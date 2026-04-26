@@ -1,5 +1,5 @@
 ---
-name: "skailup-eval-product"
+name: skailup-eval-product
 description: "Whole-product evaluator. Runs after all feature groups are approved by eval-feature. Evaluates the complete application against the original goals in brief.md. Graded on four design dimensions (quality, originality, craft, functionality 0–10) plus performance, accessibility, and mobile. Produces _implementation/eval-product.json. Final gate before release."
 metadata:
   version: "1.0.0"

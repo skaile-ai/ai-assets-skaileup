@@ -2,7 +2,7 @@
 
 The Skaileup skill catalog — concept, build, and quality pipeline skills for the Skaile ecosystem.
 
-Organized into 13 focused domains covering the full product lifecycle: grounding (research + onboarding), discovery (brief + brand), experience (journeys + features + screens), architecture, data modeling, prototyping, implementation, quality assurance, and skill meta-improvement.
+Organized into 14 focused domains covering the full product lifecycle: grounding (research + onboarding), discovery (brief + brand), experience (journeys + features + screens), architecture, data modeling, prototyping, implementation (autonomous + supervised), quality assurance, and skill meta-improvement.
 
 ## Domains
 
@@ -11,6 +11,7 @@ Organized into 13 focused domains covering the full product lifecycle: grounding
 | [`skaileup/`](skaileup/DOMAIN.md) | Base orchestrators — the main entry point for all pipelines |
 | [`skaileup-architecture/`](skaileup-architecture/DOMAIN.md) | Techstack selection + concept-level system architecture |
 | [`skaileup-build/`](skaileup-build/DOMAIN.md) | Implementation pipeline (scaffold, features, migrations) |
+| [`skaileup-build-supervised/`](skaileup-build-supervised/DOMAIN.md) | Supervised build: git-prepare, brainstorm, plan, finish |
 | [`skaileup-concept-mockup/`](skaileup-concept-mockup/DOMAIN.md) | Static text wireframes from screen specs |
 | [`skaileup-concept-ops/`](skaileup-concept-ops/DOMAIN.md) | Cross-cutting concept operations (review, eval, drift, sync) |
 | [`skaileup-concept-storybook/`](skaileup-concept-storybook/DOMAIN.md) | Living interactive prototypes (Storybook) |

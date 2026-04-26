@@ -1,5 +1,5 @@
 ---
-name: "skailup-datamodel"
+name: skailup-datamodel
 description: "Use when features are approved but _concept/blueprint/datamodel/ is empty. Produces model.dbml (DBML), model.json (editor canvas), seed.json (test scenarios), and feature_map.json (model-to-feature cross-reference)."
 metadata:
   version: "1.0.0"

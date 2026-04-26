@@ -1,5 +1,5 @@
 ---
-name: "skailup-eval-concept"
+name: skailup-eval-concept
 description: "Concept completeness and clarity gate. An independent evaluator reviews _concept/ artifacts adversarially — assumes gaps exist and proves completeness. Checks every feature has traceable acceptance criteria, screen specs, data model coverage, and an unambiguous brief. Produces _concept/eval-concept.json. Run at end of skaileup-conceptualization before implementation begins."
 metadata:
   version: "1.0.0"

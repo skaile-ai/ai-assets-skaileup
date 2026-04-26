@@ -1,5 +1,5 @@
 ---
-name: "skailup-eval-feature"
+name: skailup-eval-feature
 description: "Feature implementation evaluator. An independent sub-agent verifies the running app matches the feature spec and acceptance criteria after a feature group is implemented. Browser-based: simulates user journeys from user perspective. Adversarial: assumes something is broken. Produces _implementation/eval-feature/{group}.json. Called by skaileup-implementation/implement after each feature group — replaces feature_auto_review."
 metadata:
   version: "1.0.0"
