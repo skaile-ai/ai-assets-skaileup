@@ -1,20 +1,20 @@
 ---
-name: skailup-reverse-engineer
+name: skaileup-reverse-engineer
 description: "Use when the user has an existing project repository and wants to generate or bootstrap a _concept/ folder from it. Triggered by: 'reverse engineer this project', 'generate concept from existing code', 'I have a codebase, extract the concept', 'document this existing app', 'build concept from repo'."
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "reverse"
-    - "existing"
-    - "codebase"
-    - "repo"
-    - "extract"
-    - "import"
-    - "bootstrap"
-    - "existing-project"
-    - "infer"
-    - "scan"
-  source: "MIGRATED"
+    - 'reverse'
+    - 'existing'
+    - 'codebase'
+    - 'repo'
+    - 'extract'
+    - 'import'
+    - 'bootstrap'
+    - 'existing-project'
+    - 'infer'
+    - 'scan'
+  source: 'MIGRATED'
   parameters:
     depth:
       type: enum
@@ -23,16 +23,16 @@ metadata:
   prerequisites:
     inputs_required:
       - id: repo_path
-        label: "Repository Path"
+        label: 'Repository Path'
         type: text
-        hint: "Absolute or relative path to the existing project repository root"
+        hint: 'Absolute or relative path to the existing project repository root'
     inputs_optional:
       - id: concept_path
-        label: "Concept Output Path"
+        label: 'Concept Output Path'
         type: text
-        hint: "Where to write _concept/ (default: <repo_path>/_concept/). Override if the concept lives elsewhere."
+        hint: 'Where to write _concept/ (default: <repo_path>/_concept/). Override if the concept lives elsewhere.'
       - id: extraction_scope
-        label: "What to Extract"
+        label: 'What to Extract'
         type: multiselect
         options:
           - overview
@@ -48,69 +48,69 @@ metadata:
           - datamodel
           - brand
           - screens
-        hint: "Which concept artifacts to generate. Omit items you already have or want to write manually."
+        hint: 'Which concept artifacts to generate. Omit items you already have or want to write manually.'
       - id: overwrite_mode
-        label: "If _concept/ Files Already Exist"
+        label: 'If _concept/ Files Already Exist'
         type: select
         options:
           - skip
           - diff_and_confirm
           - overwrite
         default: skip
-        hint: "skip = never overwrite, diff_and_confirm = show diff and ask, overwrite = always replace"
+        hint: 'skip = never overwrite, diff_and_confirm = show diff and ask, overwrite = always replace'
       - id: app_description_hint
-        label: "What does this app do? (optional hint)"
+        label: 'What does this app do? (optional hint)'
         type: text
-        hint: "Brief description to help the agent when README is sparse or missing."
+        hint: 'Brief description to help the agent when README is sparse or missing.'
     produces:
-      - path: "_concept"
-        description: "Full _concept/ structure extracted and inferred from the existing repository"
+      - path: '_concept'
+        description: 'Full _concept/ structure extracted and inferred from the existing repository'
   user_inputs:
     dialog:
-      - id: "repo_path"
-        label: "Repository Path"
-        type: "text"
+      - id: 'repo_path'
+        label: 'Repository Path'
+        type: 'text'
         required: true
-        hint: "Absolute or relative path to the existing project repository root"
-      - id: "concept_path"
-        label: "Concept Output Path"
-        type: "text"
+        hint: 'Absolute or relative path to the existing project repository root'
+      - id: 'concept_path'
+        label: 'Concept Output Path'
+        type: 'text'
         required: false
-        hint: "Where to write _concept/ (default: <repo_path>/_concept/). Override if the concept lives elsewhere."
-      - id: "extraction_scope"
-        label: "What to Extract"
-        type: "multiselect"
+        hint: 'Where to write _concept/ (default: <repo_path>/_concept/). Override if the concept lives elsewhere.'
+      - id: 'extraction_scope'
+        label: 'What to Extract'
+        type: 'multiselect'
         required: false
         options:
-          - "overview"
-          - "techstack"
-          - "features"
-          - "datamodel"
-          - "brand"
-          - "screens"
+          - 'overview'
+          - 'techstack'
+          - 'features'
+          - 'datamodel'
+          - 'brand'
+          - 'screens'
         default:
-          - "overview"
-          - "techstack"
-          - "features"
-          - "datamodel"
-          - "brand"
-          - "screens"
-        hint: "Which concept artifacts to generate. Omit items you already have or want to write manually."
-      - id: "overwrite_mode"
-        label: "If _concept/ Files Already Exist"
-        type: "select"
+          - 'overview'
+          - 'techstack'
+          - 'features'
+          - 'datamodel'
+          - 'brand'
+          - 'screens'
+        hint: 'Which concept artifacts to generate. Omit items you already have or want to write manually.'
+      - id: 'overwrite_mode'
+        label: 'If _concept/ Files Already Exist'
+        type: 'select'
         required: false
         options:
-          - "skip"
-          - "diff_and_confirm"
-          - "overwrite"
-        default: "skip"
-        hint: "skip = never overwrite, diff_and_confirm = show diff and ask, overwrite = always replace"
-      - id: "app_description_hint"
-        label: "What does this app do? (optional hint)"
-        type: "text"
+          - 'skip'
+          - 'diff_and_confirm'
+          - 'overwrite'
+        default: 'skip'
+        hint: 'skip = never overwrite, diff_and_confirm = show diff and ask, overwrite = always replace'
+      - id: 'app_description_hint'
+        label: 'What does this app do? (optional hint)'
+        type: 'text'
         required: false
-        hint: "Brief description to help the agent when README is sparse or missing."
+        hint: 'Brief description to help the agent when README is sparse or missing.'
     files: []
 ---
 
@@ -127,6 +127,7 @@ why, and how.
 **Writes to:** `_concept/` (all applicable folders)
 
 Every generated artifact is tagged with a confidence level:
+
 - `extracted` — read directly from code or config (high confidence)
 - `inferred` — reasoned from context or structure (medium confidence)
 - `needs_review` — could not be determined reliably (must be validated)
@@ -149,12 +150,14 @@ Every generated artifact is tagged with a confidence level:
 No standard pipeline prerequisites. This skill is an entry point.
 
 Before starting:
+
 - `repo_path` must point to a readable directory
 - At minimum, the repository must have at least one of: source files, a README, or a package manifest
 
 ## Shared Contracts
 
 Before starting, read:
+
 - `skaileup-shared/contracts/concept_structure.md` — canonical `_concept/` paths and naming rules
 - `skaileup-shared/contracts/frontmatter.md` — required YAML fields
 - `skaileup-shared/contracts/semantic_types.md` — stack-independent types (data model output uses these)
@@ -163,11 +166,11 @@ Before starting, read:
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| Shared contracts (above) | Required |
+| Source                                                                                          | Priority             |
+| ----------------------------------------------------------------------------------------------- | -------------------- |
+| Shared contracts (above)                                                                        | Required             |
 | `<repo_path>/README.md`, root package manifests, router files, schema/model files, config files | Required (from repo) |
-| Compiled output (`dist/`, `build/`, `.next/`, `node_modules/`), binary assets, lockfiles | Never load |
+| Compiled output (`dist/`, `build/`, `.next/`, `node_modules/`), binary assets, lockfiles        | Never load           |
 
 Keep context targeted. Do not load entire source trees. Scan file lists first, then
 read selectively based on file purpose.
@@ -184,41 +187,45 @@ Check `overwrite_mode`. If `_concept/` already contains files and `overwrite_mod
 note which output artifacts already exist — skip them at generation time. If `diff_and_confirm`,
 collect diffs at the end of each phase before writing.
 
-EMIT  [reverse-engineer] started run_id=<uuid> repo_path=<path> concept_path=<path> scope=[...]
+EMIT [reverse-engineer] started run_id=<uuid> repo_path=<path> concept_path=<path> scope=[...]
 
 ### Step 2: Repository Discovery
 
 **Goal:** Build a map of the repository before reading any file deeply.
 
 2a. **File tree scan** — List the top 2 levels of `repo_path`. Identify:
+
 - Root manifest files (package.json, pyproject.toml, Cargo.toml, go.mod, pom.xml, composer.json, Gemfile)
 - README, CHANGELOG, docs/
 - Source root (`src/`, `app/`, `lib/`, pages, routes)
 - Config files (vite.config, nuxt.config, next.config, tailwind.config, tsconfig)
 - Database/model directories (prisma/, migrations/, models/, schemas/, db/)
-- Test directories (tests/, __tests__/, spec/, e2e/, cypress/, playwright/)
+- Test directories (tests/, **tests**/, spec/, e2e/, cypress/, playwright/)
 - CI/CD configs (.github/workflows/, .gitlab-ci.yml, Dockerfile)
 
 2b. **Project type detection** — From manifests, determine:
+
 - Language(s): TypeScript, JavaScript, Python, Rust, Go, Ruby, Java, PHP, other
 - App type: web app, API-only, CLI, library, monorepo, full-stack
 
 2c. **Depth check** — For monorepos, identify which sub-package is the primary app.
 Ask the user if ambiguous (more than one candidate app package).
 
-EMIT  [reverse-engineer] checkpoint phase=discovery project_type=<type> languages=[...]
+EMIT [reverse-engineer] checkpoint phase=discovery project_type=<type> languages=[...]
 
 ### Step 3: Overview Extraction (scope: overview)
 
 **Goal:** Produce `discovery/brief.md`, `goals.md`, `comparable.md`.
 
 Read in order:
+
 1. `README.md` (or docs/README.md, docs/index.md)
 2. Package manifest fields: `name`, `description`, `homepage`, `keywords`, `author`
 3. `CHANGELOG.md` — for release history and feature evolution hints
 4. Any `docs/` or `wiki/` markdown
 
 Extract:
+
 - **App name** — from manifest `name` field, then README title
 - **Elevator pitch** — from manifest `description`, README tagline, or first paragraph
 - **Target audience** — from README "Who is this for?", "Getting Started" section
@@ -228,6 +235,7 @@ Extract:
 - **Success criteria / goals** — from README features list, roadmap, or milestone markers
 
 Confidence tagging rules:
+
 - `extracted` — text verbatim from README or manifest
 - `inferred` — synthesized from code structure or indirect clues
 - `needs_review` — field left empty because no signal found
@@ -235,12 +243,13 @@ Confidence tagging rules:
 Write:
 
 **`_concept/discovery/brief.md`**
+
 ```yaml
 ---
-elevator_pitch: "<extracted or inferred>"
-audience: "<extracted or inferred>"
-problem: "<extracted or inferred>"
-hero_flow: "<extracted or inferred>"
+elevator_pitch: '<extracted or inferred>'
+audience: '<extracted or inferred>'
+problem: '<extracted or inferred>'
+hero_flow: '<extracted or inferred>'
 comparable_products: []
 last_updated: YYYY-MM-DD
 extraction_confidence:
@@ -263,6 +272,7 @@ note that comparables were not documented. Never fabricate comparables.
 **Goal:** Produce `blueprint/techstack.md`.
 
 Read:
+
 - Root manifest and lock file
 - `package.json` `dependencies` + `devDependencies`
 - Framework config files (nuxt.config.ts, next.config.js, vite.config.ts, etc.)
@@ -272,30 +282,31 @@ Read:
 
 Detect each dimension:
 
-| Dimension | Detection Strategy |
-|-----------|-------------------|
-| `platform` | Dockerfile base image, CI runner, deployment config |
-| `frontend` | `nuxt`, `next`, `remix`, `astro`, `sveltekit`, `vite`+`react`/`vue` in deps |
-| `ui_library` | `@nuxt/ui`, `shadcn-ui`, `@radix-ui`, `primevue`, `vuetify`, `mantine`, `chakra-ui`, `tailwindcss` |
-| `backend` | `express`, `fastify`, `hono`, `koa`, `django`, `fastapi`, `flask`, `rails`, `laravel` |
-| `database` | `pg`, `mysql2`, `@prisma/client`, `mongoose`, `drizzle-orm`, `sqlalchemy`, `sequelize` |
-| `auth` | `next-auth`, `lucia`, `passport`, `@auth0/nextjs-auth0`, `better-auth`, `supabase` |
-| `hosting` | vercel.json, netlify.toml, railway.json, fly.toml, deploy CI step |
-| `package_manager` | `bun.lockb` → bun, `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, else npm |
+| Dimension         | Detection Strategy                                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| `platform`        | Dockerfile base image, CI runner, deployment config                                                |
+| `frontend`        | `nuxt`, `next`, `remix`, `astro`, `sveltekit`, `vite`+`react`/`vue` in deps                        |
+| `ui_library`      | `@nuxt/ui`, `shadcn-ui`, `@radix-ui`, `primevue`, `vuetify`, `mantine`, `chakra-ui`, `tailwindcss` |
+| `backend`         | `express`, `fastify`, `hono`, `koa`, `django`, `fastapi`, `flask`, `rails`, `laravel`              |
+| `database`        | `pg`, `mysql2`, `@prisma/client`, `mongoose`, `drizzle-orm`, `sqlalchemy`, `sequelize`             |
+| `auth`            | `next-auth`, `lucia`, `passport`, `@auth0/nextjs-auth0`, `better-auth`, `supabase`                 |
+| `hosting`         | vercel.json, netlify.toml, railway.json, fly.toml, deploy CI step                                  |
+| `package_manager` | `bun.lockb` → bun, `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, else npm                           |
 
 Write:
 
 **`_concept/blueprint/techstack.md`**
+
 ```yaml
 ---
-platform: "<detected>"
-frontend: "<detected>"
-ui_library: "<detected>"
-backend: "<detected>"
-database: "<detected>"
-auth: "<detected>"
-hosting: "<detected>"
-package_manager: "<detected>"
+platform: '<detected>'
+frontend: '<detected>'
+ui_library: '<detected>'
+backend: '<detected>'
+database: '<detected>'
+auth: '<detected>'
+hosting: '<detected>'
+package_manager: '<detected>'
 last_updated: YYYY-MM-DD
 extraction_confidence:
   # extracted | inferred | needs_review per field
@@ -313,6 +324,7 @@ Feature extraction is a two-pass process: route discovery → behavioral inferen
 **Pass 1: Route/Endpoint Discovery**
 
 Scan for route definitions in this order of priority:
+
 1. **Router files** — `src/router/`, `app/router.ts`, Next.js `app/` or `pages/`, Nuxt `pages/`, Rails `routes.rb`, Django `urls.py`, FastAPI router registrations
 2. **API route handlers** — `server/api/`, `api/`, `routes/`, `controllers/`, Express `app.get(...)` calls
 3. **Navigation components** — sidebar, navbar, breadcrumb components that reference route names
@@ -320,6 +332,7 @@ Scan for route definitions in this order of priority:
 **Pass 2: Behavioral Inference**
 
 For each route/page component, read the file and infer:
+
 - What the user can do on this screen / at this endpoint
 - What data it reads and writes
 - What roles/guards protect it (auth middleware, route guards, permission checks)
@@ -334,6 +347,7 @@ For each route/page component, read the file and infer:
 **Feature Grouping**
 
 Group routes into feature groups using URL prefix or domain:
+
 - `/auth/*`, `/login`, `/signup` → `01_user_auth/`
 - `/dashboard`, `/home`, `/` → `02_dashboard/`
 - `/tasks/*`, `/todos/*` → `03_tasks/`
@@ -343,6 +357,7 @@ Assign sequential two-digit prefixes: `01_`, `02_`, `03_`…
 Write one `.md` per logical feature within each group:
 
 **`_concept/experience/features/<NN_group>/<feature>.md`**
+
 ```yaml
 ---
 priority: must-have
@@ -352,20 +367,21 @@ data_entities: []
 last_updated: YYYY-MM-DD
 extraction_confidence: extracted | inferred | needs_review
 source_files:
-  - "<relative path to route/component that evidences this feature>"
+  - '<relative path to route/component that evidences this feature>'
 ---
 ```
 
 Body: what the feature does, what the user can accomplish, notable behaviors observed
 in the source.
 
-EMIT  [reverse-engineer] checkpoint phase=features_extracted groups=<N> features=<N> needs_review=<N>
+EMIT [reverse-engineer] checkpoint phase=features_extracted groups=<N> features=<N> needs_review=<N>
 
 ### Step 6: Data Model Extraction (scope: datamodel)
 
 **Goal:** Produce `blueprint/datamodel/model.dbml`, `model.json`, `seed.json`.
 
 Read in priority order:
+
 1. **Prisma schema** — `prisma/schema.prisma`
 2. **Drizzle schema** — `db/schema.ts`, `src/db/*.ts`
 3. **TypeORM entities** — `src/entities/`, `src/models/` decorated classes
@@ -376,6 +392,7 @@ Read in priority order:
 8. **GraphQL schema** — `schema.graphql`, `src/schema.ts`
 
 For each entity/model found:
+
 - Extract field names and types
 - Map framework types → semantic types (see `skaileup-shared/contracts/semantic_types.md`):
   - `String` → `string`, `Int`/`Float` → `number`, `Boolean` → `boolean`
@@ -386,6 +403,7 @@ For each entity/model found:
 - Note unique constraints, nullable status, default values
 
 Write:
+
 - **`_concept/blueprint/datamodel/model.dbml`** — using DBML syntax with semantic types
 - **`_concept/blueprint/datamodel/model.json`** — using the editor-native format
 - **`_concept/blueprint/datamodel/seed.json`** — four standard scenarios (`empty`,
@@ -395,13 +413,14 @@ Write:
 Update feature frontmatter `data_entities[]` via the feedback loop pattern for any
 features already written in Step 5.
 
-EMIT  [reverse-engineer] checkpoint phase=datamodel_extracted entities=<N> relationships=<N> enums=<N> source=<orm_type>
+EMIT [reverse-engineer] checkpoint phase=datamodel_extracted entities=<N> relationships=<N> enums=<N> source=<orm_type>
 
 ### Step 7: Brand / Visual Extraction (scope: brand)
 
 **Goal:** Produce `discovery/brand/identity.md` and `discovery/brand/tokens.json`.
 
 Read:
+
 - `tailwind.config.ts` / `tailwind.config.js` — `theme.extend.colors`, fonts
 - CSS custom property files (`tokens.css`, `variables.css`, `globals.css`)
 - Design token files (`tokens.json`, `design-tokens.json`, `style-dictionary/`)
@@ -410,6 +429,7 @@ Read:
 - `app.vue` / `_app.tsx` / root layout for global styles
 
 Extract:
+
 - **Color palette** — primary, secondary, accent, neutral, semantic (success/error/warning/info)
 - **Typography** — font families (heading, body, mono), scale if defined
 - **Border radius** — design language (sharp, moderate, rounded, pill)
@@ -418,6 +438,7 @@ Extract:
 Write:
 
 **`_concept/discovery/brand/identity.md`**
+
 ```yaml
 ---
 mood: []
@@ -431,6 +452,7 @@ Body: describe the visual character inferred from the color palette, typography,
 component style.
 
 **`_concept/discovery/brand/tokens.json`**
+
 ```json
 {
   "colors": {
@@ -478,6 +500,7 @@ corresponding page/view component:
 - **Rails:** `app/views/**/*.erb`
 
 For each screen, extract:
+
 - **Layout** — which layout wrapper/template it uses
 - **Data bindings** — what entities the component fetches
 - **Interactions** — user actions visible in the component (buttons, forms, links)
@@ -487,6 +510,7 @@ For each screen, extract:
 Write:
 
 **`_concept/experience/screens/<NN_group>/<screen>.md`**
+
 ```yaml
 ---
 implements: []
@@ -495,13 +519,14 @@ layout: default | shell | auth | blank
 last_updated: YYYY-MM-DD
 extraction_confidence: extracted | inferred | needs_review
 source_files:
-  - "<relative path to component file>"
+  - '<relative path to component file>'
 ---
 ```
 
 Body: description of screen purpose, key UI sections, primary interactions, and visible states.
 
 After writing all screens, run the feedback loop:
+
 - For each screen, add its path to the `screens[]` array in the matching feature files
 
 ### Step 9: Confidence Report
@@ -533,43 +558,43 @@ Note any unusual or ambiguous findings (e.g., multiple ORMs detected, no README 
 routes inferred from components rather than a router file).
 ```
 
-EMIT  [reverse-engineer] completed run_id=<uuid> artifacts_written=<N> needs_review_fields=<N>
+EMIT [reverse-engineer] completed run_id=<uuid> artifacts_written=<N> needs_review_fields=<N>
 
 ## Outputs
 
-| File | Description |
-|------|-------------|
-| `_concept/discovery/brief.md` | Project vision, audience, problem, hero flow |
-| `_concept/discovery/goals.md` | Goals, constraints, deadlines inferred from docs |
-| `_concept/discovery/comparable.md` | Products mentioned in README / docs |
-| `_concept/blueprint/techstack.md` | Tech stack detected from manifests and config |
-| `_concept/experience/features/<NN>/<feature>.md` | Features inferred from routes and components |
-| `_concept/blueprint/datamodel/model.dbml` | Data model extracted from ORM/schema files |
-| `_concept/blueprint/datamodel/model.json` | Editor-native data model format |
-| `_concept/blueprint/datamodel/seed.json` | Scenario seed data (4 standard scenarios) |
-| `_concept/discovery/brand/identity.md` | Brand character extracted from CSS/theme |
-| `_concept/discovery/brand/tokens.json` | Design tokens extracted from config |
-| `_concept/experience/screens/<NN>/<screen>.md` | Screen specs extracted from page components |
+| File                                             | Description                                      |
+| ------------------------------------------------ | ------------------------------------------------ |
+| `_concept/discovery/brief.md`                    | Project vision, audience, problem, hero flow     |
+| `_concept/discovery/goals.md`                    | Goals, constraints, deadlines inferred from docs |
+| `_concept/discovery/comparable.md`               | Products mentioned in README / docs              |
+| `_concept/blueprint/techstack.md`                | Tech stack detected from manifests and config    |
+| `_concept/experience/features/<NN>/<feature>.md` | Features inferred from routes and components     |
+| `_concept/blueprint/datamodel/model.dbml`        | Data model extracted from ORM/schema files       |
+| `_concept/blueprint/datamodel/model.json`        | Editor-native data model format                  |
+| `_concept/blueprint/datamodel/seed.json`         | Scenario seed data (4 standard scenarios)        |
+| `_concept/discovery/brand/identity.md`           | Brand character extracted from CSS/theme         |
+| `_concept/discovery/brand/tokens.json`           | Design tokens extracted from config              |
+| `_concept/experience/screens/<NN>/<screen>.md`   | Screen specs extracted from page components      |
 
 ## Depth Behavior
 
-| Depth | Behavior |
-|---|---|
-| `none` | Skip this skill entirely |
-| `light` | Quick scan — high-level issues only |
-| `medium` | Standard review — all sections checked, fixes suggested (default) |
-| `max` | Deep audit — cross-reference validation, consistency checks, improvement suggestions |
+| Depth    | Behavior                                                                             |
+| -------- | ------------------------------------------------------------------------------------ |
+| `none`   | Skip this skill entirely                                                             |
+| `light`  | Quick scan — high-level issues only                                                  |
+| `medium` | Standard review — all sections checked, fixes suggested (default)                    |
+| `max`    | Deep audit — cross-reference validation, consistency checks, improvement suggestions |
 
 ## Common Mistakes
 
-| Rationalization | Reality |
-|----------------|---------|
-| "The README is sparse, I'll infer a rich brief from the code" | Only infer what the code directly implies. Mark the rest `needs_review`. Never fabricate motivation, audience, or purpose. |
-| "I'll skip brand if there's no design system" | Always write `discovery/brand/tokens.json` — even if all fields are `needs_review`. Downstream skills require it to exist. |
-| "I'll generate seed data from the test fixtures" | Yes — use fixture data for the `populated` scenario. But also generate the other three required scenarios (`empty`, `single_user`, `edge_cases`). |
-| "The entities in the ORM map 1:1 to features" | Features and entities are not 1:1. Group entities by the user-facing feature they serve. Infrastructure entities (sessions, audit logs) belong to their closest functional feature. |
-| "I can skip screens — the features already cover the routes" | Screens are separate artifacts. Features describe intent; screens describe layout, data binding, and states. Both are required for downstream design and testing skills. |
-| "I'll use the ORM's native types in model.dbml" | Translate to semantic types from `skaileup-shared/contracts/semantic_types.md`. Stack-specific types belong in stack translations, not the core model. |
-| "There are no comparables mentioned, I'll suggest some" | Never fabricate comparables. Write "No comparables documented in repository." and mark as `needs_review`. |
-| "I found all these API routes so I'll list them in the feature requirements" | Routes are evidence, not output. Feature requirements must describe user-facing behavior only. |
-| "I'll include the SSE event types / EventEmitter details since they were in the code" | Strip all backend implementation details from feature files. Document what the user experiences, not how it is implemented. |
+| Rationalization                                                                       | Reality                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The README is sparse, I'll infer a rich brief from the code"                         | Only infer what the code directly implies. Mark the rest `needs_review`. Never fabricate motivation, audience, or purpose.                                                          |
+| "I'll skip brand if there's no design system"                                         | Always write `discovery/brand/tokens.json` — even if all fields are `needs_review`. Downstream skills require it to exist.                                                          |
+| "I'll generate seed data from the test fixtures"                                      | Yes — use fixture data for the `populated` scenario. But also generate the other three required scenarios (`empty`, `single_user`, `edge_cases`).                                   |
+| "The entities in the ORM map 1:1 to features"                                         | Features and entities are not 1:1. Group entities by the user-facing feature they serve. Infrastructure entities (sessions, audit logs) belong to their closest functional feature. |
+| "I can skip screens — the features already cover the routes"                          | Screens are separate artifacts. Features describe intent; screens describe layout, data binding, and states. Both are required for downstream design and testing skills.            |
+| "I'll use the ORM's native types in model.dbml"                                       | Translate to semantic types from `skaileup-shared/contracts/semantic_types.md`. Stack-specific types belong in stack translations, not the core model.                              |
+| "There are no comparables mentioned, I'll suggest some"                               | Never fabricate comparables. Write "No comparables documented in repository." and mark as `needs_review`.                                                                           |
+| "I found all these API routes so I'll list them in the feature requirements"          | Routes are evidence, not output. Feature requirements must describe user-facing behavior only.                                                                                      |
+| "I'll include the SSE event types / EventEmitter details since they were in the code" | Strip all backend implementation details from feature files. Document what the user experiences, not how it is implemented.                                                         |

@@ -1,5 +1,5 @@
 ---
-name: skailup
+name: skaileup
 description: Top-level conversational guide for the skaileup concept → implementation pipeline
 ---
 
@@ -11,14 +11,14 @@ engine present. Does not contain pipeline logic — delegates to domain-specific
 
 ## Agents
 
-| Agent | Path | What it does | When to use |
-|---|---|---|---|
-| skailup | agents/skailup/ | Conversational guide and router | Always — start here |
+| Agent    | Path             | What it does                    | When to use         |
+| -------- | ---------------- | ------------------------------- | ------------------- |
+| skaileup | agents/skaileup/ | Conversational guide and router | Always — start here |
 
 ## Notes
 
 - Depends on: `skaileup-conceptualization`, `skaileup-implementation` (for peer agents)
 - No contracts of its own; reads `skaileup-shared` contracts indirectly via orchestrators
 - The `skaile` router agent (`ai-asset-management/agents/skaile/`) is complementary, not replaced
-- New implementation orchestrators (e.g. `skailup-implementation-supabase`) are auto-discovered
+- New implementation orchestrators (e.g. `skaileup-implementation-supabase`) are auto-discovered
   by naming convention — no changes to this domain required

@@ -1,18 +1,18 @@
 ---
-name: skailup-experience-screens-technical
-description: "Technical variant of the screens skill with component inventories. Use when screen specs exist and require precise component-level breakdowns. NOT in pipeline — experimental variant for testing purposes."
+name: skaileup-experience-screens-technical
+description: 'Technical variant of the screens skill with component inventories. Use when screen specs exist and require precise component-level breakdowns. NOT in pipeline — experimental variant for testing purposes.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "screens"
-    - "pages"
-    - "ui"
-    - "layout"
-    - "components"
-    - "states"
-    - "routes"
-    - "navigation"
-  source: "MIGRATED"
+    - 'screens'
+    - 'pages'
+    - 'ui'
+    - 'layout'
+    - 'components'
+    - 'states'
+    - 'routes'
+    - 'navigation'
+  source: 'MIGRATED'
   parameters:
     depth:
       type: enum
@@ -24,7 +24,7 @@ metadata:
         gate: hard
     produces:
       - id: screens-technical
-        description: "Developer-ready technical screen annotations"
+        description: 'Developer-ready technical screen annotations'
     consumes:
       - id: techstack
         gate: soft
@@ -61,6 +61,7 @@ behavior.
 ## Prerequisites
 
 **Hard gates:**
+
 - `_concept/experience/features/` must exist with at least one feature file
 - `_concept/discovery/brand/tokens.json` must exist (unless brand was explicitly skipped)
 - `_concept/blueprint/techstack.md` must exist
@@ -71,7 +72,8 @@ If any gate fails, stop immediately and name the missing prerequisite skill.
 ## Shared Contracts
 
 Before starting, read:
-- `skaileup-shared/contracts/concept_structure.md` — valid _concept/ paths and naming rules
+
+- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths and naming rules
 - `skaileup-shared/contracts/frontmatter.md` — required YAML fields
 - `skaileup-shared/contracts/feedback_loop.md` — cross-reference protocol
 - `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
@@ -79,18 +81,18 @@ Before starting, read:
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/discovery/brief.md` | Required |
-| `_concept/experience/features/**/*.md` | Required |
-| `_concept/discovery/brand/identity.md` | Required |
-| `_concept/discovery/brand/tokens.json` | Required |
-| `_concept/blueprint/techstack.md` | Required |
-| `_concept/blueprint/datamodel/model.json` | Required |
-| `_concept/experience/behaviors/*.allium` | Optional — surface definitions |
-| `_concept/blueprint/architecture.md` | Optional — protocols and custom services |
-| `_grounding/general/design_inspiration.md` | Optional |
-| `_grounding/general/patterns.md` | Optional |
+| Source                                     | Priority                                 |
+| ------------------------------------------ | ---------------------------------------- |
+| `_concept/discovery/brief.md`              | Required                                 |
+| `_concept/experience/features/**/*.md`     | Required                                 |
+| `_concept/discovery/brand/identity.md`     | Required                                 |
+| `_concept/discovery/brand/tokens.json`     | Required                                 |
+| `_concept/blueprint/techstack.md`          | Required                                 |
+| `_concept/blueprint/datamodel/model.json`  | Required                                 |
+| `_concept/experience/behaviors/*.allium`   | Optional — surface definitions           |
+| `_concept/blueprint/architecture.md`       | Optional — protocols and custom services |
+| `_grounding/general/design_inspiration.md` | Optional                                 |
+| `_grounding/general/patterns.md`           | Optional                                 |
 
 **Never load:** Source code, build artifacts, node_modules.
 
@@ -101,13 +103,13 @@ Before starting, read:
 Read all must-read files. If any hard-gate prerequisite is missing, stop and name
 the prerequisite skill.
 
-| Artifact | Path | Missing? Run |
-|----------|------|-------------|
-| Project brief | `_concept/discovery/brief.md` | `overview` |
-| Features | `_concept/experience/features/**/*.md` | `features` |
-| Brand tokens | `_concept/discovery/brand/tokens.json` | `brand-visual` |
-| Tech stack | `_concept/blueprint/techstack.md` | `techstack` |
-| Data model | `_concept/blueprint/datamodel/model.json` | `datamodel` |
+| Artifact      | Path                                      | Missing? Run   |
+| ------------- | ----------------------------------------- | -------------- |
+| Project brief | `_concept/discovery/brief.md`             | `overview`     |
+| Features      | `_concept/experience/features/**/*.md`    | `features`     |
+| Brand tokens  | `_concept/discovery/brand/tokens.json`    | `brand-visual` |
+| Tech stack    | `_concept/blueprint/techstack.md`         | `techstack`    |
+| Data model    | `_concept/blueprint/datamodel/model.json` | `datamodel`    |
 
 **Optional: Behavioral specs.** Check if `_concept/experience/behaviors/*.allium` exists.
 If present, read all `.allium` files. Use Allium surfaces to enrich screen specs:
@@ -123,6 +125,7 @@ what actions are available. The screen spec should match the surface contract.
 ### Step 2: Read Brand Tokens
 
 Load `_concept/discovery/brand/tokens.json`. Use these values for:
+
 - Color references in component descriptions
 - Font family names
 - Border radius, spacing conventions
@@ -219,29 +222,29 @@ screens:
 
 ## Outputs
 
-| File | Purpose |
-|------|---------|
-| `_concept/experience/screens/00_layout/shell.md` | App shell: navigation, sidebar, header, footer, breakpoints |
-| `_concept/experience/screens/<NN_group>/<screen>.md` | Per-screen spec with component inventory, data, states |
+| File                                                 | Purpose                                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------- |
+| `_concept/experience/screens/00_layout/shell.md`     | App shell: navigation, sidebar, header, footer, breakpoints |
+| `_concept/experience/screens/<NN_group>/<screen>.md` | Per-screen spec with component inventory, data, states      |
 
 ## Depth Behavior
 
-| Depth | Behavior |
-|---|---|
-| `none` | Skip this skill entirely |
-| `light` | Core items only — list names and one-line descriptions, skip edge cases |
-| `medium` | Standard coverage — full specs for core items, brief for secondary (default) |
-| `max` | Exhaustive coverage — every feature/screen/component with full detail, edge cases, error states |
+| Depth    | Behavior                                                                                        |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| `none`   | Skip this skill entirely                                                                        |
+| `light`  | Core items only — list names and one-line descriptions, skip edge cases                         |
+| `medium` | Standard coverage — full specs for core items, brief for secondary (default)                    |
+| `max`    | Exhaustive coverage — every feature/screen/component with full detail, edge cases, error states |
 
 ## Common Mistakes
 
-| Rationalization | Reality |
-|----------------|---------|
-| "I know what screens look like" | You must consume brand tokens. Never invent colors, fonts, or spacing. Every visual reference must trace back to `tokens.json`. |
+| Rationalization                                            | Reality                                                                                                                                                          |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "I know what screens look like"                            | You must consume brand tokens. Never invent colors, fonts, or spacing. Every visual reference must trace back to `tokens.json`.                                  |
 | "I'll just list the screens without component inventories" | Component inventories are the primary deliverable of this variant. Design skills cannot produce mockups without knowing what goes on each screen, top to bottom. |
-| "The data model doesn't matter for screen specs" | Every screen must specify which entities and fields it displays. Template data comes from `model.json` entities and `seed.json` scenarios. |
-| "I can skip the layout shell" | The shell (navigation, sidebar, header) is the most reused component. Every screen references it. Write it first. |
-| "States are optional" | Every screen needs at minimum: default, loading, error, empty. Users encounter all of these. Missing states mean broken mockups and untested flows. |
+| "The data model doesn't matter for screen specs"           | Every screen must specify which entities and fields it displays. Template data comes from `model.json` entities and `seed.json` scenarios.                       |
+| "I can skip the layout shell"                              | The shell (navigation, sidebar, header) is the most reused component. Every screen references it. Write it first.                                                |
+| "States are optional"                                      | Every screen needs at minimum: default, loading, error, empty. Users encounter all of these. Missing states mean broken mockups and untested flows.              |
 
-EMIT  [screens-technical] started run_id=<uuid>
-EMIT  [screens-technical] completed run_id=<uuid> screens_written=<N> features_updated=<N>
+EMIT [screens-technical] started run_id=<uuid>
+EMIT [screens-technical] completed run_id=<uuid> screens_written=<N> features_updated=<N>

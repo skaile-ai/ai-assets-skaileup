@@ -1,25 +1,25 @@
 ---
-name: "skailup-tech-stack-nextjs-shadcn"
-description: "Reference document and invocable skill for the Next.js 15 + shadcn/ui + Supabase stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack."
+name: 'skaileup-tech-stack-nextjs-shadcn'
+description: 'Reference document and invocable skill for the Next.js 15 + shadcn/ui + Supabase stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
   tags:
-    - "nextjs"
-    - "next15"
-    - "shadcn"
-    - "supabase"
-    - "postgresql"
-    - "react"
-    - "rsc"
-    - "app-router"
-    - "tailwind"
-    - "pnpm"
-    - "mvp"
-    - "saas"
-    - "indie"
-    - "prototype"
-  stage: "alpha"
+    - 'nextjs'
+    - 'next15'
+    - 'shadcn'
+    - 'supabase'
+    - 'postgresql'
+    - 'react'
+    - 'rsc'
+    - 'app-router'
+    - 'tailwind'
+    - 'pnpm'
+    - 'mvp'
+    - 'saas'
+    - 'indie'
+    - 'prototype'
+  stage: 'alpha'
   requires:
-    - "standards-contract"
+    - 'standards-contract'
 ---
 
 # Tech Stack: Next.js 15 + shadcn/ui + Supabase
@@ -30,15 +30,15 @@ Full-stack application built with Next.js 15 (App Router, React Server Component
 
 ## Identity
 
-| Field | Value |
-|-------|-------|
-| Frontend | Next.js 15 (App Router, React Server Components), SSR + SSG |
-| UI Library | shadcn/ui (Radix UI + Tailwind CSS 4, copy-paste components) |
-| Backend | Supabase (managed Postgres + Auth + Storage + Realtime + Edge Functions) |
-| Database | PostgreSQL (Supabase-managed) |
-| Auth | Supabase Auth (JWT, OAuth providers, magic links, OTP, MFA) |
-| ORM / DB Access | Supabase client SDK (`@supabase/supabase-js`, `@supabase/ssr`) — no separate ORM; Prisma optional |
-| Package Manager | pnpm |
+| Field           | Value                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| Frontend        | Next.js 15 (App Router, React Server Components), SSR + SSG                                          |
+| UI Library      | shadcn/ui (Radix UI + Tailwind CSS 4, copy-paste components)                                         |
+| Backend         | Supabase (managed Postgres + Auth + Storage + Realtime + Edge Functions)                             |
+| Database        | PostgreSQL (Supabase-managed)                                                                        |
+| Auth            | Supabase Auth (JWT, OAuth providers, magic links, OTP, MFA)                                          |
+| ORM / DB Access | Supabase client SDK (`@supabase/supabase-js`, `@supabase/ssr`) — no separate ORM; Prisma optional    |
+| Package Manager | pnpm                                                                                                 |
 | CSS Methodology | Tailwind CSS 4 + shadcn/ui CSS custom properties (`--background`, `--foreground`, `--primary`, etc.) |
 
 ## When to Use
@@ -90,6 +90,7 @@ pnpm dev
 ```
 
 **`next.config.ts`:**
+
 ```typescript
 import type { NextConfig } from 'next'
 
@@ -110,6 +111,7 @@ export default nextConfig
 shadcn/ui uses a CSS custom property system where semantic color names (`--background`, `--foreground`, `--primary`, `--primary-foreground`, etc.) map to HSL values. Brand tokens from `04_brand/tokens.json` map **1:1** to these semantic variables in `globals.css`.
 
 **`src/app/globals.css` pattern:**
+
 ```css
 @import "tailwindcss";
 @import "@/components/ui/styles.css";  /* shadcn base styles */
@@ -173,6 +175,7 @@ Token mapping table:
 Supabase Auth with Next.js SSR requires `@supabase/ssr` for cookie-based session management that works across Server Components, Route Handlers, and Middleware.
 
 **`src/lib/supabase/server.ts`:**
+
 ```typescript
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
@@ -189,17 +192,18 @@ export async function createSupabaseServerClient() {
         setAll: (cookiesToSet) => {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              cookieStore.set(name, value, options),
             )
           } catch {}
         },
       },
-    }
+    },
   )
 }
 ```
 
 **`src/lib/supabase/client.ts`:**
+
 ```typescript
 import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/types/supabase'
@@ -207,12 +211,13 @@ import type { Database } from '@/types/supabase'
 export function createSupabaseBrowserClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 }
 ```
 
 **`src/middleware.ts`:**
+
 ```typescript
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
@@ -227,17 +232,21 @@ export async function middleware(request: NextRequest) {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          )
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options),
           )
         },
       },
-    }
+    },
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user && !request.nextUrl.pathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/login', request.url))
@@ -258,6 +267,7 @@ export const config = {
 Standard Next.js App Router layout with route groups for auth vs. app sections.
 
 **Key files:**
+
 - `src/app/layout.tsx` — root HTML, fonts, `ThemeProvider`
 - `src/app/(app)/layout.tsx` — authenticated shell, sidebar + header
 - `src/app/(auth)/layout.tsx` — centered auth card layout
@@ -266,6 +276,7 @@ Standard Next.js App Router layout with route groups for auth vs. app sections.
 - `src/components/shell/SidebarNav.tsx` — data-driven nav link list
 
 **`src/app/(app)/layout.tsx` pattern:**
+
 ```typescript
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -284,29 +295,30 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
 ## Component Library
 
-| Generic UI concept | shadcn/ui Component | Location after `npx shadcn add` |
-|--------------------|---------------------|----------------------------------|
-| Button | `Button` | `src/components/ui/button.tsx` |
-| DataTable | `DataTable` (compose with TanStack Table) | `src/components/ui/data-table.tsx` |
-| Modal/Dialog | `Dialog` | `src/components/ui/dialog.tsx` |
-| Form Input | `Input` + `Label` | `src/components/ui/input.tsx` |
-| Select/Dropdown | `Select` | `src/components/ui/select.tsx` |
-| Navigation | `NavigationMenu` | `src/components/ui/navigation-menu.tsx` |
-| Card | `Card`, `CardHeader`, `CardContent` | `src/components/ui/card.tsx` |
-| Toast/Notification | `Toaster` + `useToast()` | `src/components/ui/toaster.tsx` |
-| Dropdown Menu | `DropdownMenu` | `src/components/ui/dropdown-menu.tsx` |
-| Tabs | `Tabs`, `TabsList`, `TabsTrigger` | `src/components/ui/tabs.tsx` |
-| Badge | `Badge` | `src/components/ui/badge.tsx` |
-| Avatar | `Avatar` | `src/components/ui/avatar.tsx` |
-| Form (wrapper) | `Form` (react-hook-form + Zod) | `src/components/ui/form.tsx` |
-| Popover | `Popover` | `src/components/ui/popover.tsx` |
-| Sheet (drawer) | `Sheet` | `src/components/ui/sheet.tsx` |
-| Skeleton | `Skeleton` | `src/components/ui/skeleton.tsx` |
-| Separator | `Separator` | `src/components/ui/separator.tsx` |
+| Generic UI concept | shadcn/ui Component                       | Location after `npx shadcn add`         |
+| ------------------ | ----------------------------------------- | --------------------------------------- |
+| Button             | `Button`                                  | `src/components/ui/button.tsx`          |
+| DataTable          | `DataTable` (compose with TanStack Table) | `src/components/ui/data-table.tsx`      |
+| Modal/Dialog       | `Dialog`                                  | `src/components/ui/dialog.tsx`          |
+| Form Input         | `Input` + `Label`                         | `src/components/ui/input.tsx`           |
+| Select/Dropdown    | `Select`                                  | `src/components/ui/select.tsx`          |
+| Navigation         | `NavigationMenu`                          | `src/components/ui/navigation-menu.tsx` |
+| Card               | `Card`, `CardHeader`, `CardContent`       | `src/components/ui/card.tsx`            |
+| Toast/Notification | `Toaster` + `useToast()`                  | `src/components/ui/toaster.tsx`         |
+| Dropdown Menu      | `DropdownMenu`                            | `src/components/ui/dropdown-menu.tsx`   |
+| Tabs               | `Tabs`, `TabsList`, `TabsTrigger`         | `src/components/ui/tabs.tsx`            |
+| Badge              | `Badge`                                   | `src/components/ui/badge.tsx`           |
+| Avatar             | `Avatar`                                  | `src/components/ui/avatar.tsx`          |
+| Form (wrapper)     | `Form` (react-hook-form + Zod)            | `src/components/ui/form.tsx`            |
+| Popover            | `Popover`                                 | `src/components/ui/popover.tsx`         |
+| Sheet (drawer)     | `Sheet`                                   | `src/components/ui/sheet.tsx`           |
+| Skeleton           | `Skeleton`                                | `src/components/ui/skeleton.tsx`        |
+| Separator          | `Separator`                               | `src/components/ui/separator.tsx`       |
 
 > All shadcn/ui components live in `src/components/ui/` and are fully editable. The `npx shadcn add` command only adds new files — it never overwrites existing ones.
 
 **`<Toaster />` must be placed in the root layout:**
+
 ```typescript
 // src/app/layout.tsx
 import { Toaster } from '@/components/ui/toaster'
@@ -330,13 +342,14 @@ Note: CDN mocks are structural/layout approximations. shadcn/ui's exact visual s
 ## Storybook Config
 
 ```yaml
-storybook_addon: "@storybook/nextjs"
+storybook_addon: '@storybook/nextjs'
 story_format: CSF3
-component_import: "@/components/ui"
+component_import: '@/components/ui'
 setup_file: .storybook/preview.tsx
 ```
 
 **`.storybook/main.ts`:**
+
 ```typescript
 export default {
   framework: '@storybook/nextjs',
@@ -346,6 +359,7 @@ export default {
 ```
 
 **`.storybook/preview.tsx`:**
+
 ```typescript
 import '../src/app/globals.css'  // loads all CSS vars + brand tokens
 import type { Preview } from '@storybook/react'
@@ -386,6 +400,7 @@ pnpm supabase db reset
 ```
 
 **Migration file example (`supabase/migrations/20240101000000_create_posts.sql`):**
+
 ```sql
 create table posts (
   id uuid primary key default gen_random_uuid(),
@@ -441,34 +456,50 @@ Which `prog-expert-*` skills to look for:
 
 **1. Use the service role client only in Route Handlers and Server Actions — never in RSC:**
 The service role key bypasses RLS. Only use it in server-side code paths where you intentionally need admin-level access (e.g., webhook handlers). Normal data fetching in RSC should use the anon key client so RLS policies apply:
+
 ```typescript
 // Server Component — uses anon key, RLS applies
-const supabase = await createSupabaseServerClient()  // anon key + user session
-const { data } = await supabase.from('posts').select('*')  // filtered by RLS
+const supabase = await createSupabaseServerClient() // anon key + user session
+const { data } = await supabase.from('posts').select('*') // filtered by RLS
 ```
 
 **2. shadcn Form + react-hook-form + Zod for all forms:**
 The shadcn `Form` component wraps react-hook-form. Always combine with Zod for schema validation. This is the canonical pattern — do not use uncontrolled forms or manual state:
+
 ```typescript
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 ```
 
 **3. Supabase Realtime for live data:**
 Use Supabase Realtime channels for live updates instead of polling. Subscribe in a `useEffect` with proper cleanup:
+
 ```typescript
 useEffect(() => {
   const channel = supabase
     .channel('posts-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handleChange)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'posts' },
+      handleChange,
+    )
     .subscribe()
-  return () => { supabase.removeChannel(channel) }
+  return () => {
+    supabase.removeChannel(channel)
+  }
 }, [])
 ```
 
 **4. TanStack Table for data tables:**
 shadcn's `DataTable` uses TanStack Table v8. Always implement with `useReactTable` hook for client-side sorting/filtering, or implement server-side with URL-based state for large datasets:
+
 ```typescript
 const table = useReactTable({
   data,
@@ -481,11 +512,14 @@ const table = useReactTable({
 
 **5. Server Actions for mutations:**
 Use Next.js Server Actions for all form submissions and data mutations. This keeps mutation logic on the server, works without JavaScript, and integrates with the `useFormState`/`useFormStatus` hooks:
+
 ```typescript
 'use server'
 export async function createPost(formData: FormData) {
   const supabase = await createSupabaseServerClient()
-  const { error } = await supabase.from('posts').insert({ title: formData.get('title') as string })
+  const { error } = await supabase
+    .from('posts')
+    .insert({ title: formData.get('title') as string })
   if (error) throw new Error(error.message)
   revalidatePath('/posts')
 }

@@ -1,12 +1,12 @@
 ---
-name: skailup-lab-validate
+name: skaileup-lab-validate
 description: Execute test cases from a skill's test manifest in Docker containers and produce a validation report
 source: MERGED
 version: 1.0.0
 keywords: [lab, validate, test, docker, metrics]
 user_inputs:
   - key: SKILL_ID
-    prompt: "Which skill to validate?"
+    prompt: 'Which skill to validate?'
     required: true
 reads_from: [test-manifest.yaml]
 writes_to: [data/results/]

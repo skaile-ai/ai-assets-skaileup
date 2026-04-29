@@ -1,23 +1,23 @@
 ---
-name: "skailup-tech-stack-postxl"
-description: "Reference document and invocable skill for the PostXL platform stack (React 19 + Vite + NestJS + Prisma + Keycloak). Read by scaffold, foundation, design, mock, and storybook skills when 3_blueprint/1_techstack/stack.md selects this stack. Fixed production stack with code generation — used by saxe-compatible projects."
+name: 'skaileup-tech-stack-postxl'
+description: 'Reference document and invocable skill for the PostXL platform stack (React 19 + Vite + NestJS + Prisma + Keycloak). Read by scaffold, foundation, design, mock, and storybook skills when 3_blueprint/1_techstack/stack.md selects this stack. Fixed production stack with code generation — used by saxe-compatible projects.'
 metadata:
   tags:
-    - "postxl"
-    - "react19"
-    - "vite"
-    - "nestjs"
-    - "prisma"
-    - "keycloak"
-    - "postgresql"
-    - "enterprise"
-    - "codegen"
-    - "saxe"
-    - "oidc"
-    - "typescript"
-  stage: "alpha"
+    - 'postxl'
+    - 'react19'
+    - 'vite'
+    - 'nestjs'
+    - 'prisma'
+    - 'keycloak'
+    - 'postgresql'
+    - 'enterprise'
+    - 'codegen'
+    - 'saxe'
+    - 'oidc'
+    - 'typescript'
+  stage: 'alpha'
   requires:
-    - "standards-contract"
+    - 'standards-contract'
 ---
 
 # Tech Stack: PostXL (React 19 + Vite + NestJS + Prisma + Keycloak)
@@ -28,15 +28,15 @@ The PostXL platform stack is a fixed production configuration used by saxe-compa
 
 ## Identity
 
-| Field | Value |
-|-------|-------|
-| Frontend | React 19 + Vite (SPA, client-side rendering) |
-| UI Library | @postxl/ui-components (Radix UI + Tailwind CSS 4 + Vaul + Sonner + Zustand) |
-| Backend | NestJS (PostXL application server, module architecture) |
-| Database | PostgreSQL (via Prisma) |
-| Auth | Keycloak (OpenID Connect, RBAC, SSO) |
-| ORM / DB Access | Prisma (schema-first, type-safe query builder) |
-| Package Manager | pnpm |
+| Field           | Value                                                                                  |
+| --------------- | -------------------------------------------------------------------------------------- |
+| Frontend        | React 19 + Vite (SPA, client-side rendering)                                           |
+| UI Library      | @postxl/ui-components (Radix UI + Tailwind CSS 4 + Vaul + Sonner + Zustand)            |
+| Backend         | NestJS (PostXL application server, module architecture)                                |
+| Database        | PostgreSQL (via Prisma)                                                                |
+| Auth            | Keycloak (OpenID Connect, RBAC, SSO)                                                   |
+| ORM / DB Access | Prisma (schema-first, type-safe query builder)                                         |
+| Package Manager | pnpm                                                                                   |
 | CSS Methodology | Tailwind CSS 4 + @postxl/ui-components design tokens (`--radius`, `--font-sans`, etc.) |
 
 ## When to Use
@@ -91,6 +91,7 @@ pnpm run dev  # starts both frontend and backend via turbo/nx
 ```
 
 **`apps/frontend/vite.config.ts`:**
+
 ```typescript
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -111,6 +112,7 @@ export default defineConfig({
 ```
 
 **`apps/backend/src/main.ts`:**
+
 ```typescript
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
@@ -130,6 +132,7 @@ bootstrap()
 @postxl/ui-components uses a CSS custom property system similar to shadcn/ui but with PostXL-specific token names. Brand tokens from `1_discovery/2_brand/tokens.json` are applied in `globals.css` and Tailwind's `@theme` block.
 
 **`apps/frontend/src/styles/globals.css`:**
+
 ```css
 @import "tailwindcss";
 @import "@postxl/ui-components/styles";
@@ -195,6 +198,7 @@ Token mapping table:
 Keycloak provides OpenID Connect authentication. The NestJS backend validates JWTs issued by Keycloak. The frontend uses Keycloak.js to manage the auth code flow and token refresh.
 
 **NestJS — `apps/backend/src/auth/keycloak.guard.ts`:**
+
 ```typescript
 import { Injectable, ExecutionContext } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
@@ -208,6 +212,7 @@ export class KeycloakAuthGuard extends AuthGuard('jwt') {
 ```
 
 **NestJS — `apps/backend/src/auth/auth.module.ts`:**
+
 ```typescript
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
@@ -217,7 +222,7 @@ import { KeycloakStrategy } from './keycloak.strategy'
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({}),  // validation uses Keycloak's public key
+    JwtModule.register({}), // validation uses Keycloak's public key
   ],
   providers: [KeycloakStrategy],
   exports: [PassportModule],
@@ -226,6 +231,7 @@ export class AuthModule {}
 ```
 
 **NestJS — `apps/backend/src/auth/keycloak.strategy.ts`:**
+
 ```typescript
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
@@ -258,6 +264,7 @@ export class KeycloakStrategy extends PassportStrategy(Strategy) {
 ```
 
 **Frontend — `apps/frontend/src/lib/keycloak.ts`:**
+
 ```typescript
 import Keycloak from 'keycloak-js'
 
@@ -276,6 +283,7 @@ export async function initKeycloak(): Promise<boolean> {
 ```
 
 **Frontend — `apps/frontend/src/components/auth/AuthProvider.tsx`:**
+
 ```typescript
 import { useEffect, useState } from 'react'
 import { keycloak, initKeycloak } from '@/lib/keycloak'
@@ -300,6 +308,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 ```
 
 **Environment variables:**
+
 ```bash
 # Backend
 KEYCLOAK_URL=http://keycloak:8080
@@ -318,6 +327,7 @@ VITE_API_URL=http://localhost:3001
 React Router v7 handles client-side routing. `@postxl/ui-components` provides `AppShell`, `NavigationHeader`, and `SidebarNav` components for the standard PostXL layout.
 
 **Key files:**
+
 - `apps/frontend/src/main.tsx` — React root, `AuthProvider`, `RouterProvider`
 - `apps/frontend/src/layouts/AppLayout.tsx` — `AppShell` from @postxl/ui-components
 - `apps/frontend/src/components/navigation/NavigationHeader.tsx` — top bar
@@ -325,6 +335,7 @@ React Router v7 handles client-side routing. `@postxl/ui-components` provides `A
 - `apps/frontend/src/router.tsx` — React Router v7 route definitions
 
 **`apps/frontend/src/main.tsx`:**
+
 ```typescript
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -345,6 +356,7 @@ createRoot(document.getElementById('root')!).render(
 ```
 
 **`apps/frontend/src/layouts/AppLayout.tsx`:**
+
 ```typescript
 import { Outlet } from 'react-router-dom'
 import { AppShell, NavigationHeader, SidebarNav } from '@postxl/ui-components'
@@ -364,23 +376,24 @@ export function AppLayout() {
 
 ## Component Library
 
-| Generic UI concept | @postxl/ui-components | Notes |
-|--------------------|-----------------------|-------|
-| Button | `Button` | variants: `default`, `outline`, `ghost`, `destructive` |
-| DataTable | `DataTable` | TanStack Table v8 wrapper |
-| Modal/Dialog | `Dialog`, `DialogContent` | Radix Dialog wrapper |
-| Form Input | `Input`, `Label`, `FormField` | react-hook-form compatible |
-| Select/Dropdown | `Select`, `SelectContent` | Radix Select wrapper |
-| Navigation | `SidebarNav`, `NavigationHeader` | PostXL-specific shell components |
-| Card | `Card`, `CardHeader`, `CardContent` | Shadcn-style card |
-| Toast/Notification | `Toaster` + `toast()` from Sonner | Sonner toast library |
-| Drawer | `Drawer` | Vaul drawer (mobile-first) |
-| Badge | `Badge` | |
-| Avatar | `Avatar`, `AvatarFallback` | |
-| App Shell | `AppShell` | Layout wrapper |
-| Command | `CommandPalette` | PostXL global command palette |
+| Generic UI concept | @postxl/ui-components               | Notes                                                  |
+| ------------------ | ----------------------------------- | ------------------------------------------------------ |
+| Button             | `Button`                            | variants: `default`, `outline`, `ghost`, `destructive` |
+| DataTable          | `DataTable`                         | TanStack Table v8 wrapper                              |
+| Modal/Dialog       | `Dialog`, `DialogContent`           | Radix Dialog wrapper                                   |
+| Form Input         | `Input`, `Label`, `FormField`       | react-hook-form compatible                             |
+| Select/Dropdown    | `Select`, `SelectContent`           | Radix Select wrapper                                   |
+| Navigation         | `SidebarNav`, `NavigationHeader`    | PostXL-specific shell components                       |
+| Card               | `Card`, `CardHeader`, `CardContent` | Shadcn-style card                                      |
+| Toast/Notification | `Toaster` + `toast()` from Sonner   | Sonner toast library                                   |
+| Drawer             | `Drawer`                            | Vaul drawer (mobile-first)                             |
+| Badge              | `Badge`                             |                                                        |
+| Avatar             | `Avatar`, `AvatarFallback`          |                                                        |
+| App Shell          | `AppShell`                          | Layout wrapper                                         |
+| Command            | `CommandPalette`                    | PostXL global command palette                          |
 
 All components are imported from `@postxl/ui-components`:
+
 ```typescript
 import { Button, DataTable, Dialog, Input } from '@postxl/ui-components'
 ```
@@ -398,15 +411,16 @@ Note: The CDN mock approximates the PostXL layout structure. `@postxl/ui-compone
 ## Storybook Config
 
 ```yaml
-storybook_addon: "@storybook/react"
+storybook_addon: '@storybook/react'
 story_format: CSF3
-component_import: "@postxl/ui-components"
+component_import: '@postxl/ui-components'
 setup_file: apps/frontend/.storybook/setup.ts
 ```
 
 Use `@storybook/react` with the Vite builder for React 19 compatibility.
 
 **`apps/frontend/.storybook/main.ts`:**
+
 ```typescript
 export default {
   framework: {
@@ -419,6 +433,7 @@ export default {
 ```
 
 **`apps/frontend/.storybook/preview.tsx`:**
+
 ```typescript
 import '../src/styles/globals.css'
 import type { Preview } from '@storybook/react'
@@ -444,6 +459,7 @@ Write stories for feature-level composite components (e.g., a `PostEditor` that 
 Prisma manages PostgreSQL schema with a full migration history.
 
 **`apps/backend/prisma/schema.prisma`:**
+
 ```prisma
 generator client {
   provider = "prisma-client-js"
@@ -465,6 +481,7 @@ model User {
 ```
 
 **Migration commands:**
+
 ```bash
 # Create and apply new migration (dev only — generates SQL + applies)
 pnpm prisma migrate dev --name add_posts_table
@@ -483,6 +500,7 @@ pnpm prisma studio
 ```
 
 **Prisma Client usage in NestJS:**
+
 ```typescript
 // apps/backend/src/prisma/prisma.service.ts
 import { Injectable, OnModuleInit } from '@nestjs/common'
@@ -511,6 +529,7 @@ pnpm prisma generate
 ```
 
 **When to run `pnpm run generate`:**
+
 - After modifying `postxl-schema.json` (data model definitions)
 - After adding new entities or relations in the concept's `3_blueprint/3_datamodel/`
 - After changing field types that affect DTO validation
@@ -519,6 +538,7 @@ pnpm prisma generate
 **`postxl-schema.json` is the source of truth** for the data model in PostXL projects. It drives both Prisma schema generation and frontend TypeScript type generation. Never edit `schema.prisma` directly in PostXL projects — edit `postxl-schema.json` and regenerate.
 
 Generated output locations:
+
 - `apps/backend/prisma/schema.prisma` — Prisma schema (generated)
 - `apps/backend/src/*/dto/*.dto.ts` — NestJS DTOs (generated)
 - `apps/backend/src/*/entities/*.entity.ts` — Prisma model wrappers (generated)
@@ -537,6 +557,7 @@ Which `prog-expert-*` skills to look for:
 
 **1. NestJS module per domain, never per layer:**
 Organize NestJS modules by business domain, not by technical layer. Each domain module (e.g., `PostsModule`) owns its controller, service, and repository. Cross-cutting concerns (auth, logging, validation) live in shared modules:
+
 ```
 apps/backend/src/
 ├── posts/
@@ -554,6 +575,7 @@ apps/backend/src/
 
 **2. Keycloak JWT carries roles — do not replicate roles in the database:**
 Keycloak `realm_access.roles` in the JWT payload is the source of truth for authorization. NestJS guards read roles from the validated JWT, not from a database roles table. Use `@Roles('admin')` decorator pattern on controllers:
+
 ```typescript
 @Get()
 @UseGuards(KeycloakAuthGuard, RolesGuard)
@@ -566,6 +588,7 @@ The PostXL generator updates `schema.prisma` from `postxl-schema.json`. Running 
 
 **4. React query hooks from codegen for all server state:**
 Generated React query hooks (`use-posts.ts`, `use-users.ts`) wrap TanStack Query and the typed API client. Never use raw `fetch` or `axios` in components — always use the generated hooks. This ensures consistent loading states, error handling, and cache invalidation:
+
 ```typescript
 import { useGetPosts, useCreatePost } from '@/hooks/use-posts'
 
@@ -578,6 +601,7 @@ function PostList() {
 
 **5. Sonner `toast()` for all user notifications:**
 @postxl/ui-components bundles Sonner. Use the `toast()` function (not a hook) anywhere in the application — no context provider needed beyond the `<Toaster />` in the app root. Standardize notification patterns: `toast.success()` for completed actions, `toast.error()` for failures, `toast.loading()` for async operations:
+
 ```typescript
 import { toast } from '@postxl/ui-components'
 

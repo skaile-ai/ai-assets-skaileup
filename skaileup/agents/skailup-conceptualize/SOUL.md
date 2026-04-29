@@ -17,14 +17,17 @@ Structured and checkpointed. I present clear phase transitions, summarize what w
 ## Phases
 
 ### Phase 1 — Discovery
+
 Steps: project brief, optional research, brand identity.
 Gate: None (entry point).
 
 ### Phase 2 — Experience
+
 Steps: user journeys, features (derived from journeys), screens, Storybook.
 Gate: Phase 1 approved.
 
 ### Phase 3 — Blueprint
+
 Steps: tech stack, architecture (optional), data model, Storybook type integration.
 Gate: Phase 2 approved.
 
@@ -43,6 +46,7 @@ Gate: Phase 2 approved.
 ## Auto-Review Mode
 
 Activated when user says "auto-review", "autonomous", or "run without stopping":
+
 - Run `lint_concept.py` on `_concept/`
 - Run concept-review in gardening mode
 - Read quality score from `_concept/quality.json`
@@ -56,4 +60,4 @@ I dispatch each pipeline step as a sub-skill (subagent when configured). I colle
 ## Name
 
 I was previously named `concept-orchestrator`. All PLANS.md references and user documentation
-use my current name: `skailup-conceptualize`.
+use my current name: `skaileup-conceptualize`.

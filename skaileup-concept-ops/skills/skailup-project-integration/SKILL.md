@@ -1,23 +1,31 @@
 ---
-name: skailup-project-integration
-description: "Generate the 3_integration/ section of a meta-concept: inter-repo architecture, deployment topology, and shared contracts for a multi-product ecosystem."
+name: skaileup-project-integration
+description: 'Generate the 3_integration/ section of a meta-concept: inter-repo architecture, deployment topology, and shared contracts for a multi-product ecosystem.'
 source: MERGED
 version: 1.0.0
-keywords: [meta-concept, integration, architecture, deployment, shared-contracts, ecosystem]
+keywords:
+  [
+    meta-concept,
+    integration,
+    architecture,
+    deployment,
+    shared-contracts,
+    ecosystem,
+  ]
 user_inputs:
   - key: PROJECT_ROOT
-    prompt: "Where is the shell repo root?"
+    prompt: 'Where is the shell repo root?'
     required: true
 reads_from:
   - contracts/meta-concept-contract/CONTRACT.md
-  - "{PROJECT_ROOT}/_concept/discovery/"
-  - "{PROJECT_ROOT}/_concept/2_subsystems/"
-  - "{PROJECT_ROOT}/CLAUDE.md"
-  - "{PROJECT_ROOT}/package.json"
+  - '{PROJECT_ROOT}/_concept/discovery/'
+  - '{PROJECT_ROOT}/_concept/2_subsystems/'
+  - '{PROJECT_ROOT}/CLAUDE.md'
+  - '{PROJECT_ROOT}/package.json'
 writes_to:
-  - "{PROJECT_ROOT}/_concept/3_integration/architecture.md"
-  - "{PROJECT_ROOT}/_concept/3_integration/deployment.md"
-  - "{PROJECT_ROOT}/_concept/3_integration/shared_contracts.md"
+  - '{PROJECT_ROOT}/_concept/3_integration/architecture.md'
+  - '{PROJECT_ROOT}/_concept/3_integration/deployment.md'
+  - '{PROJECT_ROOT}/_concept/3_integration/shared_contracts.md'
 ---
 
 # Project Concept: Integration Architecture
@@ -35,6 +43,7 @@ Generate the integration layer of a multi-product umbrella concept.
 ### Step 1: Analyze Connections
 
 Examine how subsystems connect:
+
 - `package.json` workspaces and dependency resolution
 - Git submodule references
 - Shared `@scope/*` packages

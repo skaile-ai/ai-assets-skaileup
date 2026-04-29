@@ -1,35 +1,35 @@
 ---
-name: skailup-quality-test-unit
-description: "Use when you need unit test files generated from feature specs. Reads existing source code patterns and feature requirements, then produces one test file per feature with test cases mapped to requirements."
+name: skaileup-quality-test-unit
+description: 'Use when you need unit test files generated from feature specs. Reads existing source code patterns and feature requirements, then produces one test file per feature with test cases mapped to requirements.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "testing"
-    - "unit-tests"
-    - "vitest"
-    - "jest"
-    - "code-generation"
-    - "tdd"
-  source: "MIGRATED"
+    - 'testing'
+    - 'unit-tests'
+    - 'vitest'
+    - 'jest'
+    - 'code-generation'
+    - 'tdd'
+  source: 'MIGRATED'
   subagent: true
   prerequisites:
     files:
-      - path: "package.json"
+      - path: 'package.json'
         gate: hard
-        description: "Source code must exist — unit tests require implemented functions to test"
-      - path: "_concept/experience/features"
+        description: 'Source code must exist — unit tests require implemented functions to test'
+      - path: '_concept/experience/features'
         gate: hard
-        description: "Feature specs required — each requirement becomes a test case"
+        description: 'Feature specs required — each requirement becomes a test case'
         min_entries: 1
-      - path: "_concept/blueprint/techstack.md"
+      - path: '_concept/blueprint/techstack.md'
         gate: hard
-        description: "Tech stack required to select correct test framework (vitest/jest)"
+        description: 'Tech stack required to select correct test framework (vitest/jest)'
     reads:
-      - path: "_concept/testing/test_plan.md"
-        description: "Test plan for structured test scenario coverage"
+      - path: '_concept/testing/test_plan.md'
+        description: 'Test plan for structured test scenario coverage'
     produces:
-      - path: "src"
-        description: "One test file per feature (in stack-appropriate test directory)"
+      - path: 'src'
+        description: 'One test file per feature (in stack-appropriate test directory)'
 ---
 
 # Test Unit — Feature-Driven Unit Test Generation
@@ -59,6 +59,7 @@ individual functions, composables, utilities, and component logic in isolation.
 ## Prerequisites
 
 **Hard gates:**
+
 1. Source code must exist (`package.json`, `pyproject.toml`, or equivalent)
 2. Feature specs must exist in `_concept/experience/features/`
 3. Tech stack must be known — `_concept/blueprint/techstack.md` or infer from `package.json`
@@ -66,20 +67,21 @@ individual functions, composables, utilities, and component logic in isolation.
 ## Shared Contracts
 
 Before starting, read:
-- `skaileup-shared/contracts/concept_structure.md` — valid _concept/ paths
+
+- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths
 - `skaileup-shared/contracts/frontmatter.md` — feature frontmatter fields
 - `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/experience/features/**/*.md` | Required |
-| `_concept/blueprint/techstack.md` | Required |
-| `package.json` (deps + scripts) | Required |
+| Source                                  | Priority |
+| --------------------------------------- | -------- |
+| `_concept/experience/features/**/*.md`  | Required |
+| `_concept/blueprint/techstack.md`       | Required |
+| `package.json` (deps + scripts)         | Required |
 | Existing test files (pattern discovery) | Required |
-| Source code for features under test | Required |
-| `_concept/testing/test_plan.md` | Optional |
+| Source code for features under test     | Required |
+| `_concept/testing/test_plan.md`         | Optional |
 
 ## Workflow
 
@@ -97,6 +99,7 @@ Read project configuration to determine:
 6. **Test config:** `vitest.config.ts`, `jest.config.js`, `pytest.ini`, etc.
 
 If no test framework is configured:
+
 > "No test framework detected. Recommend adding vitest (for Nuxt/Vue) or jest. Install it first?"
 
 #### Sub-agent 2: Feature-to-Source Mapping
@@ -151,13 +154,13 @@ describe('Feature: <feature_name>', () => {
 
 #### What to Test
 
-| Source Type | What to Test |
-|-------------|-------------|
-| Composables | Return values, reactivity, error handling |
-| Utility functions | Input/output, edge cases, type handling |
-| API handlers | Request parsing, response shape, error responses |
-| Store/state | Mutations, getters, actions, initial state |
-| Validators | Valid inputs, invalid inputs, boundary values |
+| Source Type       | What to Test                                     |
+| ----------------- | ------------------------------------------------ |
+| Composables       | Return values, reactivity, error handling        |
+| Utility functions | Input/output, edge cases, type handling          |
+| API handlers      | Request parsing, response shape, error responses |
+| Store/state       | Mutations, getters, actions, initial state       |
+| Validators        | Valid inputs, invalid inputs, boundary values    |
 
 #### What NOT to Test (leave for integration/E2E)
 
@@ -208,15 +211,15 @@ report them, do not change the test.
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Ignoring existing test patterns | Read 2-3 existing tests first and match conventions exactly |
-| Testing implementation details | Test behavior described in the requirement, not internal methods |
-| Generating tests that need a database | Mock all external dependencies; leave DB tests for integration |
-| Writing snapshot tests for everything | Only snapshot when the output shape matters to the requirement |
-| Skipping error state tests | Every error state in the feature spec needs a test |
-| Creating tests in the wrong location | Match the existing test file layout exactly |
+| Mistake                               | What to do instead                                               |
+| ------------------------------------- | ---------------------------------------------------------------- |
+| Ignoring existing test patterns       | Read 2-3 existing tests first and match conventions exactly      |
+| Testing implementation details        | Test behavior described in the requirement, not internal methods |
+| Generating tests that need a database | Mock all external dependencies; leave DB tests for integration   |
+| Writing snapshot tests for everything | Only snapshot when the output shape matters to the requirement   |
+| Skipping error state tests            | Every error state in the feature spec needs a test               |
+| Creating tests in the wrong location  | Match the existing test file layout exactly                      |
 
-EMIT  [test-unit] started run_id=<uuid>
-EMIT  [test-unit] checkpoint feature=<name> tests=<N> passing=<N> failing=<N>
-EMIT  [test-unit] completed run_id=<uuid> features=<N> test_files=<N> tests_total=<N> tests_passing=<N> tests_failing=<N>
+EMIT [test-unit] started run_id=<uuid>
+EMIT [test-unit] checkpoint feature=<name> tests=<N> passing=<N> failing=<N>
+EMIT [test-unit] completed run_id=<uuid> features=<N> test_files=<N> tests_total=<N> tests_passing=<N> tests_failing=<N>

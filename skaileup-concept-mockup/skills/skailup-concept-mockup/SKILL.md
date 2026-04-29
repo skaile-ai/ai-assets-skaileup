@@ -1,23 +1,23 @@
 ---
-name: skailup-concept-mockup
+name: skaileup-concept-mockup
 description: "Use when screen specs are approved and user wants interactive HTML mockups. Also when user says 'mockup', 'prototype', 'show me what it looks like'. Generates a linked multi-page prototype. Supports 3 stacks: Alpine.js+Shoelace, Vue 3+PrimeVue, Preact+HTM. Auto-selects stack template from tech-stack profile if stack.md exists."
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "ui"
-    - "ux"
-    - "design"
-    - "frontend"
-    - "mockups"
-    - "prototype"
-    - "linked"
-    - "alpine"
-    - "shoelace"
-    - "primevue"
-    - "vue3"
-    - "preact"
-    - "htm"
-  source: "MIGRATED"
+    - 'ui'
+    - 'ux'
+    - 'design'
+    - 'frontend'
+    - 'mockups'
+    - 'prototype'
+    - 'linked'
+    - 'alpine'
+    - 'shoelace'
+    - 'primevue'
+    - 'vue3'
+    - 'preact'
+    - 'htm'
+  source: 'MIGRATED'
   parameters:
     depth:
       type: enum
@@ -29,33 +29,33 @@ metadata:
         gate: hard
     produces:
       - id: prototype
-        description: "Text-based mockup descriptions"
+        description: 'Text-based mockup descriptions'
     consumes:
       - id: brand-tokens
         gate: soft
   prerequisites:
     files:
-      - path: "_concept/experience/screens"
+      - path: '_concept/experience/screens'
         gate: hard
-        description: "Screen specs must exist — mockup renders screen specs as HTML"
+        description: 'Screen specs must exist — mockup renders screen specs as HTML'
         min_entries: 1
-      - path: "_concept/discovery/brand/tokens.json"
+      - path: '_concept/discovery/brand/tokens.json'
         gate: hard
-        description: "Design tokens required for brand-accurate styling"
-      - path: "_concept/blueprint/datamodel/seed.json"
+        description: 'Design tokens required for brand-accurate styling'
+      - path: '_concept/blueprint/datamodel/seed.json'
         gate: hard
-        description: "Seed data required for realistic mock content"
-      - path: "_concept/blueprint/techstack.md"
+        description: 'Seed data required for realistic mock content'
+      - path: '_concept/blueprint/techstack.md'
         gate: soft
-        description: "Tech stack used to auto-select mockup stack template"
+        description: 'Tech stack used to auto-select mockup stack template'
     reads:
-      - path: "_concept/discovery/brief.md"
-        description: "App name and navigation structure"
-      - path: "_concept/experience/features"
-        description: "Feature list for page inventory"
+      - path: '_concept/discovery/brief.md'
+        description: 'App name and navigation structure'
+      - path: '_concept/experience/features'
+        description: 'Feature list for page inventory'
     produces:
-      - path: "_concept/mockups"
-        description: "Linked multi-page HTML prototype files"
+      - path: '_concept/mockups'
+        description: 'Linked multi-page HTML prototype files'
 ---
 
 # Concept Mock — Linked Multi-Page Prototype
@@ -73,11 +73,11 @@ in a browser to validate flows end-to-end.
 
 Three stacks available, each CDN-only with zero build step:
 
-| Stack | ID | Best For |
-|-------|----|----------|
-| Alpine.js + Shoelace | `alpine_shoelace` | Lightweight prototypes, web-component UI primitives |
-| Vue 3 + PrimeVue | `vue_primevue` | Data-heavy apps, rich DataTable/Dialog/Form components |
-| Preact + HTM | `preact_htm` | Modern ES modules, signal-based reactivity, minimal overhead |
+| Stack                | ID                | Best For                                                     |
+| -------------------- | ----------------- | ------------------------------------------------------------ |
+| Alpine.js + Shoelace | `alpine_shoelace` | Lightweight prototypes, web-component UI primitives          |
+| Vue 3 + PrimeVue     | `vue_primevue`    | Data-heavy apps, rich DataTable/Dialog/Form components       |
+| Preact + HTM         | `preact_htm`      | Modern ES modules, signal-based reactivity, minimal overhead |
 
 All stacks are **CDN-only, zero build**. Every HTML file opens directly in a browser.
 
@@ -89,15 +89,15 @@ automatically select the template. This avoids the user having to choose manuall
 
 **Stack → Default Mock Template:**
 
-| tech_stack_skill | mock_template | Notes |
-|-----------------|---------------|-------|
-| `nuxt-primevue` | `vue_primevue` | Direct match |
-| `nuxt-ui` | `vue_primevue` | Closest CDN match for Reka UI |
-| `nextjs-radix` | `preact_htm` | React ecosystem → Preact |
-| `nextjs-shadcn` | `preact_htm` | React ecosystem → Preact |
-| `nuxt-minimal` | `alpine_shoelace` | Minimal stack → Alpine |
-| `postxl` | `preact_htm` | PostXL uses React conventions |
-| custom / unknown | — | Ask user to choose |
+| tech_stack_skill | mock_template     | Notes                         |
+| ---------------- | ----------------- | ----------------------------- |
+| `nuxt-primevue`  | `vue_primevue`    | Direct match                  |
+| `nuxt-ui`        | `vue_primevue`    | Closest CDN match for Reka UI |
+| `nextjs-radix`   | `preact_htm`      | React ecosystem → Preact      |
+| `nextjs-shadcn`  | `preact_htm`      | React ecosystem → Preact      |
+| `nuxt-minimal`   | `alpine_shoelace` | Minimal stack → Alpine        |
+| `postxl`         | `preact_htm`      | PostXL uses React conventions |
+| custom / unknown | —                 | Ask user to choose            |
 
 If no `tech_stack_skill:` is set, present the three options and ask the user to choose
 before proceeding.
@@ -117,6 +117,7 @@ before proceeding.
 ## Prerequisites
 
 **Hard gates:**
+
 1. `_concept/experience/screens/` has at least one screen file
 2. `_concept/discovery/brand/tokens.json` exists
 3. `_concept/blueprint/datamodel/seed.json` exists
@@ -126,6 +127,7 @@ If any are missing, stop and name what is needed.
 **Optional: Tech Stack for Template Auto-Selection**
 
 If `_concept/blueprint/techstack.md` exists:
+
 - Read it and extract `tech_stack_skill:`
 - Read `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` and extract `mock_template:`
 - Use the mapped template from the table above
@@ -134,6 +136,7 @@ If `_concept/blueprint/techstack.md` exists:
 ## Shared Contracts
 
 Before starting, read:
+
 - `skaileup-shared/contracts/concept_structure.md` — valid paths
 - `skaileup-shared/contracts/frontmatter.md` — screen frontmatter fields
 - `skaileup-shared/contracts/seed_data.md` — scenario convention
@@ -142,16 +145,16 @@ Before starting, read:
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/discovery/brand/tokens.json` | Required |
-| `_concept/experience/screens/**/*.md` | Required |
-| `_concept/experience/screens/00_layout/shell.md` | Required |
-| `_concept/blueprint/datamodel/seed.json` | Required |
-| `_concept/blueprint/techstack.md` | Optional (template auto-selection) |
+| Source                                                    | Priority                                         |
+| --------------------------------------------------------- | ------------------------------------------------ |
+| `_concept/discovery/brand/tokens.json`                    | Required                                         |
+| `_concept/experience/screens/**/*.md`                     | Required                                         |
+| `_concept/experience/screens/00_layout/shell.md`          | Required                                         |
+| `_concept/blueprint/datamodel/seed.json`                  | Required                                         |
+| `_concept/blueprint/techstack.md`                         | Optional (template auto-selection)               |
 | `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` | Optional (read if stack.md has tech_stack_skill) |
-| `_concept/experience/screens/components/*.md` | Optional |
-| `_grounding/general/design_inspiration.md` | Optional |
+| `_concept/experience/screens/components/*.md`             | Optional                                         |
+| `_grounding/general/design_inspiration.md`                | Optional                                         |
 
 **Never load:** `_concept/discovery/`, `_concept/experience/features/`, source code.
 
@@ -230,6 +233,7 @@ Convert `seed.json` scenarios to JS:
 ### Phase 4: Screen Pages
 
 For each screen in `experience/screens/`, generate an HTML file. Each screen page:
+
 - **Includes the shared shell** (sidebar, header) with current page highlighted
 - **Links to other screens** via real `<a href>` tags (working navigation!)
 - **Renders seed data** with stack-appropriate binding
@@ -240,6 +244,7 @@ For each screen in `experience/screens/`, generate an HTML file. Each screen pag
 ### Phase 5: Index & Navigation
 
 `index.html` serves as the entry point:
+
 - Redirects to the first meaningful screen (e.g., dashboard or login)
 - OR acts as a screen selector showing all available screens
 
@@ -254,37 +259,37 @@ For each screen in `experience/screens/`, generate an HTML file. Each screen pag
 
 ## Outputs
 
-| File | Description |
-|------|-------------|
-| `_concept/mockups/index.html` | Entry point / screen selector |
+| File                                 | Description                           |
+| ------------------------------------ | ------------------------------------- |
+| `_concept/mockups/index.html`        | Entry point / screen selector         |
 | `_concept/mockups/shared/styles.css` | Brand CSS variables + stack overrides |
-| `_concept/mockups/shared/layout.js` | Shared shell component |
-| `_concept/mockups/shared/seed.js` | Seed data as JS for all screens |
-| `_concept/mockups/screens/*.html` | One HTML per screen, all linked |
-| `_concept/mockups/README.md` | How to open, what to test |
+| `_concept/mockups/shared/layout.js`  | Shared shell component                |
+| `_concept/mockups/shared/seed.js`    | Seed data as JS for all screens       |
+| `_concept/mockups/screens/*.html`    | One HTML per screen, all linked       |
+| `_concept/mockups/README.md`         | How to open, what to test             |
 
 ## Depth Behavior
 
-| Depth | Behavior |
-|---|---|
-| `none` | Skip this skill entirely |
-| `light` | Hero flow mockup only |
-| `medium` | Hero + vital flow mockups (default) |
-| `max` | All flows including edge cases and error states |
+| Depth    | Behavior                                        |
+| -------- | ----------------------------------------------- |
+| `none`   | Skip this skill entirely                        |
+| `light`  | Hero flow mockup only                           |
+| `medium` | Hero + vital flow mockups (default)             |
+| `max`    | All flows including edge cases and error states |
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Isolated HTML files with no navigation | Every page includes the shared shell with working `<a href>` links to all other pages |
-| Colors not from tokens.json | Every color must trace back to tokens.json via CSS variables |
-| Inlining everything per page | Use shared `shared/` files — single source of truth for styles, layout, seed data |
-| Static mockups without interactivity | Use stack-appropriate reactivity for all dynamic elements |
-| Missing mobile layout | Mobile-first. Sidebar collapses at `lg:` breakpoint |
-| No empty state design | Render empty scenario from seed.js with helpful onboarding messages |
-| Broken cross-page links | Verify every link resolves. All screen pages are in `screens/`, shared files in `shared/` |
-| Not reading templates first | Phase 0 is mandatory — read all templates before generating any code |
-| Default framework styling visible | Override ALL framework CSS variables to match brand tokens |
+| Mistake                                | What to do instead                                                                        |
+| -------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Isolated HTML files with no navigation | Every page includes the shared shell with working `<a href>` links to all other pages     |
+| Colors not from tokens.json            | Every color must trace back to tokens.json via CSS variables                              |
+| Inlining everything per page           | Use shared `shared/` files — single source of truth for styles, layout, seed data         |
+| Static mockups without interactivity   | Use stack-appropriate reactivity for all dynamic elements                                 |
+| Missing mobile layout                  | Mobile-first. Sidebar collapses at `lg:` breakpoint                                       |
+| No empty state design                  | Render empty scenario from seed.js with helpful onboarding messages                       |
+| Broken cross-page links                | Verify every link resolves. All screen pages are in `screens/`, shared files in `shared/` |
+| Not reading templates first            | Phase 0 is mandatory — read all templates before generating any code                      |
+| Default framework styling visible      | Override ALL framework CSS variables to match brand tokens                                |
 
 ## Strict Constraints
 
@@ -302,6 +307,6 @@ For each screen in `experience/screens/`, generate an HTML file. Each screen pag
 - **REQUIRED:** Scenario switcher for populated/empty/edge_cases
 - **REQUIRED:** CDN-only dependencies — no build step, no npm
 
-EMIT  [mock] started run_id=<uuid> stack=<mockup_style>
-EMIT  [mock] checkpoint phase=shell_complete screens=<N>
-EMIT  [mock] completed run_id=<uuid> mockups_generated=<N> stack=<mockup_style> navigation_links=<N>
+EMIT [mock] started run_id=<uuid> stack=<mockup_style>
+EMIT [mock] checkpoint phase=shell_complete screens=<N>
+EMIT [mock] completed run_id=<uuid> mockups_generated=<N> stack=<mockup_style> navigation_links=<N>

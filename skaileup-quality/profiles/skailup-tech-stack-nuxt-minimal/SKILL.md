@@ -1,24 +1,24 @@
 ---
-name: "skailup-tech-stack-nuxt-minimal"
-description: "Reference document and invocable skill for the Nuxt 4 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack."
+name: 'skaileup-tech-stack-nuxt-minimal'
+description: 'Reference document and invocable skill for the Nuxt 4 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
   tags:
-    - "nuxt"
-    - "tailwind"
-    - "drizzle"
-    - "sqlite"
-    - "nitro"
-    - "nuxt-auth-utils"
-    - "bun"
-    - "minimal"
-    - "personal"
-    - "blog"
-    - "tool"
-    - "prototype"
-    - "learning"
-  stage: "alpha"
+    - 'nuxt'
+    - 'tailwind'
+    - 'drizzle'
+    - 'sqlite'
+    - 'nitro'
+    - 'nuxt-auth-utils'
+    - 'bun'
+    - 'minimal'
+    - 'personal'
+    - 'blog'
+    - 'tool'
+    - 'prototype'
+    - 'learning'
+  stage: 'alpha'
   requires:
-    - "standards-contract"
+    - 'standards-contract'
 ---
 
 # Tech Stack: Nuxt 4 Minimal (Tailwind + Drizzle + SQLite)
@@ -29,16 +29,16 @@ Lightweight full-stack application built entirely with Nuxt 4 — no external ba
 
 ## Identity
 
-| Field | Value |
-|-------|-------|
-| Frontend | Nuxt 4 (Vue 3, Composition API), SSR |
-| UI Library | Tailwind CSS 4 (no component library — custom components only) |
-| Backend | Nitro (built-in Nuxt server — server/api/ routes) |
-| Database | SQLite (via Drizzle ORM + `better-sqlite3`) |
-| Auth | nuxt-auth-utils (cookie-based sessions, password hashing via `scrypt`) |
-| ORM / DB Access | Drizzle ORM + Drizzle Kit |
-| Package Manager | bun |
-| CSS Methodology | Tailwind CSS 4 with `@theme` CSS custom properties |
+| Field           | Value                                                                  |
+| --------------- | ---------------------------------------------------------------------- |
+| Frontend        | Nuxt 4 (Vue 3, Composition API), SSR                                   |
+| UI Library      | Tailwind CSS 4 (no component library — custom components only)         |
+| Backend         | Nitro (built-in Nuxt server — server/api/ routes)                      |
+| Database        | SQLite (via Drizzle ORM + `better-sqlite3`)                            |
+| Auth            | nuxt-auth-utils (cookie-based sessions, password hashing via `scrypt`) |
+| ORM / DB Access | Drizzle ORM + Drizzle Kit                                              |
+| Package Manager | bun                                                                    |
+| CSS Methodology | Tailwind CSS 4 with `@theme` CSS custom properties                     |
 
 ## When to Use
 
@@ -82,23 +82,26 @@ bun run dev
 ```
 
 `nuxt.config.ts`:
+
 ```typescript
 export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', 'nuxt-auth-utils'],
   runtimeConfig: {
-    sessionPassword: process.env.NUXT_SESSION_PASSWORD,  // min 32 chars
+    sessionPassword: process.env.NUXT_SESSION_PASSWORD, // min 32 chars
     dbPath: process.env.DB_PATH ?? './data/app.db',
   },
 })
 ```
 
 `.env`:
+
 ```bash
 NUXT_SESSION_PASSWORD=replace-with-32-char-random-secret-string
 DB_PATH=./data/app.db
 ```
 
 `drizzle.config.ts`:
+
 ```typescript
 import { defineConfig } from 'drizzle-kit'
 
@@ -117,6 +120,7 @@ export default defineConfig({
 Pure Tailwind CSS 4 with no component library. Brand tokens from `04_brand/tokens.json` map directly to CSS custom properties in the `@theme` block.
 
 **`assets/css/tailwind.css`:**
+
 ```css
 @import "tailwindcss";
 
@@ -180,6 +184,7 @@ Token mapping table:
 | `color.error` | `--color-error` | `text-error` |
 
 Since there is no component library, define a small set of reusable component classes using Tailwind `@layer components`:
+
 ```css
 @layer components {
   .btn-primary {
@@ -202,6 +207,7 @@ Since there is no component library, define a small set of reusable component cl
 `nuxt-auth-utils` provides server-side session management using sealed cookies (encrypted with `NUXT_SESSION_PASSWORD`). No JWT, no external auth provider — sessions live in cookies.
 
 **`server/utils/auth.ts`:**
+
 ```typescript
 import { scrypt, randomBytes, timingSafeEqual } from 'node:crypto'
 import { promisify } from 'node:util'
@@ -210,19 +216,23 @@ const scryptAsync = promisify(scrypt)
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16).toString('hex')
-  const derivedKey = await scryptAsync(password, salt, 64) as Buffer
+  const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer
   return `${salt}:${derivedKey.toString('hex')}`
 }
 
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   const [salt, storedKey] = hash.split(':')
-  const derivedKey = await scryptAsync(password, salt, 64) as Buffer
+  const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer
   const storedBuffer = Buffer.from(storedKey, 'hex')
   return timingSafeEqual(derivedKey, storedBuffer)
 }
 ```
 
 **`server/api/auth/login.post.ts`:**
+
 ```typescript
 import { getUserByEmail } from '~/server/db/queries/users'
 import { verifyPassword } from '~/server/utils/auth'
@@ -241,6 +251,7 @@ export default defineEventHandler(async (event) => {
 ```
 
 **`server/api/auth/logout.post.ts`:**
+
 ```typescript
 export default defineEventHandler(async (event) => {
   await clearUserSession(event)
@@ -249,6 +260,7 @@ export default defineEventHandler(async (event) => {
 ```
 
 **`middleware/auth.ts`** (Nuxt route middleware):
+
 ```typescript
 export default defineNuxtRouteMiddleware(async (to) => {
   const { loggedIn } = useUserSession()
@@ -265,11 +277,13 @@ Apply to pages with `definePageMeta({ middleware: 'auth', requiresAuth: true })`
 Nuxt 4 layouts are minimal for this stack — typically a single `layouts/default.vue` with a simple header and content area.
 
 **Key files:**
+
 - `layouts/default.vue` — header + main + optional footer
 - `components/app/AppHeader.vue` — site name, nav links, user menu (if logged in)
 - `pages/index.vue`, `pages/login.vue`, `pages/app/[...].vue`
 
 **`layouts/default.vue` pattern:**
+
 ```vue
 <template>
   <div class="min-h-screen flex flex-col bg-bg text-fg">
@@ -277,7 +291,9 @@ Nuxt 4 layouts are minimal for this stack — typically a single `layouts/defaul
     <main class="flex-1 container mx-auto px-4 py-8 max-w-5xl">
       <slot />
     </main>
-    <footer class="border-t border-border py-6 text-center text-sm text-fg-muted">
+    <footer
+      class="border-t border-border py-6 text-center text-sm text-fg-muted"
+    >
       &copy; {{ new Date().getFullYear() }} {{ appName }}
     </footer>
   </div>
@@ -290,16 +306,16 @@ For apps with a sidebar (admin-style), create `layouts/dashboard.vue` with a fle
 
 There is no external component library. Build a small set of reusable Vue components in `components/ui/`:
 
-| Generic UI concept | Custom component | Notes |
-|--------------------|-----------------|-------|
-| Button | `components/ui/UiButton.vue` | Accepts `variant`, `size`, `loading` props |
-| DataTable | `components/ui/UiTable.vue` | Simple `<table>` wrapper with slot columns |
-| Modal/Dialog | `components/ui/UiDialog.vue` | Use HTML `<dialog>` element + Tailwind |
-| Form Input | `components/ui/UiInput.vue` | Input + label + error message |
-| Select/Dropdown | `components/ui/UiSelect.vue` | Native `<select>` styled with Tailwind |
-| Navigation | `components/app/AppNav.vue` | NuxtLink list with active class |
-| Card | `components/ui/UiCard.vue` | `<div class="card">` wrapper with slots |
-| Toast/Notification | `composables/useToast.ts` | Custom composable + `<TransitionGroup>` |
+| Generic UI concept | Custom component             | Notes                                      |
+| ------------------ | ---------------------------- | ------------------------------------------ |
+| Button             | `components/ui/UiButton.vue` | Accepts `variant`, `size`, `loading` props |
+| DataTable          | `components/ui/UiTable.vue`  | Simple `<table>` wrapper with slot columns |
+| Modal/Dialog       | `components/ui/UiDialog.vue` | Use HTML `<dialog>` element + Tailwind     |
+| Form Input         | `components/ui/UiInput.vue`  | Input + label + error message              |
+| Select/Dropdown    | `components/ui/UiSelect.vue` | Native `<select>` styled with Tailwind     |
+| Navigation         | `components/app/AppNav.vue`  | NuxtLink list with active class            |
+| Card               | `components/ui/UiCard.vue`   | `<div class="card">` wrapper with slots    |
+| Toast/Notification | `composables/useToast.ts`    | Custom composable + `<TransitionGroup>`    |
 
 > Keep this component set small. If component complexity grows significantly, consider switching to nuxt-ui or nuxt-primevue instead.
 
@@ -316,13 +332,14 @@ Note: The mock uses Shoelace components as placeholders. The actual implementati
 ## Storybook Config
 
 ```yaml
-storybook_addon: "@storybook/vue3"
+storybook_addon: '@storybook/vue3'
 story_format: Vue SFC
-component_import: "@/components/ui"
+component_import: '@/components/ui'
 setup_file: .storybook/setup.ts
 ```
 
 **`.storybook/main.ts`:**
+
 ```typescript
 export default {
   framework: '@storybook/vue3-vite',
@@ -332,8 +349,9 @@ export default {
 ```
 
 **`.storybook/preview.ts`:**
+
 ```typescript
-import '../assets/css/tailwind.css'  // brand tokens via @theme
+import '../assets/css/tailwind.css' // brand tokens via @theme
 import type { Preview } from '@storybook/vue3'
 
 export default {
@@ -348,22 +366,28 @@ Write stories for `components/ui/` components only. Server-side composables and 
 Drizzle ORM with Drizzle Kit manages SQLite migrations.
 
 **`server/db/schema.ts`:**
+
 ```typescript
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
-  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
   passwordHash: text('password_hash').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' })
-    .$defaultFn(() => new Date()).notNull(),
+    .$defaultFn(() => new Date())
+    .notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' })
-    .$defaultFn(() => new Date()).notNull(),
+    .$defaultFn(() => new Date())
+    .notNull(),
 })
 ```
 
 **`server/db/index.ts`:**
+
 ```typescript
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import Database from 'better-sqlite3'
@@ -374,6 +398,7 @@ export const db = drizzle(sqlite, { schema })
 ```
 
 **Migration commands:**
+
 ```bash
 # Generate migration SQL from schema changes
 bun drizzle-kit generate
@@ -412,6 +437,7 @@ Which `prog-expert-*` skills to look for:
 
 **1. Nitro server routes for all API logic:**
 All backend logic lives in `server/api/`. Use the file-based routing convention: `server/api/posts/index.get.ts`, `server/api/posts/[id].put.ts`. Access the Drizzle `db` instance via a server utility — never instantiate it per-request:
+
 ```typescript
 // server/api/posts/index.get.ts
 export default defineEventHandler(async () => {
@@ -421,6 +447,7 @@ export default defineEventHandler(async () => {
 
 **2. Session validation in every protected server route:**
 Use `requireUserSession()` from `nuxt-auth-utils` at the top of every protected API handler. It throws 401 automatically if no valid session exists:
+
 ```typescript
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
@@ -430,6 +457,7 @@ export default defineEventHandler(async (event) => {
 
 **3. SQLite WAL mode for better concurrency:**
 Enable Write-Ahead Logging immediately after opening the database connection. This is critical for any app with concurrent reads and writes:
+
 ```typescript
 // server/db/index.ts
 const sqlite = new Database(process.env.DB_PATH ?? './data/app.db')
@@ -440,6 +468,7 @@ export const db = drizzle(sqlite, { schema })
 
 **4. Keep data directory outside the project for Docker deployments:**
 Mount `DB_PATH` as a Docker volume. Use an absolute path or a path outside the app directory to avoid losing data on container rebuild:
+
 ```dockerfile
 VOLUME ["/data"]
 ENV DB_PATH=/data/app.db

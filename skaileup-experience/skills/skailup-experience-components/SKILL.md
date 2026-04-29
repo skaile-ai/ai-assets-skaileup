@@ -1,19 +1,19 @@
 ---
-name: skailup-experience-components
+name: skaileup-experience-components
 description: "Reusable component inventory. Use when screen specs exist and you need to identify shared UI patterns (data tables, forms, cards, navigation) across screens. Maps components to the tech stack's component library. Outputs to _concept/experience/screens/components/."
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "components"
-    - "patterns"
-    - "reusable"
-    - "inventory"
-    - "ui"
-    - "datatable"
-    - "forms"
-    - "cards"
-    - "navigation"
-  source: "MIGRATED"
+    - 'components'
+    - 'patterns'
+    - 'reusable'
+    - 'inventory'
+    - 'ui'
+    - 'datatable'
+    - 'forms'
+    - 'cards'
+    - 'navigation'
+  source: 'MIGRATED'
   parameters:
     depth:
       type: enum
@@ -25,25 +25,25 @@ metadata:
         gate: hard
     produces:
       - id: components
-        description: "Reusable UI component catalog"
+        description: 'Reusable UI component catalog'
     consumes:
       - id: brand-tokens
         gate: soft
   prerequisites:
     files:
-      - path: "_concept/experience/screens"
+      - path: '_concept/experience/screens'
         gate: hard
-        description: "Screen specs required to identify shared UI patterns across screens"
+        description: 'Screen specs required to identify shared UI patterns across screens'
         min_entries: 1
-      - path: "_concept/discovery/brand/tokens.json"
+      - path: '_concept/discovery/brand/tokens.json'
         gate: hard
-        description: "Design tokens required for component styling context"
-      - path: "_concept/blueprint/techstack.md"
+        description: 'Design tokens required for component styling context'
+      - path: '_concept/blueprint/techstack.md'
         gate: hard
-        description: "Tech stack required to map abstract components to concrete library components"
+        description: 'Tech stack required to map abstract components to concrete library components'
     produces:
-      - path: "_concept/experience/screens/components"
-        description: "Component inventory files with props, variants, states, and accessibility notes"
+      - path: '_concept/experience/screens/components'
+        description: 'Component inventory files with props, variants, states, and accessibility notes'
 ---
 
 # App Components — Reusable Component Inventory
@@ -72,20 +72,21 @@ tech stack to map abstract components to concrete library components
 
 ## Prerequisites
 
-| Artifact | Path | Missing? Run | Gate |
-|----------|------|-------------|------|
-| Screen specs | `_concept/experience/screens/**/*.md` | `screens` | HARD |
-| Brand tokens | `_concept/discovery/brand/tokens.json` | `brand-visual` | HARD |
-| Tech stack | `_concept/blueprint/techstack.md` | `techstack` | HARD |
-| Layout shell | `_concept/experience/screens/00_layout/shell.md` | `screens` | recommended |
-| Data model | `_concept/blueprint/datamodel/model.json` | `datamodel` | recommended |
-| Features | `_concept/experience/features/**/*.md` | `features` | recommended |
+| Artifact     | Path                                             | Missing? Run   | Gate        |
+| ------------ | ------------------------------------------------ | -------------- | ----------- |
+| Screen specs | `_concept/experience/screens/**/*.md`            | `screens`      | HARD        |
+| Brand tokens | `_concept/discovery/brand/tokens.json`           | `brand-visual` | HARD        |
+| Tech stack   | `_concept/blueprint/techstack.md`                | `techstack`    | HARD        |
+| Layout shell | `_concept/experience/screens/00_layout/shell.md` | `screens`      | recommended |
+| Data model   | `_concept/blueprint/datamodel/model.json`        | `datamodel`    | recommended |
+| Features     | `_concept/experience/features/**/*.md`           | `features`     | recommended |
 
 If any HARD gate artifact is missing, stop immediately and name the prerequisite skill.
 
 ## Shared Contracts
 
 Before starting, read:
+
 - `skaileup-shared/contracts/concept_structure.md` — valid paths
 - `skaileup-shared/contracts/frontmatter.md` — screen frontmatter fields
 - `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
@@ -94,14 +95,14 @@ Before starting, read:
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/experience/screens/**/*.md` | Required (all) |
-| `_concept/blueprint/techstack.md` | Required |
-| `_concept/discovery/brand/tokens.json` | Required |
-| `_concept/experience/screens/00_layout/shell.md` | Required |
-| `_concept/blueprint/datamodel/model.json` | Skim for entity shapes |
-| `_concept/experience/features/**/*.md` | Skim for data patterns |
+| Source                                           | Priority               |
+| ------------------------------------------------ | ---------------------- |
+| `_concept/experience/screens/**/*.md`            | Required (all)         |
+| `_concept/blueprint/techstack.md`                | Required               |
+| `_concept/discovery/brand/tokens.json`           | Required               |
+| `_concept/experience/screens/00_layout/shell.md` | Required               |
+| `_concept/blueprint/datamodel/model.json`        | Skim for entity shapes |
+| `_concept/experience/features/**/*.md`           | Skim for data patterns |
 
 ## Workflow
 
@@ -114,6 +115,7 @@ frequency map of component types mentioned across screens.
 ### Step 2: Read Tech Stack
 
 Read `_concept/blueprint/techstack.md`. Extract:
+
 - UI library (PrimeVue, Radix UI, shadcn/ui, Tailwind-only, etc.)
 - CSS framework
 - Any component-specific notes
@@ -127,18 +129,18 @@ in 2+ screens or has complex enough behavior to warrant a spec.
 
 Common pattern categories:
 
-| Pattern | Signals | Example library mapping |
-|---------|---------|------------------------|
-| Data table | Lists with sorting, filtering, pagination | PrimeVue DataTable, shadcn DataTable |
-| Form | Input fields, validation, submit | PrimeVue InputText + form layout, shadcn Form |
-| Card | Repeated content blocks with image/title/body | Custom card component |
-| Navigation | Sidebar, breadcrumbs, tabs | PrimeVue TabView, Menubar |
-| Dialog/Modal | Confirmation, creation, editing overlays | PrimeVue Dialog, shadcn Dialog |
-| Empty state | No-data placeholders | Custom (references brand behavioral copy) |
-| Status badge | Enum-based colored indicators | PrimeVue Tag, shadcn Badge |
-| File upload | Image/document upload with preview | PrimeVue FileUpload |
-| Search | Global or contextual search with results | PrimeVue AutoComplete |
-| Action bar | Bulk actions, toolbar buttons | PrimeVue Toolbar |
+| Pattern      | Signals                                       | Example library mapping                       |
+| ------------ | --------------------------------------------- | --------------------------------------------- |
+| Data table   | Lists with sorting, filtering, pagination     | PrimeVue DataTable, shadcn DataTable          |
+| Form         | Input fields, validation, submit              | PrimeVue InputText + form layout, shadcn Form |
+| Card         | Repeated content blocks with image/title/body | Custom card component                         |
+| Navigation   | Sidebar, breadcrumbs, tabs                    | PrimeVue TabView, Menubar                     |
+| Dialog/Modal | Confirmation, creation, editing overlays      | PrimeVue Dialog, shadcn Dialog                |
+| Empty state  | No-data placeholders                          | Custom (references brand behavioral copy)     |
+| Status badge | Enum-based colored indicators                 | PrimeVue Tag, shadcn Badge                    |
+| File upload  | Image/document upload with preview            | PrimeVue FileUpload                           |
+| Search       | Global or contextual search with results      | PrimeVue AutoComplete                         |
+| Action bar   | Bulk actions, toolbar buttons                 | PrimeVue Toolbar                              |
 
 ### Step 4: Confirm Component List
 
@@ -146,13 +148,13 @@ Present the identified components to the user:
 
 > "I've identified these shared components across your screens:
 >
-> | Component | Used in | Library mapping |
-> |-----------|---------|----------------|
-> | DataTable | dashboard, task list, user admin | PrimeVue DataTable |
-> | TaskForm | create task, edit task | PrimeVue form controls |
-> | StatusBadge | task list, task detail, dashboard | PrimeVue Tag |
-> | EmptyState | all list screens | Custom |
-> | ConfirmDialog | delete actions across 4 screens | PrimeVue ConfirmDialog |
+> | Component     | Used in                           | Library mapping        |
+> | ------------- | --------------------------------- | ---------------------- |
+> | DataTable     | dashboard, task list, user admin  | PrimeVue DataTable     |
+> | TaskForm      | create task, edit task            | PrimeVue form controls |
+> | StatusBadge   | task list, task detail, dashboard | PrimeVue Tag           |
+> | EmptyState    | all list screens                  | Custom                 |
+> | ConfirmDialog | delete actions across 4 screens   | PrimeVue ConfirmDialog |
 >
 > Add, remove, or rename?"
 
@@ -244,43 +246,44 @@ components:
 
 ## Outputs
 
-| File | Purpose |
-|------|---------|
+| File                                               | Purpose                       |
+| -------------------------------------------------- | ----------------------------- |
 | `_concept/experience/screens/components/<name>.md` | One spec per shared component |
 
 ## Depth Behavior
 
-| Depth | Behavior |
-|---|---|
-| `none` | Skip this skill entirely |
-| `light` | Core items only — list names and one-line descriptions, skip edge cases |
-| `medium` | Standard coverage — full specs for core items, brief for secondary (default) |
-| `max` | Exhaustive coverage — every feature/screen/component with full detail, edge cases, error states |
+| Depth    | Behavior                                                                                        |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| `none`   | Skip this skill entirely                                                                        |
+| `light`  | Core items only — list names and one-line descriptions, skip edge cases                         |
+| `medium` | Standard coverage — full specs for core items, brief for secondary (default)                    |
+| `max`    | Exhaustive coverage — every feature/screen/component with full detail, edge cases, error states |
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Creating a component for every UI element | Only spec components that appear in 2+ screens or have complex behavior |
-| Ignoring the tech stack | Always map to the chosen component library from `stack.md` |
-| Copy-pasting library docs | Spec should describe THIS app's usage, not generic library docs |
-| Missing empty/loading/error states | Every component needs at least: loading, empty, error, populated states |
-| Not cross-referencing screens | Every component must list `used_in` screens; screens should reference components |
-| Inventing components not in screens | Only spec components actually referenced in existing screen specs |
+| Mistake                                   | What to do instead                                                               |
+| ----------------------------------------- | -------------------------------------------------------------------------------- |
+| Creating a component for every UI element | Only spec components that appear in 2+ screens or have complex behavior          |
+| Ignoring the tech stack                   | Always map to the chosen component library from `stack.md`                       |
+| Copy-pasting library docs                 | Spec should describe THIS app's usage, not generic library docs                  |
+| Missing empty/loading/error states        | Every component needs at least: loading, empty, error, populated states          |
+| Not cross-referencing screens             | Every component must list `used_in` screens; screens should reference components |
+| Inventing components not in screens       | Only spec components actually referenced in existing screen specs                |
 
-MUST  include a ## Anatomy wireframe for components with 3+ internal zones
-MUST  read skaileup-shared/contracts/wireframe_conventions.md before generating anatomy wireframes
+MUST include a ## Anatomy wireframe for components with 3+ internal zones
+MUST read skaileup-shared/contracts/wireframe_conventions.md before generating anatomy wireframes
 
 Anatomy wireframe depth behavior:
-  - depth none/light: skip anatomy wireframes
-  - depth medium: anatomy for complex components (3+ zones) only
-  - depth max: anatomy for all components + variant wireframes showing different states
+
+- depth none/light: skip anatomy wireframes
+- depth medium: anatomy for complex components (3+ zones) only
+- depth max: anatomy for all components + variant wireframes showing different states
 
 A zone is a visually distinct functional region within the component — e.g.,
 toolbar, header row, body, footer, action bar. Interactive sub-elements within
 a zone (individual buttons, inputs) do not count as separate zones.
 Examples: data table has 4 zones (toolbar, header, body, pagination); badge has 1 zone.
 
-EMIT  [components] started run_id=<uuid>
-EMIT  [components] checkpoint phase=patterns_identified components=<N> screens_analyzed=<N>
-EMIT  [components] completed run_id=<uuid> components_written=<N> screens_updated=<N>
+EMIT [components] started run_id=<uuid>
+EMIT [components] checkpoint phase=patterns_identified components=<N> screens_analyzed=<N>
+EMIT [components] completed run_id=<uuid> components_written=<N> screens_updated=<N>

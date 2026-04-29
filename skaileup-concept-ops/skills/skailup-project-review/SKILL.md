@@ -1,18 +1,18 @@
 ---
-name: skailup-project-review
-description: "Audit a meta-concept for completeness, consistency, and accuracy. Checks that all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts."
+name: skaileup-project-review
+description: 'Audit a meta-concept for completeness, consistency, and accuracy. Checks that all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts.'
 source: MERGED
 version: 1.0.0
 keywords: [meta-concept, review, audit, consistency, completeness]
 user_inputs:
   - key: PROJECT_ROOT
-    prompt: "Where is the shell repo root?"
+    prompt: 'Where is the shell repo root?'
     required: true
 reads_from:
   - contracts/meta-concept-contract/CONTRACT.md
-  - "{PROJECT_ROOT}/_concept/"
-  - "{PROJECT_ROOT}/**/CLAUDE.md"
-  - "{PROJECT_ROOT}/**/_concept/"
+  - '{PROJECT_ROOT}/_concept/'
+  - '{PROJECT_ROOT}/**/CLAUDE.md'
+  - '{PROJECT_ROOT}/**/_concept/'
 writes_to: []
 ---
 
@@ -90,8 +90,8 @@ Do not auto-fix. Present findings and let the user decide what to address.
 
 ## Severity Guide
 
-| Severity | Meaning |
-|---|---|
+| Severity | Meaning                                                                |
+| -------- | ---------------------------------------------------------------------- |
 | Critical | Missing required file, broken reference, incorrect subsystem inventory |
-| Warning | Stale `last_updated`, missing optional section, inflated maturity |
-| Info | Style suggestion, minor improvement opportunity |
+| Warning  | Stale `last_updated`, missing optional section, inflated maturity      |
+| Info     | Style suggestion, minor improvement opportunity                        |

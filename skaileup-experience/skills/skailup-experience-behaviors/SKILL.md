@@ -1,19 +1,19 @@
 ---
-name: skailup-experience-behaviors
+name: skaileup-experience-behaviors
 description: "Use when features are approved and user wants to formalize behavioral rules, state machines, or entity lifecycle. Also when user says 'behavioral specs', 'state machine', 'formalize rules', 'allium specs'."
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "behavior"
-    - "specification"
-    - "allium"
-    - "rules"
-    - "states"
-    - "transitions"
-    - "domain"
-    - "lifecycle"
-    - "state-machine"
-  source: "MIGRATED"
+    - 'behavior'
+    - 'specification'
+    - 'allium'
+    - 'rules'
+    - 'states'
+    - 'transitions'
+    - 'domain'
+    - 'lifecycle'
+    - 'state-machine'
+  source: 'MIGRATED'
   parameters:
     depth:
       type: enum
@@ -25,22 +25,22 @@ metadata:
         gate: hard
     produces:
       - id: behaviors
-        description: "Behavioral specs (.allium format) per feature group"
+        description: 'Behavioral specs (.allium format) per feature group'
     consumes:
       - id: brief
         gate: soft
   prerequisites:
     files:
-      - path: "_concept/experience/features"
+      - path: '_concept/experience/features'
         gate: hard
-        description: "Features must exist — behavioral specs formalize feature rules into state machines"
+        description: 'Features must exist — behavioral specs formalize feature rules into state machines'
         min_entries: 1
     reads:
-      - path: "_concept/_grounding/general/behavioral_patterns.md"
-        description: "Domain behavioral patterns from research phase"
+      - path: '_concept/_grounding/general/behavioral_patterns.md'
+        description: 'Domain behavioral patterns from research phase'
     produces:
-      - path: "_concept/experience/behaviors"
-        description: "Allium behavioral specification files (one per feature group)"
+      - path: '_concept/experience/behaviors'
+        description: 'Allium behavioral specification files (one per feature group)'
 ---
 
 # Behaviors — Behavioral Specification
@@ -82,6 +82,7 @@ If not: "No approved features found. Run the `features` skill first."
 ## Shared Contracts
 
 Before starting, read:
+
 - `skaileup-shared/contracts/concept_structure.md` — valid paths
 - `skaileup-shared/contracts/frontmatter.md` — feature frontmatter fields
 - `skaileup-shared/contracts/feedback_loop.md` — cross-reference protocol
@@ -89,14 +90,15 @@ Before starting, read:
 - `skaileup-shared/contracts/agent_patterns.md` — communication style, standalone mode
 
 Also read the Allium language subset reference bundled with this skill:
+
 - `references/allium-subset.md` — the constructs you may use
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/discovery/brief.md` | Required |
-| `_concept/experience/features/**/*.md` | Required |
+| Source                                      | Priority |
+| ------------------------------------------- | -------- |
+| `_concept/discovery/brief.md`               | Required |
+| `_concept/experience/features/**/*.md`      | Required |
 | `_grounding/general/behavioral_patterns.md` | Optional |
 
 **Never load:** `_concept/blueprint/datamodel/`, `_concept/experience/screens/`
@@ -118,15 +120,15 @@ behavioral patterns that should inform the specs.
 
 For each feature group, extract:
 
-| # | Question |
-|---|----------|
-| 1 | What entities are implied? What states can they be in? |
-| 2 | What causes state transitions? (user actions, time, other entities) |
-| 3 | What preconditions must hold before a transition? |
-| 4 | What are the postconditions after a transition? |
-| 5 | Who can see what? Who can do what? (surfaces) |
-| 6 | Are there any configurable values (timeouts, limits, defaults)? |
-| 7 | Are there ambiguities the features don't resolve? |
+| #   | Question                                                            |
+| --- | ------------------------------------------------------------------- |
+| 1   | What entities are implied? What states can they be in?              |
+| 2   | What causes state transitions? (user actions, time, other entities) |
+| 3   | What preconditions must hold before a transition?                   |
+| 4   | What are the postconditions after a transition?                     |
+| 5   | Who can see what? Who can do what? (surfaces)                       |
+| 6   | Are there any configurable values (timeouts, limits, defaults)?     |
+| 7   | Are there ambiguities the features don't resolve?                   |
 
 ### Step 3: Write Allium Specs
 
@@ -240,28 +242,28 @@ Show what was formalized:
 
 ## Outputs
 
-| File | Description |
-|------|-------------|
+| File                                           | Description                              |
+| ---------------------------------------------- | ---------------------------------------- |
 | `_concept/experience/behaviors/<group>.allium` | Allium behavioral spec per feature group |
 
 ## Depth Behavior
 
-| Depth | Behavior |
-|---|---|
-| `none` | Skip this skill entirely |
-| `light` | Core items only — list names and one-line descriptions, skip edge cases |
-| `medium` | Standard coverage — full specs for core items, brief for secondary (default) |
-| `max` | Exhaustive coverage — every feature/screen/component with full detail, edge cases, error states |
+| Depth    | Behavior                                                                                        |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| `none`   | Skip this skill entirely                                                                        |
+| `light`  | Core items only — list names and one-line descriptions, skip edge cases                         |
+| `medium` | Standard coverage — full specs for core items, brief for secondary (default)                    |
+| `max`    | Exhaustive coverage — every feature/screen/component with full detail, edge cases, error states |
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Writing database schemas in allium | Allium describes observable behavior, not storage. No database types, no API paths. |
-| Skipping open questions | Flag ambiguities explicitly. The user decides, not the agent. |
-| Including implementation details | Surfaces describe what actors can see and do, not how the UI looks. |
-| Using unsupported Allium constructs | Stick to the subset: entity, rule, surface, config, open question. |
-| Not linking to feature groups | Every file must comment which feature group it formalizes. |
+| Mistake                             | What to do instead                                                                  |
+| ----------------------------------- | ----------------------------------------------------------------------------------- |
+| Writing database schemas in allium  | Allium describes observable behavior, not storage. No database types, no API paths. |
+| Skipping open questions             | Flag ambiguities explicitly. The user decides, not the agent.                       |
+| Including implementation details    | Surfaces describe what actors can see and do, not how the UI looks.                 |
+| Using unsupported Allium constructs | Stick to the subset: entity, rule, surface, config, open question.                  |
+| Not linking to feature groups       | Every file must comment which feature group it formalizes.                          |
 
 ## Validation Rules
 
@@ -273,6 +275,6 @@ Show what was formalized:
 - Config values have types and defaults
 - No implementation details (no database types, no API paths, no UI elements)
 
-EMIT  [behaviors] started run_id=<uuid>
-EMIT  [behaviors] checkpoint phase=specs_written files=<N> entities=<N> rules=<N> surfaces=<N> open_questions=<N>
-EMIT  [behaviors] completed run_id=<uuid> files=<N> entities=<N> rules=<N> surfaces=<N> open_questions=<N>
+EMIT [behaviors] started run_id=<uuid>
+EMIT [behaviors] checkpoint phase=specs_written files=<N> entities=<N> rules=<N> surfaces=<N> open_questions=<N>
+EMIT [behaviors] completed run_id=<uuid> files=<N> entities=<N> rules=<N> surfaces=<N> open_questions=<N>

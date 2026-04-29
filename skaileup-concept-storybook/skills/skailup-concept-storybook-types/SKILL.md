@@ -1,17 +1,17 @@
 ---
-name: skailup-concept-storybook-types
-description: "PostXL-specific: replaces mocked Storybook types with schema-generated types from model.json. Runs pxl types to generate TypeScript interfaces, preserves UI-only types, and ensures the Storybook project compiles. Use after datamodel is finalized and Storybook stories use placeholder types."
+name: skaileup-concept-storybook-types
+description: 'PostXL-specific: replaces mocked Storybook types with schema-generated types from model.json. Runs pxl types to generate TypeScript interfaces, preserves UI-only types, and ensures the Storybook project compiles. Use after datamodel is finalized and Storybook stories use placeholder types.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "types"
-    - "typescript"
-    - "storybook"
-    - "schema"
-    - "codegen"
-    - "compilation"
-    - "postxl"
-  source: "MIGRATED"
+    - 'types'
+    - 'typescript'
+    - 'storybook'
+    - 'schema'
+    - 'codegen'
+    - 'compilation'
+    - 'postxl'
+  source: 'MIGRATED'
   parameters:
     depth:
       type: enum
@@ -24,7 +24,7 @@ metadata:
         variant: storybook
     produces:
       - id: prototype
-        description: "Storybook project with schema-generated TypeScript types"
+        description: 'Storybook project with schema-generated TypeScript types'
         variant: storybook
 ---
 
@@ -59,6 +59,7 @@ during early UI development and the real data model once it is finalized.
 ## Prerequisites
 
 **Hard gates:**
+
 1. `_concept/blueprint/datamodel/model.json` must exist
 2. `_concept/experience/4_storybook/package.json` must exist
 3. `pxl` CLI must be available in the environment
@@ -66,6 +67,7 @@ during early UI development and the real data model once it is finalized.
 ## Shared Contracts
 
 Before starting, read:
+
 - `skaileup-shared/contracts/concept_structure.md` — `_concept/` paths and naming
 - `skaileup-shared/contracts/semantic_types.md` — PostXL field types
 
@@ -92,6 +94,7 @@ This generates TypeScript interfaces and enums from the data model. Output goes
 directly into the Storybook's `src/types/` directory.
 
 If `pxl types` fails:
+
 - Read error output, fix schema issues or command flags, retry
 
 ### Step 3: Reconcile Types
@@ -107,9 +110,9 @@ If `pxl types` fails:
 - Update `src/types/index.ts` as a barrel that re-exports everything:
   ```typescript
   // Schema-generated types
-  export * from './generated';
+  export * from './generated'
   // UI-only types (not in the data model)
-  export * from './ui';
+  export * from './ui'
   ```
 - Adjust the generated file's export name if needed to avoid conflicts with `ui.ts` exports
 
@@ -121,12 +124,12 @@ RUN cd _concept/experience/4_storybook && pnpm tsc --noEmit 2>&1
 
 For each type error, determine the cause:
 
-| Error type | Cause | Fix |
-|------------|-------|-----|
-| Missing field | Generated type has more required fields than the mocked version | Add missing fields to inline seed data objects in stories |
-| Renamed field | Schema uses a different field name than the mock | Update component props and story data to match the schema field name |
-| Type mismatch | Field type changed (e.g., string enum → union type) | Update usage to match the generated type |
-| Removed type | A mocked type was deleted but is still imported | Either add to `ui.ts` (if UI-only) or map to the correct generated type |
+| Error type    | Cause                                                           | Fix                                                                     |
+| ------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Missing field | Generated type has more required fields than the mocked version | Add missing fields to inline seed data objects in stories               |
+| Renamed field | Schema uses a different field name than the mock                | Update component props and story data to match the schema field name    |
+| Type mismatch | Field type changed (e.g., string enum → union type)             | Update usage to match the generated type                                |
+| Removed type  | A mocked type was deleted but is still imported                 | Either add to `ui.ts` (if UI-only) or map to the correct generated type |
 
 Fix errors and re-run `pnpm tsc --noEmit` until no type errors remain.
 
@@ -140,29 +143,29 @@ If build fails, fix runtime issues not caught by `tsc` and re-run until build su
 
 ## Outputs
 
-| File | Description |
-|------|-------------|
-| `_concept/experience/4_storybook/src/types/` | Generated types from `pxl types` |
-| `_concept/experience/4_storybook/src/types/ui.ts` | Preserved UI-only types |
-| `_concept/experience/4_storybook/src/types/index.ts` | Barrel re-exporting both |
+| File                                                 | Description                      |
+| ---------------------------------------------------- | -------------------------------- |
+| `_concept/experience/4_storybook/src/types/`         | Generated types from `pxl types` |
+| `_concept/experience/4_storybook/src/types/ui.ts`    | Preserved UI-only types          |
+| `_concept/experience/4_storybook/src/types/index.ts` | Barrel re-exporting both         |
 
 ## Depth Behavior
 
-| Depth | Behavior |
-|---|---|
-| `none` | Skip this skill entirely |
-| `light` | Minimal setup — hero flow stories only |
-| `medium` | Standard setup — hero + vital flow stories (default) |
-| `max` | Full setup — all flows, edge cases, responsive variants, dark mode |
+| Depth    | Behavior                                                           |
+| -------- | ------------------------------------------------------------------ |
+| `none`   | Skip this skill entirely                                           |
+| `light`  | Minimal setup — hero flow stories only                             |
+| `medium` | Standard setup — hero + vital flow stories (default)               |
+| `max`    | Full setup — all flows, edge cases, responsive variants, dark mode |
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Hand-writing types that the schema defines | Always run `pxl types` — never duplicate type definitions |
-| Deleting UI-only types | Preserve in `src/types/ui.ts` — they have no schema counterpart |
-| Modifying `model.json` | This step is read-only with respect to the data model |
-| Skipping the build verification | `tsc --noEmit` passes but `pnpm run build` can still fail due to runtime issues |
+| Mistake                                    | What to do instead                                                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------- |
+| Hand-writing types that the schema defines | Always run `pxl types` — never duplicate type definitions                       |
+| Deleting UI-only types                     | Preserve in `src/types/ui.ts` — they have no schema counterpart                 |
+| Modifying `model.json`                     | This step is read-only with respect to the data model                           |
+| Skipping the build verification            | `tsc --noEmit` passes but `pnpm run build` can still fail due to runtime issues |
 
 ## Checklist
 
@@ -175,5 +178,5 @@ If build fails, fix runtime issues not caught by `tsc` and re-run until build su
 - [ ] `pnpm run build` succeeds
 - [ ] No mocked types remain for schema-backed entities
 
-EMIT  [storybook-types] started run_id=<uuid>
-EMIT  [storybook-types] completed run_id=<uuid> generated_types=<N> ui_only_types=<N> errors_fixed=<N>
+EMIT [storybook-types] started run_id=<uuid>
+EMIT [storybook-types] completed run_id=<uuid> generated_types=<N> ui_only_types=<N> errors_fixed=<N>

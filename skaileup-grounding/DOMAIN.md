@@ -1,14 +1,14 @@
 ---
 name: skaileup-grounding
-description: "All context-gathering before concept work: project identity dialog, web research, and seed file ingestion."
+description: 'All context-gathering before concept work: project identity dialog, web research, and seed file ingestion.'
 type: domain
 stage: alpha
 version: 0.1.0
 building_blocks:
-  skills: "skailup-onboard, skailup-research, skailup-ingest-seeds"
-  contracts: "conceptualization-contract"
-  docs: "README.md"
-  tools: "n/a"
+  skills: 'skaileup-onboard, skaileup-research, skaileup-ingest-seeds'
+  contracts: 'conceptualization-contract'
+  docs: 'README.md'
+  tools: 'n/a'
 ---
 
 ## Purpose
@@ -19,17 +19,18 @@ Merges the former `skaileup-onboard` (project identity dialog) and `skaileup-res
 
 ## Skills
 
-| Skill | What It Does | When to Use |
-|---|---|---|
-| `skailup-onboard` | Project identity + tier dialog — collects name, problem, audience, type | First step of any new project |
-| `skailup-research` | Agentic web research — competitors, audiences, design patterns | After onboard, before discovery |
-| `skailup-ingest-seeds` | Classify user-provided files into artifact slots | When user provides seed files |
+| Skill                   | What It Does                                                            | When to Use                     |
+| ----------------------- | ----------------------------------------------------------------------- | ------------------------------- |
+| `skaileup-onboard`      | Project identity + tier dialog — collects name, problem, audience, type | First step of any new project   |
+| `skaileup-research`     | Agentic web research — competitors, audiences, design patterns          | After onboard, before discovery |
+| `skaileup-ingest-seeds` | Classify user-provided files into artifact slots                        | When user provides seed files   |
 
 ## Artifacts
 
 **Reads from:** (nothing — this is the entry point)
 
 **Writes to:**
+
 - `_grounding/onboarding/profile.yaml`
 - `_grounding/onboarding/decisions.yaml`
 - `_grounding/research/*.md`

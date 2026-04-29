@@ -1,14 +1,14 @@
 ---
 name: skaileup-datamodel
-description: "Data model definition: DBML, model.json, seed schema, feature map."
+description: 'Data model definition: DBML, model.json, seed schema, feature map.'
 type: domain
 stage: alpha
 version: 0.1.0
 building_blocks:
-  skills: "skailup-datamodel"
-  contracts: "n/a"
-  docs: "n/a"
-  tools: "n/a"
+  skills: 'skaileup-datamodel'
+  contracts: 'n/a'
+  docs: 'n/a'
+  tools: 'n/a'
 ---
 
 ## Purpose
@@ -19,17 +19,19 @@ Extracted from the former `skaileup-blueprint` domain.
 
 ## Skills
 
-| Skill | What It Does | When to Use |
-|---|---|---|
-| `skailup-datamodel` | Data model (DBML, model.json, seed schema, feature map) | After features + techstack are defined |
+| Skill                | What It Does                                            | When to Use                            |
+| -------------------- | ------------------------------------------------------- | -------------------------------------- |
+| `skaileup-datamodel` | Data model (DBML, model.json, seed schema, feature map) | After features + techstack are defined |
 
 ## Artifacts
 
 **Reads from:**
+
 - `_concept/experience/features/`
 - `_concept/architecture/techstack.md` (soft)
 
 **Writes to:**
+
 - `_concept/datamodel/model.json`
 - `_concept/datamodel/model.dbml`
 - `_concept/datamodel/seed.json`

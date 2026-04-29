@@ -4,20 +4,20 @@ version: 0.1.0
 dependencies:
   - contract:implementation-contract
   - contract:subagent_dispatch.md
-  - skill:skailup-scaffold
-  - skill:skailup-foundation
-  - skill:skailup-infrastructure
-  - skill:skailup-implement
-  - skill:skailup-implement-feature
-  - skill:skailup-update-docs
-  - skill:skailup-generate
-  - skill:skailup-migrate
-  - skill:skailup-seed
-  - skill:skailup-git-prepare
-  - skill:skailup-brainstorm
-  - skill:skailup-write-plan
-  - skill:skailup-implement-supervised
-  - skill:skailup-finish-branch
+  - skill:skaileup-scaffold
+  - skill:skaileup-foundation
+  - skill:skaileup-infrastructure
+  - skill:skaileup-implement
+  - skill:skaileup-implement-feature
+  - skill:skaileup-update-docs
+  - skill:skaileup-generate
+  - skill:skaileup-migrate
+  - skill:skaileup-seed
+  - skill:skaileup-git-prepare
+  - skill:skaileup-brainstorm
+  - skill:skaileup-write-plan
+  - skill:skaileup-implement-supervised
+  - skill:skaileup-finish-branch
   - flow:cli.flow.yaml
   - flow:complex.flow.yaml
   - flow:full.flow.yaml
@@ -25,4 +25,4 @@ dependencies:
   - flow:small.flow.yaml
   - flow:standard.flow.yaml
   - flow:superpowers.flow.yaml
-  - agent:skailup-implement
+  - agent:skaileup-implement

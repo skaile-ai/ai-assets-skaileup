@@ -1,24 +1,24 @@
 ---
-name: "skailup-tech-stack-nextjs-radix"
-description: "Reference document and invocable skill for the Next.js 15 + Radix UI + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack."
+name: 'skaileup-tech-stack-nextjs-radix'
+description: 'Reference document and invocable skill for the Next.js 15 + Radix UI + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
   tags:
-    - "nextjs"
-    - "next15"
-    - "radix-ui"
-    - "directus"
-    - "postgresql"
-    - "react"
-    - "rsc"
-    - "app-router"
-    - "tailwind"
-    - "pnpm"
-    - "accessible"
-    - "enterprise"
-    - "vercel"
-  stage: "alpha"
+    - 'nextjs'
+    - 'next15'
+    - 'radix-ui'
+    - 'directus'
+    - 'postgresql'
+    - 'react'
+    - 'rsc'
+    - 'app-router'
+    - 'tailwind'
+    - 'pnpm'
+    - 'accessible'
+    - 'enterprise'
+    - 'vercel'
+  stage: 'alpha'
   requires:
-    - "standards-contract"
+    - 'standards-contract'
 ---
 
 # Tech Stack: Next.js 15 + Radix UI + Directus
@@ -29,16 +29,16 @@ Full-stack application built with Next.js 15 (App Router, React Server Component
 
 ## Identity
 
-| Field | Value |
-|-------|-------|
-| Frontend | Next.js 15 (App Router, React Server Components), SSR + SSG |
-| UI Library | Radix UI primitives + Tailwind CSS 4 |
-| Backend | Directus (headless CMS, auto-generated REST + GraphQL API) |
-| Database | PostgreSQL |
-| Auth | NextAuth.js v5 (Auth.js) with Directus provider |
+| Field           | Value                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| Frontend        | Next.js 15 (App Router, React Server Components), SSR + SSG                                                    |
+| UI Library      | Radix UI primitives + Tailwind CSS 4                                                                           |
+| Backend         | Directus (headless CMS, auto-generated REST + GraphQL API)                                                     |
+| Database        | PostgreSQL                                                                                                     |
+| Auth            | NextAuth.js v5 (Auth.js) with Directus provider                                                                |
 | ORM / DB Access | Directus SDK (`@directus/sdk`) — no separate ORM; Directus manages the DB. Prisma optional for custom entities |
-| Package Manager | pnpm |
-| CSS Methodology | Tailwind CSS 4 + CSS custom properties for brand tokens |
+| Package Manager | pnpm                                                                                                           |
+| CSS Methodology | Tailwind CSS 4 + CSS custom properties for brand tokens                                                        |
 
 ## When to Use
 
@@ -81,12 +81,16 @@ pnpm dev
 ```
 
 `next.config.ts` minimum:
+
 ```typescript
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [{ hostname: 'localhost' }, { hostname: process.env.DIRECTUS_HOST ?? '' }],
+    remotePatterns: [
+      { hostname: 'localhost' },
+      { hostname: process.env.DIRECTUS_HOST ?? '' },
+    ],
   },
 }
 
@@ -94,13 +98,14 @@ export default nextConfig
 ```
 
 **Tailwind CSS 4 (`src/app/globals.css`):**
+
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-primary-50: oklch(97% 0.02 270);
   --color-primary-500: oklch(55% 0.18 270);
-  --color-primary-900: oklch(25% 0.10 270);
+  --color-primary-900: oklch(25% 0.1 270);
   --font-sans: 'Inter Variable', sans-serif;
   --radius-md: 0.5rem;
 }
@@ -111,6 +116,7 @@ export default nextConfig
 Radix UI applies no default styling — it is purely behavioral. All visual design comes from Tailwind classes applied to the component wrappers. Brand tokens from `04_brand/tokens.json` are mapped directly to CSS custom properties in `globals.css`.
 
 **`globals.css` pattern:**
+
 ```css
 @import "tailwindcss";
 
@@ -161,6 +167,7 @@ Token mapping table:
 | `shadow.default` | `--shadow-md` | `shadow-md` |
 
 **`cn()` utility (required for Radix component composition):**
+
 ```typescript
 // src/lib/utils.ts
 import { clsx, type ClassValue } from 'clsx'
@@ -176,12 +183,15 @@ export function cn(...inputs: ClassValue[]) {
 NextAuth.js v5 (Auth.js) handles authentication. Directus is used as the data source via a custom credentials provider that calls the Directus `/auth/login` endpoint.
 
 **`src/auth.ts`:**
+
 ```typescript
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { createDirectus, rest, authentication } from '@directus/sdk'
 
-const directus = createDirectus(process.env.DIRECTUS_URL!).with(rest()).with(authentication('json'))
+const directus = createDirectus(process.env.DIRECTUS_URL!)
+  .with(rest())
+  .with(authentication('json'))
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -190,13 +200,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize({ email, password }) {
         const result = await directus.login(String(email), String(password))
         if (!result.access_token) return null
-        return { id: result.user?.id, accessToken: result.access_token, refreshToken: result.refresh_token }
+        return {
+          id: result.user?.id,
+          accessToken: result.access_token,
+          refreshToken: result.refresh_token,
+        }
       },
     }),
   ],
   callbacks: {
     jwt({ token, user }) {
-      if (user) { token.accessToken = user.accessToken; token.refreshToken = user.refreshToken }
+      if (user) {
+        token.accessToken = user.accessToken
+        token.refreshToken = user.refreshToken
+      }
       return token
     },
     session({ session, token }) {
@@ -208,11 +225,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 ```
 
 **`src/app/api/auth/[...nextauth]/route.ts`:**
+
 ```typescript
 export { GET, POST } from '@/auth'
 ```
 
 **`src/middleware.ts`:**
+
 ```typescript
 export { auth as middleware } from '@/auth'
 
@@ -226,6 +245,7 @@ export const config = {
 App Router uses `src/app/layout.tsx` as the root layout and nested layouts for section-level shells.
 
 **Key files:**
+
 - `src/app/layout.tsx` — root HTML shell, fonts, providers
 - `src/app/(app)/layout.tsx` — authenticated shell with sidebar + header
 - `src/components/shell/AppSidebar.tsx` — `NavigationMenu` from Radix, server component safe
@@ -233,6 +253,7 @@ App Router uses `src/app/layout.tsx` as the root layout and nested layouts for s
 - `src/components/shell/AppNav.tsx` — nav link list, renders `next/link` inside Radix items
 
 **`src/app/(app)/layout.tsx` pattern:**
+
 ```typescript
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -253,23 +274,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
 ## Component Library
 
-| Generic UI concept | Radix UI Primitive | Package |
-|--------------------|--------------------|---------|
-| Button | No primitive — compose with `Slot` | `@radix-ui/react-slot` |
-| DataTable | No primitive — build with `<table>` + Tailwind | N/A |
-| Modal/Dialog | `Dialog.Root`, `Dialog.Trigger`, `Dialog.Content` | `@radix-ui/react-dialog` |
-| Form Input | No primitive — use `<input>` + `Label` | `@radix-ui/react-label` |
-| Select/Dropdown | `Select.Root`, `Select.Trigger`, `Select.Content` | `@radix-ui/react-select` |
-| Navigation | `NavigationMenu.Root`, `NavigationMenu.List` | `@radix-ui/react-navigation-menu` |
-| Card | No primitive — compose with `<div>` | N/A |
-| Toast/Notification | `Toast.Provider`, `Toast.Root`, `Toast.Viewport` | `@radix-ui/react-toast` |
-| Dropdown Menu | `DropdownMenu.Root`, `DropdownMenu.Content` | `@radix-ui/react-dropdown-menu` |
-| Tooltip | `Tooltip.Provider`, `Tooltip.Root` | `@radix-ui/react-tooltip` |
-| Tabs | `Tabs.Root`, `Tabs.List`, `Tabs.Trigger` | `@radix-ui/react-tabs` |
-| Checkbox | `Checkbox.Root`, `Checkbox.Indicator` | `@radix-ui/react-checkbox` |
-| Switch | `Switch.Root` | `@radix-ui/react-switch` |
-| Avatar | `Avatar.Root`, `Avatar.Image`, `Avatar.Fallback` | `@radix-ui/react-avatar` |
-| Popover | `Popover.Root`, `Popover.Trigger`, `Popover.Content` | `@radix-ui/react-popover` |
+| Generic UI concept | Radix UI Primitive                                   | Package                           |
+| ------------------ | ---------------------------------------------------- | --------------------------------- |
+| Button             | No primitive — compose with `Slot`                   | `@radix-ui/react-slot`            |
+| DataTable          | No primitive — build with `<table>` + Tailwind       | N/A                               |
+| Modal/Dialog       | `Dialog.Root`, `Dialog.Trigger`, `Dialog.Content`    | `@radix-ui/react-dialog`          |
+| Form Input         | No primitive — use `<input>` + `Label`               | `@radix-ui/react-label`           |
+| Select/Dropdown    | `Select.Root`, `Select.Trigger`, `Select.Content`    | `@radix-ui/react-select`          |
+| Navigation         | `NavigationMenu.Root`, `NavigationMenu.List`         | `@radix-ui/react-navigation-menu` |
+| Card               | No primitive — compose with `<div>`                  | N/A                               |
+| Toast/Notification | `Toast.Provider`, `Toast.Root`, `Toast.Viewport`     | `@radix-ui/react-toast`           |
+| Dropdown Menu      | `DropdownMenu.Root`, `DropdownMenu.Content`          | `@radix-ui/react-dropdown-menu`   |
+| Tooltip            | `Tooltip.Provider`, `Tooltip.Root`                   | `@radix-ui/react-tooltip`         |
+| Tabs               | `Tabs.Root`, `Tabs.List`, `Tabs.Trigger`             | `@radix-ui/react-tabs`            |
+| Checkbox           | `Checkbox.Root`, `Checkbox.Indicator`                | `@radix-ui/react-checkbox`        |
+| Switch             | `Switch.Root`                                        | `@radix-ui/react-switch`          |
+| Avatar             | `Avatar.Root`, `Avatar.Image`, `Avatar.Fallback`     | `@radix-ui/react-avatar`          |
+| Popover            | `Popover.Root`, `Popover.Trigger`, `Popover.Content` | `@radix-ui/react-popover`         |
 
 > Build a `src/components/ui/` folder with styled wrappers around each Radix primitive. These wrappers apply the brand-consistent Tailwind classes and export as the app's design system components (e.g., `<Button>`, `<Dialog>`, `<Select>`). See the shadcn/ui pattern for reference — the difference is no copy-paste CLI; build them from scratch per the concept's brand.
 
@@ -286,15 +307,16 @@ Note: The CDN mock renders structural and layout intent only. Radix UI's accessi
 ## Storybook Config
 
 ```yaml
-storybook_addon: "@storybook/nextjs"
+storybook_addon: '@storybook/nextjs'
 story_format: CSF3
-component_import: "@radix-ui/react-*"
+component_import: '@radix-ui/react-*'
 setup_file: .storybook/setup.ts
 ```
 
 `@storybook/nextjs` provides Next.js 15 App Router context inside stories, including `next/navigation`, `next/image`, and `next/link` mocking.
 
 **`.storybook/main.ts`:**
+
 ```typescript
 export default {
   framework: '@storybook/nextjs',
@@ -304,8 +326,9 @@ export default {
 ```
 
 **`.storybook/preview.tsx`:**
+
 ```typescript
-import '../src/app/globals.css'  // brand tokens via @theme
+import '../src/app/globals.css' // brand tokens via @theme
 import type { Preview } from '@storybook/react'
 
 const preview: Preview = {
@@ -334,6 +357,7 @@ npx directus bootstrap
 ```
 
 If custom entities are needed outside Directus, add Prisma:
+
 ```bash
 pnpm add prisma @prisma/client
 pnpm prisma init --datasource-provider postgresql
@@ -348,12 +372,14 @@ Keep Directus-managed and Prisma-managed tables clearly separated in documentati
 None for Directus (API is auto-generated).
 
 If Prisma is added for custom entities:
+
 ```bash
 # After schema changes, regenerate types
 pnpm prisma generate
 ```
 
 For TypeScript types from the Directus SDK:
+
 ```typescript
 // src/types/directus.ts
 export interface DirectusSchema {
@@ -373,6 +399,7 @@ Which `prog-expert-*` skills to look for:
 
 **1. Server Components as the default for data fetching:**
 In App Router, all components are Server Components by default. Fetch Directus data directly in RSC — no `useEffect` or client-side fetching for initial data. Mark components as `'use client'` only when they need interactivity or browser APIs:
+
 ```typescript
 // src/app/(app)/posts/page.tsx — Server Component
 async function PostsPage() {
@@ -384,27 +411,33 @@ async function PostsPage() {
 
 **2. Radix primitive + CVA for variant-aware components:**
 Build styled wrappers using `class-variance-authority` to handle component variants. This keeps variant logic type-safe and co-located with the component:
+
 ```typescript
-const buttonVariants = cva('rounded-md font-medium transition-colors focus-visible:outline-none', {
-  variants: {
-    variant: {
-      primary: 'bg-primary-500 text-white hover:bg-primary-600',
-      outline: 'border border-border bg-transparent hover:bg-surface-raised',
+const buttonVariants = cva(
+  'rounded-md font-medium transition-colors focus-visible:outline-none',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-primary-500 text-white hover:bg-primary-600',
+        outline: 'border border-border bg-transparent hover:bg-surface-raised',
+      },
+      size: { sm: 'px-3 py-1.5 text-sm', md: 'px-4 py-2 text-base' },
     },
-    size: { sm: 'px-3 py-1.5 text-sm', md: 'px-4 py-2 text-base' },
+    defaultVariants: { variant: 'primary', size: 'md' },
   },
-  defaultVariants: { variant: 'primary', size: 'md' },
-})
+)
 ```
 
 **3. Next.js caching strategy for Directus data:**
 Use Next.js `fetch` cache tags for ISR-compatible caching of Directus content. Tag by collection name so revalidation is surgical:
+
 ```typescript
 const data = await fetch(`${process.env.DIRECTUS_URL}/items/posts`, {
   next: { tags: ['posts'], revalidate: 60 },
   headers: { Authorization: `Bearer ${serviceToken}` },
 })
 ```
+
 Call `revalidateTag('posts')` in a route handler when Directus webhooks fire on collection updates.
 
 **4. `Tooltip.Provider` and `Toast.Provider` must wrap the app:**
@@ -412,8 +445,13 @@ Radix providers must be placed high in the tree. Put them in `src/app/layout.tsx
 
 **5. Type-safe route params with `next/navigation`:**
 Next.js 15 makes `params` and `searchParams` async. Always await them:
+
 ```typescript
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await params
 }
 ```

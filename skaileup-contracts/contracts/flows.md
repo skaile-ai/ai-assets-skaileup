@@ -15,7 +15,7 @@ the `name` field in the skill's `SKILL.md` frontmatter. Never use file paths.
 
 ```yaml
 # correct
-skill: "skailup-datamodel"
+skill: "skaileup-datamodel"
 
 # wrong — never use paths
 skill: "concept/blueprint/datamodel"
@@ -27,62 +27,62 @@ files at startup and building a name→path registry.
 
 ### Canonical Skill Registry
 
-| Name | Domain | Description |
-|---|---|---|
-| `skailup-overview` | skaileup-discovery | Project brief, goals, comparable products |
-| `skailup-research` | skaileup-research | Parallel research mode — domain, competitors, audiences |
-| `skailup-brand-visual` | skaileup-discovery | Visual identity — colors, fonts, tokens |
-| `skailup-brand-behavioral` | skaileup-discovery | Communication tone, micro-copy guidelines |
-| `skailup-journeys` | skaileup-experience | User journey maps, stories.json, EARS criteria |
-| `skailup-features` | skaileup-experience | Feature specs in numbered groups |
-| `skailup-behaviors` | skaileup-experience | Behavioral specs (.allium format) |
-| `skailup-screens` | skaileup-experience | Screen specs with component inventories |
-| `skailup-components` | skaileup-experience | Reusable component inventory |
-| `skailup-mock` | skaileup-prototype | Interactive HTML mockups |
-| `skailup-storybook` | skaileup-storybook | Living Storybook prototype (3-layer) |
-| `skailup-techstack` | skaileup-blueprint | Tech stack selection and reasoning |
-| `skailup-architecture` | skaileup-blueprint | System architecture, modules, data flow |
-| `skailup-datamodel` | skaileup-blueprint | Data model (stack-aware schema output) |
-| `skailup-reverse-engineer` | skaileup-concept-meta | Extract full concept from existing codebase |
-| `skailup-add-feature` | skaileup-concept-meta | Add/modify feature in live concept |
-| `skailup-review` | skaileup-concept-meta | Concept structure audit + gardening |
-| `skailup-eval-concept` | skaileup-concept-meta | Concept completeness gate |
-| `skailup-eval-feature` | skaileup-concept-meta | Feature implementation gate |
-| `skailup-eval-product` | skaileup-concept-meta | Product goal assessment |
-| `skailup-scaffold` | skaileup-build | Project scaffolding |
-| `skailup-foundation` | skaileup-build | Brand tokens, auth config, app shell |
-| `skailup-infrastructure` | skaileup-build | Custom backend modules (conditional) |
-| `skailup-migrate` | skaileup-build | Database migrations |
-| `skailup-seed` | skaileup-build | Load seed data scenarios |
-| `skailup-implement-feature` | skaileup-build | TDD feature implementation |
-| `skailup-update-docs` | skaileup-build | Sync docs after implementation |
-| `skailup-generate` | skaileup-build | Code generation utilities |
-| `skailup-git-prepare` | skaileup-build | Git repo prep for supervised implementation |
-| `skailup-brainstorm` | skaileup-build | Structured problem decomposition before planning |
-| `skailup-write-plan` | skaileup-build | Decomposed implementation plan from concept artifacts |
-| `skailup-implement-supervised` | skaileup-build | Supervised subagent-driven implementation |
-| `skailup-finish-branch` | skaileup-build | Controlled branch completion (merge/PR/keep/discard) |
-| `skailup-audit` | skaileup-quality | Static code + structure analysis |
-| `skailup-e2e` | skaileup-quality | Browser-based E2E journey testing |
-| `skailup-ready` | skaileup-quality | Pre-flight readiness gate |
-| `skailup-sync` | skaileup-quality | Cross-reference repair |
-| `skailup-test-unit` | skaileup-quality | Unit test generation and execution |
-| `skailup-test-integration` | skaileup-quality | Integration test generation and execution |
-| `skailup-test-plan` | skaileup-quality | Test plan from features, screens, data model |
-| `skailup-compile-validators` | skaileup-quality | Compile all validator.py files into unified suite |
-| `skailup-standards-discover` | skaileup-standards | Discover codebase conventions → _standards/ |
-| `skailup-standards-inject` | skaileup-standards | Match standards to requesting skill |
+| Name                            | Domain                | Description                                             |
+| ------------------------------- | --------------------- | ------------------------------------------------------- |
+| `skaileup-overview`             | skaileup-discovery    | Project brief, goals, comparable products               |
+| `skaileup-research`             | skaileup-research     | Parallel research mode — domain, competitors, audiences |
+| `skaileup-brand-visual`         | skaileup-discovery    | Visual identity — colors, fonts, tokens                 |
+| `skaileup-brand-behavioral`     | skaileup-discovery    | Communication tone, micro-copy guidelines               |
+| `skaileup-journeys`             | skaileup-experience   | User journey maps, stories.json, EARS criteria          |
+| `skaileup-features`             | skaileup-experience   | Feature specs in numbered groups                        |
+| `skaileup-behaviors`            | skaileup-experience   | Behavioral specs (.allium format)                       |
+| `skaileup-screens`              | skaileup-experience   | Screen specs with component inventories                 |
+| `skaileup-components`           | skaileup-experience   | Reusable component inventory                            |
+| `skaileup-mock`                 | skaileup-prototype    | Interactive HTML mockups                                |
+| `skaileup-storybook`            | skaileup-storybook    | Living Storybook prototype (3-layer)                    |
+| `skaileup-techstack`            | skaileup-blueprint    | Tech stack selection and reasoning                      |
+| `skaileup-architecture`         | skaileup-blueprint    | System architecture, modules, data flow                 |
+| `skaileup-datamodel`            | skaileup-blueprint    | Data model (stack-aware schema output)                  |
+| `skaileup-reverse-engineer`     | skaileup-concept-meta | Extract full concept from existing codebase             |
+| `skaileup-add-feature`          | skaileup-concept-meta | Add/modify feature in live concept                      |
+| `skaileup-review`               | skaileup-concept-meta | Concept structure audit + gardening                     |
+| `skaileup-eval-concept`         | skaileup-concept-meta | Concept completeness gate                               |
+| `skaileup-eval-feature`         | skaileup-concept-meta | Feature implementation gate                             |
+| `skaileup-eval-product`         | skaileup-concept-meta | Product goal assessment                                 |
+| `skaileup-scaffold`             | skaileup-build        | Project scaffolding                                     |
+| `skaileup-foundation`           | skaileup-build        | Brand tokens, auth config, app shell                    |
+| `skaileup-infrastructure`       | skaileup-build        | Custom backend modules (conditional)                    |
+| `skaileup-migrate`              | skaileup-build        | Database migrations                                     |
+| `skaileup-seed`                 | skaileup-build        | Load seed data scenarios                                |
+| `skaileup-implement-feature`    | skaileup-build        | TDD feature implementation                              |
+| `skaileup-update-docs`          | skaileup-build        | Sync docs after implementation                          |
+| `skaileup-generate`             | skaileup-build        | Code generation utilities                               |
+| `skaileup-git-prepare`          | skaileup-build        | Git repo prep for supervised implementation             |
+| `skaileup-brainstorm`           | skaileup-build        | Structured problem decomposition before planning        |
+| `skaileup-write-plan`           | skaileup-build        | Decomposed implementation plan from concept artifacts   |
+| `skaileup-implement-supervised` | skaileup-build        | Supervised subagent-driven implementation               |
+| `skaileup-finish-branch`        | skaileup-build        | Controlled branch completion (merge/PR/keep/discard)    |
+| `skaileup-audit`                | skaileup-quality      | Static code + structure analysis                        |
+| `skaileup-e2e`                  | skaileup-quality      | Browser-based E2E journey testing                       |
+| `skaileup-ready`                | skaileup-quality      | Pre-flight readiness gate                               |
+| `skaileup-sync`                 | skaileup-quality      | Cross-reference repair                                  |
+| `skaileup-test-unit`            | skaileup-quality      | Unit test generation and execution                      |
+| `skaileup-test-integration`     | skaileup-quality      | Integration test generation and execution               |
+| `skaileup-test-plan`            | skaileup-quality      | Test plan from features, screens, data model            |
+| `skaileup-compile-validators`   | skaileup-quality      | Compile all validator.py files into unified suite       |
+| `skaileup-standards-discover`   | skaileup-standards    | Discover codebase conventions → \_standards/            |
+| `skaileup-standards-inject`     | skaileup-standards    | Match standards to requesting skill                     |
 
 ---
 
 ## Where Flows Live
 
-| Domain | Path | Flows |
-|---|---|---|
-| Onboard | `skaileup-onboard/flows/` | `concept-only`, `prototype`, `cli-concept`, `reverse-engineer` |
-| Build | `skaileup-build/flows/` | `standard`, `full`, `cli`, `prototype`, `small`, `complex`, `superpowers` |
-| Quality | `skaileup-quality/flows/` | `audit`, `review`, `readiness` (add as needed) |
-| Schema | `skaileup-shared/flow.schema.json` | JSON Schema for all flow files |
+| Domain  | Path                               | Flows                                                                     |
+| ------- | ---------------------------------- | ------------------------------------------------------------------------- |
+| Onboard | `skaileup-onboard/flows/`          | `concept-only`, `prototype`, `cli-concept`, `reverse-engineer`            |
+| Build   | `skaileup-build/flows/`            | `standard`, `full`, `cli`, `prototype`, `small`, `complex`, `superpowers` |
+| Quality | `skaileup-quality/flows/`          | `audit`, `review`, `readiness` (add as needed)                            |
+| Schema  | `skaileup-shared/flow.schema.json` | JSON Schema for all flow files                                            |
 
 Each concept flow ends with a `next_flows` array pointing to the appropriate implementation
 (or other follow-on) flows. Use these to chain domains without bundling them into one file.
@@ -91,50 +91,50 @@ Each concept flow ends with a `next_flows` array pointing to the appropriate imp
 
 **Concept flows** (`skaileup-onboard/flows/`):
 
-| ID | Description |
-|---|---|
-| `concept-only` | Full concept pipeline — brief through screens, components, storybook |
-| `prototype` | Fast concept — brief, brand, features, screens, mockups |
-| `cli-concept` | CLI concept — brief, features, tech stack, data model (no UI) |
-| `reverse-engineer` | Extract full concept from an existing codebase |
+| ID                 | Description                                                          |
+| ------------------ | -------------------------------------------------------------------- |
+| `concept-only`     | Full concept pipeline — brief through screens, components, storybook |
+| `prototype`        | Fast concept — brief, brand, features, screens, mockups              |
+| `cli-concept`      | CLI concept — brief, features, tech stack, data model (no UI)        |
+| `reverse-engineer` | Extract full concept from an existing codebase                       |
 
 **Implementation flows** (`skaileup-build/flows/`):
 
-| ID | Description |
-|---|---|
-| `standard` | Scaffold, foundation, migrate/seed, feature TDD, tests, verify |
-| `full` | Readiness gate, scaffold, foundation, design(opt), full test suite, verify |
-| `cli` | CLI scaffold, foundation(headless,opt), feature TDD, unit+integration, verify |
-| `prototype` | Minimal: scaffold, implement, smoke E2E — fast path for user testing |
-| `small` | Consolidated scaffold+foundation, features, verify — no test suite |
-| `complex` | Fully checkpointed setup phases, full test suite |
-| `superpowers` | Supervised: git prep, brainstorm, spec plan, subagent dispatch, branch close |
+| ID            | Description                                                                   |
+| ------------- | ----------------------------------------------------------------------------- |
+| `standard`    | Scaffold, foundation, migrate/seed, feature TDD, tests, verify                |
+| `full`        | Readiness gate, scaffold, foundation, design(opt), full test suite, verify    |
+| `cli`         | CLI scaffold, foundation(headless,opt), feature TDD, unit+integration, verify |
+| `prototype`   | Minimal: scaffold, implement, smoke E2E — fast path for user testing          |
+| `small`       | Consolidated scaffold+foundation, features, verify — no test suite            |
+| `complex`     | Fully checkpointed setup phases, full test suite                              |
+| `superpowers` | Supervised: git prep, brainstorm, spec plan, subagent dispatch, branch close  |
 
 ---
 
 ## Flow File Structure
 
 ```yaml
-id: "standard"                  # kebab-case, matches filename
-version: "2.0.0"
-name: "Standard Implementation" # shown in flow picker UI
-description: "..."
+id: 'standard' # kebab-case, matches filename
+version: '2.0.0'
+name: 'Standard Implementation' # shown in flow picker UI
+description: '...'
 metadata:
   tags: [...]
   stage: stable
-  icon: "..."
-  category: "full-stack"
-globals:                        # parameters injected into ALL nodes
-  research_depth: "skip"
-  approval_mode: "checkpoint"
+  icon: '...'
+  category: 'full-stack'
+globals: # parameters injected into ALL nodes
+  research_depth: 'skip'
+  approval_mode: 'checkpoint'
   auto_review: false
   subagent_mode: true
-  verbosity: "standard"
-tier_presets:                   # named depth bundles; user selects one at flow start
+  verbosity: 'standard'
+tier_presets: # named depth bundles; user selects one at flow start
   quick: { ... }
   standard: { ... }
   thorough: { ... }
-artifact_handoff:               # (build flows only) artifacts consumed from upstream concept flow
+artifact_handoff: # (build flows only) artifacts consumed from upstream concept flow
   from_concept:
     - features
     - screens
@@ -143,17 +143,17 @@ artifact_handoff:               # (build flows only) artifacts consumed from ups
     - architecture
     - onboarding-decisions
 modes:
-  research: { ... }             # parallel modes (research, standards)
+  research: { ... } # parallel modes (research, standards)
   standards: { ... }
-entry: "scaffold"               # first node to execute
-nodes: [ ... ]                  # skill nodes + visual group containers + router/gate nodes
-edges: [ ... ]                  # directed execution graph
-next_flows:                     # suggested follow-on flows shown at completion
-  - id: "audit"
-    domain: "skaileup-quality"
-    label: "Audit →"
-    hint: "Run static analysis."
-    artifact_handoff:           # (concept flows only) artifacts passed to the next flow
+entry: 'scaffold' # first node to execute
+nodes: [...] # skill nodes + visual group containers + router/gate nodes
+edges: [...] # directed execution graph
+next_flows: # suggested follow-on flows shown at completion
+  - id: 'audit'
+    domain: 'skaileup-quality'
+    label: 'Audit →'
+    hint: 'Run static analysis.'
+    artifact_handoff: # (concept flows only) artifacts passed to the next flow
       - features
       - screens
       - datamodel
@@ -205,11 +205,11 @@ and passes it into the skill as the `depth` parameter. This lets a single skill 
 shallower or deeper output depending on the chosen preset.
 
 ```yaml
-- id: "overview"
-  type: "skill"
+- id: 'overview'
+  type: 'skill'
   data:
-    skill: "skailup-overview"
-    depth_from: "skaileup-discovery"   # reads tier.skaileup-discovery at runtime
+    skill: 'skaileup-overview'
+    depth_from: 'skaileup-discovery' # reads tier.skaileup-discovery at runtime
 ```
 
 ### `skip_when`
@@ -227,7 +227,7 @@ The legacy object form is also accepted for boolean flags:
 
 ```yaml
 skip_when:
-  tier_is: none     # skip when the node's own domain tier is 'none'
+  tier_is: none # skip when the node's own domain tier is 'none'
 ```
 
 ---
@@ -235,26 +235,25 @@ skip_when:
 ## Skill Node — Full Field Reference
 
 ```yaml
-id: "datamodel"
-type: "skill"
-parentNode: "g-concept"           # visual group container
+id: 'datamodel'
+type: 'skill'
+parentNode: 'g-concept' # visual group container
 position:
   x: 840
   y: 200
 data:
-
   # Identity
-  skill: "skailup-datamodel"      # canonical skill name (no paths)
-  label: "Data Model"             # display label in editor
+  skill: 'skaileup-datamodel' # canonical skill name (no paths)
+  label: 'Data Model' # display label in editor
 
   # Execution control
-  optional: false                 # orchestrator may skip if user opts out
-  parallel_group: "..."           # nodes with same group run concurrently
-  subagent: true                  # run in isolated subagent context
+  optional: false # orchestrator may skip if user opts out
+  parallel_group: '...' # nodes with same group run concurrently
+  subagent: true # run in isolated subagent context
 
   # Tier / depth
-  depth_from: "skaileup-blueprint"  # domain whose tier drives output depth
-  skip_when: "tier.skaileup-blueprint == 'none'"  # skip expression
+  depth_from: 'skaileup-blueprint' # domain whose tier drives output depth
+  skip_when: "tier.skaileup-blueprint == 'none'" # skip expression
 
   # Conditional extension
   extend_when: "artifact.datamodel.status == 'seed-partial'"
@@ -262,41 +261,41 @@ data:
   # rather than generating it from scratch.
 
   # Location
-  writes: "3_blueprint/3_datamodel/"
+  writes: '3_blueprint/3_datamodel/'
   # The _concept/ subfolder this skill writes to.
   # Used by the orchestrator for gate checks and UI progress display.
 
   # Prerequisites
   requires:
-    - "2_experience/2_features/"
-    - "3_blueprint/1_techstack/stack.md"
+    - '2_experience/2_features/'
+    - '3_blueprint/1_techstack/stack.md'
   # File or folder paths (relative to _concept/) that must exist on disk
   # before this skill can run. Orchestrator checks these before dispatching.
   # Different from edges — edges express preferred order; requires expresses
   # hard blockers (skill will fail or produce garbage without them).
 
   # Research grounding
-  grounding_folder: "datamodel/"
+  grounding_folder: 'datamodel/'
   # Subfolder within _grounding/ for this skill's research and user_input.json.
 
   # User inputs
   user_inputs:
     dialog:
-      - id: "field_id"
-        label: "Human-readable label"
-        type: "text | textarea | select | multiselect | boolean | number"
+      - id: 'field_id'
+        label: 'Human-readable label'
+        type: 'text | textarea | select | multiselect | boolean | number'
         required: false
         options: []
         default: null
-        hint: "Help text shown in the UI form"
+        hint: 'Help text shown in the UI form'
     files:
-      - "3_blueprint/3_datamodel/model.json"
+      - '3_blueprint/3_datamodel/model.json'
 
   # Feedback loops
   feedback:
-    - updates: "2_experience/2_features/**/*.md"
-      field: "data_entities"
-      description: "Sets data_entities[] in each feature file"
+    - updates: '2_experience/2_features/**/*.md'
+      field: 'data_entities'
+      description: 'Sets data_entities[] in each feature file'
   # Upstream files this skill modifies AFTER completing its own writes.
   # See skaileup-shared/contracts/feedback_loop.md for the full protocol.
 
@@ -310,12 +309,12 @@ data:
 
 ## Edge Types
 
-| Type | Meaning |
-|---|---|
-| `flow` | Required sequence — target cannot start until source completes |
-| `optional` | Target may be skipped based on user preference or `optional: true` on node |
-| `parallel` | Source and target can execute concurrently once their own prerequisites are met |
-| `review-loop` | Creates an iterative refinement cycle — see Review-Loop Edges section |
+| Type          | Meaning                                                                         |
+| ------------- | ------------------------------------------------------------------------------- |
+| `flow`        | Required sequence — target cannot start until source completes                  |
+| `optional`    | Target may be skipped based on user preference or `optional: true` on node      |
+| `parallel`    | Source and target can execute concurrently once their own prerequisites are met |
+| `review-loop` | Creates an iterative refinement cycle — see Review-Loop Edges section           |
 
 **Edges express preferred execution order. `requires` expresses hard blockers.**
 A skill with `requires` checks those paths regardless of which edges reached it.
@@ -334,21 +333,21 @@ Router nodes evaluate conditions in order and dispatch to the first matching tar
 A `null` target means skip entirely (no downstream node is activated).
 
 ```yaml
-- id: "route-prototype"
-  type: "router"
-  parentNode: "g-concept"
+- id: 'route-prototype'
+  type: 'router'
+  parentNode: 'g-concept'
   position:
     x: 1360
     y: 200
   data:
-    label: "Prototype Router"
+    label: 'Prototype Router'
     routes:
       - condition: "tier.skaileup-storybook in ['medium', 'max']"
-        target: "storybook"
+        target: 'storybook'
       - condition: "tier.skaileup-prototype in ['light', 'medium', 'max']"
-        target: "mock"
-      - condition: "default"
-        target: null   # skip entirely
+        target: 'mock'
+      - condition: 'default'
+        target: null # skip entirely
 ```
 
 Conditions are evaluated top to bottom. The first matching condition wins.
@@ -361,13 +360,13 @@ When the check fails, `on_fail` controls behavior: `"pause-for-human"` surfaces 
 error to the user; `"skip"` silently bypasses the downstream path.
 
 ```yaml
-- id: "check-features"
-  type: "gate"
+- id: 'check-features'
+  type: 'gate'
   data:
-    label: "Features Gate"
+    label: 'Features Gate'
     check: "artifact.features.status in ['draft', 'approved', 'seed']"
-    on_fail: "pause-for-human"
-    message: "Features artifact required before proceeding."
+    on_fail: 'pause-for-human'
+    message: 'Features artifact required before proceeding.'
 ```
 
 ### Sub-flow Nodes
@@ -376,11 +375,11 @@ Sub-flow nodes delegate execution to another flow file and return when complete.
 The parent flow resumes from the sub-flow node's outgoing edges.
 
 ```yaml
-- id: "run-research"
-  type: "sub-flow"
+- id: 'run-research'
+  type: 'sub-flow'
   data:
-    flow: "research-deep"
-    domain: "skaileup-research"
+    flow: 'research-deep'
+    domain: 'skaileup-research'
     pass_context: true
 ```
 
@@ -398,17 +397,18 @@ control returns to the `target` node for another pass. The loop continues until
 `exit_condition` is satisfied or `max_iterations` is reached.
 
 ```yaml
-- id: "e-review-loop"
-  source: "review"
-  target: "overview"
-  type: "review-loop"
+- id: 'e-review-loop'
+  source: 'review'
+  target: 'overview'
+  type: 'review-loop'
   max_iterations: 2
-  exit_condition: "review.score >= 0.8"
-  on_exit_fail: "pause-for-human"
+  exit_condition: 'review.score >= 0.8'
+  on_exit_fail: 'pause-for-human'
 ```
 
 `on_exit_fail` controls what happens when max_iterations is reached without satisfying
 `exit_condition`:
+
 - `"pause-for-human"` — surface result to user, require manual decision to continue
 - `"continue"` — proceed downstream regardless of score
 
@@ -420,12 +420,13 @@ Concept flows pass named artifacts to implementation flows via `next_flows[].art
 Implementation flows declare which artifacts they consume via `artifact_handoff.from_concept`.
 
 **Concept flow side** (`next_flows` entry):
+
 ```yaml
 next_flows:
-  - id: "standard"
-    domain: "skaileup-build"
-    label: "Implement →"
-    hint: "Scaffold, implement features with TDD, run tests, and verify."
+  - id: 'standard'
+    domain: 'skaileup-build'
+    label: 'Implement →'
+    hint: 'Scaffold, implement features with TDD, run tests, and verify.'
     artifact_handoff:
       - features
       - screens
@@ -436,6 +437,7 @@ next_flows:
 ```
 
 **Implementation flow side** (top-level):
+
 ```yaml
 artifact_handoff:
   from_concept:
@@ -462,12 +464,12 @@ edge to the consumer. Do **not** use overrides as a shortcut to silence gates th
 real dependencies, and do **not** add skip_checks for paths guaranteed by direct `flow` edges
 — edge ordering is sufficient.
 
-| Situation | Correct approach |
-|---|---|
-| Node B depends on Node A's output and A runs first | Add a `flow` edge A → B. No override needed. |
-| Node B depends on Node A's output; A runs in a parallel branch | Add `skip_checks` for A's output path in B's `overrides`. |
-| Node B depends on the flow entry node's output | Add `skip_checks` for the entry output in B's `overrides`. |
-| Gate fires but the file will not exist until user uploads it | Keep the gate; surface the error to the user. Never skip. |
+| Situation                                                      | Correct approach                                           |
+| -------------------------------------------------------------- | ---------------------------------------------------------- |
+| Node B depends on Node A's output and A runs first             | Add a `flow` edge A → B. No override needed.               |
+| Node B depends on Node A's output; A runs in a parallel branch | Add `skip_checks` for A's output path in B's `overrides`.  |
+| Node B depends on the flow entry node's output                 | Add `skip_checks` for the entry output in B's `overrides`. |
+| Gate fires but the file will not exist until user uploads it   | Keep the gate; surface the error to the user. Never skip.  |
 
 ---
 
@@ -536,10 +538,12 @@ with no direct edge to the consuming node.
 ## Updating an Existing Flow
 
 When a skill changes its `writes`, `requires`, or `user_inputs`:
+
 - Update the node `data` in **every flow** that includes that skill
 - Update MIGRATION.md with what changed and why
 
 When adding a new skill to an existing flow:
+
 - Add the node with full metadata including `depth_from` and `skip_when` where appropriate
 - Wire edges from its dependencies and to its dependents
 - If it has feedback loops, add the `feedback` field

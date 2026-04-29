@@ -3,13 +3,13 @@ description: Concept operations — review, extend, evaluate, and multi-product 
 version: 0.1.0
 dependencies:
   - contract:CONTRACT.md
-  - skill:skailup-review
-  - skill:skailup-add-feature
-  - skill:skailup-reverse-engineer
-  - skill:skailup-eval-concept
-  - skill:skailup-eval-feature
-  - skill:skailup-eval-product
-  - skill:skailup-project-overview
-  - skill:skailup-subsystem-map
-  - skill:skailup-integration-arch
-  - skill:skailup-project-review
+  - skill:skaileup-review
+  - skill:skaileup-add-feature
+  - skill:skaileup-reverse-engineer
+  - skill:skaileup-eval-concept
+  - skill:skaileup-eval-feature
+  - skill:skaileup-eval-product
+  - skill:skaileup-project-overview
+  - skill:skaileup-subsystem-map
+  - skill:skaileup-integration-arch
+  - skill:skaileup-project-review

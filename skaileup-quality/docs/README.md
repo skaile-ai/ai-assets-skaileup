@@ -4,16 +4,16 @@ This domain contains quality assurance skills: static audit, end-to-end testing,
 
 ## Skills
 
-| Skill | Path | Sources | Purpose |
-|---|---|---|---|
-| **skailup-audit** | `skills/skailup-audit/` | CF + Saxe | Static code analysis + concept structure audit |
-| **skailup-e2e** | `skills/skailup-e2e/` | CF + Saxe | End-to-end browser tests |
-| **skailup-ready** | `skills/skailup-ready/` | CF + Saxe | Pre-flight readiness gate before next pipeline step |
-| **skailup-sync** | `skills/skailup-sync/` | CF only | Cross-reference repair (features ↔ screens, model → features) |
-| **skailup-test-unit** | `skills/skailup-test-unit/` | CF only | Unit test generation |
-| **skailup-test-integration** | `skills/skailup-test-integration/` | CF only | Integration test generation |
-| **skailup-test-plan** | `skills/skailup-test-plan/` | CF only | Test plan document → `08_testing/test_plan.md` |
-| **skailup-compile-validators** | `skills/skailup-compile-validators/` | Saxe only | Compile all `validator.py` files into a unified validation suite |
+| Skill                           | Path                                  | Sources   | Purpose                                                          |
+| ------------------------------- | ------------------------------------- | --------- | ---------------------------------------------------------------- |
+| **skaileup-audit**              | `skills/skaileup-audit/`              | CF + Saxe | Static code analysis + concept structure audit                   |
+| **skaileup-e2e**                | `skills/skaileup-e2e/`                | CF + Saxe | End-to-end browser tests                                         |
+| **skaileup-ready**              | `skills/skaileup-ready/`              | CF + Saxe | Pre-flight readiness gate before next pipeline step              |
+| **skaileup-sync**               | `skills/skaileup-sync/`               | CF only   | Cross-reference repair (features ↔ screens, model → features)    |
+| **skaileup-test-unit**          | `skills/skaileup-test-unit/`          | CF only   | Unit test generation                                             |
+| **skaileup-test-integration**   | `skills/skaileup-test-integration/`   | CF only   | Integration test generation                                      |
+| **skaileup-test-plan**          | `skills/skaileup-test-plan/`          | CF only   | Test plan document → `08_testing/test_plan.md`                   |
+| **skaileup-compile-validators** | `skills/skaileup-compile-validators/` | Saxe only | Compile all `validator.py` files into a unified validation suite |
 
 ## Notable Patterns
 

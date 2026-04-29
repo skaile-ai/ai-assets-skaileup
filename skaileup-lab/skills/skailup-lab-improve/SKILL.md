@@ -1,12 +1,12 @@
 ---
-name: skailup-lab-improve
+name: skaileup-lab-improve
 description: Drive skill improvement through mutation, testing, and iteration
 source: MERGED
 version: 1.0.0
 keywords: [lab, improve, mutation, iteration]
 user_inputs:
   - key: SKILL_ID
-    prompt: "Which skill to improve?"
+    prompt: 'Which skill to improve?'
     required: true
 reads_from: [test-manifest.yaml, learnings/]
 writes_to: [SKILL.md, recipes/, examples/]
@@ -23,6 +23,7 @@ You are improving a skill through targeted mutations. For each iteration:
 5. **Apply the change** to the skill's files (SKILL.md, recipes, examples)
 
 Strategy priorities (highest first):
+
 1. Fix failing test cases
 2. Incorporate unaddressed corrections from learnings
 3. Update outdated patterns (version drift)
@@ -32,6 +33,7 @@ Strategy priorities (highest first):
 7. Add missing examples
 
 Rules:
+
 - Never modify SKILL.md frontmatter (name, metadata, requires)
 - Never delete existing test cases
 - Prefer small, targeted changes over rewrites

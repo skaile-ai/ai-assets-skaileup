@@ -4,15 +4,15 @@ This domain covers everything from initial project discovery through experience 
 
 ## Skill Groups
 
-| Group | Path | Purpose |
-|---|---|---|
-| **skailup-orchestrator** | `skills/skailup-orchestrator/` | Pipeline controller — dispatches skills, manages user communication |
-| **discovery** | `skills/10_discovery/` | Project overview, research, brand identity |
-| **experience** | `skills/20_experience/` | Feature specs, user journeys, screen designs, storybook |
-| **blueprint** | `skills/30_blueprint/` | Tech stack, architecture, data model |
-| **skailup-add-feature** | `skills/skailup-add-feature/` | Add a single new feature to an existing concept |
-| **skailup-reverse-engineer** | `skills/skailup-reverse-engineer/` | Ingest an existing codebase and produce a full concept |
-| **skailup-review** | `skills/skailup-review/` | Concept quality audit and cross-reference check |
+| Group                         | Path                                | Purpose                                                             |
+| ----------------------------- | ----------------------------------- | ------------------------------------------------------------------- |
+| **skaileup-orchestrator**     | `skills/skaileup-orchestrator/`     | Pipeline controller — dispatches skills, manages user communication |
+| **discovery**                 | `skills/10_discovery/`              | Project overview, research, brand identity                          |
+| **experience**                | `skills/20_experience/`             | Feature specs, user journeys, screen designs, storybook             |
+| **blueprint**                 | `skills/30_blueprint/`              | Tech stack, architecture, data model                                |
+| **skaileup-add-feature**      | `skills/skaileup-add-feature/`      | Add a single new feature to an existing concept                     |
+| **skaileup-reverse-engineer** | `skills/skaileup-reverse-engineer/` | Ingest an existing codebase and produce a full concept              |
+| **skaileup-review**           | `skills/skaileup-review/`           | Concept quality audit and cross-reference check                     |
 
 ## CF vs Saxe Variants
 
@@ -21,6 +21,7 @@ Each group contains `cf/` (Concept Forge) and `saxe/` (Saxe platform) subdirecto
 ## Flows
 
 Multi-step flows that chain these skills are in `flows/`:
+
 - `mvp.json` — discovery + experience + blueprint + implementation
 - `prototype.json` — concept + screens only
 - `concept-only.json` — full concept without implementation
@@ -30,6 +31,7 @@ Multi-step flows that chain these skills are in `flows/`:
 ## Output
 
 Skills write to a `_concept/` directory in the project:
+
 ```
 _concept/
 ├── 01_project/        → brief.md, goals.md, comparable.md

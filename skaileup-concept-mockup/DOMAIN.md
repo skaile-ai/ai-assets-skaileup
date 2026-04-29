@@ -1,12 +1,12 @@
 ---
 name: skaileup-prototype
-description: "Simple tangible prototypes — text-based mockup descriptions that visualize screen designs without requiring a full Storybook setup."
+description: 'Simple tangible prototypes — text-based mockup descriptions that visualize screen designs without requiring a full Storybook setup.'
 type: domain
 building_blocks:
-  contracts: "n/a — to be populated after skill migration."
-  docs: "n/a — to be populated after skill migration."
-  skills: "Text-based screen mockup skill."
-  tools: "n/a"
+  contracts: 'n/a — to be populated after skill migration.'
+  docs: 'n/a — to be populated after skill migration.'
+  skills: 'Text-based screen mockup skill.'
+  tools: 'n/a'
 stage: alpha
 ---
 
@@ -18,15 +18,15 @@ Skills will be moved into this domain during the architecture reorganization (Ph
 
 ## Building Blocks
 
-| Folder | Purpose |
-|--------|---------|
+| Folder    | Purpose                      |
+| --------- | ---------------------------- |
 | `skills/` | Invocable skills (see below) |
 
 ## Skills (target)
 
-| Skill | Purpose |
-|-------|---------|
-| `skailup-mock/` | Generates text-based mockup descriptions from screen design artifacts |
+| Skill            | Purpose                                                               |
+| ---------------- | --------------------------------------------------------------------- |
+| `skaileup-mock/` | Generates text-based mockup descriptions from screen design artifacts |
 
 ## Conventions
 

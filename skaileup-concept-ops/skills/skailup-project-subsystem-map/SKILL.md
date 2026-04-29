@@ -1,22 +1,22 @@
 ---
-name: skailup-project-subsystem-map
-description: "Generate the 2_subsystems/ section of a meta-concept: index of all subsystems with maturity, audience, tech stack, and references to per-subsystem concepts."
+name: skaileup-project-subsystem-map
+description: 'Generate the 2_subsystems/ section of a meta-concept: index of all subsystems with maturity, audience, tech stack, and references to per-subsystem concepts.'
 source: MERGED
 version: 1.0.0
 keywords: [meta-concept, subsystems, map, inventory, maturity, ecosystem]
 user_inputs:
   - key: PROJECT_ROOT
-    prompt: "Where is the shell repo root?"
+    prompt: 'Where is the shell repo root?'
     required: true
 reads_from:
   - contracts/meta-concept-contract/CONTRACT.md
-  - "{PROJECT_ROOT}/_concept/discovery/"
-  - "{PROJECT_ROOT}/CLAUDE.md"
-  - "{PROJECT_ROOT}/**/CLAUDE.md"
-  - "{PROJECT_ROOT}/**/_concept/"
+  - '{PROJECT_ROOT}/_concept/discovery/'
+  - '{PROJECT_ROOT}/CLAUDE.md'
+  - '{PROJECT_ROOT}/**/CLAUDE.md'
+  - '{PROJECT_ROOT}/**/_concept/'
 writes_to:
-  - "{PROJECT_ROOT}/_concept/2_subsystems/index.md"
-  - "{PROJECT_ROOT}/_concept/2_subsystems/<subsystem>.md"
+  - '{PROJECT_ROOT}/_concept/2_subsystems/index.md'
+  - '{PROJECT_ROOT}/_concept/2_subsystems/<subsystem>.md'
 ---
 
 # Project Concept: Subsystem Map
@@ -33,12 +33,14 @@ Generate the subsystem inventory for a multi-product umbrella concept.
 ### Step 1: Discover Subsystems
 
 Scan the shell repo for independent subsystems. A subsystem is any of:
+
 - A git submodule with its own `CLAUDE.md`
 - A top-level directory with its own `package.json` or `CLAUDE.md`
 - A content directory that is consumed by other subsystems (e.g., `ai-assets/`)
 - A shared resource directory that multiple subsystems depend on (e.g., `theme/`, `docs/`)
 
 For each subsystem, determine:
+
 - **Name** — directory name in the shell repo
 - **Repo** — the git remote (if submodule) or "shell" if in-repo
 - **Path** — relative path from shell repo root
@@ -73,6 +75,7 @@ For each subsystem, produce `_concept/2_subsystems/<name>.md` with:
 ### Grouping Rules
 
 If a subsystem contains nested sub-products (e.g., `forge/` contains `chat/`, `tui/`, `project/`, `concept/`), create:
+
 - One file for the parent (`forge.md`) describing the collection
 - Individual files only for sub-products that are significant enough to have their own `_concept/`
 

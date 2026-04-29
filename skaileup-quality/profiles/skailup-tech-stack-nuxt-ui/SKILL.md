@@ -1,24 +1,24 @@
 ---
-name: "skailup-tech-stack-nuxt-ui"
-description: "Reference document and invocable skill for the Nuxt 4 + @nuxt/ui v3 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack."
+name: 'skaileup-tech-stack-nuxt-ui'
+description: 'Reference document and invocable skill for the Nuxt 4 + @nuxt/ui v3 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
   tags:
-    - "nuxt"
-    - "nuxt-ui"
-    - "reka-ui"
-    - "radix-vue"
-    - "directus"
-    - "postgresql"
-    - "ssr"
-    - "vue3"
-    - "tailwind"
-    - "bun"
-    - "consumer"
-    - "branded"
-    - "design-forward"
-  stage: "alpha"
+    - 'nuxt'
+    - 'nuxt-ui'
+    - 'reka-ui'
+    - 'radix-vue'
+    - 'directus'
+    - 'postgresql'
+    - 'ssr'
+    - 'vue3'
+    - 'tailwind'
+    - 'bun'
+    - 'consumer'
+    - 'branded'
+    - 'design-forward'
+  stage: 'alpha'
   requires:
-    - "standards-contract"
+    - 'standards-contract'
 ---
 
 # Tech Stack: Nuxt 4 + @nuxt/ui + Directus
@@ -29,16 +29,16 @@ Full-stack SSR application built with Nuxt 4 (Vue 3) on the frontend, @nuxt/ui v
 
 ## Identity
 
-| Field | Value |
-|-------|-------|
-| Frontend | Nuxt 4 (Vue 3, Composition API), SSR |
-| UI Library | @nuxt/ui v3 (Reka UI + Tailwind CSS 4) |
-| Backend | Directus (headless CMS, auto-generated REST + GraphQL API) |
-| Database | PostgreSQL |
-| Auth | Directus Auth (JWT, refresh tokens, roles, SSO via OAuth2/LDAP) |
+| Field           | Value                                                                     |
+| --------------- | ------------------------------------------------------------------------- |
+| Frontend        | Nuxt 4 (Vue 3, Composition API), SSR                                      |
+| UI Library      | @nuxt/ui v3 (Reka UI + Tailwind CSS 4)                                    |
+| Backend         | Directus (headless CMS, auto-generated REST + GraphQL API)                |
+| Database        | PostgreSQL                                                                |
+| Auth            | Directus Auth (JWT, refresh tokens, roles, SSO via OAuth2/LDAP)           |
 | ORM / DB Access | Directus SDK (`@directus/sdk`) — no separate ORM; Directus manages the DB |
-| Package Manager | bun |
-| CSS Methodology | Tailwind CSS 4 + @nuxt/ui color palette via `app.config.ts` |
+| Package Manager | bun                                                                       |
+| CSS Methodology | Tailwind CSS 4 + @nuxt/ui color palette via `app.config.ts`               |
 
 ## When to Use
 
@@ -70,6 +70,7 @@ bun run dev
 ```
 
 `nuxt.config.ts` minimum configuration:
+
 ```typescript
 export default defineNuxtConfig({
   modules: ['@nuxt/ui'],
@@ -78,9 +79,10 @@ export default defineNuxtConfig({
 ```
 
 `assets/css/main.css`:
+
 ```css
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 ```
 
 ## CSS Variables / Theming
@@ -88,28 +90,30 @@ export default defineNuxtConfig({
 @nuxt/ui v3 uses Tailwind CSS 4's CSS-native configuration. Brand tokens from `04_brand/tokens.json` map through two mechanisms:
 
 **Level 1 — `app.config.ts` color palette:**
+
 ```typescript
 // app.config.ts
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: 'violet',    // maps to tokens.json color.primary (Tailwind palette name)
-      neutral: 'zinc',      // maps to tokens.json color.neutral
+      primary: 'violet', // maps to tokens.json color.primary (Tailwind palette name)
+      neutral: 'zinc', // maps to tokens.json color.neutral
     },
   },
 })
 ```
 
 For custom brand colors not in the Tailwind palette, define them in `main.css`:
+
 ```css
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 
 @theme {
   /* Custom brand primary from tokens.json */
   --color-brand-50: oklch(97% 0.02 270);
-  --color-brand-500: oklch(55% 0.18 270);   /* tokens.json color.primary.500 */
-  --color-brand-900: oklch(25% 0.10 270);
+  --color-brand-500: oklch(55% 0.18 270); /* tokens.json color.primary.500 */
+  --color-brand-900: oklch(25% 0.1 270);
 
   /* Typography from tokens.json */
   --font-sans: 'Inter Variable', sans-serif;
@@ -123,8 +127,13 @@ For custom brand colors not in the Tailwind palette, define them in `main.css`:
 ```
 
 Then reference the custom color in `app.config.ts`:
+
 ```typescript
-ui: { colors: { primary: 'brand' } }
+ui: {
+  colors: {
+    primary: 'brand'
+  }
+}
 ```
 
 Token mapping table:
@@ -146,6 +155,7 @@ Every @nuxt/ui component accepts a `ui` prop with Tailwind classes for slot-leve
 Same Directus JWT auth pattern as nuxt-primevue. @nuxt/ui provides `UModal` and form components that make the login UI straightforward.
 
 **`plugins/directus.ts`:**
+
 ```typescript
 import { createDirectus, authentication, rest } from '@directus/sdk'
 
@@ -160,6 +170,7 @@ export default defineNuxtPlugin(() => {
 ```
 
 **`middleware/auth.ts`:**
+
 ```typescript
 export default defineNuxtRouteMiddleware(async (to) => {
   const { $directus } = useNuxtApp()
@@ -174,6 +185,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 ```
 
 **Login form pattern using @nuxt/ui:**
+
 ```vue
 <template>
   <UForm :schema="schema" :state="state" @submit="onSubmit">
@@ -193,12 +205,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
 @nuxt/ui v3 provides `UApp` as the root wrapper (provides toast, tooltip, and modal contexts), `UNavigationMenu` for nav, and `UDashboardLayout` / `USidebar` for admin-style shells.
 
 **Key files:**
+
 - `layouts/default.vue` — wraps everything in `<UApp>`, composes sidebar + header + `<slot />`
 - `components/app/AppSidebar.vue` — uses `UNavigationMenu` with vertical orientation
 - `components/app/AppHeader.vue` — uses `UButton`, `UDropdownMenu`, `UAvatar`
 - `app.vue` — must include `<UApp>` at root for toast/modal to work globally
 
 **`layouts/default.vue` pattern:**
+
 ```vue
 <template>
   <UApp>
@@ -218,6 +232,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 ```
 
 **`app.vue` (if not using layouts):**
+
 ```vue
 <template>
   <UApp>
@@ -230,25 +245,25 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 ## Component Library
 
-| Generic UI concept | @nuxt/ui Component | Import |
-|--------------------|--------------------|--------|
-| Button | `UButton` | auto-imported |
-| DataTable | `UTable` | auto-imported |
-| Modal/Dialog | `UModal` | auto-imported |
-| Form Input | `UInput` | auto-imported |
-| Select/Dropdown | `USelectMenu` | auto-imported |
-| Navigation | `UNavigationMenu` | auto-imported |
-| Card | `UCard` | auto-imported |
+| Generic UI concept | @nuxt/ui Component      | Import        |
+| ------------------ | ----------------------- | ------------- |
+| Button             | `UButton`               | auto-imported |
+| DataTable          | `UTable`                | auto-imported |
+| Modal/Dialog       | `UModal`                | auto-imported |
+| Form Input         | `UInput`                | auto-imported |
+| Select/Dropdown    | `USelectMenu`           | auto-imported |
+| Navigation         | `UNavigationMenu`       | auto-imported |
+| Card               | `UCard`                 | auto-imported |
 | Toast/Notification | `useToast()` + `UToast` | auto-imported |
-| Date Picker | `UDatePicker` (v3) | auto-imported |
-| Command Palette | `UCommandPalette` | auto-imported |
-| Breadcrumb | `UBreadcrumb` | auto-imported |
-| Tabs | `UTabs` | auto-imported |
-| Badge | `UBadge` | auto-imported |
-| Avatar | `UAvatar` | auto-imported |
-| Form (wrapper) | `UForm` | auto-imported |
-| Form Field | `UFormField` | auto-imported |
-| Slider | `USlider` | auto-imported |
+| Date Picker        | `UDatePicker` (v3)      | auto-imported |
+| Command Palette    | `UCommandPalette`       | auto-imported |
+| Breadcrumb         | `UBreadcrumb`           | auto-imported |
+| Tabs               | `UTabs`                 | auto-imported |
+| Badge              | `UBadge`                | auto-imported |
+| Avatar             | `UAvatar`               | auto-imported |
+| Form (wrapper)     | `UForm`                 | auto-imported |
+| Form Field         | `UFormField`            | auto-imported |
+| Slider             | `USlider`               | auto-imported |
 
 All components are auto-imported by the `@nuxt/ui` Nuxt module — no manual imports needed.
 
@@ -265,15 +280,16 @@ Note: The CDN mock is a structural approximation only. Actual visual fidelity to
 ## Storybook Config
 
 ```yaml
-storybook_addon: "@storybook/nuxt"
+storybook_addon: '@storybook/nuxt'
 story_format: Vue SFC
-component_import: "@nuxt/ui"
+component_import: '@nuxt/ui'
 setup_file: .storybook/setup.ts
 ```
 
 `@storybook/nuxt` provides full Nuxt context (auto-imports, composables, plugins) inside stories. This is preferred over `@storybook/vue3` for @nuxt/ui because the module's auto-import system must be active.
 
 **`.storybook/main.ts`:**
+
 ```typescript
 export default {
   framework: '@storybook/nuxt',
@@ -283,6 +299,7 @@ export default {
 ```
 
 **Story example:**
+
 ```typescript
 // components/app/AppButton.stories.ts
 import type { Meta, StoryObj } from '@storybook/vue3'
@@ -319,6 +336,7 @@ For any custom tables outside Directus management, use SQL migration files in `m
 None. The Directus API is auto-generated from the collection schema.
 
 For TypeScript schema types with the Directus SDK:
+
 ```typescript
 // types/directus.ts
 export interface DirectusSchema {
@@ -348,6 +366,7 @@ Which `prog-expert-*` skills to look for:
 
 **2. Form validation via Zod + `UForm`:**
 @nuxt/ui's `UForm` accepts a `schema` prop with a Zod schema and automatically maps validation errors to field names. Always use Zod for form validation — do not use manual error state:
+
 ```typescript
 import { z } from 'zod'
 const schema = z.object({
@@ -364,8 +383,11 @@ const schema = z.object({
 
 **5. Slot-based component customization via `ui` prop:**
 Every @nuxt/ui component exposes granular slots and a `ui` prop for Tailwind class overrides. Always prefer the `ui` prop over global CSS overrides to avoid specificity issues:
+
 ```vue
-<UButton :ui="{ base: 'font-bold tracking-wide', leadingIcon: 'text-brand-500' }">
+<UButton
+  :ui="{ base: 'font-bold tracking-wide', leadingIcon: 'text-brand-500' }"
+>
   Custom Button
 </UButton>
 ```

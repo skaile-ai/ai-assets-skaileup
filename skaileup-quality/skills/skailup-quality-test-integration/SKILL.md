@@ -1,42 +1,42 @@
 ---
-name: skailup-quality-test-integration
-description: "Use when you need integration tests that verify API endpoints, data flow, and cross-feature interactions against a real database. Reads feature specs and data model to generate tests covering the full request-response cycle."
+name: skaileup-quality-test-integration
+description: 'Use when you need integration tests that verify API endpoints, data flow, and cross-feature interactions against a real database. Reads feature specs and data model to generate tests covering the full request-response cycle.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "testing"
-    - "integration"
-    - "api"
-    - "database"
-    - "endpoints"
-    - "data-flow"
-  source: "MIGRATED"
+    - 'testing'
+    - 'integration'
+    - 'api'
+    - 'database'
+    - 'endpoints'
+    - 'data-flow'
+  source: 'MIGRATED'
   subagent: true
   prerequisites:
     files:
-      - path: "package.json"
+      - path: 'package.json'
         gate: hard
-        description: "Source code with API endpoints must exist"
-      - path: "_concept/experience/features"
+        description: 'Source code with API endpoints must exist'
+      - path: '_concept/experience/features'
         gate: hard
-        description: "Feature specs required for API endpoint coverage"
+        description: 'Feature specs required for API endpoint coverage'
         min_entries: 1
-      - path: "_concept/blueprint/datamodel/model.json"
+      - path: '_concept/blueprint/datamodel/model.json'
         gate: hard
-        description: "Data model required for database operation test scenarios"
-      - path: ".env.example"
+        description: 'Data model required for database operation test scenarios'
+      - path: '.env.example'
         gate: hard
-        description: "Database connection info required (database must be accessible)"
+        description: 'Database connection info required (database must be accessible)'
     reads:
-      - path: "_concept/blueprint/datamodel/seed.json"
-        description: "Seed scenarios for test fixture data"
-      - path: "_concept/blueprint/techstack.md"
-        description: "Tech stack for test framework and API client selection"
-      - path: "_concept/testing/test_plan.md"
-        description: "Test plan for API test scenario coverage"
+      - path: '_concept/blueprint/datamodel/seed.json'
+        description: 'Seed scenarios for test fixture data'
+      - path: '_concept/blueprint/techstack.md'
+        description: 'Tech stack for test framework and API client selection'
+      - path: '_concept/testing/test_plan.md'
+        description: 'Test plan for API test scenario coverage'
     produces:
-      - path: "src"
-        description: "Integration test files covering API endpoints and data flows"
+      - path: 'src'
+        description: 'Integration test files covering API endpoints and data flows'
 ---
 
 # Test Integration — API & Data Flow Testing
@@ -66,6 +66,7 @@ cycle — from HTTP request through business logic to database mutation and resp
 ## Prerequisites
 
 **Hard gates:**
+
 1. Source code must exist with API endpoints (`server/api/`, `routes/`, or equivalent)
 2. Feature specs must exist in `_concept/experience/features/`
 3. Data model must exist at `_concept/blueprint/datamodel/model.json`
@@ -74,23 +75,24 @@ cycle — from HTTP request through business logic to database mutation and resp
 ## Shared Contracts
 
 Before starting, read:
-- `skaileup-shared/contracts/concept_structure.md` — valid _concept/ paths
+
+- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths
 - `skaileup-shared/contracts/frontmatter.md` — feature frontmatter fields
 - `skaileup-shared/contracts/seed_data.md` — scenario-based seed data convention
 - `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/experience/features/**/*.md` | Required |
+| Source                                    | Priority |
+| ----------------------------------------- | -------- |
+| `_concept/experience/features/**/*.md`    | Required |
 | `_concept/blueprint/datamodel/model.json` | Required |
-| `_concept/blueprint/datamodel/seed.json` | Required |
-| `_concept/blueprint/techstack.md` | Required |
-| API route source files | Required |
-| Existing test files (patterns) | Required |
-| `.env.example` | Required |
-| `_concept/testing/test_plan.md` | Optional |
+| `_concept/blueprint/datamodel/seed.json`  | Required |
+| `_concept/blueprint/techstack.md`         | Required |
+| API route source files                    | Required |
+| Existing test files (patterns)            | Required |
+| `.env.example`                            | Required |
+| `_concept/testing/test_plan.md`           | Optional |
 
 ## Workflow
 
@@ -225,16 +227,17 @@ describe('Data integrity: task entity', () => {
 
 Use each seed.json scenario:
 
-| Scenario | Test Purpose |
-|----------|-------------|
-| `empty` | API returns empty arrays, correct default states |
-| `single_user` | Basic operations with minimal data |
-| `populated` | CRUD operations on existing data |
-| `edge_cases` | Boundary values, max-length fields, special characters |
+| Scenario      | Test Purpose                                           |
+| ------------- | ------------------------------------------------------ |
+| `empty`       | API returns empty arrays, correct default states       |
+| `single_user` | Basic operations with minimal data                     |
+| `populated`   | CRUD operations on existing data                       |
+| `edge_cases`  | Boundary values, max-length fields, special characters |
 
 ### Phase 4: Run Tests
 
 Run integration tests. If tests fail:
+
 - **Missing tables/columns:** report migration gap
 - **Auth errors:** report auth setup issue
 - **Constraint violations:** likely a bug — report it
@@ -281,15 +284,15 @@ Run integration tests. If tests fail:
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Using mocks instead of real database | Integration tests use real database — that's the point |
-| Not resetting state between tests | Truncate or rollback after each test |
-| Hardcoding test data | Use seed.json scenarios for consistent, meaningful test data |
-| Testing only happy paths | Test field constraints, auth requirements, and error responses |
-| Ignoring cross-feature flows | model.json relationships reveal cross-feature data dependencies |
-| Using production database | Always use a separate test database or transaction rollback |
+| Mistake                              | What to do instead                                              |
+| ------------------------------------ | --------------------------------------------------------------- |
+| Using mocks instead of real database | Integration tests use real database — that's the point          |
+| Not resetting state between tests    | Truncate or rollback after each test                            |
+| Hardcoding test data                 | Use seed.json scenarios for consistent, meaningful test data    |
+| Testing only happy paths             | Test field constraints, auth requirements, and error responses  |
+| Ignoring cross-feature flows         | model.json relationships reveal cross-feature data dependencies |
+| Using production database            | Always use a separate test database or transaction rollback     |
 
-EMIT  [test-integration] started run_id=<uuid>
-EMIT  [test-integration] checkpoint feature=<name> tests=<N> passing=<N> failing=<N>
-EMIT  [test-integration] completed run_id=<uuid> features=<N> test_files=<N> tests_total=<N> endpoints_covered=<N> cross_feature_tests=<N>
+EMIT [test-integration] started run_id=<uuid>
+EMIT [test-integration] checkpoint feature=<name> tests=<N> passing=<N> failing=<N>
+EMIT [test-integration] completed run_id=<uuid> features=<N> test_files=<N> tests_total=<N> endpoints_covered=<N> cross_feature_tests=<N>

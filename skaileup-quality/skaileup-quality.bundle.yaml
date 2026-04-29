@@ -3,13 +3,13 @@ description: Quality assurance — audits, test generation, readiness gates, and
 version: 0.1.0
 dependencies:
   - contract:evaluate-contract
-  - skill:skailup-eval-code
-  - skill:skailup-test-plan
-  - skill:skailup-test-unit
-  - skill:skailup-test-integration
-  - skill:skailup-audit
-  - skill:skailup-ready
-  - skill:skailup-sync
-  - skill:skailup-compile-validators
-  - skill:skailup-e2e
+  - skill:skaileup-eval-code
+  - skill:skaileup-test-plan
+  - skill:skaileup-test-unit
+  - skill:skaileup-test-integration
+  - skill:skaileup-audit
+  - skill:skaileup-ready
+  - skill:skaileup-sync
+  - skill:skaileup-compile-validators
+  - skill:skaileup-e2e
   - agent:quality

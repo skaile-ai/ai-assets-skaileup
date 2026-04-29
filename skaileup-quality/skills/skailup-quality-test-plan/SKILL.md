@@ -1,57 +1,57 @@
 ---
-name: skailup-quality-test-plan
-description: "Use when you need a comprehensive test plan derived from concept specs. Generates test scenarios per feature covering happy paths, error states, edge cases, and permissions, mapped to seed data scenarios."
+name: skaileup-quality-test-plan
+description: 'Use when you need a comprehensive test plan derived from concept specs. Generates test scenarios per feature covering happy paths, error states, edge cases, and permissions, mapped to seed data scenarios.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "testing"
-    - "test-plan"
-    - "qa"
-    - "scenarios"
-    - "coverage"
-    - "acceptance"
-  source: "MIGRATED"
+    - 'testing'
+    - 'test-plan'
+    - 'qa'
+    - 'scenarios'
+    - 'coverage'
+    - 'acceptance'
+  source: 'MIGRATED'
   prerequisites:
     files:
-      - path: "_concept/experience/features"
+      - path: '_concept/experience/features'
         gate: hard
-        description: "Feature specs required to generate test scenarios"
+        description: 'Feature specs required to generate test scenarios'
         min_entries: 1
-      - path: "_concept/experience/screens"
+      - path: '_concept/experience/screens'
         gate: hard
-        description: "Screen specs required for UI state test coverage"
+        description: 'Screen specs required for UI state test coverage'
         min_entries: 1
-      - path: "_concept/blueprint/datamodel/model.json"
+      - path: '_concept/blueprint/datamodel/model.json'
         gate: hard
-        description: "Data model required for data validation test scenarios"
+        description: 'Data model required for data validation test scenarios'
     inputs_required:
       - id: test_scope
-        label: "Test Scope"
+        label: 'Test Scope'
         type: select
         options:
           - must-have-only
           - all-features
         default: all-features
-        hint: "Whether to generate test scenarios for must-have features only or all features"
+        hint: 'Whether to generate test scenarios for must-have features only or all features'
     reads:
-      - path: "_concept/blueprint/datamodel/seed.json"
-        description: "Seed scenarios for test fixture mapping"
-      - path: "_concept/experience/behaviors"
-        description: "Behavioral specs for state machine test coverage"
+      - path: '_concept/blueprint/datamodel/seed.json'
+        description: 'Seed scenarios for test fixture mapping'
+      - path: '_concept/experience/behaviors'
+        description: 'Behavioral specs for state machine test coverage'
     produces:
-      - path: "_concept/testing/test_plan.md"
-        description: "Structured test plan with scenarios per feature"
+      - path: '_concept/testing/test_plan.md'
+        description: 'Structured test plan with scenarios per feature'
   user_inputs:
     dialog:
-      - id: "test_scope"
-        label: "Test Scope"
-        type: "select"
+      - id: 'test_scope'
+        label: 'Test Scope'
+        type: 'select'
         options:
-          - "must-have-only"
-          - "all-features"
+          - 'must-have-only'
+          - 'all-features'
         required: true
-        default: "all-features"
-        hint: "Whether to generate test scenarios for must-have features only or all features"
+        default: 'all-features'
+        hint: 'Whether to generate test scenarios for must-have features only or all features'
     files: []
 ---
 
@@ -81,6 +81,7 @@ is a single plan file at `_concept/testing/test_plan.md`.
 ## Prerequisites
 
 **Hard gates:**
+
 1. Feature specs must exist in `_concept/experience/features/`
 2. Screen specs must exist in `_concept/experience/screens/`
 3. Data model must exist at `_concept/blueprint/datamodel/model.json`
@@ -90,7 +91,8 @@ Recommended (not blocking): `seed.json`, `experience/behaviors/*.allium`
 ## Shared Contracts
 
 Before starting, read:
-- `skaileup-shared/contracts/concept_structure.md` — valid _concept/ paths
+
+- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths
 - `skaileup-shared/contracts/frontmatter.md` — feature frontmatter fields
 - `skaileup-shared/contracts/feedback_loop.md` — cross-reference protocol
 - `skaileup-shared/contracts/seed_data.md` — scenario-based seed data convention
@@ -98,14 +100,14 @@ Before starting, read:
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
-| `_concept/discovery/brief.md` | Required |
-| `_concept/experience/features/**/*.md` | Required |
+| Source                                    | Priority |
+| ----------------------------------------- | -------- |
+| `_concept/discovery/brief.md`             | Required |
+| `_concept/experience/features/**/*.md`    | Required |
 | `_concept/blueprint/datamodel/model.json` | Required |
-| `_concept/blueprint/datamodel/seed.json` | Required |
-| `_concept/experience/screens/**/*.md` | Required |
-| `_concept/experience/behaviors/*.allium` | Optional |
+| `_concept/blueprint/datamodel/seed.json`  | Required |
+| `_concept/experience/screens/**/*.md`     | Required |
+| `_concept/experience/behaviors/*.allium`  | Optional |
 
 ## Workflow
 
@@ -119,6 +121,7 @@ Before starting, read:
 6. Read `_concept/experience/behaviors/*.allium` — behavioral rules (if exists)
 
 Apply `test_scope` filter:
+
 - `must-have-only`: include only features where `priority: must-have`
 - `all-features`: include all features regardless of priority
 
@@ -127,20 +130,26 @@ Apply `test_scope` filter:
 For each in-scope feature, produce four scenario categories:
 
 #### Happy Path
+
 What happens when everything works correctly.
+
 - One scenario per requirement checkbox in the feature spec
 - Map to `populated` seed data scenario
 - Include expected UI state from screen spec
 
 #### Error States
+
 What happens when things go wrong.
+
 - One scenario per error state documented in the feature spec
 - Include form validation failures (derive from model.json field constraints)
 - Include API error responses (network, auth, server)
 - Map to `edge_cases` seed data scenario where applicable
 
 #### Edge Cases
+
 Boundary conditions and unusual inputs.
+
 - Empty states (map to `empty` seed data scenario)
 - Maximum length inputs (derive from model.json field types)
 - Special characters in text fields
@@ -148,7 +157,9 @@ Boundary conditions and unusual inputs.
 - First-time user vs. returning user (map to `single_user` scenario)
 
 #### Permissions (if roles exist)
+
 Role-based access control scenarios.
+
 - One scenario per role defined in feature's `roles:` field
 - What each role CAN do (positive test)
 - What each role CANNOT do (negative test)
@@ -159,12 +170,12 @@ Role-based access control scenarios.
 For each scenario, specify which seed data scenario and entities to use:
 
 ```markdown
-| Scenario | Seed Scenario | Entities | Setup Notes |
-|----------|--------------|----------|-------------|
-| Login with valid creds | populated | user (admin@example.com) | Pre-seeded user |
-| Login with invalid creds | populated | — | Use wrong password |
-| Dashboard empty state | empty | — | No data seeded |
-| Task list overflow | edge_cases | task (100 items) | Pagination test |
+| Scenario                 | Seed Scenario | Entities                 | Setup Notes        |
+| ------------------------ | ------------- | ------------------------ | ------------------ |
+| Login with valid creds   | populated     | user (admin@example.com) | Pre-seeded user    |
+| Login with invalid creds | populated     | —                        | Use wrong password |
+| Dashboard empty state    | empty         | —                        | No data seeded     |
+| Task list overflow       | edge_cases    | task (100 items)         | Pagination test    |
 ```
 
 ### Step 4: Calculate Coverage Summary
@@ -187,7 +198,7 @@ Write `_concept/testing/test_plan.md`:
 ```yaml
 ---
 last_updated: YYYY-MM-DD
-scope: all-features  # or must-have-only
+scope: all-features # or must-have-only
 feature_count: N
 scenario_count: N
 seed_data_mapped: true
@@ -200,28 +211,36 @@ Structure the file:
 # Test Plan
 
 ## Scope
+
 [must-have-only | all-features] — N features, N scenarios
 
 ## Coverage Summary
+
 [table from Step 4]
 
 ## Feature: <Name>
+
 ### Happy Path
+
 - [ ] **Scenario name** — Description. Route: /path. Seed: populated.
-  Expected: [outcome]. Evidence: [what to check].
+      Expected: [outcome]. Evidence: [what to check].
 
 ### Error States
+
 - [ ] **Scenario name** — Description. Trigger: [how to cause error].
-  Expected: [error message/behavior].
+      Expected: [error message/behavior].
 
 ### Edge Cases
+
 - [ ] **Scenario name** — Description. Seed: edge_cases.
-  Expected: [outcome].
+      Expected: [outcome].
 
 ### Permissions
+
 - [ ] **Scenario name** — Role: admin. Expected: [access granted/denied].
 
 ## Seed Data Requirements
+
 [table from Step 3]
 ```
 
@@ -239,15 +258,15 @@ Show the coverage summary table and ask:
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Writing test code instead of a plan | This skill produces a markdown plan, not executable tests |
-| Ignoring seed.json scenarios | Map every scenario to a named seed data scenario |
-| Only testing happy paths | Require at least 1 error + 1 edge case per feature |
-| Inventing requirements not in specs | Every scenario must trace to a feature requirement or screen spec |
-| Skipping permissions when roles exist | If `roles:` has multiple entries, generate permission scenarios |
-| Testing nice-to-have when scope is must-have-only | Respect the `test_scope` user input |
+| Mistake                                           | What to do instead                                                |
+| ------------------------------------------------- | ----------------------------------------------------------------- |
+| Writing test code instead of a plan               | This skill produces a markdown plan, not executable tests         |
+| Ignoring seed.json scenarios                      | Map every scenario to a named seed data scenario                  |
+| Only testing happy paths                          | Require at least 1 error + 1 edge case per feature                |
+| Inventing requirements not in specs               | Every scenario must trace to a feature requirement or screen spec |
+| Skipping permissions when roles exist             | If `roles:` has multiple entries, generate permission scenarios   |
+| Testing nice-to-have when scope is must-have-only | Respect the `test_scope` user input                               |
 
-EMIT  [test-plan] started run_id=<uuid> scope=<scope>
-EMIT  [test-plan] checkpoint phase=scenarios_generated features=<N> scenarios=<N>
-EMIT  [test-plan] completed run_id=<uuid> output=_concept/testing/test_plan.md features=<N> scenarios=<N>
+EMIT [test-plan] started run_id=<uuid> scope=<scope>
+EMIT [test-plan] checkpoint phase=scenarios_generated features=<N> scenarios=<N>
+EMIT [test-plan] completed run_id=<uuid> output=\_concept/testing/test_plan.md features=<N> scenarios=<N>

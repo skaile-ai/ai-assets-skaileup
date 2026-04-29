@@ -1,5 +1,5 @@
 ---
-name: skailup-lab-learn
+name: skaileup-lab-learn
 description: Analyze skill usage observations and extract patterns, corrections, and test cases
 source: MERGED
 version: 1.0.0
@@ -14,6 +14,7 @@ writes_to: [learnings/, tests/cases/]
 Analyze observations from real skill usage and extract actionable learnings.
 
 Process:
+
 1. **Load observations** for the target skill
 2. **Identify patterns**:
    - Recurring corrections (old → new patterns, e.g., deprecated API usage)

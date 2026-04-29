@@ -1,23 +1,24 @@
 ---
-name: skailup-project-overview
-description: "Generate the discovery/ section of a meta-concept: ecosystem brief, unified goals, and competitive positioning for a multi-product project."
+name: skaileup-project-overview
+description: 'Generate the discovery/ section of a meta-concept: ecosystem brief, unified goals, and competitive positioning for a multi-product project.'
 source: MERGED
 version: 1.0.0
-keywords: [meta-concept, discovery, brief, goals, comparable, ecosystem, umbrella]
+keywords:
+  [meta-concept, discovery, brief, goals, comparable, ecosystem, umbrella]
 user_inputs:
   - key: PROJECT_ROOT
-    prompt: "Where is the shell repo root?"
+    prompt: 'Where is the shell repo root?'
     required: true
 reads_from:
   - contracts/meta-concept-contract/CONTRACT.md
-  - "{PROJECT_ROOT}/CLAUDE.md"
-  - "{PROJECT_ROOT}/_devlog/DEVLOG.md"
-  - "{PROJECT_ROOT}/**/CLAUDE.md"
+  - '{PROJECT_ROOT}/CLAUDE.md'
+  - '{PROJECT_ROOT}/_devlog/DEVLOG.md'
+  - '{PROJECT_ROOT}/**/CLAUDE.md'
 writes_to:
-  - "{PROJECT_ROOT}/_concept/discovery/brief.md"
-  - "{PROJECT_ROOT}/_concept/discovery/goals.md"
-  - "{PROJECT_ROOT}/_concept/discovery/comparable.md"
-  - "{PROJECT_ROOT}/_concept/discovery/brand/identity.md"
+  - '{PROJECT_ROOT}/_concept/discovery/brief.md'
+  - '{PROJECT_ROOT}/_concept/discovery/goals.md'
+  - '{PROJECT_ROOT}/_concept/discovery/comparable.md'
+  - '{PROJECT_ROOT}/_concept/discovery/brand/identity.md'
 ---
 
 # Project Concept: Overview
@@ -27,6 +28,7 @@ Generate the discovery layer of a multi-product umbrella concept.
 ## Prerequisites
 
 Read the meta-concept contract before proceeding:
+
 - `contracts/meta-concept-contract/CONTRACT.md`
 
 ## Process
@@ -34,6 +36,7 @@ Read the meta-concept contract before proceeding:
 ### Step 1: Gather Context
 
 Read the following to understand the ecosystem:
+
 - The shell repo's `CLAUDE.md` (project structure, submodules, conventions)
 - Each subsystem's `CLAUDE.md` (what it is, who it serves)
 - The `_devlog/DEVLOG.md` (recent evolution, architectural decisions)

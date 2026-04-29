@@ -1,12 +1,12 @@
 ---
 name: skaileup-quality
-description: "Code quality, testing, and readiness gates — static code audit, test generation at all levels (unit, integration, E2E), readiness checks, cross-reference repair, and validator compilation."
+description: 'Code quality, testing, and readiness gates — static code audit, test generation at all levels (unit, integration, E2E), readiness checks, cross-reference repair, and validator compilation.'
 type: domain
 building_blocks:
-  contracts: "n/a — to be populated after skill migration."
-  docs: "n/a — to be populated after skill migration."
-  skills: "Code audit, test plan, unit tests, integration tests, E2E tests, audit, readiness gate, cross-reference sync, and validator compilation skills."
-  tools: "n/a"
+  contracts: 'n/a — to be populated after skill migration.'
+  docs: 'n/a — to be populated after skill migration.'
+  skills: 'Code audit, test plan, unit tests, integration tests, E2E tests, audit, readiness gate, cross-reference sync, and validator compilation skills.'
+  tools: 'n/a'
 stage: alpha
 ---
 
@@ -18,26 +18,26 @@ Skills will be moved into this domain during the architecture reorganization (Ph
 
 ## Building Blocks
 
-| Folder | Purpose |
-|--------|---------|
+| Folder    | Purpose                      |
+| --------- | ---------------------------- |
 | `skills/` | Invocable skills (see below) |
 
 ## Skills (target)
 
-| Skill | Purpose |
-|-------|---------|
-| `skailup-eval-code/` | Static code audit against standards, patterns, and iron laws |
-| `skailup-test-plan/` | Generates a test plan from feature specs and acceptance criteria |
-| `skailup-test-unit/` | Generates and runs unit tests for a target package or module |
-| `skailup-test-integration/` | Generates and runs integration tests across module boundaries |
-| `skailup-e2e/` | Generates and runs end-to-end tests against running application scenarios |
-| `skailup-audit/` | Full quality audit combining code, test coverage, and standards compliance |
-| `skailup-ready/` | Readiness gate — checks all quality criteria before promotion |
-| `skailup-sync/` | Repairs cross-references and stale links across concept and implementation artifacts |
-| `skailup-compile-validators/` | Compiles skill output validators for automated quality checking |
+| Skill                          | Purpose                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| `skaileup-eval-code/`          | Static code audit against standards, patterns, and iron laws                         |
+| `skaileup-test-plan/`          | Generates a test plan from feature specs and acceptance criteria                     |
+| `skaileup-test-unit/`          | Generates and runs unit tests for a target package or module                         |
+| `skaileup-test-integration/`   | Generates and runs integration tests across module boundaries                        |
+| `skaileup-e2e/`                | Generates and runs end-to-end tests against running application scenarios            |
+| `skaileup-audit/`              | Full quality audit combining code, test coverage, and standards compliance           |
+| `skaileup-ready/`              | Readiness gate — checks all quality criteria before promotion                        |
+| `skaileup-sync/`               | Repairs cross-references and stale links across concept and implementation artifacts |
+| `skaileup-compile-validators/` | Compiles skill output validators for automated quality checking                      |
 
 ## Conventions
 
 - Quality skills operate on an existing implementation; run skaileup-build skills before invoking this domain.
-- `skailup-ready` is the gating skill — it must pass before a feature branch is merged or a pipeline stage is promoted.
-- `skailup-sync` is safe to run at any time; it does not modify implementation code, only cross-reference metadata.
+- `skaileup-ready` is the gating skill — it must pass before a feature branch is merged or a pipeline stage is promoted.
+- `skaileup-sync` is safe to run at any time; it does not modify implementation code, only cross-reference metadata.

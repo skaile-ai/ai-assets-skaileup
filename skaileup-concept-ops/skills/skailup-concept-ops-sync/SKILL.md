@@ -1,34 +1,34 @@
 ---
-name: skailup-concept-ops-sync
-description: "Use when cross-references in _concept/ are broken or out of sync. Scans the entire concept folder, finds broken links, missing bidirectional references, and orphaned entities, then shows a diff before applying fixes."
+name: skaileup-concept-ops-sync
+description: 'Use when cross-references in _concept/ are broken or out of sync. Scans the entire concept folder, finds broken links, missing bidirectional references, and orphaned entities, then shows a diff before applying fixes.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "sync"
-    - "cross-references"
-    - "repair"
-    - "links"
-    - "orphans"
-    - "consistency"
-    - "maintenance"
-  source: "MIGRATED"
+    - 'sync'
+    - 'cross-references'
+    - 'repair'
+    - 'links'
+    - 'orphans'
+    - 'consistency'
+    - 'maintenance'
+  source: 'MIGRATED'
   prerequisites:
     files:
-      - path: "_concept"
+      - path: '_concept'
         gate: hard
-        description: "_concept/ folder must exist to scan cross-references"
+        description: '_concept/ folder must exist to scan cross-references'
     reads:
-      - path: "_concept/experience/features"
-        description: "Feature files to check bidirectional links to screens"
-      - path: "_concept/experience/screens"
-        description: "Screen files to check implements: references back to features"
-      - path: "_concept/blueprint/datamodel/model.json"
-        description: "Data model to find orphaned entities without feature map entries"
-      - path: "_concept/blueprint/datamodel/feature_map.json"
-        description: "Feature map to repair model-to-feature cross-references"
+      - path: '_concept/experience/features'
+        description: 'Feature files to check bidirectional links to screens'
+      - path: '_concept/experience/screens'
+        description: 'Screen files to check implements: references back to features'
+      - path: '_concept/blueprint/datamodel/model.json'
+        description: 'Data model to find orphaned entities without feature map entries'
+      - path: '_concept/blueprint/datamodel/feature_map.json'
+        description: 'Feature map to repair model-to-feature cross-references'
     produces:
-      - path: "_concept"
-        description: "Repaired cross-reference fields across _concept/ files (shown as diff before applying)"
+      - path: '_concept'
+        description: 'Repaired cross-reference fields across _concept/ files (shown as diff before applying)'
 ---
 
 # Sync — Cross-Reference Repair
@@ -64,7 +64,8 @@ gardening mode because every change is previewed.
 ## Shared Contracts
 
 Before starting, read:
-- `skaileup-shared/contracts/concept_structure.md` — valid _concept/ paths and naming rules
+
+- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths and naming rules
 - `skaileup-shared/contracts/frontmatter.md` — required YAML fields per file type
 - `skaileup-shared/contracts/feedback_loop.md` — cross-reference protocol (authoritative source for link rules)
 - `skaileup-shared/contracts/golden_principles.md` — mechanical rules
@@ -72,14 +73,14 @@ Before starting, read:
 
 ## Context Budget
 
-| Source | Priority |
-|--------|----------|
+| Source                                               | Priority |
+| ---------------------------------------------------- | -------- |
 | `_concept/experience/features/**/*.md` (frontmatter) | Required |
-| `_concept/experience/screens/**/*.md` (frontmatter) | Required |
-| `_concept/blueprint/datamodel/model.json` | Required |
-| `_concept/blueprint/datamodel/feature_map.json` | Required |
-| `skaileup-shared/contracts/feedback_loop.md` | Required |
-| All other `_concept/**/*.md` (frontmatter only) | Optional |
+| `_concept/experience/screens/**/*.md` (frontmatter)  | Required |
+| `_concept/blueprint/datamodel/model.json`            | Required |
+| `_concept/blueprint/datamodel/feature_map.json`      | Required |
+| `skaileup-shared/contracts/feedback_loop.md`         | Required |
+| All other `_concept/**/*.md` (frontmatter only)      | Optional |
 
 ## Standalone Mode
 
@@ -104,10 +105,12 @@ Scan `_concept/` and build a complete artifact registry:
 ### Step 2: Check Bidirectional Links (Features ↔ Screens)
 
 For every feature file with `screens:` entries:
+
 - Does each referenced screen file exist?
 - Does that screen's `implements:` list this feature?
 
 For every screen file with `implements:` entries:
+
 - Does each referenced feature file exist?
 - Does that feature's `screens:` list this screen?
 
@@ -125,10 +128,12 @@ Produce a link table:
 ### Step 3: Check Data Model Links (feature_map.json + model.json → features)
 
 For each entry in `feature_map.json`:
+
 - Does the referenced feature file exist?
 - Does that feature's `data_entities:` include this entity name?
 
 For each entity in `model.json`:
+
 - Does its corresponding `feature_map.json` entry exist?
 
 ```
@@ -197,6 +202,7 @@ File: _concept/blueprint/datamodel/feature_map.json → entity "tag"
 > "Apply all fixes? Or select specific ones?"
 
 Options:
+
 - **Apply all** — apply every proposed change
 - **Select** — user picks which fixes to apply
 - **Skip** — do nothing, just save the report
@@ -204,6 +210,7 @@ Options:
 ### Step 8: Apply Fixes
 
 For each approved fix:
+
 1. Read the file
 2. Apply the frontmatter change
 3. Write the file
@@ -255,16 +262,16 @@ Remaining (user skipped or unsafe): N
 
 ## Common Mistakes
 
-| Mistake | What to do instead |
-|---------|-------------------|
-| Auto-fixing without showing diff | Always show the complete diff first and wait for approval |
-| Deleting orphaned entities | Report orphans but never delete — user may have future plans |
-| Creating missing files | Sync only repairs references, not missing content — suggest the right skill |
+| Mistake                                     | What to do instead                                                                |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| Auto-fixing without showing diff            | Always show the complete diff first and wait for approval                         |
+| Deleting orphaned entities                  | Report orphans but never delete — user may have future plans                      |
+| Creating missing files                      | Sync only repairs references, not missing content — suggest the right skill       |
 | Fixing frontmatter fields beyond cross-refs | Only fix cross-reference fields (screens, implements, data_entities, feature_map) |
-| Ignoring model.json / feature_map.json | Both are part of the cross-reference contract |
-| Running after partial pipeline | Warn the user if pipeline is incomplete — orphans may be expected |
+| Ignoring model.json / feature_map.json      | Both are part of the cross-reference contract                                     |
+| Running after partial pipeline              | Warn the user if pipeline is incomplete — orphans may be expected                 |
 
-EMIT  [sync] started run_id=<uuid>
-EMIT  [sync] checkpoint phase=scan_complete files=<N> issues=<N>
-EMIT  [sync] fix applied file=<path> action=<type>
-EMIT  [sync] completed run_id=<uuid> issues_found=<N> fixes_applied=<N> orphans_detected=<N>
+EMIT [sync] started run_id=<uuid>
+EMIT [sync] checkpoint phase=scan_complete files=<N> issues=<N>
+EMIT [sync] fix applied file=<path> action=<type>
+EMIT [sync] completed run_id=<uuid> issues_found=<N> fixes_applied=<N> orphans_detected=<N>

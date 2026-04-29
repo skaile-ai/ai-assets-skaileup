@@ -2,16 +2,16 @@
 
 ## What This Is
 
-All skaileup-* skills for the concept, build, and quality pipelines. Extracted from `ai-assets/` as a standalone submodule.
+All skaileup-\* skills for the concept, build, and quality pipelines. Extracted from `ai-assets/` as a standalone submodule.
 
-**GitHub:** `github.com/skaile-ai/ai-assets-skailup`
+**GitHub:** `github.com/skaile-ai/ai-assets-skaileup`
 
 ## Structure
 
 Skills are organized into domains. Each domain has a `DOMAIN.md` and contains skills under `skills/`.
 
 ```
-skaileup/                      ← base: meta-router (skailup) + build orchestrator (skailup-build)
+skaileup/                      ← base: meta-router (skaileup) + build orchestrator (skaileup-build)
 skaileup-grounding/            ← onboard dialog + web research + seed ingestion
 skaileup-discovery/            ← brief, goals, brand identity
 skaileup-experience/           ← journeys, features, screens, components
@@ -46,8 +46,8 @@ Shared contracts live in `skaileup-contracts/contracts/`. All skills reference t
 ## Naming Convention
 
 - **Domain directories:** `skaileup-<name>/` (with 'e')
-- **Skill directories:** `skailup-<name>/` (without 'e' — matches the CLI command prefix)
-- **Skill naming:** Skills follow the `skailup-<domain>-<function>` pattern (e.g., `skailup-discovery-brief`, `skailup-build-scaffold`). Exception: concept-ops skills that are already unambiguous keep short names (e.g., `skailup-review`, `skailup-eval-concept`).
+- **Skill directories:** `skaileup-<name>/` (without 'e' — matches the CLI command prefix)
+- **Skill naming:** Skills follow the `skaileup-<domain>-<function>` pattern (e.g., `skaileup-discovery-brief`, `skaileup-build-scaffold`). Exception: concept-ops skills that are already unambiguous keep short names (e.g., `skaileup-review`, `skaileup-eval-concept`).
 
 ## Reorganization Status
 
@@ -55,7 +55,7 @@ This repo was created by extracting and restructuring skaileup domains from `ai-
 
 - [x] Domain extraction from ai-assets
 - [x] Domain merges (onboard+research→grounding, standards→quality) and splits (blueprint→architecture+datamodel)
-- [x] Skill-level directory renames to `skailup-<domain>-<function>` pattern
+- [x] Skill-level directory renames to `skaileup-<domain>-<function>` pattern
 - [x] SKILL.md `name:` frontmatter updates
 - [x] New domain: `skaileup-build-supervised/` (extracted from build)
 - [x] Cross-domain moves: sync→concept-ops, compile-validators→lab, implement→skaileup base

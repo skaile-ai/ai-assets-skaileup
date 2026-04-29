@@ -2,4 +2,4 @@ name: skaileup-prototype
 description: Simple tangible prototypes — text-based mockup descriptions
 version: 0.1.0
 dependencies:
-  - skill:skailup-mock
+  - skill:skaileup-mock

@@ -1,31 +1,31 @@
 ---
-name: skailup-build-generate
-description: "PostXL code generation and conflict resolution. Runs PostXL generators from postxl-schema.json, auto-resolves merge conflicts using a four-level cascade, and verifies the build. Only applicable when using the PostXL tech stack. Re-run after any schema change or custom action addition."
+name: skaileup-build-generate
+description: 'PostXL code generation and conflict resolution. Runs PostXL generators from postxl-schema.json, auto-resolves merge conflicts using a four-level cascade, and verifies the build. Only applicable when using the PostXL tech stack. Re-run after any schema change or custom action addition.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "generate"
-    - "codegen"
-    - "postxl"
-    - "schema"
-    - "conflicts"
-    - "prisma"
-    - "regenerate"
-    - "sync"
-  source: "SAXE"
+    - 'generate'
+    - 'codegen'
+    - 'postxl'
+    - 'schema'
+    - 'conflicts'
+    - 'prisma'
+    - 'regenerate'
+    - 'sync'
+  source: 'SAXE'
   prerequisites:
     files:
-      - path: "postxl-schema.json"
+      - path: 'postxl-schema.json'
         gate: hard
-        description: "PostXL schema file required — this skill is PostXL-specific"
+        description: 'PostXL schema file required — this skill is PostXL-specific'
     reads:
-      - path: "_concept/blueprint/datamodel/model.json"
-        description: "Data model for sync-check between concept and PostXL schema"
-      - path: "postxl-lock.json"
-        description: "Lock file to detect schema drift and guide conflict resolution"
+      - path: '_concept/blueprint/datamodel/model.json'
+        description: 'Data model for sync-check between concept and PostXL schema'
+      - path: 'postxl-lock.json'
+        description: 'Lock file to detect schema drift and guide conflict resolution'
     produces:
-      - path: "src"
-        description: "Generated backend and frontend code from PostXL schema"
+      - path: 'src'
+        description: 'Generated backend and frontend code from PostXL schema'
 ---
 
 # Generate — PostXL Code Generation
@@ -54,84 +54,81 @@ and verifies the build. Keeps generated code synchronized with
 
 ---
 
-ROLE  Code generation agent — runs PostXL generators, resolves conflicts, verifies build.
+ROLE Code generation agent — runs PostXL generators, resolves conflicts, verifies build.
 
 READS
-  _concept/blueprint/datamodel/model.json   — authoritative concept schema (for sync check)
-  postxl-schema.json                            — project-root schema consumed by generators
-  postxl-lock.json                              — file-state tracking (generated/ejected/custom)
+\_concept/blueprint/datamodel/model.json — authoritative concept schema (for sync check)
+postxl-schema.json — project-root schema consumed by generators
+postxl-lock.json — file-state tracking (generated/ejected/custom)
 
 WRITES
-  postxl-schema.json                            — updated from concept when syncing
-  generated backend + frontend code             — via pnpm run generate
-  prisma migrations                             — via prisma migrate dev
+postxl-schema.json — updated from concept when syncing
+generated backend + frontend code — via pnpm run generate
+prisma migrations — via prisma migrate dev
 
-MUST  run Level 1 verification after every generation
-MUST  preserve custom blocks — never delete code between <<<<<<< Custom / >>>>>>> Custom markers
-MUST  commit generation results as a standalone commit
+MUST run Level 1 verification after every generation
+MUST preserve custom blocks — never delete code between <<<<<<< Custom / >>>>>>> Custom markers
+MUST commit generation results as a standalone commit
 NEVER overwrite ejected files without attempting intelligent merge first
 NEVER use --force without exhausting merge options
 NEVER leave unresolved conflict markers in committed code
-NEVER modify _concept/ files
+NEVER modify \_concept/ files
 
 EMIT [generate] started run_id=<uuid>
 
 # ── Workflow ──────────────────────────────────────────────────────
 
 STEP 1: Pre-flight
-  - Verify postxl-schema.json exists and is valid JSON
-  - Check postxl-lock.json (absent = first-time generation)
-  - Warn if uncommitted changes in working tree
-  IF project-root schema differs from _concept/blueprint/datamodel/model.json
-    - Ask user which version to use (concept is authoritative unless intentionally diverged)
+
+- Verify postxl-schema.json exists and is valid JSON
+- Check postxl-lock.json (absent = first-time generation)
+- Warn if uncommitted changes in working tree
+  IF project-root schema differs from \_concept/blueprint/datamodel/model.json
+  - Ask user which version to use (concept is authoritative unless intentionally diverged)
 
 STEP 2: Schema sync (if needed)
-  IF called after a concept schema update
-    - Copy concept model.json fields to project-root postxl-schema.json
-    - Diff old and new schemas: report new models, modified fields, removed entities
+IF called after a concept schema update - Copy concept model.json fields to project-root postxl-schema.json - Diff old and new schemas: report new models, modified fields, removed entities
 
 STEP 3: Run generators
-  $ pnpm run generate
-  - Categorize files: Created | Updated | Skipped (ejected) | Conflicted
+$ pnpm run generate
+
+- Categorize files: Created | Updated | Skipped (ejected) | Conflicted
 
 STEP 4: Resolve conflicts (four-level cascade)
-  Level 1 — Auto-resolve: generated-only files overwritten automatically
-  Level 2 — Preserve custom blocks: verify <<<<<<< Custom / >>>>>>> Custom markers survived
-  Level 3 — Intelligent merge (ejected files):
-    $ pnpm run generate --diff
-    - Accept generator structural changes (imports, type definitions)
-    - Preserve user business logic (function bodies, custom methods)
-  Level 4 — Escalate: present both versions for genuine design decisions
+Level 1 — Auto-resolve: generated-only files overwritten automatically
+Level 2 — Preserve custom blocks: verify <<<<<<< Custom / >>>>>>> Custom markers survived
+Level 3 — Intelligent merge (ejected files):
+$ pnpm run generate --diff - Accept generator structural changes (imports, type definitions) - Preserve user business logic (function bodies, custom methods)
+Level 4 — Escalate: present both versions for genuine design decisions
 
 STEP 5: Run Prisma migration (if schema changed)
-  $ pnpm prisma migrate dev --name <descriptive-name>
-  IF data loss risk
-    - Dev database: $ pnpm prisma migrate reset then re-seed
-    - Production-like: escalate to user
+$ pnpm prisma migrate dev --name <descriptive-name>
+IF data loss risk - Dev database: $ pnpm prisma migrate reset then re-seed - Production-like: escalate to user
 
 STEP 6: Verify build
-  $ pnpm run build && pnpm run lint && pnpm run test:types
-    UNTIL build passes
+$ pnpm run build && pnpm run lint && pnpm run test:types
+UNTIL build passes
 
 STEP 7: Commit
-  $ git add -A
-  $ git commit -m "generate: run PostXL generators (<summary>)"
+$ git add -A
+$ git commit -m "generate: run PostXL generators (<summary>)"
 
-  ```
-  Generation complete.
-  Schema: N models (X new, Y updated, Z unchanged)
-  Files: A created, B updated, C ejected (preserved), D conflicts resolved
-  Migration: <migration-name> applied
-  Build: passing
-  ```
+```
+Generation complete.
+Schema: N models (X new, Y updated, Z unchanged)
+Files: A created, B updated, C ejected (preserved), D conflicts resolved
+Migration: <migration-name> applied
+Build: passing
+```
 
 EMIT [generate] completed run_id=<uuid> models=<N> files_created=<A> files_updated=<B> conflicts_resolved=<D>
 
 CHECKLIST
-  - [ ] postxl-schema.json valid and in sync with concept
-  - [ ] pnpm run generate completed without errors
-  - [ ] Custom blocks survived regeneration
-  - [ ] Ejected file conflicts resolved
-  - [ ] Prisma migration applied (if schema changed)
-  - [ ] Build passes (build + lint + types)
-  - [ ] Generation committed as standalone commit
+
+- [ ] postxl-schema.json valid and in sync with concept
+- [ ] pnpm run generate completed without errors
+- [ ] Custom blocks survived regeneration
+- [ ] Ejected file conflicts resolved
+- [ ] Prisma migration applied (if schema changed)
+- [ ] Build passes (build + lint + types)
+- [ ] Generation committed as standalone commit

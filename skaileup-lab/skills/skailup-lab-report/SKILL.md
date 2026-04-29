@@ -1,5 +1,5 @@
 ---
-name: skailup-lab-report
+name: skaileup-lab-report
 description: Generate structured validation and improvement reports with trend analysis
 source: MERGED
 version: 1.0.0
@@ -14,6 +14,7 @@ writes_to: []
 Generate a structured report from validation and improvement results.
 
 Include:
+
 - **Summary**: skill name, timestamp, overall pass rate, average quality
 - **Per-case results**: case ID, gate status, quality score, duration, errors
 - **Regression analysis**: compare against previous runs, flag regressions

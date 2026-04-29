@@ -1,12 +1,12 @@
 ---
 name: skaileup-experience
-description: "Defining what users see and do — user journeys, feature specifications, behavioral specs, screen designs, and component catalogs."
+description: 'Defining what users see and do — user journeys, feature specifications, behavioral specs, screen designs, and component catalogs.'
 type: domain
 building_blocks:
-  contracts: "n/a — to be populated after skill migration."
-  docs: "n/a — to be populated after skill migration."
-  skills: "Journeys, features, behaviors, screens, technical screen specs, and component catalog skills."
-  tools: "n/a"
+  contracts: 'n/a — to be populated after skill migration.'
+  docs: 'n/a — to be populated after skill migration.'
+  skills: 'Journeys, features, behaviors, screens, technical screen specs, and component catalog skills.'
+  tools: 'n/a'
 stage: alpha
 ---
 
@@ -18,20 +18,20 @@ Skills will be moved into this domain during the architecture reorganization (Ph
 
 ## Building Blocks
 
-| Folder | Purpose |
-|--------|---------|
+| Folder    | Purpose                      |
+| --------- | ---------------------------- |
 | `skills/` | Invocable skills (see below) |
 
 ## Skills (target)
 
-| Skill | Purpose |
-|-------|---------|
-| `skailup-journeys/` | Maps end-to-end user journeys across the product |
-| `skailup-features/` | Defines feature specifications with acceptance criteria |
-| `skailup-behaviors/` | Specifies interaction behaviors, states, and edge cases |
-| `skailup-screens/` | Designs screen layouts and information architecture |
-| `skailup-screens-technical/` | Adds technical constraints and component bindings to screen designs |
-| `skailup-components/` | Catalogs reusable UI components and their variants |
+| Skill                         | Purpose                                                             |
+| ----------------------------- | ------------------------------------------------------------------- |
+| `skaileup-journeys/`          | Maps end-to-end user journeys across the product                    |
+| `skaileup-features/`          | Defines feature specifications with acceptance criteria             |
+| `skaileup-behaviors/`         | Specifies interaction behaviors, states, and edge cases             |
+| `skaileup-screens/`           | Designs screen layouts and information architecture                 |
+| `skaileup-screens-technical/` | Adds technical constraints and component bindings to screen designs |
+| `skaileup-components/`        | Catalogs reusable UI components and their variants                  |
 
 ## Conventions
 

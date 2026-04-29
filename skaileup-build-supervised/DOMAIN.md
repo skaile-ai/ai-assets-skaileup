@@ -14,16 +14,16 @@ Use this domain when the developer wants structured, step-by-step control over t
 
 ## Skills
 
-| Skill | Path | What It Does | When to Use |
-|---|---|---|---|
-| `skailup-supervised` | `skills/skailup-supervised/` | Orchestrator for the supervised build flow | Starting a supervised implementation session |
-| `skailup-supervised-git-prepare` | `skills/skailup-supervised-git-prepare/` | Create feature branch, set up worktree | First step of supervised build |
-| `skailup-supervised-brainstorm` | `skills/skailup-supervised-brainstorm/` | Explore approaches, identify trade-offs | After git prep, before planning |
-| `skailup-supervised-plan` | `skills/skailup-supervised-plan/` | Write implementation plan with checkpoints | After brainstorming, before coding |
-| `skailup-supervised-finish` | `skills/skailup-supervised-finish/` | Finalize branch: squash, clean up, prepare PR | After implementation is complete |
+| Skill                             | Path                                      | What It Does                                  | When to Use                                  |
+| --------------------------------- | ----------------------------------------- | --------------------------------------------- | -------------------------------------------- |
+| `skaileup-supervised`             | `skills/skaileup-supervised/`             | Orchestrator for the supervised build flow    | Starting a supervised implementation session |
+| `skaileup-supervised-git-prepare` | `skills/skaileup-supervised-git-prepare/` | Create feature branch, set up worktree        | First step of supervised build               |
+| `skaileup-supervised-brainstorm`  | `skills/skaileup-supervised-brainstorm/`  | Explore approaches, identify trade-offs       | After git prep, before planning              |
+| `skaileup-supervised-plan`        | `skills/skaileup-supervised-plan/`        | Write implementation plan with checkpoints    | After brainstorming, before coding           |
+| `skaileup-supervised-finish`      | `skills/skaileup-supervised-finish/`      | Finalize branch: squash, clean up, prepare PR | After implementation is complete             |
 
 ## Notes
 
-- Each skill in this domain is a discrete phase — the orchestrator (`skailup-supervised`) chains them but pauses for human approval between phases.
-- The supervised flow is an alternative to `skailup-build` (autonomous). Choose supervised when the change is high-risk, cross-cutting, or the developer wants to review each step.
+- Each skill in this domain is a discrete phase — the orchestrator (`skaileup-supervised`) chains them but pauses for human approval between phases.
+- The supervised flow is an alternative to `skaileup-build` (autonomous). Choose supervised when the change is high-risk, cross-cutting, or the developer wants to review each step.
 - Git operations use worktrees by default to avoid disrupting the main working directory.

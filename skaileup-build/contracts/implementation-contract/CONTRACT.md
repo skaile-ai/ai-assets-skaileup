@@ -1,8 +1,8 @@
 ---
-name: "implementation-contract"
-description: "Shared contract for all skaileup-implementation skills. Describes _implementation/ folder layout, scaffold-to-verify pipeline, progress.json format, git workflow, and how implementation reads from _concept/. REQUIRED reading for any implementation skill."
+name: 'implementation-contract'
+description: 'Shared contract for all skaileup-implementation skills. Describes _implementation/ folder layout, scaffold-to-verify pipeline, progress.json format, git workflow, and how implementation reads from _concept/. REQUIRED reading for any implementation skill.'
 metadata:
-  stage: "alpha"
+  stage: 'alpha'
   do_not_invoke: true
 ---
 
@@ -15,7 +15,7 @@ metadata:
 This contract covers artifacts and conventions that are **implementation-specific**.
 Conventions shared with `skaileup-conceptualization` (semantic types, pipeline graph, plans format) live in `skaileup-shared/contracts/`.
 
-## Prerequisites from _concept/
+## Prerequisites from \_concept/
 
 Implementation reads the following before starting:
 
@@ -28,7 +28,7 @@ _concept/experience/screens/**/*.md           ← screen specs (for verification
 ? _concept/blueprint/architecture.md
 ```
 
-## _implementation/ Folder Layout
+## \_implementation/ Folder Layout
 
 ```
 _implementation/
@@ -59,17 +59,17 @@ _implementation/
 
 ## Pipeline Phase Structure
 
-| Phase | Group | Skills involved |
-|-------|-------|-----------------|
-| Orchestrate | `00_orchestrator` | orchestrator (drives all phases) |
-| Setup | `10_setup` | foundation, scaffold, infrastructure |
-| Features | `20_features` | feature (per-feature TDD loop), page |
-| Verify | `30_verify` | verify (spec compliance + quality gate) |
-| Utilities | `utilities` | migrate, seed, scaffold, generate |
+| Phase       | Group             | Skills involved                         |
+| ----------- | ----------------- | --------------------------------------- |
+| Orchestrate | `00_orchestrator` | orchestrator (drives all phases)        |
+| Setup       | `10_setup`        | foundation, scaffold, infrastructure    |
+| Features    | `20_features`     | feature (per-feature TDD loop), page    |
+| Verify      | `30_verify`       | verify (spec compliance + quality gate) |
+| Utilities   | `utilities`       | migrate, seed, scaffold, generate       |
 
 ## Expert Skill Discovery
 
-During implementation, skills search for matching `skailup-prog-expert-*` skills:
+During implementation, skills search for matching `skaileup-prog-expert-*` skills:
 
 1. Read `_concept/blueprint/techstack.md`
 2. Search paths: `.claude/skills/`, `.agents/skills/`, paths in `pipeline.json` `config.expert_search_paths`
@@ -88,16 +88,19 @@ During implementation, skills search for matching `skailup-prog-expert-*` skills
 ## Implementation Plan: <App Name>
 
 ### Stack
+
 - Framework: <framework>
 - Profile: <profile>
 
 ### Phases
+
 - [x] scaffold — completed YYYY-MM-DD
 - [x] foundation — completed YYYY-MM-DD
 - [ ] feature/user_auth — in_progress
 - [ ] feature/dashboard — not_started
-...
+      ...
 
 ### Decisions
+
 ### Blockers
 ```

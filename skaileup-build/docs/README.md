@@ -4,19 +4,18 @@ This domain covers the full implementation lifecycle: project scaffolding, featu
 
 ## Skill Groups
 
-| Group | Path | Purpose |
-|---|---|---|
-| **skailup-implement** | `skills/skailup-implement/` | Implementation pipeline controller |
-| **setup** | `skills/setup/` | Project scaffold, foundation setup, infrastructure |
-| **skailup-implement-feature** | `skills/skailup-implement-feature/` | Per-feature implementation (TDD-first) |
-| **skailup-update-starlight-docs** | `skills/skailup-update-starlight-docs/` | Starlight documentation updates |
-| **utilities** | `skills/utilities/` | Migration, seed data, code generation |
+| Group                              | Path                                     | Purpose                                            |
+| ---------------------------------- | ---------------------------------------- | -------------------------------------------------- |
+| **skaileup-implement**             | `skills/skaileup-implement/`             | Implementation pipeline controller                 |
+| **setup**                          | `skills/setup/`                          | Project scaffold, foundation setup, infrastructure |
+| **skaileup-implement-feature**     | `skills/skaileup-implement-feature/`     | Per-feature implementation (TDD-first)             |
+| **skaileup-update-starlight-docs** | `skills/skaileup-update-starlight-docs/` | Starlight documentation updates                    |
+| **utilities**                      | `skills/utilities/`                      | Migration, seed data, code generation              |
 
 ## CF vs Saxe Variants
 
 - `cf/` variants are stack-agnostic
 - `saxe/` variants are PostXL/NestJS-specific
-
 
 ## Key Patterns
 
@@ -28,6 +27,7 @@ This domain covers the full implementation lifecycle: project scaffolding, featu
 ## Output
 
 Skills write to the project codebase. The implementation structure (from Saxe) is:
+
 ```
 _implementation/
 ├── decisions/     → ADRs and tech decisions

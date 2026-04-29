@@ -1,21 +1,21 @@
 ---
-name: skailup-build-docs
-description: "Use after completing an implementation step to verify and update Starlight documentation. Detects git-changed files, resolves which doc pages cover them via _sources frontmatter, checks accuracy, and rewrites stale sections. Run automatically at the end of implement-feature, scaffold, foundation, infrastructure, or any coding step."
+name: skaileup-build-docs
+description: 'Use after completing an implementation step to verify and update Starlight documentation. Detects git-changed files, resolves which doc pages cover them via _sources frontmatter, checks accuracy, and rewrites stale sections. Run automatically at the end of implement-feature, scaffold, foundation, infrastructure, or any coding step.'
 metadata:
-  version: "1.0.0"
+  version: '1.0.0'
   tags:
-    - "documentation"
-    - "starlight"
-    - "docs-sync"
-    - "post-implementation"
-    - "verification"
+    - 'documentation'
+    - 'starlight'
+    - 'docs-sync'
+    - 'post-implementation'
+    - 'verification'
   stage: alpha
   requires:
     - implementation-contract
   reads_from:
-    - "docs/"
+    - 'docs/'
   writes_to:
-    - "docs/"
+    - 'docs/'
 ---
 
 <!-- TODO: This skill currently assumes Starlight/Astro. Refactor to support
@@ -47,30 +47,30 @@ have no documentation coverage and scaffolds doc pages for them.
 
 ---
 
-ROLE  Documentation guardian — ensures Starlight docs stay in sync with source code after every implementation step.
+ROLE Documentation guardian — ensures Starlight docs stay in sync with source code after every implementation step.
 
 READS
-  git diff / git log                                   — detect changed files since last doc sync
-  docs/src/content/docs/**/*.{md,mdx}                  — existing doc pages (read _sources frontmatter)
-  <package>/docs/**/*.{md,mdx}                         — package-level doc pages
-  source files referenced by _sources                  — current state of documented code
+git diff / git log — detect changed files since last doc sync
+docs/src/content/docs/**/\*.{md,mdx} — existing doc pages (read \_sources frontmatter)
+<package>/docs/**/\*.{md,mdx} — package-level doc pages
+source files referenced by \_sources — current state of documented code
 
 WRITES
-  docs/src/content/docs/**/*.{md,mdx}                  — updated doc pages (content + _sources metadata)
-  <package>/docs/**/*.{md,mdx}                         — updated package doc pages
+docs/src/content/docs/**/\*.{md,mdx} — updated doc pages (content + \_sources metadata)
+<package>/docs/**/\*.{md,mdx} — updated package doc pages
 
 REFERENCES
-  skaileup-shared/contracts/concept_structure.md             — canonical paths
-  docs/astro.config.mjs                                — sidebar structure and registered packages
-  ai-assets/skaileup-shared/contracts/doc_tracking.md    — shared tracking conventions (_sources schema, @doc: annotations, staleness protocol)
+skaileup-shared/contracts/concept_structure.md — canonical paths
+docs/astro.config.mjs — sidebar structure and registered packages
+ai-assets/skaileup-shared/contracts/doc_tracking.md — shared tracking conventions (\_sources schema, @doc: annotations, staleness protocol)
 
-MUST  preserve existing frontmatter fields (title, description, badge, template, hero)
-MUST  only add/update _sources, _source_hash, _last_synced fields in frontmatter
-MUST  never remove content that is still accurate
-MUST  verify claims against actual source code before rewriting
-MUST  use git to determine the change scope — never scan the entire codebase blindly
+MUST preserve existing frontmatter fields (title, description, badge, template, hero)
+MUST only add/update \_sources, \_source_hash, \_last_synced fields in frontmatter
+MUST never remove content that is still accurate
+MUST verify claims against actual source code before rewriting
+MUST use git to determine the change scope — never scan the entire codebase blindly
 NEVER invent documentation for code you haven't read
-NEVER modify auto-generated resource catalog pages (resources/**)
+NEVER modify auto-generated resource catalog pages (resources/\*\*)
 NEVER remove frontmatter fields that Starlight requires (title, description)
 
 # ── Frontmatter Convention ─────────────────────────────────────────────
@@ -79,7 +79,7 @@ The skill uses **custom frontmatter fields** in Starlight doc pages to track
 source-code relationships. Starlight ignores unknown frontmatter fields, so
 these are invisible to the rendered site but machine-readable for this skill.
 
-## _sources Field
+## \_sources Field
 
 Maps source files and directories to the doc sections they inform:
 
@@ -88,30 +88,30 @@ Maps source files and directories to the doc sections they inform:
 title: Page Title
 description: Page description.
 _sources:
-  - path: "agent-framework/cli/src/commands/run.ts"
-    sections: ["## Run Command", "## Flags"]
-    description: "run command implementation"
-  - path: "agent-framework/cli/src/commands/flow.ts"
-    sections: ["## Flow Commands"]
-    description: "flow list/show commands"
-  - path: "agent-framework/runner/src/runner.ts"
-    sections: ["## Architecture"]
-    description: "runner core logic"
-_source_hash: "a1b2c3d4"
-_last_synced: "2026-03-25"
+  - path: 'agent-framework/cli/src/commands/run.ts'
+    sections: ['## Run Command', '## Flags']
+    description: 'run command implementation'
+  - path: 'agent-framework/cli/src/commands/flow.ts'
+    sections: ['## Flow Commands']
+    description: 'flow list/show commands'
+  - path: 'agent-framework/runner/src/runner.ts'
+    sections: ['## Architecture']
+    description: 'runner core logic'
+_source_hash: 'a1b2c3d4'
+_last_synced: '2026-03-25'
 ---
 ```
 
 ### Field Definitions
 
-| Field | Type | Description |
-|---|---|---|
-| `_sources` | array | List of source file/directory mappings |
-| `_sources[].path` | string | Relative path from monorepo root to source file or directory |
-| `_sources[].sections` | string[] | Markdown heading anchors in this doc that cover this source |
-| `_sources[].description` | string | What aspect of the source is documented here |
-| `_source_hash` | string | Short hash of the combined source content at last sync (first 8 chars of SHA-256) |
-| `_last_synced` | string | ISO date of last documentation sync (YYYY-MM-DD) |
+| Field                    | Type     | Description                                                                       |
+| ------------------------ | -------- | --------------------------------------------------------------------------------- |
+| `_sources`               | array    | List of source file/directory mappings                                            |
+| `_sources[].path`        | string   | Relative path from monorepo root to source file or directory                      |
+| `_sources[].sections`    | string[] | Markdown heading anchors in this doc that cover this source                       |
+| `_sources[].description` | string   | What aspect of the source is documented here                                      |
+| `_source_hash`           | string   | Short hash of the combined source content at last sync (first 8 chars of SHA-256) |
+| `_last_synced`           | string   | ISO date of last documentation sync (YYYY-MM-DD)                                  |
 
 ### Reverse Lookup
 
@@ -124,80 +124,52 @@ rg -l "path:.*agent-framework/cli/src/commands/run.ts" docs/ --glob "*.md"
 # ── Workflow ───────────────────────────────────────────────────────────
 
 STEP 1: Determine change scope
-  - Run `git diff --name-only HEAD~1..HEAD` (or the range since last sync)
-  - If on a feature branch: `git diff --name-only main...HEAD`
-  - Collect all changed/added/deleted source files
-  - Filter out non-documentable files: tests, configs, lockfiles, .gitignore, etc.
-  - Group changes by package (derive from first path segment)
+
+- Run `git diff --name-only HEAD~1..HEAD` (or the range since last sync)
+- If on a feature branch: `git diff --name-only main...HEAD`
+- Collect all changed/added/deleted source files
+- Filter out non-documentable files: tests, configs, lockfiles, .gitignore, etc.
+- Group changes by package (derive from first path segment)
   EMIT [update-starlight-docs] scope packages=<list> files_changed=<n>
 
 STEP 2: Find affected doc pages
-  - For each changed file, search all doc pages for matching `_sources[].path`
-  - Build a map: { doc_page → [changed_source_files] }
-  - Also check: are there changed files with NO doc page coverage?
+
+- For each changed file, search all doc pages for matching `_sources[].path`
+- Build a map: { doc_page → [changed_source_files] }
+- Also check: are there changed files with NO doc page coverage?
   IF uncovered files found
-    - Flag them for STEP 5 (new page scaffolding)
+  - Flag them for STEP 5 (new page scaffolding)
 
 STEP 3: Check documentation accuracy
-  FOR EACH affected doc page:
-    - Read the doc page content
-    - Read each changed source file listed in its `_sources`
-    - For each `_sources` entry, locate the `sections` in the doc
-    - Compare the documented behavior/API/structure against the actual source code
-    - Classify each section as:
-      - CURRENT: documentation matches source code
-      - STALE: documentation describes outdated behavior, API, or structure
-      - MISSING: section header exists but content is empty or placeholder
-      - BROKEN: documented file/function/export no longer exists
-    - Record findings per section
+FOR EACH affected doc page: - Read the doc page content - Read each changed source file listed in its `_sources` - For each `_sources` entry, locate the `sections` in the doc - Compare the documented behavior/API/structure against the actual source code - Classify each section as: - CURRENT: documentation matches source code - STALE: documentation describes outdated behavior, API, or structure - MISSING: section header exists but content is empty or placeholder - BROKEN: documented file/function/export no longer exists - Record findings per section
 
 STEP 4: Update stale documentation
-  FOR EACH section classified as STALE, MISSING, or BROKEN:
-    IF STALE
-      - Rewrite the section to match current source code
-      - Preserve the heading level and position in the document
-      - Keep the same writing style and detail level as surrounding content
-    IF MISSING
-      - Write new content based on the source code
-      - Match the style of the rest of the page
-    IF BROKEN
-      - If the source was renamed: update `_sources[].path` and section content
-      - If the source was deleted: remove the section and its `_sources` entry
-      - If a function/export was removed: remove or update the reference
-  AFTER all updates:
-    - Recompute `_source_hash` from current source file contents
-    - Update `_last_synced` to today's date
-    - Write the updated doc page
+FOR EACH section classified as STALE, MISSING, or BROKEN:
+IF STALE - Rewrite the section to match current source code - Preserve the heading level and position in the document - Keep the same writing style and detail level as surrounding content
+IF MISSING - Write new content based on the source code - Match the style of the rest of the page
+IF BROKEN - If the source was renamed: update `_sources[].path` and section content - If the source was deleted: remove the section and its `_sources` entry - If a function/export was removed: remove or update the reference
+AFTER all updates: - Recompute `_source_hash` from current source file contents - Update `_last_synced` to today's date - Write the updated doc page
 
 STEP 5: Scaffold documentation for uncovered changes
-  FOR EACH changed file with no doc page coverage:
-    - Determine if the change is significant enough to warrant documentation:
-      - New public API, new command, new module, new component → YES
-      - Internal refactor, test file, config tweak → NO
-    IF documentation warranted:
-      - Find the most appropriate existing doc page to add a section to
-        (prefer expanding an existing page over creating a new one)
-      - If no suitable page exists, scaffold a new page:
-        - Use the package's `docs/` directory structure convention
-        - Add Starlight frontmatter with title, description
-        - Add `_sources` entries pointing to the new files
-        - Write initial content based on the source code
-      - Add the `_sources` entry to the chosen/new page
-    IF documentation NOT warranted:
-      - Skip silently (internal changes don't need docs)
+FOR EACH changed file with no doc page coverage: - Determine if the change is significant enough to warrant documentation: - New public API, new command, new module, new component → YES - Internal refactor, test file, config tweak → NO
+IF documentation warranted: - Find the most appropriate existing doc page to add a section to
+(prefer expanding an existing page over creating a new one) - If no suitable page exists, scaffold a new page: - Use the package's `docs/` directory structure convention - Add Starlight frontmatter with title, description - Add `_sources` entries pointing to the new files - Write initial content based on the source code - Add the `_sources` entry to the chosen/new page
+IF documentation NOT warranted: - Skip silently (internal changes don't need docs)
 
 STEP 6: Validate cross-references
-  - Check all internal links in updated pages (`./path`, `/slug/`)
-  - Verify linked pages still exist
-  - Check code examples in docs still compile/match actual signatures
+
+- Check all internal links in updated pages (`./path`, `/slug/`)
+- Verify linked pages still exist
+- Check code examples in docs still compile/match actual signatures
   IF broken links found
-    - Fix or flag them in the completion summary
+  - Fix or flag them in the completion summary
 
 STEP 7: Verify sidebar registration
-  - For any NEW doc pages created in Step 5:
-    - Check if the page's parent directory is covered by `autogenerate` in astro.config.mjs
-    - If not auto-generated, flag that a manual sidebar entry is needed
-  EMIT [update-starlight-docs] completed pages_checked=<n> pages_updated=<n> pages_created=<n>
+
+- For any NEW doc pages created in Step 5:
+  - Check if the page's parent directory is covered by `autogenerate` in astro.config.mjs
+  - If not auto-generated, flag that a manual sidebar entry is needed
+    EMIT [update-starlight-docs] completed pages_checked=<n> pages_updated=<n> pages_created=<n>
 
 # ── Source Hash Computation ────────────────────────────────────────────
 
@@ -243,18 +215,19 @@ re-reading and comparing all content.
 
 This skill is designed to run as the final step after any implementation skill:
 
-| Trigger Skill | What to Check |
-|---|---|
-| `scaffold` | New package docs needed? Setup instructions accurate? |
-| `foundation` | Auth, theme, layout docs reflect actual implementation? |
-| `infrastructure` | API endpoints, middleware, database schema documented? |
-| `implement-feature` | Feature behavior, component API, routes documented? |
-| `implement-feature-page` | Page component props, slots, events documented? |
-| `migrate` | Schema changes reflected in data model docs? |
+| Trigger Skill            | What to Check                                           |
+| ------------------------ | ------------------------------------------------------- |
+| `scaffold`               | New package docs needed? Setup instructions accurate?   |
+| `foundation`             | Auth, theme, layout docs reflect actual implementation? |
+| `infrastructure`         | API endpoints, middleware, database schema documented?  |
+| `implement-feature`      | Feature behavior, component API, routes documented?     |
+| `implement-feature-page` | Page component props, slots, events documented?         |
+| `migrate`                | Schema changes reflected in data model docs?            |
 
 ## Completion Summary
 
 Present to user:
+
 - Number of doc pages checked
 - Number of sections updated (with before/after summary)
 - New pages created (with paths)
@@ -263,13 +236,13 @@ Present to user:
 
 ## Common Mistakes
 
-| Rationalization | Reality |
-|---|---|
-| "The code is self-documenting" | Users read docs, not source. Always check. |
-| "I'll just regenerate the whole page" | Preserve existing prose, style, and structure. Only update stale sections. |
-| "This internal change doesn't need docs" | Check if it affects public API or behavior before skipping. |
-| "The auto-generated catalog covers this" | Catalog pages cover skills/agents/flows, not package documentation. |
-| "I'll add _sources later" | Always add _sources on first touch — it's the index for future syncs. |
+| Rationalization                          | Reality                                                                    |
+| ---------------------------------------- | -------------------------------------------------------------------------- |
+| "The code is self-documenting"           | Users read docs, not source. Always check.                                 |
+| "I'll just regenerate the whole page"    | Preserve existing prose, style, and structure. Only update stale sections. |
+| "This internal change doesn't need docs" | Check if it affects public API or behavior before skipping.                |
+| "The auto-generated catalog covers this" | Catalog pages cover skills/agents/flows, not package documentation.        |
+| "I'll add \_sources later"               | Always add \_sources on first touch — it's the index for future syncs.     |
 
 ## Integration
 
