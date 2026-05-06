@@ -1,5 +1,5 @@
 ---
-name: skaileup-build-foundation
+name: impl-build-foundation
 description: 'Applies the three foundational layers every app needs before feature work: brand tokens → CSS variables, authentication setup, and app shell layout. Also seeds initial data and configures Storybook with brand theme if present. Reads the tech stack profile for stack-specific recipes. Run after scaffold, before implement-feature.'
 metadata:
   version: '1.0.0'

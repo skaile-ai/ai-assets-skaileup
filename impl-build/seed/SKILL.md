@@ -1,5 +1,5 @@
 ---
-name: skaileup-build-seed
+name: impl-build-seed
 description: 'Generates seed scripts from seed.json. Reads seed.json scenarios (empty, single_user, populated, edge_cases) and generates executable seed scripts for the chosen stack (Prisma, Drizzle, raw SQL, etc.). Each scenario is independently runnable. Run after migrate.'
 metadata:
   version: '1.0.0'

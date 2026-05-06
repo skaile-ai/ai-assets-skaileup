@@ -1,5 +1,5 @@
 ---
-name: skaileup-build-feature-page
+name: impl-slice-implement-page
 description: 'Page-level feature implementation with TDD Guard. Implements all features within one page using outside-in TDD: writes failing page tests, then for each feature writes failing feature tests and implements until green. Uses storybook page compositions as UI starting point if available. TDD Guard enforces red-green discipline at the feature level.'
 metadata:
   version: '1.0.0'

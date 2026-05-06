@@ -1,5 +1,5 @@
 ---
-name: skaileup-build-generate
+name: impl-build-generate
 description: 'PostXL code generation and conflict resolution. Runs PostXL generators from postxl-schema.json, auto-resolves merge conflicts using a four-level cascade, and verifies the build. Only applicable when using the PostXL tech stack. Re-run after any schema change or custom action addition.'
 metadata:
   version: '1.0.0'

@@ -1,5 +1,5 @@
 ---
-name: skaileup-build-feature
+name: impl-slice-implement
 description: 'Journey-first feature orchestrator with TDD Guard. Builds features by walking user journeys outside-in (hero → vital → hygiene from stories.json), writing failing journey e2e tests first, then delegating page-by-page implementation to the implement-feature-page sub-skill. Can also implement a single feature standalone using the feature_id input.'
 metadata:
   version: '1.0.0'
