@@ -169,7 +169,7 @@ See `feedback_loop.md` for the full cross-reference protocol.
 
 When a flow node has `"subagent": true`:
 1. Orchestrator creates a fresh agent context
-2. Context includes ONLY: the skill's SKILL.md, required `skaileup-shared/` contracts, input `_concept/` folders
+2. Context includes ONLY: the skill's SKILL.md, required `skaileup-contracts/` contracts, input `_concept/` folders
 3. **Paste the full task text verbatim into the subagent prompt** — never ask the subagent to read the plan file
 4. Subagent runs to completion and reports one of four statuses (see Implementer Status Report below)
 5. Orchestrator handles the status and collects output artifacts

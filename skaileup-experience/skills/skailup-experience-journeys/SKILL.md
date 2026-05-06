@@ -71,8 +71,8 @@ are _derived_ from stories, not invented from scratch.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md`,
-`skaileup-shared/contracts/frontmatter.md`, and `skaileup-shared/contracts/acceptance_criteria.md`
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
+`skaileup-contracts/contracts/frontmatter.md`, and `skaileup-contracts/contracts/acceptance_criteria.md`
 before proceeding.
 
 **Hard gate:** `_concept/discovery/brief.md` must exist and be non-empty.
@@ -111,17 +111,17 @@ WRITES
 \_concept/experience/journeys/stories.json — personas, story maps, acceptance criteria
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — valid \_concept/ paths and naming rules
-skaileup-shared/contracts/frontmatter.md — required YAML fields
-skaileup-shared/contracts/acceptance_criteria.md — EARS patterns and AC rules
-skaileup-shared/contracts/stories_schema.json — JSON Schema for stories.json validation
+skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths and naming rules
+skaileup-contracts/contracts/frontmatter.md — required YAML fields
+skaileup-contracts/contracts/acceptance_criteria.md — EARS patterns and AC rules
+skaileup-contracts/contracts/stories_schema.json — JSON Schema for stories.json validation
 references/ears_format.md — EARS syntax patterns and examples
 references/journey_stages.md — hero / vital / hygiene / backlog definitions
 
 MUST produce exactly one hero story map — the single most important user journey
 MUST write EARS acceptance criteria for every story (minimum 2 per hero story, 1 per other)
 MUST derive personas from brief audience and research (when available)
-MUST validate stories.json against skaileup-shared/contracts/stories_schema.json before writing
+MUST validate stories.json against skaileup-contracts/contracts/stories_schema.json before writing
 MUST include downstream hints (candidate_features, candidate_entities, candidate_screens) for every story
 MUST set status: proposed on all new stories
 NEVER write feature files, screen specs, data models, or any artifact outside experience/journeys/
@@ -242,7 +242,7 @@ OUTPUT \_concept/experience/journeys/stories.json
 }]
 }
 
-- Validate against skaileup-shared/contracts/stories_schema.json
+- Validate against skaileup-contracts/contracts/stories_schema.json
 
 EMIT [journeys] checkpoint phase=stories_written personas=<N> story_maps=<N> stories=<total>
 
@@ -282,7 +282,7 @@ CHECKLIST
 - [ ] Hero journey approved by user before remaining journeys were mapped
 - [ ] Every story has at least one EARS acceptance criterion
 - [ ] Every story has downstream hints (candidate_features, candidate_entities, candidate_screens)
-- [ ] stories.json validates against skaileup-shared/contracts/stories_schema.json
+- [ ] stories.json validates against skaileup-contracts/contracts/stories_schema.json
 - [ ] Priority distribution: hero stories are must, backlog stories are could or wont
 - [ ] Summary table shown and user has explicitly approved
 

@@ -5,7 +5,7 @@ Naming rules and format specifications for `model.dbml`, `model.json`,
 
 ## Naming Rules
 
-All naming follows `skaileup-shared/contracts/golden_principles.md`.
+All naming follows `skaileup-contracts/contracts/golden_principles.md`.
 
 | Element | Convention | Example |
 |---------|-----------|---------|
@@ -51,7 +51,7 @@ Enum task_status {
 }
 ```
 
-Use semantic types from `skaileup-shared/contracts/semantic_types.md`. Never use SQL types.
+Use semantic types from `skaileup-contracts/contracts/semantic_types.md`. Never use SQL types.
 
 ## model.json Format
 
@@ -137,7 +137,7 @@ for User ↔ Project). Do not use implicit join tables.
 
 ## seed.json Format
 
-See `skaileup-shared/contracts/seed_data.md` for the authoritative format.
+See `skaileup-contracts/contracts/seed_data.md` for the authoritative format.
 
 Key rules:
 - Entity keys: singular snake_case (`"user"`, `"task"`, `"project_member"`)

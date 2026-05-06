@@ -114,8 +114,8 @@ e2e-screenshots/\*_/_.png — per-journey step screenshots
 ? e2e-test-report.md — optional full markdown report
 
 REFERENCES
-skaileup-shared/contracts/seed_data.md — seed scenario format and data quality rules
-skaileup-shared/contracts/feedback_loop.md — how to update feature last_updated after testing
+skaileup-contracts/contracts/seed_data.md — seed scenario format and data quality rules
+skaileup-contracts/contracts/feedback_loop.md — how to update feature last_updated after testing
 references/report_template.md — report format, seed usage, responsive breakpoints, DB validation
 
 REQUIRES

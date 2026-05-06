@@ -4,7 +4,7 @@ Detailed check tables and severity classifications for the review skill.
 
 ## Pipeline Structure Checks (Step 1)
 
-Uses `skaileup-shared/contracts/concept_structure.md` for expected phase-grouped paths.
+Uses `skaileup-contracts/contracts/concept_structure.md` for expected phase-grouped paths.
 
 | Check | How | Severity if failing |
 |-------|-----|---------------------|
@@ -29,7 +29,7 @@ Uses `skaileup-shared/contracts/concept_structure.md` for expected phase-grouped
 
 ## Frontmatter Compliance (Step 2)
 
-For every `.md` file in `_concept/`, verify against `skaileup-shared/contracts/frontmatter.md`:
+For every `.md` file in `_concept/`, verify against `skaileup-contracts/contracts/frontmatter.md`:
 
 | Check | Field | Severity |
 |-------|-------|----------|
@@ -54,7 +54,7 @@ For every `.md` file in `_concept/`, verify against `skaileup-shared/contracts/f
 
 ## Golden Principles (Step 3)
 
-For every applicable rule in `skaileup-shared/contracts/golden_principles.md`:
+For every applicable rule in `skaileup-contracts/contracts/golden_principles.md`:
 
 | Rule | How to check | Severity |
 |------|-------------|----------|

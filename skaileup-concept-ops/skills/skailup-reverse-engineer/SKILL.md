@@ -158,11 +158,11 @@ Before starting:
 
 Before starting, read:
 
-- `skaileup-shared/contracts/concept_structure.md` — canonical `_concept/` paths and naming rules
-- `skaileup-shared/contracts/frontmatter.md` — required YAML fields
-- `skaileup-shared/contracts/semantic_types.md` — stack-independent types (data model output uses these)
-- `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-shared/contracts/agent_patterns.md` — communication style, standalone mode
+- `skaileup-contracts/contracts/concept_structure.md` — canonical `_concept/` paths and naming rules
+- `skaileup-contracts/contracts/frontmatter.md` — required YAML fields
+- `skaileup-contracts/contracts/semantic_types.md` — stack-independent types (data model output uses these)
+- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
+- `skaileup-contracts/contracts/agent_patterns.md` — communication style, standalone mode
 
 ## Context Budget
 
@@ -394,7 +394,7 @@ Read in priority order:
 For each entity/model found:
 
 - Extract field names and types
-- Map framework types → semantic types (see `skaileup-shared/contracts/semantic_types.md`):
+- Map framework types → semantic types (see `skaileup-contracts/contracts/semantic_types.md`):
   - `String` → `string`, `Int`/`Float` → `number`, `Boolean` → `boolean`
   - `DateTime` → `datetime`, `Json`/`jsonb` → `json`, `@id` fields → `uuid`
   - `@relation` → `relation`, `String @db.Text` → `richtext`, file fields → `image`/`file`
@@ -594,7 +594,7 @@ EMIT [reverse-engineer] completed run_id=<uuid> artifacts_written=<N> needs_revi
 | "I'll generate seed data from the test fixtures"                                      | Yes — use fixture data for the `populated` scenario. But also generate the other three required scenarios (`empty`, `single_user`, `edge_cases`).                                   |
 | "The entities in the ORM map 1:1 to features"                                         | Features and entities are not 1:1. Group entities by the user-facing feature they serve. Infrastructure entities (sessions, audit logs) belong to their closest functional feature. |
 | "I can skip screens — the features already cover the routes"                          | Screens are separate artifacts. Features describe intent; screens describe layout, data binding, and states. Both are required for downstream design and testing skills.            |
-| "I'll use the ORM's native types in model.dbml"                                       | Translate to semantic types from `skaileup-shared/contracts/semantic_types.md`. Stack-specific types belong in stack translations, not the core model.                              |
+| "I'll use the ORM's native types in model.dbml"                                       | Translate to semantic types from `skaileup-contracts/contracts/semantic_types.md`. Stack-specific types belong in stack translations, not the core model.                              |
 | "There are no comparables mentioned, I'll suggest some"                               | Never fabricate comparables. Write "No comparables documented in repository." and mark as `needs_review`.                                                                           |
 | "I found all these API routes so I'll list them in the feature requirements"          | Routes are evidence, not output. Feature requirements must describe user-facing behavior only.                                                                                      |
 | "I'll include the SSE event types / EventEmitter details since they were in the code" | Strip all backend implementation details from feature files. Document what the user experiences, not how it is implemented.                                                         |

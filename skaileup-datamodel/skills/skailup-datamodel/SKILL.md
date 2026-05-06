@@ -83,7 +83,7 @@ produces a stack-independent data model using semantic types. It outputs:
 - `seed.json` — scenario-based test data (empty, single_user, populated, edge_cases)
 - `feature_map.json` — model-to-feature cross-reference
 
-The model uses **semantic types** (from `skaileup-shared/contracts/semantic_types.md`), not
+The model uses **semantic types** (from `skaileup-contracts/contracts/semantic_types.md`), not
 SQL types. Stack translation (Prisma, Directus schema, SQL DDL) is a separate on-request step.
 
 ## When to Use
@@ -100,9 +100,9 @@ SQL types. Stack translation (Prisma, Directus schema, SQL DDL) is a separate on
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md`,
-`skaileup-shared/contracts/semantic_types.md`, `skaileup-shared/contracts/golden_principles.md`,
-`skaileup-shared/contracts/feedback_loop.md`, and `skaileup-shared/contracts/seed_data.md`.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
+`skaileup-contracts/contracts/semantic_types.md`, `skaileup-contracts/contracts/golden_principles.md`,
+`skaileup-contracts/contracts/feedback_loop.md`, and `skaileup-contracts/contracts/seed_data.md`.
 
 **Hard gates:**
 
@@ -151,14 +151,14 @@ WRITES
 \_concept/experience/features/\*_/_.md — feedback loop: data_entities[] populated
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — valid \_concept/ paths and naming rules
-skaileup-shared/contracts/semantic_types.md — stack-independent field type catalog
-skaileup-shared/contracts/golden_principles.md — naming rules: snake_case fields, PascalCase enums, \_id suffix
-skaileup-shared/contracts/feedback_loop.md — cross-reference protocol (features ↔ datamodel)
-skaileup-shared/contracts/seed_data.md — scenario format and data quality rules
+skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths and naming rules
+skaileup-contracts/contracts/semantic_types.md — stack-independent field type catalog
+skaileup-contracts/contracts/golden_principles.md — naming rules: snake_case fields, PascalCase enums, \_id suffix
+skaileup-contracts/contracts/feedback_loop.md — cross-reference protocol (features ↔ datamodel)
+skaileup-contracts/contracts/seed_data.md — scenario format and data quality rules
 references/model_conventions.md — DBML + model.json template, naming rules, feature_map format
 
-MUST use semantic types from skaileup-shared/contracts/semantic_types.md — not SQL types
+MUST use semantic types from skaileup-contracts/contracts/semantic_types.md — not SQL types
 MUST follow naming rules from golden_principles.md (snake_case fields, PascalCase enum values, \_id relation suffix)
 MUST produce all four outputs: model.dbml, model.json, seed.json, feature_map.json
 MUST trace every entity back to at least one feature in feature_map.json
@@ -268,7 +268,7 @@ OUTPUT _concept/blueprint/datamodel/model.json
 
 STEP 5: Write seed data
 
-- Read skaileup-shared/contracts/seed_data.md for scenario format and quality rules
+- Read skaileup-contracts/contracts/seed_data.md for scenario format and quality rules
 - Write seed.json using canonical format (singular snake_case entity keys, PascalCase enum values)
 - Must include all four scenarios: empty, single_user, populated, edge_cases
 - Add "permissions" scenario if the app has role-based features
@@ -277,7 +277,7 @@ STEP 5: Write seed data
 - IDs must be consistent across entities (relations must resolve)
 
 OUTPUT \_concept/blueprint/datamodel/seed.json
-See skaileup-shared/contracts/seed_data.md for full format and examples.
+See skaileup-contracts/contracts/seed_data.md for full format and examples.
 
 STEP 6: Write feature_map.json
 

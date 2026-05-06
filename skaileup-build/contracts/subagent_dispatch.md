@@ -3,7 +3,7 @@
 Detailed specification for the Implementer Status Report and escalation paths used by
 `implement-supervised`. Referenced by all skills in this domain.
 
-This contract extends `skaileup-shared/contracts/agent_patterns.md` Pattern: Subagent Dispatch
+This contract extends `skaileup-contracts/contracts/agent_patterns.md` Pattern: Subagent Dispatch
 with concrete prompt templates and orchestrator handling logic.
 
 ---

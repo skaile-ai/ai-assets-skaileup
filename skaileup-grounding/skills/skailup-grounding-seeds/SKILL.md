@@ -62,7 +62,7 @@ what the user has already provided.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md` before starting.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` before starting.
 
 **Hard gate:** `_concept/_grounding/onboarding/profile.yaml` must exist.
 
@@ -73,7 +73,7 @@ what the user has already provided.
 | Must read       | `_concept/_grounding/onboarding/profile.yaml`                        | Yes                       |
 | Must scan       | `_concept/_seeds/`                                                   | Yes                       |
 | Read if present | `_concept/concept.yaml`                                              | No (merge, not overwrite) |
-| Must read       | `skaileup-shared/contracts/concept_structure.md`                     | Yes                       |
+| Must read       | `skaileup-contracts/contracts/concept_structure.md`                     | Yes                       |
 | Never load      | `_concept/discovery/`, `_concept/experience/`, `_concept/blueprint/` | —                         |
 
 ## Standalone Mode
@@ -95,7 +95,7 @@ WRITES
 \_concept/concept.yaml — updated manifest with seed entries
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths and artifact slots
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths and artifact slots
 
 MUST read profile.yaml before classifying any file — project_type affects classification
 MUST assign a seed_state to every file (seed, seed-partial, seed-reference)

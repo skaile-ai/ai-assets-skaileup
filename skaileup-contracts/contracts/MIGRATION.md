@@ -173,9 +173,9 @@ if _concept/A_01_*/ exists inside features/ → legacy letter+number groups
 |---|---|---|---|
 | Skill catalog (hard_gates, user_inputs, folder) | Centralized in one file | Centralized in one file | **Distributed into flow nodes** — each node carries its own metadata |
 | Execution order / dependency graph | Embedded in steps[] | Explicit depends_on arrays | **Already in flows** via edges — not needed in pipeline.json |
-| Phases taxonomy | Named objects with sub-phases and orders | Simple arrays of step IDs | **Remains in flows** as group nodes + `skaileup-shared/contracts/flows.md` |
+| Phases taxonomy | Named objects with sub-phases and orders | Simple arrays of step IDs | **Remains in flows** as group nodes + `skaileup-contracts/contracts/flows.md` |
 | Feedback loops (machine-readable) | `feedback_loops[]` top-level array | `feedback_loops[]` top-level array | **Moved to flow node `feedback` field** per-skill |
-| Global runtime config | `config` section (standalone_mode, grounding_mode, standards_mode) | Not present | **Moved to `skaileup-shared/agent-config.json`** |
+| Global runtime config | `config` section (standalone_mode, grounding_mode, standards_mode) | Not present | **Moved to `skaileup-contracts/agent-config.json`** |
 | `grounding_mode.step_folders` mapping | Central lookup table | Not present | **Moved to flow node `grounding_folder` field** per-skill |
 | Implementation pipeline | Embedded as steps with phase:implementation | Explicit `implementation_pipeline[]` | **Already in mvp.json and other flows** |
 | Post-pipeline / incremental | Embedded as steps with phase:quality | `post_pipeline[]` + `incremental[]` | **Already in flows** as separate flow files |
@@ -189,21 +189,21 @@ if _concept/A_01_*/ exists inside features/ → legacy letter+number groups
 | `steps[].folder` | flow node `data.writes` |
 | `steps[].description` | flow node `data.label` + SKILL.md Overview |
 | `feedback_loops[]` | flow node `data.feedback` |
-| `config.standalone_mode` | `skaileup-shared/agent-config.json` |
-| `config.grounding_mode` (global) | `skaileup-shared/agent-config.json` |
+| `config.standalone_mode` | `skaileup-contracts/agent-config.json` |
+| `config.grounding_mode` (global) | `skaileup-contracts/agent-config.json` |
 | `config.grounding_mode.step_folders` | flow node `data.grounding_folder` |
-| `config.standards_mode` | `skaileup-shared/agent-config.json` |
-| `config.orchestrator_skill` | `skaileup-shared/agent-config.json` |
+| `config.standards_mode` | `skaileup-contracts/agent-config.json` |
+| `config.orchestrator_skill` | `skaileup-contracts/agent-config.json` |
 
 ### New files created
 
 | File | Purpose |
 |---|---|
-| `skaileup-shared/agent-config.json` | Global runtime config (standalone_mode, grounding, standards, orchestrator IDs) |
-| `skaileup-shared/contracts/flows.md` | Contract explaining the flow system, how to read/write flows |
+| `skaileup-contracts/agent-config.json` | Global runtime config (standalone_mode, grounding, standards, orchestrator IDs) |
+| `skaileup-contracts/contracts/flows.md` | Contract explaining the flow system, how to read/write flows |
 | `skaileup-conceptualization/flows/flow.schema.json` | Updated JSON schema with writes, requires, user_inputs, feedback, grounding_folder |
 | `skaileup-conceptualization/flows/mvp.json` | Reference implementation — fully enriched with all new node fields |
-| `skaileup-shared/contracts/skill_template.md` | Updated — removed all pipeline.json references, uses flow node fields |
+| `skaileup-contracts/contracts/skill_template.md` | Updated — removed all pipeline.json references, uses flow node fields |
 
 ### Migration note for remaining flow files
 
@@ -272,8 +272,8 @@ Source: ADOPT_SAXE — no CF equivalent.
 |---|---|---|
 | Examples use `postxl-schema.json`, `pxl validate`, `@postxl/cli` | Stack-agnostic examples (`model.json`, `bun run validate:model`) | PostXL is one output target, not the canonical layer |
 | EMIT skill IDs: `[implement-1-setup-1-scaffold]` (path-based) | EMIT skill IDs: `[scaffold]` (canonical name) | Skills are referenced by canonical name globally |
-| REFERENCES point to `shared/contracts/` (legacy path) | REFERENCES point to `skaileup-shared/contracts/` | Updated to monorepo structure |
-| Enforcement script: `shared/scripts/validate_skill_rules.py` | `skaileup-shared/scripts/validate_skill_rules.py` | Updated path |
+| REFERENCES point to `shared/contracts/` (legacy path) | REFERENCES point to `skaileup-contracts/contracts/` | Updated to monorepo structure |
+| Enforcement script: `shared/scripts/validate_skill_rules.py` | `skaileup-contracts/scripts/validate_skill_rules.py` | Updated path |
 | PROCEDURE example uses snapshot mechanism | PROCEDURE example uses `validate_cross_refs` | Snapshot mechanism is deprecated |
 
 ### Content unchanged
@@ -413,7 +413,7 @@ Source: ADOPT_CF — no Saxe equivalent.
 | Expert Discovery | `cf__shared/pipeline.json expert_search_paths` → monorepo structure | `dev-implementation-experts-js/` + `dev-implementation-experts-python/`; advisor skill added |
 | Expert Discovery | `prog-expert-*` skill naming → `skaileup-implementation-expert-<tech>` | Matches actual monorepo skill directory names |
 | Path refs | `05_techstack/stack.md`, `03_features/` | `blueprint/techstack.md`, `experience/features/` |
-| `cf__shared/` refs | `cf__shared/` | `skaileup-shared/` |
+| `cf__shared/` refs | `cf__shared/` | `skaileup-contracts/` |
 
 ### Content unchanged
 
@@ -439,8 +439,8 @@ Source: MERGED — CF variant + Saxe variant.
 | Final approval | Simple confirmation | Summary table with counts | **Summary table kept** — more informative |
 | Downstream field names | `entities`, `screens` (short form) | `candidate_entities`, `candidate_screens` | **`candidate_*` prefix** — more explicit, consistent |
 | EMIT prefix | `[journeys]` (inferred) | `[concept-2-experience-1-journeys]` | **`[journeys]`** — canonical name |
-| REFERENCES path | `shared/contracts/` | `shared/contracts/` | **`skaileup-shared/contracts/`** |
-| Script path | n/a | `../shared/scripts/` | **`skaileup-shared/scripts/`** (4 levels up) |
+| REFERENCES path | `shared/contracts/` | `shared/contracts/` | **`skaileup-contracts/contracts/`** |
+| Script path | n/a | `../shared/scripts/` | **`skaileup-contracts/scripts/`** (4 levels up) |
 
 ### Content adopted from each source
 
@@ -924,7 +924,7 @@ Source: MERGED — CF + Saxe variants.
 
 | Skill | Change |
 |---|---|
-| `migrate` | Canonical paths: `blueprint/datamodel/`, `blueprint/`, `skaileup-shared/contracts/`. Expert skills from `dev-implementation-experts-*`. |
+| `migrate` | Canonical paths: `blueprint/datamodel/`, `blueprint/`, `skaileup-contracts/contracts/`. Expert skills from `dev-implementation-experts-*`. |
 | `seed` | Same path updates as migrate. |
 | `generate` | Saxe adopted unchanged. Marked explicitly PostXL-specific. `postxl-schema.json` sync note with `model.json`. |
 | `utilities/scaffold` | Merged into `10_setup/scaffold` — overlap resolved. |
@@ -944,7 +944,7 @@ Source: MERGED — CF + Saxe variants.
 | Sub-agents | 3 parallel (Logic, UI/UX, Security) | 3 parallel (identical scope) | **Adopted verbatim** — both identical |
 | Structure check | When `_concept/` exists | When `_concept/` exists | **Kept** — both identical |
 | Schema reference | None | `postxl-schema.json` | **Dropped** — structure check uses canonical paths |
-| Contract refs | `cf__shared/` | `shared/contracts/` | **`skaileup-shared/contracts/`** |
+| Contract refs | `cf__shared/` | `shared/contracts/` | **`skaileup-contracts/contracts/`** |
 | Offer fixes | Present | Present | **Kept** |
 | Event prefix | `[cf_quality_audit]` | `[app-audit]` | **`[audit]`** — canonical |
 
@@ -960,7 +960,7 @@ Source: MERGED — CF + Saxe variants.
 | `status: tested` | Updates `impl_status: tested` in feature frontmatter | Updates `status: tested` | **Dropped** — update `last_updated` only (status globally removed) |
 | MUST/NEVER rules | Implicit in prose | Explicit DSL block | **Saxe's explicit rules adopted** |
 | Event prefix | `[cf_test_e2e]` | `[app-e2e]` | **`[e2e]`** — canonical |
-| Contract refs | `cf__shared/` | `shared/contracts/` | **`skaileup-shared/contracts/`** |
+| Contract refs | `cf__shared/` | `shared/contracts/` | **`skaileup-contracts/contracts/`** |
 
 ### ready
 
@@ -981,11 +981,11 @@ Source: MERGED — CF + Saxe variants.
 | Dimension | Saxe (only source) | Merged |
 |---|---|---|
 | Skill name | `compile-validators` | **`compile-validators`** — unchanged |
-| Script path | `shared/scripts/validator_lib.py` | **`skaileup-shared/scripts/validator_lib.py`** |
-| Contract path | `shared/contracts/skill_grammar.md` | **`skaileup-shared/contracts/skill_grammar.md`** |
+| Script path | `shared/scripts/validator_lib.py` | **`skaileup-contracts/scripts/validator_lib.py`** |
+| Contract path | `shared/contracts/skill_grammar.md` | **`skaileup-contracts/contracts/skill_grammar.md`** |
 | Skill paths | `skills/<category>/<skill>/` | **`ai-assets/<domain>/skills/<skill>/`** or `ai-assets/<domain>/skills/<group>/<skill>/` |
 | sys.path depth | `parents[3]` (fixed 3-level nesting) | **Variable** — 3 for flat skills, 4 for grouped skills |
-| JSON Schema path | `skills/shared/contracts/stories_schema.json` | **`ai-assets/skaileup-shared/contracts/stories_schema.json`** |
+| JSON Schema path | `skills/shared/contracts/stories_schema.json` | **`ai-assets/skaileup-contracts/contracts/stories_schema.json`** |
 
 ---
 

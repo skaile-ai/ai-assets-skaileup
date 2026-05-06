@@ -13,7 +13,7 @@ metadata:
 ## Scope
 
 This contract covers artifacts and conventions that are **implementation-specific**.
-Conventions shared with `skaileup-conceptualization` (semantic types, pipeline graph, plans format) live in `skaileup-shared/contracts/`.
+Conventions shared with `skaileup-conceptualization` (semantic types, pipeline graph, plans format) live in `skaileup-contracts/contracts/`.
 
 ## Prerequisites from \_concept/
 

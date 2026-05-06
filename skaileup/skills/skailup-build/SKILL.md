@@ -107,9 +107,9 @@ This delivers a working end-to-end flow early and reduces integration surprises.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md`,
-`skaileup-shared/contracts/plans.md`, `skaileup-shared/contracts/iron_laws.md`, and
-`skaileup-shared/contracts/golden_principles.md` before starting.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
+`skaileup-contracts/contracts/plans.md`, `skaileup-contracts/contracts/iron_laws.md`, and
+`skaileup-contracts/contracts/golden_principles.md` before starting.
 
 **Hard gates (must exist):**
 
@@ -161,10 +161,10 @@ WRITES
 LEARNINGS.md — learnings journal (append)
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-shared/contracts/plans.md — PLANS.md format
-skaileup-shared/contracts/iron_laws.md — non-negotiable constraints
-skaileup-shared/contracts/golden_principles.md — entity naming and structure rules
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
+skaileup-contracts/contracts/plans.md — PLANS.md format
+skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
+skaileup-contracts/contracts/golden_principles.md — entity naming and structure rules
 references/output_templates.md — plan presentation, completion messages
 references/procedures.md — log_learnings, update_progress, eval_feature_gate
 
@@ -219,7 +219,7 @@ STEP 4: Build implementation plan
 - Prepend infrastructure tasks: migrations, seed, auth, brand/theme, app shell layout
   IF architecture.md has custom_modules beyond standard
   - Add infrastructure sub-phase (between foundation and features)
-- Write \_implementation/PLANS.md (see skaileup-shared/contracts/plans.md format)
+- Write \_implementation/PLANS.md (see skaileup-contracts/contracts/plans.md format)
 - Write \_implementation/progress.json with all features in pending status
 - Write \_implementation/decisions.md with header
 - Log decision: "Complexity tier: <tier> — controls checkpoint frequency and testing depth"

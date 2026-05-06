@@ -131,8 +131,8 @@ downstream skills use to find implementation recipes.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md` and
-`skaileup-shared/contracts/frontmatter.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` and
+`skaileup-contracts/contracts/frontmatter.md` before proceeding.
 
 **Hard gate:** `_concept/discovery/brief.md` must exist.
 
@@ -168,8 +168,8 @@ WRITES
 \_concept/blueprint/techstack.md — full stack definition with tech_stack_skill reference
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — valid \_concept/ paths
-skaileup-shared/contracts/frontmatter.md — stack.md frontmatter fields
+skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths
+skaileup-contracts/contracts/frontmatter.md — stack.md frontmatter fields
 references/integration_categories.md — additional integration checklist
 
 MUST discover available stacks from skaileup-standards/profiles/ at runtime — never hardcode

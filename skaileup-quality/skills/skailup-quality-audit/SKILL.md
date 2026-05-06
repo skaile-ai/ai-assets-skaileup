@@ -81,9 +81,9 @@ WRITES
 ? audit-report.md — exported report (user opt-in)
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — expected \_concept/ paths
-skaileup-shared/contracts/frontmatter.md — required YAML fields
-skaileup-shared/contracts/iron_laws.md — non-negotiable constraints
+skaileup-contracts/contracts/concept_structure.md — expected \_concept/ paths
+skaileup-contracts/contracts/frontmatter.md — required YAML fields
+skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
 references/analysis_checklists.md — sub-agent checklists + report template
 
 MUST never start servers or modify files unless user asks to fix

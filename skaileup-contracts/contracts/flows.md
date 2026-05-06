@@ -4,7 +4,7 @@ Flows are self-contained execution templates. Each flow file defines a complete,
 runnable path through the skill tree for a specific use case (MVP, prototype, concept-only, etc.).
 
 **Pipeline.json is removed.** All skill metadata that was in pipeline.json now lives on
-the skill nodes inside each flow. Global agent config lives in `skaileup-shared/agent-config.json`.
+the skill nodes inside each flow. Global agent config lives in `skaileup-contracts/agent-config.json`.
 
 ---
 
@@ -82,7 +82,7 @@ files at startup and building a name→path registry.
 | Onboard | `skaileup-onboard/flows/`          | `concept-only`, `prototype`, `cli-concept`, `reverse-engineer`            |
 | Build   | `skaileup-build/flows/`            | `standard`, `full`, `cli`, `prototype`, `small`, `complex`, `superpowers` |
 | Quality | `skaileup-quality/flows/`          | `audit`, `review`, `readiness` (add as needed)                            |
-| Schema  | `skaileup-shared/flow.schema.json` | JSON Schema for all flow files                                            |
+| Schema  | `skaileup-contracts/flow.schema.json` | JSON Schema for all flow files                                            |
 
 Each concept flow ends with a `next_flows` array pointing to the appropriate implementation
 (or other follow-on) flows. Use these to chain domains without bundling them into one file.
@@ -297,7 +297,7 @@ data:
       field: 'data_entities'
       description: 'Sets data_entities[] in each feature file'
   # Upstream files this skill modifies AFTER completing its own writes.
-  # See skaileup-shared/contracts/feedback_loop.md for the full protocol.
+  # See skaileup-contracts/contracts/feedback_loop.md for the full protocol.
 
   # Runtime parameters
   parameters:
@@ -504,7 +504,7 @@ When a skill is invoked directly (no flow, no orchestrator):
 3. Runs if gates pass; otherwise names the missing prerequisite
 4. On completion, suggests next skills using the orchestrator
 
-See `skaileup-shared/agent-config.json` for standalone_mode settings.
+See `skaileup-contracts/agent-config.json` for standalone_mode settings.
 
 ---
 

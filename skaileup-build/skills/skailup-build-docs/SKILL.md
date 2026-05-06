@@ -60,9 +60,9 @@ docs/src/content/docs/**/\*.{md,mdx} — updated doc pages (content + \_sources 
 <package>/docs/**/\*.{md,mdx} — updated package doc pages
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical paths
+skaileup-contracts/contracts/concept_structure.md — canonical paths
 docs/astro.config.mjs — sidebar structure and registered packages
-ai-assets/skaileup-shared/contracts/doc_tracking.md — shared tracking conventions (\_sources schema, @doc: annotations, staleness protocol)
+ai-assets/skaileup-contracts/contracts/doc_tracking.md — shared tracking conventions (\_sources schema, @doc: annotations, staleness protocol)
 
 MUST preserve existing frontmatter fields (title, description, badge, template, hero)
 MUST only add/update \_sources, \_source_hash, \_last_synced fields in frontmatter

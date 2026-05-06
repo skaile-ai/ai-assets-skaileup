@@ -80,9 +80,9 @@ with checkpoints at each milestone.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md`,
-`skaileup-shared/contracts/plans.md`, `skaileup-shared/contracts/iron_laws.md`, and
-`skaileup-shared/contracts/agent_patterns.md` before starting.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
+`skaileup-contracts/contracts/plans.md`, `skaileup-contracts/contracts/iron_laws.md`, and
+`skaileup-contracts/contracts/agent_patterns.md` before starting.
 
 **Hard gates:** None (this is the entry point).
 
@@ -90,9 +90,9 @@ with checkpoints at each milestone.
 
 | Action       | Path                                             | Required    |
 | ------------ | ------------------------------------------------ | ----------- |
-| Must read    | `skaileup-shared/contracts/concept_structure.md` | Yes         |
-| Must read    | `skaileup-shared/contracts/plans.md`             | Yes         |
-| Must read    | `skaileup-shared/contracts/iron_laws.md`         | Yes         |
+| Must read    | `skaileup-contracts/contracts/concept_structure.md` | Yes         |
+| Must read    | `skaileup-contracts/contracts/plans.md`             | Yes         |
+| Must read    | `skaileup-contracts/contracts/iron_laws.md`         | Yes         |
 | Resume state | `_concept/PLANS.md`                              | If resuming |
 
 ---
@@ -102,9 +102,9 @@ ROLE Concept Orchestrator — guides a project through Discovery, Experience, an
 READS
 ? \_concept/PLANS.md — resume state (if exists)
 ? \_concept/discovery/brief.md — app name, complexity tier (after Phase 1)
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-shared/contracts/plans.md — PLANS.md format
-skaileup-shared/contracts/iron_laws.md — non-negotiable constraints
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
+skaileup-contracts/contracts/plans.md — PLANS.md format
+skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
 
 WRITES
 \_concept/PLANS.md — durable concept plan (phases + skill checkboxes)
@@ -113,10 +113,10 @@ WRITES
 LEARNINGS.md — learnings journal (append)
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-shared/contracts/plans.md — PLANS.md format
-skaileup-shared/contracts/iron_laws.md — non-negotiable constraints
-skaileup-shared/contracts/agent_patterns.md — communication style, standalone mode
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
+skaileup-contracts/contracts/plans.md — PLANS.md format
+skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
+skaileup-contracts/contracts/agent_patterns.md — communication style, standalone mode
 
 MUST create or resume PLANS.md before any work
 MUST follow phase order — no skipping phases
@@ -333,7 +333,7 @@ CHECKLIST
 
 ## Integration
 
-- **Reads:** `skaileup-shared/contracts/` for rules and structure
+- **Reads:** `skaileup-contracts/contracts/` for rules and structure
 - **Writes:** `_concept/` pipeline artifacts, `LEARNINGS.md`
 - **Dispatches to:** `overview`, `research`, `brand-visual`, `journeys`, `features`, `screens`, `storybook`, `techstack`, `architecture`, `datamodel`
 - **Called by:** user directly, CLI flows, or automated pipeline

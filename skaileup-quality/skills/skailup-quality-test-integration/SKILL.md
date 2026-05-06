@@ -76,10 +76,10 @@ cycle — from HTTP request through business logic to database mutation and resp
 
 Before starting, read:
 
-- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths
-- `skaileup-shared/contracts/frontmatter.md` — feature frontmatter fields
-- `skaileup-shared/contracts/seed_data.md` — scenario-based seed data convention
-- `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
+- `skaileup-contracts/contracts/concept_structure.md` — valid \_concept/ paths
+- `skaileup-contracts/contracts/frontmatter.md` — feature frontmatter fields
+- `skaileup-contracts/contracts/seed_data.md` — scenario-based seed data convention
+- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
 

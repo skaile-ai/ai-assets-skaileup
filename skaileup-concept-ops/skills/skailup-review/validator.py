@@ -5,7 +5,7 @@ Re-generate with: /compile-validators review
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "skaileup-shared" / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "skaileup-contracts" / "scripts"))
 from validator_lib import Validator, main  # noqa: E402
 
 SKILL = "review"
@@ -24,7 +24,7 @@ def validate(cwd: str) -> dict:
 
     # ── MUST rules ──
 
-    v.skip("read all skaileup-shared/contracts/ before any checks",
+    v.skip("read all skaileup-contracts/contracts/ before any checks",
            reason="process — cannot verify read order")
 
     v.skip("classify every issue by severity (CRITICAL, HIGH, MEDIUM, LOW)",
@@ -76,7 +76,7 @@ def validate(cwd: str) -> dict:
 
     v.checklist("quality.json written with all 6 breakdown fields", check_quality_structure)
 
-    v.skip("All skaileup-shared/contracts/ read before checks",
+    v.skip("All skaileup-contracts/contracts/ read before checks",
            rule_type="CHECKLIST", reason="process — cannot verify")
 
     v.skip("Every issue classified by severity (CRITICAL/HIGH/MEDIUM/LOW)",

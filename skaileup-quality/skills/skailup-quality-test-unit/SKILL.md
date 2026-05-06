@@ -68,9 +68,9 @@ individual functions, composables, utilities, and component logic in isolation.
 
 Before starting, read:
 
-- `skaileup-shared/contracts/concept_structure.md` — valid \_concept/ paths
-- `skaileup-shared/contracts/frontmatter.md` — feature frontmatter fields
-- `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
+- `skaileup-contracts/contracts/concept_structure.md` — valid \_concept/ paths
+- `skaileup-contracts/contracts/frontmatter.md` — feature frontmatter fields
+- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
 

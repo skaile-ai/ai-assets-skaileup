@@ -1,11 +1,11 @@
-# skaileup-shared
+# skaileup-contracts
 
 Shared contracts, documentation, and scripts used by all skills across all domains. **Nothing in this folder is invocable** — it is reference material only.
 
 ## Structure
 
 ```
-skaileup-shared/
+skaileup-contracts/
 ├── DOMAIN.md
 ├── contracts/                    ← merged contracts (use these)
 │   ├── concept_structure.md

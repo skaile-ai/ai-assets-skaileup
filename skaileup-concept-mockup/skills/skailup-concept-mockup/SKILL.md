@@ -137,11 +137,11 @@ If `_concept/blueprint/techstack.md` exists:
 
 Before starting, read:
 
-- `skaileup-shared/contracts/concept_structure.md` — valid paths
-- `skaileup-shared/contracts/frontmatter.md` — screen frontmatter fields
-- `skaileup-shared/contracts/seed_data.md` — scenario convention
-- `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-shared/contracts/agent_patterns.md` — communication style, standalone mode
+- `skaileup-contracts/contracts/concept_structure.md` — valid paths
+- `skaileup-contracts/contracts/frontmatter.md` — screen frontmatter fields
+- `skaileup-contracts/contracts/seed_data.md` — scenario convention
+- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
+- `skaileup-contracts/contracts/agent_patterns.md` — communication style, standalone mode
 
 ## Context Budget
 

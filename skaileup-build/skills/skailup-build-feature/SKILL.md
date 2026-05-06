@@ -145,7 +145,7 @@ e2e/specs/journeys/<stage>-<journey-slug>.spec.<ext> — journey-level e2e tests
 \_implementation/PLANS.md — checked-off journeys
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
 references/tdd_guard.md — TDD Guard state machine and CLI
 references/tdd_workflow.md — E2E patterns, seed data, pitfalls
 

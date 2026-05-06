@@ -115,8 +115,8 @@ WRITES
 \_implementation/progress.json — foundation phase status
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-shared/contracts/iron_laws.md — non-negotiable constraints
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
+skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
 
 MUST read tech stack profile before any implementation
 MUST translate ALL colors and fonts from tokens.json — never invent values

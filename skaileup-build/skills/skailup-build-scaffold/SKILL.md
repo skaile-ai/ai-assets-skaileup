@@ -70,7 +70,7 @@ tech stack profile, not from this skill directly.
 2. `_concept/discovery/brief.md` exists (app name + slug)
 3. `_concept/blueprint/datamodel/model.json` exists (entities for initial setup)
 
-**Required background:** Read `skaileup-shared/contracts/iron_laws.md` before starting.
+**Required background:** Read `skaileup-contracts/contracts/iron_laws.md` before starting.
 
 ## Context Budget
 
@@ -102,9 +102,9 @@ WRITES
 \_implementation/decisions.md — empty decision log with header
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-shared/contracts/plans.md — PLANS.md format
-skaileup-shared/contracts/seed_data.md — seed scenario format
+skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
+skaileup-contracts/contracts/plans.md — PLANS.md format
+skaileup-contracts/contracts/seed_data.md — seed scenario format
 
 MUST read tech stack profile before any scaffold commands
 MUST run Level 1 verification (build) before any commit

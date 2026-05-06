@@ -92,8 +92,8 @@ It never touches artifacts that haven't been created yet.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md`,
-`skaileup-shared/contracts/feedback_loop.md`, and `skaileup-shared/contracts/golden_principles.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
+`skaileup-contracts/contracts/feedback_loop.md`, and `skaileup-contracts/contracts/golden_principles.md` before proceeding.
 
 **Hard gates:**
 
@@ -151,11 +151,11 @@ Cascades (only to artifacts that already exist):
 \_concept/experience/screens/<NN_group>/<screen>.md
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — valid paths, naming rules
-skaileup-shared/contracts/frontmatter.md — required YAML fields per file type
-skaileup-shared/contracts/feedback_loop.md — cross-reference protocol
-skaileup-shared/contracts/golden_principles.md — entity naming, numbering rules
-skaileup-shared/contracts/semantic_types.md — stack-independent field types
+skaileup-contracts/contracts/concept_structure.md — valid paths, naming rules
+skaileup-contracts/contracts/frontmatter.md — required YAML fields per file type
+skaileup-contracts/contracts/feedback_loop.md — cross-reference protocol
+skaileup-contracts/contracts/golden_principles.md — entity naming, numbering rules
+skaileup-contracts/contracts/semantic_types.md — stack-independent field types
 references/cascade_rules.md — per-artifact cascade details and cascade order
 references/feature_spec_template.md — frontmatter template, discovery questions, impact template
 

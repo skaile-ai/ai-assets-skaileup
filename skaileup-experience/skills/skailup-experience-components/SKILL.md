@@ -87,11 +87,11 @@ If any HARD gate artifact is missing, stop immediately and name the prerequisite
 
 Before starting, read:
 
-- `skaileup-shared/contracts/concept_structure.md` — valid paths
-- `skaileup-shared/contracts/frontmatter.md` — screen frontmatter fields
-- `skaileup-shared/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-shared/contracts/agent_patterns.md` — communication style, standalone mode
-- `skaileup-shared/contracts/wireframe_conventions.md` — ASCII wireframe symbol vocabulary
+- `skaileup-contracts/contracts/concept_structure.md` — valid paths
+- `skaileup-contracts/contracts/frontmatter.md` — screen frontmatter fields
+- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
+- `skaileup-contracts/contracts/agent_patterns.md` — communication style, standalone mode
+- `skaileup-contracts/contracts/wireframe_conventions.md` — ASCII wireframe symbol vocabulary
 
 ## Context Budget
 
@@ -271,7 +271,7 @@ components:
 | Inventing components not in screens       | Only spec components actually referenced in existing screen specs                |
 
 MUST include a ## Anatomy wireframe for components with 3+ internal zones
-MUST read skaileup-shared/contracts/wireframe_conventions.md before generating anatomy wireframes
+MUST read skaileup-contracts/contracts/wireframe_conventions.md before generating anatomy wireframes
 
 Anatomy wireframe depth behavior:
 

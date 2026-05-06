@@ -13,7 +13,7 @@ metadata:
 ## Scope
 
 This contract covers artifacts and conventions that are **conceptualization-specific**.
-Structural conventions shared with `skaileup-implementation` live in `skaileup-shared/contracts/`.
+Structural conventions shared with `skaileup-implementation` live in `skaileup-contracts/contracts/`.
 
 ## _concept/ Folder Layout
 

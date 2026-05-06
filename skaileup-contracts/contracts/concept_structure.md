@@ -15,7 +15,7 @@ Every `_concept/` directory contains a `concept.yaml` at its root. This manifest
 
 ```yaml
 type: web-app
-profile: web-app # references skaileup-shared/contracts/profiles/web-app.yaml
+profile: web-app # references skaileup-contracts/contracts/profiles/web-app.yaml
 
 artifacts:
   brief:

@@ -38,7 +38,7 @@ One to two sentences: what this skill produces and why it matters.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/[contract].md` before proceeding.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/[contract].md` before proceeding.
 
 <HARD-GATE>
 Check that every path listed in this skill's `requires` field exists in `_concept/`.
@@ -84,7 +84,7 @@ Declared in the flow node's `writes` field. This skill writes to:
 Declared in the flow node's `feedback` field. After completing its own writes, this skill:
 - [Describe upstream files it modifies and what field it sets]
 
-See `skaileup-shared/contracts/feedback_loop.md` for the full protocol.
+See `skaileup-contracts/contracts/feedback_loop.md` for the full protocol.
 
 ## Completion Summary
 Present to user:

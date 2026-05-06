@@ -89,8 +89,8 @@ tokens, no implementation details.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md`,
-`skaileup-shared/contracts/frontmatter.md`, and `skaileup-shared/contracts/feedback_loop.md`
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
+`skaileup-contracts/contracts/frontmatter.md`, and `skaileup-contracts/contracts/feedback_loop.md`
 before proceeding.
 
 **Hard gate:** `_concept/experience/features/` must exist with at least one feature file.
@@ -137,11 +137,11 @@ WRITES
 \_concept/experience/features/\*_/_.md — feedback loop: screens[] populated
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — valid \_concept/ paths and naming rules
-skaileup-shared/contracts/frontmatter.md — required YAML fields
-skaileup-shared/contracts/feedback_loop.md — cross-reference protocol (screens ↔ features)
+skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths and naming rules
+skaileup-contracts/contracts/frontmatter.md — required YAML fields
+skaileup-contracts/contracts/feedback_loop.md — cross-reference protocol (screens ↔ features)
 references/screen_spec_template.md — screen spec structure with all sections
-skaileup-shared/contracts/wireframe_conventions.md — ASCII wireframe symbol vocabulary and layout rules
+skaileup-contracts/contracts/wireframe_conventions.md — ASCII wireframe symbol vocabulary and layout rules
 
 MUST write 00_layout/shell.md before any individual screen specs
 MUST register every screen back into its parent feature's screens[] frontmatter (feedback loop)
@@ -206,7 +206,7 @@ last_updated: <YYYY-MM-DD>
 
 STEP 3b: Write shell wireframe
 
-- Read skaileup-shared/contracts/wireframe_conventions.md for symbol vocabulary
+- Read skaileup-contracts/contracts/wireframe_conventions.md for symbol vocabulary
 - Generate an ASCII wireframe for shell.md showing:
   - Header zone with app name, search, user menu
   - Sidebar zone with navigation items
@@ -266,7 +266,7 @@ CHECKLIST
 - [ ] Feature files updated with screens[] in frontmatter (feedback loop complete)
 - [ ] User has explicitly approved the screen specs
 - [ ] Every screen spec includes a ### Wireframe section (at depth medium+)
-- [ ] Wireframes follow skaileup-shared/contracts/wireframe_conventions.md
+- [ ] Wireframes follow skaileup-contracts/contracts/wireframe_conventions.md
 - [ ] Shell wireframe shows desktop and mobile variants (at depth max)
 - [ ] Multi-feature screens have feat: annotations (at depth max)
 

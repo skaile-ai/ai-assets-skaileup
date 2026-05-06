@@ -95,7 +95,7 @@ It delegates to 4 sub-skills that run in sequence:
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-shared/contracts/concept_structure.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` before proceeding.
 
 **Hard gates:**
 
@@ -138,9 +138,9 @@ WRITES
 \_concept/experience/4_storybook/ — complete standalone Storybook project
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — valid \_concept/ paths
-skaileup-shared/contracts/frontmatter.md — screen frontmatter fields
-skaileup-shared/contracts/seed_data.md — scenario convention
+skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths
+skaileup-contracts/contracts/frontmatter.md — screen frontmatter fields
+skaileup-contracts/contracts/seed_data.md — scenario convention
 
 MUST resolve storybook_addon, story_format, and component_library from tech stack profile before delegating
 MUST run all 4 sub-skills in sequence — each depends on the previous

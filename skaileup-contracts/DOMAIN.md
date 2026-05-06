@@ -1,5 +1,5 @@
 ---
-name: skaileup-shared
+name: skaileup-contracts
 description: "Shared contracts, documentation, and scripts that all skills across all domains read — the single source of truth for cross-cutting conventions."
 type: domain
 building_blocks:

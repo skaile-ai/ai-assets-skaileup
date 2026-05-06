@@ -20,7 +20,7 @@ Use the meta-concept format when a project has **two or more** of the following:
 - A shared identity / brand but independent feature sets
 - Per-subsystem `_concept/` directories that already exist
 
-If the project is a single app with one tech stack, use the standard `concept_structure.md` contract from `skaileup-shared/contracts/` instead.
+If the project is a single app with one tech stack, use the standard `concept_structure.md` contract from `skaileup-contracts/contracts/` instead.
 
 ## Relationship to Single-App Concepts
 
@@ -109,15 +109,15 @@ last_updated: YYYY-MM-DD
 
 ### discovery/goals.md
 
-Standard format — same as `skaileup-shared/contracts/frontmatter.md`.
+Standard format — same as `skaileup-contracts/contracts/frontmatter.md`.
 
 ### discovery/comparable.md
 
-Standard format — same as `skaileup-shared/contracts/frontmatter.md`.
+Standard format — same as `skaileup-contracts/contracts/frontmatter.md`.
 
 ### discovery/brand/identity.md
 
-Standard format — same as `skaileup-shared/contracts/frontmatter.md`.
+Standard format — same as `skaileup-contracts/contracts/frontmatter.md`.
 If the brand identity lives in a subsystem's `_concept/`, this file can be a
 reference pointer:
 

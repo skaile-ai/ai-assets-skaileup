@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "description": "Global agent runtime configuration. Skill catalog (per-skill metadata) lives in each flow's node data. See skaileup-shared/contracts/flows.md.",
+  "description": "Global agent runtime configuration. Skill catalog (per-skill metadata) lives in each flow's node data. See skaileup-contracts/contracts/flows.md.",
 
   "standalone_mode": {
     "enabled": true,

@@ -98,7 +98,7 @@ WRITES
 (none — read-only audit skill, output is the report shown to user)
 
 REFERENCES
-skaileup-shared/contracts/concept_structure.md — expected \_concept/ paths
+skaileup-contracts/contracts/concept_structure.md — expected \_concept/ paths
 references/report_templates.md — readiness table, fix templates, check details
 
 STEP 1: Discover features
