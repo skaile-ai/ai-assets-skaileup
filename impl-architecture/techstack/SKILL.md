@@ -1,5 +1,5 @@
 ---
-name: skaileup-architecture-techstack
+name: impl-architecture-techstack
 description: "Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from skaileup-standards/profiles/, asks plain-language questions, recommends the best match, and writes stack.md."
 metadata:
   version: '1.0.0'

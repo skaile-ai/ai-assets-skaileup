@@ -1,5 +1,5 @@
 ---
-name: skaileup-architecture-system
+name: impl-architecture-system
 description: 'Use after features and techstack are approved to document system architecture. Produces architecture.md with system overview, backend structure, data flow, communication protocols, external integrations, and infrastructure.'
 metadata:
   version: '1.0.0'
