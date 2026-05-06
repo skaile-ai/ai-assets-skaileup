@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-contract
+name: lab-contract
 description: Shared interfaces and schemas for the lab system
 source: MERGED
 version: 1.0.0

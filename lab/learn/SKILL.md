@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-learn
+name: lab-learn
 description: Analyze skill usage observations and extract patterns, corrections, and test cases
 source: MERGED
 version: 1.0.0

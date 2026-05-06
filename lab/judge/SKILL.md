@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-judge
+name: lab-judge
 description: LLM-as-judge quality scoring for generated code against recipe specifications
 source: MERGED
 version: 1.0.0

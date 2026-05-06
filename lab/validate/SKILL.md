@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-validate
+name: lab-validate
 description: Execute test cases from a skill's test manifest in Docker containers and produce a validation report
 source: MERGED
 version: 1.0.0

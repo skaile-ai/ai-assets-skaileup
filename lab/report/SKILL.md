@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-report
+name: lab-report
 description: Generate structured validation and improvement reports with trend analysis
 source: MERGED
 version: 1.0.0

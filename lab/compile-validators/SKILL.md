@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-compile-validators
+name: lab-compile-validators
 description: 'Compiles MUST/NEVER/CHECKLIST rules from SKILL.md files into fast, deterministic Python validators. Run after editing or creating a skill to generate its validator.py. Replaces slow LLM-based validation with sub-second checks.'
 metadata:
   version: '1.0.0'

@@ -1,5 +1,5 @@
 ---
-name: skaileup-lab-improve
+name: lab-improve
 description: Drive skill improvement through mutation, testing, and iteration
 source: MERGED
 version: 1.0.0
