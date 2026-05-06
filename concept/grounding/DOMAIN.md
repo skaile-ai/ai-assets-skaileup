@@ -1,5 +1,5 @@
 ---
-name: skaileup-grounding
+name: concept-grounding
 description: 'All context-gathering before concept work: project identity dialog, web research, and seed file ingestion.'
 type: domain
 stage: alpha
