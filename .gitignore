@@ -1,0 +1,12 @@
+node_modules/
+.skaile/sessions/
+*.log
+.env
+.env.local
+
+# Slice-loop scratch (deleted on commit)
+_slice/
+
+# Per-developer feedback evidence (committed: applied/, devlog.md only)
+_feedback/sessions/
+_feedback/patches/
