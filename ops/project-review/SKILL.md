@@ -1,5 +1,5 @@
 ---
-name: skaileup-project-review
+name: ops-project-review
 description: 'Audit a meta-concept for completeness, consistency, and accuracy. Checks that all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts.'
 source: MERGED
 version: 1.0.0

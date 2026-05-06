@@ -1,5 +1,5 @@
 ---
-name: skaileup-project-subsystem-map
+name: ops-project-subsystem-map
 description: 'Generate the 2_subsystems/ section of a meta-concept: index of all subsystems with maturity, audience, tech stack, and references to per-subsystem concepts.'
 source: MERGED
 version: 1.0.0

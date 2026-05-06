@@ -1,5 +1,5 @@
 ---
-name: skaileup-project-overview
+name: ops-project-overview
 description: 'Generate the discovery/ section of a meta-concept: ecosystem brief, unified goals, and competitive positioning for a multi-product project.'
 source: MERGED
 version: 1.0.0

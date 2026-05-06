@@ -1,5 +1,5 @@
 ---
-name: skaileup-project-integration
+name: ops-project-integration
 description: 'Generate the 3_integration/ section of a meta-concept: inter-repo architecture, deployment topology, and shared contracts for a multi-product ecosystem.'
 source: MERGED
 version: 1.0.0

@@ -1,5 +1,5 @@
 ---
-name: skaileup-concept-ops-sync
+name: ops-sync
 description: 'Use when cross-references in _concept/ are broken or out of sync. Scans the entire concept folder, finds broken links, missing bidirectional references, and orphaned entities, then shows a diff before applying fixes.'
 metadata:
   version: '1.0.0'

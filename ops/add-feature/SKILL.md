@@ -1,5 +1,5 @@
 ---
-name: skaileup-add-feature
+name: ops-add-feature
 description: 'Use when adding a new feature or modifying an existing feature in a live concept. Surgically adds the feature spec, cascades changes through downstream artifacts (journeys, tech stack, architecture, data model, screens), and optionally triggers implementation if the app is already built.'
 metadata:
   version: '1.0.0'
