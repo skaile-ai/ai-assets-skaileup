@@ -1,5 +1,5 @@
 ---
-name: skaileup-concept-storybook-setup
+name: component-mockup-storybook-setup
 description: 'Sub-skill 1/4: Scaffold a standalone Storybook project, install dependencies, and apply brand tokens as CSS custom properties. Called by the storybook orchestrator.'
 metadata:
   version: '1.0.0'

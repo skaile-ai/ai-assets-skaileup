@@ -1,5 +1,5 @@
 ---
-name: skaileup-concept-storybook-pages
+name: component-mockup-storybook-pages
 description: 'Sub-skill 3/4: Build AppShell and full-page screen compositions from screen specs. Each page includes all state variants and responsive viewports. Writes manifest.json for the journeys sub-skill. Called by the storybook orchestrator.'
 metadata:
   version: '1.0.0'
