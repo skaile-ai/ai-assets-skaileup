@@ -1,5 +1,5 @@
 ---
-name: skaileup-discovery-brief
+name: concept-brief
 description: "Use when starting a new concept and no _concept/discovery/ exists, or when the user says 'I have an app idea', 'new project', 'start from scratch', or wants to redefine an existing brief."
 metadata:
   version: '1.0.0'

@@ -1,5 +1,5 @@
 ---
-name: skaileup-discovery-brand-visual
+name: design-brand-visual
 description: 'Use when the project brief is approved but no visual brand exists. Discovers aesthetic direction through plain-language questions, extracts palettes from reference URLs, and writes identity.md + tokens.json + brandbook.html to _concept/discovery/brand/.'
 metadata:
   version: '1.0.0'

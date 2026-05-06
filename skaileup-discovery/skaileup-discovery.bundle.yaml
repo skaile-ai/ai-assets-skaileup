@@ -1,7 +1,0 @@
-name: skaileup-discovery
-description: Problem space understanding — project brief, goals, and brand identity
-version: 0.1.0
-dependencies:
-  - skill:skaileup-overview
-  - skill:skaileup-brand-visual
-  - skill:skaileup-brand-behavioral
