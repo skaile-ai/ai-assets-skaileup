@@ -1,5 +1,5 @@
 ---
-name: skaileup-experience-screens-technical
+name: experience-screens-technical
 description: 'Technical variant of the screens skill with component inventories. Use when screen specs exist and require precise component-level breakdowns. NOT in pipeline — experimental variant for testing purposes.'
 metadata:
   version: '1.0.0'

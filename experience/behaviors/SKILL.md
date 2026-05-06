@@ -1,5 +1,5 @@
 ---
-name: skaileup-experience-behaviors
+name: experience-behaviors
 description: "Use when features are approved and user wants to formalize behavioral rules, state machines, or entity lifecycle. Also when user says 'behavioral specs', 'state machine', 'formalize rules', 'allium specs'."
 metadata:
   version: '1.0.0'

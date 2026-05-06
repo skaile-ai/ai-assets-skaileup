@@ -1,5 +1,5 @@
 ---
-name: skaileup-experience-features
+name: product-spec-features
 description: 'Use after user journeys are approved to plan features. Derives features from stories.json candidate hints and the project brief. Writes feature files organized in numbered groups. Required before screens and datamodel skills.'
 metadata:
   version: '1.0.0'
