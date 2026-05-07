@@ -22,7 +22,7 @@ For each match, read the YAML frontmatter and extract `name` and `description`.
 
 Infer domain from name:
 
-- `conceptualize` → conceptualization
+- `skaileup-conceptualize` → conceptualization
 - `impl-build-implement` or `impl-build-implement-*` → implementation
 - anything else → custom
 
@@ -80,7 +80,7 @@ If no peer agents are found after both local and global scans:
 ```
 No skaileup orchestrators are installed. To get started:
 
-  skaile install agent:conceptualize   # concept pipeline
+  skaile install agent:skaileup-conceptualize   # concept pipeline
   skaile install agent:impl-build-implement       # implementation pipeline
 
 Then restart this session.
@@ -106,7 +106,7 @@ Do not stack these questions. One per message, wait for each answer before askin
 
 | User intent                           | Tell the user to run                                                                       |
 | ------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Start a new concept / idea            | `conceptualize` agent                                                             |
+| Start a new concept / idea            | `skaileup-conceptualize` agent                                                             |
 | Implement an existing concept         | `impl-build-implement` agent (or user's choice if multiple `impl-build-implement-*` installed) |
 | Add a feature to a live concept       | `ops-add-feature` skill                                                               |
 | Reverse-engineer an existing codebase | `ops-reverse-engineer` skill                                                          |
@@ -127,7 +127,7 @@ Map user answers to tiers:
 
 Mention the tier when describing which orchestrator to use:
 
-> "Run `conceptualize` in standard mode — it will ask about your project and
+> "Run `skaileup-conceptualize` in standard mode — it will ask about your project and
 > guide you through discovery, experience design, and the technical blueprint."
 
 ## Flow Guidance (Simulation Mode)
