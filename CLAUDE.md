@@ -8,23 +8,35 @@ All skaileup-\* skills for the concept, build, and quality pipelines. Extracted 
 
 ## Structure
 
-Skills are organized into domains. Each domain has a `DOMAIN.md` and contains skills under `skills/`.
+Skills are organized into 17 top-level domains in three groups (Concept, Implementation, Meta).
 
+### Concept
 ```
-skaileup/                      ← base: meta-router (skaileup) + build orchestrator (skaileup-build)
-skaileup-grounding/            ← onboard dialog + web research + seed ingestion
-skaileup-discovery/            ← brief, goals, brand identity
-skaileup-experience/           ← journeys, features, screens, components
-skaileup-concept-mockup/       ← static text wireframes
-skaileup-concept-storybook/    ← living Storybook prototypes
-skaileup-architecture/         ← techstack + concept-level system architecture
-skaileup-datamodel/            ← data model, seed schema, feature map
-skaileup-concept-ops/          ← review, evaluate, drift detect, sync
-skaileup-build/                ← scaffold, foundation, features, migrations
-skaileup-build-supervised/     ← supervised build: git-prepare, brainstorm, plan, finish
-skaileup-quality/              ← standards + audit + tests + readiness
-skaileup-lab/                  ← skill testing + improvement + validator compilation
-skaileup-contracts/            ← shared contracts (referenced by all skills)
+concept/                       brief · goals · comparable
+design/                        brand-identity · tokens · voice
+product-spec/                  features · acceptance criteria
+experience/                    journeys · behaviors · screens · components
+concept-slice/                 per-feature concept loop (big apps only)
+component-mockup/              components in isolation: storybook + isolated-html
+walkthrough-mockup/            clickable application: text · static-html · lit · astro · framework
+mockup-feedback/               annotation → patch loop
+```
+
+### Implementation
+```
+impl-architecture/             techstack · system · datamodel · templates/
+impl-plan/                     brainstorm · align · plan-vertical · supervised
+impl-slice/                    per-slice loop: implement · test · recap · refactor · commit
+impl-build/                    one-time: scaffold · foundation · infrastructure · migrate · seed · generate · docs
+impl-quality/                  test-* · eval-code · audit · ready · standards-* · debug-*
+```
+
+### Meta
+```
+skaileup/                      base orchestrators (skaileup, skaileup-build) + scope/ — pipeline entry
+ops/                           cross-cutting: review · sync · eval · add-feature · reverse-engineer · project-*
+lab/                           skill-on-skill: validate · judge · improve · learn · compile-validators
+contracts/                     shared reference layer (every skill reads)
 ```
 
 ## Skill Structure
@@ -41,25 +53,41 @@ my-skill/
 
 ## Contracts
 
-Shared contracts live in `skaileup-contracts/contracts/`. All skills reference these.
+Shared contracts live in `contracts/contracts/`. All skills reference these.
 
 ## Naming Convention
 
-- **Domain directories:** `skaileup-<name>/` (with 'e')
-- **Skill directories:** `skaileup-<name>/` (without 'e' — matches the CLI command prefix)
-- **Skill naming:** Skills follow the `skaileup-<domain>-<function>` pattern (e.g., `skaileup-discovery-brief`, `skaileup-build-scaffold`). Exception: concept-ops skills that are already unambiguous keep short names (e.g., `skaileup-review`, `skaileup-eval-concept`).
+Every skill's `name:` follows the pattern of its **path under the repo root** with `/` replaced by `-`. Examples:
+
+| Path | `name:` |
+|---|---|
+| `concept/brief/SKILL.md` | `concept-brief` |
+| `concept/grounding/onboard/SKILL.md` | `concept-grounding-onboard` |
+| `design/brand-visual/SKILL.md` | `design-brand-visual` |
+| `experience/screens/SKILL.md` | `experience-screens` |
+| `impl-architecture/techstack/SKILL.md` | `impl-architecture-techstack` |
+| `impl-architecture/templates/template-postxl/SKILL.md` | `template-postxl` (shortened) |
+| `component-mockup/storybook/SKILL.md` | `component-mockup-storybook` |
+
+**Exception — base orchestrator skills:** Skills inside `skaileup/skills/` keep their short names (`skaileup`, `skaileup-build`) instead of the path-based form. The base orchestrator is the catalog's entry point; doubled prefixes would be awkward.
 
 ## Reorganization Status
 
-This repo was created by extracting and restructuring skaileup domains from `ai-assets/`. Domain-level and skill-level reorganization is complete.
+The catalog underwent two reorganizations:
 
+### Phase 0 (2026-04, complete)
 - [x] Domain extraction from ai-assets
 - [x] Domain merges (onboard+research→grounding, standards→quality) and splits (blueprint→architecture+datamodel)
 - [x] Skill-level directory renames to `skaileup-<domain>-<function>` pattern
 - [x] SKILL.md `name:` frontmatter updates
 - [x] New domain: `skaileup-build-supervised/` (extracted from build)
 - [x] Cross-domain moves: sync→concept-ops, compile-validators→lab, implement→skaileup base
-- [ ] DOMAIN.md enriched frontmatter for all domains (layer, depends_on, feeds_into)
-- [ ] SKILL.md content updates (context_budget, MVC dispatch sections)
-- [ ] Validator creation for skills that lack them
-- [ ] CHANGELOG.md per domain
+
+### Phase 1 (2026-05-07, this branch)
+- [x] 14 `skaileup-*` domains migrated to the new two-group structure (Concept + Implementation + Meta)
+- [x] 16 new top-level domains scaffolded with stub DOMAIN.md
+- [x] All ~70 SKILL.md files moved to new homes; `name:` frontmatter updated
+- [x] Stack profiles promoted from `skaileup-quality/profiles/` to `impl-architecture/templates/`
+- [x] Bulk path-reference update across READS/WRITES/REFERENCES + validator.py imports
+- [ ] DOMAIN.md content authored (Phase 2)
+- [ ] Validator creation for skills that lack them (Phase 2)

@@ -2,30 +2,47 @@
 
 The Skaileup skill catalog — concept, build, and quality pipeline skills for the Skaile ecosystem.
 
-Organized into 14 focused domains covering the full product lifecycle: grounding (research + onboarding), discovery (brief + brand), experience (journeys + features + screens), architecture, data modeling, prototyping, implementation (autonomous + supervised), quality assurance, and skill meta-improvement.
+Organized into 17 domains in three groups (Concept, Implementation, Meta) covering the full product lifecycle: from problem-space discovery through per-slice implementation and quality gates, with a cross-cutting ops/lab/contracts meta layer. See `SKILL_GRAPH.md` for the design rationale.
 
-## Domains
+## Top-level layout
 
-| Domain                                                                | Purpose                                                               |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [`skaileup/`](skaileup/DOMAIN.md)                                     | Base orchestrators — the main entry point for all pipelines           |
-| [`skaileup-architecture/`](skaileup-architecture/DOMAIN.md)           | Techstack selection + concept-level system architecture               |
-| [`skaileup-build/`](skaileup-build/DOMAIN.md)                         | Implementation pipeline (scaffold, features, migrations)              |
-| [`skaileup-build-supervised/`](skaileup-build-supervised/DOMAIN.md)   | Supervised build: git-prepare, brainstorm, plan, finish               |
-| [`skaileup-concept-mockup/`](skaileup-concept-mockup/DOMAIN.md)       | Static text wireframes from screen specs                              |
-| [`skaileup-concept-ops/`](skaileup-concept-ops/DOMAIN.md)             | Cross-cutting concept operations (review, eval, drift, sync)          |
-| [`skaileup-concept-storybook/`](skaileup-concept-storybook/DOMAIN.md) | Living interactive prototypes (Storybook)                             |
-| [`skaileup-contracts/`](skaileup-contracts/DOMAIN.md)                 | Shared contracts and conventions (not directly invocable)             |
-| [`skaileup-datamodel/`](skaileup-datamodel/DOMAIN.md)                 | Data model: DBML, model.json, seed schema, feature map                |
-| [`skaileup-discovery/`](skaileup-discovery/DOMAIN.md)                 | Project definition: brief, goals, comparable, brand identity          |
-| [`skaileup-experience/`](skaileup-experience/DOMAIN.md)               | User journeys, features, screens, components                          |
-| [`skaileup-grounding/`](skaileup-grounding/DOMAIN.md)                 | All context-gathering: onboard dialog + web research + seed ingestion |
-| [`skaileup-lab/`](skaileup-lab/DOMAIN.md)                             | Skill testing, improvement, validation                                |
-| [`skaileup-quality/`](skaileup-quality/DOMAIN.md)                     | Standards + code audit + test generation + readiness gates            |
+### Concept
+
+| Domain | Purpose |
+|---|---|
+| [`concept/`](concept/DOMAIN.md) | Project brief, goals, comparable apps |
+| [`design/`](design/DOMAIN.md) | Brand identity, tokens, voice |
+| [`product-spec/`](product-spec/DOMAIN.md) | Feature specs + acceptance criteria |
+| [`experience/`](experience/DOMAIN.md) | Journeys, behaviors, screens, components |
+| [`concept-slice/`](concept-slice/DOMAIN.md) | Per-feature concept loop (big apps) |
+| [`component-mockup/`](component-mockup/DOMAIN.md) | Storybook + isolated HTML |
+| [`walkthrough-mockup/`](walkthrough-mockup/DOMAIN.md) | text · static-html · lit · astro · framework |
+| [`mockup-feedback/`](mockup-feedback/DOMAIN.md) | Annotation → patch loop |
+
+### Implementation
+
+| Domain | Purpose |
+|---|---|
+| [`impl-architecture/`](impl-architecture/DOMAIN.md) | Techstack, system, datamodel, templates |
+| [`impl-plan/`](impl-plan/DOMAIN.md) | Brainstorm, align, plan-vertical, supervised |
+| [`impl-slice/`](impl-slice/DOMAIN.md) | Per-slice loop: implement → test → recap → refactor → commit |
+| [`impl-build/`](impl-build/DOMAIN.md) | One-time: scaffold, foundation, migrate, seed, ... |
+| [`impl-quality/`](impl-quality/DOMAIN.md) | Tests, audit, ready, standards, debug |
+
+### Meta
+
+| Domain | Purpose |
+|---|---|
+| [`skaileup/`](skaileup/DOMAIN.md) | Base orchestrators — entry point for all pipelines |
+| [`ops/`](ops/DOMAIN.md) | Cross-cutting: review, sync, eval, add-feature, project-* |
+| [`lab/`](lab/DOMAIN.md) | Skill-on-skill: validate, improve, compile-validators |
+| [`contracts/`](contracts/DOMAIN.md) | Reference layer (every skill reads) |
 
 ## Lineage
 
 Extracted from [`skaile-ai/ai-assets`](https://github.com/skaile-ai/ai-assets) as part of the skill catalog reorganization (April 2026). The reorganization applied these structural changes:
+
+- **Phase 1 of the SKILL_GRAPH proposal applied 2026-05-07** (this branch): 14 `skaileup-*` domains migrated to the two-group structure (Concept + Implementation + Meta). See `SKILL_GRAPH.md` for the proposal and `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` for the migration plan.
 
 - `skaileup-onboard` + `skaileup-research` merged into `skaileup-grounding`
 - `skaileup-standards` merged into `skaileup-quality`
