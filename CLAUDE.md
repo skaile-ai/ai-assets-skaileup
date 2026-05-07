@@ -53,7 +53,7 @@ my-skill/
 
 ## Contracts
 
-Shared contracts live in `contracts/contracts/`. All skills reference these.
+Shared contracts live in the top-level `contracts/` directory. All skills reference these.
 
 ## Naming Convention
 
