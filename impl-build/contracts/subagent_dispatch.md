@@ -3,7 +3,7 @@
 Detailed specification for the Implementer Status Report and escalation paths used by
 `implement-supervised`. Referenced by all skills in this domain.
 
-This contract extends `skaileup-contracts/contracts/agent_patterns.md` Pattern: Subagent Dispatch
+This contract extends `contracts/agent_patterns.md` Pattern: Subagent Dispatch
 with concrete prompt templates and orchestrator handling logic.
 
 ---
@@ -27,7 +27,7 @@ You are implementing a single task. Your full context is below.
 <paste relevant section of stack.md>
 
 ## Expert Skills Available
-<list of matched skaileup-implementation-expert-* skills, if any>
+<list of matched impl-build-implementation-expert-* skills, if any>
 
 ## Rules
 - Write failing tests FIRST (TDD Red → Green)
@@ -53,7 +53,7 @@ STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 RECEIVE status from subagent
 
 CASE DONE:
-  - Run auto-review checklist (references/auto_review.md in skaileup-implementation)
+  - Run auto-review checklist (references/auto_review.md in impl-build-implementation)
   - IF all pass → accept, log approval_method: "auto", advance flow
   - ELSE → surface failing checks to user; do not advance until resolved
 

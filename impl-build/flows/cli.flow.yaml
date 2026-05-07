@@ -53,7 +53,7 @@ nodes:
       x: 40
       y: 140
     data:
-      skill: 'skaileup-scaffold'
+      skill: 'impl-build-scaffold'
       label: 'Scaffold'
       optional: false
       parameters:
@@ -66,7 +66,7 @@ nodes:
       x: 280
       y: 140
     data:
-      skill: 'skaileup-foundation'
+      skill: 'impl-build-foundation'
       label: 'Foundation'
       optional: true
       parameters:
@@ -78,7 +78,7 @@ nodes:
       x: 520
       y: 60
     data:
-      skill: 'skaileup-migrate'
+      skill: 'impl-build-migrate'
       label: 'Migrate'
       optional: true
   - id: 'seed'
@@ -88,7 +88,7 @@ nodes:
       x: 520
       y: 220
     data:
-      skill: 'skaileup-seed'
+      skill: 'impl-build-seed'
       label: 'Seed'
       optional: true
   - id: 'implement-feature'
@@ -98,7 +98,7 @@ nodes:
       x: 760
       y: 140
     data:
-      skill: 'skaileup-implement-feature'
+      skill: 'impl-build-implement-feature'
       label: 'Feature'
       optional: false
       subagent: true
@@ -111,7 +111,7 @@ nodes:
       x: 1000
       y: 60
     data:
-      skill: 'skaileup-test-unit'
+      skill: 'impl-quality-test-unit'
       label: 'Unit Tests'
       optional: false
       subagent: true
@@ -122,7 +122,7 @@ nodes:
       x: 1000
       y: 200
     data:
-      skill: 'skaileup-test-integration'
+      skill: 'impl-quality-test-integration'
       label: 'Integration Tests'
       optional: false
       subagent: true
@@ -176,6 +176,6 @@ edges:
     type: 'flow'
 next_flows:
   - id: 'audit'
-    domain: 'skaileup-quality'
+    domain: 'impl-quality'
     label: 'Audit →'
     hint: 'Run static analysis and structure audit on the CLI codebase.'

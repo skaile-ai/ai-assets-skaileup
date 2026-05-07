@@ -5,12 +5,12 @@ Re-generate with: /compile-validators journeys
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "skaileup-contracts" / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "contracts" / "scripts"))
 from validator_lib import Validator, main  # noqa: E402
 
 SKILL = "journeys"
 STORIES = "_concept/experience/journeys/stories.json"
-SCHEMA = "skaileup-contracts/contracts/stories_schema.json"
+SCHEMA = "contracts/stories_schema.json"
 
 
 def _all_stories(v):

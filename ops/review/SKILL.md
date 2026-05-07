@@ -86,9 +86,9 @@ score (0–100) and can auto-fix safe issues in gardening mode.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
-`skaileup-contracts/contracts/frontmatter.md`, `skaileup-contracts/contracts/feedback_loop.md`,
-and `skaileup-contracts/contracts/golden_principles.md` before running any checks.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md`,
+`contracts/frontmatter.md`, `contracts/feedback_loop.md`,
+and `contracts/golden_principles.md` before running any checks.
 
 **Hard gate:** None — review can run anytime `_concept/` exists.
 
@@ -124,16 +124,16 @@ WRITES
 \_concept/quality.json — quality score + issue breakdown
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — expected phase-grouped paths and folders
-skaileup-contracts/contracts/frontmatter.md — required YAML fields per file type
-skaileup-contracts/contracts/feedback_loop.md — cross-reference rules
-skaileup-contracts/contracts/golden_principles.md — mechanical rules to enforce
-skaileup-contracts/docs/OBSERVABILITY.md — audit event format
+contracts/concept_structure.md — expected phase-grouped paths and folders
+contracts/frontmatter.md — required YAML fields per file type
+contracts/feedback_loop.md — cross-reference rules
+contracts/golden_principles.md — mechanical rules to enforce
+contracts/docs/OBSERVABILITY.md — audit event format
 references/checks.md — detailed check tables and severity rules
 references/gardening.md — safe vs unsafe auto-fix rules
 references/report_templates.md — output templates for audit and gardening reports
 
-MUST read all skaileup-contracts/contracts/ contracts before any checks
+MUST read all contracts/ contracts before any checks
 MUST classify every issue by severity (CRITICAL, HIGH, MEDIUM, LOW)
 MUST write \_concept/quality.json after every run (audit or gardening)
 MUST emit started and completed events with run_id for correlation
@@ -155,7 +155,7 @@ IF user says "review", "audit", or "check"
 
 STEP 1: Scan pipeline structure
 
-- Use skaileup-contracts/contracts/concept_structure.md for expected phase-grouped paths
+- Use contracts/concept_structure.md for expected phase-grouped paths
 - For each expected folder, check:
   - Folder exists in \_concept/
   - Has at least one expected output file
@@ -164,7 +164,7 @@ STEP 1: Scan pipeline structure
 
 STEP 2: Check frontmatter compliance
 
-- For every .md file in \_concept/, verify against skaileup-contracts/contracts/frontmatter.md:
+- For every .md file in \_concept/, verify against contracts/frontmatter.md:
   - Has YAML frontmatter delimiters (`---`)
   - `last_updated` field exists and is a valid ISO date (YYYY-MM-DD)
   - NO `status` field (globally removed — flag as issue if present)
@@ -175,7 +175,7 @@ STEP 2: Check frontmatter compliance
 
 STEP 3: Check golden principles
 
-- For every applicable rule in skaileup-contracts/contracts/golden_principles.md:
+- For every applicable rule in contracts/golden_principles.md:
   - Entity IDs: `snake_case`
   - Field names: `snake_case`
   - Enum values: `PascalCase`
@@ -270,7 +270,7 @@ EMIT [review] completed mode=gardening run_id=<uuid> auto_fixes=<N> remaining=<N
 
 CHECKLIST
 
-- [ ] All skaileup-contracts/contracts/ read before checks
+- [ ] All contracts/ read before checks
 - [ ] quality.json written with all 6 breakdown fields
 - [ ] Every issue classified by severity (CRITICAL/HIGH/MEDIUM/LOW)
 - [ ] Audit: offer to fix; Gardening: report every change made
@@ -303,7 +303,7 @@ CHECKLIST
 ## Integration
 
 - **Called by:** `concept-orchestrator` or standalone (after each phase, before `e2e`)
-- **Reads:** `_concept/` (all), `skaileup-contracts/contracts/` (all)
+- **Reads:** `_concept/` (all), `contracts/` (all)
 - **Writes:** `_concept/quality.json`; auto-fixes in gardening mode
 - **Feeds into:** quality gate for proceeding to next pipeline step
 

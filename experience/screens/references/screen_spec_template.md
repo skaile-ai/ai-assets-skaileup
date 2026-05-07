@@ -35,7 +35,7 @@ Write as if describing it to a non-technical stakeholder.
 ### Wireframe
 
 ASCII wireframe showing the spatial layout of this screen within the app shell.
-Follows `skaileup-contracts/contracts/wireframe_conventions.md`.
+Follows `contracts/wireframe_conventions.md`.
 
 - **Required** at depth `medium` and `max`
 - **Skipped** at depth `light` and `none`

@@ -22,8 +22,8 @@ modes:
     enabled: false
   standards:
     enabled: true
-    skill: 'skaileup-standards-discover'
-    inject_skill: 'skaileup-standards-inject'
+    skill: 'impl-quality-standards-discover'
+    inject_skill: 'impl-quality-standards-inject'
     trigger_after: 'scaffold'
 artifact_handoff:
   from_concept:
@@ -56,7 +56,7 @@ nodes:
       x: 40
       y: 160
     data:
-      skill: 'skaileup-scaffold'
+      skill: 'impl-build-scaffold'
       label: 'Scaffold'
       optional: false
       parameters:
@@ -68,7 +68,7 @@ nodes:
       x: 280
       y: 160
     data:
-      skill: 'skaileup-foundation'
+      skill: 'impl-build-foundation'
       label: 'Foundation'
       optional: false
   - id: 'infrastructure'
@@ -78,7 +78,7 @@ nodes:
       x: 520
       y: 160
     data:
-      skill: 'skaileup-infrastructure'
+      skill: 'impl-build-infrastructure'
       label: 'Infrastructure'
       optional: true
       condition: 'architecture.md exists AND custom_modules is non-empty OR non-standard apps present'
@@ -90,7 +90,7 @@ nodes:
       x: 760
       y: 80
     data:
-      skill: 'skaileup-migrate'
+      skill: 'impl-build-migrate'
       label: 'Migrate'
       optional: false
   - id: 'seed'
@@ -100,7 +100,7 @@ nodes:
       x: 760
       y: 240
     data:
-      skill: 'skaileup-seed'
+      skill: 'impl-build-seed'
       label: 'Seed'
       optional: false
   - id: 'implement-feature'
@@ -110,7 +110,7 @@ nodes:
       x: 1000
       y: 160
     data:
-      skill: 'skaileup-implement-feature'
+      skill: 'impl-build-implement-feature'
       label: 'Feature'
       optional: false
       subagent: true
@@ -123,7 +123,7 @@ nodes:
       x: 1240
       y: 80
     data:
-      skill: 'skaileup-test-unit'
+      skill: 'impl-quality-test-unit'
       label: 'Unit Tests'
       optional: false
       subagent: true
@@ -134,7 +134,7 @@ nodes:
       x: 1240
       y: 240
     data:
-      skill: 'skaileup-test-integration'
+      skill: 'impl-quality-test-integration'
       label: 'Integration Tests'
       optional: false
       subagent: true
@@ -145,7 +145,7 @@ nodes:
       x: 1480
       y: 160
     data:
-      skill: 'skaileup-e2e'
+      skill: 'impl-quality-test-e2e'
       label: 'E2E Tests'
       optional: true
       subagent: true
@@ -215,6 +215,6 @@ edges:
     type: 'optional'
 next_flows:
   - id: 'audit'
-    domain: 'skaileup-quality'
+    domain: 'impl-quality'
     label: 'Audit →'
     hint: 'Run static analysis and structure audit on the implemented codebase.'

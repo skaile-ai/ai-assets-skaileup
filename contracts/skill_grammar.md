@@ -56,9 +56,9 @@ The DSL says WHAT; references explain the rest.
 
 ```
 REFERENCES
-  skaileup-contracts/contracts/semantic_types.md   — field type catalog and translation table
-  skaileup-contracts/contracts/feedback_loop.md   — cross-reference protocol
-  skaileup-contracts/contracts/golden_principles.md — mechanical rules enforced across artifacts
+  contracts/semantic_types.md   — field type catalog and translation table
+  contracts/feedback_loop.md   — cross-reference protocol
+  contracts/golden_principles.md — mechanical rules enforced across artifacts
 ```
 
 ---
@@ -217,7 +217,7 @@ NEVER  modify upstream _concept/ files during implementation
 ```
 
 **Enforcement:** A Claude Code `PostToolUse` hook runs
-`skaileup-contracts/scripts/validate_skill_rules.py` after every skill completes.
+`contracts/scripts/validate_skill_rules.py` after every skill completes.
 The script extracts all MUST/NEVER lines, reads the generated output
 files, and calls `claude -p` to validate compliance. Exit code 2 blocks
 the agent with a violation report until issues are fixed.

@@ -74,8 +74,8 @@ READS
 \_concept/blueprint/datamodel/seed.json — all scenarios (empty, single_user, populated, edge_cases)
 \_concept/blueprint/datamodel/model.json — entity relationships, types, enums
 \_concept/blueprint/techstack.md — seed execution target
-skaileup-contracts/contracts/seed_data.md — scenario format reference
-skaileup-contracts/contracts/semantic_types.md — type handling (dates, UUIDs, etc.)
+contracts/seed_data.md — scenario format reference
+contracts/semantic_types.md — type handling (dates, UUIDs, etc.)
 
 WRITES
 <stack-specific seed scripts> — one file per scenario + entry point

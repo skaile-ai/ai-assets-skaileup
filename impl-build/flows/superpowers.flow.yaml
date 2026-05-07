@@ -24,9 +24,9 @@ modes:
     enabled: false
   standards:
     enabled: true
-    skill: 'skaileup-standards-discover'
-    inject_skill: 'skaileup-standards-inject'
-    trigger_after: 'skaileup-git-prepare'
+    skill: 'impl-quality-standards-discover'
+    inject_skill: 'impl-quality-standards-inject'
+    trigger_after: 'impl-slice-git-prepare'
 artifact_handoff:
   from_concept:
     - features
@@ -35,7 +35,7 @@ artifact_handoff:
     - techstack
     - architecture
     - onboarding-decisions
-entry: 'skaileup-git-prepare'
+entry: 'impl-slice-git-prepare'
 nodes:
   - id: 'g-setup'
     type: 'group'
@@ -52,17 +52,17 @@ nodes:
       label: 'Setup'
       phase: 'setup'
 
-  - id: 'skaileup-git-prepare'
+  - id: 'impl-slice-git-prepare'
     type: 'skill'
     parentNode: 'g-setup'
     position:
       x: 40
       y: 80
     data:
-      skill: 'skaileup-git-prepare'
+      skill: 'impl-slice-git-prepare'
       label: 'Git Prepare'
       optional: false
-      domain: 'skaileup-build'
+      domain: 'impl-build'
       parameters:
         git_mode: '{{ globals.git_mode }}'
 
@@ -81,30 +81,30 @@ nodes:
       label: 'Pre-Implementation'
       phase: 'pre-implementation'
 
-  - id: 'skaileup-brainstorm'
+  - id: 'impl-plan-brainstorm'
     type: 'skill'
     parentNode: 'g-preimpl'
     position:
       x: 40
       y: 80
     data:
-      skill: 'skaileup-brainstorm'
+      skill: 'impl-plan-brainstorm'
       label: 'Brainstorm'
       optional: true
-      domain: 'skaileup-build'
+      domain: 'impl-build'
       hint: 'Skip for small, well-understood changes'
 
-  - id: 'skaileup-write-plan'
+  - id: 'impl-plan-plan-vertical'
     type: 'skill'
     parentNode: 'g-preimpl'
     position:
       x: 280
       y: 80
     data:
-      skill: 'skaileup-write-plan'
+      skill: 'impl-plan-plan-vertical'
       label: 'Write Plan'
       optional: false
-      domain: 'skaileup-build'
+      domain: 'impl-build'
       parameters:
         task_granularity: '{{ globals.task_granularity }}'
         model_default: '{{ globals.model_default }}'
@@ -124,18 +124,18 @@ nodes:
       label: 'Supervised Implementation'
       phase: 'implementation'
 
-  - id: 'skaileup-implement-supervised'
+  - id: 'impl-build-implement-supervised'
     type: 'skill'
     parentNode: 'g-implement'
     position:
       x: 40
       y: 80
     data:
-      skill: 'skaileup-implement-supervised'
+      skill: 'impl-build-implement-supervised'
       label: 'Implement (Supervised)'
       optional: false
       subagent: true
-      domain: 'skaileup-build'
+      domain: 'impl-build'
 
   - id: 'g-finish'
     type: 'group'
@@ -152,48 +152,48 @@ nodes:
       label: 'Finish'
       phase: 'finish'
 
-  - id: 'skaileup-finish-branch'
+  - id: 'impl-slice-finish'
     type: 'skill'
     parentNode: 'g-finish'
     position:
       x: 40
       y: 80
     data:
-      skill: 'skaileup-finish-branch'
+      skill: 'impl-slice-finish'
       label: 'Finish Branch'
       optional: false
-      domain: 'skaileup-build'
+      domain: 'impl-build'
 
 edges:
   - id: 'e-git-brainstorm'
-    source: 'skaileup-git-prepare'
-    target: 'skaileup-brainstorm'
+    source: 'impl-slice-git-prepare'
+    target: 'impl-plan-brainstorm'
     type: 'optional'
     label: 'optional'
 
   - id: 'e-git-writeplan'
-    source: 'skaileup-git-prepare'
-    target: 'skaileup-write-plan'
+    source: 'impl-slice-git-prepare'
+    target: 'impl-plan-plan-vertical'
     type: 'flow'
 
   - id: 'e-brainstorm-writeplan'
-    source: 'skaileup-brainstorm'
-    target: 'skaileup-write-plan'
+    source: 'impl-plan-brainstorm'
+    target: 'impl-plan-plan-vertical'
     type: 'optional'
     label: 'informs'
 
   - id: 'e-writeplan-implement'
-    source: 'skaileup-write-plan'
-    target: 'skaileup-implement-supervised'
+    source: 'impl-plan-plan-vertical'
+    target: 'impl-build-implement-supervised'
     type: 'flow'
 
   - id: 'e-implement-finish'
-    source: 'skaileup-implement-supervised'
-    target: 'skaileup-finish-branch'
+    source: 'impl-build-implement-supervised'
+    target: 'impl-slice-finish'
     type: 'flow'
 
 next_flows:
   - id: 'audit'
-    domain: 'skaileup-quality'
+    domain: 'impl-quality'
     label: 'Audit →'
     hint: 'Run static analysis and structure audit on the implemented codebase.'

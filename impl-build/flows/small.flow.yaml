@@ -21,8 +21,8 @@ modes:
     enabled: false
   standards:
     enabled: true
-    skill: 'skaileup-standards-discover'
-    inject_skill: 'skaileup-standards-inject'
+    skill: 'impl-quality-standards-discover'
+    inject_skill: 'impl-quality-standards-inject'
     trigger_after: 'scaffold'
 artifact_handoff:
   from_concept:
@@ -56,7 +56,7 @@ nodes:
       x: 40
       y: 120
     data:
-      skill: 'skaileup-scaffold'
+      skill: 'impl-build-scaffold'
       label: 'Scaffold'
       optional: false
       parameters:
@@ -68,7 +68,7 @@ nodes:
       x: 280
       y: 120
     data:
-      skill: 'skaileup-foundation'
+      skill: 'impl-build-foundation'
       label: 'Foundation'
       optional: false
       note: 'Consolidated with scaffold — single checkpoint covers both'
@@ -93,7 +93,7 @@ nodes:
       x: 40
       y: 80
     data:
-      skill: 'skaileup-migrate'
+      skill: 'impl-build-migrate'
       label: 'Migrate'
       optional: false
   - id: 'seed'
@@ -103,7 +103,7 @@ nodes:
       x: 40
       y: 200
     data:
-      skill: 'skaileup-seed'
+      skill: 'impl-build-seed'
       label: 'Seed'
       optional: false
   - id: 'implement-feature'
@@ -113,7 +113,7 @@ nodes:
       x: 280
       y: 120
     data:
-      skill: 'skaileup-implement-feature'
+      skill: 'impl-build-implement-feature'
       label: 'Feature'
       optional: false
       subagent: true
@@ -153,6 +153,6 @@ edges:
     type: 'flow'
 next_flows:
   - id: 'standard'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Harden →'
     hint: 'Upgrade from small to standard — add full test suite.'

@@ -134,12 +134,12 @@ def get_body(filepath: Path) -> str:
 def check_structure(concept: Path):
     """Check pipeline folders exist."""
     required = {
-        "discovery": "Run `skaileup-overview` to create the project brief.",
-        "experience/journeys": "Run `skaileup-journeys` to map user journeys.",
-        "experience/features": "Run `skaileup-features` to define features.",
-        "blueprint/techstack.md": "Run `skaileup-techstack` or create _concept/blueprint/techstack.md manually.",
-        "blueprint/datamodel": "Run `skaileup-datamodel` to design the data model.",
-        "experience/screens": "Run `skaileup-screens` to specify screens.",
+        "discovery": "Run `concept-brief` to create the project brief.",
+        "experience/journeys": "Run `experience-journeys` to map user journeys.",
+        "experience/features": "Run `product-spec-features` to define features.",
+        "blueprint/techstack.md": "Run `impl-architecture-techstack` or create _concept/blueprint/techstack.md manually.",
+        "blueprint/datamodel": "Run `impl-architecture-datamodel` to design the data model.",
+        "experience/screens": "Run `experience-screens` to specify screens.",
     }
     optional = {"discovery/brand", "blueprint/architecture.md", "experience/behaviors", "prototype/storybook"}
 
@@ -258,7 +258,7 @@ def check_golden_principles(concept: Path):
             if fg not in screen_groups and screens_dir.exists():
                 emit("LOW", "golden", f"experience/screens/{fg}",
                      f"Feature group '{fg}' has no matching screen group.",
-                     f"Run `skaileup-screens` to create screens for {fg}.")
+                     f"Run `experience-screens` to create screens for {fg}.")
 
     # Feature files must have requirement checkboxes
     if features_dir.is_dir():
@@ -412,7 +412,7 @@ def check_model(concept: Path):
     if not models:
         emit("HIGH", "model", "blueprint/datamodel/postxl-schema.json",
              "No models defined.",
-             "Run `skaileup-datamodel` to create models from features.")
+             "Run `impl-architecture-datamodel` to create models from features.")
         return
 
     # Collect all model names for relation validation

@@ -51,8 +51,8 @@ WRITES
 <skill-dir>/validator.py — generated deterministic validator
 
 REFERENCES
-skaileup-contracts/scripts/validator_lib.py — shared validation library (read for full API)
-skaileup-contracts/contracts/skill_grammar.md — MUST/NEVER/CHECKLIST DSL keywords
+contracts/scripts/validator_lib.py — shared validation library (read for full API)
+contracts/skill_grammar.md — MUST/NEVER/CHECKLIST DSL keywords
 
 STEP 1: Determine scope
 IF user names a specific skill (e.g. "compile-validators journeys") - Find the SKILL.md in the appropriate ai-assets/<domain>/skills/ directory - Compile only that skill
@@ -87,7 +87,7 @@ Count the directory depth of the skill relative to `ai-assets/` and use the
 corresponding number of parents: 3 for flat (`skills/<skill>/`), 4 for grouped
 (`skills/<group>/<skill>/`).
 
-Read ai-assets/skaileup-contracts/scripts/validator_lib.py to understand the full API.
+Read ai-assets/contracts/scripts/validator_lib.py to understand the full API.
 Generate a Python script following this exact template:
 
 OUTPUT <skill-dir>/validator.py
@@ -97,7 +97,7 @@ Re-generate with: /compile-validators <skill-name>
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(**file**).resolve().parents[N] / "skaileup-contracts" / "scripts"))
+sys.path.insert(0, str(Path(**file**).resolve().parents[N] / "contracts" / "scripts"))
 from validator_lib import Validator, main
 
     SKILL = "<skill-name>"
@@ -180,7 +180,7 @@ r"^\d{2}*"))
 v.checklist("stories.json validates against schema", lambda: (
 v.json_schema_validate(
 "\_concept/experience/journeys/stories.json",
-"ai-assets/skaileup-contracts/contracts/stories_schema.json")
+"ai-assets/contracts/stories_schema.json")
 ))
 
 # Cross-reference: every key maps to existing files

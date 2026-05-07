@@ -126,8 +126,8 @@ like it was written by the same person.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` and
-`skaileup-contracts/contracts/frontmatter.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md` and
+`contracts/frontmatter.md` before proceeding.
 
 | Artifact       | Path                                     | Missing? Run   | Gate                        |
 | -------------- | ---------------------------------------- | -------------- | --------------------------- |
@@ -174,8 +174,8 @@ WRITES
 \_concept/discovery/brand/copy_guidelines.md — practical templates for implementers
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths
-skaileup-contracts/contracts/frontmatter.md — brand frontmatter fields
+contracts/concept_structure.md — valid \_concept/ paths
+contracts/frontmatter.md — brand frontmatter fields
 
 MUST match tone to brand mood from identity.md — never default to generic professional voice
 MUST read all features + screens before writing to enumerate real UI states

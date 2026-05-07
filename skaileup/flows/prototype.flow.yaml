@@ -22,33 +22,33 @@ globals:
   verbosity: 'brief'
 tier_presets:
   quick:
-    skaileup-research: none
-    skaileup-discovery: light
-    skaileup-experience: light
-    skaileup-prototype: light
-    skaileup-storybook: none
-    skaileup-blueprint: none
-    skaileup-concept-meta: none
+    concept-grounding-research: none
+    design: light
+    experience: light
+    walkthrough-mockup: light
+    component-mockup-storybook: none
+    impl-architecture: none
+    ops: none
   standard:
-    skaileup-research: light
-    skaileup-discovery: medium
-    skaileup-experience: medium
-    skaileup-prototype: medium
-    skaileup-storybook: none
-    skaileup-blueprint: none
-    skaileup-concept-meta: none
+    concept-grounding-research: light
+    design: medium
+    experience: medium
+    walkthrough-mockup: medium
+    component-mockup-storybook: none
+    impl-architecture: none
+    ops: none
   thorough:
-    skaileup-research: medium
-    skaileup-discovery: max
-    skaileup-experience: max
-    skaileup-prototype: medium
-    skaileup-storybook: max
-    skaileup-blueprint: none
-    skaileup-concept-meta: none
+    concept-grounding-research: medium
+    design: max
+    experience: max
+    walkthrough-mockup: medium
+    component-mockup-storybook: max
+    impl-architecture: none
+    ops: none
 modes:
   research:
     enabled: true
-    skill: 'skaileup-research'
+    skill: 'concept-grounding-research'
     triggers:
       - 'overview'
       - 'brand-visual'
@@ -67,7 +67,7 @@ nodes:
       x: -400
       y: 160
     data:
-      skill: 'skaileup-onboard'
+      skill: 'concept-grounding-onboard'
       label: 'Project Onboarding'
       optional: false
   - id: 'ingest-seeds'
@@ -76,7 +76,7 @@ nodes:
       x: -200
       y: 160
     data:
-      skill: 'skaileup-ingest-seeds'
+      skill: 'concept-grounding-seeds'
       label: 'Ingest Seeds'
       optional: true
       skip_when: 'no_seeds_dir'
@@ -101,10 +101,10 @@ nodes:
       x: 40
       y: 160
     data:
-      skill: 'skaileup-overview'
+      skill: 'concept-brief'
       label: 'Project Brief'
       optional: false
-      depth_from: 'skaileup-discovery'
+      depth_from: 'design'
       parameters:
         input_style: 'freeform'
   - id: 'journeys'
@@ -114,11 +114,11 @@ nodes:
       x: 280
       y: 60
     data:
-      skill: 'skaileup-journeys'
+      skill: 'experience-journeys'
       label: 'User Journeys'
       optional: true
-      depth_from: 'skaileup-experience'
-      skip_when: "tier.skaileup-experience in ['none', 'light']"
+      depth_from: 'experience'
+      skip_when: "tier.experience in ['none', 'light']"
       parameters:
         hero_approval_required: true
         min_stages:
@@ -130,11 +130,11 @@ nodes:
       x: 280
       y: 200
     data:
-      skill: 'skaileup-brand-visual'
+      skill: 'design-brand-visual'
       label: 'Brand Visual'
       optional: false
-      depth_from: 'skaileup-discovery'
-      skip_when: "tier.skaileup-discovery in ['none', 'light']"
+      depth_from: 'design'
+      skip_when: "tier.design in ['none', 'light']"
       parallel_group: 'identity'
   - id: 'techstack'
     type: 'skill'
@@ -143,10 +143,10 @@ nodes:
       x: 280
       y: 320
     data:
-      skill: 'skaileup-techstack'
+      skill: 'impl-architecture-techstack'
       label: 'Tech Stack'
       optional: false
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       parallel_group: 'identity'
   - id: 'features'
     type: 'skill'
@@ -155,10 +155,10 @@ nodes:
       x: 560
       y: 200
     data:
-      skill: 'skaileup-features'
+      skill: 'product-spec-features'
       label: 'Features'
       optional: false
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
   - id: 'screens'
     type: 'skill'
     parentNode: 'g-concept'
@@ -166,10 +166,10 @@ nodes:
       x: 840
       y: 200
     data:
-      skill: 'skaileup-screens'
+      skill: 'experience-screens'
       label: 'Screens'
       optional: false
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
   - id: 'route-prototype'
     type: 'router'
     parentNode: 'g-concept'
@@ -179,9 +179,9 @@ nodes:
     data:
       label: 'Prototype Router'
       routes:
-        - condition: "tier.skaileup-storybook in ['medium', 'max']"
+        - condition: "tier.component-mockup-storybook in ['medium', 'max']"
           target: 'storybook'
-        - condition: "tier.skaileup-prototype in ['light', 'medium', 'max']"
+        - condition: "tier.walkthrough-mockup in ['light', 'medium', 'max']"
           target: 'mock'
         - condition: 'default'
           target: null
@@ -192,11 +192,11 @@ nodes:
       x: 1280
       y: 240
     data:
-      skill: 'skaileup-mock'
+      skill: 'walkthrough-mockup-text'
       label: 'Mockups'
       optional: false
-      depth_from: 'skaileup-prototype'
-      skip_when: "tier.skaileup-prototype == 'none'"
+      depth_from: 'walkthrough-mockup'
+      skip_when: "tier.walkthrough-mockup == 'none'"
       parameters:
         framework: 'alpine'
         include_seed_data: true
@@ -208,11 +208,11 @@ nodes:
       x: 1280
       y: 80
     data:
-      skill: 'skaileup-storybook'
+      skill: 'component-mockup-storybook'
       label: 'Storybook'
       optional: true
-      depth_from: 'skaileup-storybook'
-      skip_when: "tier.skaileup-storybook == 'none'"
+      depth_from: 'component-mockup-storybook'
+      skip_when: "tier.component-mockup-storybook == 'none'"
 edges:
   - id: 'e-onboard-ingest'
     source: 'onboard'
@@ -260,7 +260,7 @@ edges:
     type: 'flow'
 next_flows:
   - id: 'prototype'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Build Prototype →'
     hint: 'Scaffold and run a minimal implementation pass — fast path for user testing.'
     artifact_handoff:
@@ -269,7 +269,7 @@ next_flows:
       - techstack
       - onboarding-decisions
   - id: 'standard'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Full Implement →'
     hint: 'Continue to production-grade implementation after validating the prototype concept.'
     artifact_handoff:

@@ -25,27 +25,27 @@ globals:
   verbosity: 'detailed'
 tier_presets:
   quick:
-    skaileup-experience: light
-    skaileup-blueprint: light
-    skaileup-storybook: none
-    skaileup-concept-meta: none
+    experience: light
+    impl-architecture: light
+    component-mockup-storybook: none
+    ops: none
   standard:
-    skaileup-experience: medium
-    skaileup-blueprint: medium
-    skaileup-storybook: none
-    skaileup-concept-meta: light
+    experience: medium
+    impl-architecture: medium
+    component-mockup-storybook: none
+    ops: light
   thorough:
-    skaileup-experience: max
-    skaileup-blueprint: max
-    skaileup-storybook: medium
-    skaileup-concept-meta: medium
+    experience: max
+    impl-architecture: max
+    component-mockup-storybook: medium
+    ops: medium
 modes:
   research:
     enabled: false
   standards:
     enabled: true
-    skill: 'skaileup-standards-discover'
-    inject_skill: 'skaileup-standards-inject'
+    skill: 'impl-quality-standards-discover'
+    inject_skill: 'impl-quality-standards-inject'
     trigger_after: 'reverse-engineer'
     parameters:
       note: 'Discover conventions from the repo being reverse-engineered'
@@ -86,7 +86,7 @@ nodes:
       x: 40
       y: 100
     data:
-      skill: 'skaileup-reverse-engineer'
+      skill: 'ops-reverse-engineer'
       label: 'Reverse Engineer'
       optional: false
       subagent: true
@@ -104,11 +104,11 @@ nodes:
       x: 40
       y: 60
     data:
-      skill: 'skaileup-journeys'
+      skill: 'experience-journeys'
       label: 'User Journeys'
       optional: true
-      depth_from: 'skaileup-experience'
-      skip_when: "tier.skaileup-experience in ['none', 'light']"
+      depth_from: 'experience'
+      skip_when: "tier.experience in ['none', 'light']"
       parameters:
         note: 'Derive journeys from the extracted concept'
   - id: 'architecture'
@@ -118,10 +118,10 @@ nodes:
       x: 280
       y: 60
     data:
-      skill: 'skaileup-architecture'
+      skill: 'impl-architecture-system'
       label: 'Architecture'
       optional: true
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       subagent: true
       extend_when: "artifact.architecture.status == 'seed-partial'"
   - id: 'datamodel'
@@ -131,10 +131,10 @@ nodes:
       x: 280
       y: 160
     data:
-      skill: 'skaileup-datamodel'
+      skill: 'impl-architecture-datamodel'
       label: 'Data Model'
       optional: true
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       subagent: true
       extend_when: "artifact.datamodel.status == 'seed-partial'"
   - id: 'screens'
@@ -144,10 +144,10 @@ nodes:
       x: 560
       y: 100
     data:
-      skill: 'skaileup-screens'
+      skill: 'experience-screens'
       label: 'Screens'
       optional: true
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
       subagent: true
   - id: 'storybook'
     type: 'skill'
@@ -156,11 +156,11 @@ nodes:
       x: 560
       y: 160
     data:
-      skill: 'skaileup-storybook'
+      skill: 'component-mockup-storybook'
       label: 'Storybook'
       optional: true
-      depth_from: 'skaileup-storybook'
-      skip_when: "tier.skaileup-storybook == 'none'"
+      depth_from: 'component-mockup-storybook'
+      skip_when: "tier.component-mockup-storybook == 'none'"
 edges:
   - id: 'e-re-journeys'
     source: 'reverse-engineer'
@@ -192,11 +192,11 @@ edges:
     type: 'optional'
 next_flows:
   - id: 'concept-only'
-    domain: 'skaileup-onboard'
+    domain: 'concept-grounding-onboard'
     label: 'Enrich Concept →'
     hint: 'Run the full concept pipeline to enrich and validate the extracted concept.'
   - id: 'standard'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Implement →'
     hint: 'Proceed to implementation using the extracted concept as foundation.'
     artifact_handoff:

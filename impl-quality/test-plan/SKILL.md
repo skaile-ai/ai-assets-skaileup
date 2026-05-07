@@ -92,11 +92,11 @@ Recommended (not blocking): `seed.json`, `experience/behaviors/*.allium`
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — valid \_concept/ paths
-- `skaileup-contracts/contracts/frontmatter.md` — feature frontmatter fields
-- `skaileup-contracts/contracts/feedback_loop.md` — cross-reference protocol
-- `skaileup-contracts/contracts/seed_data.md` — scenario-based seed data convention
-- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
+- `contracts/concept_structure.md` — valid \_concept/ paths
+- `contracts/frontmatter.md` — feature frontmatter fields
+- `contracts/feedback_loop.md` — cross-reference protocol
+- `contracts/seed_data.md` — scenario-based seed data convention
+- `contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
 

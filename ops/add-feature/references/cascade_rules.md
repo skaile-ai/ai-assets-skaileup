@@ -105,7 +105,7 @@ Table new_entity {
 
 **Feedback loop**: Update the feature spec's `data_entities: []` to list new entity names.
 
-Follow `skaileup-contracts/contracts/golden_principles.md`:
+Follow `contracts/golden_principles.md`:
 - Entity IDs: `snake_case` (e.g., `task_item`)
 - Field names: `snake_case`
 - Relation fields: `_id` suffix (e.g., `assigned_to_id`)

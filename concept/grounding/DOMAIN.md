@@ -5,7 +5,7 @@ type: domain
 stage: alpha
 version: 0.1.0
 building_blocks:
-  skills: 'skaileup-onboard, skaileup-research, skaileup-ingest-seeds'
+  skills: 'concept-grounding-onboard, concept-grounding-research, concept-grounding-seeds'
   contracts: 'conceptualization-contract'
   docs: 'README.md'
   tools: 'n/a'
@@ -15,15 +15,15 @@ building_blocks:
 
 Gather all external context needed before concept definition begins. Three skills that answer: "What is this project, what does the market look like, and what material does the user already have?"
 
-Merges the former `skaileup-onboard` (project identity dialog) and `skaileup-research` (web research) domains into a single bootstrap domain.
+Merges the former `concept-grounding-onboard` (project identity dialog) and `concept-grounding-research` (web research) domains into a single bootstrap domain.
 
 ## Skills
 
 | Skill                   | What It Does                                                            | When to Use                     |
 | ----------------------- | ----------------------------------------------------------------------- | ------------------------------- |
-| `skaileup-onboard`      | Project identity + tier dialog — collects name, problem, audience, type | First step of any new project   |
-| `skaileup-research`     | Agentic web research — competitors, audiences, design patterns          | After onboard, before discovery |
-| `skaileup-ingest-seeds` | Classify user-provided files into artifact slots                        | When user provides seed files   |
+| `concept-grounding-onboard`      | Project identity + tier dialog — collects name, problem, audience, type | First step of any new project   |
+| `concept-grounding-research`     | Agentic web research — competitors, audiences, design patterns          | After onboard, before discovery |
+| `concept-grounding-seeds` | Classify user-provided files into artifact slots                        | When user provides seed files   |
 
 ## Artifacts
 

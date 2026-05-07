@@ -85,7 +85,7 @@ WRITES
 
 REFERENCES
 contracts/subagent_dispatch.md — implementer prompt template, status handling
-skaileup-contracts/contracts/agent_patterns.md — Subagent Dispatch pattern
+contracts/agent_patterns.md — Subagent Dispatch pattern
 
 MUST read superpowers-plan.md before dispatching any task
 MUST paste full task text verbatim into subagent prompt — never refer to plan file

@@ -51,7 +51,7 @@ nodes:
       x: 40
       y: 120
     data:
-      skill: 'skaileup-scaffold'
+      skill: 'impl-build-scaffold'
       label: 'Scaffold'
       optional: false
       parameters:
@@ -63,7 +63,7 @@ nodes:
       x: 280
       y: 120
     data:
-      skill: 'skaileup-implement-feature'
+      skill: 'impl-build-implement-feature'
       label: 'Feature'
       optional: false
       subagent: true
@@ -77,7 +77,7 @@ nodes:
       x: 520
       y: 120
     data:
-      skill: 'skaileup-e2e'
+      skill: 'impl-quality-test-e2e'
       label: 'Smoke Test'
       optional: true
       parameters:
@@ -94,6 +94,6 @@ edges:
     type: 'optional'
 next_flows:
   - id: 'standard'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Harden →'
     hint: 'Upgrade from prototype to production — foundation, TDD, full test suite, verify.'

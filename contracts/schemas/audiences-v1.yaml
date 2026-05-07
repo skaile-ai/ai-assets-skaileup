@@ -1,5 +1,5 @@
 id: audiences-v1
-description: 'Target audience persona profiles produced by skaileup-research. Stored at _grounding/research/audiences.md.'
+description: 'Target audience persona profiles produced by concept-grounding-research. Stored at _grounding/research/audiences.md.'
 version: 1
 type: object
 required: [personas_defined, last_updated, personas]

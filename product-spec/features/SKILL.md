@@ -112,9 +112,9 @@ screen specs, data models, brand, or tech stack.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
-`skaileup-contracts/contracts/frontmatter.md`, `skaileup-contracts/contracts/feedback_loop.md`,
-and `skaileup-contracts/contracts/golden_principles.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md`,
+`contracts/frontmatter.md`, `contracts/feedback_loop.md`,
+and `contracts/golden_principles.md` before proceeding.
 
 **Hard gates:**
 
@@ -156,10 +156,10 @@ WRITES
 \_concept/experience/features/<NN_group>/<feature>.md — one file per feature
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths and naming rules
-skaileup-contracts/contracts/frontmatter.md — required YAML fields
-skaileup-contracts/contracts/feedback_loop.md — how downstream skills modify feature files
-skaileup-contracts/contracts/golden_principles.md — group naming, entity naming rules
+contracts/concept_structure.md — valid \_concept/ paths and naming rules
+contracts/frontmatter.md — required YAML fields
+contracts/feedback_loop.md — how downstream skills modify feature files
+contracts/golden_principles.md — group naming, entity naming rules
 references/feature_template.md — file template, identification questions
 
 MUST organize features in numbered group folders (01_user_auth, 02_dashboard, etc.)

@@ -1,6 +1,6 @@
 ---
 name: "standards-contract"
-description: "Shared contract for all skaileup-standards skills. Describes _standards/ folder layout, profile format, standards injection protocol, and how profiles map to tech-stack choices."
+description: "Shared contract for all impl-architecture skills. Describes _standards/ folder layout, profile format, standards injection protocol, and how profiles map to tech-stack choices."
 metadata:
   stage: "alpha"
   do_not_invoke: true
@@ -8,7 +8,7 @@ metadata:
 
 # Standards Domain — Shared Contract
 
-**Do not invoke directly.** This is a dependency contract — all `skaileup-standards` skills read this before operating.
+**Do not invoke directly.** This is a dependency contract — all `impl-architecture` skills read this before operating.
 
 ## Scope
 

@@ -151,9 +151,9 @@ data models, screens, brand, or tech stack.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
-`skaileup-contracts/contracts/frontmatter.md`, `skaileup-contracts/contracts/iron_laws.md`, and
-`skaileup-contracts/contracts/agent_patterns.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md`,
+`contracts/frontmatter.md`, `contracts/iron_laws.md`, and
+`contracts/agent_patterns.md` before proceeding.
 
 No hard gates — this is the first step in the pipeline.
 
@@ -161,8 +161,8 @@ No hard gates — this is the first step in the pipeline.
 
 | Action           | Path                                                  | Required |
 | ---------------- | ----------------------------------------------------- | -------- |
-| Must read        | `skaileup-contracts/contracts/concept_structure.md`      | Yes      |
-| Must read        | `skaileup-contracts/contracts/frontmatter.md`            | Yes      |
+| Must read        | `contracts/concept_structure.md`      | Yes      |
+| Must read        | `contracts/frontmatter.md`            | Yes      |
 | Check if present | `_concept/_grounding/overview/user_input.json`        | No       |
 | Check if present | `_concept/_grounding/general/domain.md`               | No       |
 | Check if present | `_concept/_grounding/general/competitors.md`          | No       |
@@ -191,10 +191,10 @@ WRITES
 \_concept/discovery/comparable.md — similar apps with lessons learned
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths and naming rules
-skaileup-contracts/contracts/frontmatter.md — required YAML fields
-skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
-skaileup-contracts/contracts/agent_patterns.md — communication style, standalone mode
+contracts/concept_structure.md — valid \_concept/ paths and naming rules
+contracts/frontmatter.md — required YAML fields
+contracts/iron_laws.md — non-negotiable constraints
+contracts/agent_patterns.md — communication style, standalone mode
 
 MUST include all required frontmatter fields in brief.md
 MUST wait for explicit human approval before handing off

@@ -91,8 +91,8 @@ only where features demand it.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md`,
-`skaileup-contracts/contracts/frontmatter.md`, and `skaileup-contracts/contracts/semantic_types.md`.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md`,
+`contracts/frontmatter.md`, and `contracts/semantic_types.md`.
 
 **Hard gates:**
 
@@ -134,9 +134,9 @@ WRITES
 \_concept/blueprint/architecture.md — complete system architecture specification
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths and naming rules
-skaileup-contracts/contracts/frontmatter.md — required YAML fields
-skaileup-contracts/contracts/semantic_types.md — field types (for data flow context)
+contracts/concept_structure.md — valid \_concept/ paths and naming rules
+contracts/frontmatter.md — required YAML fields
+contracts/semantic_types.md — field types (for data flow context)
 references/output_template.md — six-section architecture.md template
 
 MUST include all six sections in architecture.md (overview, backend, data flow, protocols, integrations, infrastructure)

@@ -5,7 +5,7 @@ Re-generate with: /compile-validators add-feature
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "skaileup-contracts" / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "contracts" / "scripts"))
 from validator_lib import Validator, main  # noqa: E402
 
 SKILL = "add-feature"

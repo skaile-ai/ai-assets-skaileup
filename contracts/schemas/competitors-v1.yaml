@@ -1,5 +1,5 @@
 id: competitors-v1
-description: 'Structured competitor analysis produced by skaileup-research. Stored at _grounding/research/competitors.md.'
+description: 'Structured competitor analysis produced by concept-grounding-research. Stored at _grounding/research/competitors.md.'
 version: 1
 type: object
 required: [products_analyzed, last_updated, products]

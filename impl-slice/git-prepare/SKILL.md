@@ -50,7 +50,7 @@ on a dedicated `implement/<app-slug>` branch, not on `main`.
 ## When NOT to Use
 
 - Git is already initialized and the branch exists — skip or run in verify-only mode
-- You want to add a single feature to an existing branch — use `skaileup-implementation` directly
+- You want to add a single feature to an existing branch — use `impl-build-implementation` directly
 
 ## Git Mode: Branch vs. Worktree
 

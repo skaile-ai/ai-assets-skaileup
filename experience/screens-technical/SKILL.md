@@ -73,11 +73,11 @@ If any gate fails, stop immediately and name the missing prerequisite skill.
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — valid \_concept/ paths and naming rules
-- `skaileup-contracts/contracts/frontmatter.md` — required YAML fields
-- `skaileup-contracts/contracts/feedback_loop.md` — cross-reference protocol
-- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-contracts/contracts/agent_patterns.md` — communication style, read-context-first, standalone mode
+- `contracts/concept_structure.md` — valid \_concept/ paths and naming rules
+- `contracts/frontmatter.md` — required YAML fields
+- `contracts/feedback_loop.md` — cross-reference protocol
+- `contracts/iron_laws.md` — non-negotiable constraints
+- `contracts/agent_patterns.md` — communication style, read-context-first, standalone mode
 
 ## Context Budget
 

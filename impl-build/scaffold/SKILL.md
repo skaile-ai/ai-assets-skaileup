@@ -45,7 +45,7 @@ metadata:
 Creates a buildable project from a completed `_concept/` pipeline. Reads the
 tech stack definition from `stack.md` to determine framework, CLI commands, and
 project structure conventions. Delegates stack-specific scaffold steps to
-`skaileup-standards/profiles/<tech_stack_skill>/SKILL.md`.
+`impl-architecture/profiles/<tech_stack_skill>/SKILL.md`.
 
 **Framework-agnostic:** all stack-specific scaffold commands come from the
 tech stack profile, not from this skill directly.
@@ -70,14 +70,14 @@ tech stack profile, not from this skill directly.
 2. `_concept/discovery/brief.md` exists (app name + slug)
 3. `_concept/blueprint/datamodel/model.json` exists (entities for initial setup)
 
-**Required background:** Read `skaileup-contracts/contracts/iron_laws.md` before starting.
+**Required background:** Read `contracts/iron_laws.md` before starting.
 
 ## Context Budget
 
 | Action         | Path                                                      | Required                     |
 | -------------- | --------------------------------------------------------- | ---------------------------- |
 | Must read      | `_concept/blueprint/techstack.md`                         | Yes                          |
-| Must read      | `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` | Yes (resolved from stack.md) |
+| Must read      | `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Yes (resolved from stack.md) |
 | Must read      | `_concept/discovery/brief.md`                             | Yes                          |
 | Must read      | `_concept/blueprint/datamodel/model.json`                 | Yes                          |
 | Read if exists | `_concept/blueprint/architecture.md`                      | Recommended                  |
@@ -89,7 +89,7 @@ ROLE Scaffold agent — creates a buildable project from concept artifacts using
 
 READS
 \_concept/blueprint/techstack.md — tech stack choice + tech_stack_skill field
-skaileup-standards/profiles/<tech_stack_skill>/SKILL.md — scaffold commands + project structure
+impl-architecture/profiles/<tech_stack_skill>/SKILL.md — scaffold commands + project structure
 \_concept/discovery/brief.md — app name, slug
 \_concept/blueprint/datamodel/model.json — entity count, relationships
 ? \_concept/blueprint/architecture.md — custom modules, processes
@@ -102,9 +102,9 @@ WRITES
 \_implementation/decisions.md — empty decision log with header
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-contracts/contracts/plans.md — PLANS.md format
-skaileup-contracts/contracts/seed_data.md — seed scenario format
+contracts/concept_structure.md — canonical \_concept/ paths
+contracts/plans.md — PLANS.md format
+contracts/seed_data.md — seed scenario format
 
 MUST read tech stack profile before any scaffold commands
 MUST run Level 1 verification (build) before any commit
@@ -122,7 +122,7 @@ STEP 1: Read concept context
 
 - Read brief.md: app name, slug, elevator pitch
 - Read stack.md: extract tech_stack_skill value
-- Read profile: `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md`
+- Read profile: `impl-architecture/profiles/<tech_stack_skill>/SKILL.md`
   Extract from profile:
   - `scaffold_command` — CLI command to create the project
   - `project_structure` — expected directory layout

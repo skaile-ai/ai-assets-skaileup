@@ -1,6 +1,6 @@
 ---
 name: impl-build-migrate
-description: 'Generates database migrations from the data model. Reads model.dbml + model.json and stack.md, then generates migration files for the target ORM (Prisma, Drizzle, Directus, raw SQL). Translates semantic types using skaileup-contracts/contracts/semantic_types.md. Run before implement-feature.'
+description: 'Generates database migrations from the data model. Reads model.dbml + model.json and stack.md, then generates migration files for the target ORM (Prisma, Drizzle, Directus, raw SQL). Translates semantic types using contracts/semantic_types.md. Run before implement-feature.'
 metadata:
   version: '1.0.0'
   tags:
@@ -38,7 +38,7 @@ Reads the stack-independent data model (`model.dbml` + `model.json`) and
 the chosen tech stack (`stack.md`), then generates database migration files
 for the target ORM or migration framework. Translates semantic types to
 stack-specific types using the translation table in
-`skaileup-contracts/contracts/semantic_types.md`.
+`contracts/semantic_types.md`.
 
 ## When to Use
 
@@ -70,7 +70,7 @@ READS
 \_concept/blueprint/datamodel/model.dbml — human-readable model structure
 \_concept/blueprint/datamodel/model.json — relationships, enums, field metadata
 \_concept/blueprint/techstack.md — ORM + migration tool + database
-skaileup-contracts/contracts/semantic_types.md — type translation table
+contracts/semantic_types.md — type translation table
 
 WRITES
 <stack-specific migration files> — paths depend on ORM
@@ -97,7 +97,7 @@ STEP 2: Read tech stack
 
 STEP 3: Load type translation table
 
-- Read skaileup-contracts/contracts/semantic_types.md
+- Read contracts/semantic_types.md
 - Map every semantic type to the target stack's concrete type
 
 STEP 4: Search for expert skills

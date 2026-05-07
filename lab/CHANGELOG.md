@@ -1,3 +1,3 @@
-# Changelog — skaileup-lab
+# Changelog — lab
 
 ## [Unreleased]

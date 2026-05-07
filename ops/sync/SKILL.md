@@ -65,11 +65,11 @@ gardening mode because every change is previewed.
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — valid \_concept/ paths and naming rules
-- `skaileup-contracts/contracts/frontmatter.md` — required YAML fields per file type
-- `skaileup-contracts/contracts/feedback_loop.md` — cross-reference protocol (authoritative source for link rules)
-- `skaileup-contracts/contracts/golden_principles.md` — mechanical rules
-- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
+- `contracts/concept_structure.md` — valid \_concept/ paths and naming rules
+- `contracts/frontmatter.md` — required YAML fields per file type
+- `contracts/feedback_loop.md` — cross-reference protocol (authoritative source for link rules)
+- `contracts/golden_principles.md` — mechanical rules
+- `contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
 
@@ -79,7 +79,7 @@ Before starting, read:
 | `_concept/experience/screens/**/*.md` (frontmatter)  | Required |
 | `_concept/blueprint/datamodel/model.json`            | Required |
 | `_concept/blueprint/datamodel/feature_map.json`      | Required |
-| `skaileup-contracts/contracts/feedback_loop.md`         | Required |
+| `contracts/feedback_loop.md`         | Required |
 | All other `_concept/**/*.md` (frontmatter only)      | Optional |
 
 ## Standalone Mode

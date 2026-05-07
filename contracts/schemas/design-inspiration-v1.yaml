@@ -1,5 +1,5 @@
 id: design-inspiration-v1
-description: 'Design inspiration and visual reference collection produced by skaileup-research. Stored at _grounding/research/design-inspiration.md.'
+description: 'Design inspiration and visual reference collection produced by concept-grounding-research. Stored at _grounding/research/design-inspiration.md.'
 version: 1
 type: object
 required: [references_collected, last_updated]

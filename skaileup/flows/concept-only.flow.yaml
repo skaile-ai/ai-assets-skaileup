@@ -27,33 +27,33 @@ globals:
   verbosity: 'detailed'
 tier_presets:
   quick:
-    skaileup-research: light
-    skaileup-discovery: light
-    skaileup-experience: light
-    skaileup-prototype: none
-    skaileup-storybook: none
-    skaileup-blueprint: light
-    skaileup-concept-meta: none
+    concept-grounding-research: light
+    design: light
+    experience: light
+    walkthrough-mockup: none
+    component-mockup-storybook: none
+    impl-architecture: light
+    ops: none
   standard:
-    skaileup-research: medium
-    skaileup-discovery: medium
-    skaileup-experience: medium
-    skaileup-prototype: light
-    skaileup-storybook: none
-    skaileup-blueprint: medium
-    skaileup-concept-meta: light
+    concept-grounding-research: medium
+    design: medium
+    experience: medium
+    walkthrough-mockup: light
+    component-mockup-storybook: none
+    impl-architecture: medium
+    ops: light
   thorough:
-    skaileup-research: max
-    skaileup-discovery: max
-    skaileup-experience: max
-    skaileup-prototype: medium
-    skaileup-storybook: max
-    skaileup-blueprint: max
-    skaileup-concept-meta: medium
+    concept-grounding-research: max
+    design: max
+    experience: max
+    walkthrough-mockup: medium
+    component-mockup-storybook: max
+    impl-architecture: max
+    ops: medium
 modes:
   research:
     enabled: true
-    skill: 'skaileup-research'
+    skill: 'concept-grounding-research'
     triggers:
       - 'overview'
       - 'features'
@@ -77,7 +77,7 @@ nodes:
       x: -400
       y: 200
     data:
-      skill: 'skaileup-onboard'
+      skill: 'concept-grounding-onboard'
       label: 'Project Onboarding'
       optional: false
   - id: 'ingest-seeds'
@@ -86,7 +86,7 @@ nodes:
       x: -200
       y: 200
     data:
-      skill: 'skaileup-ingest-seeds'
+      skill: 'concept-grounding-seeds'
       label: 'Ingest Seeds'
       optional: true
       skip_when: 'no_seeds_dir'
@@ -96,11 +96,11 @@ nodes:
       x: -400
       y: 400
     data:
-      skill: 'skaileup-research'
+      skill: 'concept-grounding-research'
       label: 'Domain Research'
       optional: true
-      depth_from: 'skaileup-research'
-      skip_when: "tier.skaileup-research == 'none'"
+      depth_from: 'concept-grounding-research'
+      skip_when: "tier.concept-grounding-research == 'none'"
       mode: parallel
   - id: 'g-concept'
     type: 'group'
@@ -123,10 +123,10 @@ nodes:
       x: 40
       y: 200
     data:
-      skill: 'skaileup-overview'
+      skill: 'concept-brief'
       label: 'Project Brief'
       optional: false
-      depth_from: 'skaileup-discovery'
+      depth_from: 'design'
   - id: 'journeys'
     type: 'skill'
     parentNode: 'g-concept'
@@ -134,11 +134,11 @@ nodes:
       x: 280
       y: 80
     data:
-      skill: 'skaileup-journeys'
+      skill: 'experience-journeys'
       label: 'User Journeys'
       optional: false
-      depth_from: 'skaileup-experience'
-      skip_when: "tier.skaileup-experience in ['none', 'light']"
+      depth_from: 'experience'
+      skip_when: "tier.experience in ['none', 'light']"
       parameters:
         hero_approval_required: true
   - id: 'brand-visual'
@@ -148,11 +148,11 @@ nodes:
       x: 280
       y: 240
     data:
-      skill: 'skaileup-brand-visual'
+      skill: 'design-brand-visual'
       label: 'Brand Visual'
       optional: false
-      depth_from: 'skaileup-discovery'
-      skip_when: "tier.skaileup-discovery in ['none', 'light']"
+      depth_from: 'design'
+      skip_when: "tier.design in ['none', 'light']"
       parallel_group: 'identity'
   - id: 'techstack'
     type: 'skill'
@@ -161,10 +161,10 @@ nodes:
       x: 280
       y: 380
     data:
-      skill: 'skaileup-techstack'
+      skill: 'impl-architecture-techstack'
       label: 'Tech Stack'
       optional: false
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       parallel_group: 'identity'
   - id: 'features'
     type: 'skill'
@@ -173,10 +173,10 @@ nodes:
       x: 560
       y: 200
     data:
-      skill: 'skaileup-features'
+      skill: 'product-spec-features'
       label: 'Features'
       optional: false
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
       subagent: true
   - id: 'brand-behavioral'
     type: 'skill'
@@ -185,10 +185,10 @@ nodes:
       x: 560
       y: 80
     data:
-      skill: 'skaileup-brand-behavioral'
+      skill: 'design-brand-voice'
       label: 'Brand Behavioral'
       optional: true
-      depth_from: 'skaileup-discovery'
+      depth_from: 'design'
       skip_when:
         tier_is: none
   - id: 'behaviors'
@@ -198,10 +198,10 @@ nodes:
       x: 560
       y: 340
     data:
-      skill: 'skaileup-behaviors'
+      skill: 'experience-behaviors'
       label: 'Behaviors'
       optional: true
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
       skip_when:
         tier_is: none
   - id: 'architecture'
@@ -211,10 +211,10 @@ nodes:
       x: 840
       y: 80
     data:
-      skill: 'skaileup-architecture'
+      skill: 'impl-architecture-system'
       label: 'Architecture'
       optional: false
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       subagent: true
       extend_when: "artifact.architecture.status == 'seed-partial'"
   - id: 'datamodel'
@@ -224,10 +224,10 @@ nodes:
       x: 840
       y: 240
     data:
-      skill: 'skaileup-datamodel'
+      skill: 'impl-architecture-datamodel'
       label: 'Data Model'
       optional: false
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       subagent: true
       extend_when: "artifact.datamodel.status == 'seed-partial'"
   - id: 'screens'
@@ -237,10 +237,10 @@ nodes:
       x: 1120
       y: 200
     data:
-      skill: 'skaileup-screens'
+      skill: 'experience-screens'
       label: 'Screens'
       optional: false
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
       subagent: true
   - id: 'components'
     type: 'skill'
@@ -249,10 +249,10 @@ nodes:
       x: 1120
       y: 60
     data:
-      skill: 'skaileup-components'
+      skill: 'experience-components'
       label: 'Components'
       optional: true
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
       skip_when:
         tier_is: none
   - id: 'route-prototype'
@@ -264,9 +264,9 @@ nodes:
     data:
       label: 'Prototype Router'
       routes:
-        - condition: "tier.skaileup-storybook in ['medium', 'max']"
+        - condition: "tier.component-mockup-storybook in ['medium', 'max']"
           target: 'storybook'
-        - condition: "tier.skaileup-prototype in ['light', 'medium', 'max']"
+        - condition: "tier.walkthrough-mockup in ['light', 'medium', 'max']"
           target: 'mock'
         - condition: 'default'
           target: null
@@ -277,10 +277,10 @@ nodes:
       x: 1360
       y: 60
     data:
-      skill: 'skaileup-storybook'
+      skill: 'component-mockup-storybook'
       label: 'Storybook'
       optional: true
-      depth_from: 'skaileup-storybook'
+      depth_from: 'component-mockup-storybook'
       skip_when:
         tier_is: none
   - id: 'mock'
@@ -290,10 +290,10 @@ nodes:
       x: 1360
       y: 340
     data:
-      skill: 'skaileup-mock'
+      skill: 'walkthrough-mockup-text'
       label: 'Mockups'
       optional: true
-      depth_from: 'skaileup-prototype'
+      depth_from: 'walkthrough-mockup'
       skip_when:
         tier_is: none
       parameters:
@@ -305,11 +305,11 @@ nodes:
       x: 1560
       y: 200
     data:
-      skill: 'skaileup-review'
+      skill: 'ops-review'
       label: 'Concept Review'
       optional: true
-      depth_from: 'skaileup-concept-meta'
-      skip_when: "tier.skaileup-concept-meta == 'none'"
+      depth_from: 'ops'
+      skip_when: "tier.ops == 'none'"
 edges:
   - id: 'e-onboard-ingest'
     source: 'onboard'
@@ -408,7 +408,7 @@ edges:
     on_exit_fail: 'pause-for-human'
 next_flows:
   - id: 'standard'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Implement →'
     hint: 'Scaffold, implement features with TDD, run tests, and verify.'
     artifact_handoff:
@@ -419,6 +419,6 @@ next_flows:
       - architecture
       - onboarding-decisions
   - id: 'full'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Full Production →'
     hint: 'Readiness gate, design pass, comprehensive test suite, verify.'

@@ -129,7 +129,7 @@ If any are missing, stop and name what is needed.
 If `_concept/blueprint/techstack.md` exists:
 
 - Read it and extract `tech_stack_skill:`
-- Read `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` and extract `mock_template:`
+- Read `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` and extract `mock_template:`
 - Use the mapped template from the table above
 - Skip the manual template selection step
 
@@ -137,11 +137,11 @@ If `_concept/blueprint/techstack.md` exists:
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — valid paths
-- `skaileup-contracts/contracts/frontmatter.md` — screen frontmatter fields
-- `skaileup-contracts/contracts/seed_data.md` — scenario convention
-- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-contracts/contracts/agent_patterns.md` — communication style, standalone mode
+- `contracts/concept_structure.md` — valid paths
+- `contracts/frontmatter.md` — screen frontmatter fields
+- `contracts/seed_data.md` — scenario convention
+- `contracts/iron_laws.md` — non-negotiable constraints
+- `contracts/agent_patterns.md` — communication style, standalone mode
 
 ## Context Budget
 
@@ -152,7 +152,7 @@ Before starting, read:
 | `_concept/experience/screens/00_layout/shell.md`          | Required                                         |
 | `_concept/blueprint/datamodel/seed.json`                  | Required                                         |
 | `_concept/blueprint/techstack.md`                         | Optional (template auto-selection)               |
-| `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` | Optional (read if stack.md has tech_stack_skill) |
+| `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Optional (read if stack.md has tech_stack_skill) |
 | `_concept/experience/screens/components/*.md`             | Optional                                         |
 | `_grounding/general/design_inspiration.md`                | Optional                                         |
 
@@ -185,7 +185,7 @@ _concept/mockups/
 
 1. **Auto-select (preferred):** If `_concept/blueprint/techstack.md` exists:
    - Read it, extract `tech_stack_skill:`
-   - Read `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md`, extract `mock_template:`
+   - Read `impl-architecture/profiles/<tech_stack_skill>/SKILL.md`, extract `mock_template:`
    - Use the template from the mapping table above
    - No user prompt needed
 2. **Manual select (fallback):** If no `tech_stack_skill:` is resolvable:

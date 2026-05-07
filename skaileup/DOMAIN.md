@@ -17,8 +17,8 @@ engine present. Does not contain pipeline logic — delegates to domain-specific
 
 ## Notes
 
-- Depends on: `skaileup-conceptualization`, `skaileup-implementation` (for peer agents)
-- No contracts of its own; reads `skaileup-contracts` contracts indirectly via orchestrators
+- Depends on: `skaileup-conceptualization`, `impl-build-implementation` (for peer agents)
+- No contracts of its own; reads `contracts` contracts indirectly via orchestrators
 - The `skaile` router agent (`ai-asset-management/agents/skaile/`) is complementary, not replaced
-- New implementation orchestrators (e.g. `skaileup-implementation-supabase`) are auto-discovered
+- New implementation orchestrators (e.g. `impl-build-implementation-supabase`) are auto-discovered
   by naming convention — no changes to this domain required

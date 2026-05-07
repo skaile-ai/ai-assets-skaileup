@@ -1,6 +1,6 @@
 ---
 name: impl-architecture-techstack
-description: "Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from skaileup-standards/profiles/, asks plain-language questions, recommends the best match, and writes stack.md."
+description: "Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from impl-architecture/profiles/, asks plain-language questions, recommends the best match, and writes stack.md."
 metadata:
   version: '1.0.0'
   tags:
@@ -110,7 +110,7 @@ metadata:
 
 The **techstack** skill is the Tech Stack Advisor. It helps the user choose the
 right tools for their project through plain-language questions. It discovers
-available stacks at runtime from `skaileup-standards/profiles/*/SKILL.md` and recommends
+available stacks at runtime from `impl-architecture/profiles/*/SKILL.md` and recommends
 the best match based on the user's answers.
 
 The `tech_stack_skill` field written to `stack.md` is the single reference all
@@ -131,8 +131,8 @@ downstream skills use to find implementation recipes.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` and
-`skaileup-contracts/contracts/frontmatter.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md` and
+`contracts/frontmatter.md` before proceeding.
 
 **Hard gate:** `_concept/discovery/brief.md` must exist.
 
@@ -141,7 +141,7 @@ downstream skills use to find implementation recipes.
 | Action           | Path                                                            | Required                         |
 | ---------------- | --------------------------------------------------------------- | -------------------------------- |
 | Must read        | `_concept/discovery/brief.md`                                   | Yes                              |
-| Must read        | `skaileup-standards/profiles/*/SKILL.md`                        | Yes (stack discovery)            |
+| Must read        | `impl-architecture/profiles/*/SKILL.md`                        | Yes (stack discovery)            |
 | Check if present | `_concept/experience/features/**/*.md`                          | No (complexity signals)          |
 | Check if present | `_concept/_grounding/overview/user_input.json`                  | No (complexity + pre-answers)    |
 | Check if present | `_concept/_grounding/general/onboarding.md`                     | No (skip pre-answered questions) |
@@ -159,7 +159,7 @@ and writes `_concept/blueprint/techstack.md`.
 
 READS
 \_concept/discovery/brief.md — app name, description, audience
-skaileup-standards/profiles/_/SKILL.md — available stack profiles (discovered at runtime)
+impl-architecture/profiles/_/SKILL.md — available stack profiles (discovered at runtime)
 ? \_concept/experience/features/\*\*/_.md — feature requirements (complexity signals)
 ? \_concept/\_grounding/overview/user_input.json — complexity field + pre-collected answers
 ? \_concept/\_grounding/general/onboarding.md — pre-answered tech preferences
@@ -168,11 +168,11 @@ WRITES
 \_concept/blueprint/techstack.md — full stack definition with tech_stack_skill reference
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths
-skaileup-contracts/contracts/frontmatter.md — stack.md frontmatter fields
+contracts/concept_structure.md — valid \_concept/ paths
+contracts/frontmatter.md — stack.md frontmatter fields
 references/integration_categories.md — additional integration checklist
 
-MUST discover available stacks from skaileup-standards/profiles/ at runtime — never hardcode
+MUST discover available stacks from impl-architecture/profiles/ at runtime — never hardcode
 MUST include tech_stack_skill field in stack.md frontmatter — downstream skills depend on it
 MUST include Additional Integrations section in stack.md
 MUST include Trade-offs Considered section in stack.md
@@ -192,7 +192,7 @@ STEP 1: Read context
 
 STEP 2: Discover available stacks
 
-- Scan skaileup-standards/profiles/\*/SKILL.md
+- Scan impl-architecture/profiles/\*/SKILL.md
 - For each found profile, read:
   - The Identity table (name, framework, UI library, backend, database, etc.)
   - The "When to Use" section
@@ -317,9 +317,9 @@ EMIT [techstack] completed run_id=<uuid> tech_stack_skill=<profile-id> additiona
 
 CHECKLIST
 
-- [ ] skaileup-standards/profiles/ was scanned for available stacks
+- [ ] impl-architecture/profiles/ was scanned for available stacks
 - [ ] stack.md exists with all required frontmatter fields
-- [ ] tech_stack_skill field is set (matches a skaileup-standards/profiles/ directory or "custom")
+- [ ] tech_stack_skill field is set (matches a impl-architecture/profiles/ directory or "custom")
 - [ ] Additional Integrations section present
 - [ ] Trade-offs Considered section present
 - [ ] User has explicitly approved the stack
@@ -339,7 +339,7 @@ CHECKLIST
 
 | Mistake                                           | What to do instead                                                                      |
 | ------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Hardcoding stack details without reading profiles | Always scan skaileup-standards/profiles/\*/SKILL.md — new profiles may have been added. |
+| Hardcoding stack details without reading profiles | Always scan impl-architecture/profiles/\*/SKILL.md — new profiles may have been added. |
 | Omitting `tech_stack_skill`                       | This field is mandatory — all downstream skills depend on it.                           |
 | Recommending without asking                       | Always ask the user, even if the answer seems obvious. Framework preference matters.    |
 | Skipping Trade-offs Considered                    | Always explain what was weighed. Tech stack is a high-impact long-term choice.          |

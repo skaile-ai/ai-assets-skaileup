@@ -169,7 +169,7 @@ See `feedback_loop.md` for the full cross-reference protocol.
 
 When a flow node has `"subagent": true`:
 1. Orchestrator creates a fresh agent context
-2. Context includes ONLY: the skill's SKILL.md, required `skaileup-contracts/` contracts, input `_concept/` folders
+2. Context includes ONLY: the skill's SKILL.md, required `contracts/` contracts, input `_concept/` folders
 3. **Paste the full task text verbatim into the subagent prompt** — never ask the subagent to read the plan file
 4. Subagent runs to completion and reports one of four statuses (see Implementer Status Report below)
 5. Orchestrator handles the status and collects output artifacts
@@ -216,11 +216,11 @@ actionable rather than opaque.
 When implementing features:
 1. Read `_concept/blueprint/techstack.md` to identify the tech stack
 2. Search for matching expert skills in the monorepo:
-   - JS/TS stack: `dev-implementation-experts-js/skills/skaileup-implementation-expert-<tech>/`
-   - Python stack: `dev-implementation-experts-python/skills/skaileup-implementation-expert-<tech>/`
+   - JS/TS stack: `dev-implementation-experts-js/skills/impl-build-implementation-expert-<tech>/`
+   - Python stack: `dev-implementation-experts-python/skills/impl-build-implementation-expert-<tech>/`
 3. If found: load the expert skill's references and recipes for implementation guidance
 4. If not found: proceed with general knowledge
 5. After successful implementation: suggest creating or updating expert recipes
 
-The `skaileup-implementation-expert-advisor` skill can route to the correct expert
+The `impl-build-implementation-expert-advisor` skill can route to the correct expert
 when the target tech is not immediately obvious from the stack.

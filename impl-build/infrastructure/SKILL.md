@@ -92,7 +92,7 @@ docker-compose.yml — additional services
 .env.example — new environment variables
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
+contracts/concept_structure.md — canonical \_concept/ paths
 references/layer_patterns.md — implementation patterns per layer, provider template
 references/dependency_mapping.md — external integration → npm package mapping
 

@@ -38,7 +38,7 @@ metadata:
         description: 'Brand tokens for design fidelity check'
       - path: '_implementation/eval-feature'
         description: 'Feature eval results to confirm all groups approved'
-      - path: 'skaileup-evaluate/skills/eval-product/references/design-rubrics.md'
+      - path: 'ops/eval-product/references/design-rubrics.md'
         description: 'Design scoring rubrics — required before scoring any design dimension'
     produces:
       - path: '_implementation/eval-product.json'
@@ -66,7 +66,7 @@ WRITES
 \_implementation/eval-product.json — MUST write before reporting
 
 REFERENCES
-skaileup-evaluate/skills/eval-product/references/design-rubrics.md
+ops/eval-product/references/design-rubrics.md
 
 MUST read design-rubrics.md before scoring any design dimension
 MUST walk all journeys end-to-end, not spot-check

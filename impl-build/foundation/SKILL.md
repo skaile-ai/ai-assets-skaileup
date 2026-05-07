@@ -57,7 +57,7 @@ Applies the foundational layers every app needs before feature work begins:
    (only if `experience/4_storybook/` exists)
 
 **Framework-agnostic.** All file locations, variable naming, auth plugin names,
-and layout patterns come from `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md`.
+and layout patterns come from `impl-architecture/profiles/<tech_stack_skill>/SKILL.md`.
 
 ## When to Use
 
@@ -85,7 +85,7 @@ and layout patterns come from `skaileup-standards/profiles/<tech_stack_skill>/SK
 | Action         | Path                                                      | Required    |
 | -------------- | --------------------------------------------------------- | ----------- |
 | Must read      | `_concept/blueprint/techstack.md`                         | Yes         |
-| Must read      | `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` | Yes         |
+| Must read      | `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Yes         |
 | Must read      | `_concept/discovery/brand/tokens.json`                    | Yes         |
 | Read if exists | `_concept/discovery/brand/identity.md`                    | Recommended |
 | Read if exists | `_concept/experience/screens/00_layout/shell.md`          | Recommended |
@@ -99,7 +99,7 @@ ROLE Foundation agent — applies brand tokens, configures auth, wires app shell
 
 READS
 \_concept/blueprint/techstack.md — tech_stack_skill, auth provider
-skaileup-standards/profiles/<tech_stack_skill>/SKILL.md — css_vars_mapping, auth_setup, app_shell recipes
+impl-architecture/profiles/<tech_stack_skill>/SKILL.md — css_vars_mapping, auth_setup, app_shell recipes
 \_concept/discovery/brand/tokens.json — color tokens, typography, spacing, shadows
 ? \_concept/discovery/brand/identity.md — design philosophy, atmosphere
 ? \_concept/experience/screens/00_layout/shell.md — navigation structure, sidebar items
@@ -115,8 +115,8 @@ WRITES
 \_implementation/progress.json — foundation phase status
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
+contracts/concept_structure.md — canonical \_concept/ paths
+contracts/iron_laws.md — non-negotiable constraints
 
 MUST read tech stack profile before any implementation
 MUST translate ALL colors and fonts from tokens.json — never invent values
@@ -234,7 +234,7 @@ CHECKLIST
 ## Tech Stack Resolution
 
 Read `stack.md` → extract `tech_stack_skill`. Then read
-`skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` and extract:
+`impl-architecture/profiles/<tech_stack_skill>/SKILL.md` and extract:
 
 | Section            | Purpose                                                       |
 | ------------------ | ------------------------------------------------------------- |

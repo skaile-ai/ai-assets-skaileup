@@ -1,5 +1,5 @@
 id: onboarding-profile-v1
-description: 'Machine-readable project identity produced by skaileup-onboard. Stored at _grounding/onboarding/profile.yaml.'
+description: 'Machine-readable project identity produced by concept-grounding-onboard. Stored at _grounding/onboarding/profile.yaml.'
 version: 1
 type: object
 required: [name, problem, audience, type, created, tiers]
@@ -25,13 +25,13 @@ properties:
     type: object
     description: 'Per-domain tier settings (none/light/medium/max)'
     properties:
-      skaileup-research: { type: string, enum: [none, light, medium, max] }
-      skaileup-discovery: { type: string, enum: [none, light, medium, max] }
-      skaileup-experience: { type: string, enum: [none, light, medium, max] }
-      skaileup-prototype: { type: string, enum: [none, light, medium, max] }
-      skaileup-storybook: { type: string, enum: [none, light, medium, max] }
-      skaileup-blueprint: { type: string, enum: [none, light, medium, max] }
-      skaileup-concept-meta: { type: string, enum: [none, light, medium, max] }
+      concept-grounding-research: { type: string, enum: [none, light, medium, max] }
+      design: { type: string, enum: [none, light, medium, max] }
+      experience: { type: string, enum: [none, light, medium, max] }
+      walkthrough-mockup: { type: string, enum: [none, light, medium, max] }
+      component-mockup-storybook: { type: string, enum: [none, light, medium, max] }
+      impl-architecture: { type: string, enum: [none, light, medium, max] }
+      ops: { type: string, enum: [none, light, medium, max] }
     additionalProperties:
       type: string
       enum: [none, light, medium, max]
@@ -43,10 +43,10 @@ example:
   type: web-app
   created: '2026-04-25'
   tiers:
-    skaileup-research: medium
-    skaileup-discovery: medium
-    skaileup-experience: medium
-    skaileup-blueprint: medium
-    skaileup-prototype: light
-    skaileup-storybook: none
-    skaileup-concept-meta: light
+    concept-grounding-research: medium
+    design: medium
+    experience: medium
+    impl-architecture: medium
+    walkthrough-mockup: light
+    component-mockup-storybook: none
+    ops: light

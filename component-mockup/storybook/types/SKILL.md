@@ -68,8 +68,8 @@ during early UI development and the real data model once it is finalized.
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — `_concept/` paths and naming
-- `skaileup-contracts/contracts/semantic_types.md` — PostXL field types
+- `contracts/concept_structure.md` — `_concept/` paths and naming
+- `contracts/semantic_types.md` — PostXL field types
 
 ## Workflow
 

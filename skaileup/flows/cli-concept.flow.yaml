@@ -23,27 +23,27 @@ globals:
   cli_mode: true
 tier_presets:
   quick:
-    skaileup-research: none
-    skaileup-discovery: light
-    skaileup-experience: light
-    skaileup-blueprint: light
-    skaileup-concept-meta: none
+    concept-grounding-research: none
+    design: light
+    experience: light
+    impl-architecture: light
+    ops: none
   standard:
-    skaileup-research: light
-    skaileup-discovery: light
-    skaileup-experience: medium
-    skaileup-blueprint: medium
-    skaileup-concept-meta: none
+    concept-grounding-research: light
+    design: light
+    experience: medium
+    impl-architecture: medium
+    ops: none
   thorough:
-    skaileup-research: medium
-    skaileup-discovery: medium
-    skaileup-experience: max
-    skaileup-blueprint: max
-    skaileup-concept-meta: light
+    concept-grounding-research: medium
+    design: medium
+    experience: max
+    impl-architecture: max
+    ops: light
 modes:
   research:
     enabled: true
-    skill: 'skaileup-research'
+    skill: 'concept-grounding-research'
     triggers:
       - 'overview'
       - 'features'
@@ -62,7 +62,7 @@ nodes:
       x: -400
       y: 140
     data:
-      skill: 'skaileup-onboard'
+      skill: 'concept-grounding-onboard'
       label: 'Project Onboarding'
       optional: false
   - id: 'ingest-seeds'
@@ -71,7 +71,7 @@ nodes:
       x: -200
       y: 140
     data:
-      skill: 'skaileup-ingest-seeds'
+      skill: 'concept-grounding-seeds'
       label: 'Ingest Seeds'
       optional: true
       skip_when: 'no_seeds_dir'
@@ -96,10 +96,10 @@ nodes:
       x: 40
       y: 140
     data:
-      skill: 'skaileup-overview'
+      skill: 'concept-brief'
       label: 'Project Brief'
       optional: false
-      depth_from: 'skaileup-discovery'
+      depth_from: 'design'
       parameters:
         input_style: 'freeform'
         note: 'Describe CLI commands, flags, and expected output'
@@ -110,11 +110,11 @@ nodes:
       x: 280
       y: 60
     data:
-      skill: 'skaileup-journeys'
+      skill: 'experience-journeys'
       label: 'User Journeys'
       optional: true
-      depth_from: 'skaileup-experience'
-      skip_when: "tier.skaileup-experience in ['none', 'light']"
+      depth_from: 'experience'
+      skip_when: "tier.experience in ['none', 'light']"
       parameters:
         min_stages:
           - 'hero'
@@ -126,10 +126,10 @@ nodes:
       x: 280
       y: 200
     data:
-      skill: 'skaileup-features'
+      skill: 'product-spec-features'
       label: 'Features'
       optional: false
-      depth_from: 'skaileup-experience'
+      depth_from: 'experience'
       parameters:
         cli_mode: true
         describe_as_commands: true
@@ -140,10 +140,10 @@ nodes:
       x: 280
       y: 320
     data:
-      skill: 'skaileup-techstack'
+      skill: 'impl-architecture-techstack'
       label: 'Tech Stack'
       optional: false
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       parallel_group: 'identity'
   - id: 'architecture'
     type: 'skill'
@@ -152,10 +152,10 @@ nodes:
       x: 560
       y: 60
     data:
-      skill: 'skaileup-architecture'
+      skill: 'impl-architecture-system'
       label: 'Architecture'
       optional: true
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       extend_when: "artifact.architecture.status == 'seed-partial'"
   - id: 'datamodel'
     type: 'skill'
@@ -164,10 +164,10 @@ nodes:
       x: 560
       y: 200
     data:
-      skill: 'skaileup-datamodel'
+      skill: 'impl-architecture-datamodel'
       label: 'Data Model'
       optional: false
-      depth_from: 'skaileup-blueprint'
+      depth_from: 'impl-architecture'
       extend_when: "artifact.datamodel.status == 'seed-partial'"
       parameters:
         note: 'Config files, storage schemas, output formats'
@@ -218,7 +218,7 @@ edges:
     type: 'optional'
 next_flows:
   - id: 'cli'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Implement CLI →'
     hint: 'Scaffold the CLI project and implement features with unit and integration tests.'
     artifact_handoff:

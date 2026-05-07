@@ -83,11 +83,11 @@ If not: "No approved features found. Run the `features` skill first."
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — valid paths
-- `skaileup-contracts/contracts/frontmatter.md` — feature frontmatter fields
-- `skaileup-contracts/contracts/feedback_loop.md` — cross-reference protocol
-- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-contracts/contracts/agent_patterns.md` — communication style, standalone mode
+- `contracts/concept_structure.md` — valid paths
+- `contracts/frontmatter.md` — feature frontmatter fields
+- `contracts/feedback_loop.md` — cross-reference protocol
+- `contracts/iron_laws.md` — non-negotiable constraints
+- `contracts/agent_patterns.md` — communication style, standalone mode
 
 Also read the Allium language subset reference bundled with this skill:
 

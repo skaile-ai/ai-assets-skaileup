@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "flow.schema.json",
   "title": "ConceptForge Flow",
-  "description": "A skill pipeline flow definition. Node/edge structure is compatible with Vue Flow (@vue-flow/core) and React Flow (@xyflow/react). Each flow file is self-contained: skill metadata (writes, requires, user_inputs, feedback, grounding_folder) lives on each node. Skills are referenced by canonical name only — never by path. See skaileup-contracts/contracts/flows.md for authoring guidance.",
+  "description": "A skill pipeline flow definition. Node/edge structure is compatible with Vue Flow (@vue-flow/core) and React Flow (@xyflow/react). Each flow file is self-contained: skill metadata (writes, requires, user_inputs, feedback, grounding_folder) lives on each node. Skills are referenced by canonical name only — never by path. See contracts/flows.md for authoring guidance.",
   "type": "object",
   "required": ["id", "name", "nodes", "edges"],
   "additionalProperties": false,

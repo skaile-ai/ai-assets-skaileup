@@ -4,7 +4,7 @@ Flows are self-contained execution templates. Each flow file defines a complete,
 runnable path through the skill tree for a specific use case (MVP, prototype, concept-only, etc.).
 
 **Pipeline.json is removed.** All skill metadata that was in pipeline.json now lives on
-the skill nodes inside each flow. Global agent config lives in `skaileup-contracts/agent-config.json`.
+the skill nodes inside each flow. Global agent config lives in `contracts/agent-config.json`.
 
 ---
 
@@ -15,11 +15,11 @@ the `name` field in the skill's `SKILL.md` frontmatter. Never use file paths.
 
 ```yaml
 # correct
-skill: "skaileup-datamodel"
+skill: "impl-architecture-datamodel"
 
 # wrong — never use paths
 skill: "concept/blueprint/datamodel"
-skill: "skaileup-blueprint/skills/30_blueprint/cf_datamodel"
+skill: "impl-architecture/skills/30_blueprint/cf_datamodel"
 ```
 
 The orchestrator resolves names to skill directories by scanning all `SKILL.md` frontmatter
@@ -29,49 +29,49 @@ files at startup and building a name→path registry.
 
 | Name                            | Domain                | Description                                             |
 | ------------------------------- | --------------------- | ------------------------------------------------------- |
-| `skaileup-overview`             | skaileup-discovery    | Project brief, goals, comparable products               |
-| `skaileup-research`             | skaileup-research     | Parallel research mode — domain, competitors, audiences |
-| `skaileup-brand-visual`         | skaileup-discovery    | Visual identity — colors, fonts, tokens                 |
-| `skaileup-brand-behavioral`     | skaileup-discovery    | Communication tone, micro-copy guidelines               |
-| `skaileup-journeys`             | skaileup-experience   | User journey maps, stories.json, EARS criteria          |
-| `skaileup-features`             | skaileup-experience   | Feature specs in numbered groups                        |
-| `skaileup-behaviors`            | skaileup-experience   | Behavioral specs (.allium format)                       |
-| `skaileup-screens`              | skaileup-experience   | Screen specs with component inventories                 |
-| `skaileup-components`           | skaileup-experience   | Reusable component inventory                            |
-| `skaileup-mock`                 | skaileup-prototype    | Interactive HTML mockups                                |
-| `skaileup-storybook`            | skaileup-storybook    | Living Storybook prototype (3-layer)                    |
-| `skaileup-techstack`            | skaileup-blueprint    | Tech stack selection and reasoning                      |
-| `skaileup-architecture`         | skaileup-blueprint    | System architecture, modules, data flow                 |
-| `skaileup-datamodel`            | skaileup-blueprint    | Data model (stack-aware schema output)                  |
-| `skaileup-reverse-engineer`     | skaileup-concept-meta | Extract full concept from existing codebase             |
-| `skaileup-add-feature`          | skaileup-concept-meta | Add/modify feature in live concept                      |
-| `skaileup-review`               | skaileup-concept-meta | Concept structure audit + gardening                     |
-| `skaileup-eval-concept`         | skaileup-concept-meta | Concept completeness gate                               |
-| `skaileup-eval-feature`         | skaileup-concept-meta | Feature implementation gate                             |
-| `skaileup-eval-product`         | skaileup-concept-meta | Product goal assessment                                 |
-| `skaileup-scaffold`             | skaileup-build        | Project scaffolding                                     |
-| `skaileup-foundation`           | skaileup-build        | Brand tokens, auth config, app shell                    |
-| `skaileup-infrastructure`       | skaileup-build        | Custom backend modules (conditional)                    |
-| `skaileup-migrate`              | skaileup-build        | Database migrations                                     |
-| `skaileup-seed`                 | skaileup-build        | Load seed data scenarios                                |
-| `skaileup-implement-feature`    | skaileup-build        | TDD feature implementation                              |
-| `skaileup-update-docs`          | skaileup-build        | Sync docs after implementation                          |
-| `skaileup-generate`             | skaileup-build        | Code generation utilities                               |
-| `skaileup-git-prepare`          | skaileup-build        | Git repo prep for supervised implementation             |
-| `skaileup-brainstorm`           | skaileup-build        | Structured problem decomposition before planning        |
-| `skaileup-write-plan`           | skaileup-build        | Decomposed implementation plan from concept artifacts   |
-| `skaileup-implement-supervised` | skaileup-build        | Supervised subagent-driven implementation               |
-| `skaileup-finish-branch`        | skaileup-build        | Controlled branch completion (merge/PR/keep/discard)    |
-| `skaileup-audit`                | skaileup-quality      | Static code + structure analysis                        |
-| `skaileup-e2e`                  | skaileup-quality      | Browser-based E2E journey testing                       |
-| `skaileup-ready`                | skaileup-quality      | Pre-flight readiness gate                               |
-| `skaileup-sync`                 | skaileup-quality      | Cross-reference repair                                  |
-| `skaileup-test-unit`            | skaileup-quality      | Unit test generation and execution                      |
-| `skaileup-test-integration`     | skaileup-quality      | Integration test generation and execution               |
-| `skaileup-test-plan`            | skaileup-quality      | Test plan from features, screens, data model            |
-| `skaileup-compile-validators`   | skaileup-quality      | Compile all validator.py files into unified suite       |
-| `skaileup-standards-discover`   | skaileup-standards    | Discover codebase conventions → \_standards/            |
-| `skaileup-standards-inject`     | skaileup-standards    | Match standards to requesting skill                     |
+| `concept-brief`             | design    | Project brief, goals, comparable products               |
+| `concept-grounding-research`             | concept-grounding-research     | Parallel research mode — domain, competitors, audiences |
+| `design-brand-visual`         | design    | Visual identity — colors, fonts, tokens                 |
+| `design-brand-voice`     | design    | Communication tone, micro-copy guidelines               |
+| `experience-journeys`             | experience   | User journey maps, stories.json, EARS criteria          |
+| `product-spec-features`             | experience   | Feature specs in numbered groups                        |
+| `experience-behaviors`            | experience   | Behavioral specs (.allium format)                       |
+| `experience-screens`              | experience   | Screen specs with component inventories                 |
+| `experience-components`           | experience   | Reusable component inventory                            |
+| `walkthrough-mockup-text`                 | walkthrough-mockup    | Interactive HTML mockups                                |
+| `component-mockup-storybook`            | component-mockup-storybook    | Living Storybook prototype (3-layer)                    |
+| `impl-architecture-techstack`            | impl-architecture    | Tech stack selection and reasoning                      |
+| `impl-architecture-system`         | impl-architecture    | System architecture, modules, data flow                 |
+| `impl-architecture-datamodel`            | impl-architecture    | Data model (stack-aware schema output)                  |
+| `ops-reverse-engineer`     | ops | Extract full concept from existing codebase             |
+| `ops-add-feature`          | ops | Add/modify feature in live concept                      |
+| `ops-review`               | ops | Concept structure audit + gardening                     |
+| `ops-eval-concept`         | ops | Concept completeness gate                               |
+| `ops-eval-feature`         | ops | Feature implementation gate                             |
+| `ops-eval-product`         | ops | Product goal assessment                                 |
+| `impl-build-scaffold`             | impl-build        | Project scaffolding                                     |
+| `impl-build-foundation`           | impl-build        | Brand tokens, auth config, app shell                    |
+| `impl-build-infrastructure`       | impl-build        | Custom backend modules (conditional)                    |
+| `impl-build-migrate`              | impl-build        | Database migrations                                     |
+| `impl-build-seed`                 | impl-build        | Load seed data scenarios                                |
+| `impl-build-implement-feature`    | impl-build        | TDD feature implementation                              |
+| `impl-build-docs`          | impl-build        | Sync docs after implementation                          |
+| `impl-build-generate`             | impl-build        | Code generation utilities                               |
+| `impl-slice-git-prepare`          | impl-build        | Git repo prep for supervised implementation             |
+| `impl-plan-brainstorm`           | impl-build        | Structured problem decomposition before planning        |
+| `impl-plan-plan-vertical`           | impl-build        | Decomposed implementation plan from concept artifacts   |
+| `impl-build-implement-supervised` | impl-build        | Supervised subagent-driven implementation               |
+| `impl-slice-finish`        | impl-build        | Controlled branch completion (merge/PR/keep/discard)    |
+| `impl-quality-audit`                | impl-quality      | Static code + structure analysis                        |
+| `impl-quality-test-e2e`                  | impl-quality      | Browser-based E2E journey testing                       |
+| `impl-quality-ready`                | impl-quality      | Pre-flight readiness gate                               |
+| `ops-sync`                 | impl-quality      | Cross-reference repair                                  |
+| `impl-quality-test-unit`            | impl-quality      | Unit test generation and execution                      |
+| `impl-quality-test-integration`     | impl-quality      | Integration test generation and execution               |
+| `impl-quality-test-plan`            | impl-quality      | Test plan from features, screens, data model            |
+| `lab-compile-validators`   | impl-quality      | Compile all validator.py files into unified suite       |
+| `impl-quality-standards-discover`   | impl-architecture    | Discover codebase conventions → \_standards/            |
+| `impl-quality-standards-inject`     | impl-architecture    | Match standards to requesting skill                     |
 
 ---
 
@@ -79,17 +79,17 @@ files at startup and building a name→path registry.
 
 | Domain  | Path                               | Flows                                                                     |
 | ------- | ---------------------------------- | ------------------------------------------------------------------------- |
-| Onboard | `skaileup-onboard/flows/`          | `concept-only`, `prototype`, `cli-concept`, `reverse-engineer`            |
-| Build   | `skaileup-build/flows/`            | `standard`, `full`, `cli`, `prototype`, `small`, `complex`, `superpowers` |
-| Quality | `skaileup-quality/flows/`          | `audit`, `review`, `readiness` (add as needed)                            |
-| Schema  | `skaileup-contracts/flow.schema.json` | JSON Schema for all flow files                                            |
+| Onboard | `concept-grounding-onboard/flows/`          | `concept-only`, `prototype`, `cli-concept`, `reverse-engineer`            |
+| Build   | `impl-build/flows/`            | `standard`, `full`, `cli`, `prototype`, `small`, `complex`, `superpowers` |
+| Quality | `impl-quality/flows/`          | `audit`, `review`, `readiness` (add as needed)                            |
+| Schema  | `contracts/flow.schema.json` | JSON Schema for all flow files                                            |
 
 Each concept flow ends with a `next_flows` array pointing to the appropriate implementation
 (or other follow-on) flows. Use these to chain domains without bundling them into one file.
 
 ### Flow Catalogue
 
-**Concept flows** (`skaileup-onboard/flows/`):
+**Concept flows** (`concept-grounding-onboard/flows/`):
 
 | ID                 | Description                                                          |
 | ------------------ | -------------------------------------------------------------------- |
@@ -98,7 +98,7 @@ Each concept flow ends with a `next_flows` array pointing to the appropriate imp
 | `cli-concept`      | CLI concept — brief, features, tech stack, data model (no UI)        |
 | `reverse-engineer` | Extract full concept from an existing codebase                       |
 
-**Implementation flows** (`skaileup-build/flows/`):
+**Implementation flows** (`impl-build/flows/`):
 
 | ID            | Description                                                                   |
 | ------------- | ----------------------------------------------------------------------------- |
@@ -150,7 +150,7 @@ nodes: [...] # skill nodes + visual group containers + router/gate nodes
 edges: [...] # directed execution graph
 next_flows: # suggested follow-on flows shown at completion
   - id: 'audit'
-    domain: 'skaileup-quality'
+    domain: 'impl-quality'
     label: 'Audit →'
     hint: 'Run static analysis.'
     artifact_handoff: # (concept flows only) artifacts passed to the next flow
@@ -171,29 +171,29 @@ The user selects a preset at flow start (or a custom per-domain override).
 ```yaml
 tier_presets:
   quick:
-    skaileup-research: none
-    skaileup-discovery: light
-    skaileup-experience: light
-    skaileup-prototype: none
-    skaileup-storybook: none
-    skaileup-blueprint: light
-    skaileup-concept-meta: none
+    concept-grounding-research: none
+    design: light
+    experience: light
+    walkthrough-mockup: none
+    component-mockup-storybook: none
+    impl-architecture: light
+    ops: none
   standard:
-    skaileup-research: medium
-    skaileup-discovery: medium
-    skaileup-experience: medium
-    skaileup-prototype: light
-    skaileup-storybook: none
-    skaileup-blueprint: medium
-    skaileup-concept-meta: light
+    concept-grounding-research: medium
+    design: medium
+    experience: medium
+    walkthrough-mockup: light
+    component-mockup-storybook: none
+    impl-architecture: medium
+    ops: light
   thorough:
-    skaileup-research: max
-    skaileup-discovery: max
-    skaileup-experience: max
-    skaileup-prototype: medium
-    skaileup-storybook: max
-    skaileup-blueprint: max
-    skaileup-concept-meta: medium
+    concept-grounding-research: max
+    design: max
+    experience: max
+    walkthrough-mockup: medium
+    component-mockup-storybook: max
+    impl-architecture: max
+    ops: medium
 ```
 
 Depth levels: `none` | `light` | `medium` | `max`
@@ -208,8 +208,8 @@ shallower or deeper output depending on the chosen preset.
 - id: 'overview'
   type: 'skill'
   data:
-    skill: 'skaileup-overview'
-    depth_from: 'skaileup-discovery' # reads tier.skaileup-discovery at runtime
+    skill: 'concept-brief'
+    depth_from: 'design' # reads tier.design at runtime
 ```
 
 ### `skip_when`
@@ -218,9 +218,9 @@ shallower or deeper output depending on the chosen preset.
 resolved tier map and skips the node entirely when the expression is truthy.
 
 ```yaml
-skip_when: "tier.skaileup-experience in ['none', 'light']"
-skip_when: "tier.skaileup-concept-meta == 'none'"
-skip_when: "tier.skaileup-storybook == 'none'"
+skip_when: "tier.experience in ['none', 'light']"
+skip_when: "tier.ops == 'none'"
+skip_when: "tier.component-mockup-storybook == 'none'"
 ```
 
 The legacy object form is also accepted for boolean flags:
@@ -243,7 +243,7 @@ position:
   y: 200
 data:
   # Identity
-  skill: 'skaileup-datamodel' # canonical skill name (no paths)
+  skill: 'impl-architecture-datamodel' # canonical skill name (no paths)
   label: 'Data Model' # display label in editor
 
   # Execution control
@@ -252,8 +252,8 @@ data:
   subagent: true # run in isolated subagent context
 
   # Tier / depth
-  depth_from: 'skaileup-blueprint' # domain whose tier drives output depth
-  skip_when: "tier.skaileup-blueprint == 'none'" # skip expression
+  depth_from: 'impl-architecture' # domain whose tier drives output depth
+  skip_when: "tier.impl-architecture == 'none'" # skip expression
 
   # Conditional extension
   extend_when: "artifact.datamodel.status == 'seed-partial'"
@@ -297,7 +297,7 @@ data:
       field: 'data_entities'
       description: 'Sets data_entities[] in each feature file'
   # Upstream files this skill modifies AFTER completing its own writes.
-  # See skaileup-contracts/contracts/feedback_loop.md for the full protocol.
+  # See contracts/feedback_loop.md for the full protocol.
 
   # Runtime parameters
   parameters:
@@ -342,9 +342,9 @@ A `null` target means skip entirely (no downstream node is activated).
   data:
     label: 'Prototype Router'
     routes:
-      - condition: "tier.skaileup-storybook in ['medium', 'max']"
+      - condition: "tier.component-mockup-storybook in ['medium', 'max']"
         target: 'storybook'
-      - condition: "tier.skaileup-prototype in ['light', 'medium', 'max']"
+      - condition: "tier.walkthrough-mockup in ['light', 'medium', 'max']"
         target: 'mock'
       - condition: 'default'
         target: null # skip entirely
@@ -379,7 +379,7 @@ The parent flow resumes from the sub-flow node's outgoing edges.
   type: 'sub-flow'
   data:
     flow: 'research-deep'
-    domain: 'skaileup-research'
+    domain: 'concept-grounding-research'
     pass_context: true
 ```
 
@@ -424,7 +424,7 @@ Implementation flows declare which artifacts they consume via `artifact_handoff.
 ```yaml
 next_flows:
   - id: 'standard'
-    domain: 'skaileup-build'
+    domain: 'impl-build'
     label: 'Implement →'
     hint: 'Scaffold, implement features with TDD, run tests, and verify.'
     artifact_handoff:
@@ -504,7 +504,7 @@ When a skill is invoked directly (no flow, no orchestrator):
 3. Runs if gates pass; otherwise names the missing prerequisite
 4. On completion, suggests next skills using the orchestrator
 
-See `skaileup-contracts/agent-config.json` for standalone_mode settings.
+See `contracts/agent-config.json` for standalone_mode settings.
 
 ---
 

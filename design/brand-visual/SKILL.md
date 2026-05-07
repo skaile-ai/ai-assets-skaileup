@@ -130,8 +130,8 @@ re-inventing color names.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` and
-`skaileup-contracts/contracts/frontmatter.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md` and
+`contracts/frontmatter.md` before proceeding.
 
 **Hard gate:** `_concept/discovery/brief.md` must exist.
 
@@ -174,8 +174,8 @@ WRITES
 \_concept/discovery/brand/references/ — screenshots from user-provided reference URLs
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths
-skaileup-contracts/contracts/frontmatter.md — brand frontmatter fields
+contracts/concept_structure.md — valid \_concept/ paths
+contracts/frontmatter.md — brand frontmatter fields
 references/design_philosophy.md — aesthetic principles, boldness guidelines
 references/discovery_questions.md — interview questions and presentation templates
 references/tokens_schema.md — tokens.json structure and output templates

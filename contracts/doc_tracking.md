@@ -12,7 +12,7 @@
 | Skill | Domain | Role |
 |---|---|---|
 | `skaildev-doc` | `skaile-development` | Generates and maintains documentation from source; reads `_sources` frontmatter and `@doc:` annotations to produce or update doc pages |
-| `update-starlight-docs` | `skaileup-implementation` | Syncs existing Starlight doc pages when source files change; uses staleness detection to identify pages that need updating |
+| `update-starlight-docs` | `impl-build-implementation` | Syncs existing Starlight doc pages when source files change; uses staleness detection to identify pages that need updating |
 
 ---
 

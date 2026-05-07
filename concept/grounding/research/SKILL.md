@@ -121,10 +121,10 @@ None. Research can run at any time. It has no hard dependencies.
 
 Before starting, read:
 
-- `skaileup-contracts/contracts/concept_structure.md` — valid `_concept/` paths
-- `skaileup-contracts/contracts/frontmatter.md` — required YAML fields
-- `skaileup-contracts/contracts/iron_laws.md` — non-negotiable constraints
-- `skaileup-contracts/contracts/agent_patterns.md` — communication style, standalone mode
+- `contracts/concept_structure.md` — valid `_concept/` paths
+- `contracts/frontmatter.md` — required YAML fields
+- `contracts/iron_laws.md` — non-negotiable constraints
+- `contracts/agent_patterns.md` — communication style, standalone mode
 
 ## Context Budget
 
@@ -161,8 +161,8 @@ WRITES
 \_grounding/findings/_.png — screenshots captured via browser tool
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid paths
-skaileup-contracts/contracts/frontmatter.md — required YAML fields
+contracts/concept_structure.md — valid paths
+contracts/frontmatter.md — required YAML fields
 references/competitor_template.md — per-competitor analysis structure
 references/persona_template.md — per-persona profile structure
 references/design_inspiration_template.md — layout/color/typography/component structure

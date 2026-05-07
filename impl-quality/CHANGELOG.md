@@ -1,3 +1,3 @@
-# Changelog — skaileup-evaluate
+# Changelog — impl-quality
 
 ## [Unreleased]

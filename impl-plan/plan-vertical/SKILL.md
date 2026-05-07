@@ -193,7 +193,7 @@ depends_on: [task-id, ...]
 #### Tech Context
 
   <Relevant section of stack.md>
-  <Expert skills: list matched skaileup-implementation-expert-* skills>
+  <Expert skills: list matched impl-build-implementation-expert-* skills>
 
 #### Acceptance Criteria
 

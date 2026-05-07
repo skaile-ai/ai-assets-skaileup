@@ -1,6 +1,6 @@
 ---
 name: component-mockup-storybook
-description: 'Use after screens are approved to generate a 3-layer Storybook project: custom building-block components, full-page screen compositions, and clickable user journey flows. Framework-agnostic — resolves addon and story format from skaileup-standards/profiles/. Delegates to 4 sub-skills in sequence.'
+description: 'Use after screens are approved to generate a 3-layer Storybook project: custom building-block components, full-page screen compositions, and clickable user journey flows. Framework-agnostic — resolves addon and story format from impl-architecture/profiles/. Delegates to 4 sub-skills in sequence.'
 metadata:
   version: '1.0.0'
   tags:
@@ -69,7 +69,7 @@ clickable journey flows mapped to user journey stages.
 
 It is **stack-agnostic**. The Storybook addon, story file format (`.vue`/`.tsx`/`.svelte`),
 component library, and icon library are all resolved at runtime from the tech stack profile
-(`skaileup-standards/profiles/<tech_stack_skill>/SKILL.md`).
+(`impl-architecture/profiles/<tech_stack_skill>/SKILL.md`).
 
 It delegates to 4 sub-skills that run in sequence:
 
@@ -95,7 +95,7 @@ It delegates to 4 sub-skills that run in sequence:
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` before proceeding.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md` before proceeding.
 
 **Hard gates:**
 
@@ -108,7 +108,7 @@ It delegates to 4 sub-skills that run in sequence:
 | Action           | Path                                                      | Required        |
 | ---------------- | --------------------------------------------------------- | --------------- |
 | Must read        | `_concept/blueprint/techstack.md`                         | Yes             |
-| Must read        | `skaileup-standards/profiles/<tech_stack_skill>/SKILL.md` | Yes             |
+| Must read        | `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Yes             |
 | Must read        | `_concept/discovery/brand/tokens.json`                    | Yes             |
 | Must read        | `_concept/experience/screens/**/*.md`                     | Yes             |
 | Check if present | `_concept/experience/journeys/stories.json`               | No (Layer 3)    |
@@ -125,7 +125,7 @@ ROLE Storybook Orchestrator — resolves tech stack, then delegates to 4 sub-ski
 
 READS
 \_concept/blueprint/techstack.md — tech_stack_skill, package_manager
-skaileup-standards/profiles/<tech_stack_skill>/SKILL.md — storybook_addon, story_format, component_library, icon_library
+impl-architecture/profiles/<tech_stack_skill>/SKILL.md — storybook_addon, story_format, component_library, icon_library
 \_concept/experience/screens/**/\*.md — screen specs (UI elements, states, data requirements)
 \_concept/experience/screens/00_layout/shell.md — app shell structure, navigation
 \_concept/discovery/brand/tokens.json — color palette, fonts, radius, spacing, shadows, mode
@@ -138,9 +138,9 @@ WRITES
 \_concept/experience/4_storybook/ — complete standalone Storybook project
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — valid \_concept/ paths
-skaileup-contracts/contracts/frontmatter.md — screen frontmatter fields
-skaileup-contracts/contracts/seed_data.md — scenario convention
+contracts/concept_structure.md — valid \_concept/ paths
+contracts/frontmatter.md — screen frontmatter fields
+contracts/seed_data.md — scenario convention
 
 MUST resolve storybook_addon, story_format, and component_library from tech stack profile before delegating
 MUST run all 4 sub-skills in sequence — each depends on the previous
@@ -154,7 +154,7 @@ EMIT [storybook] started run_id=<uuid>
 STEP 1: Resolve tech stack
 
 - Read stack.md → extract tech_stack_skill, package_manager
-- Read skaileup-standards/profiles/<tech_stack_skill>/SKILL.md → extract:
+- Read impl-architecture/profiles/<tech_stack_skill>/SKILL.md → extract:
   | Field | Purpose |
   |---|---|
   | storybook_addon | e.g. @storybook/nuxt, @storybook/react-vite |
