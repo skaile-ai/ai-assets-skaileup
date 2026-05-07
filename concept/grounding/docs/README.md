@@ -10,9 +10,9 @@ This domain covers everything from initial project discovery through experience 
 | **discovery**                 | `skills/10_discovery/`              | Project overview, research, brand identity                          |
 | **experience**                | `skills/20_experience/`             | Feature specs, user journeys, screen designs, storybook             |
 | **blueprint**                 | `skills/30_blueprint/`              | Tech stack, architecture, data model                                |
-| **skaileup-add-feature**      | `skills/skaileup-add-feature/`      | Add a single new feature to an existing concept                     |
-| **skaileup-reverse-engineer** | `skills/skaileup-reverse-engineer/` | Ingest an existing codebase and produce a full concept              |
-| **skaileup-review**           | `skills/skaileup-review/`           | Concept quality audit and cross-reference check                     |
+| **ops-add-feature**      | `skills/ops-add-feature/`      | Add a single new feature to an existing concept                     |
+| **ops-reverse-engineer** | `skills/ops-reverse-engineer/` | Ingest an existing codebase and produce a full concept              |
+| **ops-review**           | `skills/ops-review/`           | Concept quality audit and cross-reference check                     |
 
 ## CF vs Saxe Variants
 

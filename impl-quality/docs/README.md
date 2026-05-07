@@ -6,14 +6,14 @@ This domain contains quality assurance skills: static audit, end-to-end testing,
 
 | Skill                           | Path                                  | Sources   | Purpose                                                          |
 | ------------------------------- | ------------------------------------- | --------- | ---------------------------------------------------------------- |
-| **skaileup-audit**              | `skills/skaileup-audit/`              | CF + Saxe | Static code analysis + concept structure audit                   |
-| **skaileup-e2e**                | `skills/skaileup-e2e/`                | CF + Saxe | End-to-end browser tests                                         |
-| **skaileup-ready**              | `skills/skaileup-ready/`              | CF + Saxe | Pre-flight readiness gate before next pipeline step              |
-| **skaileup-sync**               | `skills/skaileup-sync/`               | CF only   | Cross-reference repair (features ↔ screens, model → features)    |
-| **skaileup-test-unit**          | `skills/skaileup-test-unit/`          | CF only   | Unit test generation                                             |
-| **skaileup-test-integration**   | `skills/skaileup-test-integration/`   | CF only   | Integration test generation                                      |
-| **skaileup-test-plan**          | `skills/skaileup-test-plan/`          | CF only   | Test plan document → `08_testing/test_plan.md`                   |
-| **skaileup-compile-validators** | `skills/skaileup-compile-validators/` | Saxe only | Compile all `validator.py` files into a unified validation suite |
+| **impl-quality-audit**              | `skills/impl-quality-audit/`              | CF + Saxe | Static code analysis + concept structure audit                   |
+| **impl-quality-test-e2e**                | `skills/impl-quality-test-e2e/`                | CF + Saxe | End-to-end browser tests                                         |
+| **impl-quality-ready**              | `skills/impl-quality-ready/`              | CF + Saxe | Pre-flight readiness gate before next pipeline step              |
+| **ops-sync**               | `skills/ops-sync/`               | CF only   | Cross-reference repair (features ↔ screens, model → features)    |
+| **impl-quality-test-unit**          | `skills/impl-quality-test-unit/`          | CF only   | Unit test generation                                             |
+| **impl-quality-test-integration**   | `skills/impl-quality-test-integration/`   | CF only   | Integration test generation                                      |
+| **impl-quality-test-plan**          | `skills/impl-quality-test-plan/`          | CF only   | Test plan document → `08_testing/test_plan.md`                   |
+| **lab-compile-validators** | `skills/lab-compile-validators/` | Saxe only | Compile all `validator.py` files into a unified validation suite |
 
 ## Notable Patterns
 

@@ -22,8 +22,8 @@ For each match, read the YAML frontmatter and extract `name` and `description`.
 
 Infer domain from name:
 
-- `skaileup-conceptualize` → conceptualization
-- `skaileup-implement` or `skaileup-implement-*` → implementation
+- `conceptualize` → conceptualization
+- `impl-build-implement` or `impl-build-implement-*` → implementation
 - anything else → custom
 
 ### Step 2 — Scan for flows
@@ -80,8 +80,8 @@ If no peer agents are found after both local and global scans:
 ```
 No skaileup orchestrators are installed. To get started:
 
-  skaile install agent:skaileup-conceptualize   # concept pipeline
-  skaile install agent:skaileup-implement       # implementation pipeline
+  skaile install agent:conceptualize   # concept pipeline
+  skaile install agent:impl-build-implement       # implementation pipeline
 
 Then restart this session.
 ```
@@ -106,11 +106,11 @@ Do not stack these questions. One per message, wait for each answer before askin
 
 | User intent                           | Tell the user to run                                                                       |
 | ------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Start a new concept / idea            | `skaileup-conceptualize` agent                                                             |
-| Implement an existing concept         | `skaileup-implement` agent (or user's choice if multiple `skaileup-implement-*` installed) |
-| Add a feature to a live concept       | `skaileup-add-feature` skill                                                               |
-| Reverse-engineer an existing codebase | `skaileup-reverse-engineer` skill                                                          |
-| Review / audit concept quality        | `skaileup-review` skill                                                                    |
+| Start a new concept / idea            | `conceptualize` agent                                                             |
+| Implement an existing concept         | `impl-build-implement` agent (or user's choice if multiple `impl-build-implement-*` installed) |
+| Add a feature to a live concept       | `ops-add-feature` skill                                                               |
+| Reverse-engineer an existing codebase | `ops-reverse-engineer` skill                                                          |
+| Review / audit concept quality        | `ops-review` skill                                                                    |
 | Not sure / exploratory                | Ask clarifying questions, one at a time                                                    |
 
 You name agents and skills in prose. You tell the user **which agent or command to run**.
@@ -127,7 +127,7 @@ Map user answers to tiers:
 
 Mention the tier when describing which orchestrator to use:
 
-> "Run `skaileup-conceptualize` in standard mode — it will ask about your project and
+> "Run `conceptualize` in standard mode — it will ask about your project and
 > guide you through discovery, experience design, and the technical blueprint."
 
 ## Flow Guidance (Simulation Mode)
@@ -141,7 +141,7 @@ Use this when no flow engine was detected, or when a specific flow is not regist
    - `type: flow` → sequential, must complete before next node
    - `type: parallel` → can run concurrently, present as a group
    - `type: optional` → present as a choice the user can skip
-3. For each skill node (`type: "skill"`): the step is `data.skill` (e.g. `skaileup-overview`)
+3. For each skill node (`type: "skill"`): the step is `data.skill` (e.g. `concept-brief`)
 4. Skip group nodes (`type: "group"`)
 
 ### Guidance loop
@@ -187,8 +187,8 @@ Each step message follows this structure:
 
 Example:
 
-> "Next up: **Project Brief** (`skaileup-overview`). This step produces `_concept/discovery/brief.md` — the foundation for everything that follows.
-> Run it with: `claude --skill skaileup-overview`
+> "Next up: **Project Brief** (`concept-brief`). This step produces `_concept/discovery/brief.md` — the foundation for everything that follows.
+> Run it with: `claude --skill concept-brief`
 > Let me know when it's done and I'll show you what's next."
 
 ## Flow Guidance (Engine Mode)
@@ -209,7 +209,7 @@ Announce: _"This flow isn't registered in the engine — I'll guide you through 
 
 - **One question per message** — never stack questions
 - **Always state what comes next** — after every user response, tell them the next step
-- **Always give the exact command** — never say "run the skill", say "run `claude --skill skaileup-overview`"
+- **Always give the exact command** — never say "run the skill", say "run `claude --skill concept-brief`"
 - **Never modify `_concept/` or `_implementation/` artifacts directly** — these belong to the orchestrators
 - **Never proceed past a gate without user confirmation** — always ask before advancing phases
 - **When uncertain about project state**, read the relevant PLANS.md before asking the user

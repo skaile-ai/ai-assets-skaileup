@@ -1,6 +1,6 @@
 ---
 name: 'implementation-contract'
-description: 'Shared contract for all skaileup-implementation skills. Describes _implementation/ folder layout, scaffold-to-verify pipeline, progress.json format, git workflow, and how implementation reads from _concept/. REQUIRED reading for any implementation skill.'
+description: 'Shared contract for all impl-build-implementation skills. Describes _implementation/ folder layout, scaffold-to-verify pipeline, progress.json format, git workflow, and how implementation reads from _concept/. REQUIRED reading for any implementation skill.'
 metadata:
   stage: 'alpha'
   do_not_invoke: true
@@ -8,12 +8,12 @@ metadata:
 
 # Implementation Domain — Shared Contract
 
-**Do not invoke directly.** This is a dependency contract — all `skaileup-implementation` skills read this before operating.
+**Do not invoke directly.** This is a dependency contract — all `impl-build-implementation` skills read this before operating.
 
 ## Scope
 
 This contract covers artifacts and conventions that are **implementation-specific**.
-Conventions shared with `skaileup-conceptualization` (semantic types, pipeline graph, plans format) live in `skaileup-contracts/contracts/`.
+Conventions shared with `conceptualization` (semantic types, pipeline graph, plans format) live in `contracts/`.
 
 ## Prerequisites from \_concept/
 

@@ -67,7 +67,7 @@ metadata:
 
 ## Overview
 
-The **skaileup-onboard** skill is the project initialization agent. It runs a
+The **concept-grounding-onboard** skill is the project initialization agent. It runs a
 structured dialog to collect project identity, complexity tier preferences, and
 early technology decisions. Outputs are written to `_concept/_grounding/onboarding/`
 as machine-readable YAML files consumed by every downstream skill.
@@ -90,8 +90,8 @@ data only — the foundation that all subsequent skills build on.
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` and
-`skaileup-contracts/contracts/iron_laws.md` before starting.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md` and
+`contracts/iron_laws.md` before starting.
 
 **Hard gates:** None — this is the entry point.
 
@@ -99,8 +99,8 @@ data only — the foundation that all subsequent skills build on.
 
 | Action       | Path                                                                 | Required    |
 | ------------ | -------------------------------------------------------------------- | ----------- |
-| Must read    | `skaileup-contracts/contracts/concept_structure.md`                     | Yes         |
-| Must read    | `skaileup-contracts/contracts/iron_laws.md`                             | Yes         |
+| Must read    | `contracts/concept_structure.md`                     | Yes         |
+| Must read    | `contracts/iron_laws.md`                             | Yes         |
 | Resume state | `_concept/_grounding/onboarding/profile.yaml`                        | If resuming |
 | Never load   | `_concept/discovery/`, `_concept/experience/`, `_concept/blueprint/` | —           |
 
@@ -123,9 +123,9 @@ WRITES
 \_concept/\_grounding/onboarding/decisions.yaml — technology decisions with confidence levels
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths
-skaileup-contracts/contracts/iron_laws.md — non-negotiable constraints
-skaileup-contracts/contracts/agent_patterns.md — communication style, standalone mode
+contracts/concept_structure.md — canonical \_concept/ paths
+contracts/iron_laws.md — non-negotiable constraints
+contracts/agent_patterns.md — communication style, standalone mode
 
 MUST check for existing profile.yaml before asking any questions (resume support)
 MUST write profile.yaml and decisions.yaml atomically after Phase 4 completes
@@ -188,13 +188,13 @@ IF user chose standard or thorough: > "The preset applies default depths to each
       Present the domain table with preset defaults pre-filled:
       | Domain                | Default (from preset) | Override? |
       |---|---|---|
-      | skaileup-research     | <preset value>        |           |
-      | skaileup-discovery    | <preset value>        |           |
-      | skaileup-experience   | <preset value>        |           |
-      | skaileup-prototype    | <preset value>        |           |
-      | skaileup-storybook    | <preset value>        |           |
-      | skaileup-blueprint    | <preset value>        |           |
-      | skaileup-concept-meta | <preset value>        |           |
+      | concept-grounding-research     | <preset value>        |           |
+      | design    | <preset value>        |           |
+      | experience   | <preset value>        |           |
+      | walkthrough-mockup    | <preset value>        |           |
+      | component-mockup-storybook    | <preset value>        |           |
+      | impl-architecture    | <preset value>        |           |
+      | ops | <preset value>        |           |
 
       Valid values per domain: none | light | medium | max
       Collect overrides one at a time; skip domains the user does not want to change.
@@ -269,13 +269,13 @@ OUTPUT \_concept/\_grounding/onboarding/profile.yaml
     project_type: "<web-app|cli-tool|api-service|library|data-pipeline|mobile-app>"
     tier_preset: "<quick|standard|thorough>"
     tier_overrides:
-      skaileup-research: "<none|light|medium|max>"
-      skaileup-discovery: "<none|light|medium|max>"
-      skaileup-experience: "<none|light|medium|max>"
-      skaileup-prototype: "<none|light|medium|max>"
-      skaileup-storybook: "<none|light|medium|max>"
-      skaileup-blueprint: "<none|light|medium|max>"
-      skaileup-concept-meta: "<none|light|medium|max>"
+      concept-grounding-research: "<none|light|medium|max>"
+      design: "<none|light|medium|max>"
+      experience: "<none|light|medium|max>"
+      walkthrough-mockup: "<none|light|medium|max>"
+      component-mockup-storybook: "<none|light|medium|max>"
+      impl-architecture: "<none|light|medium|max>"
+      ops: "<none|light|medium|max>"
     has_brand: <true|false>
     brand_source: "<description or null>"
     created_at: "<YYYY-MM-DD>"
@@ -330,7 +330,7 @@ Present a summary to the user:
 >
 > Next steps:
 >
-> - If you have existing material (docs, designs, code): run `skaileup-ingest-seeds`
+> - If you have existing material (docs, designs, code): run `concept-grounding-seeds`
 > - Otherwise: run the orchestrator to start the concept pipeline"
 
 EMIT [onboard] completed run_id=<uuid> project=<project_name> preset=<tier_preset>
@@ -354,13 +354,13 @@ Preset defaults applied per domain when no override is given:
 
 | Domain                | quick | standard | thorough |
 | --------------------- | ----- | -------- | -------- |
-| skaileup-research     | light | medium   | max      |
-| skaileup-discovery    | light | medium   | max      |
-| skaileup-experience   | light | medium   | max      |
-| skaileup-prototype    | none  | light    | medium   |
-| skaileup-storybook    | none  | none     | max      |
-| skaileup-blueprint    | light | medium   | max      |
-| skaileup-concept-meta | none  | light    | medium   |
+| concept-grounding-research     | light | medium   | max      |
+| design    | light | medium   | max      |
+| experience   | light | medium   | max      |
+| walkthrough-mockup    | none  | light    | medium   |
+| component-mockup-storybook    | none  | none     | max      |
+| impl-architecture    | light | medium   | max      |
+| ops | none  | light    | medium   |
 
 ## Depth Behavior
 
@@ -405,4 +405,4 @@ If `_concept/_grounding/onboarding/profile.yaml` already exists when this skill 
 
 - **Called by:** `skaileup-orchestrator` as the first step, or standalone by the user
 - **Feeds into:** all downstream skills via `_concept/_grounding/onboarding/profile.yaml` and `decisions.yaml`
-- **Hands off to:** `skaileup-ingest-seeds` (if seeds exist) or `skaileup-orchestrator` (to start pipeline)
+- **Hands off to:** `concept-grounding-seeds` (if seeds exist) or `skaileup-orchestrator` (to start pipeline)

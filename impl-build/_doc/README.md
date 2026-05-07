@@ -1,4 +1,4 @@
-# skaileup-implementation
+# impl-build-implementation
 
 This domain covers the full implementation lifecycle: project scaffolding, feature-by-feature development (TDD), and verification. Skills read from `_concept/` and write production code.
 
@@ -6,10 +6,10 @@ This domain covers the full implementation lifecycle: project scaffolding, featu
 
 | Group                              | Path                                     | Purpose                                            |
 | ---------------------------------- | ---------------------------------------- | -------------------------------------------------- |
-| **skaileup-implement**             | `skills/skaileup-implement/`             | Implementation pipeline controller                 |
+| **impl-build-implement**             | `skills/impl-build-implement/`             | Implementation pipeline controller                 |
 | **setup**                          | `skills/setup/`                          | Project scaffold, foundation setup, infrastructure |
-| **skaileup-implement-feature**     | `skills/skaileup-implement-feature/`     | Per-feature implementation (TDD-first)             |
-| **skaileup-update-starlight-docs** | `skills/skaileup-update-starlight-docs/` | Starlight documentation updates                    |
+| **impl-slice-implement**     | `skills/impl-slice-implement/`     | Per-feature implementation (TDD-first)             |
+| **impl-build-docs** | `skills/impl-build-docs/` | Starlight documentation updates                    |
 | **utilities**                      | `skills/utilities/`                      | Migration, seed data, code generation              |
 
 ## CF vs Saxe Variants

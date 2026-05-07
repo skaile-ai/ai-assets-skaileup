@@ -1,6 +1,6 @@
 ---
 name: concept-grounding-seeds
-description: 'Scans the _seeds/ directory, auto-classifies each file by content analysis, maps files to artifact slots, validates against schemas, and updates concept.yaml with seed statuses. Use after skaileup-onboard when the user has provided existing material.'
+description: 'Scans the _seeds/ directory, auto-classifies each file by content analysis, maps files to artifact slots, validates against schemas, and updates concept.yaml with seed statuses. Use after concept-grounding-onboard when the user has provided existing material.'
 metadata:
   version: '1.0.0'
   tags:
@@ -35,7 +35,7 @@ metadata:
 
 ## Overview
 
-The **skaileup-ingest-seeds** skill scans the `_concept/_seeds/` directory,
+The **concept-grounding-seeds** skill scans the `_concept/_seeds/` directory,
 auto-classifies each file by content analysis, maps files to known artifact
 slots, validates them against artifact schemas, and updates `concept.yaml`
 with the resulting seed statuses.
@@ -50,19 +50,19 @@ what the user has already provided.
 ## When to Use
 
 - The user has provided existing material (documents, designs, code, data models)
-- `skaileup-onboard` has already run and `profile.yaml` exists
+- `concept-grounding-onboard` has already run and `profile.yaml` exists
 - The orchestrator dispatches this after onboarding when `_seeds/` is non-empty
 - The user says "I have existing docs", "I have a design spec", "use these files"
 
 ## When NOT to Use
 
 - `_concept/_seeds/` is empty or does not exist — skip this skill and proceed to the pipeline
-- `skaileup-onboard` has not run yet — run it first so profile.yaml is available
+- `concept-grounding-onboard` has not run yet — run it first so profile.yaml is available
 - Seeds have already been ingested and `concept.yaml` already has seed entries — re-run only if new seeds were added
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `skaileup-contracts/contracts/concept_structure.md` before starting.
+**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md` before starting.
 
 **Hard gate:** `_concept/_grounding/onboarding/profile.yaml` must exist.
 
@@ -73,7 +73,7 @@ what the user has already provided.
 | Must read       | `_concept/_grounding/onboarding/profile.yaml`                        | Yes                       |
 | Must scan       | `_concept/_seeds/`                                                   | Yes                       |
 | Read if present | `_concept/concept.yaml`                                              | No (merge, not overwrite) |
-| Must read       | `skaileup-contracts/contracts/concept_structure.md`                     | Yes                       |
+| Must read       | `contracts/concept_structure.md`                     | Yes                       |
 | Never load      | `_concept/discovery/`, `_concept/experience/`, `_concept/blueprint/` | —                         |
 
 ## Standalone Mode
@@ -95,7 +95,7 @@ WRITES
 \_concept/concept.yaml — updated manifest with seed entries
 
 REFERENCES
-skaileup-contracts/contracts/concept_structure.md — canonical \_concept/ paths and artifact slots
+contracts/concept_structure.md — canonical \_concept/ paths and artifact slots
 
 MUST read profile.yaml before classifying any file — project_type affects classification
 MUST assign a seed_state to every file (seed, seed-partial, seed-reference)
@@ -110,7 +110,7 @@ EMIT [ingest-seeds] started run_id=<uuid>
 # -- Step 1: Gate Check ------------------------------------------------------
 
 STEP 1: Verify prerequisites
-IF \_concept/\_grounding/onboarding/profile.yaml does not exist - STOP with message: > "Onboarding profile not found. Please run `skaileup-onboard` first, then > re-run seed ingestion."
+IF \_concept/\_grounding/onboarding/profile.yaml does not exist - STOP with message: > "Onboarding profile not found. Please run `concept-grounding-onboard` first, then > re-run seed ingestion."
 ELSE - Read profile.yaml (project_name, project_type, tier_preset)
 
 IF \_concept/\_seeds/ does not exist OR is empty - Report: > "No seeds found in \_concept/\_seeds/. Nothing to ingest. > Run the orchestrator to start the concept pipeline." - EXIT cleanly (do not write concept.yaml)
@@ -262,7 +262,7 @@ Assign seed_state based on completeness signals:
 
 ## Integration
 
-- **Called by:** `skaileup-orchestrator` after `skaileup-onboard`, or standalone by the user
+- **Called by:** `skaileup-orchestrator` after `concept-grounding-onboard`, or standalone by the user
 - **Requires:** `_concept/_grounding/onboarding/profile.yaml` (hard gate)
 - **Feeds into:** all downstream skills via `concept.yaml` seed entries
 - **Hands off to:** `skaileup-orchestrator` (to start the concept pipeline)

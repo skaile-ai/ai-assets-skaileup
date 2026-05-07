@@ -26,8 +26,8 @@ tags:
   - 'verification'
   - 'plans'
 metadata:
-  domain: 'skaileup-implementation'
-  skill_merged: 'skills/skaileup-implement/SKILL.md'
+  domain: 'impl-build-implementation'
+  skill_merged: 'skills/impl-build-implement/SKILL.md'
   phases: 'Setup, Features, UAT, Verification'
   complexity_tiers: 'small, standard, complex'
   consumes: '_concept/ artifacts (1_discovery, 2_experience, 3_blueprint)'

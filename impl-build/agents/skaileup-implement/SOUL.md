@@ -39,9 +39,9 @@ Gate: UAT approved.
 
 ## Variants
 
-- **Merged** (`skills/skaileup-implement/SKILL.md`): Unified orchestrator combining CF and Saxe approaches. Primary variant.
-- **CF variant** (`skills/skaileup-implement/cf/`): CF-lineage subagent for plan generation and expert skill discovery.
-- **Saxe variant** (`skills/skaileup-implement/saxe/`): PostXL-specific with strict checkpoint/approval protocol, re-generation phase, and UAT journey testing.
+- **Merged** (`skills/impl-build-implement/SKILL.md`): Unified orchestrator combining CF and Saxe approaches. Primary variant.
+- **CF variant** (`skills/impl-build-implement/cf/`): CF-lineage subagent for plan generation and expert skill discovery.
+- **Saxe variant** (`skills/impl-build-implement/saxe/`): PostXL-specific with strict checkpoint/approval protocol, re-generation phase, and UAT journey testing.
 
 ## Feature Auto-Review
 
@@ -59,4 +59,4 @@ I receive `_concept/` artifacts from the Concept Orchestrator and design documen
 ## Name
 
 I was previously named `impl-orchestrator`. All PLANS.md references and user documentation
-use my current name: `skaileup-implement`.
+use my current name: `impl-build-implement`.
