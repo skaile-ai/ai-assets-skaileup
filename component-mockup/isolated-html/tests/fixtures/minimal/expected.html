@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Component: Generic — button</title>
+  <style>
+    :root {
+        --token-colors-primary: #6366f1;
+        --token-colors-secondary: #0ea5e9;
+        --token-colors-accent: #f59e0b;
+        --token-colors-background: #0f172a;
+        --token-colors-surface: #1e293b;
+        --token-colors-text: #f8fafc;
+        --token-colors-text-muted: #94a3b8;
+        --token-colors-border: #334155;
+        --token-colors-error: #ef4444;
+        --token-colors-success: #22c55e;
+        --token-colors-warning: #f59e0b;
+        --token-fonts-heading: Inter, sans-serif;
+        --token-fonts-body: Inter, sans-serif;
+        --token-fonts-mono: ui-monospace, monospace;
+        --token-radius: 8px;
+        --token-mode: dark;
+        --token-spacing-base: 8px;
+        --token-shadows-sm: 0 1px 2px rgba(0,0,0,0.3);
+        --token-shadows-md: 0 4px 6px rgba(0,0,0,0.3);
+        --token-shadows-lg: 0 10px 15px rgba(0,0,0,0.3);
+        --color-primary: #6366f1;
+        --color-foreground: #f8fafc;
+        --radius: 0.5rem;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: var(--token-fonts-body), system-ui, sans-serif;
+      color: var(--token-colors-text);
+      background: var(--token-colors-background);
+      margin: 0;
+      padding: 24px;
+      line-height: 1.4;
+    }
+    header h1 {
+      font-family: var(--token-fonts-heading), system-ui, sans-serif;
+      margin: 0 0 4px 0;
+    }
+    .subtitle { margin: 0 0 4px 0; color: var(--token-colors-text); }
+    .meta { margin: 0 0 24px 0; color: var(--token-colors-text-muted); font-size: 12px; }
+    section.variant-state-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 120px repeat(var(--cols), minmax(120px, 1fr));
+      align-items: start;
+      margin-bottom: 24px;
+    }
+    .grid-header, .grid-row-label {
+      color: var(--token-colors-text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .cell {
+      border: 1px solid var(--token-colors-border);
+      border-radius: var(--token-radius);
+      padding: 12px;
+      background: var(--token-colors-surface);
+      min-height: 64px;
+    }
+    section.anatomy pre {
+      background: var(--token-colors-surface);
+      border: 1px solid var(--token-colors-border);
+      border-radius: var(--token-radius);
+      padding: 12px;
+      overflow-x: auto;
+      color: var(--token-colors-text);
+      font-family: var(--token-fonts-mono), ui-monospace, monospace;
+      font-size: 12px;
+    }
+    footer { margin-top: 24px; color: var(--token-colors-text-muted); font-size: 12px; }
+    footer a { color: var(--token-colors-text-muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Component: Generic</h1>
+    <p class="subtitle">Click target. Triggers an action.</p>
+    <p class="meta">Library mapping: None · Last updated: 2026-05-07</p>
+  </header>
+  <section class="variant-state-grid" style="--cols: 2;">
+    <div></div>
+    <div class="grid-header">Default</div>
+    <div class="grid-header">Outlined</div>
+    <div class="grid-row-label">Default</div>
+    <div class="cell" data-variant="Default" data-state="Default"><div class="swatch" style="height: 32px; border-radius: var(--token-radius); background: var(--token-colors-primary); "></div><p class="caption" style="margin: 6px 0 0 0; color: var(--token-colors-text-muted); font-size: 11px;">button · Default · Default</p></div>
+    <div class="cell" data-variant="Outlined" data-state="Default" style="background: var(--token-colors-background); border-width: 2px"><div class="swatch" style="height: 32px; border-radius: var(--token-radius); background: var(--token-colors-primary); "></div><p class="caption" style="margin: 6px 0 0 0; color: var(--token-colors-text-muted); font-size: 11px;">button · Outlined · Default</p></div>
+    <div class="grid-row-label">Loading</div>
+    <div class="cell" data-variant="Default" data-state="Loading"><div class="swatch" style="height: 32px; border-radius: var(--token-radius); background: var(--token-colors-primary); opacity: 0.6"></div><p class="caption" style="margin: 6px 0 0 0; color: var(--token-colors-text-muted); font-size: 11px;">button · Default · Loading (loading)</p></div>
+    <div class="cell" data-variant="Outlined" data-state="Loading" style="background: var(--token-colors-background); border-width: 2px"><div class="swatch" style="height: 32px; border-radius: var(--token-radius); background: var(--token-colors-primary); opacity: 0.6"></div><p class="caption" style="margin: 6px 0 0 0; color: var(--token-colors-text-muted); font-size: 11px;">button · Outlined · Loading (loading)</p></div>
+    <div class="grid-row-label">Disabled</div>
+    <div class="cell" data-variant="Default" data-state="Disabled"><div class="swatch" style="height: 32px; border-radius: var(--token-radius); background: var(--token-colors-primary); opacity: 0.5"></div><p class="caption" style="margin: 6px 0 0 0; color: var(--token-colors-text-muted); font-size: 11px;">button · Default · Disabled</p></div>
+    <div class="cell" data-variant="Outlined" data-state="Disabled" style="background: var(--token-colors-background); border-width: 2px"><div class="swatch" style="height: 32px; border-radius: var(--token-radius); background: var(--token-colors-primary); opacity: 0.5"></div><p class="caption" style="margin: 6px 0 0 0; color: var(--token-colors-text-muted); font-size: 11px;">button · Outlined · Disabled</p></div>
+  </section>
+  <section class="anatomy">
+    <h2>Anatomy</h2>
+    <pre>+---------------+
+| [ Click me ]  |
++---------------+</pre>
+  </section>
+  <footer>
+    <h2>Used in</h2>
+    <ul>
+    <li><a href="../../experience/screens/00_demo/index.md">experience/screens/00_demo/index.md</a></li>
+    </ul>
+  </footer>
+</body>
+</html>
