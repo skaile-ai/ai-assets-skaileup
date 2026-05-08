@@ -1,0 +1,26 @@
+name: mvp
+description: >-
+  Tier bundle for MVP — single-feature, fast prototype. Root tier bundle
+  (no inheritance). Lists every skill referenced by flows/mvp.flow.yaml.
+  Note: impl-architecture-templates is included pending Phase 3
+  reconciliation (see flows/_meta/deferred_skills.yaml).
+metadata:
+  version: '1.0.0'
+  tags:
+    - bundle
+    - tier
+    - mvp
+    - prototype
+  stage: alpha
+requires:
+  - skill:skaileup-scope-scope-project
+  - skill:concept-brief
+  - skill:product-spec-features
+  - skill:walkthrough-mockup-text
+  - skill:impl-architecture-techstack
+  - skill:impl-architecture-templates
+  - skill:impl-build-scaffold
+  - skill:impl-plan-plan-vertical
+  - skill:impl-slice-implement
+  - skill:impl-slice-commit
+  - skill:impl-quality-test-unit
