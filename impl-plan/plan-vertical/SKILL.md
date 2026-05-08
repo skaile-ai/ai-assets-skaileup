@@ -160,7 +160,7 @@ MUST  refuse to write the plan if feature.md is missing
 MUST  copy EARS acceptance criteria from feature.md (or align.md "## Acceptance handoff") verbatim into "## Testing strategy ### Automated tests" — every EARS line maps to ≥ 1 test row
 MUST  include the 5 required Definition of Done items verbatim (see schema below)
 MUST  set phase: plan in the handoff frontmatter
-MUST  write to _slice/impl/<slice_id>/plan.md (NEVER the legacy _implementation/superpowers-plan.md path — that schema is project-wide and obsolete)
+MUST  write to _slice/impl/<slice_id>/plan.md (per-slice scratch); never write to a project-wide path — the project-level PLANS.md is owned by a different skill
 
 NEVER  produce a plan that batches all UI as one row, then all logic as another row, then all data as a third
 NEVER  decompose by technical layer (frontend / backend / db) instead of by user-facing vertical
