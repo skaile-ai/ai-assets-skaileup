@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-08",
+  "journeys": [
+    {
+      "id": "sign-in",
+      "title": "User signs in",
+      "description": "First-time user authenticates and lands on the home screen.",
+      "screen_sequence": [
+        "experience/screens/00_auth/login.md"
+      ]
+    }
+  ]
+}
