@@ -1,8 +1,8 @@
 ---
 name: impl-slice-finish
-description: "Controlled branch completion after supervised implementation. Presents four options: merge to main, create pull request, keep branch for later, or discard. Requires explicit confirmation for merge and discard actions. Triggers on: 'finish the branch', 'close out the implementation', 'we're done — what now', 'merge or PR', after implement-supervised completes."
+description: "Use when ending an implementation branch after all per-slice work is committed. Presents four options: merge to main, create pull request, keep branch, or discard. Requires explicit confirmation for merge and discard. Refuses if any _slice/impl/<id>/ scratch dirs remain (those signal uncommitted slices)."
 metadata:
-  version: '1.0.0'
+  version: '2.0.0'
   tags:
     - 'git'
     - 'branch'
@@ -11,12 +11,8 @@ metadata:
     - 'finish'
     - 'cleanup'
   stage: beta
-  source: 'MERGED'
   prerequisites:
     files:
-      - path: '_implementation/superpowers-plan.md'
-        gate: hard
-        description: 'Plan required to verify all tasks are complete before finishing'
       - path: '_implementation/git-state.json'
         gate: hard
         description: 'Git state required for branch name and worktree path'
@@ -32,10 +28,6 @@ metadata:
           - 'discard'
         required: true
         hint: 'merge = squash-merge to main now; pull-request = open PR for review; keep = leave branch as-is; discard = delete branch and worktree'
-    files: []
-  reads_from:
-    - '_implementation/superpowers-plan.md'
-    - '_implementation/git-state.json'
 ---
 
 # Finish Branch
@@ -64,11 +56,11 @@ require typed confirmation before executing.
 ROLE Branch completion — presents merge / PR / keep / discard options and executes the chosen action with appropriate safeguards.
 
 READS
-\_implementation/superpowers-plan.md — verify all tasks are done
+\_slice/impl/ — must be empty or absent (any remaining `<id>/` subdirs signal uncommitted slices)
 \_implementation/git-state.json — branch name, git_mode, worktree path
-\_implementation/decisions.md — concerns to include in PR/merge message
+\_implementation/decisions.md — concerns to include in PR/merge message (optional)
 
-MUST verify all tasks in superpowers-plan.md are done before merge or PR
+MUST verify _slice/impl/ has no remaining slice dirs before merge or PR
 MUST require typed "merge" confirmation before squash-merging to main
 MUST require typed "discard" confirmation before deleting the branch
 MUST clean up worktree if git_mode=worktree and action is merge, keep, or discard
@@ -80,11 +72,11 @@ NEVER delete the branch without explicit typed confirmation
 
 STEP 1: Pre-flight checks
 
-- Read superpowers-plan.md
-- Count tasks: total, done, pending, blocked
-  IF any tasks are pending or blocked
-  - STOP. Report: "N tasks are not complete. Finish remaining tasks before closing the branch."
-  - List incomplete tasks
+- Scan `_slice/impl/` for remaining slice dirs:
+  $ find _slice/impl -mindepth 1 -maxdepth 1 -type d 2>/dev/null
+  IF any subdirs are returned
+  - STOP. Report: "N slices are not yet committed. Run `impl-slice-commit` for each remaining slice before closing the branch."
+  - List the remaining slice dirs
 - Read git-state.json: branch, git_mode, worktree_path
 
 STEP 2: Run final tests
@@ -95,7 +87,7 @@ STEP 2: Run final tests
 
 STEP 3: Present options
 
-> "Implementation is complete. All N tasks done, all tests passing.
+> "Implementation is complete. All slices committed (`_slice/impl/` is empty), all tests passing.
 >
 > What would you like to do with the implementation branch?
 >
@@ -125,7 +117,7 @@ feat: implement <app-name> — supervised build
     - Update git-state.json: status = merged
     > "Merged to main. Branch implement/<app-slug> deleted."
 
-CASE pull-request: - Build PR body from: - superpowers-plan.md task list (as checklist) - decisions.md concerns (if any) - Test counts
+CASE pull-request: - Build PR body from: - Per-slice commit history on this branch (`git log --oneline main..HEAD`, grouped by `Slice:` trailer from impl-slice-commit) - decisions.md concerns (if any) - Test counts
 $ gh pr create \
  --title "feat: implement <app-name>" \
  --body "<PR body>" \
@@ -149,7 +141,7 @@ $ git branch -D implement/<app-slug> - Update git-state.json: status = discarded
 
 CHECKLIST
 
-- [ ] All tasks verified complete before merge or PR
+- [ ] `_slice/impl/` verified empty before merge or PR
 - [ ] Full test suite passed before merge or PR
 - [ ] Typed confirmation received for merge and discard
 - [ ] Worktree cleaned up if git_mode=worktree
@@ -161,7 +153,7 @@ CHECKLIST
 
 | Mistake                                                    | What to do instead                                      |
 | ---------------------------------------------------------- | ------------------------------------------------------- |
-| Merging without checking all tasks are done                | Always count pending/blocked tasks first                |
+| Closing the branch with uncommitted slices                 | Run `impl-slice-commit` for each remaining `_slice/impl/<id>/` first |
 | Merging without typed "merge" confirmation                 | Always require it — prevents accidental merges          |
 | Forgetting to remove the worktree                          | Always clean up the worktree on merge, keep, or discard |
 | Using `git branch -D` without typed "discard" confirmation | Require the typed word — lost work destroys trust       |

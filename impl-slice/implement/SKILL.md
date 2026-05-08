@@ -1,28 +1,30 @@
 ---
 name: impl-slice-implement
-description: 'Journey-first feature orchestrator with TDD Guard. Builds features by walking user journeys outside-in (hero → vital → hygiene from stories.json), writing failing journey e2e tests first, then delegating page-by-page implementation to the implement-feature-page sub-skill. Can also implement a single feature standalone using the feature_id input.'
+description: 'Use when implementing a single slice planned by impl-plan/plan-vertical. Reads _slice/impl/<slice_id>/plan.md, walks the vertical decomposition (UI + logic + data), writes failing tests first, implements with TDD Guard, persists per-slice progress to _slice/impl/<slice_id>/progress.json. Resumes interrupted runs from progress.json.'
 metadata:
-  version: '1.0.0'
+  version: '2.0.0'
   tags:
     - 'implement'
-    - 'feature'
+    - 'slice'
     - 'tdd'
-    - 'journey'
-    - 'e2e'
+    - 'vertical'
     - 'test-first'
     - 'code'
     - 'build'
     - 'engineering'
-  source: 'MERGED'
+  stage: alpha
   prerequisites:
     files:
+      - path: '_slice/impl/'
+        gate: hard
+        description: 'Slice scratch dir; the active slice_id resolves to _slice/impl/<slice_id>/plan.md (written by impl-plan-plan-vertical)'
       - path: '_concept/experience/features'
         gate: hard
-        description: 'Feature specs required for implementation targets'
+        description: 'Feature specs (the slice implements one feature from this set)'
         min_entries: 1
       - path: '_concept/experience/screens'
         gate: hard
-        description: 'Screen specs required for page implementation'
+        description: 'Screen specs for the feature'
         min_entries: 1
       - path: '_concept/blueprint/datamodel/model.json'
         gate: hard
@@ -30,31 +32,17 @@ metadata:
       - path: 'package.json'
         gate: hard
         description: 'Dev stack must be running (project scaffolded and foundation applied)'
-    inputs_optional:
-      - id: feature_id
-        label: 'Single feature to implement? (e.g., 01_user_auth/login) — leave blank for journey-first mode'
+    inputs_required:
+      - id: slice_id
+        label: 'Slice id (kebab-case feature slug; matches _slice/impl/<slice_id>/ scratch dir)'
         type: text
-    reads:
-      - path: '_concept/experience/journeys/stories.json'
-        description: 'Journey stages for hero → vital → hygiene implementation order'
-      - path: '_concept/experience/4_storybook/src/pages'
-        description: 'Storybook page compositions as UI starting point for each page'
-    produces:
-      - path: '_implementation/progress.json'
-        description: 'Updated feature implementation status after each page completes. Each page entry tracks status: pending | in_progress | complete for resume support.'
-  user_inputs:
-    dialog:
-      - id: 'feature_id'
-        label: 'Single feature to implement? (e.g., 01_user_auth/login) — leave blank for journey-first mode'
-        type: 'text'
-        required: false
-      - id: 'auto_approve_pages'
+        hint: 'Same slug used by concept-slice and impl-plan; e.g. team-todo-comments.'
+    inputs_optional:
+      - id: auto_approve_pages
         label: 'Auto-approve per-page checkpoints? (for unattended pipeline runs)'
-        type: 'boolean'
-        required: false
+        type: boolean
         default: false
-        note: 'Flow context value takes precedence if set by parent implement skill. Test-green and regression gates are never bypassed regardless of this setting.'
-    files: []
+        hint: 'Flow context value takes precedence if set by parent. Test-green and regression gates are never bypassed.'
 ---
 
 # Implement Feature — Journey-First Feature Orchestrator
@@ -124,7 +112,7 @@ without journey context (useful for `add-feature` follow-through).
 | Must read      | `_concept/blueprint/techstack.md`            | Yes                        |
 | Read if exists | `_concept/experience/4_storybook/src/pages/` | Recommended (UI reference) |
 | Read if exists | `_concept/blueprint/datamodel/seed.json`     | Recommended                |
-| Read if exists | `_implementation/progress.json`              | If resuming                |
+| Read if exists | `_slice/impl/<slice_id>/progress.json`              | If resuming                |
 
 ---
 
@@ -137,12 +125,11 @@ READS
 ? \_concept/experience/4_storybook/src/pages/ — storybook page compositions (UI reference)
 \_concept/blueprint/datamodel/model.json — data model
 \_concept/blueprint/datamodel/seed.json — seed data scenarios
-? \_implementation/progress.json — resume state
+? \_slice/impl/<slice_id>/progress.json — resume state
 
 WRITES
 e2e/specs/journeys/<stage>-<journey-slug>.spec.<ext> — journey-level e2e tests
-\_implementation/progress.json — journey/page/feature status
-\_implementation/PLANS.md — checked-off journeys
+\_slice/impl/<slice_id>/progress.json — journey/page/feature status (per-slice resume state)
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
@@ -176,7 +163,6 @@ IF feature_id is provided
 - Write failing tests first (TDD RED)
 - Implement the feature (TDD GREEN)
 - Verify all tests pass
-- Update PLANS.md: check off the feature
 - Update feature's last_updated in frontmatter
 - EMIT [implement-feature] completed feature=<feature_id> tests=<N>
 
@@ -339,7 +325,6 @@ $ git commit -m "feat: implement <stage> journey — <journey-label>"
 $ git branch -d feat/<journey-slug>
 
 - Update progress.json: journey → complete
-- Update PLANS.md: check off journey
   EMIT [implement-feature] journey_complete journey=<id> stage=<stage>
 
 STEP 9: Repeat for remaining journeys
@@ -358,7 +343,7 @@ CHECKLIST
 - [ ] Journey e2e tests pass for each completed journey
 - [ ] All page and feature tests pass (no regressions)
 - [ ] Build passes (backend + frontend + lint)
-- [ ] progress.json and PLANS.md updated
+- [ ] _slice/impl/<slice_id>/progress.json updated
 
 ---
 
@@ -379,4 +364,4 @@ CHECKLIST
 - **Called by:** `implement` orchestrator or standalone
 - **Dispatches to:** `implement-feature-page` (per page)
 - **Reads:** `_concept/experience/` (journeys, features, screens, storybook)
-- **Writes:** E2E test files, `_implementation/progress.json`
+- **Writes:** E2E test files, `_slice/impl/<slice_id>/progress.json`
