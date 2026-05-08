@@ -1,0 +1,18 @@
+name: concept-slice
+description: >-
+  Per-feature concept loop — brainstorm -> align -> scope-feature ->
+  design-feature. Used directly by standard-app/complex-app tier flows;
+  inlined as nodes in their flow files. Leaf bundle (no inheritance).
+metadata:
+  version: '1.0.0'
+  tags:
+    - bundle
+    - concept-slice
+    - per-feature
+    - slice
+  stage: alpha
+requires:
+  - skill:concept-slice-brainstorm
+  - skill:concept-slice-align
+  - skill:concept-slice-scope-feature
+  - skill:concept-slice-design-feature
