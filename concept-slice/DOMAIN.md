@@ -12,7 +12,10 @@ Runs the concept loop at a per-feature granularity for large applications: brain
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **concept-slice-brainstorm** (`brainstorm/`) — Per-feature sparring partner that surfaces the user's mental model for one feature (who uses it, what triggers it, the happy path, what's clearly out).
+- **concept-slice-align** (`align/`) — Grills the user about a single feature: edge cases, unstated rules, error states, role/permission gaps; produces EARS-format acceptance criteria.
+- **concept-slice-scope-feature** (`scope-feature/`) — Forces an IN/OUT/DEFER decision on each edge-case item from align and produces the final scope decision the design step honors.
+- **concept-slice-design-feature** (`design-feature/`) — Commits the feature's permanent `_concept/` artifacts (feature spec, screen specs, walkthrough-mockup stub) and clears the slice scratch on success.
 
 ## Cross-references
 

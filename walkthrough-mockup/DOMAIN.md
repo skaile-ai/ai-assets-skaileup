@@ -12,7 +12,8 @@ Produces clickable application walkthroughs at increasing fidelity levels, from 
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **walkthrough-mockup-text** (`text/`) — Generates a linked multi-page interactive HTML prototype across 3 stacks (Alpine+Shoelace, Vue 3+PrimeVue, Preact+HTM); auto-selects template from the tech-stack profile.
+- **walkthrough-mockup-static-html** (`static-html/`) — Zero-build clickable static HTML walkthrough — one HTML file per screen and per journey, plus `manifest.json` for the mockup-feedback cluster. Best for simple-app tier.
 
 ## Cross-references
 

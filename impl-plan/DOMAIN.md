@@ -12,7 +12,10 @@ Produces the implementation plan through brainstorm, alignment, vertical slice p
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **impl-plan-brainstorm** (`brainstorm/`) — Per-slice sparring partner on risks, unknowns, and dependencies for a single feature; writes `_slice/impl/<id>/brainstorm.md` for align to consume.
+- **impl-plan-align** (`align/`) — Grill-me interview that surfaces unstated assumptions, technical constraints, and edge cases before plan-vertical writes the slice plan.
+- **impl-plan-plan-vertical** (`plan-vertical/`) — Writes the per-slice vertical-decomposition plan (one row per user-facing slice — UI + Logic + Data) plus testing strategy and an anti-horizontal-nudge block.
+- **impl-plan-supervised** (`supervised/`) — Supervised subagent-driven implementation orchestrator: dispatches one subagent per task, enforces spec-compliance review, handles 4-status reports and escalation.
 
 ## Cross-references
 

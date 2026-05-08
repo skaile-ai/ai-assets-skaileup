@@ -12,7 +12,8 @@ Captures the initial framing of a product or feature: a concise brief, articulat
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **concept-brief** (`brief/`) — Captures the project brief through plain-language dialog when starting a new concept or redefining an existing one; writes `_concept/discovery/brief.md`.
+- **grounding/** — Sub-domain for context gathering before concept work (onboard, research, seeds). See `grounding/DOMAIN.md`.
 
 ## Cross-references
 

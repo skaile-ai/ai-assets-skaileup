@@ -12,7 +12,13 @@ Develops and previews UI components in isolation using Storybook and isolated HT
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **component-mockup-storybook** (`storybook/orchestrator/`) — Generates a 3-layer Storybook project (custom building-block components, full-page screen compositions, clickable user journey flows); framework-agnostic, delegates to 4 sub-skills.
+- **component-mockup-storybook-setup** (`storybook/setup/`) — Sub-skill 1/4: scaffolds the Storybook project, installs dependencies, applies brand tokens as CSS custom properties.
+- **component-mockup-storybook-components** (`storybook/components/`) — Sub-skill 2/4: identifies custom building-block components from screen specs, builds them, creates Storybook stories.
+- **component-mockup-storybook-pages** (`storybook/pages/`) — Sub-skill 3/4: builds AppShell and full-page screen compositions including state variants and responsive viewports; writes `manifest.json` for journeys.
+- **component-mockup-storybook-journeys** (`storybook/journeys/`) — Sub-skill 4/4: builds clickable multi-screen user journey stories (click-dummies) for hero, vital, and hygiene flows.
+- **component-mockup-storybook-types** (`storybook/types/`) — PostXL-specific: replaces mocked Storybook types with schema-generated types from `model.json`; preserves UI-only types.
+- **component-mockup-isolated-html** (`isolated-html/`) — Renders one standalone HTML file per component showing all variants × states in a token-driven grid; no JS, no framework, openable via `file://`.
 
 ## Cross-references
 

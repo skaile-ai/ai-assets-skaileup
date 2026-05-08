@@ -12,7 +12,7 @@ Specifies the feature set and the acceptance criteria that define when each feat
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **product-spec-features** (`features/`) — Plans features from `stories.json` candidate hints and the project brief; writes feature files organized in numbered groups. Required before screens and datamodel.
 
 ## Cross-references
 

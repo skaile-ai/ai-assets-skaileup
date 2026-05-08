@@ -12,7 +12,8 @@ Defines the visual and tonal language of a product: brand identity, design token
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- **design-brand-visual** (`brand-visual/`) — Discovers aesthetic direction, extracts palettes from reference URLs, and writes `identity.md` + `tokens.json` + `brandbook.html` to `_concept/discovery/brand/`.
+- **design-brand-voice** (`brand-voice/`) — Defines communication tone, error message style, empty-state messaging, micro-copy guidelines, and notification voice; writes `behavioral.md` + `copy_guidelines.md`.
 
 ## Cross-references
 
