@@ -1,0 +1,141 @@
+id: impl-slice
+version: '2.0.0'
+name: 'Impl Slice'
+description: >-
+  Per-feature implementation loop: impl-plan brainstorm -> align -> plan-vertical,
+  then impl-slice implement -> test -> recap -> refactor -> commit. Canonical
+  building block consumed by tier flows (simple-app, standard-app, complex-app)
+  via node inlining. Iteration semantics: tier orchestrators run this slice
+  once per feature in their plan-vertical backlog. Slice flow is
+  standalone-runnable for testability of the slice loop.
+meta:
+  category: incremental
+  tags:
+    - impl-slice
+    - per-feature
+    - slice
+  icon: i-heroicons-arrow-path
+globals:
+  research_depth: skip
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+entry: i-brainstorm
+nodes:
+  - id: i-brainstorm
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: impl-plan-brainstorm
+      label: 'Plan: Brainstorm'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-align
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: impl-plan-align
+      label: 'Plan: Align'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-plan-vertical
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: impl-plan-plan-vertical
+      label: 'Plan: Vertical Plan'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-implement
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: impl-slice-implement
+      label: 'Slice: Implement'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-test
+    type: skill
+    position:
+      x: 800
+      y: 200
+    data:
+      skill: impl-slice-test
+      label: 'Slice: Test'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-recap
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: impl-slice-recap
+      label: 'Slice: Recap'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-refactor
+    type: skill
+    position:
+      x: 1200
+      y: 200
+    data:
+      skill: impl-slice-refactor
+      label: 'Slice: Refactor'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-commit
+    type: skill
+    position:
+      x: 1400
+      y: 200
+    data:
+      skill: impl-slice-commit
+      label: 'Slice: Commit'
+      optional: false
+      subagent: false
+      parameters: {}
+edges:
+  - id: e-i-brainstorm-i-align
+    source: i-brainstorm
+    target: i-align
+    type: flow
+  - id: e-i-align-i-plan-vertical
+    source: i-align
+    target: i-plan-vertical
+    type: flow
+  - id: e-i-plan-vertical-i-implement
+    source: i-plan-vertical
+    target: i-implement
+    type: flow
+  - id: e-i-implement-i-test
+    source: i-implement
+    target: i-test
+    type: flow
+  - id: e-i-test-i-recap
+    source: i-test
+    target: i-recap
+    type: flow
+  - id: e-i-recap-i-refactor
+    source: i-recap
+    target: i-refactor
+    type: flow
+  - id: e-i-refactor-i-commit
+    source: i-refactor
+    target: i-commit
+    type: flow
