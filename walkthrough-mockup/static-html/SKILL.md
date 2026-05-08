@@ -363,8 +363,172 @@ REFERENCES
 
 ## STEP 4: Emit index.html and manifest.json
 
+### STEP 4a: Emit `index.html`
+
+  - Set `<body data-spec-index="true">`.
+  - Render two top-level sections:
+    - `<section id="screens">` — flat list grouped by `<group>`, each
+      entry an `<a href="screen/<group>/<name>.html">` linking to the
+      screen page.
+    - `<section id="journeys">` — flat list, each entry an
+      `<a href="journey/<id>.html">` linking to the journey page.
+      If `stories.json` has zero journeys, render the literal text
+      `"No journeys defined"` and add a `warnings[]` entry of
+      `kind: "missing_screen_sequence"` (when caused by absent
+      `screen_sequence`) or `kind: "no_journeys"` (when absent file).
+  - Embed a `<footer>Generated <generated_at></footer>` line.
+  - Write the file UTF-8, LF.
+
+### STEP 4b: Emit `manifest.json`
+
+  - Build the object using the pinned schema (see `## Manifest Schema`
+    below — pasted inline so future readers don't have to chase the
+    plan document).
+  - `schema_version = "1.0"`.
+  - `renderer = "walkthrough-mockup-static-html"`,
+    `renderer_version = "0.1.0"` (this skill's `metadata.version`).
+  - `generated_at = ` current UTC ISO-8601 (e.g.
+    `2026-05-08T12:34:56Z`). For deterministic snapshot tests, the
+    validator replaces this value with `"<pinned>"` before comparison
+    (see STEP 5).
+  - Sort `screens[]` by `screen_path`, `journeys[]` by `journey_id`,
+    and `features[]` by `feature_path` for deterministic diffs.
+  - Write atomically: write to `manifest.json.tmp`, fsync, rename to
+    `manifest.json`.
+
+## Manifest Schema
+
+This schema is the **contract handed to `mockup-feedback-annotate`** in
+Phase 3. It MUST NOT change without coordinated updates to that
+mini-plan. Field names are pinned exactly:
+
+```json
+{
+  "schema_version": "1.0",
+  "renderer": "walkthrough-mockup-static-html",
+  "renderer_version": "0.1.0",
+  "generated_at": "2026-05-07T12:34:56Z",
+  "source_root": "experience/screens",
+  "screens": [
+    {
+      "screen_path": "experience/screens/01_user_auth/login.md",
+      "screen_id": "01_user_auth/login",
+      "rendered_html": "screen/01_user_auth/login.html",
+      "implements": ["experience/features/01_user_auth/login.md"],
+      "data_entities": ["User"],
+      "layout": "experience/screens/00_layout/shell.md",
+      "elements": [
+        {
+          "element_id": "submit-button",
+          "kind": "button",
+          "label": "Sign in",
+          "states": ["default", "loading", "disabled", "error"],
+          "provisional": false,
+          "source_anchor": "experience/screens/01_user_auth/login.md#elements/submit-button"
+        }
+      ]
+    }
+  ],
+  "journeys": [
+    {
+      "journey_id": "user-signs-in",
+      "rendered_html": "journey/user-signs-in.html",
+      "source": "experience/journeys/stories.json#user-signs-in",
+      "screen_sequence": [
+        "experience/screens/01_user_auth/login.md",
+        "experience/screens/02_dashboard/home.md"
+      ]
+    }
+  ],
+  "features": [
+    {
+      "feature_path": "product-spec/features/01_user_auth/login.md",
+      "rendered_screens": ["experience/screens/01_user_auth/login.md"]
+    }
+  ],
+  "warnings": [
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/02_dashboard/home.md",
+      "element_id": "kpi-card-1",
+      "message": "No elements: block in screen frontmatter; auto-slugged 1 element."
+    }
+  ]
+}
+```
+
+### Field semantics
+
+- `schema_version`: bump on breaking change. Phase 3 pins `^1.0`.
+- `renderer` / `renderer_version`: identifies which walkthrough variant
+  produced the site. Future Lit/Astro variants emit the same shape with
+  their own `renderer` value.
+- `generated_at`: ISO-8601 UTC; lets feedback-annotate detect stale
+  renders.
+- `source_root`: relative path the screen paths are anchored to (always
+  `experience/screens` for this skill).
+- `screens[].screen_path`: full path with `.md`. Used by feedback-annotate
+  when it needs to read the source file.
+- `screens[].screen_id`: the path stem `<group>/<name>` (no `.md`); this
+  is the value emitted in `data-spec-screen`.
+- `screens[].rendered_html`: site-relative path to the rendered HTML.
+- `screens[].elements[].element_id`: the value emitted in
+  `data-spec-element`.
+- `screens[].elements[].provisional`: `true` when auto-slugged
+  (mirrors `data-spec-provisional`).
+- `screens[].elements[].source_anchor`: a fragment-style pointer back to
+  the source file. Explicit ids: `#elements/<element_id>`. Provisional:
+  `#auto/<element_id>` (no entry yet in the YAML).
+- `journeys[].screen_sequence`: ordered list of screen source paths.
+  Same order is used by the rendered "Next →" links inside
+  `journey/<id>.html`.
+- `warnings[].kind`: machine-readable, one of `auto_slugged`,
+  `missing_layout`, `missing_feature`, `unknown_element_kind`,
+  `missing_screen`, `missing_screen_sequence`, `no_journeys`,
+  `auto_slug_collision`. Extend cautiously — Phase 3 will switch on
+  this field.
+
 ## STEP 5: Validate
+
+  - Run `walkthrough-mockup/static-html/validator.py
+    _concept/walkthrough-mockup/static-html` from the repo root.
+  - The validator confirms (a) every `data-spec-*` attribute resolves
+    to an existing source file or rendered HTML target; (b)
+    `manifest.json` matches the pinned schema; (c) every screen-link
+    inside `journey/<id>.html` resolves; (d) no JS framework was
+    emitted (zero-build invariant).
+  - Exit 0 = ready for Phase 3 to consume. Exit 2 = violation report
+    with `<file>:<line>: <message>` lines.
 
 ## MUST / NEVER
 
+MUST  emit `data-spec-screen` on every screen `<body>`
+MUST  emit `data-spec-element` on every annotatable child node
+MUST  emit `data-spec-provisional="true"` on auto-slugged element nodes
+MUST  write `manifest.json` that conforms to the pinned schema (`schema_version: "1.0"`)
+MUST  sort all manifest arrays lexicographically (`screens` by `screen_path`, `journeys` by `journey_id`, `features` by `feature_path`) for deterministic diffs
+MUST  escape every interpolated string via `html.escape(..., quote=True)`
+MUST  use only stdlib + PyYAML in the renderer (no Jinja, no Mako, no build tool)
+
+NEVER  include a JS framework, a bundler artefact, or any `<script src="...">` pointing at a non-relative URL — the site is openable as a static set of files
+NEVER  mutate source files (`experience/screens/**`, `experience/journeys/stories.json`, `design/tokens.json`, `product-spec/features/**`) — this skill is read-only on its inputs
+NEVER  emit `data-spec-*` attributes outside the pinned table — Phase 3 ignores unknown ones, but lean attribute sets keep drift visible
+NEVER  inline absolute paths from the developer's filesystem into `manifest.json` — use repo-relative paths only
+NEVER  inject journey-step navigation into `screen/**/*.html` — cross-journey continuation lives only in `journey/<id>.html`
+
 ## CHECKLIST
+
+  - [ ] `_concept/walkthrough-mockup/static-html/index.html` exists
+  - [ ] `_concept/walkthrough-mockup/static-html/manifest.json` exists and parses as JSON
+  - [ ] `manifest.schema_version == "1.0"`
+  - [ ] One `screen/<group>/<name>.html` per screen file under `experience/screens/`
+  - [ ] One `journey/<id>.html` per journey in `stories.json`
+  - [ ] Every `<body>` in `screen/**/*.html` has `data-spec-screen`
+  - [ ] Every annotatable node in `screen/**/*.html` has `data-spec-element`
+  - [ ] Every auto-slugged element node also has `data-spec-provisional="true"`
+  - [ ] No `<script src="http...">` or non-relative resource URL appears in any output file
+  - [ ] Validator (`walkthrough-mockup/static-html/validator.py`) exits 0 on the produced site
+
+EMIT  [walkthrough-mockup-static-html] started run_id=<uuid>
+EMIT  [walkthrough-mockup-static-html] checkpoint screens=<N> journeys=<M>
+EMIT  [walkthrough-mockup-static-html] completed run_id=<uuid> screens=<N> journeys=<M> warnings=<W>
