@@ -163,9 +163,12 @@ implements:
   - experience/features/01_user_auth/registration.md
 data_entities: [User]
 layout: experience/screens/00_layout/shell.md
+elements: []                    # OPTIONAL — see contracts/elements_block.md
 last_updated: YYYY-MM-DD
 ---
 ```
+
+For the optional `elements:` block (used by walkthrough renderers and the mockup-feedback loop), see `contracts/elements_block.md`.
 
 ---
 

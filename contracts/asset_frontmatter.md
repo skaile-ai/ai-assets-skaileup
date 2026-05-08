@@ -4,6 +4,8 @@ Canonical frontmatter definitions for the four AI asset types: **skill**, **prom
 
 This document covers the manifest metadata of assets in `ai-assets/`. It is distinct from `frontmatter.md`, which covers YAML fields in `_concept/` output artifacts.
 
+> For artefact frontmatter (e.g. screen `elements:` blocks), see `contracts/frontmatter.md` and `contracts/elements_block.md`.
+
 ## Design Principles
 
 Skills and prompts follow the [Agent Skills Specification](https://agentskills.io/specification) for maximum interoperability — `name` and `description` at root, everything else in `metadata:`.
