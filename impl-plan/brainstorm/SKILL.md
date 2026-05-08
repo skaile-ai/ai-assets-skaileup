@@ -1,200 +1,254 @@
 ---
 name: impl-plan-brainstorm
-description: "Structured problem decomposition before implementation planning. Explores unknowns, surfaces risks, identifies dependencies, and formulates open questions that would block implementation if unanswered. Run before write-plan. Triggers on: 'let's think before we start', 'what are the risks', 'brainstorm the implementation', 'what could go wrong', starting a complex feature with unclear scope."
+description: "Use when starting per-slice implementation work for a feature in a standard-app or complex-app tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<group>/<feature_slug>.md and writes _slice/impl/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
 metadata:
-  version: '1.0.0'
+  version: "2.0.0"
   tags:
-    - 'brainstorm'
-    - 'planning'
-    - 'risks'
-    - 'decomposition'
-    - 'pre-implementation'
-    - 'unknowns'
-  stage: beta
-  source: 'MERGED'
+    - impl-plan
+    - brainstorm
+    - planning
+    - risks
+    - decomposition
+    - pre-implementation
+    - unknowns
+    - per-slice
+    - feature-scoped
+  stage: alpha
   prerequisites:
     files:
-      - path: '_concept/discovery/brief.md'
+      - path: "_concept/_meta/scope.yaml"
         gate: hard
-        description: 'Brief required for scope definition'
-      - path: '_concept/experience/features'
+        description: "Tier context required — produced by skaileup-scope-scope-project. Determines whether this skill runs (standard-app/complex-app) or is skipped (mvp/simple-app)."
+      - path: "_concept/product-spec/features/{feature_slug}.md"
         gate: hard
-        description: 'Features required to identify implementation risks'
-        min_entries: 1
-      - path: '_concept/blueprint/techstack.md'
-        gate: hard
-        description: 'Tech stack required to surface stack-specific risks'
-  user_inputs:
-    dialog:
-      - id: 'focus_area'
-        label: 'Focus the brainstorm on a specific area? (leave blank for full-scope)'
-        type: 'text'
-        required: false
-    files: []
-  reads_from:
-    - '_concept/discovery/brief.md'
-    - '_concept/experience/features/**/*.md'
-    - '_concept/blueprint/techstack.md'
-    - '_concept/blueprint/datamodel/model.json'
-    - '_concept/experience/journeys/stories.json'
-  writes_to:
-    - '_implementation/brainstorm.md'
+        description: "Permanent feature artifact written by concept-slice-design-feature; THIS feature is the brainstorm scope."
+    inputs_required:
+      - id: feature_slug
+        label: "Kebab-case feature slug; resolves to _concept/product-spec/features/<group>/<feature_slug>.md"
+        type: text
+        hint: "Same slug used by concept-slice for this feature. Regex ^[a-z][a-z0-9-]{1,47}$."
+    inputs_optional:
+      - id: focus_area
+        label: "Focus the brainstorm on a specific risk dimension? (data | auth | integrations | stack | performance | ux)"
+        type: text
+        hint: "Leave blank to brainstorm across all six dimensions."
+    reads:
+      - path: "_concept/experience/screens/{feature_slug}/"
+        description: "Screen specs for this feature — context for UX-related risks."
+      - path: "_concept/blueprint/datamodel/model.json"
+        description: "Data model — surfaces entity-touching risks."
+      - path: "_concept/blueprint/techstack.md"
+        description: "Stack constraints — surfaces stack-specific risks."
+      - path: "_slice/impl/{slice_id}/brainstorm.md"
+        description: "Re-entry mode — resume or refine an existing per-slice brainstorm."
+    produces:
+      - path: "_slice/impl/{slice_id}/brainstorm.md"
+        description: "Per-slice impl brainstorm handoff for impl-plan-align."
 ---
 
-# Brainstorm
+# Implementation Brainstorm — per-slice
 
 ## Overview
 
-Before any plan is written or code is touched, this skill does the thinking that prevents
-expensive rework. It surfaces unknowns, risks, dependencies, and questions that would
-block implementation if encountered mid-build.
+`impl-plan-brainstorm` is the entry point of the per-slice impl-loop for **standard-app**
+and **complex-app** tiers. It is scoped to ONE feature (the slice), not the whole project.
+Its job is to surface implementation risks, unknowns, and dependencies — and to flush out
+P1 questions that would otherwise block `impl-plan-align` from running a useful grill.
 
-The output is `_implementation/brainstorm.md` — a structured document that `write-plan`
-reads to produce a robust, risk-aware implementation plan.
+The output is `_slice/impl/<slice_id>/brainstorm.md` — a structured handoff file consumed
+by `impl-plan-align`. The `_slice/impl/<slice_id>/` directory is scratch and is deleted by
+`impl-slice/commit` after the slice's atomic commit lands. None of the impl-plan skills
+delete the dir themselves.
 
-**Why brainstorm before planning?** A plan written without this step assumes everything
-is known. It isn't. The brainstorm exposes the gaps before they become blockers.
+**Per-slice scope** is the key behaviour change from the legacy project-wide brainstorm:
+risks are listed for THIS feature only. Project-wide audits live in `ops/audit` or
+`impl-quality/audit`. If the user asks for a project-wide brainstorm, refuse and refer
+them to those skills.
 
 ## When to Use
 
-- Before `write-plan` on any complex feature set or full app build
-- When scope feels unclear or risky
-- When the tech stack or integrations are unfamiliar
+- Starting per-slice implementation for a standard-app or complex-app feature whose
+  concept artifacts (`feature.md` + screens) are already frozen.
+- Re-entering an existing slice (`_slice/impl/<id>/brainstorm.md` exists) to refine risks
+  or answer a previously-flagged P1 question.
 
 ## When NOT to Use
 
-- The feature is a small, well-understood incremental change — skip brainstorm, go to write-plan
-- You have already brainstormed in a prior session (check for existing brainstorm.md)
+- Tier is `mvp` or `simple-app` — those tiers skip brainstorm per SKILL_GRAPH § 6 tier
+  composition. Their entry point is `impl-plan-plan-vertical` (mvp) or `impl-plan-align`
+  (simple-app). Refuse and point the caller at the right skill.
+- Project-wide brainstorming — out of scope. Use `ops/audit` or `impl-quality/audit`.
+- Concept artifacts are missing (`_concept/product-spec/features/<group>/<feature_slug>.md`
+  not present). Refuse and refer the caller to `concept-slice/design-feature`.
 
 ---
 
-ROLE Pre-implementation problem decomposition — surfaces risks, unknowns, and open questions before planning begins.
+ROLE Per-slice implementation brainstorm partner — surfaces risks, unknowns, and dependencies for ONE feature only. Refuses project-wide scope.
 
 READS
-\_concept/discovery/brief.md
-\_concept/experience/features/\*_/_.md
-\_concept/blueprint/techstack.md
-\_concept/blueprint/datamodel/model.json
-? \_concept/experience/journeys/stories.json
-? \_concept/blueprint/architecture.md
-? \_implementation/brainstorm.md — check for existing brainstorm (resume/update mode)
+  _concept/_meta/scope.yaml                                       — required; tier + project description
+  _concept/product-spec/features/{group}/{feature_slug}.md        — required; the feature being planned
+  ? _concept/experience/screens/{feature_slug}/*.md               — optional; screen specs for this feature
+  ? _concept/blueprint/datamodel/model.json                       — optional; data model (entity-touching risks)
+  ? _concept/blueprint/techstack.md                               — optional; stack-specific risks
+  ? _slice/impl/{slice_id}/brainstorm.md                          — re-entry mode (resume/refine existing)
 
 WRITES
-\_implementation/brainstorm.md
+  _slice/impl/{slice_id}/brainstorm.md                            — handoff for impl-plan-align
 
-MUST read all feature specs before brainstorming — never improvise the feature list
-MUST separate known facts from assumptions — label each clearly
-MUST produce at least one open question per major risk area
-MUST ask open questions as standalone messages BEFORE writing brainstorm.md
-NEVER write brainstorm.md before unresolved blockers are surfaced to the user
+REFERENCES
+  SKILL_GRAPH.md                                                  — § 5.2 per-slice impl loop, § 6 tier composition, § 7 workspace zones
+  contracts/iron_laws.md                                          — § 7 (no artifact without prerequisites), § 9 (standalone questions)
+  contracts/skill_grammar.md                                      — DSL keywords
+  contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
+  docs/superpowers/plans/2A-scope-project.md                      — § Pinned scope.yaml schema
+  docs/superpowers/plans/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
+
+REQUIRES
+  hard: _concept/_meta/scope.yaml                                 — tier context
+  state: scope.yaml `tier` ∈ {standard-app, complex-app}
+
+# Constraints (placed early per skill_grammar.md § Authoring tip 4)
+
+MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
+MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
+MUST  refuse to run if scope.yaml `tier` ∈ {mvp, simple-app} — those tiers do not run impl-plan-brainstorm (per SKILL_GRAPH § 6 tier-composition table); the base orchestrator is responsible for not invoking this skill at those tiers
+MUST  resolve feature_slug to _concept/product-spec/features/<group>/<feature_slug>.md before any other step; refuse if file missing (iron_laws § 7)
+MUST  scope brainstorm to THIS ONE feature; do NOT enumerate risks for other features
+MUST  surface every P1 question to the user as a standalone message before writing brainstorm.md
+MUST  write the handoff frontmatter exactly per the cross-phase contract (slice_id, feature_title, feature_path, phase, tier, created_at, last_updated)
+MUST  set phase: brainstorm in the handoff frontmatter
+MUST  set slice_id := feature_slug (raw kebab-case slug, regex ^[a-z][a-z0-9-]{1,47}$) — same rule as concept-slice
+MUST  derive the {group} segment of feature_path by globbing _concept/product-spec/features/*/<feature_slug>.md and refusing if zero or >1 matches
+
+NEVER  expand the scope to project-wide risks (that's a different skill — ops/audit or impl-quality/audit)
+NEVER  write brainstorm.md before unresolved P1 blockers are surfaced and answered
+NEVER  enumerate edge cases — that is impl-plan-align's grill (separation of concerns)
+NEVER  invent acceptance criteria — they live in feature.md and are copied verbatim by impl-plan-align
+NEVER  silently overwrite an existing _slice/impl/<slice_id>/brainstorm.md (re-entry: load it, show diff, ask)
+
+INPUT
+  Read from: _concept/_grounding/impl-plan-brainstorm/input.json
+  If missing, ask the user:
+  - feature_slug: Kebab-case feature slug (required) default: <none>
+  - focus_area: Focus a single risk dimension (optional) [data | auth | integrations | stack | performance | ux] default: <none>
 
 # ── Workflow ───────────────────────────────────────────────────────
 
-STEP 1: Read all concept artifacts
+STEP 1: Read scope and validate tier
+  - Open _concept/_meta/scope.yaml; abort with explicit error if missing:
+    > "[impl-plan-brainstorm] required file _concept/_meta/scope.yaml not found.
+    >  Run skaileup-scope-scope-project first."
+  - Read scope.tier. If tier ∈ {mvp, simple-app}, refuse with:
+    > "[impl-plan-brainstorm] tier=<tier> does not run brainstorm.
+    >  For simple-app start with impl-plan-align directly. For mvp run impl-plan-plan-vertical."
+  - Cache scope.tier and scope.description for later.
+  - Reminder placed inline (per skill_grammar.md § Authoring tip 1):
+    MUST scope brainstorm to THIS ONE feature; do NOT enumerate risks for other features.
 
-- Read brief.md, all features, stack.md, model.json
-- Read stories.json if exists (journey order context)
-- Note: what is the app trying to do, who uses it, what are the must-have flows?
-
-STEP 2: Identify risk areas
-For each of the following dimensions, note what is clear vs. unclear:
-
-- **Data model risks** — relationships that are complex, soft-deletes, versioning, multi-tenancy
-- **Auth / permission risks** — role matrix completeness, edge cases, session management
-- **Integration risks** — external APIs, third-party services, queues, webhooks
-- **Tech stack risks** — unfamiliar libraries, version constraints, known gotchas
-- **Performance risks** — large datasets, real-time requirements, expensive queries
-- **UX/flow risks** — multi-step flows, optimistic UI, offline requirements
-- **Test strategy risks** — hard-to-test areas (real-time, file uploads, payments)
-
-STEP 3: Surface open questions
-
-- List every question that, if unanswered, would require rework after implementation starts
-- Prioritize: P1 = blocks planning, P2 = blocks a specific feature, P3 = nice to know
-  IF there are P1 questions (plan blockers)
-  - Send them to the user as standalone messages BEFORE continuing
-  - Pause until answered
+STEP 2: Resolve feature_slug → feature_path
+  - If feature_slug was pre-supplied, use it. Else ask STANDALONE:
+    > "Which feature are we brainstorming? Give me the kebab-case slug
+    >  (the filename of _concept/product-spec/features/<group>/<feature_slug>.md)."
+  - Validate slug against ^[a-z][a-z0-9-]{1,47}$.
+  - $ ls _concept/product-spec/features/*/<feature_slug>.md
+    IF zero matches
+      - refuse: "[impl-plan-brainstorm] feature.md not found for slug <slug>. Run concept-slice/design-feature first."
+    ELIF >1 match (slug collision across groups)
+      - refuse with the matching paths and ask the user which group is intended.
     ELSE
-  - Document P2/P3 questions in brainstorm.md; they do not block planning
+      - feature_path := the single match; group := dirname.basename
+  - slice_id := feature_slug.
+  - Check whether _slice/impl/<slice_id>/ already exists.
+    IF _slice/impl/<slice_id>/brainstorm.md exists
+      - Ask STANDALONE:
+        > "A brainstorm at _slice/impl/<slice_id>/brainstorm.md already exists.
+        >  Do you want to (a) resume — refine the existing brainstorm,
+        >  or (b) abandon and start fresh (overwrites)?"
+      - Wait for answer. On (b), require explicit confirmation before any write.
+    ELSE
+      - $ mkdir -p _slice/impl/<slice_id>/
 
-STEP 4: Write \_implementation/brainstorm.md
+STEP 3: Read concept artifacts
+  - Read feature.md (required). Note: title (frontmatter), first paragraph of body, data_entities[] if present, journey_stage if present.
+  - $ ls _concept/experience/screens/<feature_slug>/*.md  → if any, read each.
+  - Read _concept/blueprint/datamodel/model.json if present.
+  - Read _concept/blueprint/techstack.md if present.
+  - Reminder (inline MUST): scope to THIS feature only; mention other features only as cross-feature touch points, not as risk owners.
 
----
+STEP 4: Assess risks across six dimensions
+  For EACH dimension below, note known facts vs unknowns, scoped to THIS feature:
+    - data            — entities touched, soft-deletes, multi-tenancy, FK ownership
+    - auth            — role matrix completeness, session edge cases, gating
+    - integrations    — external APIs, queues, webhooks (touched by THIS feature)
+    - stack           — unfamiliar libraries, version constraints, perf hotspots
+    - performance     — worst-case data sizes, expensive queries, real-time needs
+    - ux              — multi-step flows, optimistic UI, offline behavior
+  - If focus_area was supplied, deepen that dimension and list the others as one-line summaries.
 
-# Implementation Brainstorm
+STEP 5: Surface P1 questions (each STANDALONE)
+  - For each unknown that BLOCKS impl-plan-align's grill, send STANDALONE:
+    > "P1 blocker: <question>. I need an answer before I can write brainstorm.md."
+  - Wait for answer. Repeat until no P1 questions remain unanswered.
+  - P2 questions go in the handoff but do not block.
+  - P3 questions are nice-to-know — also in the handoff.
 
-date: <ISO date>
-scope: <full | focus_area>
+STEP 6: Draft handoff in memory
+  Frontmatter (cross-phase contract):
+    ```
+    ---
+    slice_id: <feature_slug>
+    feature_title: <title from feature.md frontmatter, verbatim>
+    feature_path: _concept/product-spec/features/<group>/<feature_slug>.md
+    phase: brainstorm
+    tier: <scope.tier>
+    created_at: <ISO-8601 UTC, e.g. 2026-05-08T12:34:56Z>
+    last_updated: <same as created_at on first write>
+    ---
+    ```
 
----
+  Body sections (use these exact headers, in order):
+    ## App-level summary (1 paragraph)
+    ## Feature summary (1 paragraph)
+    ## Risks and unknowns
+    ### Data
+    ### Auth
+    ### Integrations
+    ### Stack
+    ### Performance
+    ### UX
+    ## Open questions
+    ## Recommended mitigations
 
-## App Summary
+  - `## App-level summary` is 1 paragraph derived from scope.description + 1 line "tier: <tier>".
+  - `## Feature summary` is 1 paragraph derived from feature.md (title + first body paragraph).
+  - `## Risks and unknowns` MUST contain all six sub-headings; an empty sub-heading must contain the literal `_(no risks identified for this feature)_`.
+  - `## Open questions` MUST contain a markdown table with the header `| Priority | Question | Blocks |` and at least the table delimiter row.
+  - `## Recommended mitigations` is a bullet list, one per significant risk (≥ one per non-empty risk sub-heading).
 
-<2-3 sentence description of what we're building and for whom>
+  Show the full draft to the user.
 
-## What We Know
+STEP 7: Approval
+  CHECKPOINT brainstorm_draft
+    > "Here's the impl-plan brainstorm draft for slice `<slice_id>`.
+    >  Approve to write to _slice/impl/<slice_id>/brainstorm.md, or tell me what to change."
 
-<Confirmed facts from concept: key features, data model shape, tech stack, journey order>
+STEP 8: Write the handoff
+  - Write _slice/impl/<slice_id>/brainstorm.md
+  - Verify file exists and frontmatter parses
+  - $ python3 impl-plan/brainstorm/validator.py _slice/impl/<slice_id>/brainstorm.md
 
-## Risks and Unknowns
-
-### Data Model
-
-<risks, unclear relationships, decisions needed>
-
-### Auth and Permissions
-
-<role matrix gaps, edge cases>
-
-### Integrations
-
-<external APIs, async flows, unknowns>
-
-### Tech Stack
-
-<unfamiliar libraries, version constraints, known issues>
-
-### Testing
-
-<hard-to-test areas, seed data gaps>
-
-## Open Questions
-
-| Priority | Question | Blocks           |
-| -------- | -------- | ---------------- |
-| P1       | ...      | planning         |
-| P2       | ...      | <feature>        |
-| P3       | ...      | nothing critical |
-
-## Answered Questions
-
-| Question | Answer | Source                 |
-| -------- | ------ | ---------------------- |
-| ...      | ...    | user / spec / research |
-
-## Recommended Mitigations
-
-  <For each major risk: what to do about it in the plan>
-
-STEP 5: Commit
-$ git add \_implementation/brainstorm.md
-$ git commit -m "docs: record implementation brainstorm"
+EMIT  [impl-plan-brainstorm] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 
 CHECKLIST
-
-- [ ] All concept artifacts read
-- [ ] Risk areas assessed across all six dimensions
-- [ ] P1 open questions surfaced to user and answered before proceeding
-- [ ] brainstorm.md written with structured sections
-- [ ] Committed to implementation branch
-
----
-
-## Common Mistakes
-
-| Mistake                                             | What to do instead                                               |
-| --------------------------------------------------- | ---------------------------------------------------------------- |
-| Brainstorming from memory without reading the specs | Always read all feature specs first                              |
-| Writing brainstorm.md before surfacing P1 questions | Surface P1 questions first; document answers before writing      |
-| Listing risks without recommending mitigations      | Every risk section needs a mitigation suggestion                 |
-| Marking everything as P3 to avoid blocking          | Honest priority assignment — P1 blockers prevent planning errors |
+  - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {standard-app, complex-app})
+  - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
+  - [ ] _slice/impl/<slice_id>/ directory exists (created or pre-existing)
+  - [ ] All concept artifacts (feature.md required; screens/model/techstack optional) read
+  - [ ] Risk areas assessed across all six dimensions, scoped to THIS feature
+  - [ ] All P1 questions surfaced as STANDALONE messages and answered before draft
+  - [ ] Handoff frontmatter contains all 7 keys (slice_id, feature_title, feature_path, phase, tier, created_at, last_updated)
+  - [ ] All 5 top-level body sections present; `## Risks and unknowns` has all 6 sub-headings
+  - [ ] `## Open questions` has the priority table header line
+  - [ ] User approved the draft via CHECKPOINT before write
+  - [ ] _slice/impl/<slice_id>/brainstorm.md exists on disk and validator.py exits 0
