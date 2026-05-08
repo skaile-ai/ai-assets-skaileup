@@ -322,6 +322,45 @@ REFERENCES
 
 ## STEP 3: Render journeys
 
+  For each journey in `stories.json`'s `journeys[]` array:
+
+  - Determine output path:
+    `_concept/walkthrough-mockup/static-html/journey/<journey_id>.html`
+  - Set `<body data-spec-journey="<journey_id>">`.
+  - Render `<h1>` with the escaped `journey.title` and a `<p>` with the
+    escaped `journey.description` (when present).
+  - Render an `<ol>` of steps. For each entry in `screen_sequence`:
+    - Resolve the screen file. If absent on disk, emit a `<li>` with
+      class `journey-step-missing` and a `data-spec-screen` attribute
+      still present (so feedback-annotate can capture intent), AND
+      append a `manifest.warnings[]` entry of `kind: "missing_screen"`.
+    - Otherwise render `<li>` containing:
+      - A heading `Step <n>: <screen_label>` (label = screen filename
+        stem with underscores → spaces, escaped).
+      - An `<a href="../screen/<group>/<name>.html"
+        data-spec-screen="<screen_id>">Open screen</a>` link.
+      - A `Next →` link to the next step's screen (or to `index.html`
+        on the last step).
+  - The acceptance criterion "clicking a journey link walks through
+    screens in order" is honoured by the journey HTML alone — STEP 2
+    only lists journeys this screen participates in (no
+    journey-specific "Next" injection inside the screen HTML, so the
+    same screen can appear in multiple journeys cleanly).
+  - Write the file UTF-8, LF.
+
+### Screen-in-multiple-journeys rule
+
+  When a screen appears in two or more journeys, each `journey/<id>.html`
+  retains its own "Next →" link only inside the journey HTML. The screen
+  HTML itself does NOT embed journey-specific navigation (else screen
+  renders couple to journey state). Cross-journey continuation is solely
+  owned by `journey/<id>.html`.
+
+  NEVER inject journey-step "Next →" links into `screen/**/*.html`.
+  The screen's footer lists the journeys it participates in (with links
+  to the journey pages) but does not advance to any specific journey's
+  next screen.
+
 ## STEP 4: Emit index.html and manifest.json
 
 ## STEP 5: Validate
