@@ -211,11 +211,12 @@ STEP 5: Write refactor.md (Approval status: pending)
   Write to _slice/impl/<slice_id>/refactor.md.
 
 STEP 6: Approval gate (STANDALONE message per iron_laws § 9)
-  Send a STANDALONE message:
+  CHECKPOINT refactor_approval
     > "Refactor proposal for `<slice_id>` is ready at
     >  _slice/impl/<slice_id>/refactor.md. Which candidate(s) should I apply,
     >  if any? You can also reject all and we move on to commit."
-  Wait for response.
+  Wait for response. NO in-tree edits before this CHECKPOINT resolves
+  (iron_laws § 8).
 
 STEP 7: Apply (or record rejection)
   Inline MUST: NO in-tree edit before the user's response (Iron Law § 8).

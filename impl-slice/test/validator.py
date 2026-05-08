@@ -61,18 +61,29 @@ def split_frontmatter(text: str) -> tuple[dict, str]:
 
 
 def extract_section(body: str, header: str) -> str:
-    """Return text under `header` until the next `## ` header or EOF."""
+    """Return text under `header` until the next same-or-higher-level header or EOF.
+
+    Sub-sections (`### `) stop at the next `### ` or `## `. Top sections
+    (`## `) stop at the next `## ` only.
+    """
     lines = body.splitlines()
     out: list[str] = []
     inside = False
+    is_subsection = header.startswith("### ")
     for line in lines:
         stripped = line.rstrip()
         if stripped == header:
             inside = True
             continue
         if inside:
-            if stripped.startswith("## ") and stripped != header:
-                break
+            if is_subsection:
+                if stripped.startswith("### ") and stripped != header:
+                    break
+                if stripped.startswith("## "):
+                    break
+            else:
+                if stripped.startswith("## ") and stripped != header:
+                    break
             out.append(line)
     return "\n".join(out).strip("\n")
 
