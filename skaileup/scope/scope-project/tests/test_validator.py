@@ -74,10 +74,10 @@ def test_snapshot_rule_for_each_fixture():
             return "mvp"
         if s["features_estimate"] <= 5 and not s["multi_user"]:
             return "simple-app"
-        if s["features_estimate"] <= 20 or s["multi_user"]:
-            return "standard-app"
         if s["persistence"] == "external" or len(s["integrations"]) >= 2:
             return "complex-app"
+        if s["features_estimate"] <= 20 or s["multi_user"]:
+            return "standard-app"
         return "complex-app"
 
     for f in FIXTURES:

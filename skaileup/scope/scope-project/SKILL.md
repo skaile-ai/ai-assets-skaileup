@@ -2,7 +2,7 @@
 name: skaileup-scope-scope-project
 description: "Use when the user starts a new project and no _concept/_meta/scope.yaml exists yet, or when re-scoping (--tier= override). Picks one of mvp / simple-app / standard-app / complex-app from a one-sentence project description and writes _concept/_meta/scope.yaml. First action in the skaileup pipeline; gates which flow runs next."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   tags:
     - scope
     - tier
@@ -113,12 +113,15 @@ STEP 2: Collect signals (skip individual questions if pre-supplied via INPUT)
     → integrations (list[string])
 
 STEP 3: Apply the decision rule (verbatim from SKILL_GRAPH.md § 3)
+  Order matters — enterprise check sits ABOVE the multi-user/feature-count branch
+  so that a multi-user enterprise app does not short-circuit to `standard-app`.
+
   rule_tier = (
     "mvp"          if features_estimate <= 1 and persistence == "trivial"
     else "simple-app"   if features_estimate <= 5 and not multi_user
-    else "standard-app" if features_estimate <= 20 or multi_user
     else "complex-app"  if persistence == "external" or len(integrations) >= 2
-    else "complex-app"  # documented fall-through
+    else "standard-app" if features_estimate <= 20 or multi_user
+    else "complex-app"  # explicit fall-through (large but unclassified)
   )
 
 STEP 4: Resolve override
@@ -180,7 +183,7 @@ OUTPUT _concept/_meta/scope.yaml
     requested_tier: <string|null>
     rule_would_have_picked: <enum|null>
   chosen_at: "<iso-8601 UTC Z>"
-  chosen_by: "skaileup-scope-scope-project@1.0.0"
+  chosen_by: "skaileup-scope-scope-project@1.1.0"
 
 CHECKLIST
   - [ ] Interview questions sent as standalone messages

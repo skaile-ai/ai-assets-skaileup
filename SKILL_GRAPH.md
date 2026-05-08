@@ -148,14 +148,17 @@ complex-app   linear high-level +      N × impl-slice            HITL — super
               + project-overview       audit between slices)     + align per slice
 ```
 
-**Decision rule** the `scope-project` skill follows:
+**Decision rule** the `scope-project` skill follows (order matters — enterprise check sits above the multi-user/feature-count branch so that a multi-user enterprise app does not short-circuit to `standard-app`):
 
 ```
 if features ≤ 1 and persistence trivial:        → mvp
 elif features ≤ 5 and single-user:              → simple-app
-elif features ≤ 20 or multi-user:               → standard-app
 elif multi-product or enterprise integration:   → complex-app
+elif features ≤ 20 or multi-user:               → standard-app
+else:                                           → complex-app   # explicit fall-through (large but unclassified)
 ```
+
+`multi-product or enterprise integration` is satisfied when `signals.persistence == "external"` OR `len(signals.integrations) >= 2`.
 
 User can override at any time by re-running `scope-project --tier=<name>`.
 

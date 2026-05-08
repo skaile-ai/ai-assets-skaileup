@@ -19,8 +19,8 @@
   },
   {
     "id": "complex-erp-portal",
-    "description": "A multi-product B2B portal with single-tenant deployments, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline.",
-    "signals": {"features_estimate": 35, "multi_user": false, "persistence": "external", "integrations": ["stripe", "salesforce", "rabbitmq"]},
+    "description": "A multi-tenant B2B portal with assignee/role hierarchies, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline.",
+    "signals": {"features_estimate": 35, "multi_user": true, "persistence": "external", "integrations": ["stripe", "salesforce", "rabbitmq"]},
     "expected_tier": "complex-app"
   }
 ]

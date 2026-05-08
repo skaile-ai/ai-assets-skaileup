@@ -17,4 +17,4 @@ override:
   requested_tier: null
   rule_would_have_picked: null
 chosen_at: "2026-05-07T00:00:00Z"
-chosen_by: "skaileup-scope-scope-project@1.0.0"
+chosen_by: "skaileup-scope-scope-project@1.1.0"

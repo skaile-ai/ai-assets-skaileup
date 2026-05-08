@@ -32,13 +32,14 @@ complex-app   linear high-level +      N × impl-slice            HITL — super
               + project-overview       audit between slices)     + align per slice
 ```
 
-**Decision rule** the `scope-project` skill follows:
+**Decision rule** the `scope-project` skill follows (order matters — enterprise check sits above the multi-user/feature-count branch so a multi-user enterprise app does not short-circuit to `standard-app`):
 
 ```
 if features ≤ 1 and persistence trivial:        → mvp
 elif features ≤ 5 and single-user:              → simple-app
-elif features ≤ 20 or multi-user:               → standard-app
 elif multi-product or enterprise integration:   → complex-app
+elif features ≤ 20 or multi-user:               → standard-app
+else:                                           → complex-app   # explicit fall-through (large but unclassified)
 ```
 
 User can override at any time by re-running `scope-project --tier=<name>`.
@@ -81,30 +82,33 @@ A solo product with up to five features and a real (but single)
 data shape. Example: a personal recipe collector with tagging, search,
 and a print-friendly view.
 
-### Branch 3 — `standard-app`
-Fires when neither of the above and `features_estimate <= 20 OR multi_user == true`.
-This catches both larger single-user apps and any multi-user app, even
-small ones. Example: a team todo app with assignees, due-date reminders,
-comments, and per-project views.
+### Branch 3 — `complex-app` (enterprise check, runs BEFORE the standard-app catch-all)
+Fires when the previous didn't and `persistence == "external" OR len(integrations) >= 2`.
+Multi-product, enterprise integrations, queue/bus persistence. This branch
+sits above the multi-user/feature-count branch on purpose: a multi-user
+enterprise app would otherwise short-circuit to `standard-app` via Branch 4's
+`OR multi_user` clause and never reach the complex-app check. Example:
+a multi-tenant B2B portal integrating Stripe billing, Salesforce CRM sync,
+and a queue-driven order pipeline.
 
-### Branch 4 — `complex-app`
-Fires when none of the above and `persistence == "external" OR len(integrations) >= 2`.
-Multi-product, enterprise integrations, queue/bus persistence. Example:
-a B2B portal integrating Stripe billing, Salesforce CRM sync, and a
-queue-driven order pipeline.
+### Branch 4 — `standard-app`
+Fires when none of the above and `features_estimate <= 20 OR multi_user == true`.
+This catches both larger single-user apps and any multi-user app that did NOT
+already trip the enterprise check. Example: a team todo app with assignees,
+due-date reminders, comments, and per-project views.
 
 ---
 
 ## 4. Fall-through Behavior
 
-The verbatim rule's four `if/elif` branches do not strictly cover every
-input. Consider `features_estimate = 30, multi_user = false,
-persistence = "structured", integrations = []`:
+The four `if/elif` branches do not strictly cover every input. Consider
+`features_estimate = 30, multi_user = false, persistence = "structured",
+integrations = []`:
 
 - Branch 1 fails (features_estimate > 1).
-- Branch 2 fails (features_estimate > 5).
-- Branch 3 fails (features_estimate > 20 AND multi_user == false).
-- Branch 4 fails (persistence != "external" AND len(integrations) < 2).
+- Branch 2 fails (features_estimate > 5 — and even if it weren't, multi_user is moot here).
+- Branch 3 fails (persistence != "external" AND len(integrations) < 2).
+- Branch 4 fails (features_estimate > 20 AND multi_user == false).
 
 The skill **falls through to `complex-app`** in this case and explicitly
 documents the fall-through in `reasoning`. Rationale: a 30-feature app
@@ -137,22 +141,12 @@ output in `skaileup/scope/scope-project/examples/<tier>.scope.yaml`.
 ### Example C — standard-app
 - description: "A team todo app with assignees, due-date reminders, comments, and per-project views."
 - signals: `features_estimate=12`, `multi_user=true`, `persistence="structured"`, `integrations=["sendgrid"]`
-- Branch 1 fails. Branch 2 fails (multi_user). Branch 3 fires (12 <= 20 OR multi_user) → `standard-app`.
+- Branch 1 fails. Branch 2 fails (multi_user). Branch 3 fails (persistence != external AND only 1 integration). Branch 4 fires (12 <= 20 OR multi_user) → `standard-app`.
 
 ### Example D — complex-app
-- description: "A multi-product B2B portal with single-tenant deployments, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline."
-- signals: `features_estimate=35`, `multi_user=false`, `persistence="external"`, `integrations=["stripe", "salesforce", "rabbitmq"]`
-- Branch 1 fails (35 > 1). Branch 2 fails (35 > 5). Branch 3 fails (35 > 20 AND multi_user=false). Branch 4 fires (persistence == "external") → `complex-app`.
-
-**Important note on Example D's signals.** A multi-user 35-feature app
-with external persistence would actually fire Branch 3 (`features_estimate <= 20 OR multi_user`)
-under the literal rule and produce `standard-app`. To exercise Branch 4
-with a clean fixture, Example D pins `multi_user=false`: a single-tenant
-B2B portal where each customer gets their own deployment. The integrations
-and external persistence are what make it complex; the multi-tenancy is
-not what triggers Branch 4. If you encounter a multi-user enterprise app
-in practice, expect the rule to return `standard-app`; that result can
-either be accepted or overridden via `--tier=complex-app`.
+- description: "A multi-tenant B2B portal with assignee/role hierarchies, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline."
+- signals: `features_estimate=35`, `multi_user=true`, `persistence="external"`, `integrations=["stripe", "salesforce", "rabbitmq"]`
+- Branch 1 fails (35 > 1). Branch 2 fails (35 > 5). Branch 3 fires (persistence == "external" — and 3 integrations also satisfies `len >= 2`) → `complex-app`. Note: the enterprise check sits above the multi-user/feature-count branch precisely so this case doesn't short-circuit to standard-app.
 
 (Implementation note: the fixtures' `expected_tier` is what the rule
 returns, NOT what a human would pick. The four canonical examples are
