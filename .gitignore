@@ -4,6 +4,11 @@ node_modules/
 .env
 .env.local
 
+# Python build artefacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # Slice-loop scratch (deleted on commit)
 _slice/
 
