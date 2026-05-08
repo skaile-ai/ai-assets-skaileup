@@ -1,0 +1,23 @@
+schema_version: "1.0"
+tier: complex-app
+flow_to_run: "flow:complex-app"
+reasoning: |
+  features_estimate is 35 (> 20) and multi_user is false, so branches 1 through
+  3 do not fire. Branch 4 fires because persistence is "external" (queue/bus,
+  multi-product) and three integrations are in scope. HITL supervision and
+  per-slice audits are mandated for this tier.
+description: "A multi-product B2B portal with single-tenant deployments, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline."
+signals:
+  features_estimate: 35
+  multi_user: false
+  persistence: external
+  integrations:
+    - stripe
+    - salesforce
+    - rabbitmq
+override:
+  applied: false
+  requested_tier: null
+  rule_would_have_picked: null
+chosen_at: "2026-05-07T00:00:00Z"
+chosen_by: "skaileup-scope-scope-project@1.0.0"

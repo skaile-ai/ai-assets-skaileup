@@ -1,0 +1,19 @@
+schema_version: "1.0"
+tier: mvp
+flow_to_run: "flow:mvp"
+reasoning: |
+  features_estimate is 1 and persistence is trivial, so the first branch of the
+  decision rule fires: this is an MVP. Single-user, no integrations, local JSON
+  storage — the lightest tier is appropriate.
+description: "A single-user personal budget tracker that stores entries in one local JSON file."
+signals:
+  features_estimate: 1
+  multi_user: false
+  persistence: trivial
+  integrations: []
+override:
+  applied: false
+  requested_tier: null
+  rule_would_have_picked: null
+chosen_at: "2026-05-07T00:00:00Z"
+chosen_by: "skaileup-scope-scope-project@1.0.0"

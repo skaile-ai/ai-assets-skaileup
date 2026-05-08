@@ -1,0 +1,20 @@
+schema_version: "1.0"
+tier: simple-app
+flow_to_run: "flow:simple-app"
+reasoning: |
+  features_estimate is 4 (<= 5) and multi_user is false, so branch 2 of the
+  decision rule fires: simple-app. Persistence is structured (single relational
+  schema) and there are no integrations — the linear concept-and-impl shape
+  fits a solo product with up to five features.
+description: "A solo recipe collector with tagging, search, and a print-friendly view."
+signals:
+  features_estimate: 4
+  multi_user: false
+  persistence: structured
+  integrations: []
+override:
+  applied: false
+  requested_tier: null
+  rule_would_have_picked: null
+chosen_at: "2026-05-07T00:00:00Z"
+chosen_by: "skaileup-scope-scope-project@1.0.0"

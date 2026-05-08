@@ -1,0 +1,21 @@
+schema_version: "1.0"
+tier: standard-app
+flow_to_run: "flow:standard-app"
+reasoning: |
+  features_estimate is 12 (<= 20) and multi_user is true, so branch 3 of the
+  decision rule fires: standard-app. Multiple roles share state, persistence
+  is structured, and one integration (sendgrid) is in scope. The concept-slice
+  loop and per-slice plan checkpoint are warranted.
+description: "A team todo app with assignees, due-date reminders, comments, and per-project views."
+signals:
+  features_estimate: 12
+  multi_user: true
+  persistence: structured
+  integrations:
+    - sendgrid
+override:
+  applied: false
+  requested_tier: null
+  rule_would_have_picked: null
+chosen_at: "2026-05-07T00:00:00Z"
+chosen_by: "skaileup-scope-scope-project@1.0.0"
