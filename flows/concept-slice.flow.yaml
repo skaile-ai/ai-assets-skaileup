@@ -1,0 +1,80 @@
+id: concept-slice
+version: '2.0.0'
+name: 'Concept Slice'
+description: >-
+  Per-feature concept loop: brainstorm -> align -> scope-feature -> design-feature.
+  Canonical building block consumed by tier flows (standard-app, complex-app)
+  via node inlining. Iteration semantics: tier orchestrators run this slice
+  once per feature in their feature backlog. Slice flow is standalone-runnable
+  for testability of the slice loop.
+meta:
+  category: concept
+  tags:
+    - concept-slice
+    - per-feature
+    - slice
+  icon: i-heroicons-light-bulb
+globals:
+  research_depth: light
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+entry: c-brainstorm
+nodes:
+  - id: c-brainstorm
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: concept-slice-brainstorm
+      label: 'Slice: Brainstorm'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: c-align
+    type: skill
+    position:
+      x: 240
+      y: 200
+    data:
+      skill: concept-slice-align
+      label: 'Slice: Align'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: c-scope-feature
+    type: skill
+    position:
+      x: 480
+      y: 200
+    data:
+      skill: concept-slice-scope-feature
+      label: 'Slice: Scope Feature'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: c-design-feature
+    type: skill
+    position:
+      x: 720
+      y: 200
+    data:
+      skill: concept-slice-design-feature
+      label: 'Slice: Design Feature'
+      optional: false
+      subagent: false
+      parameters: {}
+edges:
+  - id: e-c-brainstorm-c-align
+    source: c-brainstorm
+    target: c-align
+    type: flow
+  - id: e-c-align-c-scope-feature
+    source: c-align
+    target: c-scope-feature
+    type: flow
+  - id: e-c-scope-feature-c-design-feature
+    source: c-scope-feature
+    target: c-design-feature
+    type: flow
