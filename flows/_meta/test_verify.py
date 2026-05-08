@@ -153,3 +153,121 @@ def test_schema_violation_fails(tmp_path):
     proc = _run(verifier)
     assert proc.returncode == 2
     assert "schema validation failed" in proc.stderr
+
+
+# ---------------------------------------------------------------------------
+# Case 6: schema accepts router/gate/sub-flow node types + review-loop edge
+# ---------------------------------------------------------------------------
+def test_schema_accepts_new_node_and_edge_types():
+    """Regression guard for the v1.1 schema bump (router, gate, sub-flow, review-loop)."""
+    import jsonschema
+
+    schema = json.loads(SCHEMA.read_text())
+    flow = {
+        "id": "smoke",
+        "name": "Smoke",
+        "description": "exercises router + gate + sub-flow + review-loop",
+        "nodes": [
+            {
+                "id": "r1",
+                "type": "router",
+                "position": {"x": 0, "y": 0},
+                "data": {
+                    "label": "Tier Router",
+                    "routes": [
+                        {"condition": "tier == 'mvp'", "target": "g1"},
+                        {"condition": "default", "target": None},
+                    ],
+                },
+            },
+            {
+                "id": "g1",
+                "type": "gate",
+                "position": {"x": 100, "y": 0},
+                "data": {
+                    "label": "Features Gate",
+                    "check": "artifact.features.status in ['draft', 'approved']",
+                    "on_fail": "pause-for-human",
+                    "message": "Features required.",
+                },
+            },
+            {
+                "id": "sf1",
+                "type": "sub-flow",
+                "position": {"x": 200, "y": 0},
+                "data": {"flow": "concept-slice", "pass_context": True},
+            },
+            {
+                "id": "s1",
+                "type": "skill",
+                "position": {"x": 300, "y": 0},
+                "data": {"skill": "impl-slice-implement"},
+            },
+        ],
+        "edges": [
+            {"id": "e1", "source": "r1", "target": "g1"},
+            {"id": "e2", "source": "g1", "target": "sf1"},
+            {"id": "e3", "source": "sf1", "target": "s1"},
+            {
+                "id": "e-loop",
+                "source": "s1",
+                "target": "g1",
+                "type": "review-loop",
+                "max_iterations": 3,
+                "exit_condition": "tests.passing",
+            },
+        ],
+        "entry": "r1",
+    }
+    jsonschema.validate(flow, schema)
+
+
+@pytest.mark.parametrize(
+    "mutation,reason",
+    [
+        # invalid on_fail enum
+        (lambda f: f["nodes"][1]["data"].update({"on_fail": "invalid-mode"}), "gate on_fail enum"),
+        # empty routes
+        (lambda f: f["nodes"][0]["data"].update({"routes": []}), "router routes minItems"),
+        # bad flow id pattern (uppercase + space)
+        (lambda f: f["nodes"][2]["data"].update({"flow": "BAD ID"}), "sub-flow id pattern"),
+        # bogus edge type
+        (lambda f: f["edges"][0].update({"type": "not-a-real-edge-type"}), "edge type enum"),
+    ],
+)
+def test_schema_rejects_bad_new_types(mutation, reason):
+    """Each mutation must trip a validation error — proves the schema is constraining."""
+    import jsonschema
+
+    schema = json.loads(SCHEMA.read_text())
+    flow = {
+        "id": "smoke",
+        "name": "Smoke",
+        "nodes": [
+            {
+                "id": "r1",
+                "type": "router",
+                "position": {"x": 0, "y": 0},
+                "data": {"routes": [{"condition": "default", "target": None}]},
+            },
+            {
+                "id": "g1",
+                "type": "gate",
+                "position": {"x": 100, "y": 0},
+                "data": {
+                    "check": "artifact.features.status in ['draft', 'approved']",
+                    "on_fail": "pause-for-human",
+                },
+            },
+            {
+                "id": "sf1",
+                "type": "sub-flow",
+                "position": {"x": 200, "y": 0},
+                "data": {"flow": "concept-slice"},
+            },
+        ],
+        "edges": [{"id": "e1", "source": "r1", "target": "g1"}],
+    }
+    mutation(flow)
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(flow, schema)
