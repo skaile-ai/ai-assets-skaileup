@@ -72,6 +72,90 @@ this rationale in mind.
 
 ## Renderer Contract
 
+This is the **public contract** of this skill. Every other walkthrough
+variant in Phase 3 (Lit, Astro, framework-tier) MUST emit the same set of
+`data-spec-*` attributes on the same DOM positions so the
+`mockup-feedback-*` cluster can resolve clicks identically across renderers.
+
+### `data-spec-*` attribute table
+
+| DOM location | Attribute | Value | Source |
+|---|---|---|---|
+| `<body>` of every `screen/<group>/<name>.html` | `data-spec-screen` | screen path stem (e.g. `01_user_auth/login`) | screen file path |
+| every annotatable child node (form fields, buttons, links, images, regions, list items, nav items) | `data-spec-element` | element id (kebab-case) | `elements:` entry, or auto-slug |
+| same node, when no explicit `elements:` entry exists for it | `data-spec-provisional` | literal string `"true"` | absent in YAML |
+| `<body>` of every `journey/<id>.html` | `data-spec-journey` | journey id from stories.json | stories.json |
+| each step link inside `journey/<id>.html` | `data-spec-screen` | the screen-stem of that step's screen | journey step entry |
+| `<body>` of `index.html` | `data-spec-index` | literal string `"true"` | (none — site root marker) |
+
+**The renderer MUST NOT add `data-spec-*` attributes outside this table.**
+Phase 3's annotate skill ignores unknown ones, but a lean attribute set
+keeps drift visible.
+
+### `screen_id` vs `screen_path`
+
+Both forms are kept in `manifest.json` so Phase 3 consumers can pick:
+
+- `screen_path`: full repo-relative path with extension, e.g.
+  `experience/screens/01_user_auth/login.md`. Used in journey
+  `screen_sequence`, in `screens[].screen_path`, and in `source_anchor`s.
+- `screen_id`: path stem under `experience/screens/` without `.md`, e.g.
+  `01_user_auth/login`. Used in `data-spec-screen`, in the rendered HTML
+  filename, and in `screens[].screen_id`.
+
+### kind → DOM tag mapping
+
+| kind | rendered tag | notes |
+|---|---|---|
+| `input` | `<input>` | with `name="<id>"` and `aria-label="<label>"` |
+| `button` | `<button>` | label as inner text |
+| `link` | `<a>` | `href="#"` placeholder |
+| `image` | `<img>` | `src="#"` placeholder, `alt="<label>"` |
+| `text` | `<span>` | label as inner text |
+| `region` | `<section>` | label as inner `<h3>` |
+| `list` | `<ul>` | empty list with placeholder `<li>` |
+| `form` | `<form>` | placeholder; nested inputs not auto-derived |
+| `nav` | `<nav>` | placeholder list of links |
+| `media` | `<figure>` | `<figcaption>` carries label |
+| `custom` | `<div>` | label as inner text; renderable but unstyled |
+
+States beyond `default` are rendered as adjacent `<span class="state-<n>">`
+children of the element so visual reviewers can see state coverage.
+
+### Auto-slug fallback (this skill's portion of the hybrid ID strategy)
+
+When a screen file has no `elements:` block, OR has a partial one, this
+skill MUST:
+
+  1. Walk the screen body and identify renderable widgets by source order.
+     **Source set:** (a) markdown headings (`##`, `###`), (b) form-field
+     lines matching `[label]: input|button|...` pattern, (c) acceptance-
+     criteria mentions in body text. (Auto-slug net is intentionally wide;
+     explicit ids always win on collision.)
+  2. For each widget not present in `elements:` (matched by label-equality,
+     case-insensitive), generate an id by:
+     - Lowercase the label
+     - Replace any non `[a-z0-9]` run with a single `-`
+     - Trim leading/trailing `-`
+     - If empty (label was e.g. `"…"`), fall back to `<kind>-<n>` where
+       `n` is a 1-based counter scoped per-screen-per-kind
+       (`button-1`, `button-2`, `input-1`, ...).
+     - On collision with another auto-slugged id within the same screen,
+       append `-2`, `-3`, ... until unique.
+     - Collision with an explicit id: warning `kind: "auto_slug_collision"`
+       and the auto-slugged element gets the suffixed id.
+  3. Render the node with `data-spec-element="<auto-slugged-id>"` AND
+     `data-spec-provisional="true"`.
+  4. Append a `warnings[]` entry of `kind: "auto_slugged"` to
+     `manifest.json` for each auto-slugged element.
+  5. **Never** mutate the source `experience/screens/<group>/<name>.md`
+     file. Promotion of provisional ids is `mockup-feedback-triage`'s job
+     in Phase 3.
+
+This procedure mirrors step 1 of the hybrid ID strategy from
+`REFACTOR_MOCKUP.md` § 6 / `contracts/elements_block.md` § "Hybrid ID
+strategy".
+
 ## Inputs
 
 This skill consumes four input shapes, all under the project root:
@@ -192,6 +276,49 @@ REFERENCES
     is emitted as `[]`.
 
 ## STEP 2: Render screens
+
+  For each parsed screen (in lexicographic order):
+
+  - Determine output path:
+    `_concept/walkthrough-mockup/static-html/screen/<group>/<name>.html`
+  - Compute `screen_id` = path stem under `experience/screens/`
+    (e.g. `01_user_auth/login`).
+  - Open the wrapping shell (default or layout-driven). If the screen
+    frontmatter declares `layout: experience/screens/00_layout/shell.md`
+    AND that file exists, render the layout's body markdown as a wrapper
+    around the screen content; if the layout file is missing, emit a
+    warning `kind: "missing_layout"` and use the built-in default shell.
+  - Inject the flattened `tokens.json` keys as CSS custom properties
+    on `:root` inside the shell's `<style>` block.
+  - Set `<body data-spec-screen="<screen_id>">`.
+  - Render the explicit `elements[]` first (in declaration order):
+    - Choose the HTML tag per the `kind → DOM tag mapping` table.
+    - Emit `data-spec-element="<element.id>"`.
+    - If the element entry has `provisional: true`, also emit
+      `data-spec-provisional="true"`.
+    - Render the label as visible text (escaped via
+      `html.escape(..., quote=True)`).
+    - For each state in `element.states` beyond `default`, render a small
+      sibling `<span class="state-<state>">` so visual reviewers can see
+      state coverage.
+  - For widgets discoverable in the screen body but absent from
+    `elements[]`, apply the auto-slug fallback and emit them at the
+    bottom of `<main>` inside an HTML comment-delimited
+    `<!-- auto-slugged --> ... <!-- /auto-slugged -->` group so the
+    source ordering vs auto-slugged ordering is visually distinct.
+  - Render the screen body markdown (descriptive text/headings only)
+    inside a `<section class="screen-body-prose">`. Body content does
+    NOT receive `data-spec-element` attributes — only the `elements:`
+    block (or auto-slug fallback) does.
+  - Add a footer linking back to `index.html` and, when the screen
+    appears in any journey, list those journeys with links to
+    `journey/<id>.html`. (See STEP 3 for the cross-journey rule.)
+  - Write the file UTF-8, LF.
+
+  MUST escape every label, id, screen_path, journey_id with
+  `html.escape(..., quote=True)` before substitution into HTML.
+  NEVER trust frontmatter strings; they may contain quotes, angle
+  brackets, or unicode that breaks the document.
 
 ## STEP 3: Render journeys
 
