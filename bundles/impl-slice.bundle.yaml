@@ -1,0 +1,23 @@
+name: impl-slice
+description: >-
+  Per-feature impl loop — impl-plan brainstorm -> align -> plan-vertical, then
+  impl-slice implement -> test -> recap -> refactor -> commit. Used directly
+  by simple-app/standard-app/complex-app tier flows; inlined as nodes. Leaf
+  bundle (no inheritance).
+metadata:
+  version: '1.0.0'
+  tags:
+    - bundle
+    - impl-slice
+    - per-feature
+    - slice
+  stage: alpha
+requires:
+  - skill:impl-plan-brainstorm
+  - skill:impl-plan-align
+  - skill:impl-plan-plan-vertical
+  - skill:impl-slice-implement
+  - skill:impl-slice-test
+  - skill:impl-slice-recap
+  - skill:impl-slice-refactor
+  - skill:impl-slice-commit
