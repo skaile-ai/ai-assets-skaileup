@@ -1,6 +1,6 @@
 ---
 name: concept-slice-design-feature
-description: "Use after concept-slice-scope-feature to commit THIS feature's permanent _concept/ artifacts — the feature spec, all required screen specs, and the per-feature walkthrough-mockup stub. The only writer of permanent _concept/ artifacts in the concept-slice cluster. Deletes _slice/concept/<id>/ on success. Triggers on: 'design this feature', 'commit slice artifacts', 'design-feature', after concept-slice-scope-feature completes."
+description: "Use when concept-slice-scope-feature has completed and you need to commit THIS feature's permanent _concept/ artifacts — the feature spec, all required screen specs, and the per-feature walkthrough-mockup stub. The only writer of permanent _concept/ artifacts in the concept-slice cluster. Deletes _slice/concept/<id>/ on success. Triggers on: 'design this feature', 'commit slice artifacts', 'design-feature'."
 metadata:
   version: "1.0.0"
   tags:

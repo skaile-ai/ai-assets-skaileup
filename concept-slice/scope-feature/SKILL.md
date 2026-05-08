@@ -1,6 +1,6 @@
 ---
 name: concept-slice-scope-feature
-description: "Use after concept-slice-align to draw the IN/OUT line for THIS feature — reads align's edge-case list, forces an IN/OUT/DEFER decision on each item, and produces the final scope decision that concept-slice-design-feature honors. Triggers on: 'scope this feature', 'what's in vs out', 'lock the boundary', after concept-slice-align completes."
+description: "Use when concept-slice-align has completed and you need to draw the IN/OUT line for THIS feature — reads align's edge-case list, forces an IN/OUT/DEFER decision on each item, and produces the final scope decision that concept-slice-design-feature honors. Triggers on: 'scope this feature', 'what's in vs out', 'lock the boundary'."
 metadata:
   version: "1.0.0"
   tags:

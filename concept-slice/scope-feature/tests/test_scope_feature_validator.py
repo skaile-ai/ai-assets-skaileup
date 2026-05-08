@@ -2,16 +2,19 @@
 
 from __future__ import annotations
 
-import sys
+import importlib.util
 from pathlib import Path
 
 import pytest
 
 THIS_DIR = Path(__file__).resolve().parent
 SKILL_DIR = THIS_DIR.parent
-sys.path.insert(0, str(SKILL_DIR))
 
-import validator  # noqa: E402
+_spec = importlib.util.spec_from_file_location(
+    "concept_slice_scope_feature_validator", SKILL_DIR / "validator.py"
+)
+validator = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(validator)
 
 
 GOOD_FRONTMATTER = """---

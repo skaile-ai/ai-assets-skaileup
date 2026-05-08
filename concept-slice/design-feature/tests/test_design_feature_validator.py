@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import shutil
-import sys
 from pathlib import Path
 
 import pytest
 
 THIS_DIR = Path(__file__).resolve().parent
 SKILL_DIR = THIS_DIR.parent
-sys.path.insert(0, str(SKILL_DIR))
 
-import validator  # noqa: E402
+_spec = importlib.util.spec_from_file_location(
+    "concept_slice_design_feature_validator", SKILL_DIR / "validator.py"
+)
+validator = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(validator)
 
 EXAMPLE_DIR = SKILL_DIR / "examples" / "team-todo-comments"
 EXPECTED_OUTPUT = EXAMPLE_DIR / "expected_output"

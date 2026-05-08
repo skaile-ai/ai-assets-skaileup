@@ -1,6 +1,6 @@
 ---
 name: concept-slice-align
-description: "Use after concept-slice-brainstorm (or as the entry point for simple-app) to grill the user about THIS feature — surfaces edge cases, unstated rules, error states, role/permission gaps, and produces EARS-format acceptance criteria. Inverts the brainstorm: now the AI asks pointed questions, the user defends their assumptions. Triggers on: 'align this feature', 'grill me on edge cases', 'lock down acceptance criteria', after concept-slice-brainstorm completes."
+description: "Use when concept-slice-brainstorm has completed (or as the entry point for simple-app) and you need to grill the user about THIS feature — surfaces edge cases, unstated rules, error states, role/permission gaps, and produces EARS-format acceptance criteria. Inverts the brainstorm: now the AI asks pointed questions, the user defends their assumptions. Triggers on: 'align this feature', 'grill me on edge cases', 'lock down acceptance criteria'."
 metadata:
   version: "1.0.0"
   tags:
