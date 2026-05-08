@@ -125,7 +125,7 @@ nodes:
       x: 1600
       y: 200
     data:
-      skill: impl-architecture-templates
+      skill: impl-architecture-templates-select
       label: 'Architecture Templates (deferred)'
       optional: true
       parameters: {}

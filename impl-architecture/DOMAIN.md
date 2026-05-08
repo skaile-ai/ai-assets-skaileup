@@ -15,7 +15,7 @@ Defines the technical foundation: tech stack decisions, system architecture, dat
 - **impl-architecture-techstack** (`techstack/`) — Discovers available stacks from `templates/`, asks plain-language questions, recommends the best match, and writes `stack.md`.
 - **impl-architecture-system** (`system/`) — Documents system architecture: overview, backend structure, data flow, communication protocols, external integrations, infrastructure.
 - **impl-architecture-datamodel** (`datamodel/`) — Produces `model.dbml` (DBML), `model.json` (editor canvas), `seed.json` (test scenarios), and `feature_map.json` (model-to-feature cross-reference).
-- **templates/** — Stack profile templates (Next.js + Radix/shadcn, Nuxt minimal/UI/PrimeVue, SvelteKit minimal, PostXL); each template directory contains a `SKILL.md` describing its scaffold conventions.
+- **templates/** — Cluster of 7 stack-specific scaffold templates (PostXL, Next.js + Radix/shadcn, Nuxt minimal/UI/PrimeVue, SvelteKit minimal). Selector `impl-architecture-templates-select` (Phase 3 deferred) picks one at runtime. See `templates/DOMAIN.md`.
 
 ## Cross-references
 

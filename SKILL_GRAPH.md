@@ -470,7 +470,9 @@ complex-app.flow.yaml:
    concept-slice/design-feature          ✓         ✓
    ───────────────────────────────────────────────────────
    impl-arch/techstack      ✓    ✓       ✓         ✓
-   impl-arch/templates      ✓    ✓       ✓         ✓
+   impl-arch/templates-select ✓  ✓       ✓         ✓   ← cluster selector (Phase 3)
+                                                          picks one of impl-arch/templates/template-{postxl,nextjs-radix,
+                                                          nextjs-shadcn,nuxt-minimal,nuxt-primevue,nuxt-ui,sveltekit-minimal}
    impl-arch/system                      ✓         ✓
    impl-arch/datamodel           ✓       ✓         ✓
    impl-plan/brainstorm                  ✓         ✓

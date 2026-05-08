@@ -12,7 +12,7 @@ description: >-
   + ready. Ops: review + sync. Iteration semantics: cs-align..i-commit run
   once per feature; the linear graph below shows one iteration. Deferred
   skills (concept-goals, concept-comparable, design-inspiration,
-  walkthrough-mockup-astro, mockup-feedback-*, impl-architecture-templates)
+  walkthrough-mockup-astro, mockup-feedback-*, impl-architecture-templates-select)
   see flows/_meta/deferred_skills.yaml.
 meta:
   category: full-stack
@@ -231,7 +231,7 @@ nodes:
       x: 3400
       y: 200
     data:
-      skill: impl-architecture-templates
+      skill: impl-architecture-templates-select
       label: 'Architecture Templates (deferred)'
       optional: true
       parameters: {}

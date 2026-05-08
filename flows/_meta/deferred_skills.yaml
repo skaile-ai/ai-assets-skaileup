@@ -28,5 +28,5 @@ deferred_phase_3:
     reason: "Phase 3 — mockup-feedback-patch (mockup feedback cluster, standard/complex)"
   - name: mockup-feedback-apply
     reason: "Phase 3 — mockup-feedback-apply (mockup feedback cluster, standard/complex)"
-  - name: impl-architecture-templates
-    reason: "ambiguous — Phase 1 promoted templates as stack-specific (template-postxl); needs SKILL_GRAPH § 6 reconciliation"
+  - name: impl-architecture-templates-select
+    reason: "Phase 3 — selector skill that picks one of impl-architecture/templates/template-* based on signals from scope.yaml + techstack output. The 7 concrete stack templates (template-postxl, template-nextjs-radix, template-nextjs-shadcn, template-nuxt-minimal, template-nuxt-primevue, template-nuxt-ui, template-sveltekit-minimal) already exist as real skills; this is the runtime chooser. See impl-architecture/templates/DOMAIN.md."

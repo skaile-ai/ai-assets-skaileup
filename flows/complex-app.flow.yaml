@@ -15,7 +15,7 @@ description: >-
   INCLUDING brainstorm) -> impl-slice (supervised plan) -> impl-quality/audit
   (every slice) -> done. Deferred skills (concept-goals, concept-comparable,
   design-inspiration, walkthrough-mockup-astro/framework, mockup-feedback-*,
-  impl-architecture-templates) see flows/_meta/deferred_skills.yaml.
+  impl-architecture-templates-select) see flows/_meta/deferred_skills.yaml.
 meta:
   category: full-stack
   tags:
@@ -296,7 +296,7 @@ nodes:
       x: 4400
       y: 200
     data:
-      skill: impl-architecture-templates
+      skill: impl-architecture-templates-select
       label: 'Architecture Templates (deferred)'
       optional: true
       parameters: {}

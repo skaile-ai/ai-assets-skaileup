@@ -113,11 +113,11 @@ def test_unresolved_skill_fails(tmp_path):
 def test_deferred_skill_warns_only(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
     proc = _run(verifier)
-    # mvp already references impl-architecture-templates (deferred), so we
+    # mvp already references impl-architecture-templates-select (deferred), so we
     # expect a WARN line for it and overall exit 0.
     assert proc.returncode == 0
     assert "deferred skill referenced" in proc.stderr
-    assert "impl-architecture-templates" in proc.stderr
+    assert "impl-architecture-templates-select" in proc.stderr
 
 
 # ---------------------------------------------------------------------------
