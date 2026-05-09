@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Session",
+  "type": "object",
+  "required": ["sessionId", "annotations"],
+  "properties": {
+    "sessionId": { "type": "string", "minLength": 1 },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "sessionId", "specRef", "body", "category", "status"],
+        "properties": {
+          "id":        { "type": "string" },
+          "sessionId": { "type": "string" },
+          "createdAt": { "type": "string" },
+          "specRef": {
+            "type": "object",
+            "required": ["element"],
+            "properties": {
+              "element":     { "type": "string" },
+              "screen":      { "type": ["string", "null"] },
+              "feature":     { "type": ["string", "null"] },
+              "journey":     { "type": ["string", "null"] },
+              "route":       { "type": ["string", "null"] },
+              "provisional": { "type": "boolean" }
+            }
+          },
+          "body":     { "type": "string" },
+          "category": { "type": "string", "enum": ["change", "add", "remove", "question"] },
+          "status":   { "type": "string", "enum": ["open", "applied", "dismissed"] }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

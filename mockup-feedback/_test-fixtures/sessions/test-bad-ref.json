@@ -1,0 +1,18 @@
+{
+  "sessionId": "test-bad-ref",
+  "annotations": [
+    {
+      "id": "ann-bad-1",
+      "sessionId": "test-bad-ref",
+      "createdAt": "2026-05-09T14:00:00Z",
+      "specRef": {
+        "element": "ghost-btn",
+        "screen": "nonexistent/screen",
+        "provisional": false
+      },
+      "body": "this screen does not exist",
+      "category": "change",
+      "status": "open"
+    }
+  ]
+}

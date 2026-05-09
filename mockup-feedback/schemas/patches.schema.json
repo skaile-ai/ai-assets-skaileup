@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Patches",
+  "type": "object",
+  "required": ["sessionId", "proposedAt", "patches", "needs_manual"],
+  "properties": {
+    "sessionId":   { "type": "string" },
+    "proposedAt":  { "type": "string" },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "annotationId", "file", "section", "kind", "body", "diff"],
+        "properties": {
+          "id":           { "type": "string" },
+          "annotationId": { "type": "string" },
+          "file":         { "type": "string" },
+          "section":      { "type": "string" },
+          "kind":         { "type": "string", "enum": ["content", "provisional-promotion", "create-section"] },
+          "category":     { "type": ["string", "null"] },
+          "body":         { "type": "string", "description": "Original annotation body (copied from session JSON by patch skill; preserved in applied/ audit trail)" },
+          "diff":         { "type": "string" }
+        }
+      }
+    },
+    "needs_manual": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["annotationId", "reason"],
+        "properties": {
+          "annotationId": { "type": "string" },
+          "reason":       { "type": "string" }
+        }
+      }
+    }
+  }
+}
