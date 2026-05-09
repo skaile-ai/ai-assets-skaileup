@@ -1444,10 +1444,14 @@ Create `mockup-feedback/apply/tests/fixtures/test-pass/before/concept/experience
 title: Login Screen
 elements:
   - id: submit-button
+    kind: button
     label: Sign In
+    states: [default, loading]
     provisional: true
   - id: email-input
+    kind: input
     label: Email
+    states: [default, disabled]
     provisional: false
 ---
 
@@ -1489,7 +1493,7 @@ Create `mockup-feedback/apply/tests/fixtures/test-pass/before/_feedback/patches/
       "kind": "provisional-promotion",
       "category": null,
       "body": "this should be on the right",
-      "diff": "@@ frontmatter:elements @@\n-  - id: submit-button\n-    label: Sign In\n-    provisional: true\n+  - id: submit-button\n+    label: Sign In\n+    provisional: false\n"
+      "diff": "@@ frontmatter:elements @@\n-  - id: submit-button\n-    kind: button\n-    label: Sign In\n-    states: [default, loading]\n-    provisional: true\n+  - id: submit-button\n+    kind: button\n+    label: Sign In\n+    states: [default, loading]\n+    provisional: false\n"
     }
   ],
   "needs_manual": []
@@ -1514,10 +1518,14 @@ Create `mockup-feedback/apply/tests/fixtures/test-pass/before/_feedback/patches/
   ```diff
   @@ frontmatter:elements @@
   -  - id: submit-button
+  -    kind: button
   -    label: Sign In
+  -    states: [default, loading]
   -    provisional: true
   +  - id: submit-button
+  +    kind: button
   +    label: Sign In
+  +    states: [default, loading]
   +    provisional: false
   ```
 ```
@@ -1531,10 +1539,14 @@ Create `mockup-feedback/apply/tests/fixtures/test-pass/after/concept/experience/
 title: Login Screen
 elements:
   - id: submit-button
+    kind: button
     label: Sign In
+    states: [default, loading]
     provisional: false
   - id: email-input
+    kind: input
     label: Email
+    states: [default, disabled]
     provisional: false
 ---
 
@@ -1655,10 +1667,14 @@ Create `mockup-feedback/apply/tests/fixtures/test-partial-fail/after/concept/exp
 title: Login Screen
 elements:
   - id: submit-button
+    kind: button
     label: Sign In
+    states: [default, loading]
     provisional: true
   - id: email-input
+    kind: input
     label: Email
+    states: [default, disabled]
     provisional: false
 ---
 
