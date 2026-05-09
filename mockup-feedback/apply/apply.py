@@ -290,6 +290,7 @@ def main() -> int:
             (concept_root / rel).write_text(content, encoding="utf-8")
 
     # Append devlog
+    devlog_was_new = not devlog_path.exists()
     devlog_path.parent.mkdir(parents=True, exist_ok=True)
     with devlog_path.open("a", encoding="utf-8") as fh:
         fh.write(build_devlog_block(sid, applied_items))
@@ -322,6 +323,8 @@ def main() -> int:
         )
         if applied_path.exists():
             applied_path.unlink()
+        if devlog_was_new and devlog_path.exists():
+            devlog_path.unlink()
         print("ERROR: git commit failed — working tree restored.", file=sys.stderr)
         print(result.stdout + result.stderr, file=sys.stderr)
         return 1
