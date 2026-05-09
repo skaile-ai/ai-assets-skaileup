@@ -131,7 +131,8 @@ ${provisionalBanner}
   outsideClickHandler = (e) => {
     if (activePopover && !activePopover.contains(e.target)) closePopover();
   };
-  setTimeout(() => document.addEventListener('mousedown', outsideClickHandler, true), 0);
+  const _mouseHandler = outsideClickHandler;
+  setTimeout(() => document.addEventListener('mousedown', _mouseHandler, true), 0);
   escapeHandler = (e) => { if (e.key === 'Escape') closePopover(); };
   document.addEventListener('keydown', escapeHandler);
   activePopover = div;
