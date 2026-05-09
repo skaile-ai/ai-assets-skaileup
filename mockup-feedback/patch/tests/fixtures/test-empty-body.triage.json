@@ -1,0 +1,11 @@
+{
+  "sessionId": "test-empty-body",
+  "triagedAt": "2026-05-09T14:31:00Z",
+  "groups": [
+    {
+      "file": "experience/screens/01_user_auth/login.md",
+      "annotations": ["ann-empty-1"]
+    }
+  ],
+  "unresolved": []
+}

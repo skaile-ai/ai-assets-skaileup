@@ -1,0 +1,18 @@
+{
+  "sessionId": "test-empty-body",
+  "annotations": [
+    {
+      "id": "ann-empty-1",
+      "sessionId": "test-empty-body",
+      "createdAt": "2026-05-09T14:00:00Z",
+      "specRef": {
+        "element": "submit-button",
+        "screen": "01_user_auth/login",
+        "provisional": true
+      },
+      "body": "",
+      "category": "change",
+      "status": "open"
+    }
+  ]
+}
