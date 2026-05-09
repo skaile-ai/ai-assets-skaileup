@@ -249,6 +249,12 @@ _concept/**.md               edited
   skip `review.md` and call apply directly with its own approved patches).
 - Re-running apply on an already-applied session aborts unless
   `--force` is passed (idempotency check via `applied/<sid>.json`).
+- **Annotation partitioning invariant.** Every annotation in the input
+  session JSON is routed by triage+patch into **exactly one** of:
+  (a) `triage/<sid>.json#/unresolved` (no target file),
+  (b) `patches/<sid>.json#/patches[]` (one or more proposed diffs),
+  or (c) `patches/<sid>.json#/needs_manual[]` (cannot be automated).
+  Every validator and consumer can rely on this partition.
 
 ---
 
@@ -356,6 +362,13 @@ for derived patches that have no annotate-time origin (currently only
 ```markdown
 # Review patches for session 01J... (2 patches across 1 file)
 
+## Needs manual review
+
+(omit this section when `needs_manual` is empty)
+
+- annotation `01M...` — empty body, cannot author a `change` diff
+- annotation `01N...` — contradictory intent on submit-button
+
 ## experience/screens/01_user_auth/login.md
 
 - [x] **p-01K...-content** · category=change · annotation: "this should be on the right"
@@ -374,6 +387,14 @@ for derived patches that have no annotate-time origin (currently only
   +    provisional: false
   ```
 ```
+
+**Rendering rules:**
+- The `## Needs manual review` preamble appears **iff** `needs_manual`
+  is non-empty. Each entry is `- annotation \`<annotationId>\` — <reason>`.
+- These items have **no checkbox** — they are not approval-gated.
+- Per-file checklist sections follow, one per group in `patches.json`.
+- Every entry in `patches[]` produces exactly one `- [x]` checklist item;
+  the user toggles `[x]` ↔ `[ ]` to approve or skip.
 
 ### `_concept/_feedback/applied/<sid>.json` (committed)
 
@@ -630,18 +651,26 @@ LLM nondeterminism — golden-master not viable for diff text.
 - `fixtures/01J-minimal.triage.json` → patch run produces
   `patches/01J-minimal.json` + `review.md`.
 - `validator.py` checks **structural properties**:
-  - Every input annotation produces at least one patch.
+  - Every input annotation appears in EXACTLY ONE of: `patches[]`
+    (one or more entries) OR `needs_manual[]` (one entry). Asserts the
+    partitioning invariant from §Architecture.
   - Every patch's `file` matches its annotation's resolved file.
   - Every patch's diff is parseable as a unified diff.
-  - For each annotation with `provisional: true`, exactly one
-    `kind: "provisional-promotion"` patch exists.
-  - Every patch in `patches.json` has a corresponding checklist item
-    in `review.md`.
+  - For each annotation with `provisional: true` that lands in
+    `patches[]`, exactly one `kind: "provisional-promotion"` patch
+    exists for it.
+  - Every entry in `patches[]` has a corresponding `- [x]` checklist
+    item in `review.md`.
+  - Every entry in `needs_manual[]` appears as a bullet under the
+    `## Needs manual review` preamble in `review.md` and has NO
+    checklist item anywhere.
   - The `add`/`remove`/`question` patches match deterministic templates
     (regex assertions on the diff text).
 - A second fixture (`01J-empty-body.triage.json`) exercises the
-  `needs-manual` path — validator confirms the patch is flagged
-  unchecked.
+  `needs_manual` path — annotation has empty body. Validator confirms:
+  the annotation appears in `needs_manual[]`, is absent from
+  `patches[]`, has no checklist item, and is rendered as a bullet
+  under `## Needs manual review` in `review.md`.
 
 ### `mockup-feedback/apply/tests/`
 
