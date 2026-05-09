@@ -54,7 +54,7 @@ def triage_session(session: dict, concept_root: Path) -> dict:
 
     return {
         "sessionId": session["sessionId"],
-        "triagedAt": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "triagedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "groups": [{"file": f, "annotations": ids} for f, ids in groups.items()],
         "unresolved": unresolved,
     }

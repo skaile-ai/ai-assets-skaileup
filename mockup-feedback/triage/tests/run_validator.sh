@@ -9,7 +9,7 @@ CONCEPT_ROOT="$FIXTURES_DIR/concept"
 SESSIONS_DIR="$FIXTURES_DIR/sessions"
 EXPECTED_DIR="$SKILL_DIR/tests/expected"
 TMP_OUT="$(mktemp -d)"
-trap "rm -rf $TMP_OUT" EXIT
+trap 'rm -rf "$TMP_OUT"' EXIT
 
 normalize_json() {
     # Strip volatile triagedAt field for comparison

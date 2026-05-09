@@ -80,7 +80,7 @@ def main() -> int:
         return 1
 
     try:
-        triage = json.loads(Path(sys.argv[1]).read_text())
+        triage = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
@@ -88,7 +88,7 @@ def main() -> int:
     session = None
     if len(sys.argv) >= 3:
         try:
-            session = json.loads(Path(sys.argv[2]).read_text())
+            session = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
         except Exception as exc:
             print(f"ERROR: {exc}", file=sys.stderr)
             return 1
