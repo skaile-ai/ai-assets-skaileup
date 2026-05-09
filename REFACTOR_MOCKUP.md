@@ -455,14 +455,43 @@ Step 1 unblocks SKILL_GRAPH cleanup. Steps 2-5 are each their own slice.
 
 ---
 
-## 12. Still missing — needs user input
+## 12. Resolved — forge-concept investigation
 
-1. **Existing forge-concept walkthrough work** — is there code in
-   forge-concept this should align with or absorb? Need a pointer to the
-   existing implementation (path / repo / commit) before step 3 of the
-   migration begins. The contract above was designed assuming greenfield;
-   if forge-concept already has working overlay or annotation code, the
-   skill specs should match its conventions, not invent new ones.
+Investigation completed 2026-05-09 (skill-graph migration plan
+Task 3.0). See full findings in
+`docs/superpowers/notes/forge-concept-walkthrough.md`.
+
+**Outcome:** forge-concept has **no working** overlay / annotation /
+walkthrough code yet. It does have one detailed draft proposal —
+`forge-concept/docs/superpowers/specs/2026-05-05-bidirectional-spec-visual-loop.md`
+— authored by the same team that owns this catalog.
+
+The proposal pre-dates this migration plan and defines the same surface
+(data attribute schema, overlay protocol, storage layout, feedback API
+shape) at the level of detail Phase 3 needs. Phase 3 is therefore **not
+greenfield** — it is execution against a settled design.
+
+**Adopt verbatim from the spec** (see notes file § 5a for the table):
+the `data-spec-*` attribute names, vanilla-DOM overlay runtime + the
+`postMessage` protocol, the `_concept/_feedback/{sessions,patches}/`
+storage layout, and the annotation `category` enum
+(`change|add|remove|question`).
+
+**Where the spec and § 11 (Resolved decisions) diverge, § 11 wins** —
+specifically: patch granularity (§ 11 row 4: section-level for
+markdown, line-level for JSON; the spec proposed line-level for
+everything) and element-ID strategy (§ 11 row 3: hybrid auto-slug +
+promote-on-annotate; the spec only said "provisional, flagged"). The
+catalog's resolutions are stricter and supersede.
+
+**Producer / consumer split:** the `mockup-feedback` skills are the
+**producer** of the protocol (data-spec markup, overlay bundle, JSON
+file shapes, devlog format). forge-concept is one **consumer** —
+its `pages/walkthrough/index.vue`, `FeedbackDrawer.vue`, and
+`/api/feedback/*` routes are forge-concept's responsibility, tracked
+in its own spec, not in this migration plan.
+
+Task 3A's mini-plan is now **unblocked**.
 
 ---
 
