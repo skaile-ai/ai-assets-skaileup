@@ -1,3 +1,0 @@
-# Changelog — impl-quality
-
-## [Unreleased]

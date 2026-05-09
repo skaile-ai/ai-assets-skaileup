@@ -1,3 +1,0 @@
-# Changelog — lab
-
-## [Unreleased]
