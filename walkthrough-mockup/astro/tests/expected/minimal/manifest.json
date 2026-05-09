@@ -54,7 +54,7 @@
       "journey_id": "sign-in",
       "rendered_html": "journey/sign-in.html",
       "source": "experience/journeys/stories.json#sign-in",
-      "screen_sequence": ["00_auth/login"]
+      "screen_sequence": ["experience/screens/00_auth/login.md"]
     }
   ],
   "features": [
