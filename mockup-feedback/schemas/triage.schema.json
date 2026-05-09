@@ -13,7 +13,7 @@
         "required": ["file", "annotations"],
         "properties": {
           "file": { "type": "string" },
-          "annotations": { "type": "array", "items": { "type": "string" } }
+          "annotations": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
         }
       }
     },
