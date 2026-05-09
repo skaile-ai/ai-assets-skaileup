@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "renderer": "walkthrough-mockup-static-html",
+  "renderer_version": "0.1.0",
+  "generated_at": "<pinned>",
+  "source_root": "experience/screens",
+  "screens": [
+    {
+      "screen_path": "experience/screens/00_auth/login.md",
+      "screen_id": "00_auth/login",
+      "rendered_html": "screen/00_auth/login.html",
+      "implements": [
+        "product-spec/features/00_auth/login.md"
+      ],
+      "data_entities": [
+        "User"
+      ],
+      "layout": "experience/screens/00_layout/shell.md",
+      "elements": [
+        {
+          "element_id": "email-input",
+          "kind": "input",
+          "label": "Email",
+          "states": [
+            "default",
+            "focus",
+            "error"
+          ],
+          "provisional": false,
+          "source_anchor": "experience/screens/00_auth/login.md#elements/email-input"
+        },
+        {
+          "element_id": "password-input",
+          "kind": "input",
+          "label": "Password",
+          "states": [
+            "default",
+            "focus",
+            "error"
+          ],
+          "provisional": false,
+          "source_anchor": "experience/screens/00_auth/login.md#elements/password-input"
+        },
+        {
+          "element_id": "submit-button",
+          "kind": "button",
+          "label": "Sign in",
+          "states": [
+            "default",
+            "loading",
+            "disabled",
+            "error"
+          ],
+          "provisional": false,
+          "source_anchor": "experience/screens/00_auth/login.md#elements/submit-button"
+        }
+      ]
+    },
+    {
+      "screen_path": "experience/screens/00_auth/register.md",
+      "screen_id": "00_auth/register",
+      "rendered_html": "screen/00_auth/register.html",
+      "implements": [
+        "product-spec/features/00_auth/login.md"
+      ],
+      "data_entities": [
+        "User"
+      ],
+      "layout": "experience/screens/00_layout/shell.md",
+      "elements": [
+        {
+          "element_id": "email",
+          "kind": "text",
+          "label": "Email",
+          "states": [
+            "default"
+          ],
+          "provisional": true,
+          "source_anchor": "experience/screens/00_auth/register.md#auto/email"
+        },
+        {
+          "element_id": "password",
+          "kind": "text",
+          "label": "Password",
+          "states": [
+            "default"
+          ],
+          "provisional": true,
+          "source_anchor": "experience/screens/00_auth/register.md#auto/password"
+        },
+        {
+          "element_id": "create-account",
+          "kind": "text",
+          "label": "Create account",
+          "states": [
+            "default"
+          ],
+          "provisional": true,
+          "source_anchor": "experience/screens/00_auth/register.md#auto/create-account"
+        }
+      ]
+    }
+  ],
+  "journeys": [
+    {
+      "journey_id": "sign-in",
+      "rendered_html": "journey/sign-in.html",
+      "source": "experience/journeys/stories.json#sign-in",
+      "screen_sequence": [
+        "experience/screens/00_auth/login.md"
+      ]
+    }
+  ],
+  "features": [
+    {
+      "feature_path": "product-spec/features/00_auth/login.md",
+      "rendered_screens": [
+        "experience/screens/00_auth/login.md",
+        "experience/screens/00_auth/register.md"
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "email",
+      "message": "No elements: block in screen frontmatter; auto-slugged from heading."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "password",
+      "message": "No elements: block in screen frontmatter; auto-slugged from heading."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "create-account",
+      "message": "No elements: block in screen frontmatter; auto-slugged from heading."
+    }
+  ]
+}

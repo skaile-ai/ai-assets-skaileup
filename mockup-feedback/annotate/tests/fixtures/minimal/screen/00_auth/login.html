@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Login — Walkthrough</title>
+<style>
+:root {
+  --token-color-primary: #0ea5e9;
+  --token-spacing-sm: 8px;
+}
+body { font-family: system-ui, sans-serif; margin: 2rem; }
+.state { font-size: 0.75rem; color: #555; margin-left: 0.5rem; }
+</style>
+</head>
+<body data-spec-screen="00_auth/login">
+<header><a href="../../index.html">&larr; Index</a></header>
+<main>
+<h1>Login</h1>
+<section class="elements">
+<div class="element">
+<input data-spec-element="email-input" name="email-input" aria-label="Email" />
+<span class="state state-focus">focus</span>
+<span class="state state-error">error</span>
+</div>
+<div class="element">
+<input data-spec-element="password-input" name="password-input" aria-label="Password" />
+<span class="state state-focus">focus</span>
+<span class="state state-error">error</span>
+</div>
+<div class="element">
+<button data-spec-element="submit-button" type="button">Sign in</button>
+<span class="state state-loading">loading</span>
+<span class="state state-disabled">disabled</span>
+<span class="state state-error">error</span>
+</div>
+</section>
+<section class="screen-body-prose">
+<h2>Acceptance criteria</h2>
+<p>The user signs in with email and password.</p>
+<ul>
+<li>AC-1: When the user submits valid credentials, they land on the dashboard.</li>
+</ul>
+</section>
+</main>
+<footer>
+<p>Journeys: <a href="../../journey/sign-in.html">User signs in</a></p>
+</footer>
+</body>
+</html>
