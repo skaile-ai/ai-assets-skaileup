@@ -44,7 +44,7 @@ def main() -> int:
 
     patches_by_id = {p["id"]: p for p in patches_data.get("patches", [])}
     checked_ids = set(re.findall(r"- \[x\] \*\*([^*]+)\*\*", review_md))
-    applied_by_pid = {item["patchId"]: item for item in applied_data.get("items", [])}
+    applied_by_pid = {item.get("patchId"): item for item in applied_data.get("items", [])}
 
     # Every checked patch ID has an applied item
     for pid in checked_ids:
