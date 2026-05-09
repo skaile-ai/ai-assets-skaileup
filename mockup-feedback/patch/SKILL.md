@@ -200,7 +200,7 @@ Next: edit review.md as needed, then run mockup-feedback-apply
 
 | Name | Type | Default |
 |---|---|---|
-| `session_id` | string | (all untriaged sessions) |
+| `session_id` | string | (all unpatched sessions) |
 | `concept_root` | path | `_concept/` |
 
 ## Outputs

@@ -103,7 +103,7 @@ def validate(
     for p in patches_data.get("patches", []):
         diff = p.get("diff", "")
         first_line = diff.split("\n")[0] if diff else ""
-        if not re.match(r"^@@ .+ @@$", first_line.strip()):
+        if not re.match(r"^@@ (?:##|frontmatter:)\S", first_line.strip()):
             r.add(f"patch {p['id']!r}: diff missing valid @@ anchor header")
 
     # 4. Provisional-promotion patch present for provisional annotations
@@ -140,14 +140,16 @@ def validate(
                 f"needs_manual annotation {aid!r} is not listed under "
                 "## Needs manual review in review.md"
             )
+        if aid in all_checklist_ids:
+            r.add(
+                f"needs_manual annotation {aid!r} has a checklist item in review.md "
+                "(should have only a ## Needs manual review bullet)"
+            )
         if any(p["id"] for p in patches_data.get("patches", []) if p["annotationId"] == aid):
             r.add(f"needs_manual annotation {aid!r} also has patches[] entries (partition violation)")
 
     # 7. Template pattern checks for add/remove/question patches
     for p in patches_data.get("patches", []):
-        ann = None
-        if session:
-            ann = {a["id"]: a for a in session.get("annotations", [])}.get(p["annotationId"])
         cat = p.get("category")
         diff = p.get("diff", "")
         if cat == "add":
