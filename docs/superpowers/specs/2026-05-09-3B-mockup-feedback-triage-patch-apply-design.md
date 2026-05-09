@@ -149,13 +149,28 @@ once `sessions/` rotates), but **not** the diff itself (recoverable via
 git history). **No `commitSha` field** — see D7 below for the
 cross-reference mechanism.
 
+**Rejected alternatives:**
+- Minimal status manifest. Loses the annotation body — agent
+  regeneration memory has to dig through devlog prose to reconstruct intent.
+- Rich record (echoes diff). Redundant with git history; bloats over time.
+
+**Implication:** `applied/<sid>.json` is the canonical machine-readable
+audit trail. `devlog.md` is the human-readable summary. Both are
+committed.
+
 ### D7 — Commit ↔ session cross-reference
 
-**Decision:** the commit subject line embeds the session ID
-(`feedback: apply session <sid> (N applied, K failed)`). The
-`applied/<sid>.json` filename also embeds the session ID. To find the
-commit that landed a given session, use `git log --grep="session
-<sid>"`. There is **no `commitSha` field** in `applied/<sid>.json`.
+**Decision:** the commit subject line embeds the **full** session ID
+(no truncation): `feedback: apply session <full-sid> (N applied, K failed)`.
+The `applied/<sid>.json` filename also embeds the same full session ID.
+To find the commit that landed a given session, use
+`git log --grep="session <full-sid>"`. There is **no `commitSha`
+field** in `applied/<sid>.json`.
+
+Note: 3A's overlay-download filename truncates the session ID
+(`annotations-${SESSION_ID.slice(0, 8)}.json`) for human readability,
+but the **session ID inside the JSON** is full-length and is the
+canonical identifier here.
 
 **Rejected alternatives:**
 - Store `commitSha` and write it via two-step commit-then-amend.
@@ -170,15 +185,6 @@ commit that landed a given session, use `git log --grep="session
 
 **Implication:** apply emits exactly one commit per session. The
 session ID is the join key between the audit JSON and git history.
-
-**Rejected alternatives:**
-- Minimal status manifest. Loses the annotation body — agent
-  regeneration memory has to dig through devlog prose to reconstruct intent.
-- Rich record (echoes diff). Redundant with git history; bloats over time.
-
-**Implication:** `applied/<sid>.json` is the canonical machine-readable
-audit trail. `devlog.md` is the human-readable summary. Both are
-committed.
 
 ---
 
@@ -329,7 +335,16 @@ treat any future top-level fields as optional.
 }
 ```
 
-**`kind` values:** `content` | `provisional-promotion` | `create-section` | `needs-manual`.
+**`kind` values:** `content` | `provisional-promotion` | `create-section`.
+
+**`needs_manual` (top-level array on `patches/<sid>.json`).** Annotations
+the patch skill cannot automate (empty body, contradictory intent,
+unrecoverable target) are emitted into the top-level `needs_manual: []`
+array as `{annotationId, reason}` — they are NOT entries in `patches[]`,
+do NOT appear in `review.md` as checklist items, and do NOT participate
+in apply. The user resolves them by hand-editing the target file (or
+discards the annotation). This keeps `patches[]` exclusively for items
+that can be applied programmatically.
 
 **`category` semantics:** `category` always preserves the user's
 annotate-time enum (`change|add|remove|question`) verbatim, OR is `null`
@@ -473,9 +488,11 @@ in the target file's prose voice.
         with `kind: "provisional-promotion"` editing the `elements:`
         frontmatter block.
 3. For any annotation the agent cannot patch (empty body, contradictory
-   intent, missing target section it can't reasonably create): emit
-   into `needs_manual: [...]` with `{annotationId, reason}` and add an
-   unchecked `<!-- needs-manual: <reason> -->` entry to `review.md`.
+   intent, unrecoverable target): emit a `{annotationId, reason}` entry
+   into `needs_manual: [...]` (top-level on `patches/<sid>.json`).
+   These entries do NOT appear as checklist items in `review.md` —
+   they are surfaced in the review.md preamble as a bullet list under
+   a `## Needs manual review` heading, for the user to act on directly.
 4. Write `patches/<sid>.json` (machine-readable) and
    `patches/<sid>.review.md` (human-readable, all auto-generated items
    pre-checked, `needs_manual` items unchecked).
@@ -548,10 +565,12 @@ in the target file's prose voice.
 
 Three failure classes:
 
-- *Skill-prompt failures* (LLM cannot author a `change` diff): mark the
-  patch in `patches.json` as `kind: "needs-manual"` with a `reason`
-  field; mark unchecked in `review.md` with a `<!-- needs-manual -->`
-  comment.
+- *Skill-prompt failures* (LLM cannot author a `change` diff): emit a
+  `{annotationId, reason}` entry into the top-level `needs_manual: []`
+  array on `patches/<sid>.json`. The annotation does NOT appear as a
+  patch in `patches[]` and does NOT appear as a checklist item in
+  `review.md` — it surfaces in the `review.md` preamble as a bullet
+  under `## Needs manual review` for the user to handle directly.
 - *Section not found* (e.g. `add` template targets `## States` but file
   has no such header): emit the patch with `kind: "create-section"` —
   the diff includes the section creation. No abort.
@@ -562,14 +581,15 @@ Three failure classes:
 ### Apply
 
 - Working tree dirty → abort with `git status` echoed.
-- `applied/<sid>.json` already exists (committed) → abort unless
-  `--force`. (Untracked stale `applied/<sid>.json` files are also
-  refused; the user must remove them manually — see commit-failure
-  rollback path.)
+- `applied/<sid>.json` already exists (committed in HEAD) → abort
+  unless `--force`. (Untracked / uncommitted `applied/<sid>.json` is
+  not expected to appear under any code path; if one is found, the
+  pre-flight working-tree-clean check catches it before idempotency.)
 - Diff context drift: record the patch as `failed`; other patches
   continue.
 - Git commit fails: roll back working tree AND delete the just-written
-  `applied/<sid>.json`; surface hook output. Next run resumes cleanly.
+  `applied/<sid>.json`; surface hook output. Next run resumes cleanly,
+  no `--force` needed.
 - All patches fail → exit 2 without writing `applied/<sid>.json`,
   without devlog append, without commit. Session can be retried
   without `--force` after the underlying issue is fixed.
@@ -632,11 +652,16 @@ LLM nondeterminism — golden-master not viable for diff text.
 - `tests/run_apply.sh`: copy `before/` to a temp dir, init a throwaway
   git repo, run apply, diff against `after/`. Asserts working-tree
   state + commit message + `applied/<sid>.json` content.
-  (Drops `commitSha` and timestamps before diff.)
+  (Drops `appliedAt` and any other volatile fields before diff.)
 - A second fixture has one patch with a deliberately-broken diff
   (section header missing) → expected outcome: 1 applied, 1 failed;
   `applied/<sid>.json` records failure; devlog only mentions the
   applied one.
+- A third fixture has *every* patch's section header missing →
+  expected outcome (all-failed short-circuit): exit 2, no commit,
+  no `applied/<sid>.json` written, no devlog append, working tree
+  unchanged. Asserts the no-lockout retry path: a re-run with the
+  same inputs must again exit 2 cleanly without `--force`.
 
 ### Domain-level
 
