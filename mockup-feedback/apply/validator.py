@@ -51,10 +51,13 @@ def main() -> int:
         if pid not in applied_by_pid:
             violations.append(f"checked patch {pid!r} has no corresponding item in applied JSON")
 
-    # No applied item references unknown patch ID
+    # No applied item references unknown patch ID; every item must have patchId
     for item in applied_data.get("items", []):
         pid = item.get("patchId")
-        if pid and pid not in patches_by_id:
+        if not pid:
+            violations.append(f"item missing or empty 'patchId' field: {item!r}")
+            continue
+        if pid not in patches_by_id:
             violations.append(f"applied item references unknown patchId {pid!r}")
 
     # Status validity

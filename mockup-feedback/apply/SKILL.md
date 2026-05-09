@@ -73,6 +73,9 @@ python <skill-dir>/apply.py \
 - Single git commit: `feedback: apply session <sid> (N applied, K failed)`
 - Rollback on commit failure (hook rejection etc.)
 
+If `apply.py` exits 2, stop here and print the all-failed message from the
+failure recovery table below. Do not proceed to Step 4.
+
 ---
 
 ## Step 4 — Report
