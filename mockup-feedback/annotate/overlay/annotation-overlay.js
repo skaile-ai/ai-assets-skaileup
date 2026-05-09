@@ -8,7 +8,8 @@
  *   standalone  → floating toolbar with "Download annotations" button
  *
  * postMessage protocol (from docs/superpowers/notes/forge-concept-walkthrough.md):
- *   overlay→parent: { type: "overlay.ready",      route, manifest? }
+ *   overlay→parent: { type: "overlay.ready",      route, manifest?: undefined }
+ *     (manifest omitted in v0.1 — requires runtime fetch of manifest.json; TODO Task 3A+)
  *   overlay→parent: { type: "overlay.annotation",  annotation }
  *   overlay→parent: { type: "overlay.navigate",    route }
  *   parent→overlay: { type: "parent.setMode",      mode: "view"|"annotate" }
@@ -39,6 +40,16 @@ const IS_IFRAME = (() => {
   try { return window !== window.parent; } catch (_) { return true; }
 })();
 
+// ── HTML escape helper ────────────────────────────────────────────────────────
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 // ── Spec-ref resolution ───────────────────────────────────────────────────────
 
 /**
@@ -65,11 +76,25 @@ function resolveTarget(el) {
   return null;
 }
 
+// TODO: also capture data-spec-feature (from node ancestor) and
+// data-spec-route attribute (canonical walkthrough route vs location.pathname).
+// Deferred to Task 3B design — downstream patch mapper needs feature field.
+
 // ── Popover ───────────────────────────────────────────────────────────────────
 
 let activePopover = null;
+let outsideClickHandler = null;
+let escapeHandler = null;
 
 function closePopover() {
+  if (outsideClickHandler) {
+    document.removeEventListener('mousedown', outsideClickHandler, true);
+    outsideClickHandler = null;
+  }
+  if (escapeHandler) {
+    document.removeEventListener('keydown', escapeHandler);
+    escapeHandler = null;
+  }
   if (activePopover) { activePopover.remove(); activePopover = null; }
 }
 
@@ -91,7 +116,7 @@ function showPopover(specRef) {
     ? `<p style="margin:0 0 8px;padding:6px 8px;background:#fef3c7;border-radius:4px;font-size:12px;color:#92400e;">⚠ Provisional ID — will be promoted on first annotation</p>`
     : '';
   div.innerHTML = `
-<div style="font-weight:600;margin-bottom:10px;">Annotate: <code style="background:#f1f5f9;padding:2px 4px;border-radius:3px">${specRef.element}</code></div>
+<div style="font-weight:600;margin-bottom:10px;">Annotate: <code style="background:#f1f5f9;padding:2px 4px;border-radius:3px">${escHtml(specRef.element)}</code></div>
 ${provisionalBanner}
 <select id="ov-cat" style="width:100%;padding:5px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:4px">
   ${CATEGORIES.map(c => `<option value="${c}">${c[0].toUpperCase() + c.slice(1)}</option>`).join('')}
@@ -103,8 +128,17 @@ ${provisionalBanner}
   <button id="ov-cancel" style="padding:5px 14px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;font-size:14px">Cancel</button>
 </div>`;
   document.body.appendChild(div);
+  outsideClickHandler = (e) => {
+    if (activePopover && !activePopover.contains(e.target)) closePopover();
+  };
+  setTimeout(() => document.addEventListener('mousedown', outsideClickHandler, true), 0);
+  escapeHandler = (e) => { if (e.key === 'Escape') closePopover(); };
+  document.addEventListener('keydown', escapeHandler);
   activePopover = div;
   div.querySelector('#ov-body').focus();
+  div.querySelector('#ov-body').addEventListener('input', (e) => {
+    e.target.style.borderColor = '#cbd5e1';
+  });
   div.querySelector('#ov-cancel').addEventListener('click', closePopover);
   div.querySelector('#ov-submit').addEventListener('click', () => {
     const body = div.querySelector('#ov-body').value.trim();
@@ -120,6 +154,8 @@ ${provisionalBanner}
 function makeId() {
   return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
 }
+// Returns base-36 timestamp+random. Will be replaced by ULID when
+// annotation-overlay is extracted to @skaile/annotation-overlay (catalog § row 7).
 
 function submitAnnotation({ specRef, body, category }) {
   const annotation = {
@@ -164,7 +200,9 @@ if (IS_IFRAME) {
     const anchor = e.target.closest('a[href]');
     if (!anchor || annotateMode) return;
     const href = anchor.getAttribute('href');
-    if (href && !href.startsWith('http') && !href.startsWith('//')) {
+    if (href && !href.startsWith('http') && !href.startsWith('//') &&
+        !href.startsWith('mailto:') && !href.startsWith('tel:') &&
+        !href.startsWith('#') && !href.startsWith('javascript:')) {
       e.preventDefault();
       window.parent.postMessage({ type: 'overlay.navigate', route: href }, '*');
     }
