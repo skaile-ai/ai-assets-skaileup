@@ -8,6 +8,8 @@ PASS_FIXTURE="tests/expected/minimal"
 FAIL_FIXTURE="tests/fixtures/minimal"
 VALIDATOR="validator.py"
 
+[ -f "$VALIDATOR" ] || { echo "ERROR: $VALIDATOR not found — run from mockup-feedback/annotate/"; exit 1; }
+
 echo "--- Test 1: pre-injection fixture should FAIL ---"
 python "$VALIDATOR" "$FAIL_FIXTURE" && {
     echo "ERROR: validator returned 0 on un-injected fixture (expected 2)"
@@ -31,7 +33,17 @@ echo "--- Test 3: overlay not last script before </body> should FAIL ---"
 TMP_DIR=$(mktemp -d)
 cp -r "$PASS_FIXTURE/"* "$TMP_DIR/"
 # Inject a script tag AFTER annotation-overlay.js in index.html
-sed -i 's|<script type="module" src="annotation-overlay.js"></script>|<script type="module" src="annotation-overlay.js"></script>\n<script src="extra.js"></script>|' "$TMP_DIR/index.html"
+python3 -c "
+import pathlib
+p = pathlib.Path('$TMP_DIR/index.html')
+txt = p.read_text()
+txt = txt.replace(
+    '<script type=\"module\" src=\"annotation-overlay.js\"></script>',
+    '<script type=\"module\" src=\"annotation-overlay.js\"></script>\n<script src=\"extra.js\"></script>',
+    1
+)
+p.write_text(txt)
+"
 python "$VALIDATOR" "$TMP_DIR" && {
     echo "ERROR: validator returned 0 when overlay is not last script (expected 2)"
     rm -rf "$TMP_DIR"

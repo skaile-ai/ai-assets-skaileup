@@ -75,10 +75,6 @@ def collect_html_files(site_root: Path) -> list[Path]:
 def check_site(site_root: Path) -> Report:
     r = Report()
 
-    if not site_root.is_dir():
-        r.add(str(site_root), "site root directory does not exist")
-        return r
-
     # 1. Overlay bundle must be present
     overlay_path = site_root / OVERLAY_FILENAME
     if not overlay_path.is_file():
@@ -133,6 +129,9 @@ def main() -> int:
         return 1
 
     site_root = Path(sys.argv[1])
+    if not site_root.is_dir():
+        print(f"error: site root does not exist or is not a directory: {site_root}", file=sys.stderr)
+        return 1
     r = check_site(site_root)
 
     if r.ok():
