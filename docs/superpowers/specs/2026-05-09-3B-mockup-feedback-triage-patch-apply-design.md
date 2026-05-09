@@ -25,6 +25,14 @@ This document is the agreed design. Implementation lives in a follow-up
 mini-plan at `docs/superpowers/plans/3B-mockup-feedback-triage-patch-apply.md`
 (written next, in the same pattern as `3A-mockup-feedback-annotate.md`).
 
+**Supersedes the migration plan's Task 3B description on two points:**
+the migration plan describes triage as classifying into
+`bug|copy|layout|scope|out-of-scope` and prompting for provisional ID
+promotion. This spec **rejects both**: triage is pure routing (decision
+D1) and provisional promotion is emitted as an extra patch by the patch
+skill (decision D5). Where the migration plan and this spec disagree on
+3B internals, this spec wins.
+
 **Already settled upstream — adopted verbatim, not re-discussed here:**
 
 | Topic                                        | Source                                                      |
@@ -135,10 +143,33 @@ target file with provisional annotations. The promotion diff edits
 ### D6 — `applied/<sid>.json` shape (committed audit trail)
 
 **Decision:** **hybrid** — per-annotation entry containing
-`{annotationId, patchId, target: {file, section, category}, body, status, commitSha?, error?}`.
+`{annotationId, patchId, target: {file, section, category}, body, status, error?}`.
 Stores the original annotation body (which is otherwise unrecoverable
 once `sessions/` rotates), but **not** the diff itself (recoverable via
-`git show <commitSha>`).
+git history). **No `commitSha` field** — see D7 below for the
+cross-reference mechanism.
+
+### D7 — Commit ↔ session cross-reference
+
+**Decision:** the commit subject line embeds the session ID
+(`feedback: apply session <sid> (N applied, K failed)`). The
+`applied/<sid>.json` filename also embeds the session ID. To find the
+commit that landed a given session, use `git log --grep="session
+<sid>"`. There is **no `commitSha` field** in `applied/<sid>.json`.
+
+**Rejected alternatives:**
+- Store `commitSha` and write it via two-step commit-then-amend.
+  Amending changes the SHA, so the value recorded inside the file
+  references the orphaned pre-amend commit. Inconsistent with
+  `git log` and broken after `git gc`.
+- Two real commits (content + applied-with-SHA). Doubles the noise in
+  git log per session and complicates the all-failed rollback path.
+- `git commit-tree` plumbing to compute the SHA in advance. Works but
+  adds substantial complexity for a value that's already recoverable
+  via `git log --grep`.
+
+**Implication:** apply emits exactly one commit per session. The
+session ID is the join key between the audit JSON and git history.
 
 **Rejected alternatives:**
 - Minimal status manifest. Loses the annotation body — agent
@@ -219,13 +250,19 @@ _concept/**.md               edited
 
 ### Input — `_concept/_feedback/sessions/<sid>.json` (from 3A)
 
+The shape produced by `mockup-feedback/annotate/overlay/annotation-overlay.js`
+(see the Download payload in that file): `{sessionId, annotations}` —
+no top-level `createdAt`. Schemas in `mockup-feedback/schemas/` must
+treat any future top-level fields as optional.
+
 ```json
 {
   "sessionId": "01J...",
-  "createdAt": "2026-05-09T14:22:00Z",
   "annotations": [
     {
       "id": "01K...",
+      "sessionId": "01J...",
+      "createdAt": "2026-05-09T14:23:11Z",
       "specRef": {
         "element": "submit-button",
         "screen": "01_user_auth/login",
@@ -235,8 +272,7 @@ _concept/**.md               edited
       },
       "body": "this should be on the right",
       "category": "change",
-      "status": "open",
-      "createdAt": "2026-05-09T14:23:11Z"
+      "status": "open"
     }
   ]
 }
@@ -293,7 +329,12 @@ _concept/**.md               edited
 }
 ```
 
-`kind` values: `content` | `provisional-promotion` | `needs-manual`.
+**`kind` values:** `content` | `provisional-promotion` | `create-section` | `needs-manual`.
+
+**`category` semantics:** `category` always preserves the user's
+annotate-time enum (`change|add|remove|question`) verbatim, OR is `null`
+for derived patches that have no annotate-time origin (currently only
+`provisional-promotion`). It is **never** overloaded with `kind` values.
 
 ### `_concept/_feedback/patches/<sid>.review.md`
 
@@ -324,7 +365,6 @@ _concept/**.md               edited
 ```json
 {
   "sessionId": "01J...",
-  "commitSha": "abc123",
   "appliedAt": "2026-05-09T14:42:00Z",
   "items": [
     {
@@ -344,7 +384,7 @@ _concept/**.md               edited
       "target": {
         "file": "experience/screens/01_user_auth/login.md",
         "section": "frontmatter:elements",
-        "category": "provisional-promotion"
+        "category": null
       },
       "body": "this should be on the right",
       "status": "applied"
@@ -353,7 +393,12 @@ _concept/**.md               edited
 }
 ```
 
-`status` values: `applied` | `failed`. `failed` items add `error` (string) and omit `commitSha`.
+`status` values: `applied` | `failed`. `failed` items add `error`
+(string). `target.category` mirrors the patch's `category` field —
+the user's annotate-time enum, or `null` for derived patches.
+
+**No `commitSha` field.** Per D7, the commit ↔ session join is via
+the commit subject (`git log --grep="session <sid>"`).
 
 ### `_concept/_feedback/devlog.md` (appended per session)
 
@@ -465,21 +510,25 @@ in the target file's prose voice.
       file missing, etc.): record `{status: "failed", error: <msg>}`;
       revert the in-memory file content for that file (do not write to
       disk yet).
-4. Write all successful in-memory file contents to disk in one pass.
-5. Append the session's devlog block to `_feedback/devlog.md` (only
+4. **All-failed short-circuit.** If zero patches succeeded: do **not**
+   write `applied/<sid>.json`, do **not** append to `devlog.md`, do
+   **not** create a git commit. Print failure summary and exit 2. The
+   session can be retried after fixing the patches without `--force`,
+   because no audit artifact was written.
+5. Write all successful in-memory file contents to disk in one pass.
+6. Append the session's devlog block to `_feedback/devlog.md` (only
    succeeded items contribute lines).
-6. Write `applied/<sid>.json` with all items (succeeded + failed; the
-   commit SHA is filled in step 7 *before* writing).
-7. Stage edited files + `devlog.md` + `applied/<sid>.json`. Run `git
-   commit -m "feedback: apply session <sid> (N applied, K failed)"`.
-   Capture the resulting SHA, write into `applied/<sid>.json`,
-   re-stage `applied/<sid>.json` only, and amend the commit.
-   *(Two-step commit is unavoidable because the SHA can't be known
-   until after the first commit.)*
-8. On commit failure (hook rejection, etc.): roll back via `git
-   restore --staged --worktree -- <files>`; do NOT write
-   `applied/<sid>.json`. Surface the hook output to the user verbatim.
-9. Print summary: `N applied, K failed; commit <sha>`.
+7. Write `applied/<sid>.json` with all items (succeeded + failed). No
+   `commitSha` field — the commit subject embeds the session ID
+   (per D7).
+8. Stage edited files + `devlog.md` + `applied/<sid>.json`. Run
+   `git commit -m "feedback: apply session <sid> (N applied, K failed)"`.
+   Single commit, no amend.
+9. On commit failure (hook rejection, etc.): roll back via
+   `git restore --staged --worktree -- <files>` and **delete**
+   `applied/<sid>.json` from the working tree (so the next attempt
+   isn't locked out). Surface the hook output to the user verbatim.
+10. Print summary: `N applied, K failed; session <sid> committed`.
 
 ---
 
@@ -513,13 +562,17 @@ Three failure classes:
 ### Apply
 
 - Working tree dirty → abort with `git status` echoed.
-- `applied/<sid>.json` already exists → abort unless `--force`.
+- `applied/<sid>.json` already exists (committed) → abort unless
+  `--force`. (Untracked stale `applied/<sid>.json` files are also
+  refused; the user must remove them manually — see commit-failure
+  rollback path.)
 - Diff context drift: record the patch as `failed`; other patches
   continue.
-- Git commit fails: roll back working tree; do NOT write
-  `applied/<sid>.json`; surface hook output.
-- All patches fail → still write `applied/<sid>.json` (all items
-  `failed`), no git commit, no devlog append, exit 2.
+- Git commit fails: roll back working tree AND delete the just-written
+  `applied/<sid>.json`; surface hook output. Next run resumes cleanly.
+- All patches fail → exit 2 without writing `applied/<sid>.json`,
+  without devlog append, without commit. Session can be retried
+  without `--force` after the underlying issue is fixed.
 
 ### Cross-cutting
 
