@@ -97,6 +97,8 @@ class Report:
 
 
 class AttrCollector(HTMLParser):
+    """Collects (tag, attrs_dict) tuples for every start/startend tag."""
+
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.tags: list[tuple[str, dict[str, str]]] = []
@@ -165,7 +167,7 @@ def check_manifest_shape(site: Path, report: Report) -> dict | None:
 
 def check_no_dist(site: Path, report: Report) -> None:
     dist = site / "dist"
-    if dist.exists():
+    if dist.is_dir():
         report.add(
             str(dist),
             "dist/ subdirectory found — astro.config.mjs outDir misconfigured "
@@ -190,7 +192,19 @@ def check_stylesheet(site: Path, report: Report) -> None:
         )
         return
     # Resolve href relative to site root (strip leading slash if present)
+    if stylesheet_href.startswith(("http://", "https://", "//")):
+        report.add(
+            str(index_path),
+            f"stylesheet href={stylesheet_href!r} is an external URL — Tailwind must be bundled locally",
+        )
+        return
     href_clean = stylesheet_href.lstrip("/")
+    if not href_clean:
+        report.add(
+            str(index_path),
+            f"stylesheet href={stylesheet_href!r} is empty or bare-slash — Astro build misconfigured",
+        )
+        return
     css_path = site / href_clean
     if not css_path.exists():
         report.add(
@@ -325,7 +339,7 @@ def check_zero_build(html_path: Path, report: Report) -> None:
         if pat.search(text):
             report.add(
                 str(html_path),
-                f"non-relative script/stylesheet URL found ({pat.pattern!r})",
+                f"zero-build invariant violated: non-relative script/stylesheet URL ({pat.pattern!r})",
             )
             return
 
