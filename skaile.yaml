@@ -1,0 +1,13 @@
+name: ai-assets-skaileup
+description: ai-assets-skaileup AI skill dependencies
+agent-config:
+  default:
+    agent: claude-code
+    provider: anthropic
+    model: claude-sonnet-4-6
+    driver: claude-sdk
+    max_turns: 200
+ai_resources: []
+repositories:
+  skaile-ai-assets:
+    url: https://github.com/skaile-ai/skaile-ai-assets
