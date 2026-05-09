@@ -29,6 +29,9 @@ metadata:
         gate: soft
         description: "Feature files linked from manifest.json for traceability; absence is a warning"
         min_entries: 1
+    reads:
+      - path: "experience/screens/00_layout/shell.md"
+        description: "Optional shared layout reference; if present, used as reference for the Shell.astro wrapper"
   produces:
     - path: "_concept/walkthrough-mockup/astro"
       description: "Astro project source + built site: index.html, screen/<group>/<name>.html, journey/<id>.html, manifest.json"
@@ -53,9 +56,9 @@ Astro project already exists by checking for
 `_concept/walkthrough-mockup/astro/astro.config.mjs`:
 
 - **Init** (absent): scaffold project skeleton → generate `specs.json` +
-  `global.css` → `bun install` → `astro build` → write `manifest.json`
+  `global.css` → `bun install` → `bun run build` → write `manifest.json`
 - **Update** (present): regenerate `specs.json` + `global.css` only →
-  `astro build` → rewrite `manifest.json`
+  `bun run build` → rewrite `manifest.json`
 
 On update runs the agent NEVER touches `astro.config.mjs`,
 `tailwind.config.mjs`, or `.astro` template files — those belong to the
@@ -83,6 +86,14 @@ same DOM position as `walkthrough-mockup-static-html` so the
 | `<body>` of `index.html` | `data-spec-index` | literal string `"true"` | (none — site root marker) |
 
 **The renderer MUST NOT add `data-spec-*` attributes outside this table.**
+
+### `screen_id` vs `screen_path`
+
+Identical semantics to `walkthrough-mockup-static-html`. See that skill's
+"screen_id vs screen_path" section for the full definition. In brief:
+`screen_id` is the path stem used in `data-spec-screen` and HTML filenames;
+`screen_path` is the full repo-relative path with `.md` extension used in
+`manifest.json` and `stories.json` `screen_sequence` entries.
 
 ### `kind → DOM tag mapping`
 
@@ -122,6 +133,17 @@ Same four input shapes as `walkthrough-mockup-static-html`:
 | `experience/journeys/stories.json` | JSON `{ "journeys": [{ "id", "title", "description", "screen_sequence" }] }` |
 | `design/tokens.json` | Token tree. Flattened to CSS custom properties (`--token-<dotted-path-with-hyphens>`). |
 | `product-spec/features/<group>/<feature>.md` | Used only for `manifest.json#features`; not rendered as HTML. |
+
+## Outputs
+
+Generated under `_concept/walkthrough-mockup/astro/`:
+
+| Path | Description |
+|---|---|
+| `index.html` | Router/menu — `<body data-spec-index="true">`. Lists every screen and journey. |
+| `screen/<group>/<name>.html` | One file per screen. `<body data-spec-screen="<screen_id>">`. |
+| `journey/<id>.html` | One file per journey. `<body data-spec-journey="<id>">`. Walks through screens in order. |
+| `manifest.json` | Machine-readable index for `mockup-feedback-annotate`. |
 
 ## Astro project layout
 
@@ -268,7 +290,9 @@ REFERENCES
 - Apply auto-slug fallback: for each widget in screen body absent from
   `elements[]`, generate kebab-case id, set `provisional: true`, set
   `source_anchor: "#auto/<id>"`. Append `kind: "auto_slugged"` to
-  `warnings[]`.
+  `warnings[]`. On id collision with another auto-slugged element within the
+  same screen, suffix with `-2`, `-3`, … until unique and emit
+  `kind: "auto_slug_collision"` to `warnings[]`.
 - Build normalised in-memory model:
   `{ screens, journeys, token_vars, features, warnings }`.
 
@@ -682,7 +706,7 @@ MUST  sort manifest arrays lexicographically
 MUST  set emptyOutDir: false in astro.config.mjs
 MUST  set build.format: 'file' in astro.config.mjs
 MUST  set outDir: '.' in astro.config.mjs
-MUST  write specs.json and global.css before running astro build
+MUST  write specs.json and global.css before running bun run build
 MUST  regenerate global.css on every run (agent-managed)
 MUST  return getStaticPaths() slugs without trailing slashes
 
