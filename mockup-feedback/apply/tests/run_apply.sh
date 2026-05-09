@@ -91,6 +91,11 @@ EXPECTED_NORM=$(normalize_applied < "$FIXTURES/test-partial-fail/after/_feedback
     && echo "OK: applied JSON matches expected (failed item recorded)" \
     || { echo "FAIL: applied JSON differs"; diff <(echo "$EXPECTED_NORM") <(echo "$ACTUAL_NORM"); exit 1; }
 
+COMMIT_MSG2=$(git -C "$TMP2" log -1 --format="%s")
+[[ "$COMMIT_MSG2" == *"session test-partial-fail"* ]] \
+    && echo "OK: commit message contains session ID" \
+    || { echo "FAIL: commit message: $COMMIT_MSG2"; exit 1; }
+
 echo ""
 
 # ── Test 3: all-fail short-circuit ────────────────────────────────────────────
@@ -122,15 +127,13 @@ COMMIT_COUNT=$(git -C "$TMP3" log --oneline | wc -l | tr -d ' ')
     || { echo "FAIL: unexpected commit count: $COMMIT_COUNT"; exit 1; }
 
 # Verify retry without --force succeeds cleanly (exits 2 again, not 1)
-cd "$TMP3"
 set +e
-python3 "$APPLY" \
+(cd "$TMP3" && python3 "$APPLY" \
     "_feedback/patches/test-all-fail.json" \
     "_feedback/patches/test-all-fail.review.md" \
-    "concept" "_feedback"
+    "concept" "_feedback")
 EC2=$?
 set -e
-cd - > /dev/null
 [ "$EC2" -eq 2 ] \
     && echo "OK: retry exits 2 cleanly without --force (no lockout)" \
     || { echo "FAIL: retry failed unexpectedly with exit $EC2"; exit 1; }
