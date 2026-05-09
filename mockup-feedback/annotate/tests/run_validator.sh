@@ -27,4 +27,25 @@ python "$VALIDATOR" "$PASS_FIXTURE"
 echo "OK: validator passed on injected fixture"
 
 echo ""
+echo "--- Test 3: overlay not last script before </body> should FAIL ---"
+TMP_DIR=$(mktemp -d)
+cp -r "$PASS_FIXTURE/"* "$TMP_DIR/"
+# Inject a script tag AFTER annotation-overlay.js in index.html
+sed -i 's|<script type="module" src="annotation-overlay.js"></script>|<script type="module" src="annotation-overlay.js"></script>\n<script src="extra.js"></script>|' "$TMP_DIR/index.html"
+python "$VALIDATOR" "$TMP_DIR" && {
+    echo "ERROR: validator returned 0 when overlay is not last script (expected 2)"
+    rm -rf "$TMP_DIR"
+    exit 1
+} || {
+    EC=$?
+    if [ "$EC" -ne 2 ]; then
+        echo "ERROR: expected exit code 2, got $EC"
+        rm -rf "$TMP_DIR"
+        exit 1
+    fi
+    echo "OK: validator correctly reported violation (exit 2)"
+}
+rm -rf "$TMP_DIR"
+
+echo ""
 echo "All tests passed."

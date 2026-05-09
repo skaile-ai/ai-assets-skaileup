@@ -118,6 +118,11 @@ def check_site(site_root: Path) -> Report:
             pass  # already caught by overlay_found check above
         elif tag_pos > body_close:
             r.add(str(rel), "overlay script tag appears after </body>")
+        else:
+            # Verify no <script> tag appears between overlay tag and </body>
+            between = raw[tag_pos + len(f'src="{OVERLAY_FILENAME}"'):body_close]
+            if re.search(r'<script', between, re.IGNORECASE):
+                r.add(str(rel), "overlay script tag is not the last <script> before </body>")
 
     return r
 
