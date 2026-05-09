@@ -12,7 +12,7 @@ Manages the annotation-to-patch loop for mockups: annotate, triage, patch, and a
 
 ## Skills
 
-(Populated as skills are migrated/authored.)
+- [`mockup-feedback-annotate`](annotate/SKILL.md) — Inject annotation overlay into a walkthrough site
 
 ## Cross-references
 
