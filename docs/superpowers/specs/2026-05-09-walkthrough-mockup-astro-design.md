@@ -107,7 +107,7 @@ Key Astro config decisions:
 - Three dynamic route templates serve all screens and journeys (no per-screen file authoring)
 - `_astro/` directory: Astro emits hashed CSS/JS bundle chunks here; commit alongside built HTML; the validator does NOT flag its presence
 
-**`global.css` ownership:** `global.css` is **agent-managed** (regenerated each run alongside `specs.json`). This ensures new tokens from `tokens.json` appear in `:root` on every update run. `tailwind.config.mjs` is **user-owned** (scaffolded once, never regenerated). If the user adds tokens that require new Tailwind utilities, they must extend `tailwind.config.mjs` manually; the skill emits a `manifest.warnings[]` entry of `kind: "stale_tailwind_config"` when `tokens.json` has changed since init (detected by comparing token key count in `specs.json` vs. CSS var declarations in `global.css` at run start).
+**`global.css` ownership:** `global.css` is **agent-managed** (regenerated each run alongside `specs.json`). This ensures new tokens from `tokens.json` appear in `:root` on every update run. `tailwind.config.mjs` is **user-owned** (scaffolded once, never regenerated). If the user adds tokens that require new Tailwind utilities, they must extend `tailwind.config.mjs` manually; on update runs only, the skill emits a `manifest.warnings[]` entry of `kind: "stale_tailwind_config"` when `tokens.json` has changed since init (detected by comparing token key count in the freshly derived `specs.json` vs. CSS var declarations in the existing `global.css` before it is overwritten). On init runs this check is skipped — there is no prior `global.css` to compare against.
 
 ## Data flow
 
@@ -275,7 +275,7 @@ REFERENCES
 | `bun install` exits non-zero | Fail loudly with stderr; do not build |
 | `astro build` exits non-zero | Fail loudly with stderr; do not write `manifest.json` |
 | `dist/` subdirectory exists after build | Fail: "astro.config.mjs outDir misconfigured — dist/ must not exist" |
-| `tokens.json` key count differs from CSS var count in existing `global.css` | `kind: "stale_tailwind_config"` warning; user must extend `tailwind.config.mjs` manually |
+| `tokens.json` key count differs from CSS var count in existing `global.css` (update runs only) | `kind: "stale_tailwind_config"` warning; user must extend `tailwind.config.mjs` manually |
 | Update run would touch `.astro` files or `astro.config.mjs` | NEVER rule |
 
 ### `warnings[].kind` enum
