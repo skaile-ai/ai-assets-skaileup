@@ -1,0 +1,11 @@
+{
+  "sessionId": "test-minimal",
+  "triagedAt": "__VOLATILE__",
+  "groups": [
+    {
+      "file": "experience/screens/01_user_auth/login.md",
+      "annotations": ["ann-change-1", "ann-add-1", "ann-question-1", "ann-remove-1"]
+    }
+  ],
+  "unresolved": []
+}

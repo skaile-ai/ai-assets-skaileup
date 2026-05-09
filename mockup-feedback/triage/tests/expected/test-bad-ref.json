@@ -1,0 +1,11 @@
+{
+  "sessionId": "test-bad-ref",
+  "triagedAt": "__VOLATILE__",
+  "groups": [],
+  "unresolved": [
+    {
+      "annotationId": "ann-bad-1",
+      "reason": "file not found: _concept/experience/screens/nonexistent/screen.md"
+    }
+  ]
+}
