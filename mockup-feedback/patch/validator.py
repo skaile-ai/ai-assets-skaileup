@@ -103,7 +103,7 @@ def validate(
     for p in patches_data.get("patches", []):
         diff = p.get("diff", "")
         first_line = diff.split("\n")[0] if diff else ""
-        if not re.match(r"^@@ (?:##|frontmatter:)\S", first_line.strip()):
+        if not re.match(r"^@@ (?:## \S|##\S|frontmatter:\S)", first_line.strip()):
             r.add(f"patch {p['id']!r}: diff missing valid @@ anchor header")
 
     # 4. Provisional-promotion patch present for provisional annotations
@@ -125,14 +125,14 @@ def validate(
                     )
 
     # 5. Every patches[] entry has a - [x] checklist item in review.md
-    checked_ids, _ = parse_checklist(review_md)
+    checked_ids, unchecked_ids = parse_checklist(review_md)
     for p in patches_data.get("patches", []):
         if p["id"] not in checked_ids:
             r.add(f"patch {p['id']!r} is in patches[] but has no - [x] item in review.md")
 
     # 6. Every needs_manual[] entry is in review.md preamble, not in checklist
     nm_in_review = parse_needs_manual_bullets(review_md)
-    all_checklist_ids = checked_ids | _
+    all_checklist_ids = checked_ids | unchecked_ids
     for nm in patches_data.get("needs_manual", []):
         aid = nm["annotationId"]
         if aid not in nm_in_review:
