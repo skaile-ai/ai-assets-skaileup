@@ -29,9 +29,9 @@ metadata:
         gate: soft
         description: "Feature files linked from manifest.json for traceability; absence is a warning"
         min_entries: 1
-    produces:
-      - path: "_concept/walkthrough-mockup/astro"
-        description: "Astro project source + built site: index.html, screen/<group>/<name>.html, journey/<id>.html, manifest.json"
+  produces:
+    - path: "_concept/walkthrough-mockup/astro"
+      description: "Astro project source + built site: index.html, screen/<group>/<name>.html, journey/<id>.html, manifest.json"
 ---
 
 # Walkthrough Mockup — Astro
@@ -661,7 +661,6 @@ Exit 0 = ready. Exit 2 = violation report.
 | `bun run build` exits non-zero | Fail loudly with stderr; do not write `manifest.json` |
 | `dist/` exists after build | Fail: "astro.config.mjs outDir misconfigured — dist/ must not exist" |
 | Token count differs from CSS var count (update runs only) | `kind: "stale_tailwind_config"`; user must extend `tailwind.config.mjs` manually |
-| Update run would touch `.astro` files or `astro.config.mjs` | NEVER rule |
 
 ### `warnings[].kind` enum
 
