@@ -30,8 +30,8 @@ python "$SKILL_DIR/validator.py" "$_WORK" \
   --source-root "$FIXTURE_SRC/experience/screens" \
   --project-root "$FIXTURE_SRC" || _rc=$?
 if [[ $_rc -eq 0 ]]; then echo "   UNEXPECTED PASS"; exit 1; fi
-if [[ $_rc -eq 1 ]]; then echo "   INTERNAL ERROR (exit 1 — not a validation failure)"; exit 1; fi
-echo "   FAIL as expected (exit $_rc)"
+if [[ $_rc -ne 2 ]]; then echo "   UNEXPECTED EXIT CODE $_rc (expected 2)"; exit 1; fi
+echo "   FAIL as expected (exit 2)"
 rm -rf "$_WORK"
 _WORK=""
 
@@ -52,8 +52,8 @@ python "$SKILL_DIR/validator.py" "$_WORK" \
   --source-root "$FIXTURE_SRC/experience/screens" \
   --project-root "$FIXTURE_SRC" || _rc=$?
 if [[ $_rc -eq 0 ]]; then echo "   UNEXPECTED PASS"; exit 1; fi
-if [[ $_rc -eq 1 ]]; then echo "   INTERNAL ERROR (exit 1 — not a validation failure)"; exit 1; fi
-echo "   FAIL as expected (exit $_rc)"
+if [[ $_rc -ne 2 ]]; then echo "   UNEXPECTED EXIT CODE $_rc (expected 2)"; exit 1; fi
+echo "   FAIL as expected (exit 2)"
 rm -rf "$_WORK"
 _WORK=""
 
@@ -73,8 +73,8 @@ python "$SKILL_DIR/validator.py" "$_WORK" \
   --source-root "$FIXTURE_SRC/experience/screens" \
   --project-root "$FIXTURE_SRC" || _rc=$?
 if [[ $_rc -eq 0 ]]; then echo "   UNEXPECTED PASS"; exit 1; fi
-if [[ $_rc -eq 1 ]]; then echo "   INTERNAL ERROR (exit 1 — not a validation failure)"; exit 1; fi
-echo "   FAIL as expected (exit $_rc)"
+if [[ $_rc -ne 2 ]]; then echo "   UNEXPECTED EXIT CODE $_rc (expected 2)"; exit 1; fi
+echo "   FAIL as expected (exit 2)"
 rm -rf "$_WORK"
 _WORK=""
 
@@ -89,8 +89,8 @@ python "$SKILL_DIR/validator.py" "$_WORK" \
   --source-root "$FIXTURE_SRC/experience/screens" \
   --project-root "$FIXTURE_SRC" || _rc=$?
 if [[ $_rc -eq 0 ]]; then echo "   UNEXPECTED PASS"; exit 1; fi
-if [[ $_rc -eq 1 ]]; then echo "   INTERNAL ERROR (exit 1 — not a validation failure)"; exit 1; fi
-echo "   FAIL as expected (exit $_rc)"
+if [[ $_rc -ne 2 ]]; then echo "   UNEXPECTED EXIT CODE $_rc (expected 2)"; exit 1; fi
+echo "   FAIL as expected (exit 2)"
 rm -rf "$_WORK"
 _WORK=""
 
