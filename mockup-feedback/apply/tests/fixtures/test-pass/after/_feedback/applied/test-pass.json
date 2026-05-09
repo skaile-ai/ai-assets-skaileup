@@ -1,0 +1,28 @@
+{
+  "sessionId": "test-pass",
+  "appliedAt": "__VOLATILE__",
+  "items": [
+    {
+      "annotationId": "ann-c1",
+      "patchId": "p-ann-c1-content",
+      "target": {
+        "file": "experience/screens/01_user_auth/login.md",
+        "section": "## Layout",
+        "category": "change"
+      },
+      "body": "this should be on the right",
+      "status": "applied"
+    },
+    {
+      "annotationId": "ann-c1",
+      "patchId": "p-ann-c1-promotion",
+      "target": {
+        "file": "experience/screens/01_user_auth/login.md",
+        "section": "frontmatter:elements",
+        "category": null
+      },
+      "body": "this should be on the right",
+      "status": "applied"
+    }
+  ]
+}

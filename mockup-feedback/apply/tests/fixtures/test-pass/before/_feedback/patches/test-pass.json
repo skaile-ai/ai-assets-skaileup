@@ -1,0 +1,27 @@
+{
+  "sessionId": "test-pass",
+  "proposedAt": "2026-05-09T14:35:00Z",
+  "patches": [
+    {
+      "id": "p-ann-c1-content",
+      "annotationId": "ann-c1",
+      "file": "experience/screens/01_user_auth/login.md",
+      "section": "## Layout",
+      "kind": "content",
+      "category": "change",
+      "body": "this should be on the right",
+      "diff": "@@ ## Layout @@\n-- submit-button: centered below form\n+- submit-button: right-aligned below form\n"
+    },
+    {
+      "id": "p-ann-c1-promotion",
+      "annotationId": "ann-c1",
+      "file": "experience/screens/01_user_auth/login.md",
+      "section": "frontmatter:elements",
+      "kind": "provisional-promotion",
+      "category": null,
+      "body": "this should be on the right",
+      "diff": "@@ frontmatter:elements @@\n-  - id: submit-button\n-    kind: button\n-    label: Sign In\n-    states: [default, loading]\n-    provisional: true\n+  - id: submit-button\n+    kind: button\n+    label: Sign In\n+    states: [default, loading]\n+    provisional: false\n"
+    }
+  ],
+  "needs_manual": []
+}
