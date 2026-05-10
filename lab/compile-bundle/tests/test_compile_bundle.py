@@ -56,6 +56,12 @@ def test_insert_format_has_no_space_after_colon():
     assert "  - skill:my-skill\n" in result
 
 
+def test_insert_raises_when_no_requires_key():
+    raw = "name: foo\ndescription: bar\n"  # no requires: key at all
+    with pytest.raises(ValueError, match="requires"):
+        insert_skills(raw, ["skill-x"])
+
+
 # ── main (integration) ────────────────────────────────────────────────
 
 

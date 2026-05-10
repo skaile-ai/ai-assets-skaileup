@@ -52,8 +52,9 @@ def insert_skills(raw_text: str, missing: list[str]) -> str:
     elif requires_idx is not None:
         insert_at = requires_idx + 1
     else:
-        insert_at = len(lines)
+        raise ValueError("No 'requires:' key found in bundle text; cannot insert skills.")
 
+    # no space after colon — domain convention; loaded as plain string by PyYAML
     new_lines = [f"  - skill:{name}\n" for name in missing]
     lines[insert_at:insert_at] = new_lines
     return "".join(lines)
@@ -86,7 +87,11 @@ def main(
             continue
 
         bundle = bundles[stem]
-        new_text = insert_skills(bundle["raw_text"], missing)
+        try:
+            new_text = insert_skills(bundle["raw_text"], missing)
+        except ValueError as exc:
+            print(f"ERROR: {stem}.bundle.yaml: {exc}", file=sys.stderr)
+            sys.exit(1)
         bundle["path"].write_text(new_text, encoding="utf-8")
         names = ", ".join(missing)
         print(f"Added {len(missing)} skill(s) to {stem}.bundle.yaml: [{names}]")
