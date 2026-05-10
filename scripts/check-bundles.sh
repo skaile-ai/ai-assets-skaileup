@@ -15,9 +15,10 @@ set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
+trap 'git restore bundles/ 2>/dev/null || true' EXIT
 
 echo "=== check-bundles: running compile_bundle.py ==="
-python lab/compile-bundle/compile_bundle.py
+python3 lab/compile-bundle/compile_bundle.py
 
 echo "=== check-bundles: checking for drift ==="
 if ! git diff --exit-code bundles/ > /dev/null; then
@@ -25,13 +26,16 @@ if ! git diff --exit-code bundles/ > /dev/null; then
     echo "ERROR: bundle drift detected — the following bundles are out of sync with flows/:"
     git diff --stat bundles/
     echo ""
-    echo "Fix: run 'python lab/compile-bundle/compile_bundle.py' and commit the result."
-    git restore bundles/
+    echo "Fix: run 'python3 lab/compile-bundle/compile_bundle.py' and commit the result."
     exit 1
 fi
 
 echo "=== check-bundles: running validator.py ==="
-python lab/compile-bundle/validator.py
+if ! python3 lab/compile-bundle/validator.py; then
+    echo ""
+    echo "ERROR: bundle validator found coverage gaps. Run 'python3 lab/compile-bundle/validator.py' locally for details."
+    exit 1
+fi
 
 echo ""
 echo "OK: all bundles are up to date and fully cover their flows."
