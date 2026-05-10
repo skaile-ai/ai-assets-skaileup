@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 import sys
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 DEVLOG_PATH = Path("_feedback/devlog.md")
@@ -38,13 +38,18 @@ def parse_entries(text: str) -> tuple[str, list[tuple[date, str]]]:
     header is everything before the first ## YYYY-MM-DD · entry.
     """
     parts = _ENTRY_SPLIT_RE.split(text)
-    header = parts[0]
+    if _ENTRY_DATE_RE.match(parts[0]):
+        header = ""
+        entry_parts = parts
+    else:
+        header = parts[0]
+        entry_parts = parts[1:]
 
     entries: list[tuple[date, str]] = []
-    for part in parts[1:]:
+    for part in entry_parts:
         m = _ENTRY_DATE_RE.match(part)
         if m:
-            entry_date = datetime.strptime(m.group(1), "%Y-%m-%d").date()
+            entry_date = date.fromisoformat(m.group(1))
             entries.append((entry_date, part))
 
     entries.sort(key=lambda x: x[0], reverse=True)
@@ -90,16 +95,26 @@ def main(
         entry_texts = by_quarter[key]
         archive_path = archive_dir / f"{key}.md"
         if archive_path.exists():
-            existing = archive_path.read_text(encoding="utf-8").rstrip()
-            new_content = existing + "\n\n" + "\n\n".join(entry_texts) + "\n"
+            existing = archive_path.read_text(encoding="utf-8")
+            # Skip entries whose header line already appears in the archive
+            new_entries = [t for t in entry_texts if t.splitlines()[0] not in existing]
+            if not new_entries:
+                continue
+            new_content = existing.rstrip() + "\n\n" + "\n\n".join(new_entries) + "\n"
         else:
+            new_entries = entry_texts
             new_content = f"# Devlog Archive — {key}\n\n" + "\n\n".join(entry_texts) + "\n"
-        archive_path.write_text(new_content, encoding="utf-8")
-        print(f"Archived {len(entry_texts)} entries → {archive_path}")
+        tmp = archive_path.with_suffix(".tmp")
+        tmp.write_text(new_content, encoding="utf-8")
+        tmp.replace(archive_path)
+        print(f"Archived {len(new_entries)} entries → {archive_path}")
 
     # Rewrite devlog.md with kept entries only
-    kept_text = header.rstrip() + "\n\n" + "\n\n".join(t for _, t in to_keep) + "\n"
-    devlog_path.write_text(kept_text, encoding="utf-8")
+    body = "\n\n".join(t for _, t in to_keep)
+    kept_text = header.rstrip() + ("\n\n" + body if body else "") + "\n"
+    tmp = devlog_path.with_suffix(".tmp")
+    tmp.write_text(kept_text, encoding="utf-8")
+    tmp.replace(devlog_path)
     print(
         f"Kept {len(to_keep)} recent entries in {devlog_path} "
         f"(archived {len(to_archive)} across {len(by_quarter)} quarter file(s))."

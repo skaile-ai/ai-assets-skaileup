@@ -225,3 +225,37 @@ def test_main_preserves_devlog_header(tmp_path):
 
     content = devlog.read_text()
     assert content.startswith("# Feedback Devlog")
+
+
+def test_parse_entries_no_header_does_not_drop_first_entry():
+    # File starts directly with an entry (no "# Feedback Devlog" header)
+    entry = make_entry("2026-05-06", session="first")
+    text = entry  # no leading header at all
+    header, entries = parse_entries(text)
+    assert len(entries) == 1
+    assert "first" in entries[0][1]
+
+
+def test_main_does_not_duplicate_on_second_run(tmp_path):
+    devlog = tmp_path / "devlog.md"
+    archive_dir = tmp_path / "archive"
+    entries = [
+        make_entry("2025-01-15", session="qa"),
+        make_entry("2024-12-15", session="qb"),
+    ]
+    devlog.write_text(make_devlog(entries), encoding="utf-8")
+
+    # First run archives both (threshold=1, keep=0)
+    archive_main(devlog_path=devlog, archive_dir=archive_dir, trigger_count=1, keep_count=0)
+
+    # Restore devlog to its original state (simulating a crash before devlog rewrite)
+    devlog.write_text(make_devlog(entries), encoding="utf-8")
+
+    # Second run should not duplicate entries in archive
+    archive_main(devlog_path=devlog, archive_dir=archive_dir, trigger_count=1, keep_count=0)
+
+    total = 0
+    for f in archive_dir.glob("*.md"):
+        _, archived = parse_entries(f.read_text())
+        total += len(archived)
+    assert total == 2  # not 4
