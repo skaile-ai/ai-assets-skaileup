@@ -40,23 +40,30 @@ lab/compile-bundle/
 
 ### Step 1 — Load flows
 
-For each `flows/<stem>.flow.yaml`, extract `data.skill` from every node where `type == "skill"`, in document order. Result: `flow_skills: dict[str, list[str]]` mapping stem → ordered skill names.
+For each `flows/<stem>.flow.yaml`, extract `node["data"]["skill"]` from every node where `node["type"] == "skill"`, in document order. Include nodes with `optional: true` — optional nodes are still required skills for the bundle. Result: `flow_skills: dict[str, list[str]]` mapping stem → ordered skill names (bare names, no prefix).
+
+**Pairing rule:** a flow `flows/<stem>.flow.yaml` is paired with bundle `bundles/<stem>.bundle.yaml` by matching stem (filename without extension). Example: `flows/standard-app.flow.yaml` → `bundles/standard-app.bundle.yaml`.
 
 ### Step 2 — Load bundles
 
-For each `bundles/<stem>.bundle.yaml`, parse the `requires:` list. Split into:
-- `bundle_refs`: entries starting with `bundle:`
-- `skill_refs`: entries starting with `skill:`
+For each `bundles/<stem>.bundle.yaml`, parse the `requires:` list. If the `requires:` key is absent, treat it as an empty list. Split entries into:
+- `bundle_refs`: entries starting with `bundle:` (bare name after prefix: `bundle:mvp` → `"mvp"`)
+- `skill_refs`: entries starting with `skill:` (bare name after prefix: `skill:concept-brief` → `"concept-brief"`)
 - `other_refs`: anything else (preserved verbatim)
 
 ### Step 3 — Resolve ancestry
 
-For each bundle, follow `bundle:*` refs recursively to collect `ancestor_skills: set[str]` — the union of all `skill:*` entries in every ancestor bundle. This prevents re-listing skills already provided by inheritance.
+For each bundle, resolve `bundle_refs` recursively (union, any traversal order) to collect `ancestor_skills: set[str]` — the set of **bare skill names** (prefix already stripped) from all `skill:` entries in every ancestor bundle.
+
+**Lookup rule:** a `bundle:foo` ref resolves to `bundles/foo.bundle.yaml` (strip `bundle:` prefix, append `.bundle.yaml`).
+
+**Cycle detection:** track visited bundle stems during traversal; if a stem is visited twice, exit 1 with message: `"Circular bundle inheritance detected: <stem> → ... → <stem>"`.
 
 ### Step 4 — Compute missing skills
 
 ```python
-covered = {r.removeprefix("skill:") for r in own_skill_refs} | ancestor_skills
+# All sets contain bare names (no skill:/bundle: prefix)
+covered = set(own_skill_refs) | ancestor_skills
 missing = [s for s in flow_skills[stem] if s not in covered]
 ```
 
@@ -64,13 +71,13 @@ If `missing` is empty, skip this bundle (no write).
 
 ### Step 5 — Insert missing skills
 
-Find the insertion point in the bundle YAML text:
+Find the insertion point in the bundle YAML **text** (line-by-line, not re-serialised):
 
-- **After** the last `  - skill:` line
-- **Before** any trailing `  - bundle:` lines (user-added bundle refs at the end)
-- If no `skill:` lines exist yet, insert after the `requires:` key line
+1. Scan for the last line matching `^  - skill:` — insert **after** this line.
+2. If no `skill:` lines exist, scan for the first line matching `^  - bundle:` — insert **before** that line.
+3. If neither exists, insert after the `requires:` key line.
 
-Append one `  - skill:<name>` line per missing skill, in flow-node order.
+Append one `  - skill:<name>` line (no space after colon, matching existing format) per missing skill, in flow-node order.
 
 ### Step 6 — Write and report
 
@@ -118,7 +125,7 @@ STEPS
 
 MUST
   - Never remove existing requires: entries (additive only)
-  - Insert new skill: entries after the last existing skill: line, before any trailing bundle: refs
+  - Insert new skill: entries after the last existing skill: line; if none exist, before the first bundle: line; format as `  - skill:<name>` (no space after colon)
   - Preserve all formatting, comments, and non-requires: fields verbatim
   - Run validator.py after compile_bundle.py and surface any failures before committing
 
@@ -143,7 +150,7 @@ NEVER
 
 ## Acceptance Test
 
-Run `compile_bundle.py` against the existing hand-authored bundles:
+Run from the **repo root** (`/mnt/localvault/workBench/SKAILE/skaile-dev-matthias/ai-assets/ai-assets-skaileup`):
 
 ```bash
 python lab/compile-bundle/compile_bundle.py
@@ -169,7 +176,8 @@ Expected: exit 0.
 | Flow file exists but no matching bundle | Print warning, skip |
 | Bundle file exists but no matching flow | Skip silently (user-only bundle) |
 | Malformed YAML in flow or bundle | Exit 1 with filename and parse error |
-| Circular bundle inheritance | Exit 1 with cycle description |
+| Circular bundle inheritance | Exit 1 with full cycle path: `"a → b → a"` |
+| `requires:` key absent from bundle | Treat as empty list (safe default) |
 | Flow references a skill name not found in catalog | Print warning, still add to bundle (skill may be a planned stub) |
 
 ---
