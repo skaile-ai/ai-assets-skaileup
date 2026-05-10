@@ -1,0 +1,17 @@
+{
+  "name": "skaileup-catalog-docs",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "generate": "node scripts/generate-skill-pages.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/starlight": "^0.37.7",
+    "astro": "^5.18.0",
+    "yaml": "^2.8.3"
+  }
+}

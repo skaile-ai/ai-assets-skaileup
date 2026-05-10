@@ -1,0 +1,213 @@
+---
+title: Skill Authoring Guide
+description: How to write a new skill that installs correctly with the skaile CLI — from skaile.yaml to the integrity checklist.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="note">
+This is a condensed version of [`CONTRIBUTING.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/CONTRIBUTING.md). Read that first if you're publishing a brand-new skill repo.
+</Aside>
+
+## How the installer works
+
+The `skaile` CLI scans a repository and builds a catalog from recognized
+manifest files. See [How It's Consumed](/intro/consumption/) for the full
+table.
+
+Local repos (declared with `path:` in `skaile.yaml`) are **symlinked**;
+remote repos (declared with `url:`) are **copied**.
+
+## Repository layout
+
+```
+my-skill-repo/
+├── skaile.yaml              # Required: declares this repo for the workspace
+├── README.md
+├── my-domain/               # Domain directory — groups related skills
+│   ├── DOMAIN.md            # Optional: domain manifest
+│   ├── my-skill/
+│   │   ├── SKILL.md         # Required: skill manifest + prompt
+│   │   ├── references/      # Optional: files the skill body can reference
+│   │   ├── scripts/         # Optional: helper scripts
+│   │   ├── tests/           # Optional: test manifest + fixtures
+│   │   └── validator.py     # Optional: compiled checker
+│   └── my-other-skill/
+│       └── SKILL.md
+└── my-other-domain/
+    └── ...
+```
+
+The scanner walks the entire tree — directory depth and naming of
+intermediate directories don't affect discovery. **Only the manifest filename
+matters.**
+
+## skaile.yaml
+
+Every skill repo needs a `skaile.yaml` at its root:
+
+```yaml
+repositories:
+  my-repo-name:
+    url: https://github.com/my-org/my-skill-repo
+    branch: main
+```
+
+For local development, the workspace `skaile.yaml` can use `path:` instead:
+
+```yaml
+repositories:
+  my-repo-name:
+    path: ../my-skill-repo
+```
+
+## SKILL.md template
+
+```yaml
+---
+name: my-domain-function
+description: "Use when [trigger]. Describes what the skill does and when to invoke it."
+metadata:
+  version: "1.0.0"
+  tags: [tag1, tag2, tag3]
+  stage: alpha | beta | stable
+  requires:
+    - contract:my-contract
+    - skill:helper-skill
+  prerequisites:
+    files:
+      - path: "_concept/brief.md"
+        gate: hard
+        description: "Why needed"
+    reads:
+      - path: "_concept/optional.md"
+        description: "Optional context"
+    produces:
+      - path: "_concept/output.md"
+        description: "What this skill creates"
+---
+
+# Skill Title
+
+ROLE  One-sentence identity — what this skill is and what it owns.
+
+READS
+  _concept/brief.md              — required input description
+  ? _concept/optional.md         — optional input (? prefix)
+
+WRITES
+  _concept/output.md             — what this skill produces
+
+REFERENCES
+  contracts/iron_laws            — non-negotiable cross-cutting constraints
+  contracts/golden_principles    — mechanical rules
+
+MUST  do the critical thing
+NEVER  do the forbidden thing
+
+STEP 1: First step
+  - Action here
+  - Another action
+
+CHECKLIST
+  - [ ] Output written to correct path
+  - [ ] Cross-references valid
+```
+
+## Dependencies (`requires:`)
+
+Each entry is a `kind:name` string. Supported kinds: `skill`, `contract`,
+`agent`, `prompt`, `flow`, `bundle`. A bare string defaults to `skill`.
+
+```yaml
+requires:
+  - skill:helper-skill           # explicit kind prefix
+  - contract:iron-laws           # contract dependency
+  - my-other-skill               # bare string — defaults to kind "skill"
+```
+
+Place `requires:` under `metadata:` (preferred — agentskills.io convention)
+**or** at the root (legacy). Pick one — don't declare both.
+
+## REFERENCES paths
+
+When a skill body uses `REFERENCES`, paths are resolved **relative to the
+repository root** at the time the agent reads the skill — *not* relative to
+the skill directory.
+
+```
+REFERENCES
+  contracts/iron_laws            # relative to repo root
+  shared-domain/references/guide.md
+```
+
+After install, the skill is deployed to `.claude/skills/<name>/`. Reference
+files are **not** automatically deployed alongside it unless they are
+declared as `contract` or `skill` assets with their own manifest.
+
+**Best practices:**
+
+1. **Shared reference material** (contracts, guides): create a
+   `CONTRACT.md` so the asset is installable. Declare it in `requires:`.
+2. **Skill-local reference material** (detail docs, templates): put files
+   in the skill's `references/` subdirectory.
+3. **Avoid path references to files that aren't part of the deployed skill
+   directory.**
+
+## Common mistakes
+
+### Declaring `requires:` in both places
+
+```yaml
+# WRONG — declared at root and under metadata
+requires:
+  - contract:my-contract
+metadata:
+  requires:
+    - skill:other-skill
+
+# CORRECT — pick one (metadata preferred)
+metadata:
+  version: "1.0.0"
+  requires:
+    - contract:my-contract
+    - skill:other-skill
+```
+
+### Bare string for non-skill dependencies
+
+```yaml
+# WRONG — "my-contract" parsed as skill:my-contract
+requires: [my-contract]
+
+# CORRECT
+requires: [contract:my-contract]
+```
+
+### Stale domain path references after a rename
+
+When a domain directory is renamed, all `REFERENCES` and `READS` lines in
+skill bodies pointing to the old path break. **Run a bulk find-and-replace
+across all SKILL.md files after any domain rename.**
+
+## Integrity checklist
+
+Before publishing:
+
+- [ ] `skaile.yaml` declares this repository with `url:` (or `path:` for dev)
+- [ ] Every `SKILL.md` has `name:` set explicitly
+- [ ] Every `SKILL.md` has `metadata.version:` (semver), `metadata.tags:` (≥2), `metadata.stage:`
+- [ ] `requires:` is declared in exactly one place
+- [ ] All `requires:` entries use `kind:name` for non-skill dependencies
+- [ ] All `REFERENCES` paths point to files that will exist after install
+- [ ] No `REFERENCES` paths point to directories that have been renamed
+
+## Version bump rules
+
+| Bump | When |
+|---|---|
+| **Major** | Breaking change: renamed inputs, removed `produces` paths, renamed skill |
+| **Minor** | New inputs, new outputs, new behavior, added `references/` or `scripts/` |
+| **Patch** | Typo fixes, improved wording, updated reference content, tag changes |
+
+Update `metadata.version:` in the same commit as the change.

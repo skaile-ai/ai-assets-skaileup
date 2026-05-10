@@ -1,0 +1,252 @@
+---
+title: Asset Frontmatter
+description: Manifest schema for the four AI asset types — skill, prompt, agent, flow — plus DOMAIN.md.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="note">
+Source: [`contracts/asset_frontmatter.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/contracts/asset_frontmatter.md)
+</Aside>
+
+Skills and prompts follow the [Agent Skills Specification](https://agentskills.io/specification) — `name` and `description` at root, everything else in `metadata:`.
+
+Agents follow the [GitAgent Specification](https://www.gitagent.sh/) — a git-native standard with its own root-level field structure. The `metadata:` block holds skaile-specific extensions.
+
+Flows use a custom schema optimised for the agent-flow-engine.
+
+## Root fields (every asset)
+
+```yaml
+name: string          # Required. kebab-case. 1–64 chars. a-z, 0-9, hyphens only.
+description: string   # Required. 1–1024 chars. Describes what the asset does AND when to use it.
+                      # Skills: start with "Use when..." for trigger-based routing.
+```
+
+## Skill — SKILL.md
+
+```yaml
+---
+name: skill-name
+description: "Use when [trigger conditions]. Specific keywords for agent routing."
+license: MIT                            # optional — agentskills.io field
+compatibility: "Requires Python 3.12+"  # optional — environment requirements
+allowed-tools: Bash(git:*) Read Edit    # optional — pre-approved tools
+metadata:
+  version: "1.0.0"
+  author: skaile                        # optional — omit for monorepo-owned
+  tags: [keyword1, keyword2]            # searchable; ≥ 2 tags
+  stage: alpha | beta | stable
+  source: CF | SAXE | MERGED | MIGRATED | TEST
+  requires:                             # dependencies
+    - contract:iron-laws
+    - skill:helper-skill
+  do_not_invoke: false                  # true for system contracts
+  subagent: false
+  prerequisites:
+    files:
+      - path: "_concept/path/to/file"
+        gate: hard | soft
+        description: "Why this file is needed"
+        min_entries: 1                  # for directories
+    inputs_required:
+      - id: input_name
+        label: "Human-readable label"
+        type: text | textarea | select | multiselect | boolean | number
+        options: []
+        default: null
+    inputs_optional:
+      - id: input_name
+        label: "..."
+        type: text
+    reads:
+      - path: "_concept/path/to/optional/source"
+        description: "What this provides"
+    produces:
+      - path: "_concept/path/to/output"
+        description: "What is produced"
+---
+```
+
+### Field reference
+
+| Field | Location | Required | Notes |
+|---|---|---|---|
+| `name` | root | yes | kebab-case; unique within domain; must match directory name |
+| `description` | root | yes | trigger-oriented: "Use when..." |
+| `license` | root | no | default MIT |
+| `compatibility` | root | no | environment requirements |
+| `allowed-tools` | root | no | space-delimited tool list |
+| `metadata.version` | metadata | yes | semver |
+| `metadata.author` | metadata | no | omit for monorepo-owned |
+| `metadata.tags` | metadata | yes | at least 2–3 tags |
+| `metadata.stage` | metadata | yes | alpha / beta / stable |
+| `metadata.source` | metadata | no | CF / SAXE / MERGED / MIGRATED / TEST |
+| `metadata.requires` | metadata | no | bare strings or `{name, source, version?}` objects |
+| `metadata.do_not_invoke` | metadata | no | default false |
+| `metadata.subagent` | metadata | no | default false |
+| `metadata.prerequisites` | metadata | no | replaces user_inputs / reads_from / writes_to |
+| `metadata.user_inputs` | metadata | no | **DEPRECATED** — use `metadata.prerequisites` |
+| `metadata.reads_from` | metadata | no | **DEPRECATED** — use `metadata.prerequisites.reads` |
+| `metadata.writes_to` | metadata | no | **DEPRECATED** — use `metadata.prerequisites.produces` |
+
+### Skill directory structure
+
+```
+skill-name/
+├── SKILL.md          # Required: metadata + instructions
+├── scripts/          # Optional: PEP 723 / bash / node helpers
+├── references/       # Optional: detailed docs loaded on demand
+├── assets/           # Optional: templates, schemas, static resources
+├── tests/            # Optional: test manifest + fixtures (lab/validate)
+└── validator.py      # Optional: compiled MUST/NEVER checker
+```
+
+### Progressive disclosure
+
+1. **Metadata** (~100 tokens): `name` + `description` loaded at startup.
+2. **Instructions** (under 5000 tokens): Full SKILL.md body loaded on activation. Keep under 500 lines.
+3. **Resources** (as needed): Files in `scripts/`, `references/`, `assets/` loaded on demand.
+
+## Prompt — `*.prompt.md`
+
+Minimal variant. The body **is** the prompt text — no workflow layer.
+
+```yaml
+---
+name: command-name
+description: "What this command does and when to invoke it."
+metadata:
+  version: "1.0.0"
+  tags: [tag1, tag2]
+  stage: alpha | beta | stable
+---
+```
+
+When installed to `.claude/commands/`, the `name` field becomes the slash
+command name (e.g. `commit` → `/commit`).
+
+## Agent — `agent.yaml`
+
+Follows [GitAgent](https://www.gitagent.sh/). Root fields are gitagent-native; `metadata:` holds skaile extensions.
+
+```yaml
+spec_version: "0.1.0"
+name: agent-name
+version: "1.0.0"
+description: "What this agent does."
+author: skaile
+license: MIT
+tags: [tag1, tag2]
+
+extends: ../path/to/base-agent/agent.yaml  # optional inheritance
+
+model:
+  preferred: claude-opus-4-6
+  fallback: [claude-sonnet-4-6, claude-haiku-4-5-20251001]
+  constraints:
+    temperature: 0.2
+    max_tokens: 8192
+
+skills: []
+delegation:
+  mode: explicit | router | auto
+runtime:
+  max_turns: 100
+  timeout: 1800
+
+requires:
+  - name: concept-orchestrator
+    source: ../../skaileup-conceptualization/agents/orchestrator
+    version: "1.0.0"
+    optional: false
+    mount: agents/conceptualization
+
+compliance:
+  risk_tier: low | medium | high
+  supervision:
+    human_in_the_loop: never | on_risk | always
+    kill_switch: false
+
+metadata:
+  stage: alpha | beta | stable
+  domain: domain-name
+  produces: "What this agent writes"
+  consumes: "What this agent reads"
+```
+
+## Flow — `*.flow.yaml`
+
+Custom schema for the agent-flow-engine. Uses `id` (machine identifier) distinct from `name` (display).
+
+```yaml
+id: flow-id
+name: Human Readable Name
+version: "1.0"
+description: >-
+  What this flow does.
+
+metadata:
+  tags: [tag1, tag2]
+  stage: alpha | beta | stable
+  icon: i-heroicons-rocket-launch
+  category: full-stack | prototype | concept | cli | maintenance
+  onboarding:
+    input_style: structured | repo
+    fields: [app_name, problem, audience]
+
+globals:
+  research_depth: skip | light | moderate | deep
+  approval_mode: auto_approve | checkpoint
+  auto_review: false
+  subagent_mode: true
+  verbosity: brief | standard | detailed
+
+modes:
+  research:
+    enabled: false
+    skill: research
+  standards:
+    enabled: false
+    skill: standards-discover
+    inject_skill: standards-inject
+    trigger_after: scaffold
+
+entry: node-id
+nodes: [...]
+edges: [...]
+```
+
+Flows keep `id`, `version`, `name`, `description` at root because the
+flow-engine and runner parse them directly. The `metadata:` block holds
+catalog/UI fields.
+
+## DOMAIN.md
+
+```yaml
+---
+name: domain-name
+description: "One-line summary of this domain."
+metadata:
+  stage: alpha | beta | stable
+  type: domain
+---
+```
+
+## Migration from previous schema
+
+| Old | New | Action |
+|---|---|---|
+| `keywords: [...]` | `metadata.tags: [...]` | Move into metadata, rename |
+| `source: CF` (root) | `metadata.source: CF` | Move into metadata |
+| `version: "1.0.0"` (root) | `metadata.version: "1.0.0"` | Move into metadata |
+| `reads_from: []` (root) | `metadata.prerequisites.reads` | Migrate to prerequisites |
+| `writes_to: []` (root) | `metadata.prerequisites.produces` | Migrate to prerequisites |
+| `user_inputs:` (root) | `metadata.prerequisites.inputs_required` | Migrate to prerequisites |
+| `metadata.user_inputs` | `metadata.prerequisites` | Deprecated; migrate |
+| `metadata.reads_from` | `metadata.prerequisites.reads` | Deprecated; migrate |
+| `metadata.writes_to` | `metadata.prerequisites.produces` | Deprecated; migrate |
+
+New skills should use `metadata.prerequisites` exclusively. Existing skills
+using deprecated fields continue to work but should be migrated when next
+touched.

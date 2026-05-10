@@ -1,0 +1,121 @@
+---
+title: Slice Loops
+description: The two per-feature iteration clusters — concept-slice and impl-slice — share the same five-phase shape with /clear between every phase.
+sidebar:
+  order: 6
+---
+
+Both halves of the catalog have a per-feature loop with the same shape. The
+shape is what makes context resets safe: each phase reads a scratch file from
+the prior phase, not chat history.
+
+## concept-slice (per feature, big apps)
+
+```
+   pick next feature from product-spec/features/ (high-level)
+            │
+            ▼
+   ┌──────────────────────────┐   writes _slice/concept/<id>/brainstorm.md
+   │ concept-slice/brainstorm │   sparring on what this feature is
+   └────────┬─────────────────┘   ───── /clear ─────
+            ▼
+   ┌──────────────────────────┐   writes _slice/concept/<id>/align.md
+   │ concept-slice/align      │   ★ AI interviews user about this feature
+   │   ★ surfaces edge cases, │   ★ acceptance criteria become explicit
+   │     unstated rules       │
+   └────────┬─────────────────┘   ───── /clear ─────
+            ▼
+   ┌──────────────────────────┐   writes _slice/concept/<id>/scope.md
+   │ concept-slice/            │   what's IN, what's OUT for this feature
+   │   scope-feature          │   ★ prevents scope creep mid-design
+   └────────┬─────────────────┘   ───── /clear ─────
+            ▼
+   ┌──────────────────────────┐   appends to:
+   │ concept-slice/            │     product-spec/features/<feature>.md
+   │   design-feature         │     experience/screens/<feature>/*.md
+   │                          │     mockup/<tier>/<feature>.*
+   │                          │     datamodel: only this feature's entities
+   └────────┬─────────────────┘
+            │
+            └────────► hand off to impl-slice (or loop to next feature)
+```
+
+## impl-slice (per feature, runs N times)
+
+```
+   pick next feature (from product-spec, or just-produced concept-slice)
+            │
+            ▼
+   ┌──────────────────────────┐   writes _slice/impl/<id>/brainstorm.md
+   │ impl-plan/brainstorm     │   sparring · multi-method · idea space
+   └────────┬─────────────────┘   ───── /clear ─────
+            ▼
+   ┌──────────────────────────┐   writes _slice/impl/<id>/align.md
+   │ impl-plan/align          │   AI interviews user (grill-me style)
+   │   ★ shared understanding │   ★ surfaces unstated assumptions
+   └────────┬─────────────────┘   ───── /clear ─────
+            ▼
+   ┌──────────────────────────┐   writes _slice/impl/<id>/plan.md
+   │ impl-plan/plan-vertical  │   ★ vertical decomposition
+   │   ★ trims AI from        │     UI + logic + data for this slice
+   │     horizontal default   │   ★ defines testing strategy
+   └────────┬─────────────────┘   ───── /clear ─────
+            ▼
+   ┌──────────────────────────┐   reads plan.md
+   │ impl-slice/implement     │   codes the slice end-to-end
+   │   (page + logic +        │   verifies against testing strategy
+   │    schema if needed)     │   from plan
+   └────────┬─────────────────┘
+            ▼
+   ┌──────────────────────────┐   short feedback loops on usability:
+   │ impl-slice/test          │   too many buttons? too much text?
+   │  (NOT impl-quality/test) │   does it feel awkward to use?
+   └────────┬─────────────────┘   ────────────
+            ▼
+   ┌──────────────────────────┐   writes _slice/impl/<id>/recap.md
+   │ impl-slice/recap         │   ★ MANDATORY — explain the flow
+   │   ★ produces a diagram   │     so the user keeps the overview
+   │   ★ skipping it = losing │     after 5+ iterations
+   │     decision authority   │
+   └────────┬─────────────────┘
+            ▼
+   ┌──────────────────────────┐   ★ AI defaults to ADDING complexity
+   │ impl-slice/refactor      │     so refactor is FORCED, not optional
+   │   ★ smallest improvement?│   "could a new dev follow this without
+   │   ★ preserve behavior,   │    mental jumps?"
+   │     improve structure    │
+   └────────┬─────────────────┘
+            ▼
+   ┌──────────────────────────┐   atomic commits
+   │ impl-slice/commit        │   ★ deletes _slice/impl/<id>/ scratch
+   │                          │     (truth lives in code; stale planning
+   │                          │      docs confuse future iterations)
+   └────────┬─────────────────┘
+            │
+            └────────► loop back to "pick next feature"
+
+   ─── if stuck mid-slice ──►  impl-quality/debug-self-verify  or
+                               impl-quality/debug-handoff
+```
+
+## Why the resets work
+
+Every slice phase **reads from the prior phase's scratch file** rather than
+from chat history. After each phase the user runs `/clear` (or starts a new
+chat) — the next phase loads the handoff file and continues. The dumb zone
+(~100k tokens for most agents) is avoided because no single phase carries the
+whole slice in context.
+
+## Why scratch is deleted on commit
+
+Truth lives in **code** (impl-slice) or in **`_concept/` artifacts**
+(concept-slice) after a slice ships. Stale planning docs in the working tree
+confuse the next iteration. Previous slice docs survive in git history.
+
+## Mandatory phases
+
+| Phase | Why it can't be skipped |
+|---|---|
+| `recap` | After 5+ iterations the user loses the overview. Recap forces a re-explainable diagram and keeps decision authority with the human. |
+| `refactor` | The agent's natural default is to **add** complexity. Refactor as a separate phase forces "could a new dev follow this without mental jumps?" |
+| `align` | The interviewer surfaces what wasn't said. Without it, the implement phase finds the gap halfway through, after a /clear, with no recourse. |

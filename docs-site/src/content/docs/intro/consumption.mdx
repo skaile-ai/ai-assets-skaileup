@@ -1,0 +1,81 @@
+---
+title: How It's Consumed
+description: Repo registration, install via skaile CLI, deploy targets, and submodule layout in skaile-dev.
+sidebar:
+  order: 8
+---
+
+The catalog is consumed by the [`skaile` CLI](https://github.com/skaile-ai/skaile-agent-framework)
+via `@skaile/asset-manager`, which scans a repository by walking every file
+and building a catalog from recognized manifest files.
+
+## Manifest file types
+
+| Filename | Asset kind |
+|---|---|
+| `SKILL.md` | `skill` |
+| `AGENT.md` | `agent` |
+| `agent.yaml` | `agent` |
+| `CONTRACT.md` | `contract` |
+| `MCP.md` | `mcp-server` |
+| `CONNECTOR.md` | `connector` |
+| `MOUNT.md` | `mount` |
+| `<name>.prompt.md` | `prompt` |
+| `<name>.bundle.yaml` | `bundle` |
+| `<name>.flow.yaml` | `flow` |
+
+Each manifest file produces exactly one catalog entry. Name collisions (same
+`kind:name`) are resolved by picking the alphabetically later source path.
+
+## Deploy targets
+
+Project-local install paths per agent driver:
+
+| Driver | Skill | Agent | Prompt | Contract | Flow |
+|---|---|---|---|---|---|
+| `claude-code` | `.claude/skills/` | `.claude/agents/` | `.claude/commands/` | `.claude/contracts/` | `.skaile/flows/` |
+| `omp` | `.omp/skills/` | `.omp/agents/` | `.omp/prompts/` | `.omp/contracts/` | `.skaile/flows/` |
+| `codex` | `.codex/skills/` | `.codex/agents/` | `.codex/rules/` | `.codex/contracts/` | `.skaile/flows/` |
+
+Local repos (declared with `path:` in `skaile.yaml`) are **symlinked**;
+remote repos (declared with `url:`) are **copied**. Symlinks update live;
+copies only update when content changes.
+
+## Registering this repo in a workspace
+
+In the project's `skaile.yaml`:
+
+```yaml
+repositories:
+  # Remote (install by copying)
+  skaileup:
+    url: https://github.com/skaile-ai/ai-assets-skaileup
+    branch: main
+
+  # Local checkout (install by symlink — live updates)
+  skaileup:
+    path: ../ai-assets-skaileup
+```
+
+Then install specific assets:
+
+```bash
+$ skaile add skill:concept-brief        # install one skill + its requires
+$ skaile add bundle:simple-app          # install a bundle (all its deps)
+$ skaile add --global skill:my-skill    # install globally (~/.claude/skills/)
+$ skaile list                           # show installed assets
+$ skaile search skill concept           # search the catalog
+```
+
+## Submodule layout in skaile-dev
+
+The shell repo `skaile-dev-matthias/` mounts the catalog as a git submodule:
+
+```
+skaile-dev-matthias/
+├── ai-assets/                 ← general-purpose skills
+└── ai-assets-skaileup/        ← THIS REPO — Skaile-specific catalog
+```
+
+Both are mounted in workspace flows alongside the agent framework runtime
+(`skaile-agent-framework/`).

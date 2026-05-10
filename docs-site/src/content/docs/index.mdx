@@ -1,0 +1,63 @@
+---
+title: Skaileup Skill Catalog
+description: Concept, build, and quality pipeline skills for the Skaile ecosystem.
+template: splash
+hero:
+  tagline: |
+    Concept · Implementation · Meta — the full product lifecycle
+    from problem-space discovery through per-slice delivery and quality gates.
+  actions:
+    - text: Start with the mental model
+      link: /intro/mental-model/
+      icon: right-arrow
+      variant: primary
+    - text: Browse the catalog
+      link: /domains/concept-group/
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What lives here
+
+The **skaileup catalog** is the skill library consumed by the `skaile` CLI and the
+agent runtime. ~94 SKILL.md files organized into 17 domains across three groups,
+plus the flow + bundle pairs that compose them into per-tier pipelines.
+
+<CardGrid>
+  <Card title="Concept" icon="document">
+    What the product *is* — brief, brand, journeys, screens, mockup variants,
+    feedback loop. Linear for small apps, sliced for big ones.
+
+    [Concept group →](/domains/concept-group/)
+  </Card>
+  <Card title="Implementation" icon="rocket">
+    What the product *becomes* — architecture, plan, per-slice loop
+    (implement → test → recap → refactor → commit), and project-wide quality gates.
+
+    [Implementation group →](/domains/impl-group/)
+  </Card>
+  <Card title="Meta" icon="setting">
+    Cross-cutting: orchestrators (`skaileup`, `skaileup-build`), ops skills
+    (review · sync · eval · …), the lab (skill-on-skill tooling), and contracts.
+
+    [Meta group →](/domains/meta-group/)
+  </Card>
+</CardGrid>
+
+## How to read this site
+
+1. **Start with [What is Skaileup](/intro/what-is-skaileup/)** if you've never
+   touched the catalog before.
+2. **The [Mental Model](/intro/mental-model/)** explains the two-group structure,
+   slice loops, and tier system in one page.
+3. **Each domain** has an overview page plus one page per skill — every skill
+   page embeds the verbatim `SKILL.md` body and links to the source on GitHub.
+4. **The [Reference](/reference/skill-grammar/)** section captures the DSL
+   grammar, frontmatter schemas, and the iron laws every skill obeys.
+
+## Status
+
+Phase 1 of the catalog reorganization shipped 2026-05-07. Phase 2 (DOMAIN.md
+authoring + missing validators) and Phase 3 (open follow-ups identified during
+this docs pass) are tracked in [Improvements & Roadmap](/improvements/).

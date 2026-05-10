@@ -1,0 +1,17 @@
+---
+import { getCollection } from "astro:content";
+const docs = await getCollection("docs");
+console.log("[debug] docs collection length:", docs.length);
+const sample = docs[0] as any;
+console.log("[debug] entry shape keys:", Object.keys(sample));
+console.log("[debug] sample id:", sample.id, " slug:", sample.slug);
+---
+
+<html>
+  <body>
+    <p>Found {docs.length} entries</p>
+    <ul>
+      {docs.map((d) => <li>{d.id} — {(d.data as any).title ?? "(no title)"}</li>)}
+    </ul>
+  </body>
+</html>

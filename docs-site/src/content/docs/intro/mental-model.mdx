@@ -1,0 +1,133 @@
+---
+title: Mental Model
+description: Two groups (Concept · Implementation) plus a Meta layer, with two slice loops mirroring each other on both sides.
+sidebar:
+  order: 2
+---
+
+The catalog is shaped by one observation: **the work of *figuring out* a
+product and the work of *building* it have the same rhythm.** Each side
+benefits from a per-feature loop when the product is too big to design or
+build in one pass. So we get the same shape on both halves — concept-slice on
+one side, impl-slice on the other.
+
+```
+                    user input  /  existing repo
+                              │
+                              ▼
+                    ╔═════════════════════╗
+                    ║    skaileup-base    ║   routes user, runs flows
+                    ╚══════════╤══════════╝
+                               │
+                               ▼
+                    ┌──────────────────────────┐
+                    │ skaileup/scope/          │   2-3 questions:
+                    │   scope-project          │   how many features?
+                    │                          │   single user / multi-user?
+                    │   ► writes               │   integrations?
+                    │     _concept/_meta/      │
+                    │     scope.yaml           │   ► picks tier:
+                    │     {tier, flow}         │     mvp · simple-app ·
+                    └────────────┬─────────────┘     standard-app · complex-app
+                                 │
+                                 │  (user can override)
+                                 ▼
+                    ┌──────────────────────────────────┐
+                    │  flows/<tier>.flow.yaml          │
+                    │  bundles/<tier>.bundle.yaml      │  ◄ install only
+                    └───────────────┬──────────────────┘    what tier needs
+                                    │
+              ┌─────────────────────┴──────────────────────────┐
+              ▼                                                ▼
+   ╔═══════════════════════════╗                  ╔══════════════════════════╗
+   ║          CONCEPT          ║                  ║      IMPLEMENTATION      ║
+   ╚═══════════════════════════╝                  ╚══════════════════════════╝
+   ┌───────────────────────┐                      ┌──────────────────────────┐
+   │ concept/              │                      │ impl-architecture/       │
+   │ design/               │                      │ impl-plan/               │
+   │ product-spec/         │                      │ impl-build/  one-time    │
+   │ experience/           │                      ├──────────────────────────┤
+   │ mockup/               │                      │ impl-slice/  PER-SLICE   │
+   ├───────────────────────┤                      │   loop, big apps         │
+   │ concept-slice/        │                      │   ↻                      │
+   │   PER-SLICE loop,     │                      ├──────────────────────────┤
+   │   big apps only       │                      │ impl-quality/            │
+   │   ↻                   │                      └──────────────────────────┘
+   └───────────────────────┘                               │
+              │                                            │
+              └──────────────────────┬─────────────────────┘
+                                     ▼
+                  ┌────────────────────────────────┐
+                  │            META                │
+                  │  ops/   review,sync,eval,...   │
+                  │  lab/   validate,improve,...   │
+                  │  contracts/   reference layer  │
+                  └────────────────────────────────┘
+```
+
+## The three groups
+
+| Group | Purpose | Domains |
+|---|---|---|
+| **Concept** | What the product *is* | concept · design · product-spec · experience · concept-slice · component-mockup · walkthrough-mockup · mockup-feedback |
+| **Implementation** | What the product *becomes* | impl-architecture · impl-plan · impl-slice · impl-build · impl-quality |
+| **Meta** | Cross-cutting, runs against the others | skaileup · ops · lab · contracts |
+
+## The two slice loops
+
+Both `concept-slice/` and `impl-slice/` follow the same five-phase shape:
+
+```
+concept-slice           impl-slice
+─────────────           ──────────
+brainstorm              brainstorm        ← surface the unknown
+align                   align             ← grill-me interview
+scope-feature           plan-vertical     ← decompose, define test strategy
+design-feature          implement → test
+                        recap → refactor → commit
+```
+
+After every phase the user runs `/clear` (or starts a new chat) and the next
+phase reads the prior phase's scratch file from `_slice/concept/<id>/` or
+`_slice/impl/<id>/`. **No phase carries the whole slice in context** — that's
+how big apps stay buildable past the dumb-zone (~100k tokens).
+
+Scratch is **deleted on commit**: truth lives in code (`impl-slice`) or in
+permanent `_concept/` artifacts (`concept-slice`). Stale planning docs in the
+working tree confuse the next iteration. Previous slice docs survive in git
+history.
+
+## The meta layer
+
+- **`skaileup/`** — base orchestrators (`skaileup`, `skaileup-build`) plus
+  `scope/` (the tier picker). The pipeline entry point.
+- **`ops/`** — operates on artifacts: `review`, `sync`, `eval-{concept,feature,product}`,
+  `add-feature`, `reverse-engineer`, `project-{overview,review,subsystem-map,integration}`.
+- **`lab/`** — operates on **skills themselves**: `validate`, `judge`, `improve`,
+  `learn`, `report`, `compile-validators`, `compile-bundle`, `archive`.
+- **`contracts/`** — shared reference layer. **Every skill reads from here.**
+  Iron laws, golden principles, semantic types, frontmatter schemas, the DSL
+  grammar itself.
+
+## Where it sits in the Skaile stack
+
+```
+┌─────────────────────────────────────────┐
+│  Skaile platform / forge / IDE          │
+└─────────────┬───────────────────────────┘
+              │ runs
+              ▼
+┌─────────────────────────────────────────┐
+│  skaile-agent-framework  (runtime)      │
+│  • bridge (claude-sdk / omp / codex)    │
+│  • runner (flow execution)              │
+│  • connectors (MCP, capability registry)│
+└─────────────┬───────────────────────────┘
+              │ reads SKILL.md from
+              ▼
+┌─────────────────────────────────────────┐
+│  ai-assets-skaileup  ← you are here     │
+│  • SKILL.md / DOMAIN.md / CONTRACT.md   │
+│  • flows + bundles                      │
+└─────────────────────────────────────────┘
+```

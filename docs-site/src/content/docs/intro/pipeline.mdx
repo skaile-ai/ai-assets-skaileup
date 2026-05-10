@@ -1,0 +1,127 @@
+---
+title: Pipeline Walkthrough
+description: What runs in what order — from scope-project through ready, with examples for each tier.
+sidebar:
+  order: 3
+---
+
+This page walks the catalog end-to-end for a `standard-app`. (The other tiers
+are slimmer specializations of the same pipeline — see [Tiers](/intro/tiers/).)
+
+## 0. Scope
+
+```
+$ skaile run flow:standard-app
+```
+
+`skaileup/` is the entry orchestrator. Its first move is `skaileup/scope/scope-project`,
+which interviews the user (2–3 questions) and writes `_concept/_meta/scope.yaml`:
+
+```yaml
+tier: standard-app
+flow: standard-app.flow.yaml
+signals:
+  features: ~12
+  multi_user: true
+  persistence: db
+  integrations: [stripe]
+```
+
+The flow + bundle for the chosen tier are loaded. Only the skills the tier
+needs are installed.
+
+## 1. Concept — high-level pass
+
+For `standard-app` and `complex-app`, the concept side runs in two passes.
+**Pass 1** establishes the grand scheme (one pass through all features at a
+coarse level):
+
+```
+brief + goals + comparable + brand-visual + journeys
+```
+
+| Skill | Output |
+|---|---|
+| `concept/brief` | `_concept/discovery/brief.md` — elevator pitch, audience, problem, hero flow |
+| `concept/goals` | `_concept/discovery/goals.md` |
+| `concept/comparable` | `_concept/discovery/comparable.md` |
+| `design/brand-visual` | `_concept/design/identity.md`, `tokens.json` |
+| `experience/journeys` | `_concept/experience/journeys/stories.json` (EARS criteria, candidate features) |
+| `product-spec/features` | `_concept/experience/features/<group>/<feature>.md` (high-level only) |
+
+After Pass 1 the agent has a coarse feature list and a brand. It does **not**
+have screen specs, datamodel, or per-feature acceptance criteria yet.
+
+## 2. Concept — slice loop (per feature)
+
+For each feature in the high-level list, run `concept-slice/`:
+
+```
+brainstorm → align → scope-feature → design-feature
+```
+
+`design-feature` writes back into the permanent `_concept/` artifacts:
+`product-spec/features/<feature>.md` (full), `experience/screens/<feature>/`,
+the mockup variant for the tier, and adds the feature's entities to the
+datamodel. Then the loop hands off.
+
+## 3. Implementation — project setup (once)
+
+```
+impl-architecture/techstack → impl-architecture/datamodel →
+impl-build/scaffold → impl-build/foundation → impl-build/migrate → impl-build/seed
+```
+
+| Skill | What |
+|---|---|
+| `impl-architecture/techstack` | Picks the stack template from `impl-architecture/templates/template-*` |
+| `impl-architecture/datamodel` | Generates the canonical `model.json`, `seed.json`, `feature_map.json` |
+| `impl-architecture/system` | High-level system design (apps, services, protocols) |
+| `impl-build/scaffold` | Runs the template's scaffold command |
+| `impl-build/foundation` | Auth, layout shell, design-tokens-as-code |
+| `impl-build/migrate` | Initial migration from the datamodel |
+| `impl-build/seed` | Seed data scenarios from `seed.json` |
+
+These are **one-time** skills. They never run again unless the stack changes.
+
+## 4. Implementation — slice loop (per feature, runs N times)
+
+For each feature, run `impl-slice/`:
+
+```
+impl-plan/brainstorm → impl-plan/align → impl-plan/plan-vertical →
+impl-slice/implement → impl-slice/test →
+impl-slice/recap → impl-slice/refactor → impl-slice/commit
+```
+
+Between every phase the user runs `/clear`. Phases read from
+`_slice/impl/<id>/`. `commit` deletes the scratch directory after landing
+atomic commits.
+
+## 5. Quality gates (between slices, or at release)
+
+```
+impl-quality/test-unit · test-integration · test-e2e
+impl-quality/eval-code · audit · ready
+ops/eval-feature · ops/eval-product
+ops/review · ops/sync
+```
+
+`ready` is the release gate. `eval-product` scores the finished app against
+the original goals on four design dimensions plus performance, accessibility,
+and mobile.
+
+## End-to-end
+
+```
+scope-project
+  └─► flows/standard-app.flow.yaml
+        ├─► concept (Pass 1: brief, brand, journeys, high-level features)
+        ├─► impl-build (one-time: scaffold, foundation, migrate, seed)
+        └─► loop until done:
+              concept-slice (brainstorm → align → scope → design)
+              impl-slice    (brainstorm → align → plan → implement → test → recap → refactor → commit)
+              [optional] impl-quality/audit between slices
+        └─► impl-quality/ready
+        └─► ops/eval-product
+```

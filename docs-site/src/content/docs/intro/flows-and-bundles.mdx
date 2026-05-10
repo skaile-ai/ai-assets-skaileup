@@ -1,0 +1,78 @@
+---
+title: Flows & Bundles
+description: How tier flows compose slice flows, and how bundles install only the skills a flow needs.
+sidebar:
+  order: 7
+---
+
+A **flow** is a YAML graph of skill nodes and edges. A **bundle** is the matching list of skills that flow needs installed. They come in pairs:
+
+```
+flows/                                              bundles/
+├── concept-slice.flow.yaml   ◄── pair ──►        ├── concept-slice.bundle.yaml
+├── impl-slice.flow.yaml      ◄── pair ──►        ├── impl-slice.bundle.yaml
+├── mvp.flow.yaml             ◄── pair ──►        ├── mvp.bundle.yaml
+├── simple-app.flow.yaml      ◄── pair ──►        ├── simple-app.bundle.yaml
+├── standard-app.flow.yaml    ◄── pair ──►        ├── standard-app.bundle.yaml
+├── complex-app.flow.yaml     ◄── pair ──►        ├── complex-app.bundle.yaml
+└── custom.flow.yaml          ◄── pair ──►        └── custom.bundle.yaml
+```
+
+Use:
+
+```bash
+$ skaile add bundle:simple-app          # install the skills the flow needs
+$ skaile run flow:simple-app            # execute the flow
+```
+
+The two slice flows (`concept-slice`, `impl-slice`) are **building blocks**.
+Tier flows compose them.
+
+## Tier composition
+
+```
+mvp.flow.yaml:
+   scope-project ─► linear concept ─► impl-build/scaffold ─►
+   impl-slice (1 iteration, no recap, no refactor) ─► done
+
+simple-app.flow.yaml:
+   scope-project ─► linear concept ─► impl-build setup ─►
+   loop: impl-slice ─► done (when all features built)
+
+standard-app.flow.yaml:
+   scope-project ─► high-level concept (brief, brand, journeys) ─►
+   impl-build setup ─►
+   loop: concept-slice ─► impl-slice ─► done
+
+complex-app.flow.yaml:
+   scope-project ─► high-level concept ─► project-overview ─►
+   impl-build setup ─►
+   loop: concept-slice ─► impl-slice (supervised plan) ─►
+        impl-quality/audit (every slice) ─► done
+```
+
+Bundles inherit: `simple-app` includes `mvp`, `standard-app` includes
+`simple-app`, `complex-app` includes `standard-app`. Each bundle file lists
+only its *additions*.
+
+## Bundle-from-flow generation
+
+`lab/compile-bundle` walks a flow's node graph and emits the matching
+`<name>.bundle.yaml`. **Run on every flow change** to prevent drift between
+what the flow executes and what the bundle installs. The repo also ships a
+`scripts/check-bundles.sh` that enforces this in CI.
+
+## Custom flows
+
+`custom.flow.yaml` is the user's playground — start by inheriting a tier and
+override what you need:
+
+```yaml
+extends: standard-app
+nodes:
+  - id: my-extra-step
+    type: skill
+    data:
+      skill: ops/sync
+      after: [impl-slice]
+```
