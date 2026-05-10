@@ -38,6 +38,8 @@ def load_flows(flows_dir: Path) -> dict[str, list[str]]:
             node["data"]["skill"]
             for node in flow.get("nodes", [])
             if node.get("type") == "skill"
+            and isinstance(node.get("data"), dict)
+            and "skill" in node["data"]
         ]
     return result
 
@@ -72,7 +74,7 @@ def load_bundles(bundles_dir: Path) -> dict[str, BundleData]:
 def resolve_ancestors(
     stem: str,
     bundles: dict[str, BundleData],
-    _path: tuple[str, ...] = (),
+    _path: tuple[str, ...] | None = None,
 ) -> set[str]:
     """Return the union of all bare skill names from all ancestor bundles.
 
@@ -80,6 +82,8 @@ def resolve_ancestors(
     Traversal order does not matter (result is a set union).
     Raises ValueError on circular inheritance with the full cycle path.
     """
+    if _path is None:
+        _path = ()
     if stem in _path:
         idx = _path.index(stem)
         cycle = " → ".join(_path[idx:]) + f" → {stem}"
@@ -94,6 +98,10 @@ def resolve_ancestors(
     for parent_stem in bundle["bundle_refs"]:
         parent = bundles.get(parent_stem)
         if parent is None:
+            print(
+                f"WARNING: bundle '{stem}' references unknown bundle '{parent_stem}' — skipping",
+                file=sys.stderr,
+            )
             continue
         ancestor_skills.update(parent["skill_refs"])
         ancestor_skills.update(resolve_ancestors(parent_stem, bundles, _path))
