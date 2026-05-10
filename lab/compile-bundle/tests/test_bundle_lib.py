@@ -68,6 +68,22 @@ def test_load_flows_stem_strips_flow_yaml_suffix(tmp_path):
     assert "standard-app" in result
 
 
+def test_load_flows_deduplicates_duplicate_skill_nodes(tmp_path):
+    d = tmp_path / "flows"
+    d.mkdir()
+    # Two nodes with the same skill name — should appear once in result
+    nodes = [
+        {"id": "a1", "type": "skill", "data": {"skill": "skill-a"}},
+        {"id": "a2", "type": "skill", "data": {"skill": "skill-a"}},
+        {"id": "b1", "type": "skill", "data": {"skill": "skill-b"}},
+    ]
+    (d / "mvp.flow.yaml").write_text(
+        yaml.dump({"id": "mvp", "nodes": nodes, "edges": []}), encoding="utf-8"
+    )
+    result = load_flows(d)
+    assert result["mvp"] == ["skill-a", "skill-b"]  # skill-a appears once
+
+
 # ── load_bundles ──────────────────────────────────────────────────────
 
 

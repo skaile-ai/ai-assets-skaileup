@@ -34,13 +34,13 @@ def load_flows(flows_dir: Path) -> dict[str, list[str]]:
         except yaml.YAMLError as exc:
             print(f"ERROR: malformed YAML in {path}: {exc}", file=sys.stderr)
             sys.exit(1)
-        result[stem] = [
+        result[stem] = list(dict.fromkeys(
             node["data"]["skill"]
             for node in flow.get("nodes", [])
             if node.get("type") == "skill"
             and isinstance(node.get("data"), dict)
             and "skill" in node["data"]
-        ]
+        ))
     return result
 
 
