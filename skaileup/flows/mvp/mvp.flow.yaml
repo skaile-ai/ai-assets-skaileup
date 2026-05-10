@@ -1,0 +1,188 @@
+id: mvp
+version: '2.0.0'
+name: 'MVP'
+description: >-
+  Single-feature, trivial-persistence app. One impl-slice iteration; no recap,
+  no refactor; no concept-slice loop. Linear concept pipeline:
+  scope-project -> brief -> features -> mockup-walkthrough-text -> techstack ->
+  templates (deferred) -> scaffold -> impl-plan-plan-vertical ->
+  impl-slice-implement -> impl-slice-commit -> impl-quality-test-unit.
+  Per SKILL_GRAPH § 6 mvp column: only impl-quality-test-unit; no
+  impl-slice-test/recap/refactor; no concept-slice phases.
+meta:
+  category: prototype
+  tags:
+    - tier
+    - mvp
+    - fast
+    - single-feature
+  icon: i-heroicons-rocket-launch
+globals:
+  research_depth: skip
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: brief
+entry: scope
+nodes:
+  - id: scope
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: skaileup-scope-scope-project
+      label: 'Scope Project'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: brief
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: concept-brief
+      label: 'Concept Brief'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: features
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: product-spec-features
+      label: 'Product Features'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: mock-text
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: mockup-walkthrough-text
+      label: 'Text Walkthrough Mockup'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: techstack
+    type: skill
+    position:
+      x: 800
+      y: 200
+    data:
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: templates
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: impl-architecture-templates-select
+      label: 'Architecture Templates (deferred)'
+      optional: true
+      subagent: false
+      parameters: {}
+  - id: scaffold
+    type: skill
+    position:
+      x: 1200
+      y: 200
+    data:
+      skill: impl-build-scaffold
+      label: 'Scaffold'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: plan-vertical
+    type: skill
+    position:
+      x: 1400
+      y: 200
+    data:
+      skill: impl-plan-plan-vertical
+      label: 'Plan Vertical'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: implement
+    type: skill
+    position:
+      x: 1600
+      y: 200
+    data:
+      skill: impl-slice-implement
+      label: 'Implement'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: commit
+    type: skill
+    position:
+      x: 1800
+      y: 200
+    data:
+      skill: impl-slice-commit
+      label: 'Commit'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: test-unit
+    type: skill
+    position:
+      x: 2000
+      y: 200
+    data:
+      skill: impl-quality-test-unit
+      label: 'Unit Tests'
+      optional: false
+      subagent: false
+      parameters: {}
+edges:
+  - id: e-scope-brief
+    source: scope
+    target: brief
+    type: flow
+  - id: e-brief-features
+    source: brief
+    target: features
+    type: flow
+  - id: e-features-mock-text
+    source: features
+    target: mock-text
+    type: flow
+  - id: e-mock-text-techstack
+    source: mock-text
+    target: techstack
+    type: flow
+  - id: e-techstack-templates
+    source: techstack
+    target: templates
+    type: optional
+  - id: e-templates-scaffold
+    source: templates
+    target: scaffold
+    type: flow
+  - id: e-scaffold-plan-vertical
+    source: scaffold
+    target: plan-vertical
+    type: flow
+  - id: e-plan-vertical-implement
+    source: plan-vertical
+    target: implement
+    type: flow
+  - id: e-implement-commit
+    source: implement
+    target: commit
+    type: flow
+  - id: e-commit-test-unit
+    source: commit
+    target: test-unit
+    type: flow

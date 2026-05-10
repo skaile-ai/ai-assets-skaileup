@@ -1,0 +1,126 @@
+---
+title: Flows & Bundles Schema
+description: Pairing convention, file format, inheritance, and the lab/compile-bundle generator that prevents drift.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Each flow is paired with a bundle of identical name. The bundle lists exactly
+the skills the flow runs — no more, no less.
+
+```
+flows/                                              bundles/
+├── concept-slice.flow.yaml   ◄── pair ──►        ├── concept-slice.bundle.yaml
+├── impl-slice.flow.yaml      ◄── pair ──►        ├── impl-slice.bundle.yaml
+├── mvp.flow.yaml             ◄── pair ──►        ├── mvp.bundle.yaml
+├── simple-app.flow.yaml      ◄── pair ──►        ├── simple-app.bundle.yaml
+├── standard-app.flow.yaml    ◄── pair ──►        ├── standard-app.bundle.yaml
+├── complex-app.flow.yaml     ◄── pair ──►        ├── complex-app.bundle.yaml
+└── custom.flow.yaml          ◄── pair ──►        └── custom.bundle.yaml
+```
+
+## Bundle format
+
+```yaml
+name: simple-app
+description: "Skills required to run the simple-app flow."
+extends: mvp                         # inherit; only list additions below
+requires:
+  - skill:concept-grounding-onboard
+  - skill:design-brand-visual
+  - skill:experience-journeys
+  - skill:experience-screens
+  - skill:mockup-walkthrough-static-html
+  - skill:mockup-component-isolated-html
+  - skill:impl-architecture-datamodel
+  - skill:impl-plan-align
+  - skill:impl-build-foundation
+  - skill:impl-slice-test
+  - skill:impl-slice-recap
+  - skill:impl-quality-test-e2e
+```
+
+## Flow format
+
+See [Asset Frontmatter](/reference/asset-frontmatter/#flow--flowyaml) for the
+full schema. Minimal example:
+
+```yaml
+id: simple-app
+name: Simple App
+version: "1.0"
+description: >-
+  One pass through concept, then N × impl-slice with full slice loop.
+
+metadata:
+  tags: [tier, full-stack]
+  stage: beta
+  category: full-stack
+
+entry: scope-project
+
+nodes:
+  - id: scope-project
+    type: skill
+    data: { skill: skaileup/scope/scope-project }
+  - id: concept-linear
+    type: subflow
+    data: { ref: ./concept-linear.subflow.yaml }
+  - id: impl-loop
+    type: loop
+    data:
+      over: features
+      body:
+        - { type: skill, skill: impl-plan/plan-vertical }
+        - { type: skill, skill: impl-slice/implement }
+        - { type: skill, skill: impl-slice/test }
+        - { type: skill, skill: impl-slice/commit }
+
+edges:
+  - { from: scope-project, to: concept-linear }
+  - { from: concept-linear, to: impl-loop }
+```
+
+## Inheritance
+
+Bundles inherit:
+
+```
+mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app
+```
+
+Each bundle file lists only its **additions** beyond the parent. The
+installer walks the inheritance chain and resolves the full skill set.
+
+## Bundle-from-flow generation
+
+`lab/compile-bundle` walks a flow's node graph and emits the matching
+`<name>.bundle.yaml`:
+
+```bash
+$ skaile run lab/compile-bundle --flow flows/standard-app.flow.yaml
+# Updates bundles/standard-app.bundle.yaml additively
+```
+
+**Run on every flow change** to prevent drift. The repo also ships a CI
+check at `scripts/check-bundles.sh`.
+
+<Aside type="caution">
+`lab/compile-bundle` is **additive only** — it never removes entries a user
+has added. If you want to delete a skill from a bundle, edit the bundle file
+by hand.
+</Aside>
+
+## Custom flows
+
+`custom.flow.yaml` is the user's playground. Inherit from a tier and override:
+
+```yaml
+extends: standard-app
+nodes:
+  - id: my-extra-step
+    type: skill
+    data:
+      skill: ops/sync
+      after: [impl-slice]
+```

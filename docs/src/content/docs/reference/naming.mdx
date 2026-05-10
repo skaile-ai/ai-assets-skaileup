@@ -1,0 +1,91 @@
+---
+title: Naming Conventions
+description: How skill names, directory names, and the path-prefix convention all line up — and the one acknowledged exception.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## The path-prefix convention
+
+Every skill's `name:` follows the **path under the repo root** with `/`
+replaced by `-`:
+
+| Path | `name:` |
+|---|---|
+| `concept/brief/SKILL.md` | `concept-brief` |
+| `concept/grounding/onboard/SKILL.md` | `concept-grounding-onboard` |
+| `design/brand-visual/SKILL.md` | `design-brand-visual` |
+| `experience/screens/SKILL.md` | `experience-screens` |
+| `impl-architecture/techstack/SKILL.md` | `impl-architecture-techstack` |
+| `impl-architecture/templates/template-postxl/SKILL.md` | `template-postxl` (shortened) |
+| `mockup-component/storybook/SKILL.md` | `mockup-component-storybook` |
+
+This is the convention used across the catalog (84 of 94 skills follow it
+verbatim).
+
+## The exception — base orchestrators
+
+Skills inside `skaileup/skills/` keep their **short** names (`skaileup`,
+`skaileup-build`) instead of the path-based form. The base orchestrator is
+the catalog's entry point; doubled prefixes (`skaileup-skaileup-skaileup`)
+would be awkward.
+
+```
+skaileup/skills/skaileup/SKILL.md            → name: skaileup
+skaileup/skills/skaileup-build/SKILL.md      → name: skaileup-build
+```
+
+## Templates
+
+Templates under `impl-architecture/templates/template-*/` use a shortened
+name (the directory **already** has the `template-` prefix, so the path
+prefix would double it):
+
+```
+impl-architecture/templates/template-postxl/SKILL.md → name: template-postxl
+```
+
+## CONTRIBUTING.md vs. catalog state
+
+<Aside type="caution">
+
+`CONTRIBUTING.md` says: *"`name:` must match the parent directory name
+exactly."* The catalog actually uses **path-based** names where the parent
+directory is just the last segment (e.g. dir `brief/` → name `concept-brief`).
+
+This is an acknowledged inconsistency. Until it's resolved, the catalog
+state (path-based naming) is authoritative for working skills. See
+[Improvements & Roadmap](/improvements/) for the planned reconciliation.
+
+</Aside>
+
+## Directory names
+
+- **Skill directories** match the *last segment* of the skill name (the
+  unprefixed function name): skill `concept-brief` lives in `concept/brief/`.
+- **Domain directories** group related skills — their names map to the first
+  segment of every skill's `name:` field.
+
+## Asset name rules
+
+Per the [Agent Skills spec](https://agentskills.io/specification):
+
+- Must be **kebab-case**: `a-z`, `0-9`, hyphens only.
+- 1–64 characters.
+- No consecutive hyphens.
+- No leading or trailing hyphen.
+- Must not start with a digit.
+
+## Naming pitfall
+
+If a skill directory is named `my-skill-v2` but the SKILL.md frontmatter
+says `name: my-skill`, the CLI registers it as `skill:my-skill` (from
+frontmatter). The directory name is only used as a fallback when `name:` is
+absent. **Always set `name:` explicitly.**
+
+## Stale path references after a rename
+
+When a domain directory is renamed (e.g. `old-domain/` → `new-domain/`), all
+`REFERENCES` and `READS` lines in skill bodies pointing to the old path
+break. **Run a bulk find-and-replace across all SKILL.md files after any
+domain rename.**

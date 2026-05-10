@@ -4,7 +4,7 @@
 cluster in `SKILL_GRAPH.md`
 
 **Decisions baked in (from review):**
-- Naming: `component-mockup-*`, `walkthrough-mockup-*`, `mockup-feedback-*`
+- Naming: `mockup-component-*`, `mockup-walkthrough-*`, `mockup-feedback-*`
 - Default walkthrough tier for `standard-app`: **Astro**
 - Patch granularity: **section-level** for markdown, line-level for JSON
 - File granularity: **matches the vertical slice** (one feature → one feature.md,
@@ -41,16 +41,16 @@ peer of an ASCII wireframe; it's a different concern entirely.
 Three top-level domains, all flat-named with kebab-case:
 
 ```
-component-mockup/                      ← components in isolation
-  component-mockup-storybook           Storybook 8 (high-fi catalog)
-  component-mockup-isolated-html       single component standalone HTML
+mockup-component/                      ← components in isolation
+  mockup-component-storybook           Storybook 8 (high-fi catalog)
+  mockup-component-isolated-html       single component standalone HTML
 
-walkthrough-mockup/                    ← clickable application
-  walkthrough-mockup-text              ASCII wireframes (read-only)
-  walkthrough-mockup-static-html       zero-build clickable HTML
-  walkthrough-mockup-lit               Lit web components, embeddable
-  walkthrough-mockup-astro             ★ DEFAULT for standard-app
-  walkthrough-mockup-framework         stack-native (Next/Nuxt) via profile
+mockup-walkthrough/                    ← clickable application
+  mockup-walkthrough-text              ASCII wireframes (read-only)
+  mockup-walkthrough-static-html       zero-build clickable HTML
+  mockup-walkthrough-lit               Lit web components, embeddable
+  mockup-walkthrough-astro             ★ DEFAULT for standard-app
+  mockup-walkthrough-framework         stack-native (Next/Nuxt) via profile
 
 mockup-feedback/                       ← annotation → patch loop
   mockup-feedback-annotate             inject overlay, capture clicks
@@ -62,7 +62,7 @@ mockup-feedback/                       ← annotation → patch loop
 ### Why three top-level domains, not one with sub-clusters
 
 1. The skaile CLI's catalog refs are `kind:name` (flat). Three short refs
-   (`skill:walkthrough-mockup-astro`, `skill:component-mockup-storybook`)
+   (`skill:mockup-walkthrough-astro`, `skill:mockup-component-storybook`)
    are clearer than nested `skill:mockup/walkthrough/astro`.
 2. Each cluster has a different I/O contract — sibling status makes that
    visible at the catalog level.
@@ -79,29 +79,29 @@ mockup-feedback/                       ← annotation → patch loop
 
 ---
 
-## 3. Component-mockup tiers
+## 3. mockup-component tiers
 
 | Skill | Use when |
 |---|---|
-| `component-mockup-storybook` | Standard/complex apps with shared component library |
-| `component-mockup-isolated-html` | mvp/simple apps where Storybook is overkill |
+| `mockup-component-storybook` | Standard/complex apps with shared component library |
+| `mockup-component-isolated-html` | mvp/simple apps where Storybook is overkill |
 
-**`component-mockup-storybook`:**
+**`mockup-component-storybook`:**
 - Reads `experience/components/*.md` and `design/tokens.json`
 - Tech-stack aware: resolves addon configuration from
   `impl-architecture/templates/<stack>/`
-- Produces `_concept/component-mockup/storybook/` (Storybook 8 site)
+- Produces `_concept/mockup-component/storybook/` (Storybook 8 site)
 - Output is a buildable Storybook with `*.stories.ts` per component variant
 
-**`component-mockup-isolated-html`:**
+**`mockup-component-isolated-html`:**
 - Reads `experience/components/*.md` and `design/tokens.json`
-- Produces `_concept/component-mockup/isolated-html/<component>.html`
+- Produces `_concept/mockup-component/isolated-html/<component>.html`
 - One file per component, no JS, no build, no framework
 - Useful early in design before committing to a component library
 
 ---
 
-## 4. Walkthrough-mockup tiers
+## 4. mockup-walkthrough tiers
 
 All five share the **same input contract**:
 
@@ -111,18 +111,18 @@ input  = ( experience/screens/*.md
          , design/tokens.json
          , product-spec/features/*.md )
 
-output = a routed site at _concept/walkthrough-mockup/<tier>/
+output = a routed site at _concept/mockup-walkthrough/<tier>/
          with /screen/<group>/<name> and /journey/<id> routes
          + every rendered DOM node carries data-spec-* attributes
 ```
 
 | Tier | Build | Interactivity | Best for |
 |---|---|---|---|
-| `walkthrough-mockup-text` | none | read-only | mvp |
-| `walkthrough-mockup-static-html` | none | clickable, no state | simple-app |
-| `walkthrough-mockup-lit` | optional | full state, embeddable | standard-app (embedded) |
-| `walkthrough-mockup-astro` | yes | islands, full nav | **standard-app default** |
-| `walkthrough-mockup-framework` | yes | stack-native | complex-app |
+| `mockup-walkthrough-text` | none | read-only | mvp |
+| `mockup-walkthrough-static-html` | none | clickable, no state | simple-app |
+| `mockup-walkthrough-lit` | optional | full state, embeddable | standard-app (embedded) |
+| `mockup-walkthrough-astro` | yes | islands, full nav | **standard-app default** |
+| `mockup-walkthrough-framework` | yes | stack-native | complex-app |
 
 Swapping fidelity = swap the renderer skill. The contract is identical, so
 no other artifacts need to change.
@@ -174,7 +174,7 @@ error-prone, slow. Doesn't scale past a handful of features.
 **The flow:**
 
 ```
-   walkthrough-mockup-astro renders <screen> with data-spec-* attrs
+   mockup-walkthrough-astro renders <screen> with data-spec-* attrs
             │
             ▼
    user clicks element, types annotation in mockup-feedback-annotate
@@ -323,8 +323,8 @@ This avoids upfront tedium AND ID instability across regenerations.
    │ Zone                       │ Lifetime │ Contents                      │
    ├────────────────────────────┼──────────┼───────────────────────────────┤
    │ _concept/                  │ permanent│ product spec (existing)       │
-   │ _concept/component-mockup/ │ permanent│ Storybook + isolated HTML     │
-   │ _concept/walkthrough-mockup│ permanent│ rendered walkthrough sites    │
+   │ _concept/mockup-component/ │ permanent│ Storybook + isolated HTML     │
+   │ _concept/mockup-walkthrough│ permanent│ rendered walkthrough sites    │
    │   /<tier>/                 │          │   (regeneratable)             │
    ├────────────────────────────┼──────────┼───────────────────────────────┤
    │ _feedback/                 │ permanent│ NEW zone                      │
@@ -349,13 +349,13 @@ evidence**, not slice-internal scratch. It's permanent and append-only.
 
 | Skill | Purpose |
 |---|---|
-| `component-mockup-storybook` | renamed from `skaileup-concept-storybook` (consolidates 6 sub-skills) |
-| `component-mockup-isolated-html` | NEW — single-component standalone HTML |
-| `walkthrough-mockup-text` | renamed from `skaileup-concept-mockup` |
-| `walkthrough-mockup-static-html` | NEW — clickable static HTML site |
-| `walkthrough-mockup-lit` | NEW — Lit web components site |
-| `walkthrough-mockup-astro` | NEW — Astro islands site (default for standard-app) |
-| `walkthrough-mockup-framework` | NEW — stack-native via profile |
+| `mockup-component-storybook` | renamed from `skaileup-concept-storybook` (consolidates 6 sub-skills) |
+| `mockup-component-isolated-html` | NEW — single-component standalone HTML |
+| `mockup-walkthrough-text` | renamed from `skaileup-concept-mockup` |
+| `mockup-walkthrough-static-html` | NEW — clickable static HTML site |
+| `mockup-walkthrough-lit` | NEW — Lit web components site |
+| `mockup-walkthrough-astro` | NEW — Astro islands site (default for standard-app) |
+| `mockup-walkthrough-framework` | NEW — stack-native via profile |
 | `mockup-feedback-annotate` | NEW — overlay injection + annotation capture |
 | `mockup-feedback-triage` | NEW — classify annotations + promote provisional IDs |
 | `mockup-feedback-patch` | NEW — section-level diffs |
@@ -374,14 +374,14 @@ evidence**, not slice-internal scratch. It's permanent and append-only.
 ```
                                         mvp  simple  standard  complex
                                         ────────────────────────────────
-   component-mockup-storybook                          ✓         ✓
-   component-mockup-isolated-html             ✓
+   mockup-component-storybook                          ✓         ✓
+   mockup-component-isolated-html             ✓
    ───────────────────────────────────────────────────────────────────
-   walkthrough-mockup-text             ✓
-   walkthrough-mockup-static-html             ✓
-   walkthrough-mockup-lit                              (alt)
-   walkthrough-mockup-astro                            ✓ (default)
-   walkthrough-mockup-framework                                  ✓
+   mockup-walkthrough-text             ✓
+   mockup-walkthrough-static-html             ✓
+   mockup-walkthrough-lit                              (alt)
+   mockup-walkthrough-astro                            ✓ (default)
+   mockup-walkthrough-framework                                  ✓
    ───────────────────────────────────────────────────────────────────
    mockup-feedback-annotate                            ✓         ✓
    mockup-feedback-triage                              ✓         ✓
@@ -407,15 +407,15 @@ Notes:
 
 Five-step migration ordered by risk:
 
-1. **Rename only.** `skaileup-concept-mockup` → `walkthrough-mockup-text/`,
-   `skaileup-concept-storybook` → `component-mockup-storybook/`. No
+1. **Rename only.** `skaileup-concept-mockup` → `mockup-walkthrough-text/`,
+   `skaileup-concept-storybook` → `mockup-component-storybook/`. No
    behavior change. Update SKILL_GRAPH.md and CONTRIBUTING.md references.
 
 2. **Define `elements:` frontmatter + write validator.** Add optional
    schema; validator in `lab/`. Existing screens without it keep working.
    Renderers fall back to auto-slug + `data-spec-provisional="true"`.
 
-3. **Build `walkthrough-mockup-static-html`** as the simplest new
+3. **Build `mockup-walkthrough-static-html`** as the simplest new
    walkthrough variant. It validates the input contract for downstream
    tiers.
 
@@ -427,7 +427,7 @@ Five-step migration ordered by risk:
    - line-level for JSON
    - hybrid provisional-ID promotion
 
-5. **Build `walkthrough-mockup-{lit, astro, framework}`** in any order.
+5. **Build `mockup-walkthrough-{lit, astro, framework}`** in any order.
    Each just has to honor the input contract and emit `data-spec-*`
    attributes.
 
@@ -439,7 +439,7 @@ Step 1 unblocks SKILL_GRAPH cleanup. Steps 2-5 are each their own slice.
 
 | # | Question | Decision |
 |---|---|---|
-| 1 | Naming style | Flat kebab: `component-mockup-storybook`, `walkthrough-mockup-astro`, `mockup-feedback-annotate` |
+| 1 | Naming style | Flat kebab: `mockup-component-storybook`, `mockup-walkthrough-astro`, `mockup-feedback-annotate` |
 | 2 | Default walkthrough for standard-app | **Astro** |
 | 3 | Element ID strategy | **Hybrid** — auto-slug provisional, promote on first annotation |
 | 4 | Patch granularity | **Section-level** for markdown, line-level for JSON |
@@ -501,15 +501,15 @@ Task 3A's mini-plan is now **unblocked**.
 
 ```
                 BEFORE                            AFTER
-   mockup/                          component-mockup/
-     text                             component-mockup-storybook
-     static-html                      component-mockup-isolated-html
-     lit                            walkthrough-mockup/
-     storybook  ──────────►           walkthrough-mockup-text
-                                      walkthrough-mockup-static-html
-                                      walkthrough-mockup-lit
-                                      walkthrough-mockup-astro       ← std default
-                                      walkthrough-mockup-framework
+   mockup/                          mockup-component/
+     text                             mockup-component-storybook
+     static-html                      mockup-component-isolated-html
+     lit                            mockup-walkthrough/
+     storybook  ──────────►           mockup-walkthrough-text
+                                      mockup-walkthrough-static-html
+                                      mockup-walkthrough-lit
+                                      mockup-walkthrough-astro       ← std default
+                                      mockup-walkthrough-framework
                                     mockup-feedback/
                                       mockup-feedback-annotate
                                       mockup-feedback-triage

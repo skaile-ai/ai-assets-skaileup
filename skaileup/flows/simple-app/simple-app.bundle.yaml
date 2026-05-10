@@ -1,0 +1,34 @@
+name: simple-app
+description: >-
+  Tier bundle for simple-app — single-user, ≤5 features, full impl-slice loop.
+  Inherits mvp; adds brand-visual, journeys, screens, static-html walkthrough,
+  isolated-html components, datamodel, full impl-build setup, impl-plan-align,
+  impl-slice-test/recap, e2e quality.
+  Note: simple-app's flow does NOT use mockup-walkthrough-text (mvp's mockup
+  variant); installing it as part of the inheritance chain is a no-op (skill
+  is available; just not invoked by simple-app.flow.yaml).
+metadata:
+  version: '1.0.0'
+  tags:
+    - bundle
+    - tier
+    - simple-app
+    - small
+  stage: alpha
+requires:
+  - bundle:mvp
+  # delta vs mvp (computed from flows):
+  - skill:design-brand-visual
+  - skill:experience-journeys
+  - skill:experience-screens
+  - skill:mockup-walkthrough-static-html
+  - skill:mockup-component-isolated-html
+  - skill:impl-architecture-datamodel
+  - skill:impl-build-foundation
+  - skill:impl-build-migrate
+  - skill:impl-build-seed
+  - skill:impl-build-docs
+  - skill:impl-plan-align
+  - skill:impl-slice-test
+  - skill:impl-slice-recap
+  - skill:impl-quality-test-e2e

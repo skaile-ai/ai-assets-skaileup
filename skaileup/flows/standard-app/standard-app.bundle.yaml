@@ -1,0 +1,45 @@
+name: standard-app
+description: >-
+  Tier bundle for standard-app — multi-user / ≤20 features. Inherits
+  simple-app; adds concept-slice (align/scope-feature/design-feature),
+  impl-plan-brainstorm, impl-slice-refactor, full quality suite (integration
+  + ready), ops review/sync, system architecture + infrastructure build,
+  experience-behaviors/components, storybook, deferred concept-goals/
+  concept-comparable/design-inspiration, deferred mockup-feedback cluster,
+  deferred mockup-walkthrough-astro.
+  Note: standard-app's flow does NOT use mockup-component-isolated-html
+  (Storybook supersedes it); installing it as part of the inheritance chain
+  is a no-op (skill is available; just not invoked by standard-app.flow.yaml).
+metadata:
+  version: '1.0.0'
+  tags:
+    - bundle
+    - tier
+    - standard-app
+    - multi-user
+  stage: alpha
+requires:
+  - bundle:simple-app
+  # delta vs simple-app (computed from flows):
+  - skill:concept-goals
+  - skill:concept-comparable
+  - skill:design-inspiration
+  - skill:experience-behaviors
+  - skill:experience-components
+  - skill:mockup-walkthrough-astro
+  - skill:mockup-component-storybook
+  - skill:mockup-feedback-annotate
+  - skill:mockup-feedback-triage
+  - skill:mockup-feedback-patch
+  - skill:mockup-feedback-apply
+  - skill:impl-architecture-system
+  - skill:impl-build-infrastructure
+  - skill:impl-plan-brainstorm
+  - skill:concept-slice-align
+  - skill:concept-slice-scope-feature
+  - skill:concept-slice-design-feature
+  - skill:impl-slice-refactor
+  - skill:impl-quality-test-integration
+  - skill:impl-quality-ready
+  - skill:ops-review
+  - skill:ops-sync

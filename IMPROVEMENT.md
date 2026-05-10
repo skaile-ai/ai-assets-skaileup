@@ -1,8 +1,8 @@
 # Improvements & Roadmap
 
-Findings from the 2026-05-10 catalog review across all 17 domains, 94 SKILL.md files, the contracts/, flows/, bundles/ layers, and the `CLAUDE.md` / `CONTRIBUTING.md` / `SKILL_GRAPH.md` / `REFACTOR_MOCKUP.md` reference docs. Items are grouped by **severity × cost-to-fix**; each item names the affected files and the proposed action.
+Findings from the 2026-05-10 catalog review across all 17 domains, 94 SKILL.md files, the skaileup/contracts/, skaileup/flows/ layers (contracts + flows/bundles were moved from ai-assets/ in this reorganization), and the `CLAUDE.md` / `CONTRIBUTING.md` / `SKILL_GRAPH.md` / `REFACTOR_MOCKUP.md` reference docs. Items are grouped by **severity × cost-to-fix**; each item names the affected files and the proposed action.
 
-> **Methodology.** Programmatic frontmatter audit on every SKILL.md (`/tmp/skill_audit.json`) plus four parallel domain-deep-read agents (concept-side, mockup, impl-side, meta+templates). Numbers below are reproducible from the audit script in `docs-site/scripts/`.
+> **Methodology.** Programmatic frontmatter audit on every SKILL.md (`/tmp/skill_audit.json`) plus four parallel domain-deep-read agents (concept-side, mockup, impl-side, meta+templates). Numbers below are reproducible from the audit script in `docs/scripts/`.
 
 ---
 
@@ -50,9 +50,9 @@ Findings from the 2026-05-10 catalog review across all 17 domains, 94 SKILL.md f
 
 ### B2. Bidirectional feedback loop is one-way in practice
 
-- **What's wrong.** `mockup-feedback/{annotate,triage,patch,apply}` correctly write to `_concept/_feedback/devlog.md`. **But** the `walkthrough-mockup-{text,static-html,astro}` regenerators don't read `devlog.md` in STEP 1. Every regeneration loses prior human intent.
+- **What's wrong.** `mockup-feedback/{annotate,triage,patch,apply}` correctly write to `_concept/_feedback/devlog.md`. **But** the `mockup-walkthrough-{text,static-html,astro}` regenerators don't read `devlog.md` in STEP 1. Every regeneration loses prior human intent.
 - **Why it matters.** REFACTOR_MOCKUP.md §5 specifies a *bidirectional* sync. The forward direction works (annotation → patch → apply → devlog). The backward direction (devlog → regeneration) is missing.
-- **Recommended action.** Add a STEP 1 to each walkthrough-mockup-* skill: "Read `_feedback/devlog.md`, filter to entries that mention any path the regeneration will touch, and treat their patch summaries as required preserved-intent before regenerating." This is one ~15-line addition per renderer, three renderers — small change, completes the design intent.
+- **Recommended action.** Add a STEP 1 to each mockup-walkthrough-* skill: "Read `_feedback/devlog.md`, filter to entries that mention any path the regeneration will touch, and treat their patch summaries as required preserved-intent before regenerating." This is one ~15-line addition per renderer, three renderers — small change, completes the design intent.
 
 ### B3. Three eval skills missing `ROLE` keyword
 
@@ -126,7 +126,7 @@ Findings from the 2026-05-10 catalog review across all 17 domains, 94 SKILL.md f
 
 ### D2. README.md says "17 domains" but the count is closer to 20
 
-- **What's wrong.** `README.md` line 5 says "17 domains in three groups". Counting top-level domain directories with DOMAIN.md: 8 (concept) + 5 (impl) + 4 (meta) = 17. Counting all domains including sub-domains (`concept-grounding`, `impl-architecture/templates`, `component-mockup/storybook`) is more like 20–22. Pick a definition and stick to it.
+- **What's wrong.** `README.md` line 5 says "17 domains in three groups". Counting top-level domain directories with DOMAIN.md: 8 (concept) + 5 (impl) + 4 (meta) = 17. Counting all domains including sub-domains (`concept-grounding`, `impl-architecture/templates`, `mockup-component/storybook`) is more like 20–22. Pick a definition and stick to it.
 
 ### D3. `experience-screens` description is overlong (~190 chars)
 
@@ -134,7 +134,7 @@ Findings from the 2026-05-10 catalog review across all 17 domains, 94 SKILL.md f
 
 ### D4. `skaileup-build` README mentions `lit` walkthrough variant that isn't in the repo
 
-- **What's wrong.** README.md, CLAUDE.md and SKILL_GRAPH.md reference `walkthrough-mockup-lit` but no `walkthrough-mockup/lit/SKILL.md` exists. Only `text/`, `static-html/`, `astro/` are present.
+- **What's wrong.** README.md, CLAUDE.md and SKILL_GRAPH.md reference `mockup-walkthrough-lit` but no `mockup-walkthrough/lit/SKILL.md` exists. Only `text/`, `static-html/`, `astro/` are present.
 - **Action.** Either author the lit variant (the docs say it's an "alt for embedded") or remove the references.
 
 ### D5. `validator.py` coverage is uneven
@@ -158,11 +158,11 @@ The three appear redundant on first reading but `git-prepare` runs once per proj
 
 ### E4. **Remove or convert:** templates as skills (see A5)
 
-### E5. **Split:** `walkthrough-mockup-text` is doing too much
+### E5. **Split:** `mockup-walkthrough-text` is doing too much
 
-`walkthrough-mockup/text/SKILL.md` (139 lines) describes Alpine, Vue, Preact, Shoelace CDN-based mockups — four different stacks behind one skill. Compare: `walkthrough-mockup/static-html/` (534 lines) does one thing precisely. **Action:** consider splitting `text/` into `text-alpine/`, `text-vue/`, `text-preact/`, or document the multi-stack case explicitly with a sub-skill pattern.
+`mockup-walkthrough/text/SKILL.md` (139 lines) describes Alpine, Vue, Preact, Shoelace CDN-based mockups — four different stacks behind one skill. Compare: `mockup-walkthrough/static-html/` (534 lines) does one thing precisely. **Action:** consider splitting `text/` into `text-alpine/`, `text-vue/`, `text-preact/`, or document the multi-stack case explicitly with a sub-skill pattern.
 
-### E6. **Add:** missing `walkthrough-mockup-lit` and `walkthrough-mockup-framework` skills
+### E6. **Add:** missing `mockup-walkthrough-lit` and `mockup-walkthrough-framework` skills
 
 Both are referenced in the docs and tier composition tables but don't exist as files. Either author them or update the tier tables.
 
@@ -183,7 +183,7 @@ Wrap the audit script (used to produce `/tmp/skill_audit.json`) into a CI step t
 
 ### F2. CI gate: bundle ↔ flow drift
 
-`scripts/check-bundles.sh` already exists but isn't invoked from anywhere visible. Wire it into a pre-merge check so flow edits force bundle regeneration.
+`ai-assets/scripts/check-bundles.sh` already exists but isn't invoked from anywhere visible. Wire it into a pre-merge check so flow edits force bundle regeneration.
 
 ### F3. Path-reference sweep on every domain rename
 
@@ -197,7 +197,7 @@ The refactor was the design doc that drove Phase 2 of the mockup work. With Phas
 
 ## Appendix — Audit data
 
-The structured audit lives at `/tmp/skill_audit.json` (re-run from `docs-site/scripts/audit.py` if needed). Key counts:
+The structured audit lives at `/tmp/skill_audit.json` (re-run from `docs/scripts/audit.py` if needed). Key counts:
 
 | Dimension | Count |
 |---|---|

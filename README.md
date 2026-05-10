@@ -19,8 +19,8 @@ The Skaileup skill catalog — concept, build, and quality pipeline skills for t
         product-spec            impl-plan                lab · contracts
         experience              impl-build
         concept-slice ↻         impl-slice ↻
-        component-mockup        impl-quality
-        walkthrough-mockup
+        mockup-component        impl-quality
+        mockup-walkthrough
         mockup-feedback
 ```
 
@@ -30,7 +30,7 @@ The Skaileup skill catalog — concept, build, and quality pipeline skills for t
 
 ## Documentation
 
-- 📖 **[Browse the full Starlight site](docs-site/)** — `cd docs-site && npm install && npm run dev` to read it locally; every skill has its own page with the SKILL.md body embedded.
+- 📖 **[Browse the full Starlight site](docs/)** — `npm run docs` to read it locally; every skill has its own page with the SKILL.md body embedded.
 - 📐 **[`SKILL_GRAPH.md`](SKILL_GRAPH.md)** — design rationale for the catalog structure.
 - 🧬 **[`REFACTOR_MOCKUP.md`](REFACTOR_MOCKUP.md)** — the mockup-cluster design: three orthogonal concerns (component / walkthrough / feedback), bidirectional sync via references + devlog, per-slice file-granularity rule.
 - 🔧 **[`CONTRIBUTING.md`](CONTRIBUTING.md)** — how to author a skill that installs correctly with the `skaile` CLI.
@@ -42,33 +42,40 @@ The Skaileup skill catalog — concept, build, and quality pipeline skills for t
 
 | Domain | Purpose |
 |---|---|
-| [`concept/`](concept/DOMAIN.md) | Project brief, goals, comparable apps |
-| [`design/`](design/DOMAIN.md) | Brand identity, tokens, voice |
-| [`product-spec/`](product-spec/DOMAIN.md) | Feature specs + acceptance criteria |
-| [`experience/`](experience/DOMAIN.md) | Journeys, behaviors, screens, components |
-| [`concept-slice/`](concept-slice/DOMAIN.md) | Per-feature concept loop (big apps) |
-| [`component-mockup/`](component-mockup/DOMAIN.md) | Storybook + isolated HTML |
-| [`walkthrough-mockup/`](walkthrough-mockup/DOMAIN.md) | text · static-html · astro · framework |
-| [`mockup-feedback/`](mockup-feedback/DOMAIN.md) | Annotation → patch loop |
+| [`skaileup/concept/`](skaileup/concept/DOMAIN.md) | Project brief, goals, comparable apps |
+| [`skaileup/design/`](skaileup/design/DOMAIN.md) | Brand identity, tokens, voice |
+| [`skaileup/product-spec/`](skaileup/product-spec/DOMAIN.md) | Feature specs + acceptance criteria |
+| [`skaileup/experience/`](skaileup/experience/DOMAIN.md) | Journeys, behaviors, screens, components |
+| [`skaileup/concept-slice/`](skaileup/concept-slice/DOMAIN.md) | Per-feature concept loop (big apps) |
+| [`skaileup/mockup-component/`](skaileup/mockup-component/DOMAIN.md) | Storybook + isolated HTML |
+| [`skaileup/mockup-walkthrough/`](skaileup/mockup-walkthrough/DOMAIN.md) | text · static-html · astro · framework |
+| [`skaileup/mockup-feedback/`](skaileup/mockup-feedback/DOMAIN.md) | Annotation → patch loop |
 
 ### Implementation
 
 | Domain | Purpose |
 |---|---|
-| [`impl-architecture/`](impl-architecture/DOMAIN.md) | Techstack · system · datamodel · templates/ |
-| [`impl-plan/`](impl-plan/DOMAIN.md) | Brainstorm · align · plan-vertical · supervised |
-| [`impl-slice/`](impl-slice/DOMAIN.md) | Per-slice loop: implement → test → recap → refactor → commit |
-| [`impl-build/`](impl-build/DOMAIN.md) | One-time: scaffold · foundation · migrate · seed · generate · docs |
-| [`impl-quality/`](impl-quality/DOMAIN.md) | Tests · audit · ready · standards · debug |
+| [`skaileup/impl-architecture/`](skaileup/impl-architecture/DOMAIN.md) | Techstack · system · datamodel · templates/ |
+| [`skaileup/impl-plan/`](skaileup/impl-plan/DOMAIN.md) | Brainstorm · align · plan-vertical · supervised |
+| [`skaileup/impl-slice/`](skaileup/impl-slice/DOMAIN.md) | Per-slice loop: implement → test → recap → refactor → commit |
+| [`skaileup/impl-build/`](skaileup/impl-build/DOMAIN.md) | One-time: scaffold · foundation · migrate · seed · generate · docs |
+| [`skaileup/impl-quality/`](skaileup/impl-quality/DOMAIN.md) | Tests · audit · ready · standards · debug |
 
-### Meta
+### Meta — user-facing
 
 | Domain | Purpose |
 |---|---|
-| [`skaileup/`](skaileup/DOMAIN.md) | Base orchestrators + `scope/` — pipeline entry point |
-| [`ops/`](ops/DOMAIN.md) | Cross-cutting: review · sync · eval · add-feature · project-* |
-| [`lab/`](lab/DOMAIN.md) | Skill-on-skill: validate · improve · compile-validators |
-| [`contracts/`](contracts/DOMAIN.md) | Reference layer (every skill reads) |
+| [`skaileup/skaileup-orchestrator/`](skaileup/skaileup-orchestrator/DOMAIN.md) | Base orchestrators + `scope/` — pipeline entry point |
+| [`skaileup/ops/`](skaileup/ops/DOMAIN.md) | Cross-cutting: review · sync · eval · add-feature · project-* |
+
+### Meta — system assets
+
+| Location | Purpose |
+|---|---|
+| [`skaileup/contracts/`](skaileup/contracts/DOMAIN.md) | Reference layer (every skill reads) |
+| [`skaileup/flows/`](skaileup/flows/) | Flow + bundle YAMLs, co-located per app-type |
+| [`ai-assets/lab/`](ai-assets/lab/DOMAIN.md) | Skill-on-skill: validate · improve · compile-bundle |
+| [`ai-assets/scripts/`](ai-assets/scripts/) | CI scripts (check-bundles.sh) |
 
 ## Tiers
 
@@ -91,17 +98,32 @@ $ skaile run flow:simple-app            # execute the flow
 ```
 
 ```
-flows/                                              bundles/
-├── concept-slice.flow.yaml   ◄── pair ──►        ├── concept-slice.bundle.yaml
-├── impl-slice.flow.yaml      ◄── pair ──►        ├── impl-slice.bundle.yaml
-├── mvp.flow.yaml             ◄── pair ──►        ├── mvp.bundle.yaml
-├── simple-app.flow.yaml      ◄── pair ──►        ├── simple-app.bundle.yaml
-├── standard-app.flow.yaml    ◄── pair ──►        ├── standard-app.bundle.yaml
-├── complex-app.flow.yaml     ◄── pair ──►        ├── complex-app.bundle.yaml
-└── custom.flow.yaml          ◄── pair ──►        └── custom.bundle.yaml
+skaileup/flows/
+├── complex-app/
+│   ├── complex-app.flow.yaml
+│   └── complex-app.bundle.yaml
+├── concept-slice/
+│   ├── concept-slice.flow.yaml
+│   └── concept-slice.bundle.yaml
+├── impl-slice/
+│   ├── impl-slice.flow.yaml
+│   └── impl-slice.bundle.yaml
+├── mvp/
+│   ├── mvp.flow.yaml
+│   └── mvp.bundle.yaml
+├── simple-app/
+│   ├── simple-app.flow.yaml
+│   └── simple-app.bundle.yaml
+├── standard-app/
+│   ├── standard-app.flow.yaml
+│   └── standard-app.bundle.yaml
+└── _meta/
+    ├── verify_flows.py
+    ├── test_verify.py
+    └── deferred_skills.yaml
 ```
 
-`lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML — run on every flow change to prevent drift. CI: `scripts/check-bundles.sh`.
+`ai-assets/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file — run on every flow change to prevent drift. CI: `ai-assets/scripts/check-bundles.sh`.
 
 ## How this is consumed
 
@@ -130,7 +152,7 @@ Extracted from [`skaile-ai/ai-assets`](https://github.com/skaile-ai/ai-assets) a
 
 ## Quick links
 
-- [Skill DSL Grammar](contracts/skill_grammar.md)
-- [Iron Laws](contracts/iron_laws.md)
-- [Golden Principles](contracts/golden_principles.md)
-- [Asset Frontmatter Schema](contracts/asset_frontmatter.md)
+- [Skill DSL Grammar](skaileup/contracts/skill_grammar.md)
+- [Iron Laws](skaileup/contracts/iron_laws.md)
+- [Golden Principles](skaileup/contracts/golden_principles.md)
+- [Asset Frontmatter Schema](skaileup/contracts/asset_frontmatter.md)

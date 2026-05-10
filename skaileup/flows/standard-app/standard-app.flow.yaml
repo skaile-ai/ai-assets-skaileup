@@ -1,0 +1,677 @@
+id: standard-app
+version: '2.0.0'
+name: 'Standard App'
+description: >-
+  Multi-user / ≤20 features. High-level concept (brief, goals(deferred),
+  comparable(deferred), brand-visual, inspiration(deferred), journeys,
+  behaviors(opt), screens, components, features, mockups, mockup-feedback
+  cluster(deferred)) -> impl-build setup -> per-feature loop:
+  concept-slice (align -> scope-feature -> design-feature; NO brainstorm) ->
+  impl-slice (full: brainstorm -> align -> plan-vertical -> implement -> test
+  -> recap -> refactor -> commit) -> done. Quality: unit + integration + e2e
+  + ready. Ops: review + sync. Iteration semantics: cs-align..i-commit run
+  once per feature; the linear graph below shows one iteration. Deferred
+  skills (concept-goals, concept-comparable, design-inspiration,
+  mockup-walkthrough-astro, mockup-feedback-*, impl-architecture-templates-select)
+  see flows/_meta/deferred_skills.yaml.
+meta:
+  category: full-stack
+  tags:
+    - tier
+    - standard-app
+    - multi-user
+  icon: i-heroicons-squares-2x2
+globals:
+  research_depth: moderate
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+entry: scope
+nodes:
+  # --- Scope ---
+  - id: scope
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: skaileup-scope-scope-project
+      label: 'Scope Project'
+      optional: false
+      parameters: {}
+  # --- High-level concept ---
+  - id: brief
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: concept-brief
+      label: 'Concept Brief'
+      optional: false
+      parameters: {}
+  - id: goals
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: concept-goals
+      label: 'Concept Goals (deferred)'
+      optional: true
+      parameters: {}
+  - id: comparable
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: concept-comparable
+      label: 'Comparable (deferred)'
+      optional: true
+      parameters: {}
+  - id: brand-visual
+    type: skill
+    position:
+      x: 800
+      y: 200
+    data:
+      skill: design-brand-visual
+      label: 'Brand Visual'
+      optional: false
+      parameters: {}
+  - id: inspiration
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: design-inspiration
+      label: 'Design Inspiration (deferred)'
+      optional: true
+      parameters: {}
+  - id: journeys
+    type: skill
+    position:
+      x: 1200
+      y: 200
+    data:
+      skill: experience-journeys
+      label: 'Experience Journeys'
+      optional: false
+      parameters: {}
+  - id: behaviors-opt
+    type: skill
+    position:
+      x: 1400
+      y: 200
+    data:
+      skill: experience-behaviors
+      label: 'Experience Behaviors (opt)'
+      optional: true
+      parameters: {}
+  - id: features
+    type: skill
+    position:
+      x: 1600
+      y: 200
+    data:
+      skill: product-spec-features
+      label: 'Product Features'
+      optional: false
+      parameters: {}
+  - id: screens
+    type: skill
+    position:
+      x: 1800
+      y: 200
+    data:
+      skill: experience-screens
+      label: 'Experience Screens'
+      optional: false
+      parameters: {}
+  - id: components
+    type: skill
+    position:
+      x: 2000
+      y: 200
+    data:
+      skill: experience-components
+      label: 'Experience Components'
+      optional: false
+      parameters: {}
+  - id: mock-walkthrough
+    type: skill
+    position:
+      x: 2200
+      y: 100
+    data:
+      skill: mockup-walkthrough-astro
+      label: 'Astro Walkthrough Mockup (deferred; falls back to static-html)'
+      optional: true
+      parallel_group: mockups
+      parameters: {}
+  - id: mock-static-fallback
+    type: skill
+    position:
+      x: 2200
+      y: 200
+    data:
+      skill: mockup-walkthrough-static-html
+      label: 'Static HTML Walkthrough (Phase 2 fallback for astro)'
+      optional: false
+      parallel_group: mockups
+      parameters: {}
+  - id: comp-storybook
+    type: skill
+    position:
+      x: 2200
+      y: 300
+    data:
+      skill: mockup-component-storybook
+      label: 'Storybook Components'
+      optional: false
+      parallel_group: mockups
+      parameters: {}
+  # --- Mockup feedback cluster (deferred) ---
+  - id: feedback-annotate
+    type: skill
+    position:
+      x: 2400
+      y: 100
+    data:
+      skill: mockup-feedback-annotate
+      label: 'Mockup Feedback: Annotate (deferred)'
+      optional: true
+      parameters: {}
+  - id: feedback-triage
+    type: skill
+    position:
+      x: 2600
+      y: 100
+    data:
+      skill: mockup-feedback-triage
+      label: 'Mockup Feedback: Triage (deferred)'
+      optional: true
+      parameters: {}
+  - id: feedback-patch
+    type: skill
+    position:
+      x: 2800
+      y: 100
+    data:
+      skill: mockup-feedback-patch
+      label: 'Mockup Feedback: Patch (deferred)'
+      optional: true
+      parameters: {}
+  - id: feedback-apply
+    type: skill
+    position:
+      x: 3000
+      y: 100
+    data:
+      skill: mockup-feedback-apply
+      label: 'Mockup Feedback: Apply (deferred)'
+      optional: true
+      parameters: {}
+  # --- Architecture ---
+  - id: techstack
+    type: skill
+    position:
+      x: 3200
+      y: 200
+    data:
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
+      optional: false
+      parameters: {}
+  - id: templates
+    type: skill
+    position:
+      x: 3400
+      y: 200
+    data:
+      skill: impl-architecture-templates-select
+      label: 'Architecture Templates (deferred)'
+      optional: true
+      parameters: {}
+  - id: arch-system
+    type: skill
+    position:
+      x: 3600
+      y: 200
+    data:
+      skill: impl-architecture-system
+      label: 'System Architecture'
+      optional: false
+      parameters: {}
+  - id: datamodel
+    type: skill
+    position:
+      x: 3800
+      y: 200
+    data:
+      skill: impl-architecture-datamodel
+      label: 'Data Model'
+      optional: false
+      parameters: {}
+  # --- Build ---
+  - id: scaffold
+    type: skill
+    position:
+      x: 4000
+      y: 200
+    data:
+      skill: impl-build-scaffold
+      label: 'Scaffold'
+      optional: false
+      parameters: {}
+  - id: foundation
+    type: skill
+    position:
+      x: 4200
+      y: 200
+    data:
+      skill: impl-build-foundation
+      label: 'Foundation'
+      optional: false
+      parameters: {}
+  - id: infra-opt
+    type: skill
+    position:
+      x: 4400
+      y: 200
+    data:
+      skill: impl-build-infrastructure
+      label: 'Infrastructure (opt)'
+      optional: true
+      parameters: {}
+  - id: migrate
+    type: skill
+    position:
+      x: 4600
+      y: 200
+    data:
+      skill: impl-build-migrate
+      label: 'Migrate'
+      optional: false
+      parameters: {}
+  - id: seed
+    type: skill
+    position:
+      x: 4800
+      y: 200
+    data:
+      skill: impl-build-seed
+      label: 'Seed'
+      optional: false
+      parameters: {}
+  - id: docs
+    type: skill
+    position:
+      x: 5000
+      y: 200
+    data:
+      skill: impl-build-docs
+      label: 'Build Docs'
+      optional: false
+      parameters: {}
+  # --- Per-feature loop: concept-slice (no brainstorm) ---
+  - id: cs-align
+    type: skill
+    position:
+      x: 5200
+      y: 200
+    data:
+      skill: concept-slice-align
+      label: 'Concept Slice: Align'
+      optional: false
+      parameters: {}
+  - id: cs-scope-feature
+    type: skill
+    position:
+      x: 5400
+      y: 200
+    data:
+      skill: concept-slice-scope-feature
+      label: 'Concept Slice: Scope Feature'
+      optional: false
+      parameters: {}
+  - id: cs-design-feature
+    type: skill
+    position:
+      x: 5600
+      y: 200
+    data:
+      skill: concept-slice-design-feature
+      label: 'Concept Slice: Design Feature'
+      optional: false
+      parameters: {}
+  # --- Per-feature loop: impl-slice (full) ---
+  - id: i-brainstorm
+    type: skill
+    position:
+      x: 5800
+      y: 200
+    data:
+      skill: impl-plan-brainstorm
+      label: 'Impl Plan: Brainstorm'
+      optional: false
+      parameters: {}
+  - id: i-align
+    type: skill
+    position:
+      x: 6000
+      y: 200
+    data:
+      skill: impl-plan-align
+      label: 'Impl Plan: Align'
+      optional: false
+      parameters: {}
+  - id: i-plan-vertical
+    type: skill
+    position:
+      x: 6200
+      y: 200
+    data:
+      skill: impl-plan-plan-vertical
+      label: 'Impl Plan: Vertical Plan'
+      optional: false
+      parameters: {}
+  - id: i-implement
+    type: skill
+    position:
+      x: 6400
+      y: 200
+    data:
+      skill: impl-slice-implement
+      label: 'Impl Slice: Implement'
+      optional: false
+      parameters: {}
+  - id: i-test
+    type: skill
+    position:
+      x: 6600
+      y: 200
+    data:
+      skill: impl-slice-test
+      label: 'Impl Slice: Test'
+      optional: false
+      parameters: {}
+  - id: i-recap
+    type: skill
+    position:
+      x: 6800
+      y: 200
+    data:
+      skill: impl-slice-recap
+      label: 'Impl Slice: Recap'
+      optional: false
+      parameters: {}
+  - id: i-refactor
+    type: skill
+    position:
+      x: 7000
+      y: 200
+    data:
+      skill: impl-slice-refactor
+      label: 'Impl Slice: Refactor'
+      optional: false
+      parameters: {}
+  - id: i-commit
+    type: skill
+    position:
+      x: 7200
+      y: 200
+    data:
+      skill: impl-slice-commit
+      label: 'Impl Slice: Commit'
+      optional: false
+      parameters: {}
+  # --- Quality ---
+  - id: q-test-unit
+    type: skill
+    position:
+      x: 7400
+      y: 200
+    data:
+      skill: impl-quality-test-unit
+      label: 'Unit Tests'
+      optional: false
+      parameters: {}
+  - id: q-test-integration
+    type: skill
+    position:
+      x: 7600
+      y: 200
+    data:
+      skill: impl-quality-test-integration
+      label: 'Integration Tests'
+      optional: false
+      parameters: {}
+  - id: q-test-e2e
+    type: skill
+    position:
+      x: 7800
+      y: 200
+    data:
+      skill: impl-quality-test-e2e
+      label: 'E2E Tests'
+      optional: false
+      parameters: {}
+  - id: q-ready
+    type: skill
+    position:
+      x: 8000
+      y: 200
+    data:
+      skill: impl-quality-ready
+      label: 'Release Ready'
+      optional: false
+      parameters: {}
+  # --- Ops ---
+  - id: ops-review
+    type: skill
+    position:
+      x: 8200
+      y: 200
+    data:
+      skill: ops-review
+      label: 'Ops Review'
+      optional: false
+      parameters: {}
+  - id: ops-sync
+    type: skill
+    position:
+      x: 8400
+      y: 200
+    data:
+      skill: ops-sync
+      label: 'Ops Sync'
+      optional: false
+      parameters: {}
+edges:
+  - id: e-scope-brief
+    source: scope
+    target: brief
+    type: flow
+  - id: e-brief-goals
+    source: brief
+    target: goals
+    type: optional
+  - id: e-goals-comparable
+    source: goals
+    target: comparable
+    type: optional
+  - id: e-comparable-brand-visual
+    source: comparable
+    target: brand-visual
+    type: flow
+  - id: e-brand-visual-inspiration
+    source: brand-visual
+    target: inspiration
+    type: optional
+  - id: e-inspiration-journeys
+    source: inspiration
+    target: journeys
+    type: flow
+  - id: e-journeys-behaviors-opt
+    source: journeys
+    target: behaviors-opt
+    type: optional
+  - id: e-behaviors-opt-features
+    source: behaviors-opt
+    target: features
+    type: flow
+  - id: e-features-screens
+    source: features
+    target: screens
+    type: flow
+  - id: e-screens-components
+    source: screens
+    target: components
+    type: flow
+  - id: e-components-mock-walkthrough
+    source: components
+    target: mock-walkthrough
+    type: parallel
+  - id: e-components-mock-static-fallback
+    source: components
+    target: mock-static-fallback
+    type: parallel
+  - id: e-components-comp-storybook
+    source: components
+    target: comp-storybook
+    type: parallel
+  - id: e-mock-walkthrough-feedback-annotate
+    source: mock-walkthrough
+    target: feedback-annotate
+    type: optional
+  - id: e-mock-static-fallback-feedback-annotate
+    source: mock-static-fallback
+    target: feedback-annotate
+    type: optional
+  - id: e-comp-storybook-feedback-annotate
+    source: comp-storybook
+    target: feedback-annotate
+    type: optional
+  - id: e-feedback-annotate-feedback-triage
+    source: feedback-annotate
+    target: feedback-triage
+    type: optional
+  - id: e-feedback-triage-feedback-patch
+    source: feedback-triage
+    target: feedback-patch
+    type: optional
+  - id: e-feedback-patch-feedback-apply
+    source: feedback-patch
+    target: feedback-apply
+    type: optional
+  - id: e-feedback-apply-techstack
+    source: feedback-apply
+    target: techstack
+    type: flow
+  - id: e-techstack-templates
+    source: techstack
+    target: templates
+    type: optional
+  - id: e-templates-arch-system
+    source: templates
+    target: arch-system
+    type: flow
+  - id: e-arch-system-datamodel
+    source: arch-system
+    target: datamodel
+    type: flow
+  - id: e-datamodel-scaffold
+    source: datamodel
+    target: scaffold
+    type: flow
+  - id: e-scaffold-foundation
+    source: scaffold
+    target: foundation
+    type: flow
+  - id: e-foundation-infra-opt
+    source: foundation
+    target: infra-opt
+    type: optional
+  - id: e-infra-opt-migrate
+    source: infra-opt
+    target: migrate
+    type: flow
+  - id: e-migrate-seed
+    source: migrate
+    target: seed
+    type: flow
+  - id: e-seed-docs
+    source: seed
+    target: docs
+    type: flow
+  - id: e-docs-cs-align
+    source: docs
+    target: cs-align
+    type: flow
+  - id: e-cs-align-cs-scope-feature
+    source: cs-align
+    target: cs-scope-feature
+    type: flow
+  - id: e-cs-scope-feature-cs-design-feature
+    source: cs-scope-feature
+    target: cs-design-feature
+    type: flow
+  - id: e-cs-design-feature-i-brainstorm
+    source: cs-design-feature
+    target: i-brainstorm
+    type: flow
+  - id: e-i-brainstorm-i-align
+    source: i-brainstorm
+    target: i-align
+    type: flow
+  - id: e-i-align-i-plan-vertical
+    source: i-align
+    target: i-plan-vertical
+    type: flow
+  - id: e-i-plan-vertical-i-implement
+    source: i-plan-vertical
+    target: i-implement
+    type: flow
+  - id: e-i-implement-i-test
+    source: i-implement
+    target: i-test
+    type: flow
+  - id: e-i-test-i-recap
+    source: i-test
+    target: i-recap
+    type: flow
+  - id: e-i-recap-i-refactor
+    source: i-recap
+    target: i-refactor
+    type: flow
+  - id: e-i-refactor-i-commit
+    source: i-refactor
+    target: i-commit
+    type: flow
+  - id: e-i-commit-q-test-unit
+    source: i-commit
+    target: q-test-unit
+    type: flow
+  - id: e-q-test-unit-q-test-integration
+    source: q-test-unit
+    target: q-test-integration
+    type: flow
+  - id: e-q-test-integration-q-test-e2e
+    source: q-test-integration
+    target: q-test-e2e
+    type: flow
+  - id: e-q-test-e2e-q-ready
+    source: q-test-e2e
+    target: q-ready
+    type: flow
+  - id: e-q-ready-ops-review
+    source: q-ready
+    target: ops-review
+    type: flow
+  - id: e-ops-review-ops-sync
+    source: ops-review
+    target: ops-sync
+    type: flow

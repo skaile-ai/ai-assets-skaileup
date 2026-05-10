@@ -11,23 +11,23 @@ larger apps where the whole product is too big to design or build in one pass.
 ## 1. Top-Level Layout
 
 ```
-skaileup/                      base orchestrator: routes user, runs flows
-  scope/                       NEW — interviews user, picks size tier
-                               writes _concept/_meta/scope.yaml
-flows/                         mvp · simple-app · standard-app · complex-app
+skaileup/skaileup-orchestrator/  base orchestrator: routes user, runs flows
+  scope/                          NEW — interviews user, picks size tier
+                                  writes _concept/_meta/scope.yaml
+skaileup/flows/                mvp · simple-app · standard-app · complex-app
                                + slice flows: concept-slice · impl-slice
-bundles/                       matching bundles for every flow
+                               (flow + bundle co-located per app-type subfolder)
 
-CONCEPT
+CONCEPT  (all under skaileup/)
   concept/                     brief · goals · comparable
   design/                      brand-identity · tokens · voice · inspiration
   product-spec/                features · acceptance criteria
   experience/                  journeys · behaviors · screens · components
-  component-mockup/            components in isolation (see REFACTOR_MOCKUP.md):
-                               component-mockup-storybook
-                               component-mockup-isolated-html
-  walkthrough-mockup/          clickable application:
-                               walkthrough-mockup-{text, static-html, lit,
+  mockup-component/            components in isolation (see REFACTOR_MOCKUP.md):
+                               mockup-component-storybook
+                               mockup-component-isolated-html
+  mockup-walkthrough/          clickable application:
+                               mockup-walkthrough-{text, static-html, lit,
                                                    astro★, framework}
                                (★ default for standard-app)
   mockup-feedback/             annotation → patch loop:
@@ -36,9 +36,9 @@ CONCEPT
   concept-slice/               NEW — per-feature concept loop (big apps only):
                                brainstorm · align · scope-feature ·
                                design-feature  (writes one feature's portion
-                               of product-spec + experience + walkthrough-mockup)
+                               of product-spec + experience + mockup-walkthrough)
 
-IMPLEMENTATION
+IMPLEMENTATION  (all under skaileup/)
   impl-architecture/           techstack · system · datamodel · templates/
   impl-plan/                   brainstorm · align · plan-vertical · supervised
                                (testing-strategy is part of plan output)
@@ -52,9 +52,11 @@ IMPLEMENTATION
                                eval-code · audit · ready · standards-*
                                debug-{self-verify, handoff}
 
-META
+META — user-facing  (under skaileup/)
   ops/                         review · sync · eval · add-feature
                                reverse-engineer · project-* (cross-cutting)
+
+META — system assets  (under ai-assets/)
   lab/                         validate · judge · improve · learn
                                compile-validators · compile-bundle
   contracts/                   shared reference layer (every skill reads)
@@ -73,9 +75,9 @@ META
                     ╚══════════╤══════════╝
                                │
                                ▼
-                    ┌──────────────────────────┐
-                    │ skaileup/scope/          │   2-3 questions:
-                    │   scope-project          │   how many features?
+                    ┌──────────────────────────────────────┐
+                    │ skaileup/skaileup-orchestrator/scope │   2-3 questions:
+                    │   scope-project                      │   how many features?
                     │                          │   single user / multi-user?
                     │   ► writes               │   integrations?
                     │     _concept/_meta/      │
@@ -85,10 +87,10 @@ META
                                  │
                                  │  (user can override)
                                  ▼
-                    ┌──────────────────────────────────┐
-                    │  flows/<tier>.flow.yaml          │
-                    │  bundles/<tier>.bundle.yaml      │  ◄ install only
-                    └───────────────┬──────────────────┘    what tier needs
+                    ┌──────────────────────────────────────────────┐
+                    │  skaileup/flows/<tier>/<tier>.flow.yaml      │
+                    │  skaileup/flows/<tier>/<tier>.bundle.yaml    │  ◄ install only
+                    └───────────────────────┬──────────────────────┘    what tier needs
                                     │
               ┌─────────────────────┴──────────────────────────┐
               ▼                                                ▼
@@ -198,8 +200,8 @@ For **mvp** and **simple-app**, concept runs **linearly** (one pass, no slicing)
    └──────────────────┘  └────────┬─────────┘
                                   │
                                   ▼   ┌─────────────────────────────┐
-                                  └──►│ component-mockup-* +        │
-                                      │ walkthrough-mockup-<tier>   │
+                                  └──►│ mockup-component-* +        │
+                                      │ mockup-walkthrough-<tier>   │
                                       │ (one mockup variant per     │
                                       │  vertical slice; section-   │
                                       │  level patches via mockup-  │
@@ -260,11 +262,11 @@ implementation, and learn from delivery before designing the next.
 
 ```
    experience/screens/login.md                          ← screen spec (single source)
-   _concept/walkthrough-mockup/text/login.txt           ← ASCII wireframe
-   _concept/walkthrough-mockup/static-html/login.html   ← zero-build HTML
-   _concept/walkthrough-mockup/lit/login.ts             ← Lit web component
-   _concept/walkthrough-mockup/astro/login.astro        ← Astro page (default tier)
-   _concept/component-mockup/storybook/Login.stories.ts ← Storybook entry
+   _concept/mockup-walkthrough/text/login.txt           ← ASCII wireframe
+   _concept/mockup-walkthrough/static-html/login.html   ← zero-build HTML
+   _concept/mockup-walkthrough/lit/login.ts             ← Lit web component
+   _concept/mockup-walkthrough/astro/login.astro        ← Astro page (default tier)
+   _concept/mockup-component/storybook/Login.stories.ts ← Storybook entry
 
    shared filename stem ⇒ traceability is mechanical
    data-spec-screen + data-spec-element on rendered DOM ⇒ feedback loop hooks
@@ -399,16 +401,29 @@ $ skaile run flow:simple-app            # execute the flow
 ```
 
 ```
-flows/                                              bundles/
-├── concept-slice.flow.yaml   ◄── pair ──►        ├── concept-slice.bundle.yaml
-│                                                  │   per-feature concept loop
-├── impl-slice.flow.yaml      ◄── pair ──►        ├── impl-slice.bundle.yaml
-│                                                  │   per-feature impl loop
-├── mvp.flow.yaml             ◄── pair ──►        ├── mvp.bundle.yaml
-├── simple-app.flow.yaml      ◄── pair ──►        ├── simple-app.bundle.yaml
-├── standard-app.flow.yaml    ◄── pair ──►        ├── standard-app.bundle.yaml
-├── complex-app.flow.yaml     ◄── pair ──►        ├── complex-app.bundle.yaml
-└── custom.flow.yaml          ◄── pair ──►        └── custom.bundle.yaml
+skaileup/flows/                   (flow + bundle co-located per app-type subfolder)
+├── concept-slice/
+│   ├── concept-slice.flow.yaml   per-feature concept loop
+│   └── concept-slice.bundle.yaml
+├── impl-slice/
+│   ├── impl-slice.flow.yaml      per-feature impl loop
+│   └── impl-slice.bundle.yaml
+├── mvp/
+│   ├── mvp.flow.yaml
+│   └── mvp.bundle.yaml
+├── simple-app/
+│   ├── simple-app.flow.yaml
+│   └── simple-app.bundle.yaml
+├── standard-app/
+│   ├── standard-app.flow.yaml
+│   └── standard-app.bundle.yaml
+├── complex-app/
+│   ├── complex-app.flow.yaml
+│   └── complex-app.bundle.yaml
+└── _meta/
+    ├── verify_flows.py
+    ├── test_verify.py
+    └── deferred_skills.yaml
 ```
 
 The two slice flows are **building blocks**. Tier flows compose them:
@@ -439,7 +454,7 @@ complex-app.flow.yaml:
 ```
                             mvp  simple  standard  complex
                             ────────────────────────────────
-   skaileup/scope/scope     ✓    ✓       ✓         ✓
+   skaileup/skaileup-orchestrator/scope/scope     ✓    ✓       ✓         ✓
    ───────────────────────────────────────────────────────
    concept/brief            ✓    ✓       ✓         ✓
    concept/goals                         ✓         ✓
@@ -452,13 +467,13 @@ complex-app.flow.yaml:
    experience/behaviors                  (opt)     ✓
    experience/screens            ✓       ✓         ✓
    experience/components                 ✓         ✓
-   walkthrough-mockup-text      ✓
-   walkthrough-mockup-static-html      ✓
-   walkthrough-mockup-lit                          (alt for embedded)
-   walkthrough-mockup-astro                        ✓ (default)
-   walkthrough-mockup-framework                                    ✓
-   component-mockup-isolated-html      ✓
-   component-mockup-storybook                      ✓               ✓
+   mockup-walkthrough-text      ✓
+   mockup-walkthrough-static-html      ✓
+   mockup-walkthrough-lit                          (alt for embedded)
+   mockup-walkthrough-astro                        ✓ (default)
+   mockup-walkthrough-framework                                    ✓
+   mockup-component-isolated-html      ✓
+   mockup-component-storybook                      ✓               ✓
    mockup-feedback-annotate                        ✓               ✓
    mockup-feedback-triage                          ✓               ✓
    mockup-feedback-patch                           ✓               ✓
@@ -611,38 +626,38 @@ because no single phase carries the whole slice in context.
 
 | Current domain / skill | Proposed location |
 |---|---|
-| `skaileup` (base) | `skaileup/` (gains a new `scope/` cluster) |
-| `skaileup-grounding` | `concept/grounding/` (keeps onboard, research, seeds together — Phase 1 conservative; future Phase may promote `onboard/` to `concept/onboard/` once usage patterns are clearer) |
-| `skaileup-discovery` | split: brief→`concept/`, brand-*→`design/` |
-| `skaileup-experience` | split: features→`product-spec/`, journeys+behaviors+screens+components→`experience/` |
-| `skaileup-architecture` | `impl-architecture/{techstack,system,templates}` |
-| `skaileup-datamodel` | `impl-architecture/datamodel/` |
-| `skaileup-concept-mockup` | `walkthrough-mockup-text` |
-| `skaileup-concept-storybook` | `component-mockup-storybook` (consolidates 6 sub-skills) |
-| **NEW** | `component-mockup-isolated-html` |
-| **NEW** | `walkthrough-mockup-{static-html, lit, astro, framework}` |
-| **NEW** | `mockup-feedback-{annotate, triage, patch, apply}` |
+| `skaileup` (base) | `skaileup/skaileup-orchestrator/` (gains a new `scope/` cluster) |
+| `skaileup-grounding` | `skaileup/concept/grounding/` (keeps onboard, research, seeds together — Phase 1 conservative; future Phase may promote `onboard/` to `skaileup/concept/onboard/` once usage patterns are clearer) |
+| `skaileup-discovery` | split: brief→`skaileup/concept/`, brand-*→`skaileup/design/` |
+| `skaileup-experience` | split: features→`skaileup/product-spec/`, journeys+behaviors+screens+components→`skaileup/experience/` |
+| `skaileup-architecture` | `skaileup/impl-architecture/{techstack,system,templates}` |
+| `skaileup-datamodel` | `skaileup/impl-architecture/datamodel/` |
+| `skaileup-concept-mockup` | `skaileup/mockup-walkthrough-text` |
+| `skaileup-concept-storybook` | `skaileup/mockup-component-storybook` (consolidates 6 sub-skills) |
+| **NEW** | `skaileup/mockup-component-isolated-html` |
+| **NEW** | `skaileup/mockup-walkthrough-{static-html, lit, astro, framework}` |
+| **NEW** | `skaileup/mockup-feedback-{annotate, triage, patch, apply}` |
 | **NEW** | `_feedback/` workspace zone (sessions, patches, applied, devlog.md) |
 | **NEW** | `elements:` frontmatter block on screens (with provisional-ID promotion) |
-| `skaileup-concept-ops` | `ops/` (review, sync, eval, add-feature, reverse-engineer, project-*) |
-| `skaileup-build` (one-time skills) | `impl-build/` |
-| `skaileup-build/skills/feature` | **split** → `impl-slice/{implement,test,refactor,commit}` |
-| `skaileup-build/skills/feature/feature-page` | merged into `impl-slice/implement` |
-| `skaileup-build-supervised/brainstorm` | **promoted** → `impl-plan/brainstorm` |
-| `skaileup-build-supervised/plan` | **renamed** → `impl-plan/plan-vertical` |
-| `skaileup-build-supervised/git-prepare` | merged into `impl-slice/commit` |
-| `skaileup-build-supervised/finish` | merged into `impl-slice/commit` |
-| `skaileup-quality` | `impl-quality/` |
-| `skaileup-quality/profiles/*` | **promoted** → `impl-architecture/templates/` |
-| `skaileup-lab` | `lab/` (+ `lab/compile-bundle/` new) |
-| `skaileup-contracts` | `contracts/` (unchanged) |
-| **NEW** | `skaileup/scope/scope-project` (interview + tier picker) |
-| **NEW** | `concept-slice/{brainstorm, align, scope-feature, design-feature}` |
-| **NEW** | `impl-plan/align` (grill-me style deep interview) |
-| **NEW** | `impl-slice/recap` (explain + diagram, mandatory) |
-| **NEW** | `impl-quality/debug/{self-verify, handoff}` |
-| **NEW** | `flows/{concept-slice, impl-slice, mvp, simple-app, standard-app, complex-app}.flow.yaml` |
-| **NEW** | matching `bundles/*.bundle.yaml` |
+| `skaileup-concept-ops` | `skaileup/ops/` (review, sync, eval, add-feature, reverse-engineer, project-*) |
+| `skaileup-build` (one-time skills) | `skaileup/impl-build/` |
+| `skaileup-build/skills/feature` | **split** → `skaileup/impl-slice/{implement,test,refactor,commit}` |
+| `skaileup-build/skills/feature/feature-page` | merged into `skaileup/impl-slice/implement` |
+| `skaileup-build-supervised/brainstorm` | **promoted** → `skaileup/impl-plan/brainstorm` |
+| `skaileup-build-supervised/plan` | **renamed** → `skaileup/impl-plan/plan-vertical` |
+| `skaileup-build-supervised/git-prepare` | merged into `skaileup/impl-slice/commit` |
+| `skaileup-build-supervised/finish` | merged into `skaileup/impl-slice/commit` |
+| `skaileup-quality` | `skaileup/impl-quality/` |
+| `skaileup-quality/profiles/*` | **promoted** → `skaileup/impl-architecture/templates/` |
+| `skaileup-lab` | `ai-assets/lab/` (+ `ai-assets/lab/compile-bundle/` new) |
+| `skaileup-contracts` | `skaileup/contracts/` (moved from `ai-assets/contracts/`) |
+| **NEW** | `skaileup/skaileup-orchestrator/scope/scope-project` (interview + tier picker) |
+| **NEW** | `skaileup/concept-slice/{brainstorm, align, scope-feature, design-feature}` |
+| **NEW** | `skaileup/impl-plan/align` (grill-me style deep interview) |
+| **NEW** | `skaileup/impl-slice/recap` (explain + diagram, mandatory) |
+| **NEW** | `skaileup/impl-quality/debug/{self-verify, handoff}` |
+| **NEW** | `skaileup/flows/{concept-slice,impl-slice,mvp,simple-app,standard-app,complex-app}/*.flow.yaml` |
+| **NEW** | matching `skaileup/flows/*/*.bundle.yaml` (co-located with flows) |
 
 ---
 

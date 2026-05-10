@@ -1,0 +1,32 @@
+# flows/_meta/deferred_skills.yaml
+#
+# Skills referenced by SKILL_GRAPH § 6 tier-composition table (and therefore
+# by Phase 2 tier flows) that have no Phase-2 mini-plan authoring them.
+# The verifier (flows/_meta/verify_flows.py) emits WARNING (not ERROR) for
+# these names. Phase 3 must close this list.
+#
+# Each entry MUST carry a one-line rationale per the Task 2H executing-agent
+# decisions (see plan § "Open Questions" #1 and #2).
+deferred_phase_3:
+  - name: concept-goals
+    reason: "Phase 3 — concept-goals (referenced by standard-app/complex-app)"
+  - name: concept-comparable
+    reason: "Phase 3 — concept-comparable (referenced by standard-app/complex-app)"
+  - name: design-inspiration
+    reason: "Phase 3 — design-inspiration (referenced by standard-app/complex-app)"
+  - name: mockup-walkthrough-lit
+    reason: "Phase 3 — mockup-walkthrough-lit (alt for embedded contexts in complex-app)"
+  - name: mockup-walkthrough-astro
+    reason: "Phase 3 — mockup-walkthrough-astro (default mockup for standard-app)"
+  - name: mockup-walkthrough-framework
+    reason: "Phase 3 — mockup-walkthrough-framework (complex-app)"
+  - name: mockup-feedback-annotate
+    reason: "Phase 3 — mockup-feedback-annotate (mockup feedback cluster, standard/complex)"
+  - name: mockup-feedback-triage
+    reason: "Phase 3 — mockup-feedback-triage (mockup feedback cluster, standard/complex)"
+  - name: mockup-feedback-patch
+    reason: "Phase 3 — mockup-feedback-patch (mockup feedback cluster, standard/complex)"
+  - name: mockup-feedback-apply
+    reason: "Phase 3 — mockup-feedback-apply (mockup feedback cluster, standard/complex)"
+  - name: impl-architecture-templates-select
+    reason: "Phase 3 — selector skill that picks one of impl-architecture/templates/template-* based on signals from scope.yaml + techstack output. The 7 concrete stack templates (template-postxl, template-nextjs-radix, template-nextjs-shadcn, template-nuxt-minimal, template-nuxt-primevue, template-nuxt-ui, template-sveltekit-minimal) already exist as real skills; this is the runtime chooser. See impl-architecture/templates/DOMAIN.md."
