@@ -19,6 +19,7 @@ Applies skills to skills themselves: validate, judge, improve, learn, compile va
 - **lab-report** (`report/`) — Generates structured validation and improvement reports with trend analysis.
 - **lab-compile-validators** (`compile-validators/`) — Compiles MUST/NEVER/CHECKLIST rules from `SKILL.md` files into fast deterministic Python `validator.py` scripts.
 - **lab-compile-bundle** (`compile-bundle/`) — Syncs `bundles/*.bundle.yaml` with `flows/*.flow.yaml` by adding any missing `skill:` entries. Additive only — never removes user-added entries. Run after modifying a flow. CI guard: `scripts/check-bundles.sh`.
+- **lab-archive** (`archive/`) — Rolls up old `_feedback/devlog.md` entries into quarterly archive files when entry count reaches 500. Keeps the 200 most recent in the live devlog. Lossless, idempotent, atomic writes.
 - **lab-validate-elements-block** (`validate-elements-block/`) — Validates the `elements:` block in screen frontmatter or example fixtures; returns 0 for valid, non-zero with line numbers for invalid.
 
 ## Cross-references
