@@ -15,3 +15,6 @@ _slice/
 # Per-developer feedback evidence (committed: applied/, devlog.md only)
 _feedback/sessions/
 _feedback/patches/
+
+# Git worktrees
+.worktrees/
