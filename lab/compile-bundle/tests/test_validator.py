@@ -67,7 +67,7 @@ def test_warns_and_continues_when_no_bundle_for_flow(tmp_path, capsys):
     make_flow(f, "orphan", ["skill-a"])
     rc = run_validator(f, b)
     captured = capsys.readouterr()
-    assert "orphan" in captured.out or "orphan" in captured.err
+    assert "orphan" in captured.err
     assert rc == 0  # warning only, no gap found
 
 
@@ -76,3 +76,19 @@ def test_ignores_bundle_with_no_matching_flow(tmp_path):
     f.mkdir(); b.mkdir()
     make_bundle(b, "user-bundle", ["skill-a"])  # no matching flow
     assert run_validator(f, b) == 0
+
+
+def test_exits_1_on_circular_inheritance(tmp_path):
+    f, b = tmp_path / "flows", tmp_path / "bundles"
+    f.mkdir(); b.mkdir()
+    make_flow(f, "alpha", ["skill-a"])
+    make_bundle(b, "alpha", ["skill-a"], parents=["beta"])
+    make_bundle(b, "beta", [], parents=["alpha"])
+    assert run_validator(f, b) == 1
+
+
+def test_exits_1_on_malformed_flow_yaml(tmp_path):
+    f, b = tmp_path / "flows", tmp_path / "bundles"
+    f.mkdir(); b.mkdir()
+    (f / "bad.flow.yaml").write_text(": bad: yaml: [\n", encoding="utf-8")
+    assert run_validator(f, b) == 1

@@ -34,7 +34,7 @@ def main(
 
     for stem, flow_skills in sorted(flows.items()):
         if stem not in bundles:
-            print(f"WARNING: no bundle for flow '{stem}' — skipping")
+            print(f"WARNING: no bundle for flow '{stem}' — skipping", file=sys.stderr)
             continue
 
         try:
