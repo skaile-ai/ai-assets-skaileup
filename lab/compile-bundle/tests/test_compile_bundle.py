@@ -129,3 +129,16 @@ def test_warns_but_continues_when_no_bundle_for_flow(tmp_path, capsys):
     run_main(f, b)
     captured = capsys.readouterr()
     assert "orphan-flow" in captured.err
+
+
+def test_exits_1_on_circular_bundle_inheritance(tmp_path):
+    f, b = tmp_path / "flows", tmp_path / "bundles"
+    f.mkdir(); b.mkdir()
+    make_flow(f, "a", ["skill-x"])
+    make_flow(f, "b", ["skill-y"])
+    # circular: a → b → a
+    make_bundle(b, "a", "name: a\nrequires:\n  - bundle:b\n  - skill:skill-x\n")
+    make_bundle(b, "b", "name: b\nrequires:\n  - bundle:a\n  - skill:skill-y\n")
+    with pytest.raises(SystemExit) as exc_info:
+        run_main(f, b)
+    assert exc_info.value.code == 1
