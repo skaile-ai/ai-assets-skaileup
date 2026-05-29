@@ -14,6 +14,7 @@ metadata:
     - 'routes'
     - 'navigation'
   source: 'MIGRATED'
+  do_not_invoke: true
   parameters:
     depth:
       type: enum

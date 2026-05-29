@@ -15,7 +15,7 @@ Establishes the technical foundation before any code is written: stack selection
 - **impl-architecture-techstack** (`techstack/`) — Reads `templates/` profiles, asks plain-language questions, recommends a stack, writes `stack.md`.
 - **impl-architecture-system** (`system/`) — Produces `architecture.md`: system overview, backend structure, data flow, communication protocols, external integrations, infrastructure.
 - **impl-architecture-datamodel** (`datamodel/`) — Produces `_concept/blueprint/datamodel/model.dbml`, `model.json`, `seed.json`, and `feature_map.json`.
-- **templates/** (`templates/`) — 7 scaffold templates (PostXL, Next.js + Radix, Next.js + shadcn, Nuxt minimal/UI/PrimeVue, SvelteKit minimal). Each is a standalone skill; the agent picks one after `techstack` selects a stack.
+- **templates/** (`templates/`) — 7 scaffold reference templates (PostXL, Next.js + Radix, Next.js + shadcn, Nuxt minimal/UI/PrimeVue, SvelteKit minimal). Each is a `TEMPLATE.md` reference asset (not a skill); `techstack` reads the matching one after stack selection.
 
 ## When to Use
 

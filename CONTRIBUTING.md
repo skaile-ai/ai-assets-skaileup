@@ -12,6 +12,7 @@ recursively and building a catalog from recognized manifest files:
 | Filename | Asset kind |
 |---|---|
 | `SKILL.md` | `skill` |
+| `TEMPLATE.md` | `template` |
 | `AGENT.md` | `agent` |
 | `agent.yaml` | `agent` |
 | `CONTRACT.md` | `contract` |

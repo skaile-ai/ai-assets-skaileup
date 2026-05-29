@@ -2,6 +2,7 @@
 name: 'template-nuxt-minimal'
 description: 'Reference document and invocable skill for the Nuxt 4 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
+  type: template
   version: '0.1.0'
   tags:
     - 'nuxt'

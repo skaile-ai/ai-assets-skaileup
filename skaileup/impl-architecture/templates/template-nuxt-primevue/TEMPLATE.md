@@ -2,6 +2,7 @@
 name: 'template-nuxt-primevue'
 description: 'Reference document and invocable skill for the Nuxt 4 + PrimeVue 4 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
+  type: template
   version: '0.1.0'
   tags:
     - 'nuxt'

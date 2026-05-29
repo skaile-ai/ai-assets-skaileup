@@ -323,6 +323,47 @@ metadata:
 
 ---
 
+## Template — TEMPLATE.md
+
+Reference asset for scaffold recipes, version constraint tables, and technology-specific
+implementation details that are too large or too reference-focused to be a skill prompt.
+Templates are **read by** skills (`impl-architecture/techstack`, `impl-build/scaffold`, etc.)
+rather than invoked directly. Not discoverable by the skill router (`do_not_invoke` is
+implied by the `TEMPLATE.md` filename).
+
+```yaml
+---
+name: template-name                     # kebab-case; matches parent directory name
+description: "One-line summary of stack/scaffold this template describes."
+metadata:
+  type: template
+  version: "0.1.0"
+  stage: alpha | beta | stable
+  tags: [framework, language, db]       # searchable stack keywords
+  stack:
+    frontend: next15 | nuxt3 | sveltekit | ...
+    ui_library: radix | shadcn | primevue | ...
+    backend: directus | hono | ...
+    database: postgresql | sqlite | ...
+    package_manager: bun | pnpm | npm | yarn
+---
+```
+
+### Template directory structure
+
+```
+template-name/
+├── TEMPLATE.md         # Required: metadata + reference content (scaffold recipes, version tables)
+├── references/         # Optional: additional reference files loaded on demand
+└── scripts/            # Optional: scaffolding helpers
+```
+
+Consumers read `TEMPLATE.md` directly when the `tech_stack_skill` field in
+`_concept/blueprint/techstack.md` matches the template name. The Starlight site
+renders templates as reference pages in the `impl-architecture/templates/` section.
+
+---
+
 ## Migration from Previous Schema
 
 ### Skill files
