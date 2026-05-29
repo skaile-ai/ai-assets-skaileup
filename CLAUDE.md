@@ -9,15 +9,13 @@ All `skaileup-*` skills for the concept, build, and quality pipelines. Extracted
 ## Documentation
 
 - **Starlight site** at [`docs/`](./docs/) — `npm run docs` (or `cd docs && npm install && npm run dev`). Every SKILL.md is rendered as its own page with frontmatter + body, plus pages for the mental model, slice loops, tiers, flows + bundles, and the contracts reference layer.
-- **[`SKILL_GRAPH.md`](./SKILL_GRAPH.md)** — design rationale and migration map.
-- **[`REFACTOR_MOCKUP.md`](./REFACTOR_MOCKUP.md)** — mockup cluster design (component / walkthrough / feedback).
 - **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — skill-authoring guide for the `skaile` CLI.
-- **[`IMPROVEMENT.md`](./IMPROVEMENT.md)** — open issues and roadmap from the 2026-05-10 review.
+- **[`docs/devlog/`](./docs/devlog/)** — plans, specs, design notes, and the improvement backlog.
 
 ## Structure
 
 Skills are organized into 17 domains in three groups (Concept, Implementation, Meta).
-User-facing skill domains live under `skaileup/`. System/meta assets live under `ai-assets/`.
+User-facing skill domains live under `skaileup/`. System/meta assets live under `ai-assets-dev/`.
 
 ### Concept  (`skaileup/`)
 ```
@@ -46,15 +44,15 @@ skaileup/skaileup-orchestrator/         base orchestrators (skaileup, skaileup-b
 skaileup/ops/                           cross-cutting: review · sync · eval · add-feature · reverse-engineer · project-*
 ```
 
-### Meta — system assets  (`ai-assets/` and `skaileup/`)
+### Meta — system assets  (`ai-assets-dev/` and `skaileup/`)
 ```
 skaileup/contracts/                     shared reference layer (every skill reads)
 skaileup/flows/                         flow + bundle YAMLs, co-located per app-type
 skaileup/flows/_meta/                   verify_flows.py · test_verify.py · deferred_skills.yaml
-ai-assets/lab/                          skill-on-skill: validate · judge · improve · learn · compile-bundle
-ai-assets/scripts/                      CI scripts (check-bundles.sh — drift guard against skaileup/flows/)
-ai-assets/tests/                        test fixtures
-ai-assets/superpowers/                  working notes, plans, specs
+ai-assets-dev/lab/                      skill-on-skill: validate · judge · improve · learn · compile-bundle
+ai-assets-dev/scripts/                  CI scripts (check-bundles.sh — drift guard against skaileup/flows/)
+ai-assets-dev/tests/                    test fixtures
+docs/devlog/                            plans, specs, design notes, improvement backlog
 ```
 
 ## Skill Structure
@@ -96,7 +94,7 @@ Every skill's `name:` follows the **domain-relative path** (without the `skaileu
 
 **Exception — base orchestrator skills:** Skills inside `skaileup/skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`) instead of the path-based form. The base orchestrator is the catalog's entry point; doubled prefixes would be awkward.
 
-> **Note.** The `CONTRIBUTING.md` § Naming Conventions section says `name:` must match the parent directory name exactly. The catalog actually uses path-based naming where the parent directory is just the last segment (`brief/` → `concept-brief`). The path-prefix convention here is authoritative; `CONTRIBUTING.md` is being reconciled. See [`IMPROVEMENT.md`](./IMPROVEMENT.md) item A1.
+> **Note.** The `CONTRIBUTING.md` § Naming Conventions section says `name:` must match the parent directory name exactly. The catalog actually uses path-based naming where the parent directory is just the last segment (`brief/` → `concept-brief`). The path-prefix convention here is authoritative; `CONTRIBUTING.md` is being reconciled. See [`docs/devlog/IMPROVEMENT.md`](./docs/devlog/IMPROVEMENT.md) item A1.
 
 ## Two-Group Architecture
 
@@ -161,7 +159,7 @@ skaileup/flows/
     └── deferred_skills.yaml
 ```
 
-Bundles inherit: `mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`. Each file lists only its *additions*. `ai-assets/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file; run on every flow change to prevent drift. CI: `ai-assets/scripts/check-bundles.sh`.
+Bundles inherit: `mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`. Each file lists only its *additions*. `ai-assets-dev/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file; run on every flow change to prevent drift. CI: `ai-assets-dev/scripts/check-bundles.sh`.
 
 ## Reorganization Status
 
@@ -185,7 +183,7 @@ The catalog underwent two reorganizations:
 - [ ] Validator creation for skills that lack them (Phase 2)
 
 ### Phase 2 — to be planned
-Tracked in [`IMPROVEMENT.md`](./IMPROVEMENT.md). Highlights:
+Tracked in [`docs/devlog/IMPROVEMENT.md`](./docs/devlog/IMPROVEMENT.md). Highlights:
 
 - **A2/A3:** 19 skills missing `metadata.version`, 51 missing `metadata.stage` — bulk-add.
 - **A4:** 18 skills still on deprecated `metadata.user_inputs` — migrate to `prerequisites.inputs_required` / `inputs_optional`.

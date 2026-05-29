@@ -31,10 +31,8 @@ The Skaileup skill catalog — concept, build, and quality pipeline skills for t
 ## Documentation
 
 - 📖 **[Browse the full Starlight site](docs/)** — `npm run docs` to read it locally; every skill has its own page with the SKILL.md body embedded.
-- 📐 **[`SKILL_GRAPH.md`](SKILL_GRAPH.md)** — design rationale for the catalog structure.
-- 🧬 **[`REFACTOR_MOCKUP.md`](REFACTOR_MOCKUP.md)** — the mockup-cluster design: three orthogonal concerns (component / walkthrough / feedback), bidirectional sync via references + devlog, per-slice file-granularity rule.
 - 🔧 **[`CONTRIBUTING.md`](CONTRIBUTING.md)** — how to author a skill that installs correctly with the `skaile` CLI.
-- 🚦 **[`IMPROVEMENT.md`](IMPROVEMENT.md)** — open issues, splits, merges, and process gaps from the 2026-05-10 review.
+- 📁 **[`docs/devlog/`](docs/devlog/)** — plans, specs, design notes, improvement backlog.
 
 ## Layout
 
@@ -74,8 +72,8 @@ The Skaileup skill catalog — concept, build, and quality pipeline skills for t
 |---|---|
 | [`skaileup/contracts/`](skaileup/contracts/DOMAIN.md) | Reference layer (every skill reads) |
 | [`skaileup/flows/`](skaileup/flows/) | Flow + bundle YAMLs, co-located per app-type |
-| [`ai-assets/lab/`](ai-assets/lab/DOMAIN.md) | Skill-on-skill: validate · improve · compile-bundle |
-| [`ai-assets/scripts/`](ai-assets/scripts/) | CI scripts (check-bundles.sh) |
+| [`ai-assets-dev/lab/`](ai-assets-dev/lab/DOMAIN.md) | Skill-on-skill: validate · improve · compile-bundle |
+| [`ai-assets-dev/scripts/`](ai-assets-dev/scripts/) | CI scripts (check-bundles.sh) |
 
 ## Tiers
 
@@ -123,11 +121,11 @@ skaileup/flows/
     └── deferred_skills.yaml
 ```
 
-`ai-assets/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file — run on every flow change to prevent drift. CI: `ai-assets/scripts/check-bundles.sh`.
+`ai-assets-dev/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file — run on every flow change to prevent drift. CI: `ai-assets-dev/scripts/check-bundles.sh`.
 
 ## How this is consumed
 
-The `skaile` CLI and the agent runtime read SKILL.md files from disk. This repo is added as a git submodule at `ai-assets-skaileup/` in the skaile-dev shell repo, alongside `ai-assets/`.
+The `skaile` CLI and the agent runtime read SKILL.md files from disk. This repo is added as a git submodule at `ai-assets-skaileup/` in the skaile-dev shell repo.
 
 ```yaml
 # project skaile.yaml
