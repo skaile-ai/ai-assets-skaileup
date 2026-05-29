@@ -3,6 +3,7 @@ name: ops-reverse-engineer
 description: "Use when the user has an existing project repository and wants to generate or bootstrap a _concept/ folder from it. Triggered by: 'reverse engineer this project', 'generate concept from existing code', 'I have a codebase, extract the concept', 'document this existing app', 'build concept from repo'."
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'reverse'
     - 'existing'

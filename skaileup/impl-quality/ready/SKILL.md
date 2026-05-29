@@ -3,6 +3,7 @@ name: impl-quality-ready
 description: 'Pre-flight readiness check before E2E testing. Verifies that each feature has a concept doc, screen spec, data model entry, brand tokens, and tech stack. Surfaces gaps with remediation commands. Blocks testing of incomplete features.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'readiness'
     - 'preflight'

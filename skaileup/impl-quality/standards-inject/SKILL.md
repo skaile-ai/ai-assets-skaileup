@@ -2,6 +2,7 @@
 name: impl-quality-standards-inject
 description: 'Use before dispatching a skill to load applicable codebase standards. Called by orchestrator or as first step in standalone skill execution. Reads _concept/_standards/index.yml and returns matched standards.'
 metadata:
+  version: '0.1.0'
   tags:
     - 'standards'
     - 'inject'

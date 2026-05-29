@@ -2,6 +2,7 @@
 name: 'template-postxl'
 description: 'Reference document and invocable skill for the PostXL platform stack (React 19 + Vite + NestJS + Prisma + Keycloak). Read by scaffold, foundation, design, mock, and storybook skills when 3_blueprint/1_techstack/stack.md selects this stack. Fixed production stack with code generation — used by saxe-compatible projects.'
 metadata:
+  version: '0.1.0'
   tags:
     - 'postxl'
     - 'react19'

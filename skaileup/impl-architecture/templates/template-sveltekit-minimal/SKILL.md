@@ -2,6 +2,7 @@
 name: 'template-sveltekit-minimal'
 description: 'Reference document and invocable skill for the SvelteKit 2 + Svelte 5 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
+  version: '0.1.0'
   tags:
     - 'sveltekit'
     - 'svelte5'

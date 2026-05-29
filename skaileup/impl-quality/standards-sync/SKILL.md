@@ -2,6 +2,7 @@
 name: impl-quality-standards-sync
 description: "Use when pushing proven project standards back to profiles, or syncing profile standards into a project. Triggered by 'sync standards', 'update profile conventions', or 'push standards to profile'."
 metadata:
+  version: '0.1.0'
   tags:
     - 'standards'
     - 'sync'

@@ -2,6 +2,7 @@
 name: 'template-nextjs-shadcn'
 description: 'Reference document and invocable skill for the Next.js 15 + shadcn/ui + Supabase stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
 metadata:
+  version: '0.1.0'
   tags:
     - 'nextjs'
     - 'next15'

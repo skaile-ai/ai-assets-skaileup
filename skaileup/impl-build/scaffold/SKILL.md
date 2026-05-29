@@ -3,6 +3,7 @@ name: impl-build-scaffold
 description: "Scaffolds a new project from a completed concept. Reads stack.md to determine the tech stack, uses the stack's profile for scaffold commands and conventions, creates the project directory structure, initializes git, and sets up _implementation/ tracking. Run before foundation and feature implementation."
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'scaffold'
     - 'init'

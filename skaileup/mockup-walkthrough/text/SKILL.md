@@ -3,6 +3,7 @@ name: mockup-walkthrough-text
 description: "Use when screen specs are approved and user wants interactive HTML mockups. Also when user says 'mockup', 'prototype', 'show me what it looks like'. Generates a linked multi-page prototype. Supports 3 stacks: Alpine.js+Shoelace, Vue 3+PrimeVue, Preact+HTM. Auto-selects stack template from tech-stack profile if stack.md exists."
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'ui'
     - 'ux'

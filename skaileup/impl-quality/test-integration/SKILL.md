@@ -3,6 +3,7 @@ name: impl-quality-test-integration
 description: 'Use when you need integration tests that verify API endpoints, data flow, and cross-feature interactions against a real database. Reads feature specs and data model to generate tests covering the full request-response cycle.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'testing'
     - 'integration'

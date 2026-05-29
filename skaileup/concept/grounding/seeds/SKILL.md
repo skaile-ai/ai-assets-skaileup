@@ -3,6 +3,7 @@ name: concept-grounding-seeds
 description: 'Scans the _seeds/ directory, auto-classifies each file by content analysis, maps files to artifact slots, validates against schemas, and updates concept.yaml with seed statuses. Use after concept-grounding-onboard when the user has provided existing material.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'seeds'
     - 'ingestion'

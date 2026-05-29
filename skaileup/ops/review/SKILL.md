@@ -3,6 +3,7 @@ name: ops-review
 description: 'Structure audit + entropy check + doc gardening for _concept/. In audit mode: scan completeness, cross-reference integrity, golden principle compliance, and entropy; produce quality.json with score. In gardening mode: auto-fix safe issues and report what changed.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'review'
     - 'audit'

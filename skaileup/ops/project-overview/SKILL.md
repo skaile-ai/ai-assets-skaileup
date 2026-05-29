@@ -6,6 +6,8 @@ version: 1.0.0
 keywords:
   [meta-concept, discovery, brief, goals, comparable, ecosystem, umbrella]
 metadata:
+  version: '0.1.0'
+  stage: alpha
   prerequisites:
     inputs_required:
       - id: PROJECT_ROOT

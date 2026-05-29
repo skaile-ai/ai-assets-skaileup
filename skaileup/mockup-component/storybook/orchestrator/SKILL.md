@@ -3,6 +3,7 @@ name: mockup-component-storybook
 description: 'Use after screens are approved to generate a 3-layer Storybook project: custom building-block components, full-page screen compositions, and clickable user journey flows. Framework-agnostic — resolves addon and story format from impl-architecture/profiles/. Delegates to 4 sub-skills in sequence.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'storybook'
     - 'components'

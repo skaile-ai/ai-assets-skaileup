@@ -3,6 +3,7 @@ name: skaileup-build
 description: 'Full app implementation orchestrator. Reads the completed _concept/ and drives the entire pipeline from project scaffold through feature implementation to verified, deployable application. Creates the implementation plan, manages checkpoints, git workflow, and progress tracking. Journey-first feature strategy (hero → vital → hygiene from stories.json). Supports resume from any interrupted phase.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'implement'
     - 'orchestrate'

@@ -3,6 +3,7 @@ name: mockup-component-storybook-journeys
 description: 'Sub-skill 4/4: Build clickable multi-screen user journey stories (click-dummies). Each journey flows through real page components inside AppShell. Covers hero, vital, and hygiene flows from stories.json. Called by the storybook orchestrator.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'storybook'
     - 'journeys'

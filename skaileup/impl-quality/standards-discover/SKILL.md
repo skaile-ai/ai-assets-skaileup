@@ -2,6 +2,7 @@
 name: impl-quality-standards-discover
 description: "Use when analyzing an existing codebase to extract conventions, patterns, and standards. Triggered when user says 'discover standards', 'analyze codebase conventions', or when starting implementation against an existing project."
 metadata:
+  version: '0.1.0'
   tags:
     - 'standards'
     - 'conventions'

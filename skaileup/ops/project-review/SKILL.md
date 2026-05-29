@@ -5,6 +5,8 @@ source: MERGED
 version: 1.0.0
 keywords: [meta-concept, review, audit, consistency, completeness]
 metadata:
+  version: '0.1.0'
+  stage: alpha
   prerequisites:
     inputs_required:
       - id: PROJECT_ROOT

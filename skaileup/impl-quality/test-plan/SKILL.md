@@ -3,6 +3,7 @@ name: impl-quality-test-plan
 description: 'Use when you need a comprehensive test plan derived from concept specs. Generates test scenarios per feature covering happy paths, error states, edge cases, and permissions, mapped to seed data scenarios.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'testing'
     - 'test-plan'

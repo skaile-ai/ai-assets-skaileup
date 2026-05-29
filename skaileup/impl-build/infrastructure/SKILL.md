@@ -3,6 +3,7 @@ name: impl-build-infrastructure
 description: 'Sets up custom backend infrastructure from the architecture doc. Implements custom NestJS/backend modules, provider abstractions (real + in-memory), additional processes, and communication infrastructure (WebSocket, SSE). Only needed when architecture.md defines custom_modules or processes beyond the standard stack. Reads _concept/blueprint/architecture.md.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'infrastructure'
     - 'backend'

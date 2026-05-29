@@ -3,6 +3,7 @@ name: concept-grounding-onboard
 description: 'Collects project identity, complexity tier preferences, and technology decisions through a structured dialog. Produces profile.yaml and decisions.yaml in _grounding/onboarding/. Use at the start of any concept pipeline.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'onboarding'
     - 'project-setup'

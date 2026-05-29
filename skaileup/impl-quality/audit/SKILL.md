@@ -3,6 +3,7 @@ name: impl-quality-audit
 description: 'Static code audit. Launches three parallel sub-agents for logic errors, UI/UX issues, and security concerns. Also checks _concept/ structure integrity. Run before e2e or after significant changes.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'audit'
     - 'security'

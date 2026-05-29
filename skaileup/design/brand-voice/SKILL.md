@@ -3,6 +3,7 @@ name: design-brand-voice
 description: 'Use when the visual brand exists and you need to define communication tone, error message style, empty state messaging, micro-copy guidelines, and notification voice. Produces behavioral.md + copy_guidelines.md in _concept/discovery/brand/.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'brand'
     - 'tone'

@@ -3,6 +3,7 @@ name: experience-screens
 description: 'Use after features are approved to write screen specifications. Reads features, optional brand/techstack/datamodel/journeys artifacts, and produces per-screen docs organized in numbered groups. Registers screens back into feature frontmatter via feedback loop.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'screens'
     - 'pages'

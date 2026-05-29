@@ -3,6 +3,7 @@ name: impl-quality-test-unit
 description: 'Use when you need unit test files generated from feature specs. Reads existing source code patterns and feature requirements, then produces one test file per feature with test cases mapped to requirements.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'testing'
     - 'unit-tests'

@@ -3,6 +3,7 @@ name: experience-journeys
 description: 'Use after project brief is approved to map user journeys. Reads the approved brief, goals, and optional research to define personas and story maps organized by stage (hero, vital, hygiene, backlog). Writes stories.json with EARS acceptance criteria. Required before features skill.'
 metadata:
   version: '1.0.0'
+  stage: alpha
   tags:
     - 'journeys'
     - 'stories'
