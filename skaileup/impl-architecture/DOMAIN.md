@@ -8,15 +8,41 @@ metadata:
 
 # impl-architecture
 
-Defines the technical foundation: tech stack decisions, system architecture, data model, and reusable code templates.
+Establishes the technical foundation before any code is written: stack selection, system architecture, and data model. Agents run these three skills once per project, then pick a scaffold template to bootstrap the repo.
 
 ## Skills
 
-- **impl-architecture-techstack** (`techstack/`) — Discovers available stacks from `templates/`, asks plain-language questions, recommends the best match, and writes `stack.md`.
-- **impl-architecture-system** (`system/`) — Documents system architecture: overview, backend structure, data flow, communication protocols, external integrations, infrastructure.
-- **impl-architecture-datamodel** (`datamodel/`) — Produces `model.dbml` (DBML), `model.json` (editor canvas), `seed.json` (test scenarios), and `feature_map.json` (model-to-feature cross-reference).
-- **templates/** — Cluster of 7 stack-specific scaffold templates (PostXL, Next.js + Radix/shadcn, Nuxt minimal/UI/PrimeVue, SvelteKit minimal). Selector `impl-architecture-templates-select` (Phase 3 deferred) picks one at runtime. See `templates/DOMAIN.md`.
+- **impl-architecture-techstack** (`techstack/`) — Reads `templates/` profiles, asks plain-language questions, recommends a stack, writes `stack.md`.
+- **impl-architecture-system** (`system/`) — Produces `architecture.md`: system overview, backend structure, data flow, communication protocols, external integrations, infrastructure.
+- **impl-architecture-datamodel** (`datamodel/`) — Produces `_concept/blueprint/datamodel/model.dbml`, `model.json`, `seed.json`, and `feature_map.json`.
+- **templates/** (`templates/`) — 7 scaffold templates (PostXL, Next.js + Radix, Next.js + shadcn, Nuxt minimal/UI/PrimeVue, SvelteKit minimal). Each is a standalone skill; the agent picks one after `techstack` selects a stack.
+
+## When to Use
+
+- Features are approved (`product-spec` done) and no `stack.md` exists yet.
+- Starting the implementation pipeline: `impl-plan` needs `stack.md` and `architecture.md` as inputs.
+- Data model is blank (`_concept/blueprint/datamodel/` empty) but features reference entities.
+- Scaffolding a new repo from scratch (templates cluster).
+
+## When NOT to Use
+
+- Stack already locked and documented — skip `techstack`, run `system` and `datamodel` only.
+- Prototype or MVP tier with no backend — `datamodel` is optional; scaffold directly from a template.
+- Adding a feature to an existing repo — use `impl-plan` or `impl-slice` directly.
+
+## Sequence
+
+```
+impl-architecture-techstack
+        ↓
+impl-architecture-system   (parallel with)   impl-architecture-datamodel
+        ↓
+templates/<chosen-template>   (scaffold — one-time)
+```
 
 ## Cross-references
 
-- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
+- `../impl-plan/` — consumes `stack.md` and `architecture.md`.
+- `../impl-build/` — scaffold step also uses the chosen template.
+- `templates/DOMAIN.md` — template cluster details.
+- `../contracts/` — iron laws and golden principles every skill reads.
