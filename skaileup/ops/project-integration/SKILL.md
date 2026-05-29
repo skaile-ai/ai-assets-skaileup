@@ -3,16 +3,15 @@ name: ops-project-integration
 description: 'Use when building a multi-product meta-concept and the integration section is missing. Generates 3_integration/ covering inter-repo architecture, deployment topology, and shared contracts for the ecosystem.'
 source: MERGED
 version: 1.0.0
-keywords:
-  [
-    meta-concept,
-    integration,
-    architecture,
-    deployment,
-    shared-contracts,
-    ecosystem,
-  ]
 metadata:
+  tags:
+    - meta-concept
+    - integration
+    - architecture
+    - deployment
+    - shared-contracts
+    - ecosystem
+    - 
   version: '0.1.0'
   stage: alpha
   prerequisites:

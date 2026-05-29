@@ -1,0 +1,32 @@
+name: Catalog CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    name: Frontmatter audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run frontmatter audit
+        run: python3 docs/scripts/audit.py
+
+  bundles:
+    name: Bundle drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Check bundles in sync with flows
+        run: bash ai-assets-dev/scripts/check-bundles.sh

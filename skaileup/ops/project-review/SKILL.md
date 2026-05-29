@@ -3,8 +3,13 @@ name: ops-project-review
 description: 'Use when a multi-product meta-concept needs a quality check. Audits for completeness, consistency, and accuracy — verifies all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts.'
 source: MERGED
 version: 1.0.0
-keywords: [meta-concept, review, audit, consistency, completeness]
 metadata:
+  tags:
+    - meta-concept
+    - review
+    - audit
+    - consistency
+    - completeness
   version: '0.1.0'
   stage: alpha
   prerequisites:

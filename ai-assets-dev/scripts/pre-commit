@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# pre-commit — catalog integrity hooks
+#
+# Install: cp ai-assets-dev/scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Or use symlink: ln -s ../../ai-assets-dev/scripts/pre-commit .git/hooks/pre-commit
+#
+# Checks:
+#   1. No SKILL.md files reference the old _grounding/general/ path
+#   2. No SKILL.md files use deprecated user_inputs / reads_from / writes_to
+
+set -euo pipefail
+
+FAILED=0
+
+# 1. Stale grounding path check
+if git diff --cached --name-only | grep -q "SKILL\.md$"; then
+    CHANGED_SKILLS=$(git diff --cached --name-only | grep "SKILL\.md$")
+    while IFS= read -r f; do
+        if [ -f "$f" ] && grep -q "_grounding/general/" "$f"; then
+            echo "ERROR: $f references deprecated _grounding/general/ (should be _grounding/research/)"
+            FAILED=1
+        fi
+    done <<< "$CHANGED_SKILLS"
+fi
+
+# 2. Deprecated frontmatter field check
+if git diff --cached --name-only | grep -q "SKILL\.md$"; then
+    CHANGED_SKILLS=$(git diff --cached --name-only | grep "SKILL\.md$")
+    while IFS= read -r f; do
+        if [ -f "$f" ]; then
+            if grep -qE "^\s+user_inputs\s*:" "$f"; then
+                echo "ERROR: $f uses deprecated metadata.user_inputs — migrate to metadata.prerequisites"
+                FAILED=1
+            fi
+            if grep -qE "^\s*reads_from\s*:" "$f"; then
+                echo "ERROR: $f uses deprecated reads_from — migrate to metadata.prerequisites.reads"
+                FAILED=1
+            fi
+            if grep -qE "^\s*writes_to\s*:" "$f"; then
+                echo "ERROR: $f uses deprecated writes_to — migrate to metadata.prerequisites.produces"
+                FAILED=1
+            fi
+        fi
+    done <<< "$CHANGED_SKILLS"
+fi
+
+if [ "$FAILED" -eq 1 ]; then
+    echo ""
+    echo "Pre-commit check failed. Fix the issues above before committing."
+    exit 1
+fi
+
+exit 0
