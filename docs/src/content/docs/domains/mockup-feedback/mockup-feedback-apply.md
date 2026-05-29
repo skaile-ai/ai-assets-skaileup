@@ -120,6 +120,6 @@ For each failed patch:
 ## References
 
 - `mockup-feedback/schemas/patches.schema.json` — input validation
-- `REFACTOR_MOCKUP.md` §5 — devlog format
+- `docs/devlog/mockup-design.md` §5 — devlog format
 - `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D3, D6, D7
 

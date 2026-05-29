@@ -12,10 +12,13 @@ metadata:
   stage: alpha
   requires:
     - implementation-contract
-  reads_from:
-    - 'docs/'
-  writes_to:
-    - 'docs/'
+  prerequisites:
+    reads:
+      - path: 'docs/'
+        description: 'Existing doc pages to check for accuracy'
+    produces:
+      - path: 'docs/'
+        description: 'Updated or newly scaffolded Starlight pages'
 ---
 
 <!-- TODO: This skill currently assumes Starlight/Astro. Refactor to support

@@ -57,7 +57,7 @@ elements:                            # OPTIONAL — top-level frontmatter key
 
 ## Hybrid ID strategy
 
-Reproduced from `REFACTOR_MOCKUP.md` § 6 (auto-slug for fast iteration,
+Reproduced from `docs/devlog/mockup-design.md` § 6 (auto-slug for fast iteration,
 promote to explicit on first annotation):
 
 1. **Initial render.** Walkthrough auto-slugs IDs from labels/text. Marks

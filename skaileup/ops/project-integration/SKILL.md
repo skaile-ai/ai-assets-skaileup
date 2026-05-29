@@ -20,16 +20,24 @@ metadata:
       - id: PROJECT_ROOT
         label: 'Where is the shell repo root?'
         type: text
-reads_from:
-  - contracts/meta-concept-contract/CONTRACT.md
-  - '{PROJECT_ROOT}/_concept/discovery/'
-  - '{PROJECT_ROOT}/_concept/2_subsystems/'
-  - '{PROJECT_ROOT}/CLAUDE.md'
-  - '{PROJECT_ROOT}/package.json'
-writes_to:
-  - '{PROJECT_ROOT}/_concept/3_integration/architecture.md'
-  - '{PROJECT_ROOT}/_concept/3_integration/deployment.md'
-  - '{PROJECT_ROOT}/_concept/3_integration/shared_contracts.md'
+    reads:
+      - path: 'contracts/meta-concept-contract/CONTRACT.md'
+        description: 'Meta-concept contract schema'
+      - path: '{PROJECT_ROOT}/_concept/discovery/'
+        description: 'Ecosystem brief and goals'
+      - path: '{PROJECT_ROOT}/_concept/2_subsystems/'
+        description: 'Subsystem inventory'
+      - path: '{PROJECT_ROOT}/CLAUDE.md'
+        description: 'Root project instructions'
+      - path: '{PROJECT_ROOT}/package.json'
+        description: 'Package metadata for integration detection'
+    produces:
+      - path: '{PROJECT_ROOT}/_concept/3_integration/architecture.md'
+        description: 'Inter-repo architecture diagram and decisions'
+      - path: '{PROJECT_ROOT}/_concept/3_integration/deployment.md'
+        description: 'Deployment topology'
+      - path: '{PROJECT_ROOT}/_concept/3_integration/shared_contracts.md'
+        description: 'Shared API contracts across repos'
 ---
 
 # Project Concept: Integration Architecture

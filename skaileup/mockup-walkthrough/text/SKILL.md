@@ -155,7 +155,7 @@ Before starting, read:
 | `_concept/blueprint/techstack.md`                         | Optional (template auto-selection)               |
 | `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Optional (read if stack.md has tech_stack_skill) |
 | `_concept/experience/screens/components/*.md`             | Optional                                         |
-| `_grounding/general/design_inspiration.md`                | Optional                                         |
+| `_grounding/research/design_inspiration.md`                | Optional                                         |
 
 **Never load:** `_concept/discovery/`, `_concept/experience/features/`, source code.
 

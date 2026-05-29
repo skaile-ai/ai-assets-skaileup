@@ -2,7 +2,7 @@
 
 The Skaileup skill catalog — concept, build, and quality pipeline skills for the Skaile ecosystem.
 
-**94 SKILL.md files in 17 domains across three groups (Concept · Implementation · Meta)** covering the full product lifecycle: from problem-space discovery through per-slice implementation and quality gates, with a cross-cutting ops/lab/contracts meta layer.
+**94 SKILL.md files in 20 top-level domains across three groups (Concept · Implementation · Meta)** covering the full product lifecycle: from problem-space discovery through per-slice implementation and quality gates, with a cross-cutting ops/lab/contracts meta layer.
 
 ```
                               user input  /  existing repo

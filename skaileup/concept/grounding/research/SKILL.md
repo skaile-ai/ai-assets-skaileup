@@ -357,7 +357,7 @@ CHECKLIST
 
 When reading from `_grounding/`, check for both old and new paths:
 
-- `_grounding/general/` → `_grounding/research/` (prefer new)
+- `_grounding/research/` → `_grounding/research/` (prefer new)
 - `_grounding/{step}/user_input.json` → `_grounding/onboarding/inputs/{step}.json` (prefer new)
 - Underscore filenames (`design_inspiration.md`) → hyphenated (`design-inspiration.md`) (prefer new)
 

@@ -153,7 +153,7 @@ skill MUST:
      in Phase 3.
 
 This procedure mirrors step 1 of the hybrid ID strategy from
-`REFACTOR_MOCKUP.md` § 6 / `contracts/elements_block.md` § "Hybrid ID
+`docs/devlog/mockup-design.md` § 6 / `contracts/elements_block.md` § "Hybrid ID
 strategy".
 
 ## Inputs
@@ -232,7 +232,7 @@ REFERENCES
   contracts/skill_grammar.md            — DSL keywords used in this body
   contracts/iron_laws.md                — non-negotiable cross-skill constraints
   contracts/scripts/validator_lib.py    — used by mockup-walkthrough/static-html/validator.py
-  REFACTOR_MOCKUP.md § 4, § 6           — shared input contract + hybrid ID strategy
+  docs/devlog/mockup-design.md § 4, § 6           — shared input contract + hybrid ID strategy
   mockup-walkthrough/text/SKILL.md      — sibling skill (text variant) for tone reference
 
 ## STEP 1: Read inputs

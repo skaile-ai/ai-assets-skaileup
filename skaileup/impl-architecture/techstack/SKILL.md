@@ -114,7 +114,7 @@ downstream skills use to find implementation recipes.
 | Must read        | `impl-architecture/profiles/*/SKILL.md`                        | Yes (stack discovery)            |
 | Check if present | `_concept/experience/features/**/*.md`                          | No (complexity signals)          |
 | Check if present | `_concept/_grounding/overview/user_input.json`                  | No (complexity + pre-answers)    |
-| Check if present | `_concept/_grounding/general/onboarding.md`                     | No (skip pre-answered questions) |
+| Check if present | `_concept/_grounding/research/onboarding.md`                     | No (skip pre-answered questions) |
 | Never load       | `_concept/blueprint/datamodel/`, `_concept/experience/screens/` | —                                |
 
 ## Standalone Mode
@@ -132,7 +132,7 @@ READS
 impl-architecture/profiles/_/SKILL.md — available stack profiles (discovered at runtime)
 ? \_concept/experience/features/\*\*/_.md — feature requirements (complexity signals)
 ? \_concept/\_grounding/overview/user_input.json — complexity field + pre-collected answers
-? \_concept/\_grounding/general/onboarding.md — pre-answered tech preferences
+? \_concept/\_grounding/research/onboarding.md — pre-answered tech preferences
 
 WRITES
 \_concept/blueprint/techstack.md — full stack definition with tech_stack_skill reference
@@ -155,7 +155,7 @@ STEP 1: Read context
 
 - Read brief.md for the app description, audience, and domain
 - Check \_grounding/overview/user_input.json for complexity and any pre-answered tech preferences
-  IF \_grounding/general/onboarding.md exists
+  IF \_grounding/research/onboarding.md exists
   - Read onboarding notes — skip questions already answered there
     IF experience/features/ exists
   - Read feature files to gauge complexity signals

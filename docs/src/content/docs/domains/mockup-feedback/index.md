@@ -35,7 +35,7 @@ mockup-feedback-apply      → applies diffs, appends devlog, one git commit
 ## Cross-references
 
 - See `../SKILL_GRAPH.md` for the catalog-level view.
-- See `../REFACTOR_MOCKUP.md` if this domain is a mockup cluster.
+- See `../../docs/devlog/mockup-design.md` if this domain is a mockup cluster.
 
 
 ## Skills in this domain

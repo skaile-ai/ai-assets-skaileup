@@ -12,12 +12,15 @@ metadata:
       - id: PROJECT_ROOT
         label: 'Where is the shell repo root?'
         type: text
-reads_from:
-  - contracts/meta-concept-contract/CONTRACT.md
-  - '{PROJECT_ROOT}/_concept/'
-  - '{PROJECT_ROOT}/**/CLAUDE.md'
-  - '{PROJECT_ROOT}/**/_concept/'
-writes_to: []
+    reads:
+      - path: 'contracts/meta-concept-contract/CONTRACT.md'
+        description: 'Meta-concept contract schema'
+      - path: '{PROJECT_ROOT}/_concept/'
+        description: 'Project concept artifacts'
+      - path: '{PROJECT_ROOT}/**/CLAUDE.md'
+        description: 'Per-repo instructions'
+      - path: '{PROJECT_ROOT}/**/_concept/'
+        description: 'Subsystem concept artifacts'
 ---
 
 # Project Concept: Review

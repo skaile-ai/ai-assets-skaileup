@@ -12,15 +12,22 @@ metadata:
       - id: PROJECT_ROOT
         label: 'Where is the shell repo root?'
         type: text
-reads_from:
-  - contracts/meta-concept-contract/CONTRACT.md
-  - '{PROJECT_ROOT}/_concept/discovery/'
-  - '{PROJECT_ROOT}/CLAUDE.md'
-  - '{PROJECT_ROOT}/**/CLAUDE.md'
-  - '{PROJECT_ROOT}/**/_concept/'
-writes_to:
-  - '{PROJECT_ROOT}/_concept/2_subsystems/index.md'
-  - '{PROJECT_ROOT}/_concept/2_subsystems/<subsystem>.md'
+    reads:
+      - path: 'contracts/meta-concept-contract/CONTRACT.md'
+        description: 'Meta-concept contract schema'
+      - path: '{PROJECT_ROOT}/_concept/discovery/'
+        description: 'Ecosystem brief and goals'
+      - path: '{PROJECT_ROOT}/CLAUDE.md'
+        description: 'Root project instructions'
+      - path: '{PROJECT_ROOT}/**/CLAUDE.md'
+        description: 'Per-repo instructions'
+      - path: '{PROJECT_ROOT}/**/_concept/'
+        description: 'Subsystem concept artifacts'
+    produces:
+      - path: '{PROJECT_ROOT}/_concept/2_subsystems/index.md'
+        description: 'Subsystem inventory with maturity and tech stack'
+      - path: '{PROJECT_ROOT}/_concept/2_subsystems/<subsystem>.md'
+        description: 'Per-subsystem detail page'
 ---
 
 # Project Concept: Subsystem Map

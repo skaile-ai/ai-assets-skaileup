@@ -37,7 +37,7 @@ metadata:
         description: 'Features must exist — behavioral specs formalize feature rules into state machines'
         min_entries: 1
     reads:
-      - path: '_concept/_grounding/general/behavioral_patterns.md'
+      - path: '_concept/_grounding/research/behavioral_patterns.md'
         description: 'Domain behavioral patterns from research phase'
     produces:
       - path: '_concept/experience/behaviors'
@@ -100,7 +100,7 @@ Also read the Allium language subset reference bundled with this skill:
 | ------------------------------------------- | -------- |
 | `_concept/discovery/brief.md`               | Required |
 | `_concept/experience/features/**/*.md`      | Required |
-| `_grounding/general/behavioral_patterns.md` | Optional |
+| `_grounding/research/behavioral_patterns.md` | Optional |
 
 **Never load:** `_concept/blueprint/datamodel/`, `_concept/experience/screens/`
 
@@ -114,7 +114,7 @@ Read `_concept/experience/features/**/*.md`. If no feature files exist, stop:
 
 Also read `_concept/discovery/brief.md` for domain context.
 
-If `_grounding/general/behavioral_patterns.md` exists, read it for domain-specific
+If `_grounding/research/behavioral_patterns.md` exists, read it for domain-specific
 behavioral patterns that should inform the specs.
 
 ### Step 2: Identify Behavioral Patterns

@@ -94,7 +94,7 @@ With `path:`, assets are symlinked so edits to SKILL.md are immediately reflecte
 
 ```yaml
 ---
-name: my-domain-function          # Required. kebab-case. Must match the parent directory name.
+name: my-domain-function          # Required. kebab-case. Domain-relative path with / replaced by -.
 description: "Use when [trigger]. Describes what the skill does and when to invoke it."
 requires:                          # Optional. Root-level. Array of "kind:name" strings.
   - contract:my-contract           # Explicit kind prefix is required.
@@ -148,22 +148,43 @@ CHECKLIST
 
 ### Skill `name:` field
 
-- **Must be kebab-case**: `a-z`, `0-9`, hyphens only. No consecutive hyphens.
-- **Must match the parent directory name exactly.** The installer falls back to the directory
-  name only when `name:` is absent — always include it explicitly to avoid surprises.
-- Pattern: `<domain>-<function>` (e.g. `myapp-build-scaffold`, `myapp-review`).
+- **Must be kebab-case**: `a-z`, `0-9`, hyphens only. No consecutive hyphens. Max 64 chars.
+- **Must be set explicitly** — the CLI uses the directory name as a fallback only when `name:`
+  is absent. Always set it to avoid surprises.
+- **Convention: domain-relative path with `/` replaced by `-`.** The `name:` is the path
+  from the catalog root down to the skill directory, with slashes replaced by hyphens.
+
+  | Skill directory | `name:` |
+  |---|---|
+  | `concept/brief/` | `concept-brief` |
+  | `design/brand-visual/` | `design-brand-visual` |
+  | `impl-architecture/techstack/` | `impl-architecture-techstack` |
+  | `impl-quality/test-unit/` | `impl-quality-test-unit` |
+  | `ops/review/` | `ops-review` |
+
+  The directory name is the **last segment** of the path-based name: `brief/` →
+  `concept-brief`. The two match only at the catalog root, not in nested domains.
+
+- **Exceptions:**
+  - `skaileup/` and `skaileup-build/` (base orchestrator skills in
+    `skaileup-orchestrator/skills/`) keep short names without the path prefix — doubled
+    prefixes (`skaileup-skaileup`) would be awkward for the entry-point skill.
+  - `template-*` skills in `impl-architecture/templates/` use the short directory name
+    directly (e.g. `template-sveltekit-minimal`) because the `template-` prefix already
+    identifies the category.
 
 ### Directory names
 
-- **Skill directories** should match the `name:` field exactly.
-- **Domain directories** group related skills — their names are cosmetic (used as the `domain`
-  tag on the catalog entry) but should be consistent with skill names.
+- **Skill directories** should be the last segment of the skill's path-based `name:`. For
+  `name: concept-brief`, the directory is `brief/` inside the `concept/` domain.
+- **Domain directories** group related skills. Their names are used as the `domain` tag on
+  the catalog entry and should be consistent across the catalog.
 
 ### Naming pitfall: directory name ≠ frontmatter name
 
-If a skill directory is named `my-skill-v2` but the SKILL.md frontmatter says
-`name: my-skill`, the CLI registers it as `skill:my-skill` (from frontmatter). The directory
-name is only used as a fallback when `name:` is absent. Always set `name:` explicitly.
+If a skill at `concept/brief/` has `name: brief` (just the directory name), the CLI registers
+it as `skill:brief` — not `skill:concept-brief`. Any flow or bundle that references
+`skill:concept-brief` will fail to resolve it. Always use the full path-based name.
 
 ---
 
@@ -313,7 +334,7 @@ across all SKILL.md files after any domain rename.
 Before publishing a skill repository, verify:
 
 - [ ] `skaile.yaml` declares this repository with `url:` (or `path:` for dev)
-- [ ] Every `SKILL.md` has `name:` matching its parent directory name
+- [ ] Every `SKILL.md` has `name:` using the domain-relative path convention (e.g. `concept-brief`, not `brief`)
 - [ ] Every `SKILL.md` has `metadata.version:` (semver), `metadata.tags:` (≥2), `metadata.stage:`
 - [ ] `requires:` is declared in exactly one place (`metadata.requires:` preferred, root `requires:` legacy)
 - [ ] All `requires:` entries use `kind:name` format for non-skill dependencies

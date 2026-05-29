@@ -13,16 +13,24 @@ metadata:
       - id: PROJECT_ROOT
         label: 'Where is the shell repo root?'
         type: text
-reads_from:
-  - contracts/meta-concept-contract/CONTRACT.md
-  - '{PROJECT_ROOT}/CLAUDE.md'
-  - '{PROJECT_ROOT}/_devlog/DEVLOG.md'
-  - '{PROJECT_ROOT}/**/CLAUDE.md'
-writes_to:
-  - '{PROJECT_ROOT}/_concept/discovery/brief.md'
-  - '{PROJECT_ROOT}/_concept/discovery/goals.md'
-  - '{PROJECT_ROOT}/_concept/discovery/comparable.md'
-  - '{PROJECT_ROOT}/_concept/discovery/brand/identity.md'
+    reads:
+      - path: 'contracts/meta-concept-contract/CONTRACT.md'
+        description: 'Meta-concept contract schema'
+      - path: '{PROJECT_ROOT}/CLAUDE.md'
+        description: 'Root project instructions'
+      - path: '{PROJECT_ROOT}/_devlog/DEVLOG.md'
+        description: 'Project history and context'
+      - path: '{PROJECT_ROOT}/**/CLAUDE.md'
+        description: 'Per-repo instructions'
+    produces:
+      - path: '{PROJECT_ROOT}/_concept/discovery/brief.md'
+        description: 'Ecosystem brief'
+      - path: '{PROJECT_ROOT}/_concept/discovery/goals.md'
+        description: 'Unified goals'
+      - path: '{PROJECT_ROOT}/_concept/discovery/comparable.md'
+        description: 'Competitive positioning'
+      - path: '{PROJECT_ROOT}/_concept/discovery/brand/identity.md'
+        description: 'Brand identity'
 ---
 
 # Project Concept: Overview

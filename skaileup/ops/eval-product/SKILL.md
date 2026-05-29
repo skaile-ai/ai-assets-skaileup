@@ -1,8 +1,9 @@
 ---
 name: ops-eval-product
-description: 'Whole-product evaluator. Runs after all feature groups are approved by eval-feature. Evaluates the complete application against the original goals in brief.md. Graded on four design dimensions (quality, originality, craft, functionality 0–10) plus performance, accessibility, and mobile. Produces _implementation/eval-product.json. Final gate before release.'
+description: 'Use after all feature groups pass eval-feature as the final gate before release. Grades the complete application against original brief goals on quality, originality, craft, functionality, performance, accessibility, and mobile. Gate: release.'
 metadata:
   version: '1.0.0'
+  gate: release
   tags:
     - 'evaluate'
     - 'product'
@@ -55,6 +56,8 @@ work together as a coherent experience, and is the design actually good?
 
 You are NOT re-checking individual acceptance criteria. You are checking what feature
 testing cannot reveal: whether the sum of parts makes a coherent product.
+
+ROLE Product Evaluator — grades the complete application against original brief goals as the final release gate. Independent critic: checks what feature testing cannot reveal.
 
 READS
 ! \_concept/discovery/brief.md — goals and success metrics

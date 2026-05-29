@@ -59,7 +59,7 @@ metadata:
         description: 'Architecture for service boundaries and data ownership'
       - path: '_concept/experience/behaviors'
         description: 'Behavioral specs for entity state machine fields'
-      - path: '_concept/_grounding/general/patterns.md'
+      - path: '_concept/_grounding/research/patterns.md'
         description: 'Domain patterns for semantic type selection'
     produces:
       - path: '_concept/blueprint/datamodel/model.dbml'
@@ -121,7 +121,7 @@ SQL types. Stack translation (Prisma, Directus schema, SQL DDL) is a separate on
 | Check if present | `_concept/experience/journeys/stories.json`                 | No              |
 | Check if present | `_concept/blueprint/architecture.md`                        | No              |
 | Check if present | `_concept/experience/behaviors/*.allium`                    | No              |
-| Check if present | `_concept/_grounding/general/patterns.md`                   | No              |
+| Check if present | `_concept/_grounding/research/patterns.md`                   | No              |
 | Never load       | `_concept/experience/screens/`, `_concept/discovery/brand/` | —               |
 
 ## Standalone Mode
@@ -142,7 +142,7 @@ READS
 ? \_concept/experience/journeys/stories.json — EARS criteria → state machine derivation
 ? \_concept/blueprint/architecture.md — custom modules → additional entities
 ? \_concept/experience/behaviors/\*.allium — entity state machines, enum values
-? \_concept/\_grounding/general/patterns.md — domain-specific data patterns
+? \_concept/\_grounding/research/patterns.md — domain-specific data patterns
 
 WRITES
 \_concept/blueprint/datamodel/model.dbml — human-readable DBML entity definitions
@@ -186,7 +186,7 @@ STEP 1: Read context
     IF \_concept/experience/behaviors/\*.allium exists
   - Read all .allium files for formal entity definitions, state enums, transition rules
   - Allium states → enum values; Allium relationships → model relations
-    IF \_concept/\_grounding/general/patterns.md exists
+    IF \_concept/\_grounding/research/patterns.md exists
   - Read domain-specific data patterns for entity structure and relationship guidance
 
 STEP 1b: Determine involvement level
@@ -355,7 +355,7 @@ CHECKLIST
 
 Check before writing the model:
 
-- `_concept/_grounding/general/patterns.md` — domain-specific data patterns, entity structure conventions
+- `_concept/_grounding/research/patterns.md` — domain-specific data patterns, entity structure conventions
 
 ## Integration
 

@@ -102,7 +102,7 @@ DELETES
 
 REFERENCES
   SKILL_GRAPH.md                                     — § 4 concept-slice loop
-  REFACTOR_MOCKUP.md                                 — § 4 walkthrough tiers, § 9 tier composition
+  docs/devlog/mockup-design.md                                 — § 4 walkthrough tiers, § 9 tier composition
   contracts/iron_laws.md                             — § 7, § 8, § 9
   contracts/frontmatter.md                           — experience/features, experience/screens schemas
   concept-slice/design-feature/references/feature-portion-rule.md — path-segment rule with examples

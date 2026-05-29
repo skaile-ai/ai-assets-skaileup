@@ -30,15 +30,22 @@ metadata:
       - id: 'start_from_task'
         label: 'Resume from a specific task ID? (leave blank to start from first pending)'
         type: 'text'
-  reads_from:
-    - '_implementation/superpowers-plan.md'
-    - '_implementation/git-state.json'
-    - '_concept/experience/features/**/*.md'
-    - '_concept/experience/screens/**/*.md'
-  writes_to:
-    - '_implementation/superpowers-plan.md'
-    - '_implementation/decisions.md'
-    - '_implementation/progress.json'
+    reads:
+      - path: '_implementation/superpowers-plan.md'
+        description: 'Task list with status and task text'
+      - path: '_implementation/git-state.json'
+        description: 'Branch and uncommitted-change state'
+      - path: '_concept/experience/features/**/*.md'
+        description: 'Feature specs for spec-compliance review'
+      - path: '_concept/experience/screens/**/*.md'
+        description: 'Screen specs for UI fidelity checks'
+    produces:
+      - path: '_implementation/superpowers-plan.md'
+        description: 'Updated task statuses after each dispatch'
+      - path: '_implementation/decisions.md'
+        description: 'Design decisions captured during implementation'
+      - path: '_implementation/progress.json'
+        description: 'Machine-readable progress tracker'
 ---
 
 # Implement Supervised

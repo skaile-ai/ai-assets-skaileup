@@ -92,8 +92,8 @@ Before starting, read:
 | `_concept/blueprint/datamodel/model.json`  | Required                                 |
 | `_concept/experience/behaviors/*.allium`   | Optional — surface definitions           |
 | `_concept/blueprint/architecture.md`       | Optional — protocols and custom services |
-| `_grounding/general/design_inspiration.md` | Optional                                 |
-| `_grounding/general/patterns.md`           | Optional                                 |
+| `_grounding/research/design_inspiration.md` | Optional                                 |
+| `_grounding/research/patterns.md`           | Optional                                 |
 
 **Never load:** Source code, build artifacts, node_modules.
 

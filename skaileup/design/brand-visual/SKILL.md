@@ -65,7 +65,7 @@ metadata:
         type: text
         hint: 'Any font preferences or constraints?'
     reads:
-      - path: '_concept/_grounding/general/design_inspiration.md'
+      - path: '_concept/_grounding/research/design_inspiration.md'
         description: 'Design inspiration from research phase (if available)'
     produces:
       - path: '_concept/discovery/brand/identity.md'
@@ -117,8 +117,8 @@ If the gate fails, stop:
 | Action           | Path                                                | Required                  |
 | ---------------- | --------------------------------------------------- | ------------------------- |
 | Must read        | `_concept/discovery/brief.md`                       | Yes                       |
-| Check if present | `_concept/_grounding/general/design_inspiration.md` | No (visual references)    |
-| Check if present | `_concept/_grounding/general/colors_fonts.md`       | No (palette research)     |
+| Check if present | `_concept/_grounding/research/design_inspiration.md` | No (visual references)    |
+| Check if present | `_concept/_grounding/research/colors_fonts.md`       | No (palette research)     |
 | Check if present | `_concept/_grounding/brand-visual/user_input.json`  | No (pre-collected inputs) |
 | Never load       | `_concept/blueprint/datamodel/`                     | —                         |
 | Never load       | Source code                                         | —                         |
@@ -136,8 +136,8 @@ extracts from reference URLs, proposes brand identity, and writes
 
 READS
 \_concept/discovery/brief.md — app name, audience, problem, comparables
-? \_concept/\_grounding/general/design_inspiration.md — color approaches, typography trends
-? \_concept/\_grounding/general/colors_fonts.md — palette and typography research findings
+? \_concept/\_grounding/research/design_inspiration.md — color approaches, typography trends
+? \_concept/\_grounding/research/colors_fonts.md — palette and typography research findings
 ? \_concept/\_grounding/brand-visual/user_input.json — pre-collected user inputs
 
 WRITES
@@ -173,9 +173,9 @@ EMIT [brand-visual] started run_id=<uuid>
 STEP 1: Read context
 
 - Read brief.md for app name, audience, problem, comparables
-  IF \_grounding/general/design_inspiration.md exists
+  IF \_grounding/research/design_inspiration.md exists
   - Read for color approaches, typography trends, visual references
-    IF \_grounding/general/colors_fonts.md exists
+    IF \_grounding/research/colors_fonts.md exists
   - Read for palette and typography research findings
     IF \_grounding/brand-visual/user_input.json exists
   - Load pre-collected inputs, skip those questions in STEP 2

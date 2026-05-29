@@ -1,6 +1,6 @@
 ---
 name: mockup-component
-description: "Components in isolation: storybook + isolated-html (see REFACTOR_MOCKUP.md)"
+description: "Components in isolation: storybook + isolated-html (see docs/devlog/mockup-design.md)"
 metadata:
   stage: alpha
   type: domain
@@ -42,4 +42,4 @@ Renders UI components in isolation — either as a live Storybook project (`_con
 - `../mockup-walkthrough/` — for full app walkthroughs rather than isolated components.
 - `../mockup-feedback/` — annotation and patch loop that reads the storybook or isolated-html output.
 - `../contracts/concept_structure.md` — valid `_concept/` paths.
-- `../REFACTOR_MOCKUP.md` — mockup cluster design and how the three mockup domains relate.
+- `../../docs/devlog/mockup-design.md` — mockup cluster design and how the three mockup domains relate.

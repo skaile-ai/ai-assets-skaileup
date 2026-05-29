@@ -268,7 +268,7 @@ REFERENCES
   contracts/skill_grammar.md            — DSL keywords used in this body
   contracts/iron_laws.md                — non-negotiable cross-skill constraints
   contracts/scripts/validator_lib.py    — used by mockup-walkthrough/astro/validator.py
-  REFACTOR_MOCKUP.md § 4, § 6           — shared input contract + hybrid ID strategy
+  docs/devlog/mockup-design.md § 4, § 6           — shared input contract + hybrid ID strategy
   mockup-walkthrough/static-html/SKILL.md — sibling skill (contract anchor)
 
 ## STEP 1: Read inputs

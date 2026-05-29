@@ -62,11 +62,11 @@ metadata:
         default: 'must-have + nice-to-have'
         hint: 'How broad should the feature set be? Story stages set the default — this overrides the scope.'
     reads:
-      - path: '_concept/_grounding/general/domain.md'
+      - path: '_concept/_grounding/research/domain.md'
         description: 'Domain context to inform feature naming and scope'
-      - path: '_concept/_grounding/general/competitors.md'
+      - path: '_concept/_grounding/research/competitors.md'
         description: 'Competitor gaps to incorporate as differentiation features'
-      - path: '_concept/_grounding/general/audiences.md'
+      - path: '_concept/_grounding/research/audiences.md'
         description: 'Audience needs to prioritize feature depth'
     produces:
       - path: '_concept/experience/features'
@@ -117,8 +117,8 @@ and `contracts/golden_principles.md` before proceeding.
 | Must read        | `_concept/discovery/goals.md`                         | Yes      |
 | Must read        | `_concept/experience/journeys/stories.json`           | Yes      |
 | Must read        | `references/feature_template.md`                      | Yes      |
-| Check if present | `_concept/_grounding/general/competitors.md`          | No       |
-| Check if present | `_concept/_grounding/general/audiences.md`            | No       |
+| Check if present | `_concept/_grounding/research/competitors.md`          | No       |
+| Check if present | `_concept/_grounding/research/audiences.md`            | No       |
 | Check if present | `_concept/_grounding/features/user_input.json`        | No       |
 | Never load       | `_concept/experience/screens/`, `_concept/blueprint/` | —        |
 
@@ -136,8 +136,8 @@ READS
 \_concept/discovery/brief.md — app name, audience, scope
 \_concept/discovery/goals.md — success criteria, constraints
 \_concept/experience/journeys/stories.json — user journeys with candidate features
-? \_concept/\_grounding/general/competitors.md — feature gaps from competitor analysis
-? \_concept/\_grounding/general/audiences.md — user needs influencing priorities
+? \_concept/\_grounding/research/competitors.md — feature gaps from competitor analysis
+? \_concept/\_grounding/research/audiences.md — user needs influencing priorities
 ? \_concept/\_grounding/features/user_input.json — pre-collected dialog answers
 
 WRITES
@@ -179,7 +179,7 @@ STEP 1: Read context
   - "must-have features only" — skip all backlog-derived and nice-to-have candidates
   - "must-have + nice-to-have" — include hygiene and backlog candidates as nice-to-have (default)
   - "comprehensive" — include all candidates including backlog
-    IF \_concept/\_grounding/general/ exists
+    IF \_concept/\_grounding/research/ exists
   - Read competitors.md for feature gaps (if present)
   - Read audiences.md for user needs and priorities (if present)
 
@@ -309,8 +309,8 @@ CHECKLIST
 
 When research data exists, check before writing features:
 
-- `_concept/_grounding/general/competitors.md` — competitor feature sets, gaps, differentiators
-- `_concept/_grounding/general/audiences.md` — user needs influencing priorities and scope
+- `_concept/_grounding/research/competitors.md` — competitor feature sets, gaps, differentiators
+- `_concept/_grounding/research/audiences.md` — user needs influencing priorities and scope
 
 If research data exists, use it to inform feature priorities and identify gaps.
 If it does not exist, proceed from brief and stories alone.

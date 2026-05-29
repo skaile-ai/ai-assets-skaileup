@@ -24,7 +24,7 @@ Produces clickable application walkthroughs at increasing fidelity levels, from 
 ## Cross-references
 
 - See `../SKILL_GRAPH.md` for the catalog-level view.
-- See `../REFACTOR_MOCKUP.md` if this domain is a mockup cluster.
+- See `../../docs/devlog/mockup-design.md` if this domain is a mockup cluster.
 
 
 ## Skills in this domain

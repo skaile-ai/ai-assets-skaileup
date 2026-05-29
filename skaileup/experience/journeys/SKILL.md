@@ -35,11 +35,11 @@ metadata:
         gate: hard
         description: 'Project brief must exist and be approved before mapping journeys'
     reads:
-      - path: '_concept/_grounding/general/audiences.md'
+      - path: '_concept/_grounding/research/audiences.md'
         description: 'Audience personas from research phase'
-      - path: '_concept/_grounding/general/competitors.md'
+      - path: '_concept/_grounding/research/competitors.md'
         description: 'Competitor analysis for journey gaps'
-      - path: '_concept/_grounding/general/domain.md'
+      - path: '_concept/_grounding/research/domain.md'
         description: 'Domain context for journey staging'
     produces:
       - path: '_concept/experience/journeys/stories.json'
@@ -86,9 +86,9 @@ before proceeding.
 | Must read        | `_concept/discovery/goals.md`                       | Yes      |
 | Must read        | `references/ears_format.md`                         | Yes      |
 | Must read        | `references/journey_stages.md`                      | Yes      |
-| Check if present | `_concept/_grounding/general/audiences.md`          | No       |
-| Check if present | `_concept/_grounding/general/competitors.md`        | No       |
-| Check if present | `_concept/_grounding/general/domain.md`             | No       |
+| Check if present | `_concept/_grounding/research/audiences.md`          | No       |
+| Check if present | `_concept/_grounding/research/competitors.md`        | No       |
+| Check if present | `_concept/_grounding/research/domain.md`             | No       |
 | Never load       | `experience/features/`, `blueprint/`, or downstream | —        |
 
 ## Standalone Mode
@@ -104,9 +104,9 @@ ROLE Journey Mapping agent — reads the approved project brief and produces
 READS
 \_concept/discovery/brief.md — app name, audience, problem, hero_flow
 \_concept/discovery/goals.md — success criteria, constraints, deadlines
-? \_concept/\_grounding/general/audiences.md — detailed persona profiles from research
-? \_concept/\_grounding/general/competitors.md — competitor flows and feature gaps
-? \_concept/\_grounding/general/domain.md — domain terminology and workflows
+? \_concept/\_grounding/research/audiences.md — detailed persona profiles from research
+? \_concept/\_grounding/research/competitors.md — competitor flows and feature gaps
+? \_concept/\_grounding/research/domain.md — domain terminology and workflows
 
 WRITES
 \_concept/experience/journeys/stories.json — personas, story maps, acceptance criteria
@@ -138,7 +138,7 @@ STEP 1: Read context
   > "No approved project brief found. Run `overview` first."
 - Read \_concept/discovery/goals.md for success criteria and constraints
 - Extract: app name, problem, audience, hero_flow, success_metrics
-  IF \_concept/\_grounding/general/ exists
+  IF \_concept/\_grounding/research/ exists
   - Read audiences.md for detailed persona profiles (if present)
   - Read competitors.md for competitor user flows and gaps (if present)
   - Read domain.md for domain terminology and workflows (if present)
@@ -146,7 +146,7 @@ STEP 1: Read context
 STEP 2: Define personas
 
 - Identify distinct user types from brief audience field
-  IF \_concept/\_grounding/general/audiences.md exists
+  IF \_concept/\_grounding/research/audiences.md exists
   - Enrich personas with research findings (goals, pain points, context)
     ELSE
   - Derive personas from brief and goals alone

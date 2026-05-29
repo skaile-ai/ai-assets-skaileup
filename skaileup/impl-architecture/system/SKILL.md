@@ -109,7 +109,7 @@ only where features demand it.
 | Must read        | `_concept/experience/features/**/*.md`                          | Yes             |
 | Must read        | `_concept/blueprint/techstack.md`                               | Yes             |
 | Check if present | `_concept/_grounding/overview/user_input.json`                  | No (complexity) |
-| Check if present | `_concept/_grounding/general/onboarding.md`                     | No              |
+| Check if present | `_concept/_grounding/research/onboarding.md`                     | No              |
 | Check if present | `_concept/experience/behaviors/*.allium`                        | No              |
 | Never load       | `_concept/blueprint/datamodel/`, `_concept/experience/screens/` | —               |
 
@@ -128,7 +128,7 @@ READS
 \_concept/experience/features/\*_/_.md — feature requirements (drives module needs)
 \_concept/blueprint/techstack.md — confirmed tech stack and constraints
 ? \_concept/\_grounding/overview/user_input.json — complexity field (drives involvement level)
-? \_concept/\_grounding/general/onboarding.md — pre-answered architecture notes
+? \_concept/\_grounding/research/onboarding.md — pre-answered architecture notes
 ? \_concept/experience/behaviors/\*.allium — entity state machines, complex workflows
 
 WRITES
@@ -155,7 +155,7 @@ STEP 1: Read context
 - Read all feature files for functional requirements
 - Read stack.md for tech stack decisions and constraints
 - Check \_grounding/overview/user_input.json for complexity field
-  IF \_grounding/general/onboarding.md exists
+  IF \_grounding/research/onboarding.md exists
   - Read onboarding notes — user may have specified architecture constraints
   - Use these as pre-answered context; skip redundant questions
     IF \_concept/experience/behaviors/\*.allium exists
