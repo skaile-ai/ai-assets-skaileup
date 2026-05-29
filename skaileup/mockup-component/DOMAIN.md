@@ -8,7 +8,7 @@ metadata:
 
 # mockup-component
 
-Develops and previews UI components in isolation using Storybook and isolated HTML outputs. Phase 1 stub — see SKILL_GRAPH.md §1.
+Develops and previews UI components in isolation using Storybook and isolated HTML outputs.
 
 ## Skills
 
@@ -22,5 +22,5 @@ Develops and previews UI components in isolation using Storybook and isolated HT
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
 - See `../REFACTOR_MOCKUP.md` if this domain is a mockup cluster.

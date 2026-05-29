@@ -8,7 +8,7 @@ metadata:
 
 # mockup-walkthrough
 
-Produces clickable application walkthroughs at increasing fidelity levels, from plain text through static HTML, Lit, Astro, and full framework targets. Phase 1 stub — see SKILL_GRAPH.md §1.
+Produces clickable application walkthroughs at increasing fidelity levels, from plain text through static HTML, Lit, Astro, and full framework targets.
 
 ## Skills
 
@@ -18,5 +18,5 @@ Produces clickable application walkthroughs at increasing fidelity levels, from 
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
 - See `../REFACTOR_MOCKUP.md` if this domain is a mockup cluster.

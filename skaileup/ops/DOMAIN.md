@@ -8,7 +8,7 @@ metadata:
 
 # ops
 
-Provides cross-cutting operational skills: code review, syncing, evaluation, feature addition, reverse engineering, and project-level orchestration. Phase 1 stub — see SKILL_GRAPH.md §1.
+Provides cross-cutting operational skills: code review, syncing, evaluation, feature addition, reverse engineering, and project-level orchestration.
 
 ## Skills
 
@@ -26,4 +26,4 @@ Provides cross-cutting operational skills: code review, syncing, evaluation, fea
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

@@ -8,7 +8,7 @@ metadata:
 
 # design
 
-Defines the visual and tonal language of a product: brand identity, design tokens, voice, and inspiration. Phase 1 stub — see SKILL_GRAPH.md §1.
+Defines the visual and tonal language of a product: brand identity, design tokens, voice, and inspiration.
 
 ## Skills
 
@@ -17,4 +17,4 @@ Defines the visual and tonal language of a product: brand identity, design token
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

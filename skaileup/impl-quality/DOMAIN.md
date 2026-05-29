@@ -8,7 +8,7 @@ metadata:
 
 # impl-quality
 
-Covers all quality assurance concerns: test planning, unit/integration/e2e tests, code evaluation, audits, readiness checks, standards enforcement, and debug handoffs. Phase 1 stub — see SKILL_GRAPH.md §1.
+Covers all quality assurance concerns: test planning, unit/integration/e2e tests, code evaluation, audits, readiness checks, standards enforcement, and debug handoffs.
 
 ## Skills
 
@@ -27,4 +27,4 @@ Covers all quality assurance concerns: test planning, unit/integration/e2e tests
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

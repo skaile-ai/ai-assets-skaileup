@@ -8,7 +8,7 @@ metadata:
 
 # impl-architecture
 
-Defines the technical foundation: tech stack decisions, system architecture, data model, and reusable code templates. Phase 1 stub — see SKILL_GRAPH.md §1.
+Defines the technical foundation: tech stack decisions, system architecture, data model, and reusable code templates.
 
 ## Skills
 
@@ -19,4 +19,4 @@ Defines the technical foundation: tech stack decisions, system architecture, dat
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

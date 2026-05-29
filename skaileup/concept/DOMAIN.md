@@ -8,7 +8,7 @@ metadata:
 
 # concept
 
-Captures the initial framing of a product or feature: a concise brief, articulated goals, and comparable references. Phase 1 stub — see SKILL_GRAPH.md §1.
+Captures the initial framing of a product or feature: a concise brief, articulated goals, and comparable references.
 
 ## Skills
 
@@ -17,4 +17,4 @@ Captures the initial framing of a product or feature: a concise brief, articulat
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

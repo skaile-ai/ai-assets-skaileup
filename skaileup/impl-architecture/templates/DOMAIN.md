@@ -28,7 +28,7 @@ Per `CONTRIBUTING.md`, these skills use the shortened form (`name: template-post
 
 ## Cross-references
 
-- `../../../SKILL_GRAPH.md` § 6 — tier-composition table (`impl-arch/templates-select`)
+- `../../../../../docs/devlog/SKILL_GRAPH.md` § 6 — tier-composition table (`impl-arch/templates-select`)
 - `../../contracts/skill_grammar.md` — SKILL.md DSL
 - `../techstack/SKILL.md` — discovers the available stacks from this directory and recommends one
 - `../../flows/_meta/deferred_skills.yaml` — selector is currently deferred to Phase 3

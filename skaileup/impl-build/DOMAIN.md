@@ -8,7 +8,7 @@ metadata:
 
 # impl-build
 
-Handles one-time and project-level build tasks: scaffolding, foundation setup, infrastructure, migration, seeding, code generation, and documentation. Phase 1 stub — see SKILL_GRAPH.md §1.
+Handles one-time and project-level build tasks: scaffolding, foundation setup, infrastructure, migration, seeding, code generation, and documentation.
 
 ## Skills
 
@@ -22,4 +22,4 @@ Handles one-time and project-level build tasks: scaffolding, foundation setup, i
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

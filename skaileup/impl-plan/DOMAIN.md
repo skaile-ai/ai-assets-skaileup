@@ -8,7 +8,7 @@ metadata:
 
 # impl-plan
 
-Produces the implementation plan through brainstorm, alignment, vertical slice planning, and supervised refinement; the testing strategy is included as part of the plan output. Phase 1 stub — see SKILL_GRAPH.md §1.
+Produces the implementation plan through brainstorm, alignment, vertical slice planning, and supervised refinement; the testing strategy is included as part of the plan output.
 
 ## Skills
 
@@ -19,4 +19,4 @@ Produces the implementation plan through brainstorm, alignment, vertical slice p
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

@@ -8,7 +8,7 @@ metadata:
 
 # product-spec
 
-Specifies the feature set and the acceptance criteria that define when each feature is done. Phase 1 stub — see SKILL_GRAPH.md §1.
+Specifies the feature set and the acceptance criteria that define when each feature is done.
 
 ## Skills
 
@@ -16,4 +16,4 @@ Specifies the feature set and the acceptance criteria that define when each feat
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

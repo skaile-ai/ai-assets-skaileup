@@ -8,7 +8,7 @@ metadata:
 
 # mockup-feedback
 
-Manages the annotation-to-patch loop for mockups: annotate, triage, patch, and apply changes, with bidirectional sync via references and a devlog. Phase 1 stub — see SKILL_GRAPH.md §1.
+Manages the annotation-to-patch loop for mockups: annotate, triage, patch, and apply changes, with bidirectional sync via references and a devlog.
 
 ## Skills
 
@@ -29,5 +29,5 @@ mockup-feedback-apply      → applies diffs, appends devlog, one git commit
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
 - See `../REFACTOR_MOCKUP.md` if this domain is a mockup cluster.

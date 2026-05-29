@@ -8,7 +8,7 @@ metadata:
 
 # experience
 
-Models the user experience layer: journeys, interaction behaviors, screens, and the components that compose them. Phase 1 stub — see SKILL_GRAPH.md §1.
+Models the user experience layer: journeys, interaction behaviors, screens, and the components that compose them.
 
 ## Skills
 
@@ -20,4 +20,4 @@ Models the user experience layer: journeys, interaction behaviors, screens, and 
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

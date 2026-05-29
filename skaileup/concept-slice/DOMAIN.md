@@ -8,7 +8,7 @@ metadata:
 
 # concept-slice
 
-Runs the concept loop at a per-feature granularity for large applications: brainstorm, align, scope, and design each feature slice individually. Phase 1 stub — see SKILL_GRAPH.md §1.
+Runs the concept loop at a per-feature granularity for large applications: brainstorm, align, scope, and design each feature slice individually.
 
 ## Skills
 
@@ -19,4 +19,4 @@ Runs the concept loop at a per-feature granularity for large applications: brain
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

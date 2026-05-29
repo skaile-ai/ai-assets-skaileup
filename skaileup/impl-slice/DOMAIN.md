@@ -8,7 +8,7 @@ metadata:
 
 # impl-slice
 
-Executes the per-slice implementation loop (repeated N times): implement, test, recap, refactor, and commit, with scratch handoffs stored in _slice/<id>/. Phase 1 stub — see SKILL_GRAPH.md §1.
+Executes the per-slice implementation loop (repeated N times): implement, test, recap, refactor, and commit, with scratch handoffs stored in _slice/<id>/.
 
 ## Skills
 
@@ -22,4 +22,4 @@ Executes the per-slice implementation loop (repeated N times): implement, test, 
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.

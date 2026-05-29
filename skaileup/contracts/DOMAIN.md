@@ -8,7 +8,7 @@ metadata:
 
 # contracts
 
-The shared reference layer consumed by every skill in the catalog: common definitions, schemas, and conventions that all domains depend on. Phase 1 stub — see SKILL_GRAPH.md §1.
+The shared reference layer consumed by every skill in the catalog: common definitions, schemas, and conventions that all domains depend on.
 
 ## Skills
 
@@ -16,4 +16,4 @@ The shared reference layer consumed by every skill in the catalog: common defini
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
