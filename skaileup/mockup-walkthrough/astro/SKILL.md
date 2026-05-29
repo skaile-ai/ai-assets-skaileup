@@ -271,7 +271,16 @@ REFERENCES
   docs/devlog/mockup-design.md § 4, § 6           — shared input contract + hybrid ID strategy
   mockup-walkthrough/static-html/SKILL.md — sibling skill (contract anchor)
 
-## STEP 1: Read inputs
+## STEP 1: Read feedback devlog (preserved intent)
+
+- If `_concept/_feedback/devlog.md` exists, read it.
+- Filter entries where `target_paths` overlaps files under
+  `_concept/mockup-walkthrough/astro/`.
+- For each matching entry: extract `patch_summary` as a preserved-intent constraint.
+  Do not undo these during regeneration.
+- If no devlog or no matching entries: proceed with no constraints.
+
+## STEP 2: Read inputs
 
 - Glob `experience/screens/**/*.md` (excluding `00_layout/`); sort
   lexicographically. Parse YAML frontmatter (PyYAML). Extract `implements[]`,
@@ -310,13 +319,13 @@ REFERENCES
 - **Zero journeys** → render "No journeys defined",
   `kind: "no_journeys"`.
 
-## STEP 2: Detect mode
+## STEP 3: Detect mode
 
 Check `_concept/mockup-walkthrough/astro/astro.config.mjs`.
 - Absent → **Init** (proceed to STEP 3 then STEP 4).
 - Present → **Update** (skip STEP 3, proceed directly to STEP 4).
 
-## STEP 3: Scaffold project (Init only)
+## STEP 4: Scaffold project (Init only)
 
 Write the following files. Do NOT write these on update runs.
 
@@ -550,7 +559,7 @@ function findScreen(screen_id: string) {
 </Shell>
 ```
 
-## STEP 4: Generate `specs.json` and `global.css` (both modes)
+## STEP 5: Generate `specs.json` and `global.css` (both modes)
 
 Write `src/data/specs.json` derived from the in-memory model. Schema as shown
 in the `specs.json` shape section above. Overwrite unconditionally.
@@ -575,7 +584,7 @@ derived in-memory model vs. the CSS var declarations in the existing
 `global.css` before overwriting. If counts differ, append
 `kind: "stale_tailwind_config"` to `warnings[]`.
 
-## STEP 5: Build
+## STEP 6: Build
 
 Run from `_concept/mockup-walkthrough/astro/`:
 
@@ -590,7 +599,7 @@ After build: verify `dist/` does NOT exist under the project root. If it
 does: fail with "astro.config.mjs outDir misconfigured — dist/ must not
 exist".
 
-## STEP 6: Write `manifest.json`
+## STEP 7: Write `manifest.json`
 
 Emit the pinned schema. Build it from the in-memory model — NOT by
 serialising `specs.json`. Template-only fields from `specs.json`
@@ -652,7 +661,7 @@ Sort: `screens[]` by `screen_path`, `journeys[]` by `journey_id`,
 `renderer_version` matches the `metadata.version` in this SKILL.md's
 frontmatter (`"0.1.0"`).
 
-## STEP 7: Validate
+## STEP 8: Validate
 
 Run from the repo root:
 

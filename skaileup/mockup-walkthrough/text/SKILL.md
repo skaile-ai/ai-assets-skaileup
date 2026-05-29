@@ -180,6 +180,15 @@ _concept/mockups/
 
 ## Workflow
 
+### Phase 0a: Read feedback devlog (preserved intent)
+
+Before generating any output, read `_concept/_feedback/devlog.md` if it exists.
+Filter entries by `target_paths` that overlap with files this regeneration will touch
+(anything under `_concept/mockup-walkthrough/text/`).
+For each matching entry, extract the `patch_summary` — these are preserved-intent
+constraints from prior human annotation. Do not undo them during regeneration.
+If no devlog exists or no entries overlap, proceed with no constraints.
+
 ### Phase 0: Resolve Template and Read Stack Templates
 
 **Before generating any code**, determine which mock template to use:

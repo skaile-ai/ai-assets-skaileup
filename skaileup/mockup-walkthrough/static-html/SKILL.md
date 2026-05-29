@@ -235,7 +235,16 @@ REFERENCES
   docs/devlog/mockup-design.md § 4, § 6           — shared input contract + hybrid ID strategy
   mockup-walkthrough/text/SKILL.md      — sibling skill (text variant) for tone reference
 
-## STEP 1: Read inputs
+## STEP 1: Read feedback devlog (preserved intent)
+
+  - If `_concept/_feedback/devlog.md` exists, read it.
+  - Filter entries where `target_paths` overlaps files under
+    `_concept/mockup-walkthrough/static-html/`.
+  - For each matching entry: extract `patch_summary` as a preserved-intent constraint.
+    Do not undo these during regeneration.
+  - If no devlog or no matching entries: proceed with no constraints.
+
+## STEP 2: Read inputs
 
   - Glob `experience/screens/**/*.md` (excluding `00_layout/`); sort lexicographically by path.
   - For each screen: parse YAML frontmatter (PyYAML); extract `implements[]`,
@@ -275,7 +284,7 @@ REFERENCES
     `kind: "missing_feature"`, continue rendering. `manifest.features[]`
     is emitted as `[]`.
 
-## STEP 2: Render screens
+## STEP 3: Render screens
 
   For each parsed screen (in lexicographic order):
 
@@ -320,7 +329,7 @@ REFERENCES
   NEVER trust frontmatter strings; they may contain quotes, angle
   brackets, or unicode that breaks the document.
 
-## STEP 3: Render journeys
+## STEP 4: Render journeys
 
   For each journey in `stories.json`'s `journeys[]` array:
 
@@ -361,7 +370,7 @@ REFERENCES
   to the journey pages) but does not advance to any specific journey's
   next screen.
 
-## STEP 4: Emit index.html and manifest.json
+## STEP 5: Emit index.html and manifest.json
 
 ### STEP 4a: Emit `index.html`
 
@@ -488,7 +497,7 @@ mini-plan. Field names are pinned exactly:
   `auto_slug_collision`. Extend cautiously — Phase 3 will switch on
   this field.
 
-## STEP 5: Validate
+## STEP 6: Validate
 
   - Run `mockup-walkthrough/static-html/validator.py
     _concept/mockup-walkthrough/static-html` from the repo root.
