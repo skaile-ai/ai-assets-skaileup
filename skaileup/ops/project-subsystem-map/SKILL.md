@@ -1,6 +1,6 @@
 ---
 name: ops-project-subsystem-map
-description: 'Generate the 2_subsystems/ section of a meta-concept: index of all subsystems with maturity, audience, tech stack, and references to per-subsystem concepts.'
+description: 'Use when building a multi-product meta-concept and the subsystem index is missing. Generates 2_subsystems/ with maturity, audience, tech stack, and references to per-subsystem concepts for each product.'
 source: MERGED
 version: 1.0.0
 keywords: [meta-concept, subsystems, map, inventory, maturity, ecosystem]

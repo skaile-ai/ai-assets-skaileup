@@ -1,6 +1,6 @@
 ---
 name: impl-quality-audit
-description: 'Static code audit. Launches three parallel sub-agents for logic errors, UI/UX issues, and security concerns. Also checks _concept/ structure integrity. Run before e2e or after significant changes.'
+description: 'Use before e2e testing or after significant code changes to run a static audit. Launches three parallel sub-agents for logic errors, UI/UX issues, and security concerns, and checks _concept/ structure integrity.'
 metadata:
   version: '1.0.0'
   stage: alpha

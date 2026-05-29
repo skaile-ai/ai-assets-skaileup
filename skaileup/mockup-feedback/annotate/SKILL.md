@@ -1,6 +1,6 @@
 ---
 name: mockup-feedback-annotate
-description: "Injects the annotation overlay into a walkthrough site root so stakeholders can click elements and submit comments. Produces _concept/_feedback/sessions/ for annotation storage. First skill in the mockup-feedback cluster."
+description: "Use when a walkthrough site is ready and you need stakeholders to annotate it. Injects the annotation overlay so stakeholders can click elements and submit comments; produces _concept/_feedback/sessions/ for storage. First skill in the mockup-feedback cluster."
 metadata:
   version: "0.1.0"
   tags:

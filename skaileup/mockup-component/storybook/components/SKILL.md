@@ -1,6 +1,6 @@
 ---
 name: mockup-component-storybook-components
-description: "Sub-skill 2/4: Identify custom building-block components from screen specs, build them using the project's component library, and create their Storybook stories. Called by the storybook orchestrator."
+description: "Use when screen specs are approved and building-block component stories are needed. Sub-skill 2/4: identifies custom components from specs, builds them using the project's component library, and creates their Storybook stories. Called by mockup-component-storybook-orchestrator."
 metadata:
   version: '1.0.0'
   stage: alpha

@@ -1,6 +1,6 @@
 ---
 name: experience-components
-description: "Reusable component inventory. Use when screen specs exist and you need to identify shared UI patterns (data tables, forms, cards, navigation) across screens. Maps components to the tech stack's component library. Outputs to _concept/experience/screens/components/."
+description: "Use when screen specs exist and you need to identify shared UI patterns (data tables, forms, cards, navigation) across screens. Maps components to the tech stack's component library. Outputs to _concept/experience/screens/components/."
 metadata:
   version: '1.0.0'
   stage: alpha

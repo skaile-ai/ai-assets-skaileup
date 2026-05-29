@@ -1,6 +1,6 @@
 ---
 name: mockup-component-storybook-setup
-description: 'Sub-skill 1/4: Scaffold a standalone Storybook project, install dependencies, and apply brand tokens as CSS custom properties. Called by the storybook orchestrator.'
+description: 'Use when no Storybook project exists yet and one needs to be scaffolded for mockup work. Sub-skill 1/4: scaffolds a standalone Storybook project, installs dependencies, and applies brand tokens as CSS custom properties. Called by mockup-component-storybook-orchestrator.'
 metadata:
   version: '1.0.0'
   stage: alpha

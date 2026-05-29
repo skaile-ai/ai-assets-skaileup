@@ -1,6 +1,6 @@
 ---
 name: mockup-component-storybook-pages
-description: 'Sub-skill 3/4: Build AppShell and full-page screen compositions from screen specs. Each page includes all state variants and responsive viewports. Writes manifest.json for the journeys sub-skill. Called by the storybook orchestrator.'
+description: 'Use when building-block components are ready and full-page screen compositions are needed. Sub-skill 3/4: builds AppShell and page stories from screen specs with all state variants and responsive viewports; writes manifest.json for the journeys sub-skill. Called by mockup-component-storybook-orchestrator.'
 metadata:
   version: '1.0.0'
   stage: alpha

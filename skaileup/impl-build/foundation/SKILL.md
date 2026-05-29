@@ -1,6 +1,6 @@
 ---
 name: impl-build-foundation
-description: 'Applies the three foundational layers every app needs before feature work: brand tokens → CSS variables, authentication setup, and app shell layout. Also seeds initial data and configures Storybook with brand theme if present. Reads the tech stack profile for stack-specific recipes. Run after scaffold, before implement-feature.'
+description: 'Use after scaffold and before feature implementation to apply the three foundational layers every app needs: brand tokens → CSS variables, authentication setup, and app shell layout. Also seeds initial data and configures Storybook with brand theme if present.'
 metadata:
   version: '1.0.0'
   stage: alpha

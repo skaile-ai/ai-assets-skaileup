@@ -1,6 +1,6 @@
 ---
 name: ops-project-review
-description: 'Audit a meta-concept for completeness, consistency, and accuracy. Checks that all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts.'
+description: 'Use when a multi-product meta-concept needs a quality check. Audits for completeness, consistency, and accuracy — verifies all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts.'
 source: MERGED
 version: 1.0.0
 keywords: [meta-concept, review, audit, consistency, completeness]

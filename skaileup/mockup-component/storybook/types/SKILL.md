@@ -1,6 +1,6 @@
 ---
 name: mockup-component-storybook-types
-description: 'PostXL-specific: replaces mocked Storybook types with schema-generated types from model.json. Runs pxl types to generate TypeScript interfaces, preserves UI-only types, and ensures the Storybook project compiles. Use after datamodel is finalized and Storybook stories use placeholder types.'
+description: 'Use after the datamodel is finalized and Storybook stories still use placeholder types (PostXL projects only). Replaces mocked types with schema-generated TypeScript interfaces from model.json and ensures the Storybook project compiles.'
 metadata:
   version: '1.0.0'
   stage: alpha

@@ -1,6 +1,6 @@
 ---
 name: impl-build-generate
-description: 'PostXL code generation and conflict resolution. Runs PostXL generators from postxl-schema.json, auto-resolves merge conflicts using a four-level cascade, and verifies the build. Only applicable when using the PostXL tech stack. Re-run after any schema change or custom action addition.'
+description: 'Use when the project uses the PostXL tech stack and you need to regenerate code or resolve merge conflicts after a schema change or custom action addition. Runs generators from postxl-schema.json, auto-resolves conflicts via a four-level cascade, and verifies the build.'
 metadata:
   version: '1.0.0'
   stage: alpha

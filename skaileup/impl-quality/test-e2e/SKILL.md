@@ -1,6 +1,6 @@
 ---
 name: impl-quality-test-e2e
-description: 'End-to-end browser testing. Reads screen specs, features, and data model from _concept/. Uses agent-browser to test every user journey, take screenshots, and validate database records.'
+description: 'Use when all features are implemented and you need full end-to-end browser testing. Reads screen specs, features, and data model from _concept/, then uses agent-browser to test every user journey, take screenshots, and validate database records.'
 metadata:
   version: '1.0.0'
   stage: alpha

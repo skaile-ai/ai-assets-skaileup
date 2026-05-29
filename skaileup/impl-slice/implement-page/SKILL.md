@@ -1,6 +1,6 @@
 ---
 name: impl-slice-implement-page
-description: 'Page-level feature implementation with TDD Guard. Implements all features within one page using outside-in TDD: writes failing page tests, then for each feature writes failing feature tests and implements until green. Uses storybook page compositions as UI starting point if available. TDD Guard enforces red-green discipline at the feature level.'
+description: 'Use when implementing all features within a single page using outside-in TDD. Writes failing page tests first, then per-feature failing tests, implements until green. Uses Storybook page compositions as UI starting point if available. TDD Guard enforces red-green discipline.'
 metadata:
   version: '1.0.0'
   stage: alpha

@@ -1,6 +1,6 @@
 ---
 name: impl-build-seed
-description: 'Generates seed scripts from seed.json. Reads seed.json scenarios (empty, single_user, populated, edge_cases) and generates executable seed scripts for the chosen stack (Prisma, Drizzle, raw SQL, etc.). Each scenario is independently runnable. Run after migrate.'
+description: 'Use after migrate to generate executable seed scripts from seed.json. Covers all seed scenarios (empty, single_user, populated, edge_cases); each is independently runnable against the target stack (Prisma, Drizzle, raw SQL, etc.).'
 metadata:
   version: '1.0.0'
   stage: alpha

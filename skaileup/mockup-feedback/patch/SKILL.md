@@ -1,6 +1,6 @@
 ---
 name: mockup-feedback-patch
-description: "Reads triage/<sid>.json, authors section-anchored diffs for each annotation (LLM for change; templated for add/remove/question), emits patches/<sid>.json + patches/<sid>.review.md. Third skill in the mockup-feedback cluster."
+description: "Use when a triage file exists for a feedback session and you need to author diffs for each annotation. Produces patches/<sid>.json + patches/<sid>.review.md (LLM for change; templated for add/remove/question). Third skill in the mockup-feedback cluster."
 metadata:
   version: "0.1.0"
   tags: [mockup-feedback, patch, diff, review]

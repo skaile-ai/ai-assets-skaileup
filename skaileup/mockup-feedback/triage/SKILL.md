@@ -1,6 +1,6 @@
 ---
 name: mockup-feedback-triage
-description: "Routes each annotation in a session JSON to its target _concept/ file by resolving specRef.screen/feature/journey. Produces triage/<sid>.json grouped by file. Deterministic Python — no LLM. Second skill in the mockup-feedback cluster."
+description: "Use when a feedback session JSON exists and annotations need to be routed to their target concept files. Resolves specRef.screen/feature/journey and produces triage/<sid>.json grouped by file. Deterministic — no LLM. Second skill in the mockup-feedback cluster."
 metadata:
   version: "0.1.0"
   tags: [mockup-feedback, triage, routing]

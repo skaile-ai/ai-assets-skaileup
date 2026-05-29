@@ -1,6 +1,6 @@
 ---
 name: skaileup
-description: 'Full concept pipeline orchestrator. Runs the complete conceptualization pipeline (Discovery -> Experience -> Blueprint) with checkpoint approvals, PLANS.md tracking, and auto-review mode. Dispatches sub-skills for each pipeline step and manages user communication.'
+description: 'Use when starting or resuming the full concept pipeline for a new product. Runs Discovery → Experience → Blueprint with checkpoint approvals, PLANS.md tracking, and auto-review mode; dispatches sub-skills for each step.'
 metadata:
   version: '1.0.0'
   stage: alpha

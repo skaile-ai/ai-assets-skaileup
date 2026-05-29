@@ -1,6 +1,6 @@
 ---
 name: ops-project-overview
-description: 'Generate the discovery/ section of a meta-concept: ecosystem brief, unified goals, and competitive positioning for a multi-product project.'
+description: 'Use when starting a multi-product meta-concept and the discovery section does not exist yet. Generates discovery/ covering ecosystem brief, unified goals, and competitive positioning.'
 source: MERGED
 version: 1.0.0
 keywords:

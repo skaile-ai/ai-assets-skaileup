@@ -8,7 +8,7 @@ metadata:
 
 # lab
 
-Applies skills to skills themselves: validate, judge, improve, learn, compile validators, and compile bundles for the skill catalog. Phase 1 stub — see SKILL_GRAPH.md §1.
+Applies skills to skills themselves: validate, judge, improve, learn, compile validators, and compile bundles for the skill catalog.
 
 ## Skills
 
@@ -22,6 +22,24 @@ Applies skills to skills themselves: validate, judge, improve, learn, compile va
 - **lab-archive** (`archive/`) — Rolls up old `_feedback/devlog.md` entries into quarterly archive files when entry count reaches 500. Keeps the 200 most recent in the live devlog. Lossless, idempotent, atomic writes.
 - **lab-validate-elements-block** (`validate-elements-block/`) — Validates the `elements:` block in screen frontmatter or example fixtures; returns 0 for valid, non-zero with line numbers for invalid.
 
+## Narrow validators pattern
+
+`lab/validate` is the general skill validator — runs Docker-isolated test cases from a test
+manifest schema. **Narrow validators** (e.g. `validate-elements-block`, future
+`validate-frontmatter`, `validate-cross-references`) are focused validators for a specific
+contract with a bounded, deterministically checkable schema. Both live in `lab/` and follow
+the same zero-side-effect, exit-code contract (0 = valid, non-zero = violations with line
+numbers).
+
+Create a narrow validator when:
+- A contract has a closed schema that can be checked without LLM judgment.
+- The check runs in CI or as a pre-commit hook.
+- Deterministic pass/fail is more useful than a quality score.
+
+Planned: `validate-frontmatter` (SKILL.md schema compliance), `validate-cross-references`
+(READS/REFERENCES paths resolve to real files in the installed skill graph).
+
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- `docs/devlog/SKILL_GRAPH.md` — catalog-level view.
+- `../skaileup/contracts/` — contracts consumed by narrow validators.
