@@ -8,19 +8,38 @@ metadata:
 
 # mockup-component
 
-Develops and previews UI components in isolation using Storybook and isolated HTML outputs.
+Renders UI components in isolation — either as a live Storybook project (`_concept/experience/4_storybook/`) or as zero-dependency HTML files (`_concept/mockup-component/isolated-html/`). Used after screens are approved, before implementation begins.
 
 ## Skills
 
-- **mockup-component-storybook** (`storybook/orchestrator/`) — Generates a 3-layer Storybook project (custom building-block components, full-page screen compositions, clickable user journey flows); framework-agnostic, delegates to 4 sub-skills.
-- **mockup-component-storybook-setup** (`storybook/setup/`) — Sub-skill 1/4: scaffolds the Storybook project, installs dependencies, applies brand tokens as CSS custom properties.
-- **mockup-component-storybook-components** (`storybook/components/`) — Sub-skill 2/4: identifies custom building-block components from screen specs, builds them, creates Storybook stories.
-- **mockup-component-storybook-pages** (`storybook/pages/`) — Sub-skill 3/4: builds AppShell and full-page screen compositions including state variants and responsive viewports; writes `manifest.json` for journeys.
-- **mockup-component-storybook-journeys** (`storybook/journeys/`) — Sub-skill 4/4: builds clickable multi-screen user journey stories (click-dummies) for hero, vital, and hygiene flows.
-- **mockup-component-storybook-types** (`storybook/types/`) — PostXL-specific: replaces mocked Storybook types with schema-generated types from `model.json`; preserves UI-only types.
-- **mockup-component-isolated-html** (`isolated-html/`) — Renders one standalone HTML file per component showing all variants × states in a token-driven grid; no JS, no framework, openable via `file://`.
+- **mockup-component-storybook** (`storybook/orchestrator/`) — Orchestrates the full 3-layer Storybook build; delegates to 4 sub-skills in sequence; writes `_concept/experience/4_storybook/`.
+- **mockup-component-storybook-setup** (`storybook/setup/`) — Sub-skill 1/4: scaffolds the Storybook project, installs deps, injects brand tokens as CSS custom properties.
+- **mockup-component-storybook-components** (`storybook/components/`) — Sub-skill 2/4: builds custom building-block components from screen specs and creates their stories.
+- **mockup-component-storybook-pages** (`storybook/pages/`) — Sub-skill 3/4: builds AppShell + full-page screen compositions with all state variants; writes `manifest.json` for journeys.
+- **mockup-component-storybook-journeys** (`storybook/journeys/`) — Sub-skill 4/4: builds clickable multi-screen journey stories (click-dummies) for hero, vital, and hygiene flows.
+- **mockup-component-storybook-types** (`storybook/types/`) — PostXL-specific: replaces mocked types with schema-generated TypeScript from `model.json` after datamodel is finalized.
+- **mockup-component-isolated-html** (`isolated-html/`) — Renders one standalone `<component>.html` per component (all variants x states, token-driven grid, no JS, openable via `file://`).
+
+## When to Use
+
+- Screens are approved (`_concept/experience/`) and the team needs a visual reference before writing implementation code.
+- Standard-app or complex-app tier: use `mockup-component-storybook` for a live, interactive component library.
+- MVP or simple-app tier: use `mockup-component-isolated-html` for a quick, zero-build visual reference.
+- PostXL projects: run `mockup-component-storybook-types` after `impl-architecture/datamodel` is finalized.
+
+## When NOT to Use
+
+- Screens not yet approved — run `experience/screens` first.
+- The goal is a full clickable app walkthrough — use `mockup-walkthrough/` instead.
+- Implementation is already underway and components exist in code — inspect the running app directly.
+
+## Sequence
+
+`mockup-component-storybook` calls its sub-skills in order: setup → components → pages → journeys. The `types` sub-skill is optional and runs last, only for PostXL.
 
 ## Cross-references
 
-- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
-- See `../REFACTOR_MOCKUP.md` if this domain is a mockup cluster.
+- `../mockup-walkthrough/` — for full app walkthroughs rather than isolated components.
+- `../mockup-feedback/` — annotation and patch loop that reads the storybook or isolated-html output.
+- `../contracts/concept_structure.md` — valid `_concept/` paths.
+- `../REFACTOR_MOCKUP.md` — mockup cluster design and how the three mockup domains relate.
