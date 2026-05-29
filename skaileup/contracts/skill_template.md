@@ -9,16 +9,21 @@ metadata:
   source: MERGED           # CF | SAXE | MERGED | MIGRATED | TEST — omit for new skills (TEST = deterministic fixture, not for production)
   requires:
     - contract-name        # bare string for same-resource contract dependencies
-  user_inputs:
-    dialog:
+  prerequisites:
+    inputs_required:
       - id: input_name
         label: "Human-readable label"
-        type: text | select | multiselect | boolean | number
-        required: true | false
+        type: text | textarea | select | multiselect | boolean | number
         options: []   # for select/multiselect only
-        default: null
         hint: "Help text for UI forms"
-    files: []   # _concept/ paths this skill needs as pre-supplied input
+    inputs_optional:
+      - id: optional_input
+        label: "Optional label"
+        type: text
+    files:
+      - path: "_concept/path/to/file"
+        gate: hard | soft
+        description: "Why this file is needed"
   reads_from: []    # _concept/ paths this skill reads
   writes_to: []     # _concept/ paths this skill creates or modifies
 ---

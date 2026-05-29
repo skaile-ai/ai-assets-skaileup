@@ -41,18 +41,6 @@ metadata:
     produces:
       - path: '_concept/testing/test_plan.md'
         description: 'Structured test plan with scenarios per feature'
-  user_inputs:
-    dialog:
-      - id: 'test_scope'
-        label: 'Test Scope'
-        type: 'select'
-        options:
-          - 'must-have-only'
-          - 'all-features'
-        required: true
-        default: 'all-features'
-        hint: 'Whether to generate test scenarios for must-have features only or all features'
-    files: []
 ---
 
 # Test Plan — Concept-Driven Test Generation

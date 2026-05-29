@@ -17,18 +17,14 @@ metadata:
       - path: '_concept/discovery/brief.md'
         gate: hard
         description: 'Brief required for the app slug used in branch naming'
-  user_inputs:
-    dialog:
+    inputs_optional:
       - id: 'git_mode'
         label: "Git mode: 'branch' (default, all agents) or 'worktree' (Claude Code local only)"
         type: 'select'
         options:
           - 'branch'
           - 'worktree'
-        required: false
-        default: 'branch'
         hint: "Use 'worktree' only when running Claude Code locally and parallel subagents are expected"
-    files: []
 ---
 
 # Git Prepare

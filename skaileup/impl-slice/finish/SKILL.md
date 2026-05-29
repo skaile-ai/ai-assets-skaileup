@@ -16,8 +16,7 @@ metadata:
       - path: '_implementation/git-state.json'
         gate: hard
         description: 'Git state required for branch name and worktree path'
-  user_inputs:
-    dialog:
+    inputs_required:
       - id: 'finish_action'
         label: 'What to do with the implementation branch?'
         type: 'select'
@@ -26,7 +25,6 @@ metadata:
           - 'pull-request'
           - 'keep'
           - 'discard'
-        required: true
         hint: 'merge = squash-merge to main now; pull-request = open PR for review; keep = leave branch as-is; discard = delete branch and worktree'
 ---
 

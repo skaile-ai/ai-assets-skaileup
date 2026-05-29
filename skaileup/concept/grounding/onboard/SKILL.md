@@ -16,24 +16,19 @@ metadata:
         description: 'Machine-readable project identity (name, problem, audience, type, tiers)'
       - path: '_concept/_grounding/onboarding/decisions.yaml'
         description: 'Collected decisions with confidence levels (locked/preferred/open)'
-  user_inputs:
-    dialog:
+    inputs_required:
       - id: 'project_name'
         label: 'Project name'
         type: 'text'
-        required: true
       - id: 'problem_statement'
         label: 'What problem does this solve?'
         type: 'textarea'
-        required: true
       - id: 'target_audience'
         label: 'Who is the target audience?'
         type: 'textarea'
-        required: true
       - id: 'project_type'
         label: 'Project type'
         type: 'select'
-        required: true
         options:
           - 'web-app'
           - 'cli-tool'
@@ -41,15 +36,14 @@ metadata:
           - 'library'
           - 'data-pipeline'
           - 'mobile-app'
+    inputs_optional:
       - id: 'tier_preset'
         label: 'Complexity preset'
         type: 'select'
-        required: false
         options:
           - 'quick'
           - 'standard'
           - 'thorough'
-        default: 'standard'
   artifacts:
     produces:
       - id: onboarding-profile

@@ -36,19 +36,6 @@ metadata:
         description: 'Key decisions made during the pipeline session'
       - path: '_concept/eval-concept.json'
         description: 'Written by eval-concept sub-agent after Blueprint phase — verdict must be pass before implementation'
-  user_inputs:
-    dialog:
-      - id: 'complexity_tier'
-        label: 'Project complexity (controls checkpoint frequency)'
-        type: 'select'
-        options:
-          - 'small'
-          - 'standard'
-          - 'complex'
-        required: false
-        default: 'standard'
-        hint: 'small = consolidated checkpoints, standard = phase-level checkpoints, complex = per-skill checkpoints'
-    files: []
 ---
 
 # Orchestrator — Full Concept Pipeline

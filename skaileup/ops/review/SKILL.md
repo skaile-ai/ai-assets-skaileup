@@ -40,18 +40,6 @@ metadata:
     produces:
       - path: '_concept/quality.json'
         description: 'Health report with quality score (0–100) and issue inventory'
-  user_inputs:
-    dialog:
-      - id: 'mode'
-        label: 'Audit or garden?'
-        type: 'select'
-        options:
-          - 'audit'
-          - 'garden'
-        required: false
-        default: 'audit'
-        hint: 'audit = report issues; garden = auto-fix safe issues'
-    files: []
 ---
 
 # Review — Structure Audit and Gardening

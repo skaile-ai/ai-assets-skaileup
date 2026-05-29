@@ -60,19 +60,6 @@ metadata:
         description: 'Implementation decisions log'
       - path: '_implementation/LEARNINGS.md'
         description: 'Patterns and gotchas discovered during implementation'
-  user_inputs:
-    dialog:
-      - id: 'complexity_tier'
-        label: 'Project complexity (controls checkpoint frequency and testing depth)'
-        type: 'select'
-        options:
-          - 'small'
-          - 'standard'
-          - 'complex'
-        required: false
-        default: 'standard'
-        hint: 'small = consolidated setup, standard = separate scaffold+foundation, complex = all checkpoints separate'
-    files: []
 ---
 
 # Implement — Full App Implementation Orchestrator

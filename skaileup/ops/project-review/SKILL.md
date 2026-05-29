@@ -4,10 +4,12 @@ description: 'Audit a meta-concept for completeness, consistency, and accuracy. 
 source: MERGED
 version: 1.0.0
 keywords: [meta-concept, review, audit, consistency, completeness]
-user_inputs:
-  - key: PROJECT_ROOT
-    prompt: 'Where is the shell repo root?'
-    required: true
+metadata:
+  prerequisites:
+    inputs_required:
+      - id: PROJECT_ROOT
+        label: 'Where is the shell repo root?'
+        type: text
 reads_from:
   - contracts/meta-concept-contract/CONTRACT.md
   - '{PROJECT_ROOT}/_concept/'

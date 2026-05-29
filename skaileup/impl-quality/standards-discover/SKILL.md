@@ -12,13 +12,13 @@ metadata:
   stage: 'alpha'
   requires:
     - 'standards-contract'
-  user_inputs:
-    dialog:
+  prerequisites:
+    inputs_required:
       - id: 'target_path'
         label: 'Target Codebase Path'
         type: 'text'
-        required: true
         hint: 'Path to the existing codebase to analyze'
+    inputs_optional:
       - id: 'domains'
         label: 'Domains to Analyze'
         type: 'multiselect'
@@ -29,16 +29,7 @@ metadata:
           - 'naming'
           - 'testing'
           - 'architecture'
-        default:
-          - 'api'
-          - 'database'
-          - 'ui'
-          - 'naming'
-          - 'testing'
-          - 'architecture'
-        required: false
         hint: 'Which convention domains to discover'
-    files: []
 ---
 
 # Discover Standards

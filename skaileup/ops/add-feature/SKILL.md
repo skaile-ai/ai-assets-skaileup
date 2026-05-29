@@ -53,21 +53,6 @@ metadata:
     produces:
       - path: '_concept/experience/features'
         description: 'New or modified feature spec file'
-  user_inputs:
-    dialog:
-      - id: 'feature_description'
-        label: 'What feature do you want to add or change?'
-        type: 'text'
-        required: true
-        hint: 'Describe it in plain language — what should the user be able to do?'
-      - id: 'feature_mode'
-        label: 'New feature or modification?'
-        type: 'select'
-        options:
-          - 'new'
-          - 'modification'
-        required: true
-    files: []
 ---
 
 # Add Feature — Surgical Concept Modification

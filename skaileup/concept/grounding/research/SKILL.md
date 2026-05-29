@@ -66,23 +66,6 @@ metadata:
         description: 'Visual and layout references'
       - path: '_concept/_grounding/research/behavioral-patterns.md'
         description: 'UX behavioral patterns'
-  user_inputs:
-    dialog:
-      - id: 'research_scope'
-        label: 'Research scope'
-        type: 'select'
-        required: true
-        options:
-          - 'domain'
-          - 'competitors'
-          - 'audiences'
-          - 'design'
-          - 'patterns'
-          - 'colors'
-          - 'behavioral'
-          - 'all'
-        hint: "What area to research (select 'all' for comprehensive research)"
-    files: []
 ---
 
 # Research — Domain Research Mode

@@ -71,37 +71,6 @@ metadata:
     produces:
       - path: '_concept/blueprint/techstack.md'
         description: 'Chosen tech stack with profile reference for downstream skills'
-  user_inputs:
-    dialog:
-      - id: 'framework_experience'
-        label: 'Framework experience'
-        type: 'text'
-        required: false
-        hint: 'Vue, React, Python, or starting fresh?'
-      - id: 'platform'
-        label: 'Platform'
-        type: 'select'
-        required: true
-        options:
-          - 'web'
-          - 'mobile'
-          - 'api'
-          - 'desktop'
-        hint: 'What are you building?'
-      - id: 'data_heavy'
-        label: 'Data-heavy app?'
-        type: 'boolean'
-        required: false
-        hint: 'Lots of tables, lists, sorting, and filtering?'
-      - id: 'managed_vs_selfhosted'
-        label: 'Hosting preference'
-        type: 'select'
-        required: false
-        options:
-          - 'self-hosted'
-          - 'managed/cloud'
-        hint: 'Manage your own server or use hosted services?'
-    files: []
 ---
 
 # Tech Stack — Stack Selection

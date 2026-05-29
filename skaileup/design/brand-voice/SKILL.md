@@ -77,28 +77,6 @@ metadata:
         description: 'Tone of voice, personality, and communication principles'
       - path: '_concept/discovery/brand/copy_guidelines.md'
         description: 'Error messages, empty states, notifications, micro-copy patterns'
-  user_inputs:
-    dialog:
-      - id: 'tone'
-        label: 'What tone should your app speak in?'
-        type: 'select'
-        options:
-          - 'friendly'
-          - 'professional'
-          - 'playful'
-          - 'serious'
-        default: 'friendly'
-      - id: 'formality_level'
-        label: 'How formal should the language be? (1 = casual chat, 5 = corporate)'
-        type: 'select'
-        options:
-          - '1'
-          - '2'
-          - '3'
-          - '4'
-          - '5'
-        default: '3'
-    files: []
 ---
 
 # Brand Behavioral Identity

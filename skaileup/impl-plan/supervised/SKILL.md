@@ -26,13 +26,10 @@ metadata:
         gate: hard
         description: 'Feature specs required for spec compliance review'
         min_entries: 1
-  user_inputs:
-    dialog:
+    inputs_optional:
       - id: 'start_from_task'
         label: 'Resume from a specific task ID? (leave blank to start from first pending)'
         type: 'text'
-        required: false
-    files: []
   reads_from:
     - '_implementation/superpowers-plan.md'
     - '_implementation/git-state.json'

@@ -70,19 +70,6 @@ metadata:
     produces:
       - path: '_concept/experience/features'
         description: 'Feature files organized in numbered groups (one .md per feature)'
-  user_inputs:
-    dialog:
-      - id: 'feature_priorities'
-        label: 'Feature scope'
-        type: 'select'
-        options:
-          - 'must-have features only'
-          - 'must-have + nice-to-have'
-          - 'comprehensive'
-        required: false
-        default: 'must-have + nice-to-have'
-        hint: 'How broad should the feature set be? Story stages set the default — this overrides the scope.'
-    files: []
 ---
 
 # Features — Feature Planning

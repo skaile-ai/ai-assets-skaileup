@@ -73,34 +73,6 @@ metadata:
         description: 'Design tokens consumed by all downstream skills'
       - path: '_concept/discovery/brand/brandbook.html'
         description: 'Visual preview of the complete brand'
-  user_inputs:
-    dialog:
-      - id: 'reference_urls'
-        label: 'Reference websites'
-        type: 'text'
-        required: false
-        hint: "Show a website you love — I'll extract palette and style"
-      - id: 'mood'
-        label: 'Desired feeling'
-        type: 'text'
-        required: true
-        hint: 'What feeling should the app give? calm/bold/professional/playful...'
-      - id: 'light_dark'
-        label: 'Color mode'
-        type: 'select'
-        options:
-          - 'light'
-          - 'dark'
-          - 'both'
-        required: true
-        default: 'dark'
-        hint: 'Light mode, dark mode, or both?'
-      - id: 'font_preferences'
-        label: 'Font preferences'
-        type: 'text'
-        required: false
-        hint: 'Any font preferences or constraints?'
-    files: []
 ---
 
 # Brand Visual Identity
