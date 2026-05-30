@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-validate-elements-block`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** validation, elements, frontmatter, screens, lab
-**Source:** [`ai-assets/lab/validate-elements-block/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/validate-elements-block/SKILL.md)
+**Source:** [`ai-assets-dev/lab/validate-elements-block/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/validate-elements-block/SKILL.md)
 :::
 
 

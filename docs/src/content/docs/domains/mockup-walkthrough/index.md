@@ -1,6 +1,6 @@
 ---
-title: "mockup-component"
-description: "Components in isolation: storybook + isolated-html (see docs/devlog/mockup-design.md)"
+title: "mockup-walkthrough"
+description: "Clickable application walkthrough: text · static-html · lit · astro · framework"
 sidebar:
   label: "Overview"
   order: 0
@@ -11,32 +11,54 @@ sidebar:
 :::
 
 
-# mockup-component
+# mockup-walkthrough
 
-Develops and previews UI components in isolation using Storybook and isolated HTML outputs. Phase 1 stub — see SKILL_GRAPH.md §1.
+Renders approved screen specs and journey definitions into a navigable, clickable prototype. Agents use this domain when stakeholders need to walk through the application before any implementation begins.
 
 ## Skills
 
-- **mockup-component-storybook** (`storybook/orchestrator/`) — Generates a 3-layer Storybook project (custom building-block components, full-page screen compositions, clickable user journey flows); framework-agnostic, delegates to 4 sub-skills.
-- **mockup-component-storybook-setup** (`storybook/setup/`) — Sub-skill 1/4: scaffolds the Storybook project, installs dependencies, applies brand tokens as CSS custom properties.
-- **mockup-component-storybook-components** (`storybook/components/`) — Sub-skill 2/4: identifies custom building-block components from screen specs, builds them, creates Storybook stories.
-- **mockup-component-storybook-pages** (`storybook/pages/`) — Sub-skill 3/4: builds AppShell and full-page screen compositions including state variants and responsive viewports; writes `manifest.json` for journeys.
-- **mockup-component-storybook-journeys** (`storybook/journeys/`) — Sub-skill 4/4: builds clickable multi-screen user journey stories (click-dummies) for hero, vital, and hygiene flows.
-- **mockup-component-storybook-types** (`storybook/types/`) — PostXL-specific: replaces mocked Storybook types with schema-generated types from `model.json`; preserves UI-only types.
-- **mockup-component-isolated-html** (`isolated-html/`) — Renders one standalone HTML file per component showing all variants × states in a token-driven grid; no JS, no framework, openable via `file://`.
+- **mockup-walkthrough-text** (`text/`) — Linked multi-page HTML prototype (Alpine+Shoelace, Vue 3+PrimeVue, or Preact+HTM); writes to `_concept/mockups/`. Stack auto-selected from `stack.md` if present.
+- **mockup-walkthrough-static-html** (`static-html/`) — Zero-build static HTML walkthrough; writes `screen/<group>/<name>.html`, `journey/<id>.html`, and `manifest.json` to `_concept/mockups/`. Best for simple-app tier.
+- **mockup-walkthrough-astro** (`astro/`) — Tailwind-styled Astro site; same output contract as static-html but built via `bun run build`. Astro source committed alongside built output. Best for standard-app tier.
+- **mockup-walkthrough-lit** (`lit/`) — Lit web-components site (Vite); light-DOM components so `data-spec-*` stays queryable. Embeddable into a host page. Alt for embedded contexts.
+- **mockup-walkthrough-framework** (`framework/`) — Stack-native renderer; resolves `tech_stack_skill` from `_concept/blueprint/techstack.md` to a `template-*` and renders in that framework (Next/Nuxt/SvelteKit). Highest fidelity — complex-app tier. Requires `impl-architecture-templates-select` to have run.
+
+## When to Use
+
+- `experience/screens/` has at least one screen spec and the user asks for a prototype, mockup, or "show me what it looks like"
+- The orchestrator has completed the experience phase and is advancing to the mockup cluster
+- Stakeholders need a browser-openable artifact before any code is written
+
+## When NOT to Use
+
+- Screen specs don't exist yet — run `experience-screens` first
+- User wants isolated component previews — use `mockup-component` instead
+- A real implementation already exists and the ask is to review it — use `ops-review`
+
+## Sequence
+
+Pick one skill per run based on tier:
+
+```
+mvp / quick scan   → mockup-walkthrough-text
+simple-app tier    → mockup-walkthrough-static-html
+standard-app tier  → mockup-walkthrough-astro  (or -lit for embedded contexts)
+complex-app tier   → mockup-walkthrough-framework  (stack-native; static-html fallback)
+```
+
+All renderers share the same output contract; `manifest.json` is consumed by `mockup-feedback-annotate` in the next cluster phase.
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
-- See `../../docs/devlog/mockup-design.md` if this domain is a mockup cluster.
+- `../mockup-feedback/DOMAIN.md` — reads `manifest.json` produced here
+- `../experience/DOMAIN.md` — screen specs and `stories.json` are the primary inputs
+- `../contracts/elements_block.md` — `data-spec-*` attribute contract shared across all three skills
 
 
 ## Skills in this domain
 
-- [mockup-component-isolated-html](./mockup-component-isolated-html/) — Use when components are specced and an mvp/simple-app team needs a quick visual reference without a Storybook build. Renders one standalone 
-- [mockup-component-storybook](./mockup-component-storybook/) — Use after screens are approved to generate a 3-layer Storybook project: custom building-block components, full-page screen compositions, and
-- [mockup-component-storybook-components](./mockup-component-storybook-components/) — Sub-skill 2/4: Identify custom building-block components from screen specs, build them using the project's component library, and create the
-- [mockup-component-storybook-journeys](./mockup-component-storybook-journeys/) — Sub-skill 4/4: Build clickable multi-screen user journey stories (click-dummies). Each journey flows through real page components inside App
-- [mockup-component-storybook-pages](./mockup-component-storybook-pages/) — Sub-skill 3/4: Build AppShell and full-page screen compositions from screen specs. Each page includes all state variants and responsive view
-- [mockup-component-storybook-setup](./mockup-component-storybook-setup/) — Sub-skill 1/4: Scaffold a standalone Storybook project, install dependencies, and apply brand tokens as CSS custom properties. Called by the
-- [mockup-component-storybook-types](./mockup-component-storybook-types/) — PostXL-specific: replaces mocked Storybook types with schema-generated types from model.json. Runs pxl types to generate TypeScript interfac
+- [mockup-walkthrough-astro](./mockup-walkthrough-astro/) — Use when stakeholders need a clickable Astro walkthrough of the application — built static site, Tailwind-styled, openable directly in a bro
+- [mockup-walkthrough-framework](./mockup-walkthrough-framework/) — Use when stakeholders need the highest-fidelity clickable walkthrough rendered in the project's CHOSEN stack framework (Next.js / Nuxt / Sve
+- [mockup-walkthrough-lit](./mockup-walkthrough-lit/) — Use when stakeholders need a clickable Lit web-components walkthrough of the application — built with Vite, rendered as custom elements whos
+- [mockup-walkthrough-static-html](./mockup-walkthrough-static-html/) — Use when stakeholders need a clickable static HTML walkthrough of the application — zero build, no JS framework, openable directly in a brow
+- [mockup-walkthrough-text](./mockup-walkthrough-text/) — Use when screen specs are approved and user wants interactive HTML mockups. Also when user says 'mockup', 'prototype', 'show me what it look

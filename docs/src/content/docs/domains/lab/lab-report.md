@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-report`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets/lab/report/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/report/SKILL.md)
+**Source:** [`ai-assets-dev/lab/report/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/report/SKILL.md)
 :::
 
 

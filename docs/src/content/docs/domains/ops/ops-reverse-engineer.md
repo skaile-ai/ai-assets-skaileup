@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `ops-reverse-engineer`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** reverse, existing, codebase, repo, extract, import, bootstrap, existing-project, infer, scan
 **Source:** [`skaileup/ops/reverse-engineer/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/reverse-engineer/SKILL.md)
 :::

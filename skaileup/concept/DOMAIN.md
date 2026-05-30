@@ -13,6 +13,8 @@ Produces the discovery artifacts that ground all downstream concept and implemen
 ## Skills
 
 - **concept-brief** (`brief/`) — Dialog-driven capture of project idea, goals, and comparables; writes `_concept/discovery/brief.md`, `goals.md`, `comparable.md`.
+- **concept-goals** (`goals/`) — Focused success-criteria pass for standard/complex tiers; deepens `_concept/discovery/goals.md` with measurable KPIs, constraints, and non-goals.
+- **concept-comparable** (`comparable/`) — Focused reference-apps pass for standard/complex tiers; deepens `_concept/discovery/comparable.md` with borrow/avoid lessons and the positioning gap (distills `_grounding/research/competitors.md` if present).
 - **concept-grounding-onboard** (`grounding/onboard/`) — Collects project identity, tier preference, and tech decisions; writes `_concept/_grounding/onboarding/profile.yaml` and `decisions.yaml`.
 - **concept-grounding-research** (`grounding/research/`) — Research mode (runs in parallel): competitors, audiences, design inspiration, domain analysis; writes into `_grounding/research/` and `_grounding/findings/index.md`.
 - **concept-grounding-seeds** (`grounding/seeds/`) — Scans `_seeds/`, classifies files, maps them to artifact slots, updates `_concept/concept.yaml` seeds section.
@@ -37,6 +39,8 @@ concept-grounding-onboard
   └── concept-grounding-seeds     (if _seeds/ present)
   └── concept-grounding-research  (parallel, any time)
 concept-brief
+  └── concept-goals        (standard/complex high-level pass — deepen goals.md)
+  └── concept-comparable   (standard/complex high-level pass — deepen comparable.md)
 ```
 
 ## Cross-references

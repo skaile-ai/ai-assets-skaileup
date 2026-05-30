@@ -1,14 +1,14 @@
 ---
 title: "ops-project-review"
-description: "Audit a meta-concept for completeness, consistency, and accuracy. Checks that all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem concepts."
+description: "Use when a multi-product meta-concept needs a quality check. Audits for completeness, consistency, and accuracy — verifies all subsystems are documented, references are valid, maturity levels are honest, and no detail is duplicated from subsystem con"
 sidebar:
   label: "ops-project-review"
 ---
 
 :::note[Skill manifest]
 **Name:** `ops-project-review`
-**Stage:** — · **Version:** —
-**Tags:** —
+**Stage:** alpha · **Version:** 0.1.0
+**Tags:** meta-concept, review, audit, consistency, completeness
 **Source:** [`skaileup/ops/project-review/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/project-review/SKILL.md)
 :::
 

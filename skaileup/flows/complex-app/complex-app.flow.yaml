@@ -3,19 +3,17 @@ version: '2.0.0'
 name: 'Complex App'
 description: >-
   Multi-product / enterprise. Superset of standard-app plus brand-voice,
-  mockup-walkthrough-framework (deferred), non-optional infrastructure,
+  mockup-walkthrough-framework, non-optional infrastructure,
   project-overview/subsystem-map/integration/review project ops, supervised
   impl-plan, eval-code + audit quality (audit runs every slice — expressed
   via edge ordering since the schema has no loop construct), full
-  concept-slice WITH brainstorm, full mockup-feedback cluster (deferred).
+  concept-slice WITH brainstorm, full mockup-feedback cluster.
   Iteration semantics: cs-brainstorm..q-audit run once per feature; the
   linear graph below shows one iteration. Tier-flow composition rule (per
   SKILL_GRAPH § 6 prose): scope-project -> high-level concept ->
   project-overview -> impl-build setup -> loop: concept-slice (full —
   INCLUDING brainstorm) -> impl-slice (supervised plan) -> impl-quality/audit
-  (every slice) -> done. Deferred skills (concept-goals, concept-comparable,
-  design-inspiration, mockup-walkthrough-astro/framework, mockup-feedback-*,
-  impl-architecture-templates-select) see flows/_meta/deferred_skills.yaml.
+  (every slice) -> done.
 meta:
   category: full-stack
   tags:
@@ -60,7 +58,7 @@ nodes:
       y: 200
     data:
       skill: concept-goals
-      label: 'Concept Goals (deferred)'
+      label: 'Concept Goals'
       optional: true
       parameters: {}
   - id: comparable
@@ -70,7 +68,7 @@ nodes:
       y: 200
     data:
       skill: concept-comparable
-      label: 'Comparable (deferred)'
+      label: 'Comparable'
       optional: true
       parameters: {}
   - id: brand-visual
@@ -100,7 +98,7 @@ nodes:
       y: 200
     data:
       skill: design-inspiration
-      label: 'Design Inspiration (deferred)'
+      label: 'Design Inspiration'
       optional: true
       parameters: {}
   - id: journeys
@@ -160,7 +158,7 @@ nodes:
       y: 100
     data:
       skill: mockup-walkthrough-astro
-      label: 'Astro Walkthrough Mockup (deferred)'
+      label: 'Astro Walkthrough Mockup'
       optional: true
       parallel_group: mockups
       parameters: {}
@@ -171,7 +169,7 @@ nodes:
       y: 200
     data:
       skill: mockup-walkthrough-framework
-      label: 'Framework Walkthrough Mockup (deferred)'
+      label: 'Framework Walkthrough Mockup'
       optional: true
       parallel_group: mockups
       parameters: {}
@@ -197,7 +195,7 @@ nodes:
       optional: false
       parallel_group: mockups
       parameters: {}
-  # --- Mockup feedback cluster (deferred) ---
+  # --- Mockup feedback cluster ---
   - id: feedback-annotate
     type: skill
     position:
@@ -205,7 +203,7 @@ nodes:
       y: 200
     data:
       skill: mockup-feedback-annotate
-      label: 'Mockup Feedback: Annotate (deferred)'
+      label: 'Mockup Feedback: Annotate'
       optional: true
       parameters: {}
   - id: feedback-triage
@@ -215,7 +213,7 @@ nodes:
       y: 200
     data:
       skill: mockup-feedback-triage
-      label: 'Mockup Feedback: Triage (deferred)'
+      label: 'Mockup Feedback: Triage'
       optional: true
       parameters: {}
   - id: feedback-patch
@@ -225,7 +223,7 @@ nodes:
       y: 200
     data:
       skill: mockup-feedback-patch
-      label: 'Mockup Feedback: Patch (deferred)'
+      label: 'Mockup Feedback: Patch'
       optional: true
       parameters: {}
   - id: feedback-apply
@@ -235,7 +233,7 @@ nodes:
       y: 200
     data:
       skill: mockup-feedback-apply
-      label: 'Mockup Feedback: Apply (deferred)'
+      label: 'Mockup Feedback: Apply'
       optional: true
       parameters: {}
   # --- Project overview (complex-only) ---
@@ -297,7 +295,7 @@ nodes:
       y: 200
     data:
       skill: impl-architecture-templates-select
-      label: 'Architecture Templates (deferred)'
+      label: 'Architecture Templates'
       optional: true
       parameters: {}
   - id: arch-system

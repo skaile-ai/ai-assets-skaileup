@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `ops-add-feature`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** add-feature, modify, extend, feature, change, update, cascade, iteration, incremental
 **Source:** [`skaileup/ops/add-feature/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/add-feature/SKILL.md)
 :::

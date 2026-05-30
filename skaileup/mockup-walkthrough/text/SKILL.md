@@ -130,7 +130,7 @@ If any are missing, stop and name what is needed.
 If `_concept/blueprint/techstack.md` exists:
 
 - Read it and extract `tech_stack_skill:`
-- Read `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` and extract `mock_template:`
+- Read `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md` and extract `mock_template:`
 - Use the mapped template from the table above
 - Skip the manual template selection step
 
@@ -153,7 +153,7 @@ Before starting, read:
 | `_concept/experience/screens/00_layout/shell.md`          | Required                                         |
 | `_concept/blueprint/datamodel/seed.json`                  | Required                                         |
 | `_concept/blueprint/techstack.md`                         | Optional (template auto-selection)               |
-| `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Optional (read if stack.md has tech_stack_skill) |
+| `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md` | Optional (read if stack.md has tech_stack_skill) |
 | `_concept/experience/screens/components/*.md`             | Optional                                         |
 | `_grounding/research/design_inspiration.md`                | Optional                                         |
 
@@ -195,7 +195,7 @@ If no devlog exists or no entries overlap, proceed with no constraints.
 
 1. **Auto-select (preferred):** If `_concept/blueprint/techstack.md` exists:
    - Read it, extract `tech_stack_skill:`
-   - Read `impl-architecture/profiles/<tech_stack_skill>/SKILL.md`, extract `mock_template:`
+   - Read `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md`, extract `mock_template:`
    - Use the template from the mapping table above
    - No user prompt needed
 2. **Manual select (fallback):** If no `tech_stack_skill:` is resolvable:

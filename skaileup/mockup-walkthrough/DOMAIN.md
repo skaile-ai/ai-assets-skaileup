@@ -15,6 +15,8 @@ Renders approved screen specs and journey definitions into a navigable, clickabl
 - **mockup-walkthrough-text** (`text/`) — Linked multi-page HTML prototype (Alpine+Shoelace, Vue 3+PrimeVue, or Preact+HTM); writes to `_concept/mockups/`. Stack auto-selected from `stack.md` if present.
 - **mockup-walkthrough-static-html** (`static-html/`) — Zero-build static HTML walkthrough; writes `screen/<group>/<name>.html`, `journey/<id>.html`, and `manifest.json` to `_concept/mockups/`. Best for simple-app tier.
 - **mockup-walkthrough-astro** (`astro/`) — Tailwind-styled Astro site; same output contract as static-html but built via `bun run build`. Astro source committed alongside built output. Best for standard-app tier.
+- **mockup-walkthrough-lit** (`lit/`) — Lit web-components site (Vite); light-DOM components so `data-spec-*` stays queryable. Embeddable into a host page. Alt for embedded contexts.
+- **mockup-walkthrough-framework** (`framework/`) — Stack-native renderer; resolves `tech_stack_skill` from `_concept/blueprint/techstack.md` to a `template-*` and renders in that framework (Next/Nuxt/SvelteKit). Highest fidelity — complex-app tier. Requires `impl-architecture-templates-select` to have run.
 
 ## When to Use
 
@@ -35,10 +37,11 @@ Pick one skill per run based on tier:
 ```
 mvp / quick scan   → mockup-walkthrough-text
 simple-app tier    → mockup-walkthrough-static-html
-standard-app tier  → mockup-walkthrough-astro
+standard-app tier  → mockup-walkthrough-astro  (or -lit for embedded contexts)
+complex-app tier   → mockup-walkthrough-framework  (stack-native; static-html fallback)
 ```
 
-All three share the same output contract; `manifest.json` is consumed by `mockup-feedback-annotate` in the next cluster phase.
+All renderers share the same output contract; `manifest.json` is consumed by `mockup-feedback-annotate` in the next cluster phase.
 
 ## Cross-references
 

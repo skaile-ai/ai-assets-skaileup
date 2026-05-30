@@ -1,13 +1,13 @@
 ---
 title: "experience-screens"
-description: "Use after features are approved to write screen specifications. Reads features, optional brand/techstack/datamodel/journeys artifacts, and produces per-screen docs organized in numbered groups. Registers screens back into feature frontmatter via feed"
+description: "Use when features are approved and you need per-screen specifications. Produces grouped screen docs; registers back into feature frontmatter via feedback loop."
 sidebar:
   label: "experience-screens"
 ---
 
 :::note[Skill manifest]
 **Name:** `experience-screens`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** screens, pages, ui, layout, navigation, ux, experience, user-perspective
 **Source:** [`skaileup/experience/screens/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/screens/SKILL.md)
 :::
@@ -58,7 +58,7 @@ before proceeding.
 | Check if present | `_concept/blueprint/datamodel/model.json`           | No       |
 | Check if present | `_concept/blueprint/architecture.md`                | No       |
 | Check if present | `_concept/blueprint/datamodel/seed.json`            | No       |
-| Check if present | `_concept/_grounding/general/design_inspiration.md` | No       |
+| Check if present | `_concept/_grounding/research/design_inspiration.md` | No       |
 | Never load       | source code, build artifacts, node_modules          | —        |
 
 ## Standalone Mode
@@ -80,7 +80,7 @@ READS
 ? \_concept/blueprint/datamodel/model.json — entities and fields
 ? \_concept/blueprint/architecture.md — custom protocols, additional apps
 ? \_concept/blueprint/datamodel/seed.json — scenario-based seed data
-? \_concept/\_grounding/general/design_inspiration.md — layout and interaction patterns
+? \_concept/\_grounding/research/design_inspiration.md — layout and interaction patterns
 
 WRITES
 \_concept/experience/screens/00_layout/shell.md — app shell: nav, header, layout areas
@@ -247,8 +247,8 @@ CHECKLIST
 
 If research data exists, check before writing screens:
 
-- `_concept/_grounding/general/design_inspiration.md` — layout and interaction patterns
-- `_concept/_grounding/general/patterns.md` — proven UI patterns for this domain
+- `_concept/_grounding/research/design_inspiration.md` — layout and interaction patterns
+- `_concept/_grounding/research/patterns.md` — proven UI patterns for this domain
 
 Use these to inform navigation structure and screen organization.
 

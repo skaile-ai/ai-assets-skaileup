@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `impl-quality-test-plan`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** testing, test-plan, qa, scenarios, coverage, acceptance
 **Source:** [`skaileup/impl-quality/test-plan/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/test-plan/SKILL.md)
 :::

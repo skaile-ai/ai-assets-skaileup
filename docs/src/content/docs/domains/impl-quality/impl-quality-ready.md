@@ -1,13 +1,13 @@
 ---
 title: "impl-quality-ready"
-description: "Pre-flight readiness check before E2E testing. Verifies that each feature has a concept doc, screen spec, data model entry, brand tokens, and tech stack. Surfaces gaps with remediation commands. Blocks testing of incomplete features."
+description: "Use before E2E testing to verify all features are complete enough to test. Checks each feature for concept doc, screen spec, data model entry, brand tokens, and tech stack; surfaces gaps with remediation commands."
 sidebar:
   label: "impl-quality-ready"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-quality-ready`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** readiness, preflight, checklist, testing, validation, gate, implementation
 **Source:** [`skaileup/impl-quality/ready/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/ready/SKILL.md)
 :::

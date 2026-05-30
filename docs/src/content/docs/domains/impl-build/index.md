@@ -13,28 +13,54 @@ sidebar:
 
 # impl-build
 
-Handles one-time and project-level build tasks: scaffolding, foundation setup, infrastructure, migration, seeding, code generation, and documentation. Phase 1 stub — see SKILL_GRAPH.md §1.
+One-time, project-level setup tasks that run before feature slices begin. Agents use this domain to take a completed concept to a working, runnable codebase.
 
 ## Skills
 
-- **impl-build-scaffold** (`scaffold/`) — Scaffolds a new project from a completed concept; reads `stack.md`, runs the stack's scaffold commands, initializes git, and sets up `_implementation/` tracking.
-- **impl-build-foundation** (`foundation/`) — Applies the three foundational layers every app needs before feature work: brand tokens → CSS variables, authentication, and app shell layout. Also seeds initial data and configures Storybook.
-- **impl-build-infrastructure** (`infrastructure/`) — Sets up custom backend infrastructure from `architecture.md`: NestJS/backend modules, provider abstractions, additional processes, and communication infrastructure (WebSocket, SSE).
-- **impl-build-migrate** (`migrate/`) — Generates database migrations from the data model for the target ORM (Prisma, Drizzle, Directus, raw SQL); translates semantic types via contracts.
-- **impl-build-seed** (`seed/`) — Generates executable seed scripts from `seed.json` scenarios (empty, single_user, populated, edge_cases) for the chosen stack.
-- **impl-build-generate** (`generate/`) — PostXL code generation and conflict resolution: runs PostXL generators from `postxl-schema.json`, auto-resolves merge conflicts via a four-level cascade, and verifies the build.
-- **impl-build-docs** (`docs/`) — Verifies and updates Starlight documentation after an implementation step: detects git-changed files, resolves which doc pages cover them, checks accuracy, rewrites stale sections.
+- **impl-build-scaffold** (`scaffold/`) — Creates the project directory, runs stack scaffold commands, initializes git, writes `_implementation/` tracking.
+- **impl-build-foundation** (`foundation/`) — Applies brand tokens → CSS variables, auth setup, and app shell layout; configures Storybook. Writes to `src/`.
+- **impl-build-infrastructure** (`infrastructure/`) — Implements custom backend modules, provider abstractions, and communication infra (WebSocket, SSE) from `_concept/blueprint/architecture.md`.
+- **impl-build-migrate** (`migrate/`) — Generates ORM migration files (Prisma, Drizzle, Directus, raw SQL) from `model.dbml` + `model.json`.
+- **impl-build-seed** (`seed/`) — Generates independently runnable seed scripts for each scenario in `seed.json` (empty, single_user, populated, edge_cases).
+- **impl-build-generate** (`generate/`) — PostXL-only: runs generators from `postxl-schema.json`, resolves merge conflicts via four-level cascade, verifies build.
+- **impl-build-docs** (`docs/`) — After any coding step: detects git-changed files, checks Starlight doc accuracy via `_sources` frontmatter, rewrites stale sections.
+
+## When to Use
+
+- Starting a greenfield project from a finished concept (`stack.md` exists, no `src/` yet).
+- Tech stack is decided and `impl-architecture` artifacts are present in `_concept/blueprint/`.
+- Running `standard-app` or `complex-app` flow (scaffold → foundation → infrastructure → migrate → seed precede the first impl-slice).
+- After any coding step that may have drifted docs (triggers `impl-build-docs`).
+
+## When NOT to Use
+
+- Feature implementation — use `impl-slice` instead.
+- Concept is incomplete or `stack.md` is missing — run `impl-architecture` first.
+- `impl-build-generate` when the stack is not PostXL.
+
+## Sequence
+
+```
+scaffold → foundation → [infrastructure] → migrate → seed → [generate]
+                                                            ↓
+                                              (impl-slice begins here)
+```
+
+`impl-build-docs` re-runs after each coding step, not once at the end.
 
 ## Cross-references
 
-- See `../SKILL_GRAPH.md` for the catalog-level view.
+- `../impl-architecture/` — produces `stack.md`, `architecture.md`, `model.dbml` that this domain reads.
+- `../impl-slice/` — consumes the runnable project this domain produces.
+- `../contracts/semantic_types.md` — used by `impl-build-migrate` for type translation.
 
 
 ## Skills in this domain
 
-- [impl-build-foundation](./impl-build-foundation/) — Applies the three foundational layers every app needs before feature work: brand tokens → CSS variables, authentication setup, and app shell
-- [impl-build-generate](./impl-build-generate/) — PostXL code generation and conflict resolution. Runs PostXL generators from postxl-schema.json, auto-resolves merge conflicts using a four-l
-- [impl-build-infrastructure](./impl-build-infrastructure/) — Sets up custom backend infrastructure from the architecture doc. Implements custom NestJS/backend modules, provider abstractions (real + in-
-- [impl-build-migrate](./impl-build-migrate/) — Generates database migrations from the data model. Reads model.dbml + model.json and stack.md, then generates migration files for the target
-- [impl-build-scaffold](./impl-build-scaffold/) — Scaffolds a new project from a completed concept. Reads stack.md to determine the tech stack, uses the stack's profile for scaffold commands
-- [impl-build-seed](./impl-build-seed/) — Generates seed scripts from seed.json. Reads seed.json scenarios (empty, single_user, populated, edge_cases) and generates executable seed s
+- [impl-build-docs](./impl-build-docs/) — Use after completing an implementation step to verify and update Starlight documentation. Detects git-changed files, resolves which doc page
+- [impl-build-foundation](./impl-build-foundation/) — Use after scaffold and before feature implementation to apply the three foundational layers every app needs: brand tokens → CSS variables, a
+- [impl-build-generate](./impl-build-generate/) — Use when the project uses the PostXL tech stack and you need to regenerate code or resolve merge conflicts after a schema change or custom a
+- [impl-build-infrastructure](./impl-build-infrastructure/) — Use when architecture.md defines custom_modules or processes beyond the standard stack. Sets up custom NestJS/backend modules, provider abst
+- [impl-build-migrate](./impl-build-migrate/) — Use after the data model is finalized and before feature implementation to generate database migration files. Reads model.dbml + model.json 
+- [impl-build-scaffold](./impl-build-scaffold/) — Use when a concept is complete and no project directory exists yet. Reads stack.md, uses the stack profile for scaffold commands and convent
+- [impl-build-seed](./impl-build-seed/) — Use after migrate to generate executable seed scripts from seed.json. Covers all seed scenarios (empty, single_user, populated, edge_cases);

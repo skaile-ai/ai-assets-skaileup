@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `experience-screens-technical`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** screens, pages, ui, layout, components, states, routes, navigation
 **Source:** [`skaileup/experience/screens-technical/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/screens-technical/SKILL.md)
 :::
@@ -72,8 +72,8 @@ Before starting, read:
 | `_concept/blueprint/datamodel/model.json`  | Required                                 |
 | `_concept/experience/behaviors/*.allium`   | Optional — surface definitions           |
 | `_concept/blueprint/architecture.md`       | Optional — protocols and custom services |
-| `_grounding/general/design_inspiration.md` | Optional                                 |
-| `_grounding/general/patterns.md`           | Optional                                 |
+| `_grounding/research/design_inspiration.md` | Optional                                 |
+| `_grounding/research/patterns.md`           | Optional                                 |
 
 **Never load:** Source code, build artifacts, node_modules.
 

@@ -1,6 +1,6 @@
 ---
 name: impl-architecture-techstack
-description: "Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from impl-architecture/profiles/, asks plain-language questions, recommends the best match, and writes stack.md."
+description: "Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from impl-architecture/templates/, asks plain-language questions, recommends the best match, and writes stack.md."
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -80,7 +80,7 @@ metadata:
 
 The **techstack** skill is the Tech Stack Advisor. It helps the user choose the
 right tools for their project through plain-language questions. It discovers
-available stacks at runtime from `impl-architecture/profiles/*/SKILL.md` and recommends
+available stacks at runtime from `impl-architecture/templates/*/TEMPLATE.md` and recommends
 the best match based on the user's answers.
 
 The `tech_stack_skill` field written to `stack.md` is the single reference all
@@ -111,7 +111,7 @@ downstream skills use to find implementation recipes.
 | Action           | Path                                                            | Required                         |
 | ---------------- | --------------------------------------------------------------- | -------------------------------- |
 | Must read        | `_concept/discovery/brief.md`                                   | Yes                              |
-| Must read        | `impl-architecture/profiles/*/SKILL.md`                        | Yes (stack discovery)            |
+| Must read        | `impl-architecture/templates/*/TEMPLATE.md`                        | Yes (stack discovery)            |
 | Check if present | `_concept/experience/features/**/*.md`                          | No (complexity signals)          |
 | Check if present | `_concept/_grounding/overview/user_input.json`                  | No (complexity + pre-answers)    |
 | Check if present | `_concept/_grounding/research/onboarding.md`                     | No (skip pre-answered questions) |
@@ -129,7 +129,7 @@ and writes `_concept/blueprint/techstack.md`.
 
 READS
 \_concept/discovery/brief.md — app name, description, audience
-impl-architecture/profiles/_/SKILL.md — available stack profiles (discovered at runtime)
+impl-architecture/templates/_/TEMPLATE.md — available stack profiles (discovered at runtime)
 ? \_concept/experience/features/\*\*/_.md — feature requirements (complexity signals)
 ? \_concept/\_grounding/overview/user_input.json — complexity field + pre-collected answers
 ? \_concept/\_grounding/research/onboarding.md — pre-answered tech preferences
@@ -142,7 +142,7 @@ contracts/concept_structure.md — valid \_concept/ paths
 contracts/frontmatter.md — stack.md frontmatter fields
 references/integration_categories.md — additional integration checklist
 
-MUST discover available stacks from impl-architecture/profiles/ at runtime — never hardcode
+MUST discover available stacks from impl-architecture/templates/ at runtime — never hardcode
 MUST include tech_stack_skill field in stack.md frontmatter — downstream skills depend on it
 MUST include Additional Integrations section in stack.md
 MUST include Trade-offs Considered section in stack.md
@@ -162,7 +162,7 @@ STEP 1: Read context
 
 STEP 2: Discover available stacks
 
-- Scan impl-architecture/profiles/\*/SKILL.md
+- Scan impl-architecture/templates/\*/TEMPLATE.md
 - For each found profile, read:
   - The Identity table (name, framework, UI library, backend, database, etc.)
   - The "When to Use" section
@@ -287,9 +287,9 @@ EMIT [techstack] completed run_id=<uuid> tech_stack_skill=<profile-id> additiona
 
 CHECKLIST
 
-- [ ] impl-architecture/profiles/ was scanned for available stacks
+- [ ] impl-architecture/templates/ was scanned for available stacks
 - [ ] stack.md exists with all required frontmatter fields
-- [ ] tech_stack_skill field is set (matches a impl-architecture/profiles/ directory or "custom")
+- [ ] tech_stack_skill field is set (matches a impl-architecture/templates/ directory or "custom")
 - [ ] Additional Integrations section present
 - [ ] Trade-offs Considered section present
 - [ ] User has explicitly approved the stack
@@ -309,7 +309,7 @@ CHECKLIST
 
 | Mistake                                           | What to do instead                                                                      |
 | ------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Hardcoding stack details without reading profiles | Always scan impl-architecture/profiles/\*/SKILL.md — new profiles may have been added. |
+| Hardcoding stack details without reading profiles | Always scan impl-architecture/templates/\*/TEMPLATE.md — new profiles may have been added. |
 | Omitting `tech_stack_skill`                       | This field is mandatory — all downstream skills depend on it.                           |
 | Recommending without asking                       | Always ask the user, even if the answer seems obvious. Framework preference matters.    |
 | Skipping Trade-offs Considered                    | Always explain what was weighed. Tech stack is a high-impact long-term choice.          |

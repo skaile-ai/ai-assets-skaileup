@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `ops-sync`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** sync, cross-references, repair, links, orphans, consistency, maintenance
 **Source:** [`skaileup/ops/sync/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/sync/SKILL.md)
 :::

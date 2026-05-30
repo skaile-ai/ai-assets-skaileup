@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-archive`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** lab, devlog, archive, maintenance
-**Source:** [`ai-assets/lab/archive/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/archive/SKILL.md)
+**Source:** [`ai-assets-dev/lab/archive/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/archive/SKILL.md)
 :::
 
 

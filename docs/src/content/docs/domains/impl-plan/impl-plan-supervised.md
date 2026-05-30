@@ -1,6 +1,6 @@
 ---
 title: "impl-plan-supervised"
-description: "Supervised subagent-driven implementation. Dispatches one subagent per task from the superpowers plan, enforces spec-compliance review before code-quality review for each task, handles 4-status implementer reports (DONE / DONE_WITH_CONCERNS / NEEDS_C"
+description: "Use when a superpowers plan exists and you want supervised subagent-driven implementation. Dispatches one subagent per task, enforces spec-compliance review before code-quality review, handles 4-status reports (DONE / DONE_WITH_CONCERNS / NEEDS_CONTE"
 sidebar:
   label: "impl-plan-supervised"
 ---

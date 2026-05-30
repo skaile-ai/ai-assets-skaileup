@@ -14,6 +14,7 @@ Produces the visual and verbal identity of a product: design tokens consumed by 
 
 - **design-brand-visual** (`brand-visual/`) — Discovers aesthetic direction, extracts palettes from reference URLs, and writes `_concept/discovery/brand/identity.md` + `tokens.json` + `brandbook.html`.
 - **design-brand-voice** (`brand-voice/`) — Defines tone of voice, error messages, empty states, and micro-copy patterns; writes `_concept/discovery/brand/behavioral.md` + `copy_guidelines.md`.
+- **design-inspiration** (`inspiration/`) — Standard/complex pass after brand-visual; collects layout, color, typography, and component references consistent with the chosen tokens; writes `_concept/_grounding/research/design-inspiration.md` (design-inspiration-v1).
 
 ## When to Use
 
@@ -29,10 +30,11 @@ Produces the visual and verbal identity of a product: design tokens consumed by 
 
 ## Sequence
 
-`design-brand-visual` must run before `design-brand-voice`: voice requires `identity.md` and `tokens.json` as hard gates.
+`design-brand-visual` must run before `design-brand-voice`: voice requires `identity.md` and `tokens.json` as hard gates. `design-inspiration` also runs after `design-brand-visual` (hard gate on `tokens.json`), in the standard/complex high-level pass.
 
 ```
 design-brand-visual  →  design-brand-voice
+                     →  design-inspiration   (standard/complex)
 ```
 
 Both skills can be skipped via `depth: none`.

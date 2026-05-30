@@ -21,11 +21,11 @@ Project-size scoping cluster: interviews the user, picks a tier (mvp / simple-ap
 
 ## Cross-references
 
-- See `../../SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
 
 
 ## Skills in this domain
 
-- [skaileup](./skaileup/) — Full concept pipeline orchestrator. Runs the complete conceptualization pipeline (Discovery -> Experience -> Blueprint) with checkpoint appr
-- [skaileup-build](./skaileup-build/) — Full app implementation orchestrator. Reads the completed _concept/ and drives the entire pipeline from project scaffold through feature imp
+- [skaileup](./skaileup/) — Use when starting or resuming the full concept pipeline for a new product. Runs Discovery → Experience → Blueprint with checkpoint approvals
+- [skaileup-build](./skaileup-build/) — Use when concept is complete and you want to build the entire application end-to-end. Drives the full pipeline from scaffold through feature
 - [skaileup-scope-scope-project](./skaileup-scope-scope-project/) — Use when the user starts a new project and no _concept/_meta/scope.yaml exists yet, or when re-scoping (--tier= override). Picks one of mvp 

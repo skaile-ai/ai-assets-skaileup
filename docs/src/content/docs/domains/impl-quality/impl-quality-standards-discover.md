@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `impl-quality-standards-discover`
-**Stage:** alpha · **Version:** —
+**Stage:** alpha · **Version:** 0.1.0
 **Tags:** standards, conventions, patterns, codebase, analyze, discover
 **Source:** [`skaileup/impl-quality/standards-discover/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/standards-discover/SKILL.md)
 :::

@@ -15,7 +15,7 @@ sidebar:
 
 Stack-specific scaffold templates. Each subdirectory is a concrete `SKILL.md` describing one stack's scaffold conventions (file layout, package manifest, dev-stack commands, foundation steps, recommended UI library).
 
-The catalog references this cluster via the **selector** skill `impl-architecture-templates-select` (Phase 3 deferred — see `flows/_meta/deferred_skills.yaml`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md` and resolves to exactly one of the concrete templates below.
+The catalog references this cluster via the **selector** skill `impl-architecture-templates-select` (`../templates-select/SKILL.md`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md`, scores the concrete templates on frontend → UI library → backend/database, and writes the winner back as `tech_stack_skill` so the build skills resolve exactly one of the templates below.
 
 ## Concrete templates
 
@@ -33,21 +33,15 @@ Per `CONTRIBUTING.md`, these skills use the shortened form (`name: template-post
 
 ## Cross-references
 
-- `../../../SKILL_GRAPH.md` § 6 — tier-composition table (`impl-arch/templates-select`)
+- `../../../../../docs/devlog/SKILL_GRAPH.md` § 6 — tier-composition table (`impl-arch/templates-select`)
 - `../../contracts/skill_grammar.md` — SKILL.md DSL
 - `../techstack/SKILL.md` — discovers the available stacks from this directory and recommends one
-- `../../flows/_meta/deferred_skills.yaml` — selector is currently deferred to Phase 3
+- `../templates-select/SKILL.md` — the runtime selector skill (built)
 
 
 ## Skills in this domain
 
 - [impl-architecture-datamodel](./impl-architecture-datamodel/) — Use when features are approved but _concept/blueprint/datamodel/ is empty. Produces model.dbml (DBML), model.json (editor canvas), seed.json
 - [impl-architecture-system](./impl-architecture-system/) — Use after features and techstack are approved to document system architecture. Produces architecture.md with system overview, backend struct
-- [impl-architecture-techstack](./impl-architecture-techstack/) — Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from impl-architecture/profiles/, asks plain
-- [template-nextjs-radix](./template-nextjs-radix/) — Reference document and invocable skill for the Next.js 15 + Radix UI + Directus stack. Read by scaffold, foundation, design, mock, and story
-- [template-nextjs-shadcn](./template-nextjs-shadcn/) — Reference document and invocable skill for the Next.js 15 + shadcn/ui + Supabase stack. Read by scaffold, foundation, design, mock, and stor
-- [template-nuxt-minimal](./template-nuxt-minimal/) — Reference document and invocable skill for the Nuxt 4 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and s
-- [template-nuxt-primevue](./template-nuxt-primevue/) — Reference document and invocable skill for the Nuxt 4 + PrimeVue 4 + Directus stack. Read by scaffold, foundation, design, mock, and storybo
-- [template-nuxt-ui](./template-nuxt-ui/) — Reference document and invocable skill for the Nuxt 4 + @nuxt/ui v3 + Directus stack. Read by scaffold, foundation, design, mock, and storyb
-- [template-postxl](./template-postxl/) — Reference document and invocable skill for the PostXL platform stack (React 19 + Vite + NestJS + Prisma + Keycloak). Read by scaffold, found
-- [template-sveltekit-minimal](./template-sveltekit-minimal/) — Reference document and invocable skill for the SvelteKit 2 + Svelte 5 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, des
+- [impl-architecture-techstack](./impl-architecture-techstack/) — Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from impl-architecture/templates/, asks plai
+- [impl-architecture-templates-select](./impl-architecture-templates-select/) — Use after techstack.md exists to resolve the abstract stack decision to exactly one concrete scaffold template (template-postxl, template-ne

@@ -1,6 +1,6 @@
 ---
 name: 'template-nuxt-ui'
-description: 'Reference document and invocable skill for the Nuxt 4 + @nuxt/ui v3 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
+description: 'Reference document and invocable skill for the Nuxt 4 + @nuxt/ui v3 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when _concept/blueprint/techstack.md selects this stack.'
 metadata:
   type: template
   version: '0.1.0'
@@ -116,7 +116,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-@nuxt/ui v3 uses Tailwind CSS 4's CSS-native configuration. Brand tokens from `04_brand/tokens.json` map through two mechanisms:
+@nuxt/ui v3 uses Tailwind CSS 4's CSS-native configuration. Brand tokens from `_concept/discovery/brand/tokens.json` map through two mechanisms:
 
 **Level 1 — `app.config.ts` color palette:**
 

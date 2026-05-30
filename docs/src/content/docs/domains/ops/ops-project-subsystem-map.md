@@ -1,14 +1,14 @@
 ---
 title: "ops-project-subsystem-map"
-description: "Generate the 2_subsystems/ section of a meta-concept: index of all subsystems with maturity, audience, tech stack, and references to per-subsystem concepts."
+description: "Use when building a multi-product meta-concept and the subsystem index is missing. Generates 2_subsystems/ with maturity, audience, tech stack, and references to per-subsystem concepts for each product."
 sidebar:
   label: "ops-project-subsystem-map"
 ---
 
 :::note[Skill manifest]
 **Name:** `ops-project-subsystem-map`
-**Stage:** — · **Version:** —
-**Tags:** —
+**Stage:** alpha · **Version:** 0.1.0
+**Tags:** meta-concept, subsystems, map, inventory, maturity, ecosystem
 **Source:** [`skaileup/ops/project-subsystem-map/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/project-subsystem-map/SKILL.md)
 :::
 

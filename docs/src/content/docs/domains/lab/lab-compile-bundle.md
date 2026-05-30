@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-compile-bundle`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** lab, bundle, flow, sync, maintenance
-**Source:** [`ai-assets/lab/compile-bundle/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/compile-bundle/SKILL.md)
+**Source:** [`ai-assets-dev/lab/compile-bundle/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/compile-bundle/SKILL.md)
 :::
 
 

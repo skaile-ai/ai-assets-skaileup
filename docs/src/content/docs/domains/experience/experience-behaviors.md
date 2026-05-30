@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `experience-behaviors`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** behavior, specification, allium, rules, states, transitions, domain, lifecycle, state-machine
 **Source:** [`skaileup/experience/behaviors/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/behaviors/SKILL.md)
 :::
@@ -69,7 +69,7 @@ Also read the Allium language subset reference bundled with this skill:
 | ------------------------------------------- | -------- |
 | `_concept/discovery/brief.md`               | Required |
 | `_concept/experience/features/**/*.md`      | Required |
-| `_grounding/general/behavioral_patterns.md` | Optional |
+| `_grounding/research/behavioral_patterns.md` | Optional |
 
 **Never load:** `_concept/blueprint/datamodel/`, `_concept/experience/screens/`
 
@@ -83,7 +83,7 @@ Read `_concept/experience/features/**/*.md`. If no feature files exist, stop:
 
 Also read `_concept/discovery/brief.md` for domain context.
 
-If `_grounding/general/behavioral_patterns.md` exists, read it for domain-specific
+If `_grounding/research/behavioral_patterns.md` exists, read it for domain-specific
 behavioral patterns that should inform the specs.
 
 ### Step 2: Identify Behavioral Patterns

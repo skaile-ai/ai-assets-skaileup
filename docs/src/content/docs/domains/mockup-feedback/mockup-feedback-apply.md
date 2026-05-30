@@ -1,6 +1,6 @@
 ---
 title: "mockup-feedback-apply"
-description: "Reads patches/<sid>.json + patches/<sid>.review.md (checklist), applies approved section-anchored diffs to _concept/ files (best-effort), appends devlog, writes applied/<sid>.json, creates one git commit. Fourth and final skill in the mockup-feedback"
+description: "Use when patches for a feedback session are reviewed and ready to land. Applies approved section-anchored diffs to _concept/ files, appends devlog, writes applied/<sid>.json, and creates one git commit. Fourth and final skill in the mockup-feedback c"
 sidebar:
   label: "mockup-feedback-apply"
 ---

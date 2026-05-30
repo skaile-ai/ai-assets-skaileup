@@ -1,92 +1,69 @@
 ---
-title: Improvements & Roadmap
-description: Findings from the 2026-05-10 catalog review — inconsistencies, redundancy, splits/merges, and process gaps.
+title: Roadmap
+description: The catalog reorganization history — Phases 0–3, all complete.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-<Aside type="caution">
-This page is a navigable summary. The full reviewer findings live in
-[`IMPROVEMENT.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/IMPROVEMENT.md)
-at the repo root.
+The catalog reached its current shape through four reorganization phases. All
+are complete; this page is the historical record.
+
+<Aside type="tip">
+The flow verifier (`flows/_meta/verify_flows.py`) and the frontmatter audit
+(`docs/scripts/audit.py`) are the live source of truth for catalog health.
+`deferred_skills.yaml` is empty — there is no outstanding tier-flow work.
 </Aside>
 
-Findings from the 2026-05-10 catalog review across all 17 domains, 94 SKILL.md
-files, the contracts/, flows/, bundles/ layers, and the top-level reference
-docs. Items are grouped by **severity × cost-to-fix**.
+## Phases
 
-## A. Critical — block other improvements
-
-| ID | Issue | Action |
+| Phase | Date | What landed |
 |---|---|---|
-| **A1** | `CLAUDE.md` (path-prefix names) and `CONTRIBUTING.md` (parent-dir match) contradict each other | Rewrite `CONTRIBUTING.md` to match the path-prefix convention the implementation uses |
-| **A2** | 19 skills missing `metadata.version` | Bulk-add `1.0.0` (or `0.1.0` for alpha) |
-| **A3** | 51 skills missing `metadata.stage` | Bulk-add `alpha` / `beta` based on validator + tests presence |
-| **A4** | 18 skills still use deprecated `metadata.user_inputs` | Mechanical migration to `prerequisites.inputs_required` / `inputs_optional` |
-| **A5** | Templates classified as skills but contain only reference content (420–720 lines, no procedural steps) | Convert to a new `template:` asset kind, or to plain `.md` references |
+| **0** | 2026-04 | Domain extraction from `ai-assets`; domain merges/splits; skill renames |
+| **1** | 2026-05-07 | Two-group restructure (Concept · Implementation · Meta); ~70 skills moved to new homes |
+| **2** | 2026-05 | Catalog quality remediation (see below) |
+| **3** | 2026-05-30 | SKILL_GRAPH migration — the 11 deferred tier-flow skills built |
 
-## B. High — worth doing in the next pass
+## Phase 2 — quality remediation (complete)
 
-| ID | Issue |
-|---|---|
-| **B1** | concept-slice/ skills are alpha stubs with truncated workflows (brainstorm stops at STEP 4, align at STEP 6) |
-| **B2** | mockup-feedback loop is one-way: mockup-walkthrough-* regenerators don't read `_feedback/devlog.md`, so regenerations lose human intent |
-| **B3** | `ops/eval-*` skills missing the canonical `ROLE` opener |
-| **B4** | `_grounding/general/` paths used in 4 concept-side skills; new research skill writes to `_grounding/research/` (path mismatch) |
-| **B5** | `impl-plan/supervised`, `impl-build/docs` use deprecated root `reads_from` / `writes_to` |
-| **B6** | `experience/screens-technical` is dead weight ("experimental — not in default pipeline", body truncated, in no flow/bundle) |
+The 2026-05-10 catalog review backlog was worked through across five commits:
 
-## C. Medium — improves coherence
+- **Frontmatter** — `version` + `stage` completed on every skill; deprecated
+  `user_inputs` → `prerequisites` migrated; deprecated root
+  `reads_from`/`writes_to` removed.
+- **Templates demoted** — the 7 stack templates are reference assets
+  (`TEMPLATE.md`, `type: template`), no longer skills; resolved at runtime by
+  [`impl-architecture-templates-select`](../domains/impl-architecture/impl-architecture-templates-select/).
+- **DOMAIN.md** — authored for every domain (no more stubs).
+- **Descriptions** — normalized toward the "Use when…" router pattern.
+- **Naming** — `CLAUDE.md` and `CONTRIBUTING.md` reconciled on the path-prefix
+  convention.
+- **CI gates** — frontmatter audit, bundle↔flow drift guard
+  (`check-bundles.sh`), and a pre-commit hook.
 
-- **C1** — All 20 DOMAIN.md files are stubs (Phase 2 deliverable per SKILL_GRAPH.md). Author with: when the domain runs, inputs/outputs, dependencies, example call.
-- **C2** — Description quality: ~30% follow "Use when..." pattern; the rest are statement-style. Hurts the agent's skill router.
-- **C3** — DSL grammar adoption is uneven: 57/94 use ROLE, 49/94 use CHECKLIST, 60/94 use MUST. Run `lab/judge` against `contracts/skill_grammar.md` to score and backfill.
-- **C4** — `eval-{concept,feature,product}` should expose their gate position via `metadata.gate`.
-- **C5** — `mockup-feedback-patch` references `mockup-feedback/schemas/*.schema.json` files that don't exist in the repo.
-- **C6** — Document the "narrowly scoped validator" pattern (`lab/validate-elements-block`) explicitly in `lab/DOMAIN.md`.
+## Phase 3 — SKILL_GRAPH migration (complete)
 
-## D. Low — cosmetic
+All 11 deferred tier-flow skills built; `deferred_skills.yaml` is now empty and
+the flow verifier emits no deferred-skill warnings:
 
-- **D1** — `contracts/MIGRATION.md` line 6 references the Phase-0 path `skaileup-contracts/scripts/...` (now `contracts/scripts/...`).
-- **D2** — README says "17 domains" but counting sub-domains the answer is closer to 20–22. Pick a definition.
-- **D3** — Description length range is too wide (8 chars for DOMAIN.md to ~190 chars for some skills). Add a CI lint.
-- **D4** — README + CLAUDE.md + SKILL_GRAPH.md mention `mockup-walkthrough-lit` but the skill doesn't exist.
-- **D5** — `validator.py` coverage is 38/94 with no enforced rule — should be required for `stage: stable`.
+- [`concept-goals`](../domains/concept/concept-goals/),
+  [`concept-comparable`](../domains/concept/concept-comparable/),
+  [`design-inspiration`](../domains/design/design-inspiration/) — high-level
+  concept pass for standard/complex tiers.
+- [`impl-architecture-templates-select`](../domains/impl-architecture/impl-architecture-templates-select/)
+  — runtime selector over the 7 `template-*` reference assets.
+- [`mockup-walkthrough-astro`](../domains/mockup-walkthrough/mockup-walkthrough-astro/) ·
+  [`-lit`](../domains/mockup-walkthrough/mockup-walkthrough-lit/) ·
+  [`-framework`](../domains/mockup-walkthrough/mockup-walkthrough-framework/) and
+  the `mockup-feedback` cluster (annotate · triage · patch · apply) — walkthrough
+  renderers + feedback loop.
 
-## E. Splits / merges / removals to consider
+## Known follow-ups
 
-| ID | Verdict | Rationale |
-|---|---|---|
-| `impl-quality/standards-*` (3 skills) | **keep split** | Each phase is individually invokable from flows |
-| `impl-slice/{commit, git-prepare, finish}` | **keep split** | Different lifetimes (per-slice vs. project bookends) |
-| `experience/screens-technical` | **remove or archive** | Marked experimental, no flow uses it |
-| Templates as skills | **convert to non-skill assets** | 400–700-line reference docs, no STEPs |
-| `mockup-walkthrough-text` | **consider splitting** | One file covers Alpine + Vue + Preact + Shoelace |
-| `mockup-walkthrough-{lit, framework}` | **add** | Referenced in tier tables, files don't exist |
-| `impl-slice/implement/impl-slice-implement-page` | **promote to sibling** | Only nested skill in the catalog; structurally inconsistent |
+Small, non-blocking items tracked outside the phase plan:
 
-## F. Process improvements
-
-- **F1** — CI gate: frontmatter audit (fail on missing version/stage/tags, deprecated fields, stable-without-validator).
-- **F2** — CI gate: bundle ↔ flow drift via existing `scripts/check-bundles.sh`.
-- **F3** — Pre-commit hook: `grep -rE 'skaileup-|_grounding/general/' --include='SKILL.md'` to catch path drift after renames.
-- **F4** — Rename `REFACTOR_MOCKUP.md` → `docs/mockup-design.md` (the refactor landed).
-
-## Audit numbers
-
-| Dimension | Count |
-|---|---|
-| Total skills | 94 |
-| Has metadata block | 85 |
-| Missing version | 19 |
-| Missing stage | 51 |
-| Missing tags | 9 |
-| Uses prerequisites schema | 72 |
-| Uses deprecated user_inputs | 18 |
-| Uses deprecated reads_from / writes_to | 2 |
-| Has validator.py | 38 |
-| Has CLI.md | 17 |
-| Has references/ | 28 |
-| Has tests/ | 21 |
-| Has ROLE keyword | 57 |
-| Has CHECKLIST | 49 |
+- **Tier-shape extras** — `simple/standard/complex` bundles inherit
+  `mockup-walkthrough-text` (and `-isolated-html`) that those tiers don't run in
+  their flow node graph. Installing the inherited variant is a no-op; the
+  verifier reports it as a warning by design.
+- **Validator coverage** — roughly half the skills ship a `validator.py`; no
+  rule yet requires one for a given stage.

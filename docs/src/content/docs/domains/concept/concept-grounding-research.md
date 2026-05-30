@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `concept-grounding-research`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** research, competitors, market, audience, personas, brand, inspiration, templates, layouts, design, patterns, grounding
 **Source:** [`skaileup/concept/grounding/research/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/grounding/research/SKILL.md)
 :::
@@ -301,7 +301,7 @@ CHECKLIST
 
 When reading from `_grounding/`, check for both old and new paths:
 
-- `_grounding/general/` → `_grounding/research/` (prefer new)
+- `_grounding/research/` → `_grounding/research/` (prefer new)
 - `_grounding/{step}/user_input.json` → `_grounding/onboarding/inputs/{step}.json` (prefer new)
 - Underscore filenames (`design_inspiration.md`) → hyphenated (`design-inspiration.md`) (prefer new)
 

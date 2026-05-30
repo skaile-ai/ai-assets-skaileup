@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `design-brand-voice`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** brand, tone, voice, copy, microcopy, errors, empty-states, notifications, messaging, ux-writing
 **Source:** [`skaileup/design/brand-voice/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/design/brand-voice/SKILL.md)
 :::

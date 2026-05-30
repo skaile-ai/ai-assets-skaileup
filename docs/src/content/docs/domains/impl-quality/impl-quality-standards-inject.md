@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `impl-quality-standards-inject`
-**Stage:** alpha · **Version:** —
+**Stage:** alpha · **Version:** 0.1.0
 **Tags:** standards, inject, match, conventions, context
 **Source:** [`skaileup/impl-quality/standards-inject/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/standards-inject/SKILL.md)
 :::

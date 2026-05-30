@@ -10,7 +10,7 @@ metadata:
 
 Stack-specific scaffold templates. Each subdirectory is a concrete `SKILL.md` describing one stack's scaffold conventions (file layout, package manifest, dev-stack commands, foundation steps, recommended UI library).
 
-The catalog references this cluster via the **selector** skill `impl-architecture-templates-select` (Phase 3 deferred — see `flows/_meta/deferred_skills.yaml`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md` and resolves to exactly one of the concrete templates below.
+The catalog references this cluster via the **selector** skill `impl-architecture-templates-select` (`../templates-select/SKILL.md`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md`, scores the concrete templates on frontend → UI library → backend/database, and writes the winner back as `tech_stack_skill` so the build skills resolve exactly one of the templates below.
 
 ## Concrete templates
 
@@ -31,4 +31,4 @@ Per `CONTRIBUTING.md`, these skills use the shortened form (`name: template-post
 - `../../../../../docs/devlog/SKILL_GRAPH.md` § 6 — tier-composition table (`impl-arch/templates-select`)
 - `../../contracts/skill_grammar.md` — SKILL.md DSL
 - `../techstack/SKILL.md` — discovers the available stacks from this directory and recommends one
-- `../../flows/_meta/deferred_skills.yaml` — selector is currently deferred to Phase 3
+- `../templates-select/SKILL.md` — the runtime selector skill (built)

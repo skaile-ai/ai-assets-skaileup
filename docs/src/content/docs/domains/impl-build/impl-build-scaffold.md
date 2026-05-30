@@ -1,13 +1,13 @@
 ---
 title: "impl-build-scaffold"
-description: "Scaffolds a new project from a completed concept. Reads stack.md to determine the tech stack, uses the stack's profile for scaffold commands and conventions, creates the project directory structure, initializes git, and sets up _implementation/ track"
+description: "Use when a concept is complete and no project directory exists yet. Reads stack.md, uses the stack profile for scaffold commands and conventions, creates the directory structure, initializes git, and sets up _implementation/ tracking. Run before foun"
 sidebar:
   label: "impl-build-scaffold"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-build-scaffold`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** scaffold, init, setup, boilerplate, project, bootstrap, git, structure
 **Source:** [`skaileup/impl-build/scaffold/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/scaffold/SKILL.md)
 :::
@@ -20,7 +20,7 @@ sidebar:
 Creates a buildable project from a completed `_concept/` pipeline. Reads the
 tech stack definition from `stack.md` to determine framework, CLI commands, and
 project structure conventions. Delegates stack-specific scaffold steps to
-`impl-architecture/profiles/<tech_stack_skill>/SKILL.md`.
+`impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md`.
 
 **Framework-agnostic:** all stack-specific scaffold commands come from the
 tech stack profile, not from this skill directly.
@@ -52,7 +52,7 @@ tech stack profile, not from this skill directly.
 | Action         | Path                                                      | Required                     |
 | -------------- | --------------------------------------------------------- | ---------------------------- |
 | Must read      | `_concept/blueprint/techstack.md`                         | Yes                          |
-| Must read      | `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Yes (resolved from stack.md) |
+| Must read      | `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md` | Yes (resolved from stack.md) |
 | Must read      | `_concept/discovery/brief.md`                             | Yes                          |
 | Must read      | `_concept/blueprint/datamodel/model.json`                 | Yes                          |
 | Read if exists | `_concept/blueprint/architecture.md`                      | Recommended                  |
@@ -64,7 +64,7 @@ ROLE Scaffold agent — creates a buildable project from concept artifacts using
 
 READS
 \_concept/blueprint/techstack.md — tech stack choice + tech_stack_skill field
-impl-architecture/profiles/<tech_stack_skill>/SKILL.md — scaffold commands + project structure
+impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md — scaffold commands + project structure
 \_concept/discovery/brief.md — app name, slug
 \_concept/blueprint/datamodel/model.json — entity count, relationships
 ? \_concept/blueprint/architecture.md — custom modules, processes
@@ -97,7 +97,7 @@ STEP 1: Read concept context
 
 - Read brief.md: app name, slug, elevator pitch
 - Read stack.md: extract tech_stack_skill value
-- Read profile: `impl-architecture/profiles/<tech_stack_skill>/SKILL.md`
+- Read profile: `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md`
   Extract from profile:
   - `scaffold_command` — CLI command to create the project
   - `project_structure` — expected directory layout

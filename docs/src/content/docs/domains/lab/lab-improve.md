@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-improve`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets/lab/improve/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/improve/SKILL.md)
+**Source:** [`ai-assets-dev/lab/improve/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/improve/SKILL.md)
 :::
 
 

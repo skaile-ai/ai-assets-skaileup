@@ -20,23 +20,50 @@ set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
-trap 'git restore skaileup/flows/ 2>/dev/null || true' EXIT
+
+# Guard: this script regenerates bundles and then `git restore`s them, so it must
+# only run on a clean flows/ tree — otherwise the restore below would silently
+# discard uncommitted work-in-progress (e.g. flow or deferred_skills.yaml edits)
+# and the drift check would false-positive on those same edits.
+if ! git diff --quiet -- skaileup/flows/ || \
+   [ -n "$(git ls-files --others --exclude-standard -- skaileup/flows/)" ]; then
+    echo "ERROR: skaileup/flows/ has uncommitted changes."
+    echo "       check-bundles.sh regenerates and then restores skaileup/flows/,"
+    echo "       which would discard your work. Commit or stash first, then re-run."
+    echo ""
+    git status --short -- skaileup/flows/
+    exit 1
+fi
+
+# Only restore the bundle files the compile step regenerates — never blow away
+# the whole flows/ tree.
+trap 'git restore skaileup/flows/*/*.bundle.yaml 2>/dev/null || true; rm -rf /tmp/skaile-check-venv' EXIT
+
+# Use a throw-away venv so pyyaml/jsonschema are available regardless of the
+# system Python environment (avoids the PEP 668 externally-managed-environment
+# error on macOS Homebrew Python and similar setups).
+VENV=/tmp/skaile-check-venv
+if [ ! -x "$VENV/bin/python3" ]; then
+    python3 -m venv "$VENV"
+    "$VENV/bin/pip" install --quiet pyyaml jsonschema
+fi
+PY="$VENV/bin/python3"
 
 echo "=== check-bundles: running compile_bundle.py ==="
-python3 ai-assets-dev/lab/compile-bundle/compile_bundle.py
+"$PY" ai-assets-dev/lab/compile-bundle/compile_bundle.py
 
 echo "=== check-bundles: checking for drift ==="
-if ! git diff --exit-code skaileup/flows/ > /dev/null; then
+if ! git diff --exit-code skaileup/flows/*/*.bundle.yaml > /dev/null; then
     echo ""
     echo "ERROR: bundle drift detected — the following bundles are out of sync with skaileup/flows/:"
-    git diff --stat skaileup/flows/
+    git diff --stat skaileup/flows/*/*.bundle.yaml
     echo ""
     echo "Fix: run 'python3 ai-assets-dev/lab/compile-bundle/compile_bundle.py' and commit the result."
     exit 1
 fi
 
 echo "=== check-bundles: running validator.py ==="
-if ! python3 ai-assets-dev/lab/compile-bundle/validator.py; then
+if ! "$PY" ai-assets-dev/lab/compile-bundle/validator.py; then
     echo ""
     echo "ERROR: bundle validator found coverage gaps. Run 'python3 ai-assets-dev/lab/compile-bundle/validator.py' locally for details."
     exit 1

@@ -5,7 +5,7 @@ description: >-
   Single-feature, trivial-persistence app. One impl-slice iteration; no recap,
   no refactor; no concept-slice loop. Linear concept pipeline:
   scope-project -> brief -> features -> mockup-walkthrough-text -> techstack ->
-  templates (deferred) -> scaffold -> impl-plan-plan-vertical ->
+  templates -> scaffold -> impl-plan-plan-vertical ->
   impl-slice-implement -> impl-slice-commit -> impl-quality-test-unit.
   Per SKILL_GRAPH § 6 mvp column: only impl-quality-test-unit; no
   impl-slice-test/recap/refactor; no concept-slice phases.
@@ -86,7 +86,7 @@ nodes:
       y: 200
     data:
       skill: impl-architecture-templates-select
-      label: 'Architecture Templates (deferred)'
+      label: 'Architecture Templates'
       optional: true
       subagent: false
       parameters: {}

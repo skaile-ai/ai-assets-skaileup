@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-judge`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets/lab/judge/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/judge/SKILL.md)
+**Source:** [`ai-assets-dev/lab/judge/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/judge/SKILL.md)
 :::
 
 

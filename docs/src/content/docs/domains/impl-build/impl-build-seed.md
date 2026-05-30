@@ -1,13 +1,13 @@
 ---
 title: "impl-build-seed"
-description: "Generates seed scripts from seed.json. Reads seed.json scenarios (empty, single_user, populated, edge_cases) and generates executable seed scripts for the chosen stack (Prisma, Drizzle, raw SQL, etc.). Each scenario is independently runnable. Run aft"
+description: "Use after migrate to generate executable seed scripts from seed.json. Covers all seed scenarios (empty, single_user, populated, edge_cases); each is independently runnable against the target stack (Prisma, Drizzle, raw SQL, etc.)."
 sidebar:
   label: "impl-build-seed"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-build-seed`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** seed, data, fixtures, testing, development, demo, scenarios, prisma, drizzle, sql
 **Source:** [`skaileup/impl-build/seed/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/seed/SKILL.md)
 :::

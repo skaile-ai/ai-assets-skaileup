@@ -1,6 +1,6 @@
 ---
 name: 'template-nuxt-primevue'
-description: 'Reference document and invocable skill for the Nuxt 4 + PrimeVue 4 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
+description: 'Reference document and invocable skill for the Nuxt 4 + PrimeVue 4 + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when _concept/blueprint/techstack.md selects this stack.'
 metadata:
   type: template
   version: '0.1.0'
@@ -130,7 +130,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-PrimeVue 4 uses a `--p-*` CSS variable system tied to its preset (Aura, Lara, Material, Nora). Brand tokens from `04_brand/tokens.json` are mapped at two levels:
+PrimeVue 4 uses a `--p-*` CSS variable system tied to its preset (Aura, Lara, Material, Nora). Brand tokens from `_concept/discovery/brand/tokens.json` are mapped at two levels:
 
 **Level 1 — PrimeVue preset override via `definePreset()`:**
 
@@ -143,7 +143,7 @@ const BrandPreset = definePreset(Aura, {
   semantic: {
     primary: {
       50: '{tokens.color.primary.50}',
-      500: '{tokens.color.primary.500}', // from 04_brand/tokens.json
+      500: '{tokens.color.primary.500}', // from _concept/discovery/brand/tokens.json
       900: '{tokens.color.primary.900}',
     },
     colorScheme: {

@@ -1,6 +1,6 @@
 ---
 name: 'template-nuxt-minimal'
-description: 'Reference document and invocable skill for the Nuxt 4 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
+description: 'Reference document and invocable skill for the Nuxt 4 + Tailwind + Drizzle + SQLite stack. Read by scaffold, foundation, design, mock, and storybook skills when _concept/blueprint/techstack.md selects this stack.'
 metadata:
   type: template
   version: '0.1.0'
@@ -146,7 +146,7 @@ export default defineConfig({
 
 ## CSS Variables / Theming
 
-Pure Tailwind CSS 4 with no component library. Brand tokens from `04_brand/tokens.json` map directly to CSS custom properties in the `@theme` block.
+Pure Tailwind CSS 4 with no component library. Brand tokens from `_concept/discovery/brand/tokens.json` map directly to CSS custom properties in the `@theme` block.
 
 **`assets/css/tailwind.css`:**
 

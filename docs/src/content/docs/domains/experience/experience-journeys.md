@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `experience-journeys`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** journeys, stories, personas, story-map, user-flow, acceptance-criteria, ears, experience
 **Source:** [`skaileup/experience/journeys/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/journeys/SKILL.md)
 :::
@@ -53,9 +53,9 @@ before proceeding.
 | Must read        | `_concept/discovery/goals.md`                       | Yes      |
 | Must read        | `references/ears_format.md`                         | Yes      |
 | Must read        | `references/journey_stages.md`                      | Yes      |
-| Check if present | `_concept/_grounding/general/audiences.md`          | No       |
-| Check if present | `_concept/_grounding/general/competitors.md`        | No       |
-| Check if present | `_concept/_grounding/general/domain.md`             | No       |
+| Check if present | `_concept/_grounding/research/audiences.md`          | No       |
+| Check if present | `_concept/_grounding/research/competitors.md`        | No       |
+| Check if present | `_concept/_grounding/research/domain.md`             | No       |
 | Never load       | `experience/features/`, `blueprint/`, or downstream | —        |
 
 ## Standalone Mode
@@ -71,9 +71,9 @@ ROLE Journey Mapping agent — reads the approved project brief and produces
 READS
 \_concept/discovery/brief.md — app name, audience, problem, hero_flow
 \_concept/discovery/goals.md — success criteria, constraints, deadlines
-? \_concept/\_grounding/general/audiences.md — detailed persona profiles from research
-? \_concept/\_grounding/general/competitors.md — competitor flows and feature gaps
-? \_concept/\_grounding/general/domain.md — domain terminology and workflows
+? \_concept/\_grounding/research/audiences.md — detailed persona profiles from research
+? \_concept/\_grounding/research/competitors.md — competitor flows and feature gaps
+? \_concept/\_grounding/research/domain.md — domain terminology and workflows
 
 WRITES
 \_concept/experience/journeys/stories.json — personas, story maps, acceptance criteria
@@ -105,7 +105,7 @@ STEP 1: Read context
   > "No approved project brief found. Run `overview` first."
 - Read \_concept/discovery/goals.md for success criteria and constraints
 - Extract: app name, problem, audience, hero_flow, success_metrics
-  IF \_concept/\_grounding/general/ exists
+  IF \_concept/\_grounding/research/ exists
   - Read audiences.md for detailed persona profiles (if present)
   - Read competitors.md for competitor user flows and gaps (if present)
   - Read domain.md for domain terminology and workflows (if present)
@@ -113,7 +113,7 @@ STEP 1: Read context
 STEP 2: Define personas
 
 - Identify distinct user types from brief audience field
-  IF \_concept/\_grounding/general/audiences.md exists
+  IF \_concept/\_grounding/research/audiences.md exists
   - Enrich personas with research findings (goals, pain points, context)
     ELSE
   - Derive personas from brief and goals alone

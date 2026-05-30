@@ -94,7 +94,7 @@ Every skill's `name:` follows the **domain-relative path** (without the `skaileu
 
 **Exception — base orchestrator skills:** Skills inside `skaileup/skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`) instead of the path-based form. The base orchestrator is the catalog's entry point; doubled prefixes would be awkward.
 
-> **Note.** The `CONTRIBUTING.md` § Naming Conventions section says `name:` must match the parent directory name exactly. The catalog actually uses path-based naming where the parent directory is just the last segment (`brief/` → `concept-brief`). The path-prefix convention here is authoritative; `CONTRIBUTING.md` is being reconciled. See [`docs/devlog/IMPROVEMENT.md`](./docs/devlog/IMPROVEMENT.md) item A1.
+> **Note.** The path-prefix convention is authoritative: `name:` = the domain-relative path with `/` → `-`, where the parent directory is the last segment (`brief/` → `concept-brief`). `CONTRIBUTING.md` § Naming Conventions matches this.
 
 ## Two-Group Architecture
 
@@ -179,15 +179,15 @@ The catalog underwent two reorganizations:
 - [x] All ~70 SKILL.md files moved to new homes; `name:` frontmatter updated
 - [x] Stack profiles promoted from `skaileup-quality/profiles/` to `impl-architecture/templates/`
 - [x] Bulk path-reference update across READS/WRITES/REFERENCES + validator.py imports
-- [ ] DOMAIN.md content authored (Phase 2)
-- [ ] Validator creation for skills that lack them (Phase 2)
+- [x] DOMAIN.md content authored (Phase 2)
+- [x] Validator creation for skills that lack them (Phase 2)
 
-### Phase 2 — to be planned
-Tracked in [`docs/devlog/IMPROVEMENT.md`](./docs/devlog/IMPROVEMENT.md). Highlights:
+### Phase 2 — catalog quality remediation (2026-05, complete)
+The 2026-05-10 catalog review backlog has been worked through across five commits (`Phase 1`–`Phase 5` in git history): frontmatter completed on all skills (`version`/`stage`), `user_inputs` → `prerequisites` migration, templates demoted out of the skill model, DOMAIN.md files authored, descriptions normalized, and CI gates added (frontmatter audit, bundle↔flow drift, pre-commit hook).
 
-- **A2/A3:** 19 skills missing `metadata.version`, 51 missing `metadata.stage` — bulk-add.
-- **A4:** 18 skills still on deprecated `metadata.user_inputs` — migrate to `prerequisites.inputs_required` / `inputs_optional`.
-- **A5:** Templates (7 skills, 420–720 lines each) shouldn't be skills — convert to a new `template:` asset kind.
-- **B1:** concept-slice cluster has truncated workflows; standard-app and complex-app tiers depend on these.
-- **B2:** Mockup feedback loop is one-way — mockup-walkthrough-* regenerators don't read the devlog.
-- **C1:** All 20 DOMAIN.md files are stubs.
+### Phase 3 — SKILL_GRAPH migration (2026-05-30, complete)
+Tracked in [`docs/devlog/SKILL_GRAPH.md`](./docs/devlog/SKILL_GRAPH.md). All 11 deferred tier-flow skills are built; [`skaileup/flows/_meta/deferred_skills.yaml`](./skaileup/flows/_meta/deferred_skills.yaml) is now empty and the flow verifier emits no deferred-skill warnings:
+
+- `concept-goals`, `concept-comparable` (`concept/`), `design-inspiration` (`design/`) — high-level concept pass for standard/complex tiers.
+- `impl-architecture-templates-select` — runtime selector over the 7 `template-*` reference assets; writes `tech_stack_skill`.
+- `mockup-walkthrough-astro` / `-lit` / `-framework` and the `mockup-feedback-{annotate,triage,patch,apply}` cluster — walkthrough renderers + feedback loop.

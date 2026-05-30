@@ -1,6 +1,6 @@
 ---
 name: 'template-nextjs-radix'
-description: 'Reference document and invocable skill for the Next.js 15 + Radix UI + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
+description: 'Reference document and invocable skill for the Next.js 15 + Radix UI + Directus stack. Read by scaffold, foundation, design, mock, and storybook skills when _concept/blueprint/techstack.md selects this stack.'
 metadata:
   type: template
   version: '0.1.0'
@@ -142,7 +142,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-Radix UI applies no default styling — it is purely behavioral. All visual design comes from Tailwind classes applied to the component wrappers. Brand tokens from `04_brand/tokens.json` are mapped directly to CSS custom properties in `globals.css`.
+Radix UI applies no default styling — it is purely behavioral. All visual design comes from Tailwind classes applied to the component wrappers. Brand tokens from `_concept/discovery/brand/tokens.json` are mapped directly to CSS custom properties in `globals.css`.
 
 **`globals.css` pattern:**
 

@@ -1,14 +1,14 @@
 ---
 title: "ops-project-overview"
-description: "Generate the discovery/ section of a meta-concept: ecosystem brief, unified goals, and competitive positioning for a multi-product project."
+description: "Use when starting a multi-product meta-concept and the discovery section does not exist yet. Generates discovery/ covering ecosystem brief, unified goals, and competitive positioning."
 sidebar:
   label: "ops-project-overview"
 ---
 
 :::note[Skill manifest]
 **Name:** `ops-project-overview`
-**Stage:** — · **Version:** —
-**Tags:** —
+**Stage:** alpha · **Version:** 0.1.0
+**Tags:** meta-concept, discovery, brief, goals, comparable, ecosystem, umbrella
 **Source:** [`skaileup/ops/project-overview/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/project-overview/SKILL.md)
 :::
 

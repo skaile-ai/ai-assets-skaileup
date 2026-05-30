@@ -1,13 +1,13 @@
 ---
 title: "impl-build-foundation"
-description: "Applies the three foundational layers every app needs before feature work: brand tokens → CSS variables, authentication setup, and app shell layout. Also seeds initial data and configures Storybook with brand theme if present. Reads the tech stack pr"
+description: "Use after scaffold and before feature implementation to apply the three foundational layers every app needs: brand tokens → CSS variables, authentication setup, and app shell layout. Also seeds initial data and configures Storybook with brand theme i"
 sidebar:
   label: "impl-build-foundation"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-build-foundation`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** foundation, theming, brand, css-vars, auth, app-shell, layout, navigation, seed, storybook
 **Source:** [`skaileup/impl-build/foundation/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/foundation/SKILL.md)
 :::
@@ -30,7 +30,7 @@ Applies the foundational layers every app needs before feature work begins:
    (only if `experience/4_storybook/` exists)
 
 **Framework-agnostic.** All file locations, variable naming, auth plugin names,
-and layout patterns come from `impl-architecture/profiles/<tech_stack_skill>/SKILL.md`.
+and layout patterns come from `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md`.
 
 ## When to Use
 
@@ -58,7 +58,7 @@ and layout patterns come from `impl-architecture/profiles/<tech_stack_skill>/SKI
 | Action         | Path                                                      | Required    |
 | -------------- | --------------------------------------------------------- | ----------- |
 | Must read      | `_concept/blueprint/techstack.md`                         | Yes         |
-| Must read      | `impl-architecture/profiles/<tech_stack_skill>/SKILL.md` | Yes         |
+| Must read      | `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md` | Yes         |
 | Must read      | `_concept/discovery/brand/tokens.json`                    | Yes         |
 | Read if exists | `_concept/discovery/brand/identity.md`                    | Recommended |
 | Read if exists | `_concept/experience/screens/00_layout/shell.md`          | Recommended |
@@ -72,7 +72,7 @@ ROLE Foundation agent — applies brand tokens, configures auth, wires app shell
 
 READS
 \_concept/blueprint/techstack.md — tech_stack_skill, auth provider
-impl-architecture/profiles/<tech_stack_skill>/SKILL.md — css_vars_mapping, auth_setup, app_shell recipes
+impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md — css_vars_mapping, auth_setup, app_shell recipes
 \_concept/discovery/brand/tokens.json — color tokens, typography, spacing, shadows
 ? \_concept/discovery/brand/identity.md — design philosophy, atmosphere
 ? \_concept/experience/screens/00_layout/shell.md — navigation structure, sidebar items
@@ -207,7 +207,7 @@ CHECKLIST
 ## Tech Stack Resolution
 
 Read `stack.md` → extract `tech_stack_skill`. Then read
-`impl-architecture/profiles/<tech_stack_skill>/SKILL.md` and extract:
+`impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md` and extract:
 
 | Section            | Purpose                                                       |
 | ------------------ | ------------------------------------------------------------- |

@@ -46,6 +46,8 @@ Merges the former `concept-grounding-onboard` (project identity dialog) and `con
 ## Skills in this domain
 
 - [concept-brief](./concept-brief/) — Use when starting a new concept and no _concept/discovery/ exists, or when the user says 'I have an app idea', 'new project', 'start from sc
-- [concept-grounding-onboard](./concept-grounding-onboard/) — Collects project identity, complexity tier preferences, and technology decisions through a structured dialog. Produces profile.yaml and deci
+- [concept-comparable](./concept-comparable/) — Use on standard-app / complex-app concepts after brief and goals exist, when reference apps deserve their own focused pass beyond the light 
+- [concept-goals](./concept-goals/) — Use on standard-app / complex-app concepts after the brief is approved, when goals deserve their own focused pass beyond the light version c
+- [concept-grounding-onboard](./concept-grounding-onboard/) — Use when starting a new concept pipeline and project identity, tier, and technology decisions have not been captured yet. Collects these thr
 - [concept-grounding-research](./concept-grounding-research/) — Use when grounding decisions in real-world data — competitor analysis, audience research, design inspiration, behavioral patterns, color/fon
-- [concept-grounding-seeds](./concept-grounding-seeds/) — Scans the _seeds/ directory, auto-classifies each file by content analysis, maps files to artifact slots, validates against schemas, and upd
+- [concept-grounding-seeds](./concept-grounding-seeds/) — Use after concept-grounding-onboard when the user has provided existing material in _seeds/. Scans and auto-classifies each file by content 

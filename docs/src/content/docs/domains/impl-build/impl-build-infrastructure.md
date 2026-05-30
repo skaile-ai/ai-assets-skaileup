@@ -1,13 +1,13 @@
 ---
 title: "impl-build-infrastructure"
-description: "Sets up custom backend infrastructure from the architecture doc. Implements custom NestJS/backend modules, provider abstractions (real + in-memory), additional processes, and communication infrastructure (WebSocket, SSE). Only needed when architectur"
+description: "Use when architecture.md defines custom_modules or processes beyond the standard stack. Sets up custom NestJS/backend modules, provider abstractions (real + in-memory), additional processes, and communication infrastructure (WebSocket, SSE)."
 sidebar:
   label: "impl-build-infrastructure"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-build-infrastructure`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** infrastructure, backend, modules, providers, websocket, sse, adapters, integration, nestjs
 **Source:** [`skaileup/impl-build/infrastructure/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/infrastructure/SKILL.md)
 :::

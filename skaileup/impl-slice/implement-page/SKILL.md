@@ -91,7 +91,7 @@ e2e/specs/features/<group>/<feature-slug>.spec.<ext> — feature-level e2e tests
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
-impl-architecture/profiles/<tech_stack_skill>/SKILL.md — stack-specific patterns
+impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md — stack-specific patterns
 references/tdd_guard.md — TDD Guard state machine and CLI
 references/tdd_workflow.md — E2E patterns, seed data, pitfalls
 

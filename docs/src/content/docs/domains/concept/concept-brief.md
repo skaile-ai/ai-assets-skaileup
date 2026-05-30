@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `concept-brief`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** brief, idea, project, vision, start, new, pitch, audience, problem
 **Source:** [`skaileup/concept/brief/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/brief/SKILL.md)
 :::
@@ -49,8 +49,8 @@ No hard gates — this is the first step in the pipeline.
 | Must read        | `contracts/concept_structure.md`      | Yes      |
 | Must read        | `contracts/frontmatter.md`            | Yes      |
 | Check if present | `_concept/_grounding/overview/user_input.json`        | No       |
-| Check if present | `_concept/_grounding/general/domain.md`               | No       |
-| Check if present | `_concept/_grounding/general/competitors.md`          | No       |
+| Check if present | `_concept/_grounding/research/domain.md`               | No       |
+| Check if present | `_concept/_grounding/research/competitors.md`          | No       |
 | Never load       | `experience/`, `blueprint/`, or any downstream folder | —        |
 
 Keep context minimal. This skill writes the foundation — it must not be
@@ -67,8 +67,8 @@ ROLE Product Definition agent — produces `_concept/discovery/` artifacts only.
 
 READS
 ? \_concept/\_grounding/overview/user_input.json — pre-collected dialog answers
-? \_concept/\_grounding/general/domain.md — domain research (if research ran first)
-? \_concept/\_grounding/general/competitors.md — competitor research (if research ran first)
+? \_concept/\_grounding/research/domain.md — domain research (if research ran first)
+? \_concept/\_grounding/research/competitors.md — competitor research (if research ran first)
 
 WRITES
 \_concept/discovery/brief.md — elevator pitch, audience, problem, hero flow
@@ -201,8 +201,8 @@ CHECKLIST
 When research is active (`research_depth` ≠ `skip` and `overview` is in `modes.research.triggers`),
 domain and competitor research run in parallel. Before writing the brief, check:
 
-- `_concept/_grounding/general/domain.md` — domain findings for the problem statement
-- `_concept/_grounding/general/competitors.md` — competitor findings for comparable.md
+- `_concept/_grounding/research/domain.md` — domain findings for the problem statement
+- `_concept/_grounding/research/competitors.md` — competitor findings for comparable.md
 
 If research data exists, incorporate it. If it does not, proceed without it — research is optional.
 

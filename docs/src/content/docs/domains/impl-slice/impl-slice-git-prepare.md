@@ -1,6 +1,6 @@
 ---
 title: "impl-slice-git-prepare"
-description: "Prepare the git repository for a supervised implementation run. Initializes git if needed, creates the implementation branch, and optionally sets up a git worktree (Claude Code / local mode only). Run before brainstorm or write-plan. Triggers on: 'se"
+description: "Use when no git repo exists or no implementation branch exists before starting a supervised implementation run. Initializes git if needed, creates the implementation branch, and optionally sets up a git worktree (Claude Code / local mode only)."
 sidebar:
   label: "impl-slice-git-prepare"
 ---

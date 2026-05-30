@@ -2,14 +2,14 @@
 title: "impl-build-docs"
 description: "Use after completing an implementation step to verify and update Starlight documentation. Detects git-changed files, resolves which doc pages cover them via _sources frontmatter, checks accuracy, and rewrites stale sections. Run automatically at the "
 sidebar:
-  label: "docs"
+  label: "impl-build-docs"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-build-docs`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** documentation, starlight, docs-sync, post-implementation, verification
-**Source:** [`impl-build/docs/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/impl-build/docs/SKILL.md)
+**Source:** [`skaileup/impl-build/docs/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/docs/SKILL.md)
 :::
 
 
@@ -57,7 +57,7 @@ docs/src/content/docs/**/\*.{md,mdx} — updated doc pages (content + \_sources 
 REFERENCES
 contracts/concept_structure.md — canonical paths
 docs/astro.config.mjs — sidebar structure and registered packages
-ai-assets/contracts/doc_tracking.md — shared tracking conventions (\_sources schema, @doc: annotations, staleness protocol)
+skaileup/contracts/doc_tracking.md — shared tracking conventions (\_sources schema, @doc: annotations, staleness protocol)
 
 MUST preserve existing frontmatter fields (title, description, badge, template, hero)
 MUST only add/update \_sources, \_source_hash, \_last_synced fields in frontmatter

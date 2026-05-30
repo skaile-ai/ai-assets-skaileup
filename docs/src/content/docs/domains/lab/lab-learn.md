@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-learn`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets/lab/learn/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/learn/SKILL.md)
+**Source:** [`ai-assets-dev/lab/learn/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/learn/SKILL.md)
 :::
 
 

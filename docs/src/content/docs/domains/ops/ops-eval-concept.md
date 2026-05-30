@@ -1,6 +1,6 @@
 ---
 title: "ops-eval-concept"
-description: "Concept completeness and clarity gate. An independent evaluator reviews _concept/ artifacts adversarially — assumes gaps exist and proves completeness. Checks every feature has traceable acceptance criteria, screen specs, data model coverage, and an "
+description: "Use before implementation begins to verify concept completeness and clarity. Independent adversarial review of _concept/ artifacts: checks every feature has acceptance criteria, screen specs, data model coverage, and a clear brief. Gate: pre-impl."
 sidebar:
   label: "ops-eval-concept"
 ---
@@ -23,6 +23,8 @@ enough for an implementation team to build from without ambiguity.
 
 Approach adversarially: assume gaps exist and prove completeness.
 Never infer intent. If something is not explicitly stated, it is missing.
+
+ROLE Concept Completeness Evaluator — adversarially gates the concept-to-implementation boundary. Independent reviewer: was NOT present during conceptualization.
 
 READS
 ! \_concept/discovery/brief.md — goals, target user, success metrics

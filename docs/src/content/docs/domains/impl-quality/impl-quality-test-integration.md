@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `impl-quality-test-integration`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** testing, integration, api, database, endpoints, data-flow
 **Source:** [`skaileup/impl-quality/test-integration/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/test-integration/SKILL.md)
 :::

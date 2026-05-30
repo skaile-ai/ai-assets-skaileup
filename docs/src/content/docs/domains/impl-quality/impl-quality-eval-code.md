@@ -1,6 +1,6 @@
 ---
 title: "impl-quality-eval-code"
-description: "Code quality evaluator. Verifies build passes, then dispatches three parallel sub-agents for logic errors, security vulnerabilities, and UI/UX code concerns. Three scopes: scaffold (build only), feature (build + unit tests), full (everything). Produc"
+description: "Use when a pipeline checkpoint is reached (after scaffold, after each feature group, or before release) to evaluate code quality. Verifies build, then dispatches three parallel sub-agents for logic errors, security, and UI/UX concerns. Three scopes: "
 sidebar:
   label: "impl-quality-eval-code"
 ---

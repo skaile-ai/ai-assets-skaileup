@@ -1,6 +1,6 @@
 ---
 name: 'template-nextjs-shadcn'
-description: 'Reference document and invocable skill for the Next.js 15 + shadcn/ui + Supabase stack. Read by scaffold, foundation, design, mock, and storybook skills when 05_techstack/stack.md selects this stack.'
+description: 'Reference document and invocable skill for the Next.js 15 + shadcn/ui + Supabase stack. Read by scaffold, foundation, design, mock, and storybook skills when _concept/blueprint/techstack.md selects this stack.'
 metadata:
   type: template
   version: '0.1.0'
@@ -138,7 +138,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-shadcn/ui uses a CSS custom property system where semantic color names (`--background`, `--foreground`, `--primary`, `--primary-foreground`, etc.) map to HSL values. Brand tokens from `04_brand/tokens.json` map **1:1** to these semantic variables in `globals.css`.
+shadcn/ui uses a CSS custom property system where semantic color names (`--background`, `--foreground`, `--primary`, `--primary-foreground`, etc.) map to HSL values. Brand tokens from `_concept/discovery/brand/tokens.json` map **1:1** to these semantic variables in `globals.css`.
 
 **`src/app/globals.css` pattern:**
 

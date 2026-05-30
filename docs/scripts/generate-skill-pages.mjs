@@ -10,7 +10,7 @@
 //
 // For every DOMAIN.md, emits an index.mdx that lists the domain's skills.
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync, rmSync } from "node:fs";
 import { dirname, join, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
@@ -18,11 +18,15 @@ import { parse as parseYaml } from "yaml";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..", "..");
 const OUT_ROOT = join(__dirname, "..", "src", "content", "docs", "domains");
+const FLOWS_SRC = join(REPO_ROOT, "skaileup", "flows");
+const FLOWS_OUT = join(__dirname, "..", "src", "content", "docs", "flows");
 const GITHUB_BASE =
   "https://github.com/skaile-ai/ai-assets-skaileup/blob/main";
 
+// Blanket-skipped at any depth. NOTE: "docs" is intentionally NOT here — a skill
+// legitimately lives at skaileup/impl-build/docs/. The repo-root docs/ site is
+// skipped by path in walk() instead.
 const SKIP_DIRS = new Set([
-  "docs",
   ".git",
   ".worktrees",
   ".pytest_cache",
@@ -39,6 +43,8 @@ function walk(dir, hits = []) {
   for (const entry of readdirSync(dir)) {
     if (SKIP_DIRS.has(entry)) continue;
     const p = join(dir, entry);
+    // Skip only the repo-root docs/ site, not skill dirs named "docs".
+    if (entry === "docs" && dir === REPO_ROOT) continue;
     const s = statSync(p);
     if (s.isDirectory()) walk(p, hits);
     else if (entry === "SKILL.md" || entry === "DOMAIN.md") hits.push(p);
@@ -72,8 +78,9 @@ function slugify(name) {
 // Domain directories to include.
 // User-facing domains live under skaileup/<domain>/
 // contracts is now also under skaileup/ (moved from ai-assets/)
-// Meta lab domain lives under ai-assets/<domain>/
-// The DOMAIN_DIRS set uses the bare domain name; root prefix is determined by DOMAIN_ROOT below.
+// Meta lab domain lives under ai-assets-dev/lab/
+// The set uses the bare domain name; the root prefix (skaileup/ vs ai-assets-dev/)
+// is matched in main() when classifying each file.
 const SKAILEUP_DOMAINS = new Set([
   "concept",
   "contracts",
@@ -175,6 +182,80 @@ ${skillsList || "_No skills found._"}
 `;
 }
 
+function renderFlowPage({ fm, body, type }) {
+  // type is the flow directory name, e.g. "standard-app". Each carries a paired
+  // <type>.flow.yaml + <type>.bundle.yaml alongside the source markdown.
+  const title = fm.title || type;
+  const description = (fm.description || `Flow: ${type}`)
+    .replace(/\n/g, " ")
+    .replace(/"/g, "'")
+    .slice(0, 250);
+  const order = typeof fm.order === "number" ? fm.order : 99;
+  const flowRel = `skaileup/flows/${type}/${type}.flow.yaml`;
+  const bundleRel = `skaileup/flows/${type}/${type}.bundle.yaml`;
+
+  return `---
+title: "${title}"
+description: "${description}"
+sidebar:
+  label: "${title}"
+  order: ${order}
+---
+
+:::note[Flow manifest]
+**Flow:** [\`${flowRel}\`](${GITHUB_BASE}/${flowRel})
+**Bundle:** [\`${bundleRel}\`](${GITHUB_BASE}/${bundleRel})
+:::
+
+${asMdString(body)}
+`;
+}
+
+function renderFlowsIndex({ fm, body }) {
+  const title = fm.title || "Flows";
+  const description = (fm.description || "Flows")
+    .replace(/\n/g, " ")
+    .replace(/"/g, "'")
+    .slice(0, 250);
+  return `---
+title: "${title}"
+description: "${description}"
+sidebar:
+  label: "Overview"
+  order: 0
+---
+
+${asMdString(body)}
+`;
+}
+
+function generateFlows() {
+  if (!existsSync(FLOWS_SRC)) return 0;
+  ensureDir(FLOWS_OUT);
+  let count = 0;
+
+  // Flows section overview from skaileup/flows/index.md
+  const indexSrc = join(FLOWS_SRC, "index.md");
+  if (existsSync(indexSrc)) {
+    const { fm, body } = parseFrontmatter(readFileSync(indexSrc, "utf8"));
+    writeFileSync(join(FLOWS_OUT, "index.md"), renderFlowsIndex({ fm, body }));
+    count++;
+  }
+
+  // One page per flow directory that carries a <type>/<type>.md source.
+  for (const entry of readdirSync(FLOWS_SRC)) {
+    if (entry.startsWith("_")) continue; // skip _meta
+    const flowDir = join(FLOWS_SRC, entry);
+    if (!statSync(flowDir).isDirectory()) continue;
+    const src = join(flowDir, `${entry}.md`);
+    if (!existsSync(src)) continue;
+    const { fm, body } = parseFrontmatter(readFileSync(src, "utf8"));
+    writeFileSync(join(FLOWS_OUT, `${entry}.md`), renderFlowPage({ fm, body, type: entry }));
+    count++;
+  }
+  return count;
+}
+
 function main() {
   // Walk skaileup/ for user-facing skill domains, ai-assets/ for meta domains.
   // We walk REPO_ROOT but use the path structure to determine which domain each file belongs to.
@@ -187,7 +268,7 @@ function main() {
     let domain = null;
     if (parts[0] === "skaileup" && SKAILEUP_DOMAINS.has(parts[1])) {
       domain = parts[1];
-    } else if (parts[0] === "ai-assets" && AI_ASSETS_DOMAINS.has(parts[1])) {
+    } else if (parts[0] === "ai-assets-dev" && AI_ASSETS_DOMAINS.has(parts[1])) {
       domain = parts[1];
     }
     if (!domain) continue;
@@ -198,9 +279,13 @@ function main() {
   }
 
   let count = 0;
+  // Track exactly which files we write per domain, so we can prune stale ones.
+  const writtenByDomain = new Map();
   for (const [domain, { domainFile, skills }] of byDomain.entries()) {
     const outDir = join(OUT_ROOT, domain);
     ensureDir(outDir);
+    const written = new Set(["index.md"]);
+    writtenByDomain.set(domain, written);
 
     // Collect skill metadata first to feed into the domain index page
     const skillMeta = [];
@@ -225,6 +310,7 @@ function main() {
       });
       const outPath = join(outDir, `${s.slug}.md`);
       writeFileSync(outPath, out);
+      written.add(`${s.slug}.md`);
       count++;
     }
 
@@ -274,6 +360,32 @@ ${skillsList}
   }
 
   console.log(`Generated ${count} pages under ${relative(process.cwd(), OUT_ROOT)}`);
+
+  // Prune stale output: remove orphan domain dirs (old naming) and any per-domain
+  // page no longer backed by a source SKILL.md/DOMAIN.md. Loose files at the
+  // domains/ root (e.g. hand-written *-group.md overviews) are left untouched.
+  const knownDomains = new Set([...SKAILEUP_DOMAINS, ...AI_ASSETS_DOMAINS]);
+  let pruned = 0;
+  for (const entry of readdirSync(OUT_ROOT)) {
+    const entryPath = join(OUT_ROOT, entry);
+    if (!statSync(entryPath).isDirectory()) continue;
+    if (!knownDomains.has(entry)) {
+      rmSync(entryPath, { recursive: true, force: true });
+      pruned++;
+      continue;
+    }
+    const keep = writtenByDomain.get(entry) || new Set(["index.md"]);
+    for (const f of readdirSync(entryPath)) {
+      if (!keep.has(f)) {
+        rmSync(join(entryPath, f));
+        pruned++;
+      }
+    }
+  }
+  if (pruned) console.log(`Pruned ${pruned} stale entries under ${relative(process.cwd(), OUT_ROOT)}`);
+
+  const flowCount = generateFlows();
+  console.log(`Generated ${flowCount} pages under ${relative(process.cwd(), FLOWS_OUT)}`);
 }
 
 main();

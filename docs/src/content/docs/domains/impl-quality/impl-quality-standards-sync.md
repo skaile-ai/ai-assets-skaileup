@@ -7,7 +7,7 @@ sidebar:
 
 :::note[Skill manifest]
 **Name:** `impl-quality-standards-sync`
-**Stage:** alpha · **Version:** —
+**Stage:** alpha · **Version:** 0.1.0
 **Tags:** standards, sync, profile, conventions, push, pull
 **Source:** [`skaileup/impl-quality/standards-sync/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/standards-sync/SKILL.md)
 :::

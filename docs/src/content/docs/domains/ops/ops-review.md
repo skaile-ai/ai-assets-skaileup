@@ -1,13 +1,13 @@
 ---
 title: "ops-review"
-description: "Structure audit + entropy check + doc gardening for _concept/. In audit mode: scan completeness, cross-reference integrity, golden principle compliance, and entropy; produce quality.json with score. In gardening mode: auto-fix safe issues and report "
+description: "Use when _concept/ needs a quality check or housekeeping pass. In audit mode: scans completeness, cross-reference integrity, golden principle compliance, and entropy; produces quality.json with score. In gardening mode: auto-fixes safe issues and rep"
 sidebar:
   label: "ops-review"
 ---
 
 :::note[Skill manifest]
 **Name:** `ops-review`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** review, audit, status, entropy, checklist, progress, health, gardening, cleanup, quality
 **Source:** [`skaileup/ops/review/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/review/SKILL.md)
 :::

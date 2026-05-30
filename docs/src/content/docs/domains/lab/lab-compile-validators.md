@@ -9,7 +9,7 @@ sidebar:
 **Name:** `lab-compile-validators`
 **Stage:** — · **Version:** 1.0.0
 **Tags:** validation, rules, compilation, deterministic, fast, linting
-**Source:** [`ai-assets/lab/compile-validators/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets/lab/compile-validators/SKILL.md)
+**Source:** [`ai-assets-dev/lab/compile-validators/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/compile-validators/SKILL.md)
 :::
 
 

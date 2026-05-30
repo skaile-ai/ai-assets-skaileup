@@ -1,15 +1,15 @@
 ---
 title: "impl-slice-implement-page"
-description: "Page-level feature implementation with TDD Guard. Implements all features within one page using outside-in TDD: writes failing page tests, then for each feature writes failing feature tests and implements until green. Uses storybook page compositions"
+description: "Use when implementing all features within a single page using outside-in TDD. Writes failing page tests first, then per-feature failing tests, implements until green. Uses Storybook page compositions as UI starting point if available. TDD Guard enfor"
 sidebar:
   label: "impl-slice-implement-page"
 ---
 
 :::note[Skill manifest]
 **Name:** `impl-slice-implement-page`
-**Stage:** — · **Version:** 1.0.0
+**Stage:** alpha · **Version:** 1.0.0
 **Tags:** implement, feature, page, tdd, tdd-guard, test-first, e2e, component
-**Source:** [`skaileup/impl-slice/implement/impl-slice-implement-page/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/implement/impl-slice-implement-page/SKILL.md)
+**Source:** [`skaileup/impl-slice/implement-page/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/implement-page/SKILL.md)
 :::
 
 
@@ -64,7 +64,7 @@ e2e/specs/features/<group>/<feature-slug>.spec.<ext> — feature-level e2e tests
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
-impl-architecture/profiles/<tech_stack_skill>/SKILL.md — stack-specific patterns
+impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md — stack-specific patterns
 references/tdd_guard.md — TDD Guard state machine and CLI
 references/tdd_workflow.md — E2E patterns, seed data, pitfalls
 

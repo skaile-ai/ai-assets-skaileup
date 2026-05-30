@@ -31,6 +31,11 @@ export default defineConfig({
           ],
         },
         {
+          label: "Flows",
+          collapsed: false,
+          autogenerate: { directory: "flows" },
+        },
+        {
           label: "Concept",
           collapsed: false,
           items: [
@@ -149,7 +154,7 @@ export default defineConfig({
             { label: "Skill Authoring Guide", link: "/reference/contributing/" },
           ],
         },
-        { label: "Improvements & Roadmap", link: "/improvements/" },
+        { label: "Roadmap", link: "/improvements/" },
       ],
     }),
     mdx(),
