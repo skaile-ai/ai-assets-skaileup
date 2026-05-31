@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generate Starlight content pages from SKILL.md and DOMAIN.md files in the catalog.
+// Generate Starlight content pages from SKILL.md and DOMAIN.md files in the collection.
 //
 // For every SKILL.md found under skaileup/ and ai-assets/{lab,contracts}/ (skipping
 // /docs, /.git, /.worktrees, /.pytest_cache), emits an .mdx page under

@@ -30,7 +30,7 @@ the 200 most recent entries — enough context for ongoing regeneration work.
 
 **When to run:**
 - When `wc -l _feedback/devlog.md` suggests the file has grown very large
-- Before a major catalog regeneration pass (to keep agent context lean)
+- Before a major collection regeneration pass (to keep agent context lean)
 - As routine quarterly maintenance
 
 **Not needed when:**

@@ -16,4 +16,4 @@ Project-size scoping cluster: interviews the user, picks a tier (mvp / simple-ap
 
 ## Cross-references
 
-- See `../../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../../docs/devlog/SKILL_GRAPH.md` for the collection-level view.

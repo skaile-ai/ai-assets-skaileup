@@ -50,7 +50,7 @@ experience-screens       impl-architecture-datamodel
 - `../contracts/frontmatter.md` — required frontmatter fields for feature files
 - `../contracts/feedback_loop.md` — how downstream skills back-fill `screens[]` and `data_entities[]`
 - `../experience/` — journeys domain (prerequisite)
-- `../SKILL_GRAPH.md` — catalog-level dependency map
+- `../SKILL_GRAPH.md` — collection-level dependency map
 
 
 ## Skills in this domain

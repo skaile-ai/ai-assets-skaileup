@@ -13,7 +13,7 @@ sidebar:
 
 # contracts
 
-Reference material consumed by every skill in the catalog. Not invocable — no flow runs it. Skills read these files via `REFERENCES` declarations to enforce shared constraints, schemas, and conventions.
+Reference material consumed by every skill in the collection. Not invocable — no flow runs it. Skills read these files via `REFERENCES` declarations to enforce shared constraints, schemas, and conventions.
 
 ## Contents
 
@@ -56,7 +56,7 @@ Reference material consumed by every skill in the catalog. Not invocable — no 
 
 - `skaileup/flows/_meta/` — `verify_flows.py` validates bundles match flow node graphs.
 - `ai-assets/lab/compile-bundle/` — reads `profiles/` to emit bundle YAMLs.
-- `SKILL_GRAPH.md` — catalog-level view of domain relationships.
+- `SKILL_GRAPH.md` — collection-level view of domain relationships.
 
 
 ## Skills in this domain

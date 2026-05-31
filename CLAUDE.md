@@ -1,4 +1,4 @@
-# Skaileup Skill Catalog
+# Skaileup Skill Collection
 
 ## What This Is
 
@@ -92,13 +92,13 @@ Every skill's `name:` follows the **domain-relative path** (without the `skaileu
 | `skaileup/impl-architecture/templates/template-postxl/SKILL.md` | `template-postxl` (shortened — the directory already starts with `template-`) |
 | `skaileup/mockup-component/storybook/SKILL.md` | `mockup-component-storybook` |
 
-**Exception — base orchestrator skills:** Skills inside `skaileup/skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`) instead of the path-based form. The base orchestrator is the catalog's entry point; doubled prefixes would be awkward.
+**Exception — base orchestrator skills:** Skills inside `skaileup/skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`) instead of the path-based form. The base orchestrator is the collection's entry point; doubled prefixes would be awkward.
 
 > **Note.** The path-prefix convention is authoritative: `name:` = the domain-relative path with `/` → `-`, where the parent directory is the last segment (`brief/` → `concept-brief`). `CONTRIBUTING.md` § Naming Conventions matches this.
 
 ## Two-Group Architecture
 
-The catalog is shaped by one observation: **the work of figuring out a product and the work of building it have the same rhythm.** Each side benefits from a per-feature loop when the product is too big to design or build in one pass. The result is the same shape on both halves — `concept-slice/` on one side, `impl-slice/` on the other.
+The collection is shaped by one observation: **the work of figuring out a product and the work of building it have the same rhythm.** Each side benefits from a per-feature loop when the product is too big to design or build in one pass. The result is the same shape on both halves — `concept-slice/` on one side, `impl-slice/` on the other.
 
 ```
                     user input  /  existing repo
@@ -163,7 +163,7 @@ Bundles inherit: `mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`. Each fil
 
 ## Reorganization Status
 
-The catalog underwent two reorganizations:
+The collection underwent two reorganizations:
 
 ### Phase 0 (2026-04, complete)
 - [x] Domain extraction from ai-assets
@@ -182,8 +182,8 @@ The catalog underwent two reorganizations:
 - [x] DOMAIN.md content authored (Phase 2)
 - [x] Validator creation for skills that lack them (Phase 2)
 
-### Phase 2 — catalog quality remediation (2026-05, complete)
-The 2026-05-10 catalog review backlog has been worked through across five commits (`Phase 1`–`Phase 5` in git history): frontmatter completed on all skills (`version`/`stage`), `user_inputs` → `prerequisites` migration, templates demoted out of the skill model, DOMAIN.md files authored, descriptions normalized, and CI gates added (frontmatter audit, bundle↔flow drift, pre-commit hook).
+### Phase 2 — collection quality remediation (2026-05, complete)
+The 2026-05-10 collection review backlog has been worked through across five commits (`Phase 1`–`Phase 5` in git history): frontmatter completed on all skills (`version`/`stage`), `user_inputs` → `prerequisites` migration, templates demoted out of the skill model, DOMAIN.md files authored, descriptions normalized, and CI gates added (frontmatter audit, bundle↔flow drift, pre-commit hook).
 
 ### Phase 3 — SKILL_GRAPH migration (2026-05-30, complete)
 Tracked in [`docs/devlog/SKILL_GRAPH.md`](./docs/devlog/SKILL_GRAPH.md). All 11 deferred tier-flow skills are built; [`skaileup/flows/_meta/deferred_skills.yaml`](./skaileup/flows/_meta/deferred_skills.yaml) is now empty and the flow verifier emits no deferred-skill warnings:

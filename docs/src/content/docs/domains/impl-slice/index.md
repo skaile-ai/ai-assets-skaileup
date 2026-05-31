@@ -53,7 +53,7 @@ Each phase reads the prior phase's scratch file from `_slice/impl/<slice_id>/`. 
 - `../impl-plan/` — produces the `plan.md` that `impl-slice-implement` reads.
 - `../impl-quality/` — project-wide quality gates (distinct from per-slice `impl-slice-test`).
 - `../contracts/iron_laws.md` — user-approval requirement before any code edit (Iron Law §8).
-- See `../../../docs/devlog/SKILL_GRAPH.md` for the catalog-level view.
+- See `../../../docs/devlog/SKILL_GRAPH.md` for the collection-level view.
 
 
 ## Skills in this domain

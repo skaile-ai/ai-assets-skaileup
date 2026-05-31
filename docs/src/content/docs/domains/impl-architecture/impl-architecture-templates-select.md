@@ -97,7 +97,7 @@ STEP 2: Discover candidate templates
 - Scan `impl-architecture/templates/template-*/TEMPLATE.md`
 - For each, read only the Identity table / description: framework, UI library,
   backend, database
-- Build a candidate table. The catalog currently ships:
+- Build a candidate table. The collection currently ships:
 
   | template-\* id              | frontend       | ui library   | backend / data        |
   | --------------------------- | -------------- | ------------ | --------------------- |

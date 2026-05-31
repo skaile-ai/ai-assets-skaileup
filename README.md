@@ -1,6 +1,6 @@
 # ai-assets-skaileup
 
-The Skaileup skill catalog — concept, build, and quality pipeline skills for the Skaile ecosystem.
+The Skaileup skill collection — concept, build, and quality pipeline skills for the Skaile ecosystem.
 
 **94 SKILL.md files in 20 top-level domains across three groups (Concept · Implementation · Meta)** covering the full product lifecycle: from problem-space discovery through per-slice implementation and quality gates, with a cross-cutting ops/lab/contracts meta layer.
 
@@ -146,7 +146,7 @@ Local checkouts use `path:` instead of `url:` and are symlinked so edits to SKIL
 
 ## Lineage
 
-Extracted from [`skaile-ai/ai-assets`](https://github.com/skaile-ai/ai-assets) as part of the skill catalog reorganization (April 2026). The two reorganizations are documented in [`CLAUDE.md`](CLAUDE.md) § Reorganization Status and in `_devlog/plans/2026-05-07-skill-graph-migration.md` in the skaile-dev shell repo.
+Extracted from [`skaile-ai/ai-assets`](https://github.com/skaile-ai/ai-assets) as part of the skill collection reorganization (April 2026). The two reorganizations are documented in [`CLAUDE.md`](CLAUDE.md) § Reorganization Status and in `_devlog/plans/2026-05-07-skill-graph-migration.md` in the skaile-dev shell repo.
 
 ## Quick links
 

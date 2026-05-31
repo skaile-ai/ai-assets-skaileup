@@ -6,7 +6,7 @@ sidebar:
   order: 0
 ---
 
-The **Implementation group** is the half of the catalog that *builds* the
+The **Implementation group** is the half of the collection that *builds* the
 product. It has a one-time project setup and a repeating per-feature
 [`impl-slice`](../../flows/impl-slice/) loop — the same rhythm as the concept
 side.

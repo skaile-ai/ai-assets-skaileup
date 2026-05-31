@@ -43,4 +43,4 @@ mockup-feedback-apply      →  _concept/**/*.md  +  devlog.md  +  applied/<sid>
 
 - `../mockup-walkthrough/` — prerequisite domain; produces the site this domain annotates.
 - `../contracts/` — shared frontmatter schema and iron laws all skills read.
-- `../SKILL_GRAPH.md` — catalog-level dependency graph.
+- `../SKILL_GRAPH.md` — collection-level dependency graph.

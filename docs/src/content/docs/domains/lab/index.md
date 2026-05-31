@@ -13,7 +13,7 @@ sidebar:
 
 # lab
 
-Applies skills to skills themselves: validate, judge, improve, learn, compile validators, and compile bundles for the skill catalog.
+Applies skills to skills themselves: validate, judge, improve, learn, compile validators, and compile bundles for the skill collection.
 
 ## Skills
 
@@ -46,7 +46,7 @@ Planned: `validate-frontmatter` (SKILL.md schema compliance), `validate-cross-re
 
 ## Cross-references
 
-- `docs/devlog/SKILL_GRAPH.md` — catalog-level view.
+- `docs/devlog/SKILL_GRAPH.md` — collection-level view.
 - `../skaileup/contracts/` — contracts consumed by narrow validators.
 
 

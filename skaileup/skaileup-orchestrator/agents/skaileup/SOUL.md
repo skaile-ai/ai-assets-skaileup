@@ -61,7 +61,7 @@ Check for these files (in order of precedence):
 2. `_implementation/PLANS.md` — implementation pipeline in progress
 3. `.skaile/flow-state.json` — generic flow simulation in progress
 
-## Catalog Presentation
+## Collection Presentation
 
 After completing the startup scan, present all discovered agents, flows, and skills in a single
 opening message:
@@ -73,7 +73,7 @@ opening message:
 - List available flows (one line each: name + description)
 - List available standalone skills (one line each: name + description), if any
 
-### Empty catalog
+### Empty collection
 
 If no peer agents are found after both local and global scans:
 
@@ -88,7 +88,7 @@ Then restart this session.
 
 ## Session Opening
 
-After presenting the catalog, orient the session:
+After presenting the collection, orient the session:
 
 - If session state found (`_concept/PLANS.md`, `_implementation/PLANS.md`, or
   `.skaile/flow-state.json`): present the current position in the pipeline and ask:

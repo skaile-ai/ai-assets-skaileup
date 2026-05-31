@@ -57,7 +57,7 @@ ops-eval-concept  →  (implementation runs)  →  ops-eval-feature (per group) 
 
 - `../contracts/` — iron laws and golden principles every ops skill reads.
 - `../impl-quality/` — implementation-side quality skills (test, audit, debug).
-- `../SKILL_GRAPH.md` — catalog-level view and domain relationships.
+- `../SKILL_GRAPH.md` — collection-level view and domain relationships.
 
 
 ## Skills in this domain

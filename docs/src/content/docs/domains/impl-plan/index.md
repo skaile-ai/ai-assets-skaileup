@@ -50,7 +50,7 @@ Each step reads the previous step's output. `/clear` between steps is recommende
 - `../impl-slice/` — consumes `_slice/impl/<id>/plan.md` produced here.
 - `../concept-slice/` — produces the feature + screen artifacts this domain reads.
 - `../skaileup/contracts/skill_grammar.md` — DSL reference.
-- `../../../docs/devlog/SKILL_GRAPH.md` — catalog-level view.
+- `../../../docs/devlog/SKILL_GRAPH.md` — collection-level view.
 
 
 ## Skills in this domain

@@ -15,7 +15,7 @@ sidebar:
 
 Stack-specific scaffold templates. Each subdirectory is a concrete `SKILL.md` describing one stack's scaffold conventions (file layout, package manifest, dev-stack commands, foundation steps, recommended UI library).
 
-The catalog references this cluster via the **selector** skill `impl-architecture-templates-select` (`../templates-select/SKILL.md`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md`, scores the concrete templates on frontend → UI library → backend/database, and writes the winner back as `tech_stack_skill` so the build skills resolve exactly one of the templates below.
+The collection references this cluster via the **selector** skill `impl-architecture-templates-select` (`../templates-select/SKILL.md`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md`, scores the concrete templates on frontend → UI library → backend/database, and writes the winner back as `tech_stack_skill` so the build skills resolve exactly one of the templates below.
 
 ## Concrete templates
 

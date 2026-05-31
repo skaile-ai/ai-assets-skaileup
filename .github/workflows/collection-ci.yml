@@ -1,4 +1,4 @@
-name: Catalog CI
+name: Collection CI
 
 on:
   push:

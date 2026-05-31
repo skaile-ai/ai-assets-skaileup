@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   integrations: [
     starlight({
-      title: "Skaileup Skill Catalog",
+      title: "Skaileup Skill Collection",
       description:
         "Concept, build, and quality pipeline skills for the Skaile ecosystem.",
       social: [

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Frontmatter audit for the skaileup skill catalog.
+Frontmatter audit for the skaileup skill collection.
 
 Checks every SKILL.md file under skaileup/ for:
   - Missing metadata.version

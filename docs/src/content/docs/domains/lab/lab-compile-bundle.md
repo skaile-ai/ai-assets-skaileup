@@ -24,7 +24,7 @@ user-added skills and custom bundle references are preserved.
 **When to run:**
 - After adding a skill node to any flow YAML
 - Before shipping a tier to verify the bundle is complete
-- As part of routine catalog maintenance
+- As part of routine collection maintenance
 
 **Not needed when:**
 - No flow files have changed
