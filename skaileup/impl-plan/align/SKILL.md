@@ -12,6 +12,23 @@ metadata:
     - edge-cases
     - per-slice
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+    consumes:
+      - id: slice-impl-brainstorm
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: techstack
+        gate: soft
+    produces:
+      - id: slice-impl-align
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"

@@ -10,6 +10,19 @@ metadata:
     - feature-discovery
     - per-feature
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+    consumes:
+      - id: brief
+        gate: soft
+      - id: journeys
+        gate: soft
+      - id: slice-concept-brainstorm
+        gate: soft
+    produces:
+      - id: slice-concept-brainstorm
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"

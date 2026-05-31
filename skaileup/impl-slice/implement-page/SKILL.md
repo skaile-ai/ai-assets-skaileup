@@ -14,6 +14,23 @@ metadata:
     - 'e2e'
     - 'component'
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: screens
+        gate: hard
+      - id: features
+        gate: hard
+    consumes:
+      - id: prototype
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: brand-tokens
+        gate: soft
+      - id: techstack
+        gate: soft
+    produces:
+      - id: slice-impl-progress
   prerequisites:
     files:
       - path: '_concept/experience/screens'
@@ -28,7 +45,7 @@ metadata:
         gate: hard
         description: 'Dev stack must be running with passing test baseline'
     reads:
-      - path: '_concept/experience/4_storybook/src/pages'
+      - path: '_concept/prototype/storybook/src/pages'
         description: 'Storybook page compositions as UI starting point'
       - path: '_concept/blueprint/datamodel/model.json'
         description: 'Data model for entity implementation'
@@ -77,7 +94,7 @@ ROLE Page implementer — implements all features on one page using TDD Guard-en
 READS
 \_concept/experience/screens/<group>/<screen>.md — page spec: layout, states, routes, data
 \_concept/experience/features/<group>/<feature>.md — feature specs for features on this page
-? \_concept/experience/4_storybook/src/pages/ — storybook page composition (UI reference)
+? \_concept/prototype/storybook/src/pages/ — storybook page composition (UI reference)
 \_concept/blueprint/datamodel/model.json — data model (relevant entities)
 \_concept/blueprint/datamodel/seed.json — seed data scenarios
 \_concept/discovery/brand/tokens.json — brand tokens (never invent colors)

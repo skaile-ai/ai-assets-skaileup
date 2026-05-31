@@ -11,6 +11,13 @@ metadata:
     - test-loop
     - fix-verification
   stage: alpha
+  artifacts:
+    consumes:
+      - id: slice-impl-plan
+        gate: soft
+    produces:
+      - id: debug-context
+      - id: debug-protocol
   prerequisites:
     inputs_required:
       - id: bug_description

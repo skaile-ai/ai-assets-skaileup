@@ -12,6 +12,19 @@ metadata:
     - 'coverage'
     - 'acceptance'
   source: 'MIGRATED'
+  artifacts:
+    requires:
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+      - id: datamodel
+        gate: hard
+    consumes:
+      - id: behaviors
+        gate: soft
+    produces:
+      - id: test-plan
   prerequisites:
     files:
       - path: '_concept/experience/features'
@@ -39,9 +52,6 @@ metadata:
         description: 'Seed scenarios for test fixture mapping'
       - path: '_concept/experience/behaviors'
         description: 'Behavioral specs for state machine test coverage'
-    produces:
-      - path: '_concept/testing/test_plan.md'
-        description: 'Structured test plan with scenarios per feature'
 ---
 
 # Test Plan — Concept-Driven Test Generation

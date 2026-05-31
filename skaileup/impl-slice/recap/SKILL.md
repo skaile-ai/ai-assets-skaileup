@@ -12,6 +12,14 @@ metadata:
     - per-slice
     - documentation
   stage: alpha
+  artifacts:
+    requires:
+      - id: slice-impl-test
+        gate: hard
+      - id: slice-impl-plan
+        gate: hard
+    produces:
+      - id: slice-impl-recap
   prerequisites:
     files:
       - path: "_slice/impl/{slice_id}/test.md"

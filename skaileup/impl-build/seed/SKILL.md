@@ -16,6 +16,12 @@ metadata:
     - 'drizzle'
     - 'sql'
   source: 'CF'
+  artifacts:
+    requires:
+      - id: datamodel
+        gate: hard
+      - id: techstack
+        gate: hard
   prerequisites:
     files:
       - path: '_concept/blueprint/datamodel/seed.json'

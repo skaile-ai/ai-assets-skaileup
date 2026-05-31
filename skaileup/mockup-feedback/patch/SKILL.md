@@ -5,6 +5,13 @@ metadata:
   version: "0.1.0"
   tags: [mockup-feedback, patch, diff, review]
   stage: alpha
+  artifacts:
+    requires:
+      - id: feedback-triage
+        gate: hard
+    produces:
+      - id: feedback-patches
+      - id: feedback-patches-review
   prerequisites:
     files:
       - path: "_concept/_feedback/triage/"

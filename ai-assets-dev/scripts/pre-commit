@@ -7,6 +7,7 @@
 # Checks:
 #   1. No SKILL.md files reference the old _grounding/general/ path
 #   2. No SKILL.md files use deprecated user_inputs / reads_from / writes_to
+#   3. Artifact registry consistency (when SKILL.md or artifacts.yaml staged)
 
 set -euo pipefail
 
@@ -42,6 +43,19 @@ if git diff --cached --name-only | grep -q "SKILL\.md$"; then
             fi
         fi
     done <<< "$CHANGED_SKILLS"
+fi
+
+# 3. Artifact registry consistency
+if git diff --cached --name-only | grep -qE "(SKILL\.md|contracts/artifacts\.yaml)$"; then
+    if python3 -c "import yaml" 2>/dev/null; then
+        if ! python3 skaileup/contracts/scripts/verify_artifacts.py | grep -q "0 errors"; then
+            python3 skaileup/contracts/scripts/verify_artifacts.py | grep "^ERROR" || true
+            echo "ERROR: artifact registry check failed (see skaileup/contracts/artifacts.yaml)"
+            FAILED=1
+        fi
+    else
+        echo "WARN: PyYAML not installed — skipping artifact registry check (CI still enforces it)"
+    fi
 fi
 
 if [ "$FAILED" -eq 1 ]; then

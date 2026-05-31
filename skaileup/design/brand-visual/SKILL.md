@@ -31,6 +31,10 @@ metadata:
         description: 'Brand identity document — colors, fonts, tone'
       - id: brand-tokens
         description: 'Machine-readable design tokens (JSON)'
+      - id: brandbook
+        description: 'Self-contained HTML brand reference'
+      - id: brand-references
+        description: 'Screenshots from reference URLs'
     consumes:
       - id: onboarding-decisions
         gate: soft

@@ -19,6 +19,14 @@ metadata:
       type: enum
       values: [none, light, medium, max]
       default: medium
+  artifacts:
+    requires:
+      - id: components
+        gate: hard
+      - id: brand-tokens
+        gate: hard
+    produces:
+      - id: mockup-isolated-html
   prerequisites:
     files:
       - path: '_concept/experience/screens/components'
@@ -91,7 +99,7 @@ upstream skill that produces it.
 | Aspect                | `mockup-component-isolated-html` (this) | `mockup-component-storybook` (sibling)     |
 | --------------------- | --------------------------------------- | ------------------------------------------ |
 | Tier                  | mvp / simple-app                        | standard-app / complex-app                 |
-| Output                | `<component>.html` per component        | full Storybook 8 site under `_concept/experience/4_storybook/` |
+| Output                | `<component>.html` per component        | full Storybook 8 site under `_concept/prototype/storybook/` |
 | Build                 | none                                    | runs `storybook dev` / `storybook build`   |
 | Interactivity         | none (static grid)                      | controls panel, knobs, args                |
 | Framework dependency  | none                                    | tech-stack-aware                           |

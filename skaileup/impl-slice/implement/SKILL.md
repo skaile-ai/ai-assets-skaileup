@@ -13,6 +13,25 @@ metadata:
     - 'build'
     - 'engineering'
   stage: alpha
+  artifacts:
+    requires:
+      - id: slice-impl-plan
+        gate: hard
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+      - id: datamodel
+        gate: hard
+    consumes:
+      - id: journeys
+        gate: soft
+      - id: prototype
+        gate: soft
+      - id: techstack
+        gate: soft
+    produces:
+      - id: slice-impl-progress
   prerequisites:
     files:
       - path: '_slice/impl/'
@@ -99,7 +118,7 @@ without journey context (useful for `add-feature` follow-through).
 **Recommended (journey mode):**
 
 - `_concept/experience/journeys/stories.json` exists
-- `_concept/experience/4_storybook/src/pages/` exists (UI reference)
+- `_concept/prototype/storybook/src/pages/` exists (UI reference)
 
 ## Context Budget
 
@@ -110,7 +129,7 @@ without journey context (useful for `add-feature` follow-through).
 | Must read      | `_concept/experience/screens/**/*.md`        | Yes                        |
 | Must read      | `_concept/blueprint/datamodel/model.json`    | Yes                        |
 | Must read      | `_concept/blueprint/techstack.md`            | Yes                        |
-| Read if exists | `_concept/experience/4_storybook/src/pages/` | Recommended (UI reference) |
+| Read if exists | `_concept/prototype/storybook/src/pages/` | Recommended (UI reference) |
 | Read if exists | `_concept/blueprint/datamodel/seed.json`     | Recommended                |
 | Read if exists | `_slice/impl/<slice_id>/progress.json`              | If resuming                |
 
@@ -122,7 +141,7 @@ READS
 \_concept/experience/journeys/stories.json — journey definitions, story maps
 \_concept/experience/features/**/\*.md — feature specs
 \_concept/experience/screens/**/\*.md — screen/page specs
-? \_concept/experience/4_storybook/src/pages/ — storybook page compositions (UI reference)
+? \_concept/prototype/storybook/src/pages/ — storybook page compositions (UI reference)
 \_concept/blueprint/datamodel/model.json — data model
 \_concept/blueprint/datamodel/seed.json — seed data scenarios
 ? \_slice/impl/<slice_id>/progress.json — resume state

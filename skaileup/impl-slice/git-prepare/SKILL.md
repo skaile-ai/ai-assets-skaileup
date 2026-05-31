@@ -12,6 +12,15 @@ metadata:
     - 'repository'
   stage: beta
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: brief
+        gate: hard
+    consumes:
+      - id: impl-plans
+        gate: soft
+    produces:
+      - id: impl-git-state
   prerequisites:
     files:
       - path: '_concept/discovery/brief.md'

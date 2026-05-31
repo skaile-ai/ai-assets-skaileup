@@ -5,6 +5,12 @@ metadata:
   version: "0.1.0"
   tags: [mockup-feedback, triage, routing]
   stage: alpha
+  artifacts:
+    requires:
+      - id: feedback-sessions
+        gate: hard
+    produces:
+      - id: feedback-triage
   prerequisites:
     files:
       - path: "_concept/_feedback/sessions/"

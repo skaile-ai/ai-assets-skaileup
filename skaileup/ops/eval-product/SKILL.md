@@ -17,6 +17,17 @@ metadata:
     - 'adversarial'
   source: 'MERGED'
   stage: 'alpha'
+  artifacts:
+    requires:
+      - id: brief
+        gate: hard
+    consumes:
+      - id: journeys
+        gate: soft
+      - id: brand-tokens
+        gate: soft
+    produces:
+      - id: eval-product-result
   prerequisites:
     files:
       - path: '_concept/discovery/brief.md'

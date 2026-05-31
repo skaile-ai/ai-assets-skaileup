@@ -14,6 +14,21 @@ metadata:
     - per-slice
     - feature-scoped
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+      - id: features
+        gate: hard
+    consumes:
+      - id: screens
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: techstack
+        gate: soft
+    produces:
+      - id: slice-impl-brainstorm
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"

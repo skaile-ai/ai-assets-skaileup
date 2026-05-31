@@ -13,6 +13,10 @@ metadata:
   stage: 'alpha'
   requires:
     - 'standards-contract'
+  artifacts:
+    produces:
+      - id: standards-index
+      - id: standards-files
   prerequisites:
     inputs_required:
       - id: 'target_path'

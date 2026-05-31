@@ -13,6 +13,15 @@ metadata:
     - 'tdd'
   source: 'MIGRATED'
   subagent: true
+  artifacts:
+    requires:
+      - id: features
+        gate: hard
+      - id: techstack
+        gate: hard
+    consumes:
+      - id: test-plan
+        gate: soft
   prerequisites:
     files:
       - path: 'package.json'

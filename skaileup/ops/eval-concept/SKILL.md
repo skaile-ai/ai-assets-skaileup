@@ -15,6 +15,23 @@ metadata:
     - 'adversarial'
   source: 'MERGED'
   stage: 'alpha'
+  artifacts:
+    requires:
+      - id: brief
+        gate: hard
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+      - id: datamodel
+        gate: hard
+    consumes:
+      - id: journeys
+        gate: soft
+      - id: techstack
+        gate: soft
+    produces:
+      - id: eval-concept-result
   prerequisites:
     files:
       - path: '_concept/discovery/brief.md'

@@ -13,6 +13,17 @@ metadata:
     - 'data-flow'
   source: 'MIGRATED'
   subagent: true
+  artifacts:
+    requires:
+      - id: features
+        gate: hard
+      - id: datamodel
+        gate: hard
+    consumes:
+      - id: techstack
+        gate: soft
+      - id: test-plan
+        gate: soft
   prerequisites:
     files:
       - path: 'package.json'

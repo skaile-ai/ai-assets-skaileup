@@ -16,6 +16,17 @@ metadata:
     - 'infer'
     - 'scan'
   source: 'MIGRATED'
+  artifacts:
+    produces:
+      - id: brief
+      - id: goals
+      - id: comparable
+      - id: brand-identity
+      - id: brand-tokens
+      - id: techstack
+      - id: features
+      - id: screens
+      - id: datamodel
   parameters:
     depth:
       type: enum

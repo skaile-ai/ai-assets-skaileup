@@ -28,6 +28,8 @@ metadata:
     produces:
       - id: brand-behavioral
         description: 'Behavioral brand personality and interaction principles'
+      - id: copy-guidelines
+        description: 'Practical copy templates for implementers'
     consumes:
       - id: brand-identity
         gate: soft

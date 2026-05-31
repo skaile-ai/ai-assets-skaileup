@@ -56,7 +56,7 @@ metadata:
       - path: '_concept/blueprint/datamodel/seed.json'
         description: 'Seed data for realistic story args'
     produces:
-      - path: '_concept/experience/4_storybook'
+      - path: '_concept/prototype/storybook'
         description: 'Complete storybook project: setup, components, pages, journey stories'
 ---
 
@@ -136,7 +136,7 @@ impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md — storybook_addon, 
 ? \_concept/blueprint/datamodel/seed.json — seed data for realistic story content
 
 WRITES
-\_concept/experience/4_storybook/ — complete standalone Storybook project
+\_concept/prototype/storybook/ — complete standalone Storybook project
 
 REFERENCES
 contracts/concept_structure.md — valid \_concept/ paths
@@ -172,7 +172,7 @@ STEP 2: Run storybook-setup
 
 - Delegate to `storybook-setup` sub-skill
 - Pass: addon, story_format, story_extension, component_library, package_manager, tokens.json, brief.md, shell.md
-- Verify `_concept/experience/4_storybook/` exists with passing build before continuing
+- Verify `_concept/prototype/storybook/` exists with passing build before continuing
   EMIT [storybook] checkpoint phase=setup_complete
 
 STEP 3: Run storybook-components
@@ -196,7 +196,7 @@ ELSE - Note in README.md: "Layer 3 (Journeys) skipped — stories.json not found
 EMIT [storybook] checkpoint phase=journeys_skipped reason=stories.json_absent
 
 STEP 6: Final verification
-$ cd \_concept/experience/4_storybook && <package_manager> run build
+$ cd \_concept/prototype/storybook && <package_manager> run build
 IF build fails - Fix errors, retry
 
 - Count story files per layer and report
@@ -210,7 +210,7 @@ CHECKPOINT storybook_review
 > **2. Screens:** <N> page compositions with all states (Populated, Empty, Error, Loading)
 > **3. User Journeys:** <N> clickable flows (hero + vital + hygiene)
 >
-> Run `cd _concept/experience/4_storybook && <package_manager> run storybook dev` to explore.
+> Run `cd _concept/prototype/storybook && <package_manager> run storybook dev` to explore.
 >
 > Review and tell me what to adjust."
 

@@ -13,6 +13,10 @@ metadata:
     - ecosystem
   version: '0.1.0'
   stage: alpha
+  artifacts:
+    produces:
+      - id: meta-subsystems-index
+      - id: meta-subsystem-page
   prerequisites:
     inputs_required:
       - id: PROJECT_ROOT

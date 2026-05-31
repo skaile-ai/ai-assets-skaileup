@@ -11,6 +11,12 @@ metadata:
     - gate
     - feedback-loop
   stage: alpha
+  artifacts:
+    requires:
+      - id: slice-impl-plan
+        gate: hard
+    produces:
+      - id: slice-impl-test
   prerequisites:
     files:
       - path: "_slice/impl/{slice_id}/plan.md"

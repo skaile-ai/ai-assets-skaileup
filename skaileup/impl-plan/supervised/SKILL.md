@@ -14,6 +14,19 @@ metadata:
     - '4-status'
   stage: beta
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: impl-git-state
+        gate: hard
+      - id: features
+        gate: hard
+    consumes:
+      - id: screens
+        gate: soft
+    produces:
+      - id: impl-decisions
+      - id: impl-progress
+      - id: superpowers-plan
   prerequisites:
     files:
       - path: '_implementation/superpowers-plan.md'

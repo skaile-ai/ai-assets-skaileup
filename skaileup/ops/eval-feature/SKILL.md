@@ -16,6 +16,17 @@ metadata:
     - 'generator-evaluator'
   source: 'MERGED'
   stage: 'alpha'
+  artifacts:
+    requires:
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+    consumes:
+      - id: journeys
+        gate: soft
+    produces:
+      - id: eval-feature-result
   prerequisites:
     files:
       - path: '_concept/experience/features'

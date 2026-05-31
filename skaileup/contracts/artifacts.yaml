@@ -1,0 +1,525 @@
+# Artifact Registry — single source of truth for artifact id ↔ path.
+#
+# Every skill declares the artifacts it touches by ID only, in its SKILL.md
+# `metadata.artifacts:` block (produces / consumes / requires). This file maps
+# each ID to its canonical path, kind, and producing skill. Paths live HERE and
+# nowhere else — skills never repeat them.
+#
+# Authority: concept-side paths are mirrored from contracts/concept_structure.md
+# (the canonical _concept/ tree). impl-side paths live under _implementation/ and
+# _slice/. Keep this file in sync with concept_structure.md; verify_artifacts.py
+# enforces that every `produces`/`consumes`/`requires` id used by any skill exists
+# here, and that declared producers match `produced_by`.
+#
+# Entry schema:
+#   <id>:
+#     path:        canonical path or glob pattern (relative to project root)
+#     kind:        durable | scratch | code
+#                  durable = persists as truth; scratch = deleted on commit;
+#                  code    = written into the target repo, path is a pattern
+#     side:        concept | impl
+#     produced_by: skill name, or [list] when several skills write the same id
+#     description: one line
+#
+# gate semantics live on the EDGE (a skill's consumes/requires entry), not here:
+#   requires → hard gate by default (skill blocks if absent)
+#   consumes → soft gate by default (skill warns, continues)
+
+version: 1
+
+artifacts:
+
+  # ── grounding (research mode + onboarding) ──────────────────────────────
+  onboarding-profile:
+    path: _concept/_grounding/onboarding/profile.yaml
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-onboard
+    description: Project profile — name, type, tier, audience, problem.
+  onboarding-decisions:
+    path: _concept/_grounding/onboarding/decisions.yaml
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-onboard
+    description: Collected decisions — tech-stack preference, research depth, route.
+  research-domain:
+    path: _concept/_grounding/research/domain.md
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-research
+    description: Industry terminology, regulations, trends.
+  research-competitors:
+    path: _concept/_grounding/research/competitors.md
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-research
+    description: Per-product competitor analysis — features, gaps, positioning.
+  research-audiences:
+    path: _concept/_grounding/research/audiences.md
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-research
+    description: Target personas with design implications.
+  research-patterns:
+    path: _concept/_grounding/research/patterns.md
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-research
+    description: UX / architectural patterns for this domain.
+  research-design-inspiration:
+    path: _concept/_grounding/research/design-inspiration.md
+    kind: durable
+    side: concept
+    produced_by: [design-inspiration, concept-grounding-research]
+    description: Layout patterns, color, typography, component inspiration.
+  concept-manifest:
+    path: _concept/concept.yaml
+    kind: durable
+    side: concept
+    produced_by: concept-grounding-seeds
+    description: Project manifest — type, profile, per-artifact status + seed mapping.
+  scope:
+    path: _concept/_meta/scope.yaml
+    kind: durable
+    side: concept
+    produced_by: skaileup-scope-scope-project
+    description: Tier signal (mvp|simple-app|standard-app|complex-app) — weights downstream skills.
+
+  # ── discovery ───────────────────────────────────────────────────────────
+  # produced_by lists ALL skills that write the artifact; the FIRST entry is the
+  # canonical pipeline producer, the rest are alternates (reverse-engineer from
+  # code, ops mutators, mvp all-in-one skills).
+  brief:
+    path: _concept/discovery/brief.md
+    kind: durable
+    side: concept
+    produced_by: [concept-brief, ops-reverse-engineer, ops-project-overview]
+    description: Elevator pitch, audience, problem, hero flow.
+  goals:
+    path: _concept/discovery/goals.md
+    kind: durable
+    side: concept
+    # mvp tier: concept-brief writes all three discovery docs; standard+ tier
+    # splits goals/comparable into their own skills.
+    produced_by: [concept-goals, concept-brief, ops-reverse-engineer, ops-project-overview]
+    description: Success criteria, constraints, deadlines.
+  comparable:
+    path: _concept/discovery/comparable.md
+    kind: durable
+    side: concept
+    produced_by: [concept-comparable, concept-brief, ops-reverse-engineer, ops-project-overview]
+    description: Reference apps — what to borrow / avoid.
+  brand-identity:
+    path: _concept/discovery/brand/identity.md
+    kind: durable
+    side: concept
+    produced_by: [design-brand-visual, ops-reverse-engineer, ops-project-overview]
+    description: Colors, fonts, tone — human-readable.
+  brand-tokens:
+    path: _concept/discovery/brand/tokens.json
+    kind: durable
+    side: concept
+    produced_by: [design-brand-visual, ops-reverse-engineer]
+    description: Machine-readable design tokens.
+  brand-behavioral:
+    path: _concept/discovery/brand/behavioral.md
+    kind: durable
+    side: concept
+    produced_by: design-brand-voice
+    description: Voice, motion, interaction personality.
+  brandbook:
+    path: _concept/discovery/brand/brandbook.html
+    kind: durable
+    side: concept
+    produced_by: design-brand-visual
+    description: Self-contained visual brand reference (open in browser).
+  brand-references:
+    path: _concept/discovery/brand/references/
+    kind: durable
+    side: concept
+    produced_by: design-brand-visual
+    description: Screenshots captured from user-provided reference URLs.
+  copy-guidelines:
+    path: _concept/discovery/brand/copy_guidelines.md
+    kind: durable
+    side: concept
+    produced_by: design-brand-voice
+    description: Practical copy templates for implementers.
+
+  # ── experience ──────────────────────────────────────────────────────────
+  journeys:
+    path: _concept/experience/journeys/stories.json
+    kind: durable
+    side: concept
+    produced_by: [experience-journeys, ops-add-feature]
+    description: Personas, story maps (hero/vital/hygiene/backlog), EARS criteria.
+  features:
+    path: _concept/experience/features/        # NN_group/<feature>.md
+    kind: durable
+    side: concept
+    # experience-screens + datamodel are feedback-loop writers: they back-populate
+    # screens[]/data_entities[] frontmatter into existing feature files.
+    produced_by: [product-spec-features, concept-slice-design-feature, ops-sync, ops-reverse-engineer, ops-add-feature, experience-screens, impl-architecture-datamodel]
+    description: One file per feature, grouped + numbered. Includes Permissions.
+  screens:
+    path: _concept/experience/screens/         # NN_group/<screen>.md
+    kind: durable
+    side: concept
+    # experience-screens-technical enriches the same screen files in place with
+    # developer-ready technical annotations (it requires base screens first).
+    produced_by: [experience-screens, experience-screens-technical, concept-slice-design-feature, ops-sync, ops-reverse-engineer, ops-add-feature]
+    description: Screen specs, groups mirror features/.
+  components:
+    path: _concept/experience/screens/components/
+    kind: durable
+    side: concept
+    produced_by: experience-components
+    description: Reusable component specs.
+  behaviors:
+    path: _concept/experience/behaviors/       # <group>.allium
+    kind: durable
+    side: concept
+    produced_by: experience-behaviors
+    description: Behavioral specs, one per feature group.
+
+  # ── prototype / mockup ──────────────────────────────────────────────────
+  prototype:
+    # Storybook living prototype. (Legacy path experience/4_storybook/ was fixed
+    # to this canonical location during backfill.) Walkthrough renderers write a
+    # separate tree — see the `walkthrough` id below.
+    path: _concept/prototype/storybook/
+    kind: durable
+    side: concept
+    produced_by:
+      - mockup-component-storybook
+      - mockup-component-storybook-setup
+      - mockup-component-storybook-components
+      - mockup-component-storybook-pages
+      - mockup-component-storybook-journeys
+      - mockup-component-storybook-types
+    description: Living Storybook prototype — components, pages, journeys.
+  walkthrough:
+    path: _concept/mockup-walkthrough/        # <renderer>/... per renderer
+    kind: durable
+    side: concept
+    produced_by:
+      - mockup-walkthrough-text
+      - mockup-walkthrough-static-html
+      - mockup-walkthrough-astro
+      - mockup-walkthrough-lit
+      - mockup-walkthrough-framework
+      - concept-slice-design-feature          # per-feature walkthrough stub
+    description: Clickable walkthrough — one of text/static-html/astro/lit/framework renderers.
+
+  # ── blueprint (shared by concept + impl-architecture) ───────────────────
+  techstack:
+    path: _concept/blueprint/techstack.md
+    kind: durable
+    side: concept
+    produced_by: [impl-architecture-techstack, impl-architecture-templates-select, ops-reverse-engineer, ops-add-feature]
+    description: Chosen technologies + reasoning. tech_stack_skill resolved by templates-select.
+  architecture:
+    path: _concept/blueprint/architecture.md
+    kind: durable
+    side: concept
+    produced_by: [impl-architecture-system, ops-add-feature]
+    description: System architecture — modules, data flow, protocols, integrations.
+  datamodel:
+    path: _concept/blueprint/datamodel/        # model.dbml|json + seed.json + feature_map.json
+    kind: durable
+    side: concept
+    produced_by: [impl-architecture-datamodel, ops-reverse-engineer, ops-add-feature]
+    description: Schema (stack-specific format) + seed.json + feature_map.json.
+
+  # ── implementation — durable ledgers (_implementation/) ─────────────────
+  impl-plans:
+    path: _implementation/PLANS.md
+    kind: durable
+    side: impl
+    produced_by: impl-build-scaffold
+    description: Implementation plan — scope, source artifacts, feature queue, phases.
+  impl-progress:
+    path: _implementation/progress.json
+    kind: durable
+    side: impl
+    produced_by: [impl-build-scaffold, impl-build-foundation, impl-build-infrastructure, impl-plan-supervised]
+    description: Feature + journey implementation status.
+  impl-decisions:
+    path: _implementation/decisions.md
+    kind: durable
+    side: impl
+    produced_by: [impl-build-scaffold, impl-plan-supervised]
+    description: Decision log — DONE_WITH_CONCERNS + BLOCKED entries.
+  impl-git-state:
+    path: _implementation/git-state.json
+    kind: durable
+    side: impl
+    produced_by: impl-slice-git-prepare
+    description: Branch name, git mode, working-tree snapshot.
+  impl-readiness:
+    path: _implementation/readiness.json
+    kind: durable
+    side: impl
+    produced_by: impl-quality-ready
+    description: E2E readiness gate — quality scores + blocker list.
+  test-plan:
+    path: _concept/testing/test_plan.md
+    kind: durable
+    side: impl
+    produced_by: impl-quality-test-plan
+    description: Test strategy — scenarios, test types, coverage goals.
+  quality-report:
+    path: _concept/quality.json
+    kind: durable
+    side: impl
+    produced_by: ops-review
+    description: Concept health report — score, issues by severity.
+
+  # ── implementation — per-slice scratch (_slice/impl/) ───────────────────
+  # All deleted by impl-slice-commit. Carried only between adjacent phases.
+  slice-impl-brainstorm:
+    path: _slice/impl/{slice_id}/brainstorm.md
+    kind: scratch
+    side: impl
+    produced_by: impl-plan-brainstorm
+    description: Per-slice risks, unknowns, P1/P2 questions.
+  slice-impl-align:
+    path: _slice/impl/{slice_id}/align.md
+    kind: scratch
+    side: impl
+    produced_by: impl-plan-align
+    description: Grill results — edge cases, constraints, EARS handoff.
+  slice-impl-plan:
+    path: _slice/impl/{slice_id}/plan.md
+    kind: scratch
+    side: impl
+    produced_by: impl-plan-plan-vertical
+    description: Vertical decomposition rows, testing strategy, Definition of Done.
+  slice-impl-test:
+    path: _slice/impl/{slice_id}/test.md
+    kind: scratch
+    side: impl
+    produced_by: impl-slice-test
+    description: Manual + automated checks, outstanding issues, Decision.
+  slice-impl-recap:
+    path: _slice/impl/{slice_id}/recap.md
+    kind: scratch
+    side: impl
+    produced_by: impl-slice-recap
+    description: What was built, ASCII diagram, files touched, outcome vs plan.
+  slice-impl-refactor:
+    path: _slice/impl/{slice_id}/refactor.md
+    kind: scratch
+    side: impl
+    produced_by: impl-slice-refactor
+    description: 1-3 refactor candidates, approval status, applied changes.
+
+  # ── concept — per-slice scratch (_slice/concept/) ───────────────────────
+  # Deleted by concept-slice-design-feature on commit; truth → _concept/ artifacts.
+  slice-concept-brainstorm:
+    path: _slice/concept/{slice_id}/brainstorm.md
+    kind: scratch
+    side: concept
+    produced_by: concept-slice-brainstorm
+    description: Per-feature concept risks + open questions.
+  slice-concept-align:
+    path: _slice/concept/{slice_id}/align.md
+    kind: scratch
+    side: concept
+    produced_by: concept-slice-align
+    description: Aligned scope + decisions for one feature.
+  slice-concept-scope:
+    path: _slice/concept/{slice_id}/scope-feature.md
+    kind: scratch
+    side: concept
+    produced_by: concept-slice-scope-feature
+    description: Feature scope boundaries before design-feature.
+
+  # ── implementation — per-slice progress + supervised ledger ─────────────
+  slice-impl-progress:
+    path: _slice/impl/{slice_id}/progress.json
+    kind: scratch
+    side: impl
+    produced_by: [impl-slice-implement, impl-slice-implement-page]
+    description: Per-slice resume state during implement.
+  superpowers-plan:
+    path: _implementation/superpowers-plan.md
+    kind: durable
+    side: impl
+    produced_by: impl-plan-supervised
+    description: Supervised task list with per-task statuses.
+
+  # ── standards (discovered from an existing codebase) ────────────────────
+  # PATH NOTE: standards-discover/inject/sync use _concept/_standards/; eval-code
+  # reads bare _standards/index.yml. Reconcile to the _concept/-prefixed form.
+  standards-index:
+    path: _concept/_standards/index.yml
+    kind: durable
+    side: concept
+    produced_by: [impl-quality-standards-discover, impl-quality-standards-sync]
+    description: Standards index for fast matching to skills.
+  standards-files:
+    path: _concept/_standards/        # {domain}/{convention}.md
+    kind: durable
+    side: concept
+    produced_by: impl-quality-standards-discover
+    description: Per-domain discovered convention files.
+
+  # ── debug (per-bug scratch, _debug/) ────────────────────────────────────
+  debug-context:
+    path: _debug/{bug_id}/context.md
+    kind: scratch
+    side: impl
+    produced_by: [impl-quality-debug-self-verify, impl-quality-debug-handoff]
+    description: Bug reproduction context.
+  debug-protocol:
+    path: _debug/{bug_id}/protocol.md
+    kind: scratch
+    side: impl
+    produced_by: impl-quality-debug-self-verify
+    description: Self-verify debugging protocol log.
+  debug-handoff-brief:
+    path: _debug/{bug_id}/handoff.md
+    kind: scratch
+    side: impl
+    produced_by: impl-quality-debug-handoff
+    description: Debug handoff brief for escalation.
+
+  # ── evaluation reports ──────────────────────────────────────────────────
+  eval-code-report:
+    path: _implementation/eval-code.json
+    kind: durable
+    side: impl
+    produced_by: impl-quality-eval-code
+    description: Code-quality evaluation result.
+  audit-report:
+    path: audit-report.md
+    kind: durable
+    side: impl
+    produced_by: impl-quality-audit
+    description: Code audit report.
+  e2e-report:
+    path: e2e-test-report.md
+    kind: durable
+    side: impl
+    produced_by: impl-quality-test-e2e
+    description: E2E run report.
+  e2e-screenshots:
+    path: e2e-screenshots/
+    kind: durable
+    side: impl
+    produced_by: impl-quality-test-e2e
+    description: E2E screenshot captures.
+  eval-concept-result:
+    path: _concept/eval-concept.json
+    kind: durable
+    side: concept
+    produced_by: ops-eval-concept
+    description: Concept-level evaluation result.
+  eval-feature-result:
+    path: _implementation/eval-feature/        # {group}.json
+    kind: durable
+    side: impl
+    produced_by: ops-eval-feature
+    description: Per-feature-group evaluation result.
+  eval-product-result:
+    path: _implementation/eval-product.json
+    kind: durable
+    side: impl
+    produced_by: ops-eval-product
+    description: Product-level evaluation result.
+
+  # ── mockup feedback loop (_concept/_feedback/) ──────────────────────────
+  feedback-overlay-bundle:
+    path: _concept/mockup-walkthrough/static-html/annotation-overlay.js
+    kind: code
+    side: concept
+    produced_by: mockup-feedback-annotate
+    description: Annotation overlay bundle injected into a walkthrough.
+  feedback-sessions:
+    path: _concept/_feedback/sessions/
+    kind: scratch
+    side: concept
+    produced_by: mockup-feedback-annotate
+    description: Captured annotation sessions.
+  feedback-index:
+    path: _concept/_feedback/index.json
+    kind: scratch
+    side: concept
+    produced_by: mockup-feedback-annotate
+    description: Feedback session index.
+  feedback-triage:
+    path: _concept/_feedback/triage/        # <sid>.json
+    kind: scratch
+    side: concept
+    produced_by: mockup-feedback-triage
+    description: Triaged annotations grouped into actions.
+  feedback-patches:
+    path: _concept/_feedback/patches/        # <sid>.json
+    kind: scratch
+    side: concept
+    produced_by: mockup-feedback-patch
+    description: Proposed patches per triaged session.
+  feedback-patches-review:
+    path: _concept/_feedback/patches/        # <sid>.review.md
+    kind: scratch
+    side: concept
+    produced_by: mockup-feedback-patch
+    description: Human-readable patch review.
+  feedback-applied:
+    path: _concept/_feedback/applied/        # <sid>.json
+    kind: durable
+    side: concept
+    produced_by: mockup-feedback-apply
+    description: Record of applied patches.
+  feedback-devlog:
+    path: _concept/_feedback/devlog.md
+    kind: durable
+    side: concept
+    produced_by: mockup-feedback-apply
+    description: Feedback-loop devlog.
+
+  # ── isolated-component mockups ──────────────────────────────────────────
+  mockup-isolated-html:
+    path: _concept/mockup-component/isolated-html/        # <component>.html
+    kind: durable
+    side: concept
+    produced_by: mockup-component-isolated-html
+    description: Single-component HTML mockups in isolation.
+
+  # ── meta-concept (multi-product ecosystem shell) ────────────────────────
+  meta-subsystems-index:
+    path: _concept/2_subsystems/index.md
+    kind: durable
+    side: concept
+    produced_by: ops-project-subsystem-map
+    description: Ecosystem subsystem map index.
+  meta-subsystem-page:
+    path: _concept/2_subsystems/        # <subsystem>.md
+    kind: durable
+    side: concept
+    produced_by: ops-project-subsystem-map
+    description: Per-subsystem page.
+  meta-integration-architecture:
+    path: _concept/3_integration/architecture.md
+    kind: durable
+    side: concept
+    produced_by: ops-project-integration
+    description: Cross-subsystem integration architecture.
+  meta-integration-deployment:
+    path: _concept/3_integration/deployment.md
+    kind: durable
+    side: concept
+    produced_by: ops-project-integration
+    description: Ecosystem deployment topology.
+  meta-integration-shared-contracts:
+    path: _concept/3_integration/shared_contracts.md
+    kind: durable
+    side: concept
+    produced_by: ops-project-integration
+    description: Shared contracts across subsystems.
+
+# All backfill-era conflicts resolved: features path (design-feature →
+# experience/features), prototype split (storybook vs walkthrough), brand /
+# scope / testing / quality.json nodes added to concept_structure.md,
+# _standards path canonicalized, screens-technical folded into `screens`.

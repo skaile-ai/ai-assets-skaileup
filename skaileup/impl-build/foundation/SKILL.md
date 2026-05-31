@@ -16,6 +16,23 @@ metadata:
     - 'seed'
     - 'storybook'
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: brand-tokens
+        gate: hard
+      - id: techstack
+        gate: hard
+    consumes:
+      - id: brand-identity
+        gate: soft
+      - id: screens
+        gate: soft
+      - id: architecture
+        gate: soft
+      - id: datamodel
+        gate: soft
+    produces:
+      - id: impl-progress
   prerequisites:
     files:
       - path: 'package.json'
@@ -55,7 +72,7 @@ Applies the foundational layers every app needs before feature work begins:
    wired to the screen list
 4. **Seed data** — wire up `seed.json` scenarios for development and testing
 5. **Storybook brand config** — configure Storybook theme decorator with brand tokens
-   (only if `experience/4_storybook/` exists)
+   (only if `prototype/storybook/` exists)
 
 **Framework-agnostic.** All file locations, variable naming, auth plugin names,
 and layout patterns come from `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md`.
@@ -196,7 +213,7 @@ Commit: `foundation: configure seed data from concept populated scenario`
 # ── Phase 5: Storybook Brand Config ──────────────────────────────
 
 STEP 5: Configure Storybook (if exists)
-IF \_concept/experience/4_storybook/ exists AND Storybook is installed - Configure Storybook theme with brand tokens (background, fonts, colors) - Create theme decorator wrapping all stories with brand CSS variables - Set up viewport presets from shell spec's responsive breakpoints
+IF \_concept/prototype/storybook/ exists AND Storybook is installed - Configure Storybook theme with brand tokens (background, fonts, colors) - Create theme decorator wrapping all stories with brand CSS variables - Set up viewport presets from shell spec's responsive breakpoints
 Commit: `foundation: configure Storybook with brand theme`
 
 # ── Phase 6: Verify and Complete ─────────────────────────────────

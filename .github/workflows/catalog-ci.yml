@@ -30,3 +30,16 @@ jobs:
         run: pip install pyyaml
       - name: Check bundles in sync with flows
         run: bash ai-assets-dev/scripts/check-bundles.sh
+
+  artifacts:
+    name: Artifact registry check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Verify artifact registry vs skills
+        run: python3 skaileup/contracts/scripts/verify_artifacts.py

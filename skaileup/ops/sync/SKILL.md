@@ -13,6 +13,17 @@ metadata:
     - 'consistency'
     - 'maintenance'
   source: 'MIGRATED'
+  artifacts:
+    consumes:
+      - id: features
+        gate: soft
+      - id: screens
+        gate: soft
+      - id: datamodel
+        gate: soft
+    produces:
+      - id: features
+      - id: screens
   prerequisites:
     files:
       - path: '_concept'

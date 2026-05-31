@@ -14,6 +14,19 @@ metadata:
     - 'playwright'
     - 'agent-browser'
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: brief
+        gate: hard
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+      - id: datamodel
+        gate: hard
+    produces:
+      - id: e2e-report
+      - id: e2e-screenshots
   prerequisites:
     files:
       - path: 'package.json'

@@ -15,6 +15,34 @@ metadata:
     - 'iteration'
     - 'incremental'
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: brief
+        gate: hard
+      - id: features
+        gate: hard
+    consumes:
+      - id: journeys
+        gate: soft
+      - id: brand-tokens
+        gate: soft
+      - id: techstack
+        gate: soft
+      - id: architecture
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: screens
+        gate: soft
+      - id: impl-progress
+        gate: soft
+    produces:
+      - id: features
+      - id: journeys
+      - id: techstack
+      - id: architecture
+      - id: datamodel
+      - id: screens
   parameters:
     depth:
       type: enum

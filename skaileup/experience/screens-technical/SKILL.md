@@ -25,8 +25,8 @@ metadata:
       - id: screens
         gate: hard
     produces:
-      - id: screens-technical
-        description: 'Developer-ready technical screen annotations'
+      - id: screens
+        description: 'Enriches screen specs in place with developer-ready technical annotations'
     consumes:
       - id: techstack
         gate: soft

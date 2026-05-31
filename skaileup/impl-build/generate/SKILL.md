@@ -14,6 +14,10 @@ metadata:
     - 'regenerate'
     - 'sync'
   source: 'SAXE'
+  artifacts:
+    consumes:
+      - id: datamodel
+        gate: soft
   prerequisites:
     files:
       - path: 'postxl-schema.json'

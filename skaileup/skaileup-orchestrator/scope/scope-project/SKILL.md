@@ -10,6 +10,14 @@ metadata:
     - flow-selection
     - skaileup
   stage: alpha
+  artifacts:
+    consumes:
+      - id: onboarding-profile
+        gate: soft
+      - id: onboarding-decisions
+        gate: soft
+    produces:
+      - id: scope
   prerequisites:
     inputs_required:
       - id: project_description

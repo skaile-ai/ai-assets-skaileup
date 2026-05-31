@@ -10,6 +10,14 @@ metadata:
     - data-spec
     - walkthrough
   stage: alpha
+  artifacts:
+    requires:
+      - id: walkthrough
+        gate: hard
+    produces:
+      - id: feedback-overlay-bundle
+      - id: feedback-sessions
+      - id: feedback-index
   prerequisites:
     files:
       - path: "_concept/mockup-walkthrough"

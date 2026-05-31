@@ -14,6 +14,14 @@ metadata:
     - 
   version: '0.1.0'
   stage: alpha
+  artifacts:
+    requires:
+      - id: meta-subsystems-index
+        gate: hard
+    produces:
+      - id: meta-integration-architecture
+      - id: meta-integration-deployment
+      - id: meta-integration-shared-contracts
   prerequisites:
     inputs_required:
       - id: PROJECT_ROOT

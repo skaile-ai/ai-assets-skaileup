@@ -14,6 +14,12 @@ metadata:
     - 'entropy'
     - 'accessibility'
   source: 'MERGED'
+  artifacts:
+    consumes:
+      - id: techstack
+        gate: soft
+    produces:
+      - id: audit-report
   prerequisites:
     reads:
       - path: 'package.json'

@@ -16,6 +16,14 @@ metadata:
     - 'cleanup'
     - 'quality'
   source: 'MERGED'
+  artifacts:
+    consumes:
+      - id: datamodel
+        gate: soft
+      - id: quality-report
+        gate: soft
+    produces:
+      - id: quality-report
   parameters:
     depth:
       type: enum

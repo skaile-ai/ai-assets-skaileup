@@ -13,6 +13,23 @@ metadata:
     - 'gate'
     - 'implementation'
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: features
+        gate: hard
+    consumes:
+      - id: screens
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: brand-tokens
+        gate: soft
+      - id: techstack
+        gate: soft
+      - id: prototype
+        gate: soft
+    produces:
+      - id: impl-readiness
   prerequisites:
     files:
       - path: '_concept/experience/features'
@@ -30,7 +47,7 @@ metadata:
         description: 'Brand tokens existence check (global prerequisite)'
       - path: '_concept/blueprint/techstack.md'
         description: 'Tech stack existence check (global prerequisite)'
-      - path: '_concept/experience/4_storybook/src/pages'
+      - path: '_concept/prototype/storybook/src/pages'
         description: 'Storybook pages for soft mockup/composition check'
 ---
 
@@ -69,7 +86,7 @@ what is missing so the user can fix gaps efficiently.
 | **Must read**  | `_concept/blueprint/datamodel/feature_map.json` | Yes                           |
 | **Must read**  | `_concept/discovery/brand/tokens.json`          | Yes (existence check)         |
 | **Must read**  | `_concept/blueprint/techstack.md`               | Yes (existence check)         |
-| **Optional**   | `_concept/experience/4_storybook/`              | No (mockup/composition check) |
+| **Optional**   | `_concept/prototype/storybook/`                 | No (mockup/composition check) |
 | **Never load** | Source code, `_concept/_grounding/`             | —                             |
 
 ## Common Mistakes
@@ -93,7 +110,7 @@ READS
 \_concept/blueprint/datamodel/feature_map.json — model-to-feature mapping
 \_concept/discovery/brand/tokens.json — brand tokens existence
 \_concept/blueprint/techstack.md — tech stack existence
-? \_concept/experience/4_storybook/ — storybook compositions (soft check)
+? \_concept/prototype/storybook/ — storybook compositions (soft check)
 
 WRITES
 (none — read-only audit skill, output is the report shown to user)
@@ -121,7 +138,7 @@ For each feature, verify all of:
 - Concept doc exists: \_concept/experience/features/<group>/<feature>.md
 - Screen spec: at least one .md in \_concept/experience/screens/ has this feature in `implements:`
 - Data model: feature listed in feature_map.json for at least one model
-- Mockup/composition: soft check — storybook page at \_concept/experience/4_storybook/src/pages/ OR html file in \_concept/05_mockups/ (either counts; absence is a warning, not a blocker)
+- Mockup/composition: soft check — storybook page at \_concept/prototype/storybook/src/pages/ OR html file in \_concept/05_mockups/ (either counts; absence is a warning, not a blocker)
   A feature is "ready" when concept doc + screen spec + data model all pass.
 
 STEP 4: Print readiness report

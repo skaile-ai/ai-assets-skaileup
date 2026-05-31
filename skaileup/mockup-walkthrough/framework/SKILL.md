@@ -13,6 +13,21 @@ metadata:
     - prototype
     - data-spec
   stage: alpha
+  artifacts:
+    requires:
+      - id: screens
+        gate: hard
+      - id: journeys
+        gate: hard
+      - id: brand-tokens
+        gate: hard
+      - id: techstack
+        gate: hard
+    consumes:
+      - id: features
+        gate: soft
+    produces:
+      - id: walkthrough
   prerequisites:
     files:
       - path: "experience/screens"

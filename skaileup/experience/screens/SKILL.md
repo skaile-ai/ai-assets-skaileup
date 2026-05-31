@@ -26,6 +26,8 @@ metadata:
     produces:
       - id: screens
         description: 'Screen design specifications'
+      - id: features
+        description: 'Feedback loop: back-populates screens[] into feature files'
     consumes:
       - id: brand-identity
         gate: soft

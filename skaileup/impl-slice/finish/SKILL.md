@@ -11,6 +11,13 @@ metadata:
     - 'finish'
     - 'cleanup'
   stage: beta
+  artifacts:
+    requires:
+      - id: impl-git-state
+        gate: hard
+    consumes:
+      - id: impl-decisions
+        gate: soft
   prerequisites:
     files:
       - path: '_implementation/git-state.json'

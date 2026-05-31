@@ -15,6 +15,12 @@ metadata:
     - 'ddl'
     - 'migration'
   source: 'CF'
+  artifacts:
+    requires:
+      - id: datamodel
+        gate: hard
+      - id: techstack
+        gate: hard
   prerequisites:
     files:
       - path: '_concept/blueprint/datamodel/model.dbml'

@@ -12,6 +12,16 @@ metadata:
     - per-slice
     - anti-addition
   stage: alpha
+  artifacts:
+    requires:
+      - id: slice-impl-recap
+        gate: hard
+      - id: slice-impl-plan
+        gate: hard
+      - id: slice-impl-test
+        gate: hard
+    produces:
+      - id: slice-impl-refactor
   prerequisites:
     files:
       - path: "_slice/impl/{slice_id}/recap.md"

@@ -10,6 +10,13 @@ metadata:
     - escalation
     - context-transfer
   stage: alpha
+  artifacts:
+    consumes:
+      - id: slice-impl-plan
+        gate: soft
+    produces:
+      - id: debug-context
+      - id: debug-handoff-brief
   prerequisites:
     inputs_required:
       - id: bug_description

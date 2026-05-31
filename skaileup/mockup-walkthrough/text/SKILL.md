@@ -29,7 +29,7 @@ metadata:
       - id: screens
         gate: hard
     produces:
-      - id: prototype
+      - id: walkthrough
         description: 'Text-based mockup descriptions'
     consumes:
       - id: brand-tokens

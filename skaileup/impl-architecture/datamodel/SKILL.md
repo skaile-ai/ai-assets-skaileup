@@ -29,6 +29,8 @@ metadata:
     produces:
       - id: datamodel
         description: 'Data model (DBML, Prisma, or PostXL format)'
+      - id: features
+        description: 'Feedback loop: back-populates data_entities[] into feature files'
     consumes:
       - id: architecture
         gate: soft

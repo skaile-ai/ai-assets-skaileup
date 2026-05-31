@@ -12,6 +12,16 @@ metadata:
     - per-slice
     - cleanup
   stage: alpha
+  artifacts:
+    requires:
+      - id: slice-impl-test
+        gate: hard
+      - id: slice-impl-recap
+        gate: hard
+      - id: slice-impl-refactor
+        gate: hard
+      - id: slice-impl-plan
+        gate: hard
   prerequisites:
     files:
       - path: "_slice/impl/{slice_id}/test.md"

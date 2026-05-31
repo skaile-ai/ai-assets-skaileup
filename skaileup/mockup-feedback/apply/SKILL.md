@@ -5,6 +5,13 @@ metadata:
   version: "0.1.0"
   tags: [mockup-feedback, apply, git, audit]
   stage: alpha
+  artifacts:
+    requires:
+      - id: feedback-patches
+        gate: hard
+    produces:
+      - id: feedback-applied
+      - id: feedback-devlog
   prerequisites:
     files:
       - path: "_concept/_feedback/patches/"

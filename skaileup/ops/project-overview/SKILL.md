@@ -14,6 +14,12 @@ metadata:
     - umbrella
   version: '0.1.0'
   stage: alpha
+  artifacts:
+    produces:
+      - id: brief
+      - id: goals
+      - id: comparable
+      - id: brand-identity
   prerequisites:
     inputs_required:
       - id: PROJECT_ROOT

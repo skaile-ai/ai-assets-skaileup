@@ -12,6 +12,25 @@ metadata:
     - anti-horizontal
     - per-slice
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+      - id: features
+        gate: hard
+      - id: screens
+        gate: hard
+    consumes:
+      - id: slice-impl-align
+        gate: soft
+      - id: slice-impl-brainstorm
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: techstack
+        gate: soft
+    produces:
+      - id: slice-impl-plan
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"

@@ -11,6 +11,29 @@ metadata:
     - feature-portion
     - walkthrough
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+      - id: slice-concept-scope
+        gate: hard
+      - id: slice-concept-align
+        gate: hard
+    consumes:
+      - id: slice-concept-brainstorm
+        gate: soft
+      - id: brand-tokens
+        gate: soft
+      - id: datamodel
+        gate: soft
+      - id: features
+        gate: soft
+      - id: screens
+        gate: soft
+    produces:
+      - id: features
+      - id: screens
+      - id: walkthrough
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"
@@ -28,7 +51,7 @@ metadata:
         type: text
     inputs_optional:
       - id: feature_group
-        label: "Feature group (sub-dir under product-spec/features/)"
+        label: "Feature group (sub-dir under experience/features/)"
         type: text
         hint: "Defaults to the feature_slug if not provided."
     reads:
@@ -43,7 +66,7 @@ metadata:
       - path: "_concept/experience/screens"
         description: "Sibling screens — required for cross-feature collision check."
     produces:
-      - path: "_concept/product-spec/features/{feature_group}/{feature_slug}.md"
+      - path: "_concept/experience/features/{feature_group}/{feature_slug}.md"
         description: "Per-feature spec, conformant to contracts/frontmatter.md § experience/features."
       - path: "_concept/experience/screens/{feature_slug}/{screen_slug}.md"
         description: "One screen file per entry in scope-feature.md `## Required screens`."
@@ -61,7 +84,7 @@ artifacts and the only one that deletes the slice scratch dir.
 
 **Three permanent writes:**
 
-1. `_concept/product-spec/features/<group>/<feature_slug>.md` — the feature spec,
+1. `_concept/experience/features/<group>/<feature_slug>.md` — the feature spec,
    conformant to `contracts/frontmatter.md` § "experience/features/...".
 2. `_concept/experience/screens/<feature_slug>/<screen_slug>.md` — one file per
    entry in scope-feature.md's `## Required screens`. The first segment of
@@ -93,7 +116,7 @@ READS
   ? _concept/experience/screens/**/*.md              — REQUIRED for cross-feature collision check
 
 WRITES
-  _concept/product-spec/features/{feature_group}/{feature_slug}.md
+  _concept/experience/features/{feature_group}/{feature_slug}.md
   _concept/experience/screens/{feature_slug}/{screen_slug}.md   (1..N — one per required screen)
   _concept/mockup-walkthrough/{tier}/{feature_slug}.{ext}
 
@@ -149,7 +172,7 @@ STEP 0: Read all three handoffs + scope.yaml
     required_entities, in_scope_acceptance_criteria.
 
 STEP 1: Cross-feature collision check
-  - Scan _concept/experience/features/**/*.md and _concept/product-spec/features/**/*.md
+  - Scan _concept/experience/features/**/*.md
     for any path containing /<feature_slug>.md or /<feature_slug>/ that
     belongs to a *different* slice.
   - Scan _concept/experience/screens/**/*.md for the same.
@@ -163,7 +186,7 @@ STEP 1: Cross-feature collision check
     - Wait for user direction; do NOT proceed silently.
 
 STEP 2: Compose feature.md content (in memory)
-  Path: _concept/product-spec/features/<feature_group>/<feature_slug>.md
+  Path: _concept/experience/features/<feature_group>/<feature_slug>.md
   Frontmatter (per contracts/frontmatter.md § experience/features):
     ```
     ---
@@ -198,7 +221,7 @@ STEP 3: Pre-write check for feature.md
     ELSE
       - Read existing content; compute unified diff against proposed.
       - CHECKPOINT overwrite_feature_md (STANDALONE)
-        > "_concept/product-spec/features/<group>/<feature_slug>.md
+        > "_concept/experience/features/<group>/<feature_slug>.md
         >  already exists. Diff:
         >  <diff>
         >  Approve overwrite? (yes / no / edit)"
@@ -216,7 +239,7 @@ STEP 4: Compose each screen file (in memory)
       ```
       ---
       implements:
-        - _concept/product-spec/features/<feature_group>/<feature_slug>.md
+        - _concept/experience/features/<feature_group>/<feature_slug>.md
       data_entities: [<from scope-feature.md required entities>]
       # Omit `layout` when _concept/experience/screens/00_layout/shell.md
       # does not yet exist (per plan Open Question § 4 resolution).

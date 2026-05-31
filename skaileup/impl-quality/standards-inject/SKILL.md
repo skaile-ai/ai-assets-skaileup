@@ -12,6 +12,10 @@ metadata:
   stage: 'alpha'
   requires:
     - 'standards-contract'
+  artifacts:
+    consumes:
+      - id: standards-index
+        gate: soft
 ---
 
 # Inject Standards

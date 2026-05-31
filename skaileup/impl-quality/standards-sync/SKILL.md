@@ -13,6 +13,12 @@ metadata:
   stage: 'alpha'
   requires:
     - 'standards-contract'
+  artifacts:
+    consumes:
+      - id: standards-index
+        gate: soft
+    produces:
+      - id: standards-index
   prerequisites:
     inputs_required:
       - id: 'direction'

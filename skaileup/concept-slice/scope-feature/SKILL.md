@@ -10,6 +10,19 @@ metadata:
     - boundary
     - interview
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+      - id: slice-concept-align
+        gate: hard
+    consumes:
+      - id: features
+        gate: soft
+      - id: slice-concept-scope
+        gate: soft
+    produces:
+      - id: slice-concept-scope
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"

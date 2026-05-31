@@ -75,6 +75,16 @@ metadata:
     produces:                           # what this skill creates
       - path: "_concept/path/to/output"
         description: "What is produced"
+  artifacts:                            # id-based dependency graph (preferred over path-based reads/produces)
+    requires:                           # artifact ids that MUST exist before this skill runs
+      - id: techstack                   # must match an id in contracts/artifacts.yaml
+        gate: hard                      # hard (default) = block; soft = warn and continue
+    consumes:                           # artifact ids this skill reads (soft by default)
+      - id: brief
+        gate: soft
+    produces:                           # artifact ids this skill creates / updates
+      - id: features
+        description: "Optional human note; path + kind come from the registry"
   user_inputs:                          # DEPRECATED — use metadata.prerequisites instead
     dialog:
       - id: input_name
@@ -114,11 +124,44 @@ metadata:
 | `metadata.prerequisites.inputs_required` | metadata | no | user inputs that block skill start until collected |
 | `metadata.prerequisites.inputs_optional` | metadata | no | user inputs collected opportunistically |
 | `metadata.prerequisites.reads` | metadata | no | optional data sources; never blocks execution |
-| `metadata.prerequisites.produces` | metadata | no | output paths this skill creates |
+| `metadata.prerequisites.produces` | metadata | no | **DEPRECATED for artifacts** — declare outputs as `metadata.artifacts.produces` ids; keep only for non-registry paths |
+| `metadata.artifacts` | metadata | no | id-based dependency graph; ids resolve against `contracts/artifacts.yaml` |
+| `metadata.artifacts.requires` | metadata | no | artifact ids that gate skill start; `gate: hard\|soft` (default hard) |
+| `metadata.artifacts.consumes` | metadata | no | artifact ids read opportunistically; `gate` default soft |
+| `metadata.artifacts.produces` | metadata | no | artifact ids this skill creates/updates; each id's `produced_by` in the registry must list this skill |
 | `metadata.user_inputs` | metadata | no | **DEPRECATED** — use `metadata.prerequisites` instead |
 | `metadata.reads_from` | metadata | no | **DEPRECATED** — use `metadata.prerequisites.reads` instead |
 | `metadata.writes_to` | metadata | no | **DEPRECATED** — use `metadata.prerequisites.produces` instead |
 | `metadata.env_vars` | metadata | no | omit if none |
+
+### Artifact declarations & the registry
+
+A skill's data flow is declared as an **id graph**, not paths. Each id resolves
+against the **artifact registry** at [`contracts/artifacts.yaml`](./artifacts.yaml),
+which owns the `id → {path, kind, side, produced_by}` mapping. Paths live in the
+registry and **nowhere else** — skills never repeat them.
+
+- **`artifacts.produces`** — ids this skill writes. The registry's `produced_by`
+  for each id must list this skill (bidirectional check).
+- **`artifacts.consumes`** — ids this skill reads. Soft gate by default.
+- **`artifacts.requires`** — ids that must exist first. Hard gate by default.
+
+Every consumed/required id must be produced by *some* skill — dangling ids are a
+build error. `contracts/scripts/verify_artifacts.py` enforces id-in-registry,
+no-dangling, producer-bidirectionality, and (where a skill still lists a `WRITES`
+path) path-matches-registry.
+
+**Relationship to `prerequisites`.** The two blocks split by concern:
+
+| Concern | Block |
+|---|---|
+| Artifact dependency graph (what flows between skills) | `metadata.artifacts` (ids) |
+| User inputs collected via dialog | `metadata.prerequisites.inputs_required` / `inputs_optional` |
+| Non-artifact file gates (e.g. `_standards/`, raw `_seeds/`) | `metadata.prerequisites.files` |
+
+`prerequisites.reads` / `prerequisites.produces` (path-based) are **deprecated for
+registry artifacts** — express those as `artifacts` ids. Keep them only for paths
+that are deliberately *not* registry artifacts.
 
 ### Skill directory structure (agentskills.io)
 

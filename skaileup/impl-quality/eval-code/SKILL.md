@@ -14,6 +14,14 @@ metadata:
     - 'adversarial'
   source: 'MERGED'
   stage: 'alpha'
+  artifacts:
+    consumes:
+      - id: techstack
+        gate: soft
+      - id: standards-index
+        gate: soft
+    produces:
+      - id: eval-code-report
   prerequisites:
     files:
       - path: 'package.json'
@@ -34,7 +42,7 @@ metadata:
         description: 'Project dependencies and scripts'
       - path: '_concept/blueprint/techstack.md'
         description: 'Expected tech stack for architecture compliance'
-      - path: '_standards/index.yml'
+      - path: '_concept/_standards/index.yml'
         description: 'Project coding standards (if available)'
     produces:
       - path: '_implementation/eval-code.json'
@@ -57,7 +65,7 @@ Checkpoints in the pipeline:
 READS
 ! package.json (or pyproject.toml) — scripts and dependencies
 ? \_concept/blueprint/techstack.md — architecture compliance check
-? \_standards/index.yml — project coding standards
+? \_concept/_standards/index.yml — project coding standards
 
 WRITES
 \_implementation/eval-code.json — MUST write before reporting

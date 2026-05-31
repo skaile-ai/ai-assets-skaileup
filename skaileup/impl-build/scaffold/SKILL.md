@@ -14,6 +14,21 @@ metadata:
     - 'git'
     - 'structure'
   source: 'MERGED'
+  artifacts:
+    requires:
+      - id: techstack
+        gate: hard
+      - id: brief
+        gate: hard
+      - id: datamodel
+        gate: hard
+    consumes:
+      - id: architecture
+        gate: soft
+    produces:
+      - id: impl-plans
+      - id: impl-progress
+      - id: impl-decisions
   prerequisites:
     files:
       - path: '_concept/blueprint/techstack.md'

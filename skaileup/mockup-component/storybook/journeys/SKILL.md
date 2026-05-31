@@ -30,10 +30,10 @@ metadata:
         variant: storybook
   prerequisites:
     files:
-      - path: '_concept/experience/4_storybook/src/pages'
+      - path: '_concept/prototype/storybook/src/pages'
         gate: hard
         description: 'Page components must be built first (run storybook-pages)'
-      - path: '_concept/experience/4_storybook/src/pages/manifest.json'
+      - path: '_concept/prototype/storybook/src/pages/manifest.json'
         gate: hard
         description: 'Page manifest required for screen-to-story mapping'
     reads:
@@ -42,7 +42,7 @@ metadata:
       - path: '_concept/experience/screens'
         description: 'Screen specs as fallback for page mapping'
     produces:
-      - path: '_concept/experience/4_storybook/src/stories/Journeys'
+      - path: '_concept/prototype/storybook/src/stories/Journeys'
         description: 'Clickable multi-screen journey stories (hero, vital, hygiene)'
 ---
 
@@ -53,19 +53,19 @@ that let users walk through complete journeys using real UI elements.
 
 READS
 \_concept/experience/journeys/stories.json — user journeys: story maps, personas, stages
-\_concept/experience/4_storybook/src/pages/manifest.json — screen-to-page mapping (from pages sub-skill)
+\_concept/prototype/storybook/src/pages/manifest.json — screen-to-page mapping (from pages sub-skill)
 \_concept/experience/screens/\*_/_.md — screen specs (fallback for mapping)
 [passed by orchestrator]: story_extension, package_manager
 
 WRITES
-\_concept/experience/4_storybook/src/stories/Journeys/Hero/<FlowName>.stories.<ext>
-\_concept/experience/4_storybook/src/stories/Journeys/Vital/<FlowName>.stories.<ext>
-\_concept/experience/4_storybook/src/stories/Journeys/Hygiene/<FlowName>.stories.<ext>
+\_concept/prototype/storybook/src/stories/Journeys/Hero/<FlowName>.stories.<ext>
+\_concept/prototype/storybook/src/stories/Journeys/Vital/<FlowName>.stories.<ext>
+\_concept/prototype/storybook/src/stories/Journeys/Hygiene/<FlowName>.stories.<ext>
 
 REQUIRES
-state: \_concept/experience/4_storybook/src/pages/ has page components (sub-skill 3 completed)
-state: \_concept/experience/4_storybook/src/components/AppShell exists (sub-skill 3 completed)
-state: \_concept/experience/4_storybook/src/pages/manifest.json exists
+state: \_concept/prototype/storybook/src/pages/ has page components (sub-skill 3 completed)
+state: \_concept/prototype/storybook/src/components/AppShell exists (sub-skill 3 completed)
+state: \_concept/prototype/storybook/src/pages/manifest.json exists
 state: \_concept/experience/journeys/stories.json exists
 
 EMIT [storybook-journeys] started run_id=<uuid>
@@ -122,10 +122,10 @@ OUTPUT src/stories/Journeys/<Stage>/<JourneyName>.stories.<story_extension>
     For the hero flow: mark it as the default story when Storybook opens.
 
 STEP 3: Verify
-$ find \_concept/experience/4_storybook/src/stories/Journeys -name '_.stories._' | wc -l
+$ find \_concept/prototype/storybook/src/stories/Journeys -name '_.stories._' | wc -l
 → Must equal total count of hero + vital + hygiene story maps
 
-$ cd \_concept/experience/4_storybook && <package_manager> run build
+$ cd \_concept/prototype/storybook && <package_manager> run build
 IF build fails - Fix and retry
 
 EMIT [storybook-journeys] completed run_id=<uuid> journeys=<N>

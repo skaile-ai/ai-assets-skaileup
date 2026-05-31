@@ -15,6 +15,17 @@ metadata:
     - 'integration'
     - 'nestjs'
   source: 'SAXE'
+  artifacts:
+    requires:
+      - id: architecture
+        gate: hard
+    consumes:
+      - id: techstack
+        gate: soft
+      - id: features
+        gate: soft
+    produces:
+      - id: impl-progress
   prerequisites:
     files:
       - path: '_concept/blueprint/architecture.md'

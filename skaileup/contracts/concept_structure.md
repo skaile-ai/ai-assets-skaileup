@@ -52,6 +52,10 @@ onboarding:
 ```
 _concept/
 ├── concept.yaml                         ← project manifest (type, profile, artifact status, seed mapping)
+├── quality.json                         ← concept health report (written by ops-review)
+│
+├── _meta/                               ← orchestration signals (read by routing/tier-aware skills)
+│   └── scope.yaml                       ← tier signal: mvp | simple-app | standard-app | complex-app
 │
 ├── _grounding/                          ← research, reference material & user inputs (read by ALL skills)
 │   ├── onboarding/                      ← structured onboarding output
@@ -100,6 +104,9 @@ _concept/
 │   └── brand/
 │       ├── identity.md                  ← colors, fonts, tone — human-readable
 │       ├── tokens.json                  ← machine-readable design tokens
+│       ├── behavioral.md                ← voice, motion, interaction personality
+│       ├── brandbook.html               ← self-contained visual brand reference
+│       ├── copy_guidelines.md           ← practical copy templates for implementers
 │       └── references/                  ← screenshots from reference URLs
 │
 ├── experience/
@@ -140,6 +147,20 @@ _concept/
 │       ├── package.json
 │       ├── vite.config.ts
 │       └── tsconfig.json
+│
+├── mockup-walkthrough/                  ← clickable walkthrough renderers
+│   └── <renderer>/                      ← text | static-html | astro | lit | framework output tree
+│
+├── mockup-component/
+│   └── isolated-html/                   ← single-component HTML mockups (<component>.html)
+│
+├── _feedback/                           ← mockup feedback loop (annotate → triage → patch → apply)
+│   ├── sessions/  index.json            ← captured annotation sessions + index
+│   ├── triage/  patches/  applied/      ← per-session <sid>.json through the loop
+│   └── devlog.md                        ← feedback-loop devlog
+│
+├── testing/
+│   └── test_plan.md                     ← test strategy (written by impl-quality-test-plan)
 │
 └── blueprint/
     ├── techstack.md                     ← chosen technologies + reasoning

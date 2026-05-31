@@ -11,6 +11,21 @@ metadata:
     - acceptance-criteria
     - grill-me
   stage: alpha
+  artifacts:
+    requires:
+      - id: scope
+        gate: hard
+    consumes:
+      - id: slice-concept-brainstorm
+        gate: soft
+      - id: brief
+        gate: soft
+      - id: features
+        gate: soft
+      - id: slice-concept-align
+        gate: soft
+    produces:
+      - id: slice-concept-align
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"
