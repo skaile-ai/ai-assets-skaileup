@@ -1,11 +1,11 @@
 ---
 title: What is Skaileup
-description: The skaileup catalog — what it is, who consumes it, where it sits in the Skaile stack.
+description: The skaileup collection — what it is, who consumes it, where it sits in the Skaile stack.
 sidebar:
   order: 1
 ---
 
-The **skaileup catalog** is the library of *agent skills* the
+The **skaileup collection** is the library of *agent skills* the
 [`skaile` CLI](https://github.com/skaile-ai/skaile-agent-framework) and the
 agent runtime use to drive an LLM through the full product-build pipeline:
 problem framing → concept → implementation → quality gates → release.
@@ -47,10 +47,10 @@ The repo is mounted as a **git submodule at `ai-assets-skaileup/`** in the
 skaile-dev shell repo, alongside `ai-assets/`. Local checkouts use `path:` in
 `skaile.yaml` to symlink (live updates); remote checkouts use `url:` and copy.
 
-## Why this catalog exists
+## Why this collection exists
 
 LLMs are good at writing code one file at a time and bad at carrying
-project-shaped intent across long sessions. The skaileup catalog encodes that
+project-shaped intent across long sessions. The skaileup collection encodes that
 intent as discrete, verifiable steps:
 
 - **Slice it.** Big apps are built one feature at a time, not all twenty
@@ -62,7 +62,7 @@ intent as discrete, verifiable steps:
 - **Verify mechanically.** `MUST` / `NEVER` / `CHECKLIST` blocks compile down to
   Python validators — sub-second checks instead of a second LLM round-trip.
 
-The catalog is the **operating system** for an agent that is supposed to ship
+The collection is the **operating system** for an agent that is supposed to ship
 software, not the agent itself.
 
 ## Where to next

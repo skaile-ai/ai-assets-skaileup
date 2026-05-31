@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-The catalog is consumed by the [`skaile` CLI](https://github.com/skaile-ai/skaile-agent-framework)
+The collection is consumed by the [`skaile` CLI](https://github.com/skaile-ai/skaile-agent-framework)
 via `@skaile/asset-manager`, which scans a repository by walking every file
 and building a catalog from recognized manifest files.
 
@@ -69,12 +69,12 @@ $ skaile search skill concept           # search the catalog
 
 ## Submodule layout in skaile-dev
 
-The shell repo `skaile-dev-matthias/` mounts the catalog as a git submodule:
+The shell repo `skaile-dev-matthias/` mounts the collection as a git submodule:
 
 ```
 skaile-dev-matthias/
 ├── ai-assets/                 ← general-purpose skills
-└── ai-assets-skaileup/        ← THIS REPO — Skaile-specific catalog
+└── ai-assets-skaileup/        ← THIS REPO — Skaile-specific collection
 ```
 
 Both are mounted in workspace flows alongside the agent framework runtime

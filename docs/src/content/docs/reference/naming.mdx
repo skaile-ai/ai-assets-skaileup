@@ -20,14 +20,14 @@ replaced by `-`:
 | `impl-architecture/templates/template-postxl/SKILL.md` | `template-postxl` (shortened) |
 | `mockup-component/storybook/SKILL.md` | `mockup-component-storybook` |
 
-This is the convention used across the catalog (84 of 94 skills follow it
+This is the convention used across the collection (84 of 94 skills follow it
 verbatim).
 
 ## The exception — base orchestrators
 
 Skills inside `skaileup/skills/` keep their **short** names (`skaileup`,
 `skaileup-build`) instead of the path-based form. The base orchestrator is
-the catalog's entry point; doubled prefixes (`skaileup-skaileup-skaileup`)
+the collection's entry point; doubled prefixes (`skaileup-skaileup-skaileup`)
 would be awkward.
 
 ```
@@ -45,15 +45,15 @@ prefix would double it):
 impl-architecture/templates/template-postxl/SKILL.md → name: template-postxl
 ```
 
-## CONTRIBUTING.md vs. catalog state
+## CONTRIBUTING.md vs. collection state
 
 <Aside type="caution">
 
 `CONTRIBUTING.md` says: *"`name:` must match the parent directory name
-exactly."* The catalog actually uses **path-based** names where the parent
+exactly."* The collection actually uses **path-based** names where the parent
 directory is just the last segment (e.g. dir `brief/` → name `concept-brief`).
 
-This is an acknowledged inconsistency. Until it's resolved, the catalog
+This is an acknowledged inconsistency. Until it's resolved, the collection
 state (path-based naming) is authoritative for working skills. See
 [Improvements & Roadmap](/improvements/) for the planned reconciliation.
 

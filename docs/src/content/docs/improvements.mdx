@@ -1,16 +1,16 @@
 ---
 title: Roadmap
-description: The catalog reorganization history — Phases 0–3, all complete.
+description: The collection reorganization history — Phases 0–3, all complete.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-The catalog reached its current shape through four reorganization phases. All
+The collection reached its current shape through four reorganization phases. All
 are complete; this page is the historical record.
 
 <Aside type="tip">
 The flow verifier (`flows/_meta/verify_flows.py`) and the frontmatter audit
-(`docs/scripts/audit.py`) are the live source of truth for catalog health.
+(`docs/scripts/audit.py`) are the live source of truth for collection health.
 `deferred_skills.yaml` is empty — there is no outstanding tier-flow work.
 </Aside>
 
@@ -20,12 +20,12 @@ The flow verifier (`flows/_meta/verify_flows.py`) and the frontmatter audit
 |---|---|---|
 | **0** | 2026-04 | Domain extraction from `ai-assets`; domain merges/splits; skill renames |
 | **1** | 2026-05-07 | Two-group restructure (Concept · Implementation · Meta); ~70 skills moved to new homes |
-| **2** | 2026-05 | Catalog quality remediation (see below) |
+| **2** | 2026-05 | Collection quality remediation (see below) |
 | **3** | 2026-05-30 | SKILL_GRAPH migration — the 11 deferred tier-flow skills built |
 
 ## Phase 2 — quality remediation (complete)
 
-The 2026-05-10 catalog review backlog was worked through across five commits:
+The 2026-05-10 collection review backlog was worked through across five commits:
 
 - **Frontmatter** — `version` + `stage` completed on every skill; deprecated
   `user_inputs` → `prerequisites` migrated; deprecated root
