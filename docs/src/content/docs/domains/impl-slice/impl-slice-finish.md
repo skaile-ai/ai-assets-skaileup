@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-finish"
 description: "Use when ending an implementation branch after all per-slice work is committed. Presents four options: merge to main, create pull request, keep branch, or discard. Requires explicit confirmation for merge and discard. Refuses if any _slice/impl/<id>/"
+sourcePath: "skaileup/impl-slice/finish/SKILL.md"
 sidebar:
   label: "impl-slice-finish"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-finish`
 **Stage:** beta · **Version:** 2.0.0
 **Tags:** git, branch, merge, pull-request, finish, cleanup
-**Source:** [`skaileup/impl-slice/finish/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/finish/SKILL.md)
 :::
 
 

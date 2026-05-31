@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-debug-self-verify"
 description: "Use when the user is stuck on a bug and wants the AI to autonomously verify whether a fix worked. Produces a self-runnable verification protocol (test commands + expected outputs + success criteria) the AI executes without user-as-test-loop."
+sourcePath: "skaileup/impl-quality/debug-self-verify/SKILL.md"
 sidebar:
   label: "impl-quality-debug-self-verify"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-debug-self-verify`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** debug, verify, autonomous, protocol, test-loop, fix-verification
-**Source:** [`skaileup/impl-quality/debug-self-verify/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/debug-self-verify/SKILL.md)
 :::
 
 

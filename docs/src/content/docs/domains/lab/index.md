@@ -1,14 +1,11 @@
 ---
 title: "lab"
 description: "Skill-on-skill: validate · judge · improve · learn · compile-validators · compile-bundle"
+sourcePath: "ai-assets-dev/lab/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`ai-assets-dev/lab/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/DOMAIN.md)
-:::
 
 
 # lab

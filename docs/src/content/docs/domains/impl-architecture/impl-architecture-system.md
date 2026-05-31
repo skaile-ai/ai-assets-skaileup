@@ -1,6 +1,7 @@
 ---
 title: "impl-architecture-system"
 description: "Use after features and techstack are approved to document system architecture. Produces architecture.md with system overview, backend structure, data flow, communication protocols, external integrations, and infrastructure."
+sourcePath: "skaileup/impl-architecture/system/SKILL.md"
 sidebar:
   label: "impl-architecture-system"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-architecture-system`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** architecture, modules, dataflow, protocols, backend, api, services, websocket, agents, infrastructure
-**Source:** [`skaileup/impl-architecture/system/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-architecture/system/SKILL.md)
 :::
 
 

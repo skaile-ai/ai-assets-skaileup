@@ -1,6 +1,7 @@
 ---
 title: "impl-build-foundation"
 description: "Use after scaffold and before feature implementation to apply the three foundational layers every app needs: brand tokens → CSS variables, authentication setup, and app shell layout. Also seeds initial data and configures Storybook with brand theme i"
+sourcePath: "skaileup/impl-build/foundation/SKILL.md"
 sidebar:
   label: "impl-build-foundation"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-build-foundation`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** foundation, theming, brand, css-vars, auth, app-shell, layout, navigation, seed, storybook
-**Source:** [`skaileup/impl-build/foundation/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/foundation/SKILL.md)
 :::
 
 
@@ -27,7 +27,7 @@ Applies the foundational layers every app needs before feature work begins:
    wired to the screen list
 4. **Seed data** — wire up `seed.json` scenarios for development and testing
 5. **Storybook brand config** — configure Storybook theme decorator with brand tokens
-   (only if `experience/4_storybook/` exists)
+   (only if `prototype/storybook/` exists)
 
 **Framework-agnostic.** All file locations, variable naming, auth plugin names,
 and layout patterns come from `impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md`.
@@ -168,7 +168,7 @@ Commit: `foundation: configure seed data from concept populated scenario`
 # ── Phase 5: Storybook Brand Config ──────────────────────────────
 
 STEP 5: Configure Storybook (if exists)
-IF \_concept/experience/4_storybook/ exists AND Storybook is installed - Configure Storybook theme with brand tokens (background, fonts, colors) - Create theme decorator wrapping all stories with brand CSS variables - Set up viewport presets from shell spec's responsive breakpoints
+IF \_concept/prototype/storybook/ exists AND Storybook is installed - Configure Storybook theme with brand tokens (background, fonts, colors) - Create theme decorator wrapping all stories with brand CSS variables - Set up viewport presets from shell spec's responsive breakpoints
 Commit: `foundation: configure Storybook with brand theme`
 
 # ── Phase 6: Verify and Complete ─────────────────────────────────

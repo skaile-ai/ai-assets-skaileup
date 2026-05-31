@@ -1,6 +1,7 @@
 ---
 title: "mockup-feedback-annotate"
 description: "Use when a walkthrough site is ready and you need stakeholders to annotate it. Injects the annotation overlay so stakeholders can click elements and submit comments; produces _concept/_feedback/sessions/ for storage. First skill in the mockup-feedbac"
+sourcePath: "skaileup/mockup-feedback/annotate/SKILL.md"
 sidebar:
   label: "mockup-feedback-annotate"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-feedback-annotate`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** mockup-feedback, annotation, overlay, data-spec, walkthrough
-**Source:** [`skaileup/mockup-feedback/annotate/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-feedback/annotate/SKILL.md)
 :::
 
 

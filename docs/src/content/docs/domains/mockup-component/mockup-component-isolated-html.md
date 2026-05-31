@@ -1,6 +1,7 @@
 ---
 title: "mockup-component-isolated-html"
 description: "Use when components are specced and an mvp/simple-app team needs a quick visual reference without a Storybook build. Renders one standalone HTML file per component showing all variants × states in a token-driven grid; no JS, no framework, openable vi"
+sourcePath: "skaileup/mockup-component/isolated-html/SKILL.md"
 sidebar:
   label: "mockup-component-isolated-html"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-component-isolated-html`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** components, mockup, isolated, static-html, tokens, no-build, low-fidelity, simple-app
-**Source:** [`skaileup/mockup-component/isolated-html/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-component/isolated-html/SKILL.md)
 :::
 
 
@@ -71,7 +71,7 @@ upstream skill that produces it.
 | Aspect                | `mockup-component-isolated-html` (this) | `mockup-component-storybook` (sibling)     |
 | --------------------- | --------------------------------------- | ------------------------------------------ |
 | Tier                  | mvp / simple-app                        | standard-app / complex-app                 |
-| Output                | `<component>.html` per component        | full Storybook 8 site under `_concept/experience/4_storybook/` |
+| Output                | `<component>.html` per component        | full Storybook 8 site under `_concept/prototype/storybook/` |
 | Build                 | none                                    | runs `storybook dev` / `storybook build`   |
 | Interactivity         | none (static grid)                      | controls panel, knobs, args                |
 | Framework dependency  | none                                    | tech-stack-aware                           |

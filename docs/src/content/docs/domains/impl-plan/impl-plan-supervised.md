@@ -1,6 +1,7 @@
 ---
 title: "impl-plan-supervised"
 description: "Use when a superpowers plan exists and you want supervised subagent-driven implementation. Dispatches one subagent per task, enforces spec-compliance review before code-quality review, handles 4-status reports (DONE / DONE_WITH_CONCERNS / NEEDS_CONTE"
+sourcePath: "skaileup/impl-plan/supervised/SKILL.md"
 sidebar:
   label: "impl-plan-supervised"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-plan-supervised`
 **Stage:** beta · **Version:** 1.0.0
 **Tags:** implement, supervised, subagent, orchestrate, review, spec-compliance, quality, 4-status
-**Source:** [`skaileup/impl-plan/supervised/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-plan/supervised/SKILL.md)
 :::
 
 

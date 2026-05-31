@@ -1,6 +1,7 @@
 ---
 title: "impl-architecture-datamodel"
 description: "Use when features are approved but _concept/blueprint/datamodel/ is empty. Produces model.dbml (DBML), model.json (editor canvas), seed.json (test scenarios), and feature_map.json (model-to-feature cross-reference)."
+sourcePath: "skaileup/impl-architecture/datamodel/SKILL.md"
 sidebar:
   label: "impl-architecture-datamodel"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-architecture-datamodel`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** data, schema, database, entities, relationships, dbml, model, seed, feature-map
-**Source:** [`skaileup/impl-architecture/datamodel/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-architecture/datamodel/SKILL.md)
 :::
 
 

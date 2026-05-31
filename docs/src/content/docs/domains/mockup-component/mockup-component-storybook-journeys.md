@@ -1,6 +1,7 @@
 ---
 title: "mockup-component-storybook-journeys"
 description: "Use when Storybook pages are built and clickable multi-screen journey stories are needed. Sub-skill 4/4: builds click-dummy journeys (hero, vital, hygiene) from stories.json, flowing through real page components inside AppShell. Called by mockup-comp"
+sourcePath: "skaileup/mockup-component/storybook/journeys/SKILL.md"
 sidebar:
   label: "mockup-component-storybook-journeys"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-component-storybook-journeys`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** storybook, journeys, click-dummy, user-flows, interactive, hero, vital, hygiene
-**Source:** [`skaileup/mockup-component/storybook/journeys/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-component/storybook/journeys/SKILL.md)
 :::
 
 
@@ -20,19 +20,19 @@ that let users walk through complete journeys using real UI elements.
 
 READS
 \_concept/experience/journeys/stories.json — user journeys: story maps, personas, stages
-\_concept/experience/4_storybook/src/pages/manifest.json — screen-to-page mapping (from pages sub-skill)
+\_concept/prototype/storybook/src/pages/manifest.json — screen-to-page mapping (from pages sub-skill)
 \_concept/experience/screens/\*_/_.md — screen specs (fallback for mapping)
 [passed by orchestrator]: story_extension, package_manager
 
 WRITES
-\_concept/experience/4_storybook/src/stories/Journeys/Hero/<FlowName>.stories.<ext>
-\_concept/experience/4_storybook/src/stories/Journeys/Vital/<FlowName>.stories.<ext>
-\_concept/experience/4_storybook/src/stories/Journeys/Hygiene/<FlowName>.stories.<ext>
+\_concept/prototype/storybook/src/stories/Journeys/Hero/<FlowName>.stories.<ext>
+\_concept/prototype/storybook/src/stories/Journeys/Vital/<FlowName>.stories.<ext>
+\_concept/prototype/storybook/src/stories/Journeys/Hygiene/<FlowName>.stories.<ext>
 
 REQUIRES
-state: \_concept/experience/4_storybook/src/pages/ has page components (sub-skill 3 completed)
-state: \_concept/experience/4_storybook/src/components/AppShell exists (sub-skill 3 completed)
-state: \_concept/experience/4_storybook/src/pages/manifest.json exists
+state: \_concept/prototype/storybook/src/pages/ has page components (sub-skill 3 completed)
+state: \_concept/prototype/storybook/src/components/AppShell exists (sub-skill 3 completed)
+state: \_concept/prototype/storybook/src/pages/manifest.json exists
 state: \_concept/experience/journeys/stories.json exists
 
 EMIT [storybook-journeys] started run_id=<uuid>
@@ -89,10 +89,10 @@ OUTPUT src/stories/Journeys/<Stage>/<JourneyName>.stories.<story_extension>
     For the hero flow: mark it as the default story when Storybook opens.
 
 STEP 3: Verify
-$ find \_concept/experience/4_storybook/src/stories/Journeys -name '_.stories._' | wc -l
+$ find \_concept/prototype/storybook/src/stories/Journeys -name '_.stories._' | wc -l
 → Must equal total count of hero + vital + hygiene story maps
 
-$ cd \_concept/experience/4_storybook && <package_manager> run build
+$ cd \_concept/prototype/storybook && <package_manager> run build
 IF build fails - Fix and retry
 
 EMIT [storybook-journeys] completed run_id=<uuid> journeys=<N>

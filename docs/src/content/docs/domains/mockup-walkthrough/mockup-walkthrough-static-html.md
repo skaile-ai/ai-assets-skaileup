@@ -1,6 +1,7 @@
 ---
 title: "mockup-walkthrough-static-html"
 description: "Use when stakeholders need a clickable static HTML walkthrough of the application — zero build, no JS framework, openable directly in a browser. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster"
+sourcePath: "skaileup/mockup-walkthrough/static-html/SKILL.md"
 sidebar:
   label: "mockup-walkthrough-static-html"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-walkthrough-static-html`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** walkthrough, mockup, static-html, zero-build, simple-app, frontend, prototype, data-spec
-**Source:** [`skaileup/mockup-walkthrough/static-html/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-walkthrough/static-html/SKILL.md)
 :::
 
 

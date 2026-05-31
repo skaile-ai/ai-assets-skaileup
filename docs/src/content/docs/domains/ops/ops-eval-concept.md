@@ -1,6 +1,7 @@
 ---
 title: "ops-eval-concept"
 description: "Use before implementation begins to verify concept completeness and clarity. Independent adversarial review of _concept/ artifacts: checks every feature has acceptance criteria, screen specs, data model coverage, and a clear brief. Gate: pre-impl."
+sourcePath: "skaileup/ops/eval-concept/SKILL.md"
 sidebar:
   label: "ops-eval-concept"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-eval-concept`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** evaluate, concept, completeness, clarity, gate, acceptance-criteria, traceability, adversarial
-**Source:** [`skaileup/ops/eval-concept/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/eval-concept/SKILL.md)
 :::
 
 

@@ -1,14 +1,11 @@
 ---
 title: "ops"
 description: "Cross-cutting: review · sync · eval · add-feature · reverse-engineer · project-*"
+sourcePath: "skaileup/ops/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/ops/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/DOMAIN.md)
-:::
 
 
 # ops

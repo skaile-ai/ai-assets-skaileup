@@ -1,6 +1,7 @@
 ---
 title: "experience-components"
 description: "Use when screen specs exist and you need to identify shared UI patterns (data tables, forms, cards, navigation) across screens. Maps components to the tech stack's component library. Outputs to _concept/experience/screens/components/."
+sourcePath: "skaileup/experience/components/SKILL.md"
 sidebar:
   label: "experience-components"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `experience-components`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** components, patterns, reusable, inventory, ui, datatable, forms, cards, navigation
-**Source:** [`skaileup/experience/components/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/components/SKILL.md)
 :::
 
 

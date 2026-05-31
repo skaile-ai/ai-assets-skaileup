@@ -1,6 +1,7 @@
 ---
 title: "impl-architecture-techstack"
 description: "Use when the project brief exists and tech stack hasn't been chosen. Discovers available stacks from impl-architecture/templates/, asks plain-language questions, recommends the best match, and writes stack.md."
+sourcePath: "skaileup/impl-architecture/techstack/SKILL.md"
 sidebar:
   label: "impl-architecture-techstack"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-architecture-techstack`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** techstack, framework, database, hosting, architecture, profile, stack-selection
-**Source:** [`skaileup/impl-architecture/techstack/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-architecture/techstack/SKILL.md)
 :::
 
 

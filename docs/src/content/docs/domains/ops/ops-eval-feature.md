@@ -1,6 +1,7 @@
 ---
 title: "ops-eval-feature"
 description: "Use after each feature group is implemented to verify the running app matches specs. Independent browser-based adversarial review: simulates user journeys, assumes something is broken. Gate: per-feature."
+sourcePath: "skaileup/ops/eval-feature/SKILL.md"
 sidebar:
   label: "ops-eval-feature"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-eval-feature`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** evaluate, feature, acceptance-criteria, browser, spec-fidelity, journey, playwright, adversarial, generator-evaluator
-**Source:** [`skaileup/ops/eval-feature/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/eval-feature/SKILL.md)
 :::
 
 

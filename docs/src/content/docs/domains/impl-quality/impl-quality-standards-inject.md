@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-standards-inject"
 description: "Use before dispatching a skill to load applicable codebase standards. Called by orchestrator or as first step in standalone skill execution. Reads _concept/_standards/index.yml and returns matched standards."
+sourcePath: "skaileup/impl-quality/standards-inject/SKILL.md"
 sidebar:
   label: "impl-quality-standards-inject"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-standards-inject`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** standards, inject, match, conventions, context
-**Source:** [`skaileup/impl-quality/standards-inject/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/standards-inject/SKILL.md)
 :::
 
 

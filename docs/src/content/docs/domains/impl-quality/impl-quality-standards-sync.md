@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-standards-sync"
 description: "Use when pushing proven project standards back to profiles, or syncing profile standards into a project. Triggered by 'sync standards', 'update profile conventions', or 'push standards to profile'."
+sourcePath: "skaileup/impl-quality/standards-sync/SKILL.md"
 sidebar:
   label: "impl-quality-standards-sync"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-standards-sync`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** standards, sync, profile, conventions, push, pull
-**Source:** [`skaileup/impl-quality/standards-sync/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/standards-sync/SKILL.md)
 :::
 
 

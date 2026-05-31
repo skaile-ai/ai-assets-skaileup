@@ -1,6 +1,7 @@
 ---
 title: "ops-project-integration"
 description: "Use when building a multi-product meta-concept and the integration section is missing. Generates 3_integration/ covering inter-repo architecture, deployment topology, and shared contracts for the ecosystem."
+sourcePath: "skaileup/ops/project-integration/SKILL.md"
 sidebar:
   label: "ops-project-integration"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-project-integration`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** meta-concept, integration, architecture, deployment, shared-contracts, ecosystem, 
-**Source:** [`skaileup/ops/project-integration/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/project-integration/SKILL.md)
 :::
 
 

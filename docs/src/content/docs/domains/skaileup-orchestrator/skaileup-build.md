@@ -1,6 +1,7 @@
 ---
 title: "skaileup-build"
 description: "Use when concept is complete and you want to build the entire application end-to-end. Drives the full pipeline from scaffold through feature implementation to verified, deployable app; journey-first strategy (hero → vital → hygiene). Supports resume "
+sourcePath: "skaileup/skaileup-orchestrator/skills/skaileup-build/SKILL.md"
 sidebar:
   label: "build"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `skaileup-build`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** implement, orchestrate, build, app, pipeline, plan, scaffold, foundation, features, evaluate, journey
-**Source:** [`skaileup/skaileup-orchestrator/skills/skaileup-build/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/skaileup-orchestrator/skills/skaileup-build/SKILL.md)
 :::
 
 

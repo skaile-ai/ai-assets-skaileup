@@ -1,6 +1,7 @@
 ---
 title: "concept-slice-brainstorm"
 description: "Use when starting per-feature concept work for a standard-app or complex-app — sparring partner that surfaces the user's mental model for THIS one feature (who uses it, what triggers it, the happy path, what's clearly out). Strictly open-ended — edge"
+sourcePath: "skaileup/concept-slice/brainstorm/SKILL.md"
 sidebar:
   label: "concept-slice-brainstorm"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-slice-brainstorm`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** concept-slice, brainstorm, interview, feature-discovery, per-feature
-**Source:** [`skaileup/concept-slice/brainstorm/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept-slice/brainstorm/SKILL.md)
 :::
 
 

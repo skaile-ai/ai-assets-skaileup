@@ -1,6 +1,7 @@
 ---
 title: "impl-build-docs"
 description: "Use after completing an implementation step to verify and update Starlight documentation. Detects git-changed files, resolves which doc pages cover them via _sources frontmatter, checks accuracy, and rewrites stale sections. Run automatically at the "
+sourcePath: "skaileup/impl-build/docs/SKILL.md"
 sidebar:
   label: "impl-build-docs"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-build-docs`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** documentation, starlight, docs-sync, post-implementation, verification
-**Source:** [`skaileup/impl-build/docs/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/docs/SKILL.md)
 :::
 
 

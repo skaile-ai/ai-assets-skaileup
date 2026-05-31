@@ -1,6 +1,7 @@
 ---
 title: "concept-grounding-onboard"
 description: "Use when starting a new concept pipeline and project identity, tier, and technology decisions have not been captured yet. Collects these through structured dialog and produces profile.yaml and decisions.yaml in _grounding/onboarding/."
+sourcePath: "skaileup/concept/grounding/onboard/SKILL.md"
 sidebar:
   label: "concept-grounding-onboard"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-grounding-onboard`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** onboarding, project-setup, tiers, decisions
-**Source:** [`skaileup/concept/grounding/onboard/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/grounding/onboard/SKILL.md)
 :::
 
 

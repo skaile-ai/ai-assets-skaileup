@@ -1,14 +1,11 @@
 ---
 title: "mockup-component"
 description: "Components in isolation: storybook + isolated-html (see docs/devlog/mockup-design.md)"
+sourcePath: "skaileup/mockup-component/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/mockup-component/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-component/DOMAIN.md)
-:::
 
 
 # mockup-component

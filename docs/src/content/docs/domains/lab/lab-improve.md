@@ -1,6 +1,7 @@
 ---
 title: "lab-improve"
 description: "Drive skill improvement through mutation, testing, and iteration"
+sourcePath: "ai-assets-dev/lab/improve/SKILL.md"
 sidebar:
   label: "lab-improve"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-improve`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets-dev/lab/improve/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/improve/SKILL.md)
 :::
 
 

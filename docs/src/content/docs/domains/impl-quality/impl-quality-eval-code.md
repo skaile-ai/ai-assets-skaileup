@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-eval-code"
 description: "Use when a pipeline checkpoint is reached (after scaffold, after each feature group, or before release) to evaluate code quality. Verifies build, then dispatches three parallel sub-agents for logic errors, security, and UI/UX concerns. Three scopes: "
+sourcePath: "skaileup/impl-quality/eval-code/SKILL.md"
 sidebar:
   label: "impl-quality-eval-code"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-eval-code`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** evaluate, code-quality, security, static-analysis, tests, build, parallel, adversarial
-**Source:** [`skaileup/impl-quality/eval-code/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/eval-code/SKILL.md)
 :::
 
 
@@ -29,7 +29,7 @@ Checkpoints in the pipeline:
 READS
 ! package.json (or pyproject.toml) — scripts and dependencies
 ? \_concept/blueprint/techstack.md — architecture compliance check
-? \_standards/index.yml — project coding standards
+? \_concept/_standards/index.yml — project coding standards
 
 WRITES
 \_implementation/eval-code.json — MUST write before reporting

@@ -1,6 +1,7 @@
 ---
 title: "mockup-walkthrough-astro"
 description: "Use when stakeholders need a clickable Astro walkthrough of the application — built static site, Tailwind-styled, openable directly in a browser. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluste"
+sourcePath: "skaileup/mockup-walkthrough/astro/SKILL.md"
 sidebar:
   label: "mockup-walkthrough-astro"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-walkthrough-astro`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** walkthrough, mockup, astro, tailwind, standard-app, frontend, prototype, data-spec
-**Source:** [`skaileup/mockup-walkthrough/astro/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-walkthrough/astro/SKILL.md)
 :::
 
 

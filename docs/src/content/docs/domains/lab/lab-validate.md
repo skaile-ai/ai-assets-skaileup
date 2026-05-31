@@ -1,6 +1,7 @@
 ---
 title: "lab-validate"
 description: "Execute test cases from a skill's test manifest in Docker containers and produce a validation report"
+sourcePath: "ai-assets-dev/lab/validate/SKILL.md"
 sidebar:
   label: "lab-validate"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-validate`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets-dev/lab/validate/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/validate/SKILL.md)
 :::
 
 

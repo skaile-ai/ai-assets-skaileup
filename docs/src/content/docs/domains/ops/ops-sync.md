@@ -1,6 +1,7 @@
 ---
 title: "ops-sync"
 description: "Use when cross-references in _concept/ are broken or out of sync. Scans the entire concept folder, finds broken links, missing bidirectional references, and orphaned entities, then shows a diff before applying fixes."
+sourcePath: "skaileup/ops/sync/SKILL.md"
 sidebar:
   label: "ops-sync"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-sync`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** sync, cross-references, repair, links, orphans, consistency, maintenance
-**Source:** [`skaileup/ops/sync/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/sync/SKILL.md)
 :::
 
 

@@ -1,14 +1,11 @@
 ---
 title: "impl-slice"
 description: "Per-slice impl loop — runs N times: implement · test · recap · refactor · commit (scratch handoffs in _slice/<id>/)"
+sourcePath: "skaileup/impl-slice/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/impl-slice/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/DOMAIN.md)
-:::
 
 
 # impl-slice

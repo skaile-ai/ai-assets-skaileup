@@ -1,6 +1,7 @@
 ---
 title: "design-inspiration"
 description: "Use on standard-app / complex-app concepts after brand-visual, to collect concrete visual references — layout patterns, color/typography directions, component patterns — that ground downstream screens and mockups. Reads the chosen brand tokens and co"
+sourcePath: "skaileup/design/inspiration/SKILL.md"
 sidebar:
   label: "design-inspiration"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `design-inspiration`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** design, inspiration, references, layout, color, typography, component-patterns
-**Source:** [`skaileup/design/inspiration/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/design/inspiration/SKILL.md)
 :::
 
 

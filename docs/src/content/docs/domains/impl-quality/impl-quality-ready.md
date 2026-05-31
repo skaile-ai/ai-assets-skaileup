@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-ready"
 description: "Use before E2E testing to verify all features are complete enough to test. Checks each feature for concept doc, screen spec, data model entry, brand tokens, and tech stack; surfaces gaps with remediation commands."
+sourcePath: "skaileup/impl-quality/ready/SKILL.md"
 sidebar:
   label: "impl-quality-ready"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-ready`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** readiness, preflight, checklist, testing, validation, gate, implementation
-**Source:** [`skaileup/impl-quality/ready/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/ready/SKILL.md)
 :::
 
 
@@ -48,7 +48,7 @@ what is missing so the user can fix gaps efficiently.
 | **Must read**  | `_concept/blueprint/datamodel/feature_map.json` | Yes                           |
 | **Must read**  | `_concept/discovery/brand/tokens.json`          | Yes (existence check)         |
 | **Must read**  | `_concept/blueprint/techstack.md`               | Yes (existence check)         |
-| **Optional**   | `_concept/experience/4_storybook/`              | No (mockup/composition check) |
+| **Optional**   | `_concept/prototype/storybook/`                 | No (mockup/composition check) |
 | **Never load** | Source code, `_concept/_grounding/`             | —                             |
 
 ## Common Mistakes
@@ -72,7 +72,7 @@ READS
 \_concept/blueprint/datamodel/feature_map.json — model-to-feature mapping
 \_concept/discovery/brand/tokens.json — brand tokens existence
 \_concept/blueprint/techstack.md — tech stack existence
-? \_concept/experience/4_storybook/ — storybook compositions (soft check)
+? \_concept/prototype/storybook/ — storybook compositions (soft check)
 
 WRITES
 (none — read-only audit skill, output is the report shown to user)
@@ -100,7 +100,7 @@ For each feature, verify all of:
 - Concept doc exists: \_concept/experience/features/<group>/<feature>.md
 - Screen spec: at least one .md in \_concept/experience/screens/ has this feature in `implements:`
 - Data model: feature listed in feature_map.json for at least one model
-- Mockup/composition: soft check — storybook page at \_concept/experience/4_storybook/src/pages/ OR html file in \_concept/05_mockups/ (either counts; absence is a warning, not a blocker)
+- Mockup/composition: soft check — storybook page at \_concept/prototype/storybook/src/pages/ OR html file in \_concept/05_mockups/ (either counts; absence is a warning, not a blocker)
   A feature is "ready" when concept doc + screen spec + data model all pass.
 
 STEP 4: Print readiness report

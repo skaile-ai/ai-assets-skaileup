@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-recap"
 description: "Use when a slice has passed the per-slice test gate and needs the mandatory recap step. Produces a 1-3 sentence 'what was built' summary, an ASCII diagram of the feature flow (mandatory), a Files-touched list, and an Outcome-vs-plan comparison. Skipp"
+sourcePath: "skaileup/impl-slice/recap/SKILL.md"
 sidebar:
   label: "impl-slice-recap"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-recap`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** impl-slice, recap, diagram, ascii, mandatory, per-slice, documentation
-**Source:** [`skaileup/impl-slice/recap/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/recap/SKILL.md)
 :::
 
 

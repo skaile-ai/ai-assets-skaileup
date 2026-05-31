@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-refactor"
 description: "Use when a slice has been recapped and you need a forced-simplification pass. Proposes 1-3 SMALLEST-IMPROVEMENT candidates that preserve behavior — only subtractions, simplifications, clarifications, never additions. Asks user to approve before any c"
+sourcePath: "skaileup/impl-slice/refactor/SKILL.md"
 sidebar:
   label: "impl-slice-refactor"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-refactor`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** impl-slice, refactor, simplify, subtract, force-simpler, per-slice, anti-addition
-**Source:** [`skaileup/impl-slice/refactor/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/refactor/SKILL.md)
 :::
 
 

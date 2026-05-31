@@ -1,6 +1,7 @@
 ---
 title: "mockup-feedback-triage"
 description: "Use when a feedback session JSON exists and annotations need to be routed to their target concept files. Resolves specRef.screen/feature/journey and produces triage/<sid>.json grouped by file. Deterministic — no LLM. Second skill in the mockup-feedba"
+sourcePath: "skaileup/mockup-feedback/triage/SKILL.md"
 sidebar:
   label: "mockup-feedback-triage"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-feedback-triage`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** mockup-feedback, triage, routing
-**Source:** [`skaileup/mockup-feedback/triage/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-feedback/triage/SKILL.md)
 :::
 
 

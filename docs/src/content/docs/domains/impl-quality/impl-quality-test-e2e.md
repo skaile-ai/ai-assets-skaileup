@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-test-e2e"
 description: "Use when all features are implemented and you need full end-to-end browser testing. Reads screen specs, features, and data model from _concept/, then uses agent-browser to test every user journey, take screenshots, and validate database records."
+sourcePath: "skaileup/impl-quality/test-e2e/SKILL.md"
 sidebar:
   label: "impl-quality-test-e2e"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-test-e2e`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** testing, e2e, browser, screenshots, validation, journey, playwright, agent-browser
-**Source:** [`skaileup/impl-quality/test-e2e/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/test-e2e/SKILL.md)
 :::
 
 

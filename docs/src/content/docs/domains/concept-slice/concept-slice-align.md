@@ -1,6 +1,7 @@
 ---
 title: "concept-slice-align"
 description: "Use when concept-slice-brainstorm has completed (or as the entry point for simple-app) and you need to grill the user about THIS feature — surfaces edge cases, unstated rules, error states, role/permission gaps, and produces EARS-format acceptance cr"
+sourcePath: "skaileup/concept-slice/align/SKILL.md"
 sidebar:
   label: "concept-slice-align"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-slice-align`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** concept-slice, align, interview, edge-cases, acceptance-criteria, grill-me
-**Source:** [`skaileup/concept-slice/align/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept-slice/align/SKILL.md)
 :::
 
 

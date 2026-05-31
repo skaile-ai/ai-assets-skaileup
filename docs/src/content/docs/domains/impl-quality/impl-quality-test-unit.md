@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-test-unit"
 description: "Use when you need unit test files generated from feature specs. Reads existing source code patterns and feature requirements, then produces one test file per feature with test cases mapped to requirements."
+sourcePath: "skaileup/impl-quality/test-unit/SKILL.md"
 sidebar:
   label: "impl-quality-test-unit"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-test-unit`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** testing, unit-tests, vitest, jest, code-generation, tdd
-**Source:** [`skaileup/impl-quality/test-unit/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/test-unit/SKILL.md)
 :::
 
 

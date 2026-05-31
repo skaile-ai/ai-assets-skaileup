@@ -1,6 +1,7 @@
 ---
 title: "experience-journeys"
 description: "Use after project brief is approved to map user journeys. Reads the approved brief, goals, and optional research to define personas and story maps organized by stage (hero, vital, hygiene, backlog). Writes stories.json with EARS acceptance criteria. "
+sourcePath: "skaileup/experience/journeys/SKILL.md"
 sidebar:
   label: "experience-journeys"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `experience-journeys`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** journeys, stories, personas, story-map, user-flow, acceptance-criteria, ears, experience
-**Source:** [`skaileup/experience/journeys/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/journeys/SKILL.md)
 :::
 
 

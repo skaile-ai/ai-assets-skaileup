@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-test"
 description: "Use when a slice's implement step has finished and you need a per-slice usability gate before proceeding to recap. Runs manual checks + automated tests from plan.md ## Testing strategy, captures user usability observations, emits a Done/NeedsMoreWork"
+sourcePath: "skaileup/impl-slice/test/SKILL.md"
 sidebar:
   label: "impl-slice-test"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-test`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** impl-slice, test, usability, per-slice, gate, feedback-loop
-**Source:** [`skaileup/impl-slice/test/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/test/SKILL.md)
 :::
 
 

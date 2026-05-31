@@ -1,14 +1,11 @@
 ---
 title: "experience"
 description: "journeys · behaviors · screens · components"
+sourcePath: "skaileup/experience/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/experience/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/DOMAIN.md)
-:::
 
 
 # experience

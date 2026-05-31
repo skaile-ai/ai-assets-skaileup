@@ -1,6 +1,7 @@
 ---
 title: "ops-review"
 description: "Use when _concept/ needs a quality check or housekeeping pass. In audit mode: scans completeness, cross-reference integrity, golden principle compliance, and entropy; produces quality.json with score. In gardening mode: auto-fixes safe issues and rep"
+sourcePath: "skaileup/ops/review/SKILL.md"
 sidebar:
   label: "ops-review"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-review`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** review, audit, status, entropy, checklist, progress, health, gardening, cleanup, quality
-**Source:** [`skaileup/ops/review/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/review/SKILL.md)
 :::
 
 

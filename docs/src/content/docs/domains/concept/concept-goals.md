@@ -1,6 +1,7 @@
 ---
 title: "concept-goals"
 description: "Use on standard-app / complex-app concepts after the brief is approved, when goals deserve their own focused pass beyond the light version concept-brief writes. Interviews the user on success criteria, measurable KPIs, constraints, deadlines, and exp"
+sourcePath: "skaileup/concept/goals/SKILL.md"
 sidebar:
   label: "concept-goals"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-goals`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** goals, success-criteria, kpi, metrics, constraints, scope, non-goals
-**Source:** [`skaileup/concept/goals/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/goals/SKILL.md)
 :::
 
 

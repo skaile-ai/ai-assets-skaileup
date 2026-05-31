@@ -1,6 +1,7 @@
 ---
 title: "concept-slice-design-feature"
 description: "Use when concept-slice-scope-feature has completed and you need to commit THIS feature's permanent _concept/ artifacts — the feature spec, all required screen specs, and the per-feature mockup-walkthrough stub. The only writer of permanent _concept/ "
+sourcePath: "skaileup/concept-slice/design-feature/SKILL.md"
 sidebar:
   label: "concept-slice-design-feature"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-slice-design-feature`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** concept-slice, design-feature, commit, permanent-artifact, feature-portion, walkthrough
-**Source:** [`skaileup/concept-slice/design-feature/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept-slice/design-feature/SKILL.md)
 :::
 
 
@@ -23,7 +23,7 @@ artifacts and the only one that deletes the slice scratch dir.
 
 **Three permanent writes:**
 
-1. `_concept/product-spec/features/<group>/<feature_slug>.md` — the feature spec,
+1. `_concept/experience/features/<group>/<feature_slug>.md` — the feature spec,
    conformant to `contracts/frontmatter.md` § "experience/features/...".
 2. `_concept/experience/screens/<feature_slug>/<screen_slug>.md` — one file per
    entry in scope-feature.md's `## Required screens`. The first segment of
@@ -55,7 +55,7 @@ READS
   ? _concept/experience/screens/**/*.md              — REQUIRED for cross-feature collision check
 
 WRITES
-  _concept/product-spec/features/{feature_group}/{feature_slug}.md
+  _concept/experience/features/{feature_group}/{feature_slug}.md
   _concept/experience/screens/{feature_slug}/{screen_slug}.md   (1..N — one per required screen)
   _concept/mockup-walkthrough/{tier}/{feature_slug}.{ext}
 
@@ -111,7 +111,7 @@ STEP 0: Read all three handoffs + scope.yaml
     required_entities, in_scope_acceptance_criteria.
 
 STEP 1: Cross-feature collision check
-  - Scan _concept/experience/features/**/*.md and _concept/product-spec/features/**/*.md
+  - Scan _concept/experience/features/**/*.md
     for any path containing /<feature_slug>.md or /<feature_slug>/ that
     belongs to a *different* slice.
   - Scan _concept/experience/screens/**/*.md for the same.
@@ -125,7 +125,7 @@ STEP 1: Cross-feature collision check
     - Wait for user direction; do NOT proceed silently.
 
 STEP 2: Compose feature.md content (in memory)
-  Path: _concept/product-spec/features/<feature_group>/<feature_slug>.md
+  Path: _concept/experience/features/<feature_group>/<feature_slug>.md
   Frontmatter (per contracts/frontmatter.md § experience/features):
     ```
     ---
@@ -160,7 +160,7 @@ STEP 3: Pre-write check for feature.md
     ELSE
       - Read existing content; compute unified diff against proposed.
       - CHECKPOINT overwrite_feature_md (STANDALONE)
-        > "_concept/product-spec/features/<group>/<feature_slug>.md
+        > "_concept/experience/features/<group>/<feature_slug>.md
         >  already exists. Diff:
         >  <diff>
         >  Approve overwrite? (yes / no / edit)"
@@ -178,7 +178,7 @@ STEP 4: Compose each screen file (in memory)
       ```
       ---
       implements:
-        - _concept/product-spec/features/<feature_group>/<feature_slug>.md
+        - _concept/experience/features/<feature_group>/<feature_slug>.md
       data_entities: [<from scope-feature.md required entities>]
       # Omit `layout` when _concept/experience/screens/00_layout/shell.md
       # does not yet exist (per plan Open Question § 4 resolution).

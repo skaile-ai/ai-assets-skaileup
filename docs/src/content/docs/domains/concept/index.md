@@ -1,46 +1,55 @@
 ---
-title: "concept-grounding"
-description: "All context-gathering before concept work: project identity dialog, web research, and seed file ingestion."
+title: "concept"
+description: "brief · goals · comparable"
+sourcePath: "skaileup/concept/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
 
-:::note[Domain manifest]
-**Source:** [`skaileup/concept/grounding/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/grounding/DOMAIN.md)
-:::
 
+# concept
 
-## Purpose
-
-Gather all external context needed before concept definition begins. Three skills that answer: "What is this project, what does the market look like, and what material does the user already have?"
-
-Merges the former `concept-grounding-onboard` (project identity dialog) and `concept-grounding-research` (web research) domains into a single bootstrap domain.
+Produces the discovery artifacts that ground all downstream concept and implementation work: a brief, articulated goals, comparables, and a grounding profile. Agents use this domain at the start of every pipeline run, before design or implementation begins.
 
 ## Skills
 
-| Skill                   | What It Does                                                            | When to Use                     |
-| ----------------------- | ----------------------------------------------------------------------- | ------------------------------- |
-| `concept-grounding-onboard`      | Project identity + tier dialog — collects name, problem, audience, type | First step of any new project   |
-| `concept-grounding-research`     | Agentic web research — competitors, audiences, design patterns          | After onboard, before discovery |
-| `concept-grounding-seeds` | Classify user-provided files into artifact slots                        | When user provides seed files   |
+- **concept-brief** (`brief/`) — Dialog-driven capture of project idea, goals, and comparables; writes `_concept/discovery/brief.md`, `goals.md`, `comparable.md`.
+- **concept-goals** (`goals/`) — Focused success-criteria pass for standard/complex tiers; deepens `_concept/discovery/goals.md` with measurable KPIs, constraints, and non-goals.
+- **concept-comparable** (`comparable/`) — Focused reference-apps pass for standard/complex tiers; deepens `_concept/discovery/comparable.md` with borrow/avoid lessons and the positioning gap (distills `_grounding/research/competitors.md` if present).
+- **concept-grounding-onboard** (`grounding/onboard/`) — Collects project identity, tier preference, and tech decisions; writes `_concept/_grounding/onboarding/profile.yaml` and `decisions.yaml`.
+- **concept-grounding-research** (`grounding/research/`) — Research mode (runs in parallel): competitors, audiences, design inspiration, domain analysis; writes into `_grounding/research/` and `_grounding/findings/index.md`.
+- **concept-grounding-seeds** (`grounding/seeds/`) — Scans `_seeds/`, classifies files, maps them to artifact slots, updates `_concept/concept.yaml` seeds section.
 
-## Artifacts
+## When to Use
 
-**Reads from:** (nothing — this is the entry point)
+- No `_concept/discovery/` exists and the user describes a new idea or project.
+- User says "start from scratch", "new project", "I have an app idea", or wants to redefine an existing brief.
+- A concept pipeline is starting and no grounding profile (`profile.yaml`) is present yet.
+- Existing `_seeds/` material needs to be classified and wired into the concept.
 
-**Writes to:**
+## When NOT to Use
 
-- `_grounding/onboarding/profile.yaml`
-- `_grounding/onboarding/decisions.yaml`
-- `_grounding/research/*.md`
-- `_grounding/seeds/`
+- `_concept/discovery/brief.md` already exists and the user wants to move forward — go to `design/` or `product-spec/`.
+- The user is adding a feature to an existing concept — use `concept-slice/` or `ops/add-feature`.
+- Grounding data is already complete — skip `grounding/` skills and use existing artifacts directly.
 
-## Notes
+## Sequence
 
-- Onboard must run before research (research uses profile.yaml for context)
-- Seeds ingestion is optional — only runs if `_seeds/` directory exists
-- The conceptualization contract in `contracts/` predates this reorganization and covers the full concept pipeline
+```
+concept-grounding-onboard
+  └── concept-grounding-seeds     (if _seeds/ present)
+  └── concept-grounding-research  (parallel, any time)
+concept-brief
+  └── concept-goals        (standard/complex high-level pass — deepen goals.md)
+  └── concept-comparable   (standard/complex high-level pass — deepen comparable.md)
+```
+
+## Cross-references
+
+- `grounding/DOMAIN.md` — sub-domain detail for the three grounding skills.
+- `../design/DOMAIN.md` — next domain after concept is complete.
+- `../contracts/` — iron laws and artifact schemas every skill reads.
 
 
 ## Skills in this domain

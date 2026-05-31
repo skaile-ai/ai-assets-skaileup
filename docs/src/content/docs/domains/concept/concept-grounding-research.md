@@ -1,6 +1,7 @@
 ---
 title: "concept-grounding-research"
 description: "Use when grounding decisions in real-world data — competitor analysis, audience research, design inspiration, behavioral patterns, color/font research. Research is a MODE that runs in parallel with other steps, not a sequential pipeline step."
+sourcePath: "skaileup/concept/grounding/research/SKILL.md"
 sidebar:
   label: "concept-grounding-research"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-grounding-research`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** research, competitors, market, audience, personas, brand, inspiration, templates, layouts, design, patterns, grounding
-**Source:** [`skaileup/concept/grounding/research/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/grounding/research/SKILL.md)
 :::
 
 

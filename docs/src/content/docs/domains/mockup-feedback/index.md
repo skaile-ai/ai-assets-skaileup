@@ -1,14 +1,11 @@
 ---
 title: "mockup-feedback"
 description: "Annotation → patch loop: annotate · triage · patch · apply (+ bidirectional sync via references + devlog)"
+sourcePath: "skaileup/mockup-feedback/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/mockup-feedback/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-feedback/DOMAIN.md)
-:::
 
 
 # mockup-feedback

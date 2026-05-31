@@ -1,6 +1,7 @@
 ---
 title: "mockup-feedback-patch"
 description: "Use when a triage file exists for a feedback session and you need to author diffs for each annotation. Produces patches/<sid>.json + patches/<sid>.review.md (LLM for change; templated for add/remove/question). Third skill in the mockup-feedback clust"
+sourcePath: "skaileup/mockup-feedback/patch/SKILL.md"
 sidebar:
   label: "mockup-feedback-patch"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-feedback-patch`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** mockup-feedback, patch, diff, review
-**Source:** [`skaileup/mockup-feedback/patch/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-feedback/patch/SKILL.md)
 :::
 
 

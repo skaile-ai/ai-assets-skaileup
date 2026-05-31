@@ -11,58 +11,34 @@ benefits from a per-feature loop when the product is too big to design or
 build in one pass. So we get the same shape on both halves — concept-slice on
 one side, impl-slice on the other.
 
-```
-                    user input  /  existing repo
-                              │
-                              ▼
-                    ╔═════════════════════╗
-                    ║    skaileup-base    ║   routes user, runs flows
-                    ╚══════════╤══════════╝
-                               │
-                               ▼
-                    ┌──────────────────────────┐
-                    │ skaileup/scope/          │   2-3 questions:
-                    │   scope-project          │   how many features?
-                    │                          │   single user / multi-user?
-                    │   ► writes               │   integrations?
-                    │     _concept/_meta/      │
-                    │     scope.yaml           │   ► picks tier:
-                    │     {tier, flow}         │     mvp · simple-app ·
-                    └────────────┬─────────────┘     standard-app · complex-app
-                                 │
-                                 │  (user can override)
-                                 ▼
-                    ┌──────────────────────────────────┐
-                    │  flows/<tier>.flow.yaml          │
-                    │  bundles/<tier>.bundle.yaml      │  ◄ install only
-                    └───────────────┬──────────────────┘    what tier needs
-                                    │
-              ┌─────────────────────┴──────────────────────────┐
-              ▼                                                ▼
-   ╔═══════════════════════════╗                  ╔══════════════════════════╗
-   ║          CONCEPT          ║                  ║      IMPLEMENTATION      ║
-   ╚═══════════════════════════╝                  ╚══════════════════════════╝
-   ┌───────────────────────┐                      ┌──────────────────────────┐
-   │ concept/              │                      │ impl-architecture/       │
-   │ design/               │                      │ impl-plan/               │
-   │ product-spec/         │                      │ impl-build/  one-time    │
-   │ experience/           │                      ├──────────────────────────┤
-   │ mockup/               │                      │ impl-slice/  PER-SLICE   │
-   ├───────────────────────┤                      │   loop, big apps         │
-   │ concept-slice/        │                      │   ↻                      │
-   │   PER-SLICE loop,     │                      ├──────────────────────────┤
-   │   big apps only       │                      │ impl-quality/            │
-   │   ↻                   │                      └──────────────────────────┘
-   └───────────────────────┘                               │
-              │                                            │
-              └──────────────────────┬─────────────────────┘
-                                     ▼
-                  ┌────────────────────────────────┐
-                  │            META                │
-                  │  ops/   review,sync,eval,...   │
-                  │  lab/   validate,improve,...   │
-                  │  contracts/   reference layer  │
-                  └────────────────────────────────┘
+```mermaid
+flowchart TD
+  input([user input / existing repo]) --> base
+
+  base["<b>skaileup-base</b><br/>routes user · runs flows"]
+  base --> scope
+
+  scope["<b>skaileup/scope/scope-project</b><br/>2–3 questions: how many features?<br/>single- or multi-user? integrations?<br/>► writes _concept/_meta/scope.yaml {tier, flow}<br/>► picks tier: mvp · simple · standard · complex"]
+  scope -->|user can override| flow
+
+  flow["<b>flows/&lt;tier&gt;.flow.yaml</b><br/>bundles/&lt;tier&gt;.bundle.yaml<br/>◄ install only what the tier needs"]
+  flow --> concept
+  flow --> impl
+
+  subgraph CONCEPT
+    concept["concept/ · design/ · product-spec/ · experience/ · mockup/<br/><i>concept-slice/ — per-slice loop ↻ (big apps only)</i>"]
+  end
+
+  subgraph IMPLEMENTATION
+    impl["impl-architecture/ · impl-plan/ · impl-build/ (one-time)<br/><i>impl-slice/ — per-slice loop ↻ (big apps)</i><br/>impl-quality/"]
+  end
+
+  concept --> meta
+  impl --> meta
+
+  subgraph META
+    meta["ops/ review·sync·eval — lab/ validate·improve — contracts/ reference layer"]
+  end
 ```
 
 ## The three groups
@@ -75,17 +51,18 @@ one side, impl-slice on the other.
 
 ## The two slice loops
 
-Both `concept-slice/` and `impl-slice/` follow the same five-phase shape:
+Both `concept-slice/` and `impl-slice/` follow the same shape — each phase
+hands off to the next via a scratch file:
 
-```
-concept-slice           impl-slice
-─────────────           ──────────
-brainstorm              brainstorm        ← surface the unknown
-align                   align             ← grill-me interview
-scope-feature           plan-vertical     ← decompose, define test strategy
-design-feature          implement → test
-                        recap → refactor → commit
-```
+| concept-slice | impl-slice | what the phase does |
+|---|---|---|
+| brainstorm¹ | brainstorm | surface the unknown |
+| align | align | grill-me interview |
+| scope-feature | plan-vertical | decompose, define test strategy |
+| design-feature | implement → test | build it |
+|  | recap → refactor → commit | lock it in |
+
+¹ concept-slice brainstorm runs only in `complex-app`; `standard-app` starts at align.
 
 After every phase the user runs `/clear` (or starts a new chat) and the next
 phase reads the prior phase's scratch file from `_slice/concept/<id>/` or
@@ -111,23 +88,12 @@ history.
 
 ## Where it sits in the Skaile stack
 
-```
-┌─────────────────────────────────────────┐
-│  Skaile platform / forge / IDE          │
-└─────────────┬───────────────────────────┘
-              │ runs
-              ▼
-┌─────────────────────────────────────────┐
-│  skaile-agent-framework  (runtime)      │
-│  • bridge (claude-sdk / omp / codex)    │
-│  • runner (flow execution)              │
-│  • connectors (MCP, capability registry)│
-└─────────────┬───────────────────────────┘
-              │ reads SKILL.md from
-              ▼
-┌─────────────────────────────────────────┐
-│  ai-assets-skaileup  ← you are here     │
-│  • SKILL.md / DOMAIN.md / CONTRACT.md   │
-│  • flows + bundles                      │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  platform["<b>Skaile platform / forge / IDE</b>"]
+  runtime["<b>skaile-agent-framework</b> (runtime)<br/>• bridge (claude-sdk / omp / codex)<br/>• runner (flow execution)<br/>• connectors (MCP, capability registry)"]
+  catalog["<b>ai-assets-skaileup</b> ← you are here<br/>• SKILL.md / DOMAIN.md / CONTRACT.md<br/>• flows + bundles"]
+
+  platform -->|runs| runtime
+  runtime -->|reads SKILL.md from| catalog
 ```

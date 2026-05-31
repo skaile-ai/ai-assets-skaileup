@@ -1,6 +1,7 @@
 ---
 title: "concept-comparable"
 description: "Use on standard-app / complex-app concepts after brief and goals exist, when reference apps deserve their own focused pass beyond the light version concept-brief writes. Studies 3-6 comparable products, captures what to borrow and what to avoid, and "
+sourcePath: "skaileup/concept/comparable/SKILL.md"
 sidebar:
   label: "concept-comparable"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-comparable`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** comparable, competitors, reference-apps, positioning, borrow-avoid, differentiation
-**Source:** [`skaileup/concept/comparable/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/comparable/SKILL.md)
 :::
 
 

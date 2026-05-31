@@ -1,14 +1,11 @@
 ---
 title: "mockup-walkthrough"
 description: "Clickable application walkthrough: text · static-html · lit · astro · framework"
+sourcePath: "skaileup/mockup-walkthrough/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/mockup-walkthrough/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-walkthrough/DOMAIN.md)
-:::
 
 
 # mockup-walkthrough

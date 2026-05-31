@@ -1,6 +1,7 @@
 ---
 title: "impl-plan-brainstorm"
 description: "Use when starting per-slice implementation work for a feature in a standard-app or complex-app tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<gr"
+sourcePath: "skaileup/impl-plan/brainstorm/SKILL.md"
 sidebar:
   label: "impl-plan-brainstorm"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-plan-brainstorm`
 **Stage:** alpha · **Version:** 2.0.0
 **Tags:** impl-plan, brainstorm, planning, risks, decomposition, pre-implementation, unknowns, per-slice, feature-scoped
-**Source:** [`skaileup/impl-plan/brainstorm/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-plan/brainstorm/SKILL.md)
 :::
 
 

@@ -1,6 +1,7 @@
 ---
 title: "impl-slice"
 description: "The per-feature implementation loop — a reusable building block that simple-app, standard-app, and complex-app inline once per feature."
+sourcePath: "skaileup/flows/impl-slice/impl-slice.md"
 sidebar:
   label: "impl-slice"
   order: 6

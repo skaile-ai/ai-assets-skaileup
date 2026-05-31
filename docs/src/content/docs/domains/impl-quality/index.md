@@ -1,14 +1,11 @@
 ---
 title: "impl-quality"
 description: "test-{plan,unit,integration,e2e} · eval-code · audit · ready · standards-* · debug-{self-verify, handoff}"
+sourcePath: "skaileup/impl-quality/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/impl-quality/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/DOMAIN.md)
-:::
 
 
 # impl-quality

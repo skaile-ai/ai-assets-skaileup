@@ -1,6 +1,7 @@
 ---
 title: "concept-grounding-seeds"
 description: "Use after concept-grounding-onboard when the user has provided existing material in _seeds/. Scans and auto-classifies each file by content analysis, maps files to artifact slots, validates against schemas, and updates concept.yaml with seed statuses"
+sourcePath: "skaileup/concept/grounding/seeds/SKILL.md"
 sidebar:
   label: "concept-grounding-seeds"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-grounding-seeds`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** seeds, ingestion, classification, artifacts
-**Source:** [`skaileup/concept/grounding/seeds/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/grounding/seeds/SKILL.md)
 :::
 
 

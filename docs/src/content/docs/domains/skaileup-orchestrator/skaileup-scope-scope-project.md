@@ -1,6 +1,7 @@
 ---
 title: "skaileup-scope-scope-project"
 description: "Use when the user starts a new project and no _concept/_meta/scope.yaml exists yet, or when re-scoping (--tier= override). Picks one of mvp / simple-app / standard-app / complex-app from a one-sentence project description and writes _concept/_meta/sc"
+sourcePath: "skaileup/skaileup-orchestrator/scope/scope-project/SKILL.md"
 sidebar:
   label: "scope-scope-project"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `skaileup-scope-scope-project`
 **Stage:** alpha · **Version:** 1.1.0
 **Tags:** scope, tier, orchestrator-entry, flow-selection, skaileup
-**Source:** [`skaileup/skaileup-orchestrator/scope/scope-project/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/skaileup-orchestrator/scope/scope-project/SKILL.md)
 :::
 
 

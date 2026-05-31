@@ -1,6 +1,7 @@
 ---
 title: "lab-archive"
 description: "Rolls up old _feedback/devlog.md entries into quarterly archive files when entry count reaches 500. Keeps the 200 most recent entries in the live devlog; moves older ones verbatim to _feedback/devlog.archive/<YYYY>-QN.md."
+sourcePath: "ai-assets-dev/lab/archive/SKILL.md"
 sidebar:
   label: "lab-archive"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-archive`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** lab, devlog, archive, maintenance
-**Source:** [`ai-assets-dev/lab/archive/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/archive/SKILL.md)
 :::
 
 

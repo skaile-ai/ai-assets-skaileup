@@ -1,6 +1,7 @@
 ---
 title: "mockup-component-storybook-components"
 description: "Use when screen specs are approved and building-block component stories are needed. Sub-skill 2/4: identifies custom components from specs, builds them using the project's component library, and creates their Storybook stories. Called by mockup-compo"
+sourcePath: "skaileup/mockup-component/storybook/components/SKILL.md"
 sidebar:
   label: "mockup-component-storybook-components"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-component-storybook-components`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** storybook, components, stories, building-blocks, custom-components
-**Source:** [`skaileup/mockup-component/storybook/components/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-component/storybook/components/SKILL.md)
 :::
 
 
@@ -24,13 +24,13 @@ READS
 [passed by orchestrator]: component_library, story_extension, icon_library, component_import
 
 WRITES
-\_concept/experience/4_storybook/src/components/<ComponentName>.<ext>
-\_concept/experience/4_storybook/src/components/index.<ts|js> — barrel export
-\_concept/experience/4_storybook/src/stories/Components/<Name>.stories.<ext>
-\_concept/experience/4_storybook/src/@types/<entity>.<ts|js> — minimal interfaces
+\_concept/prototype/storybook/src/components/<ComponentName>.<ext>
+\_concept/prototype/storybook/src/components/index.<ts|js> — barrel export
+\_concept/prototype/storybook/src/stories/Components/<Name>.stories.<ext>
+\_concept/prototype/storybook/src/@types/<entity>.<ts|js> — minimal interfaces
 
 REQUIRES
-state: \_concept/experience/4_storybook/ exists with passing build (setup sub-skill completed)
+state: \_concept/prototype/storybook/ exists with passing build (setup sub-skill completed)
 state: \_concept/experience/screens/ has at least one screen spec
 provided: component_library, story_extension, icon_library (from orchestrator)
 
@@ -44,7 +44,7 @@ STEP 1: Inventory components across all screen specs
   a) LIBRARY — available in the project's component_library → use directly in pages, no story needed
   b) CUSTOM — not in library → must be built
 - Inspect the installed component_library package to discover its exports:
-  $ cat \_concept/experience/4_storybook/node_modules/<component_library>/dist/index.d.ts
+  $ cat \_concept/prototype/storybook/node_modules/<component_library>/dist/index.d.ts
   (or index.js — whichever exposes the exports)
 - Present the two lists to confirm scope:
   > "Component library (<component_library>) provides: [list]
@@ -72,15 +72,15 @@ IF component appears in multiple screens with different configurations - Add a s
 MUST use realistic domain-appropriate data — never "Lorem ipsum"
 
 STEP 4: Write barrel export
-OUTPUT \_concept/experience/4_storybook/src/components/index.<ts|js> - Re-export all custom components built in Step 3
+OUTPUT \_concept/prototype/storybook/src/components/index.<ts|js> - Re-export all custom components built in Step 3
 IF no custom components were built - Write empty barrel with comment: `// No custom components — all from <component_library>` - Create src/stories/Components/README.md explaining this
 
 STEP 5: Verify
 
 - Count component story files:
-  $ ls \_concept/experience/4_storybook/src/stories/Components/_.stories._ 2>/dev/null | wc -l
+  $ ls \_concept/prototype/storybook/src/stories/Components/_.stories._ 2>/dev/null | wc -l
   -> Should equal the number of custom components
-  $ cd \_concept/experience/4_storybook && <package_manager> run build
+  $ cd \_concept/prototype/storybook && <package_manager> run build
   IF build fails
   - Fix and retry
     EMIT [storybook-components] completed run_id=<uuid> components=<N>

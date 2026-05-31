@@ -1,6 +1,7 @@
 ---
 title: "lab-compile-validators"
 description: "Compiles MUST/NEVER/CHECKLIST rules from SKILL.md files into fast, deterministic Python validators. Run after editing or creating a skill to generate its validator.py. Replaces slow LLM-based validation with sub-second checks."
+sourcePath: "ai-assets-dev/lab/compile-validators/SKILL.md"
 sidebar:
   label: "lab-compile-validators"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-compile-validators`
 **Stage:** — · **Version:** 1.0.0
 **Tags:** validation, rules, compilation, deterministic, fast, linting
-**Source:** [`ai-assets-dev/lab/compile-validators/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/compile-validators/SKILL.md)
 :::
 
 

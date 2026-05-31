@@ -1,6 +1,7 @@
 ---
 title: "impl-plan-align"
 description: "Use when an implementation slice has its concept artifacts (feature.md + screens) frozen and needs a grill-me interview to surface unstated assumptions, technical constraints, and edge cases before plan-vertical writes the slice plan. Reads _concept/"
+sourcePath: "skaileup/impl-plan/align/SKILL.md"
 sidebar:
   label: "impl-plan-align"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-plan-align`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** impl-plan, align, interview, grill-me, acceptance-criteria, edge-cases, per-slice
-**Source:** [`skaileup/impl-plan/align/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-plan/align/SKILL.md)
 :::
 
 

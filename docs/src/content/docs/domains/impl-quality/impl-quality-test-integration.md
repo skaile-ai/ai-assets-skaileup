@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-test-integration"
 description: "Use when you need integration tests that verify API endpoints, data flow, and cross-feature interactions against a real database. Reads feature specs and data model to generate tests covering the full request-response cycle."
+sourcePath: "skaileup/impl-quality/test-integration/SKILL.md"
 sidebar:
   label: "impl-quality-test-integration"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-test-integration`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** testing, integration, api, database, endpoints, data-flow
-**Source:** [`skaileup/impl-quality/test-integration/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/test-integration/SKILL.md)
 :::
 
 

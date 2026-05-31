@@ -1,6 +1,7 @@
 ---
 title: "experience-screens"
 description: "Use when features are approved and you need per-screen specifications. Produces grouped screen docs; registers back into feature frontmatter via feedback loop."
+sourcePath: "skaileup/experience/screens/SKILL.md"
 sidebar:
   label: "experience-screens"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `experience-screens`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** screens, pages, ui, layout, navigation, ux, experience, user-perspective
-**Source:** [`skaileup/experience/screens/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/screens/SKILL.md)
 :::
 
 

@@ -1,6 +1,7 @@
 ---
 title: "mockup-component-storybook-setup"
 description: "Use when no Storybook project exists yet and one needs to be scaffolded for mockup work. Sub-skill 1/4: scaffolds a standalone Storybook project, installs dependencies, and applies brand tokens as CSS custom properties. Called by mockup-component-sto"
+sourcePath: "skaileup/mockup-component/storybook/setup/SKILL.md"
 sidebar:
   label: "mockup-component-storybook-setup"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-component-storybook-setup`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** storybook, setup, scaffold, brand-tokens, config
-**Source:** [`skaileup/mockup-component/storybook/setup/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-component/storybook/setup/SKILL.md)
 :::
 
 
@@ -25,7 +25,7 @@ READS
 [passed by orchestrator]: storybook_addon, story_format, story_extension, component_library, package_manager
 
 WRITES
-\_concept/experience/4_storybook/ — Storybook project scaffold
+\_concept/prototype/storybook/ — Storybook project scaffold
 
 REQUIRES
 state: \_concept/discovery/brand/tokens.json exists
@@ -42,11 +42,11 @@ STEP 1: Read context
 - Read shell.md for responsive breakpoints (used in viewport presets)
 
 STEP 2: Scaffold project
-$ mkdir -p \_concept/experience/4_storybook/src/stories
-$ mkdir -p \_concept/experience/4_storybook/.storybook
+$ mkdir -p \_concept/prototype/storybook/src/stories
+$ mkdir -p \_concept/prototype/storybook/.storybook
 
 STEP 3: Write package.json
-OUTPUT \_concept/experience/4_storybook/package.json
+OUTPUT \_concept/prototype/storybook/package.json
 {
 "name": "storybook",
 "private": true,
@@ -65,23 +65,23 @@ OUTPUT \_concept/experience/4_storybook/package.json
 
 - Use the storybook_addon resolved by the orchestrator
 - Add any additional dependencies required by the tech stack (e.g., vite for React stacks)
-  $ cd \_concept/experience/4_storybook && <package_manager> install
+  $ cd \_concept/prototype/storybook && <package_manager> install
   EMIT [storybook-setup] checkpoint phase=deps_installed
 
 STEP 4: Write .storybook/main config
-OUTPUT \_concept/experience/4_storybook/.storybook/main.<ts|js> - framework: storybook_addon - stories: ['../src/**/*.stories.*'] - addons: [storybook_addon, '@storybook/addon-essentials'] - Viewport presets derived from shell.md breakpoints
+OUTPUT \_concept/prototype/storybook/.storybook/main.<ts|js> - framework: storybook_addon - stories: ['../src/**/*.stories.*'] - addons: [storybook_addon, '@storybook/addon-essentials'] - Viewport presets derived from shell.md breakpoints
 
 STEP 5: Write .storybook/theme
-OUTPUT \_concept/experience/4_storybook/.storybook/theme.<ts|js> - Storybook theme object using brand colors and fonts from tokens.json - base: tokens.json mode ('light' or 'dark') - appBg: tokens.json colors.background - fontBase: tokens.json fonts.body - fontCode: tokens.json fonts.mono - brandTitle: app name from brief.md
+OUTPUT \_concept/prototype/storybook/.storybook/theme.<ts|js> - Storybook theme object using brand colors and fonts from tokens.json - base: tokens.json mode ('light' or 'dark') - appBg: tokens.json colors.background - fontBase: tokens.json fonts.body - fontCode: tokens.json fonts.mono - brandTitle: app name from brief.md
 
 STEP 6: Write .storybook/preview (brand tokens as CSS custom properties)
-OUTPUT \_concept/experience/4_storybook/.storybook/preview.<ts|js> - Import brand.css (global styles) - Apply CSS custom properties from tokens.json as decorators: - --color-primary, --color-secondary, --color-accent, --color-background,
+OUTPUT \_concept/prototype/storybook/.storybook/preview.<ts|js> - Import brand.css (global styles) - Apply CSS custom properties from tokens.json as decorators: - --color-primary, --color-secondary, --color-accent, --color-background,
 --color-surface, --color-foreground, --color-muted, --color-border,
 --color-destructive, --color-success, --color-warning, --radius,
 font variables from tokens.json fonts.\* - Viewport presets from shell.md breakpoints
 
 STEP 7: Write src/styles/brand.css
-OUTPUT \_concept/experience/4_storybook/src/styles/brand.css
+OUTPUT \_concept/prototype/storybook/src/styles/brand.css
 :root {
 /_ Font loading — Google Fonts import for heading and body fonts from tokens.json _/
 /_ CSS custom properties — all values from tokens.json _/
@@ -101,7 +101,7 @@ IF tokens.mode is "both"
 NEVER invent colors, fonts, or spacing — everything comes from tokens.json
 
 STEP 8: Create src/@types directory
-$ mkdir -p \_concept/experience/4_storybook/src/@types
+$ mkdir -p \_concept/prototype/storybook/src/@types
 
 - Write src/@types/README.md:
   "Types are built incrementally by each sub-skill.
@@ -109,7 +109,7 @@ $ mkdir -p \_concept/experience/4_storybook/src/@types
 - Types are NOT generated here — each subsequent sub-skill adds only the interfaces it needs.
 
 STEP 9: Verify setup
-$ cd \_concept/experience/4_storybook && <package_manager> run build
+$ cd \_concept/prototype/storybook && <package_manager> run build
 IF build fails - Fix errors and retry
 EMIT [storybook-setup] completed run_id=<uuid>
 

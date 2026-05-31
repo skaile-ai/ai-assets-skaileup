@@ -1,6 +1,7 @@
 ---
 title: "ops-add-feature"
 description: "Use when adding a new feature or modifying an existing feature in a live concept. Surgically adds the feature spec, cascades changes through downstream artifacts (journeys, tech stack, architecture, data model, screens), and optionally triggers imple"
+sourcePath: "skaileup/ops/add-feature/SKILL.md"
 sidebar:
   label: "ops-add-feature"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-add-feature`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** add-feature, modify, extend, feature, change, update, cascade, iteration, incremental
-**Source:** [`skaileup/ops/add-feature/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/add-feature/SKILL.md)
 :::
 
 

@@ -1,6 +1,7 @@
 ---
 title: "skaileup"
 description: "Use when starting or resuming the full concept pipeline for a new product. Runs Discovery → Experience → Blueprint with checkpoint approvals, PLANS.md tracking, and auto-review mode; dispatches sub-skills for each step."
+sourcePath: "skaileup/skaileup-orchestrator/skills/skaileup/SKILL.md"
 sidebar:
   label: "skaileup"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `skaileup`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** orchestrate, concept, pipeline, plan, discovery, experience, blueprint, checkpoint
-**Source:** [`skaileup/skaileup-orchestrator/skills/skaileup/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/skaileup-orchestrator/skills/skaileup/SKILL.md)
 :::
 
 

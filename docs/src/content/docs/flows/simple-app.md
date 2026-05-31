@@ -1,6 +1,7 @@
 ---
 title: "simple-app"
 description: "Single-user app of up to ~5 features — linear concept pipeline plus a per-feature impl-slice loop."
+sourcePath: "skaileup/flows/simple-app/simple-app.md"
 sidebar:
   label: "simple-app"
   order: 2

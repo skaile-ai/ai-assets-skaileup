@@ -1,14 +1,11 @@
 ---
 title: "product-spec"
 description: "features · acceptance criteria"
+sourcePath: "skaileup/product-spec/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/product-spec/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/product-spec/DOMAIN.md)
-:::
 
 
 # product-spec

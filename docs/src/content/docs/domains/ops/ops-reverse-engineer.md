@@ -1,6 +1,7 @@
 ---
 title: "ops-reverse-engineer"
 description: "Use when the user has an existing project repository and wants to generate or bootstrap a _concept/ folder from it. Triggered by: 'reverse engineer this project', 'generate concept from existing code', 'I have a codebase, extract the concept', 'docum"
+sourcePath: "skaileup/ops/reverse-engineer/SKILL.md"
 sidebar:
   label: "ops-reverse-engineer"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-reverse-engineer`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** reverse, existing, codebase, repo, extract, import, bootstrap, existing-project, infer, scan
-**Source:** [`skaileup/ops/reverse-engineer/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/reverse-engineer/SKILL.md)
 :::
 
 

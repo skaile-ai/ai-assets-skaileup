@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-audit"
 description: "Use before e2e testing or after significant code changes to run a static audit. Launches three parallel sub-agents for logic errors, UI/UX issues, and security concerns, and checks _concept/ structure integrity."
+sourcePath: "skaileup/impl-quality/audit/SKILL.md"
 sidebar:
   label: "impl-quality-audit"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-audit`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** audit, security, bugs, code-review, static-analysis, quality, entropy, accessibility
-**Source:** [`skaileup/impl-quality/audit/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/audit/SKILL.md)
 :::
 
 

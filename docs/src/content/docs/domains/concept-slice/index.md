@@ -1,14 +1,11 @@
 ---
 title: "concept-slice"
 description: "Per-feature concept loop (big apps only): brainstorm · align · scope-feature · design-feature"
+sourcePath: "skaileup/concept-slice/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/concept-slice/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept-slice/DOMAIN.md)
-:::
 
 
 # concept-slice

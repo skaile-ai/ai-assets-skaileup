@@ -132,6 +132,7 @@ function renderSkillPage({ skillPath, fm, body, repoRel }) {
   const front = `---
 title: "${name}"
 description: "${yamlDescription}"
+sourcePath: "${repoRel}"
 sidebar:
   label: "${name.replace(new RegExp(`^${repoRel.split("/")[0]}-?`), "") || name}"
 ---
@@ -140,7 +141,6 @@ sidebar:
 **Name:** \`${name}\`
 **Stage:** ${stage} · **Version:** ${version}
 **Tags:** ${tags}
-**Source:** [\`${repoRel}\`](${GITHUB_BASE}/${repoRel})
 :::
 
 ${asMdString(body)}
@@ -165,14 +165,11 @@ function renderDomainPage({ domainPath, fm, body, repoRel, skillsInDomain }) {
   return `---
 title: "${name}"
 description: "${yamlDescription}"
+sourcePath: "${repoRel}"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [\`${repoRel}\`](${GITHUB_BASE}/${repoRel})
-:::
 
 ${asMdString(body)}
 
@@ -193,10 +190,12 @@ function renderFlowPage({ fm, body, type }) {
   const order = typeof fm.order === "number" ? fm.order : 99;
   const flowRel = `skaileup/flows/${type}/${type}.flow.yaml`;
   const bundleRel = `skaileup/flows/${type}/${type}.bundle.yaml`;
+  const mdRel = `skaileup/flows/${type}/${type}.md`;
 
   return `---
 title: "${title}"
 description: "${description}"
+sourcePath: "${mdRel}"
 sidebar:
   label: "${title}"
   order: ${order}
@@ -220,6 +219,7 @@ function renderFlowsIndex({ fm, body }) {
   return `---
 title: "${title}"
 description: "${description}"
+sourcePath: "skaileup/flows/index.md"
 sidebar:
   label: "Overview"
   order: 0
@@ -274,8 +274,16 @@ function main() {
     if (!domain) continue;
     if (!byDomain.has(domain)) byDomain.set(domain, { domainFile: null, skills: [] });
     const entry = byDomain.get(domain);
-    if (basename(f) === "DOMAIN.md") entry.domainFile = f;
-    else entry.skills.push(f);
+    if (basename(f) === "DOMAIN.md") {
+      // A domain can carry DOMAIN.md at multiple depths (e.g. concept/ and
+      // concept/grounding/). The domain index must use the canonical top-level
+      // one — keep whichever sits shallowest under the domain root. Compare on
+      // repo-relative depth (`parts`), not the absolute path.
+      const prevDepth = entry.domainFile
+        ? relative(REPO_ROOT, entry.domainFile).split("/").length
+        : Infinity;
+      if (parts.length < prevDepth) entry.domainFile = f;
+    } else entry.skills.push(f);
   }
 
   let count = 0;

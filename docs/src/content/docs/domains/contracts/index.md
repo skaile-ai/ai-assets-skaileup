@@ -1,14 +1,11 @@
 ---
 title: "contracts"
 description: "Shared reference layer (every skill reads)"
+sourcePath: "skaileup/contracts/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/contracts/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/contracts/DOMAIN.md)
-:::
 
 
 # contracts

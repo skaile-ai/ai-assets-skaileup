@@ -1,23 +1,26 @@
 ---
-title: "skaileup-scope"
-description: "Project-size scoping — interviews user, picks tier, drives flow selection."
+title: "skaileup"
+description: "Top-level conversational guide for the skaileup concept → implementation pipeline"
+sourcePath: "skaileup/skaileup-orchestrator/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
 
-:::note[Domain manifest]
-**Source:** [`skaileup/skaileup-orchestrator/scope/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/skaileup-orchestrator/scope/DOMAIN.md)
-:::
 
+## Purpose
 
-# skaileup/scope
+Entry point for users starting or resuming a skaileup pipeline session. Discovers installed
+orchestrators and flows at runtime; guides users through each step with or without the flow
+engine present. Does not contain pipeline logic — delegates to domain-specific orchestrators.
 
-Project-size scoping cluster: interviews the user, picks a tier (mvp / simple-app / standard-app / complex-app), and drives flow selection. First action in the skaileup pipeline.
+## Agents
 
-## Skills
+| Agent    | Path             | What it does                    | When to use         |
+| -------- | ---------------- | ------------------------------- | ------------------- |
+| skaileup | agents/skaileup/ | Conversational guide and router | Always — start here |
 
-- **skaileup-scope-scope-project** (`scope-project/`) — Picks one of mvp / simple-app / standard-app / complex-app from a one-sentence project description and writes `_concept/_meta/scope.yaml`. Gates which flow runs next.
+## Notes
 
 ## Cross-references
 

@@ -1,6 +1,7 @@
 ---
 title: "concept-slice"
 description: "The per-feature concept loop — a reusable building block that standard-app and complex-app inline once per feature."
+sourcePath: "skaileup/flows/concept-slice/concept-slice.md"
 sidebar:
   label: "concept-slice"
   order: 5

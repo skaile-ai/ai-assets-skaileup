@@ -1,6 +1,7 @@
 ---
 title: "mockup-walkthrough-framework"
 description: "Use when stakeholders need the highest-fidelity clickable walkthrough rendered in the project's CHOSEN stack framework (Next.js / Nuxt / SvelteKit), resolved from the selected scaffold template. Generates a stack-native built site — one route/page pe"
+sourcePath: "skaileup/mockup-walkthrough/framework/SKILL.md"
 sidebar:
   label: "mockup-walkthrough-framework"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-walkthrough-framework`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** walkthrough, mockup, framework, stack-native, complex-app, frontend, prototype, data-spec
-**Source:** [`skaileup/mockup-walkthrough/framework/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-walkthrough/framework/SKILL.md)
 :::
 
 

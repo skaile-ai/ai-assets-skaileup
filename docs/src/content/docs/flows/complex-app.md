@@ -1,6 +1,7 @@
 ---
 title: "complex-app"
 description: "Multi-product / enterprise — a superset of standard-app adding brand voice, stack-native mockups, project-ops, supervised planning, and per-slice audit."
+sourcePath: "skaileup/flows/complex-app/complex-app.md"
 sidebar:
   label: "complex-app"
   order: 4

@@ -1,6 +1,7 @@
 ---
 title: "standard-app"
 description: "Multi-user app of up to ~20 features — high-level concept pass plus per-feature concept-slice and impl-slice loops, with a feedback loop on mockups."
+sourcePath: "skaileup/flows/standard-app/standard-app.md"
 sidebar:
   label: "standard-app"
   order: 3

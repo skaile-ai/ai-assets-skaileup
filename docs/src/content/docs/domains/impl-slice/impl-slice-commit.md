@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-commit"
 description: "Use when a slice has been recapped and refactored and is ready to land. Verifies all 3 predecessor handoffs (test, recap, refactor), inventories the working tree, decomposes into 1-N atomic commits with user approval, lands the commits, and deletes _"
+sourcePath: "skaileup/impl-slice/commit/SKILL.md"
 sidebar:
   label: "impl-slice-commit"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-commit`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** impl-slice, commit, git, atomic, lifecycle-terminator, per-slice, cleanup
-**Source:** [`skaileup/impl-slice/commit/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/commit/SKILL.md)
 :::
 
 

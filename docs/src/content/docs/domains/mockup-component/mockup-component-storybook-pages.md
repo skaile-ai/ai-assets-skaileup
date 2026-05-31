@@ -1,6 +1,7 @@
 ---
 title: "mockup-component-storybook-pages"
 description: "Use when building-block components are ready and full-page screen compositions are needed. Sub-skill 3/4: builds AppShell and page stories from screen specs with all state variants and responsive viewports; writes manifest.json for the journeys sub-s"
+sourcePath: "skaileup/mockup-component/storybook/pages/SKILL.md"
 sidebar:
   label: "mockup-component-storybook-pages"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-component-storybook-pages`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** storybook, pages, screens, compositions, app-shell, states, responsive
-**Source:** [`skaileup/mockup-component/storybook/pages/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-component/storybook/pages/SKILL.md)
 :::
 
 
@@ -21,19 +21,19 @@ READS
 \_concept/experience/screens/\*_/_.md — screen specs (purpose, route, UI elements, states, data)
 \_concept/experience/screens/00_layout/shell.md — app shell structure, navigation, breakpoints
 \_concept/discovery/brand/tokens.json — brand tokens
-\_concept/experience/4_storybook/src/components/ — custom components from sub-skill 2
+\_concept/prototype/storybook/src/components/ — custom components from sub-skill 2
 [passed by orchestrator]: component_library, story_extension, package_manager
 
 WRITES
-\_concept/experience/4_storybook/src/components/AppShell.<ext> — shared app shell wrapper
-\_concept/experience/4_storybook/src/pages/<Group>/<PageName>.<ext> — page compositions
-\_concept/experience/4_storybook/src/stories/Pages/<NN Group>/<Page>.stories.<ext>
-\_concept/experience/4_storybook/src/@types/<entity>.<ts|js> — minimal interfaces for page data
-\_concept/experience/4_storybook/src/pages/manifest.json — screen-to-page mapping for journeys
+\_concept/prototype/storybook/src/components/AppShell.<ext> — shared app shell wrapper
+\_concept/prototype/storybook/src/pages/<Group>/<PageName>.<ext> — page compositions
+\_concept/prototype/storybook/src/stories/Pages/<NN Group>/<Page>.stories.<ext>
+\_concept/prototype/storybook/src/@types/<entity>.<ts|js> — minimal interfaces for page data
+\_concept/prototype/storybook/src/pages/manifest.json — screen-to-page mapping for journeys
 
 REQUIRES
-state: \_concept/experience/4_storybook/ exists with passing build
-state: \_concept/experience/4_storybook/src/components/ has barrel export (from sub-skill 2)
+state: \_concept/prototype/storybook/ exists with passing build
+state: \_concept/prototype/storybook/src/components/ has barrel export (from sub-skill 2)
 state: \_concept/experience/screens/ has screen specs
 provided: component_library, story_extension, package_manager (from orchestrator)
 
@@ -47,10 +47,10 @@ STEP 1: Read all screen specs
   | Group | Screen | Route | UI Elements | States | Data Requirements |
 
 STEP 2: Build AppShell component
-OUTPUT \_concept/experience/4_storybook/src/components/AppShell.<ext> - Render full app shell from shell.md: sidebar, header/top bar, content area - Navigation items derived from shell spec — never hardcoded - Accept children prop/slot for page content area - Support collapsed/expanded sidebar states - Responsive: mobile overlay, desktop fixed sidebar (use breakpoints from shell.md) - Use component_library components for shell elements (sidebar, avatar, nav, button, etc.) - Apply brand tokens throughout
+OUTPUT \_concept/prototype/storybook/src/components/AppShell.<ext> - Render full app shell from shell.md: sidebar, header/top bar, content area - Navigation items derived from shell spec — never hardcoded - Accept children prop/slot for page content area - Support collapsed/expanded sidebar states - Responsive: mobile overlay, desktop fixed sidebar (use breakpoints from shell.md) - Use component_library components for shell elements (sidebar, avatar, nav, button, etc.) - Apply brand tokens throughout
 
 STEP 3: Build AppShell story
-OUTPUT \_concept/experience/4_storybook/src/stories/Pages/00 Layout/AppShell.stories.<ext> - title: 'Pages/00 Layout/AppShell' - layout: 'fullscreen' - Variants: DesktopExpanded, DesktopCollapsed, Mobile (at minimum)
+OUTPUT \_concept/prototype/storybook/src/stories/Pages/00 Layout/AppShell.stories.<ext> - title: 'Pages/00 Layout/AppShell' - layout: 'fullscreen' - Variants: DesktopExpanded, DesktopCollapsed, Mobile (at minimum)
 
 STEP 4: Add types for pages
 
@@ -86,7 +86,7 @@ For EACH screen spec (excluding 00_layout/): - Derive numbered group prefix from
       - Add responsive variants: Mobile, Tablet
 
 STEP 6: Write manifest and verify
-OUTPUT \_concept/experience/4_storybook/src/pages/manifest.json
+OUTPUT \_concept/prototype/storybook/src/pages/manifest.json
 {
 "<screen-spec-relative-path>": {
 "component": "<Group>/<PageName>",
@@ -95,10 +95,10 @@ OUTPUT \_concept/experience/4_storybook/src/pages/manifest.json
 }
 }
 
-$ find \_concept/experience/4_storybook/src/stories/Pages -name '_.stories._' | wc -l
+$ find \_concept/prototype/storybook/src/stories/Pages -name '_.stories._' | wc -l
 → Should cover every screen spec + AppShell
 
-$ cd \_concept/experience/4_storybook && <package_manager> run build
+$ cd \_concept/prototype/storybook && <package_manager> run build
 IF build fails - Fix and retry
 
 EMIT [storybook-pages] completed run_id=<uuid> pages=<N>

@@ -1,14 +1,11 @@
 ---
 title: "impl-plan"
 description: "brainstorm · align · plan-vertical · supervised (testing-strategy is part of plan output)"
+sourcePath: "skaileup/impl-plan/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/impl-plan/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-plan/DOMAIN.md)
-:::
 
 
 # impl-plan

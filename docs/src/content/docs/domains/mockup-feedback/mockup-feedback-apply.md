@@ -1,6 +1,7 @@
 ---
 title: "mockup-feedback-apply"
 description: "Use when patches for a feedback session are reviewed and ready to land. Applies approved section-anchored diffs to _concept/ files, appends devlog, writes applied/<sid>.json, and creates one git commit. Fourth and final skill in the mockup-feedback c"
+sourcePath: "skaileup/mockup-feedback/apply/SKILL.md"
 sidebar:
   label: "mockup-feedback-apply"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-feedback-apply`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** mockup-feedback, apply, git, audit
-**Source:** [`skaileup/mockup-feedback/apply/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-feedback/apply/SKILL.md)
 :::
 
 

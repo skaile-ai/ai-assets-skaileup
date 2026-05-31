@@ -33,11 +33,15 @@ needs are installed.
 ## 1. Concept — high-level pass
 
 For `standard-app` and `complex-app`, the concept side runs in two passes.
-**Pass 1** establishes the grand scheme (one pass through all features at a
-coarse level):
+**Pass 1** establishes the grand scheme (one linear pass through discovery,
+design, experience, and mockups):
 
 ```
-brief + goals + comparable + brand-visual + journeys
+brief + goals + comparable
+  → brand-visual + design-inspiration
+  → journeys + behaviors + features + screens + components
+  → mockup-walkthrough-astro / static-html + mockup-component-storybook
+  → mockup-feedback loop (annotate → triage → patch → apply)
 ```
 
 | Skill | Output |
@@ -46,11 +50,19 @@ brief + goals + comparable + brand-visual + journeys
 | `concept/goals` | `_concept/discovery/goals.md` |
 | `concept/comparable` | `_concept/discovery/comparable.md` |
 | `design/brand-visual` | `_concept/design/identity.md`, `tokens.json` |
+| `design/inspiration` | `_concept/design/inspiration.md` — visual references and mood |
 | `experience/journeys` | `_concept/experience/journeys/stories.json` (EARS criteria, candidate features) |
-| `product-spec/features` | `_concept/experience/features/<group>/<feature>.md` (high-level only) |
+| `experience/behaviors` | `_concept/experience/behaviors.md` — cross-screen interaction rules |
+| `product-spec/features` | `_concept/experience/features/<group>/<feature>.md` (high-level) |
+| `experience/screens` | `_concept/experience/screens/<feature>/` — high-level screen specs |
+| `experience/components` | `_concept/experience/components/` — shared component inventory |
+| `mockup-walkthrough-astro` | `_concept/mockup-walkthrough/astro/` — clickable Astro mockup |
+| `mockup-feedback-*` | Annotation → triage → patch → apply loop on the walkthrough |
 
-After Pass 1 the agent has a coarse feature list and a brand. It does **not**
-have screen specs, datamodel, or per-feature acceptance criteria yet.
+After Pass 1 the agent has a feature list, brand, high-level screen specs, and a
+walkthrough mockup. It does **not** yet have per-feature detailed design,
+per-feature acceptance criteria, or implementation-ready vertical decomposition.
+That is what concept-slice delivers.
 
 ## 2. Concept — slice loop (per feature)
 
@@ -68,19 +80,24 @@ datamodel. Then the loop hands off.
 ## 3. Implementation — project setup (once)
 
 ```
-impl-architecture/techstack → impl-architecture/datamodel →
-impl-build/scaffold → impl-build/foundation → impl-build/migrate → impl-build/seed
+impl-architecture/techstack → impl-architecture/templates-select →
+impl-architecture/system → impl-architecture/datamodel →
+impl-build/scaffold → impl-build/foundation → impl-build/infrastructure →
+impl-build/migrate → impl-build/seed → impl-build/docs
 ```
 
 | Skill | What |
 |---|---|
-| `impl-architecture/techstack` | Picks the stack template from `impl-architecture/templates/template-*` |
-| `impl-architecture/datamodel` | Generates the canonical `model.json`, `seed.json`, `feature_map.json` |
+| `impl-architecture/techstack` | Selects the stack family (Next.js, SvelteKit, Django, …) |
+| `impl-architecture/templates-select` | Resolves the matching `template-*` reference asset; writes `tech_stack_skill` |
 | `impl-architecture/system` | High-level system design (apps, services, protocols) |
+| `impl-architecture/datamodel` | Generates the canonical `model.json`, `seed.json`, `feature_map.json` |
 | `impl-build/scaffold` | Runs the template's scaffold command |
 | `impl-build/foundation` | Auth, layout shell, design-tokens-as-code |
+| `impl-build/infrastructure` | CI, hosting config, env vars, secrets management |
 | `impl-build/migrate` | Initial migration from the datamodel |
 | `impl-build/seed` | Seed data scenarios from `seed.json` |
+| `impl-build/docs` | Generates the initial project README and API docs |
 
 These are **one-time** skills. They never run again unless the stack changes.
 
@@ -100,28 +117,36 @@ atomic commits.
 
 ## 5. Quality gates (between slices, or at release)
 
+For `standard-app`:
+
 ```
-impl-quality/test-unit · test-integration · test-e2e
-impl-quality/eval-code · audit · ready
-ops/eval-feature · ops/eval-product
+impl-quality/test-unit · test-integration · test-e2e · ready
 ops/review · ops/sync
 ```
 
-`ready` is the release gate. `eval-product` scores the finished app against
-the original goals on four design dimensions plus performance, accessibility,
-and mobile.
+`complex-app` adds:
+
+```
+impl-quality/eval-code · audit          ← between each impl-slice
+```
+
+`ready` is the release gate. `audit` and `eval-code` run between slices in
+complex-app to catch drift before it compounds.
 
 ## End-to-end
 
-```
-scope-project
-  └─► flows/standard-app.flow.yaml
-        ├─► concept (Pass 1: brief, brand, journeys, high-level features)
-        ├─► impl-build (one-time: scaffold, foundation, migrate, seed)
-        └─► loop until done:
-              concept-slice (brainstorm → align → scope → design)
-              impl-slice    (brainstorm → align → plan → implement → test → recap → refactor → commit)
-              [optional] impl-quality/audit between slices
-        └─► impl-quality/ready
-        └─► ops/eval-product
+```mermaid
+flowchart TD
+  scope["scope-project"] --> flow["flows/standard-app.flow.yaml"]
+  flow --> p1["<b>concept Pass 1</b><br/>brief · goals · comparable · brand · design-inspiration<br/>journeys · behaviors · features · screens · components<br/>mockup-walkthrough-astro · mockup-feedback loop"]
+  p1 --> build["<b>impl-build (once)</b><br/>techstack · templates-select · system · datamodel<br/>scaffold · foundation · infrastructure · migrate · seed · docs"]
+  build --> loop
+
+  subgraph loop["loop until done"]
+    direction TB
+    cs["concept-slice<br/>align → scope → design<br/><i>(no brainstorm in standard-app)</i>"] --> is["impl-slice<br/>brainstorm → align → plan →<br/>implement → test → recap → refactor → commit"]
+    is -.->|optional| audit["impl-quality/audit<br/>between slices"]
+  end
+
+  loop --> ready["impl-quality/ready<br/><i>release gate</i>"]
 ```

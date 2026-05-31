@@ -1,6 +1,7 @@
 ---
 title: "impl-architecture-templates-select"
 description: "Use after techstack.md exists to resolve the abstract stack decision to exactly one concrete scaffold template (template-postxl, template-nextjs-shadcn, template-nextjs-radix, template-nuxt-ui, template-nuxt-primevue, template-nuxt-minimal, template-"
+sourcePath: "skaileup/impl-architecture/templates-select/SKILL.md"
 sidebar:
   label: "impl-architecture-templates-select"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-architecture-templates-select`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** templates, scaffold, stack-selection, selector, techstack, architecture
-**Source:** [`skaileup/impl-architecture/templates-select/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-architecture/templates-select/SKILL.md)
 :::
 
 

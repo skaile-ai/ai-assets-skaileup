@@ -1,6 +1,7 @@
 ---
 title: "design-brand-visual"
 description: "Use when the project brief is approved but no visual brand exists. Discovers aesthetic direction through plain-language questions, extracts palettes from reference URLs, and writes identity.md + tokens.json + brandbook.html to _concept/discovery/bran"
+sourcePath: "skaileup/design/brand-visual/SKILL.md"
 sidebar:
   label: "design-brand-visual"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `design-brand-visual`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** brand, colors, fonts, identity, tokens, design, visual, palette, typography, atmosphere, brandbook
-**Source:** [`skaileup/design/brand-visual/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/design/brand-visual/SKILL.md)
 :::
 
 

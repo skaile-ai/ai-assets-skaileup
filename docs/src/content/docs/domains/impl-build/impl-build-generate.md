@@ -1,6 +1,7 @@
 ---
 title: "impl-build-generate"
 description: "Use when the project uses the PostXL tech stack and you need to regenerate code or resolve merge conflicts after a schema change or custom action addition. Runs generators from postxl-schema.json, auto-resolves conflicts via a four-level cascade, and"
+sourcePath: "skaileup/impl-build/generate/SKILL.md"
 sidebar:
   label: "impl-build-generate"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-build-generate`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** generate, codegen, postxl, schema, conflicts, prisma, regenerate, sync
-**Source:** [`skaileup/impl-build/generate/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/generate/SKILL.md)
 :::
 
 

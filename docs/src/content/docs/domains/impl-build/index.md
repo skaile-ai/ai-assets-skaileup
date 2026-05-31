@@ -1,14 +1,11 @@
 ---
 title: "impl-build"
 description: "One-time / project-level: scaffold · foundation · infrastructure · migrate · seed · generate · docs"
+sourcePath: "skaileup/impl-build/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/impl-build/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/DOMAIN.md)
-:::
 
 
 # impl-build

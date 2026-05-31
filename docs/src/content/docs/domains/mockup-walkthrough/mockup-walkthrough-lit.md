@@ -1,6 +1,7 @@
 ---
 title: "mockup-walkthrough-lit"
 description: "Use when stakeholders need a clickable Lit web-components walkthrough of the application — built with Vite, rendered as custom elements whose built HTML is openable directly in a browser AND embeddable into a host page. Generates one HTML file per sc"
+sourcePath: "skaileup/mockup-walkthrough/lit/SKILL.md"
 sidebar:
   label: "mockup-walkthrough-lit"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-walkthrough-lit`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** walkthrough, mockup, lit, web-components, embeddable, standard-app, frontend, prototype, data-spec
-**Source:** [`skaileup/mockup-walkthrough/lit/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-walkthrough/lit/SKILL.md)
 :::
 
 

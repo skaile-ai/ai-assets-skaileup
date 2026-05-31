@@ -1,6 +1,7 @@
 ---
 title: "experience-behaviors"
 description: "Use when features are approved and user wants to formalize behavioral rules, state machines, or entity lifecycle. Also when user says 'behavioral specs', 'state machine', 'formalize rules', 'allium specs'."
+sourcePath: "skaileup/experience/behaviors/SKILL.md"
 sidebar:
   label: "experience-behaviors"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `experience-behaviors`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** behavior, specification, allium, rules, states, transitions, domain, lifecycle, state-machine
-**Source:** [`skaileup/experience/behaviors/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/behaviors/SKILL.md)
 :::
 
 

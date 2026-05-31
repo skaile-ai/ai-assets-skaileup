@@ -1,13 +1,21 @@
 import mdx from "@astrojs/mdx";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import mermaid from "astro-mermaid";
 
 export default defineConfig({
   integrations: [
+    // Must precede Starlight so it processes ```mermaid fences first.
+    // Client-side rendering (no Playwright); autoTheme follows Starlight's data-theme.
+    mermaid({ autoTheme: true }),
     starlight({
       title: "Skaileup Skill Collection",
       description:
         "Concept, build, and quality pipeline skills for the Skaile ecosystem.",
+      components: {
+        // Shows each page's source file path (linked to GitHub) above the footer.
+        Footer: "./src/components/Footer.astro",
+      },
       social: [
         {
           icon: "github",

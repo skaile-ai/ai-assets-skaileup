@@ -1,14 +1,11 @@
 ---
 title: "design"
 description: "brand-identity · tokens · voice · inspiration"
+sourcePath: "skaileup/design/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
-
-:::note[Domain manifest]
-**Source:** [`skaileup/design/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/design/DOMAIN.md)
-:::
 
 
 # design

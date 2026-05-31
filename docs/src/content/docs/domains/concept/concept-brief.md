@@ -1,6 +1,7 @@
 ---
 title: "concept-brief"
 description: "Use when starting a new concept and no _concept/discovery/ exists, or when the user says 'I have an app idea', 'new project', 'start from scratch', or wants to redefine an existing brief."
+sourcePath: "skaileup/concept/brief/SKILL.md"
 sidebar:
   label: "concept-brief"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-brief`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** brief, idea, project, vision, start, new, pitch, audience, problem
-**Source:** [`skaileup/concept/brief/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept/brief/SKILL.md)
 :::
 
 

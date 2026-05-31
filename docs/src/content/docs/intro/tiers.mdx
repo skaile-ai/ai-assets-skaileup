@@ -24,29 +24,37 @@ simple-app    linear, full             N × impl-slice            autonomous
 
 standard-app  linear high-level +      N × impl-slice            mostly autonomous,
               N × concept-slice        (full slice loop +        plan checkpoint
-              (per-feature design)      recap mandatory)         per slice
+              (no brainstorm;           recap mandatory)         per slice
+               align+scope+design)
 
 complex-app   linear high-level +      N × impl-slice            HITL — supervised
               N × concept-slice        (full slice loop +        plan + brainstorm
-              + project-overview       audit between slices)     + align per slice
+              (full; incl. brainstorm) audit between slices)     + align per slice
+              + project-overview
 ```
 
 ## Decision rule
 
 The `skaileup/scope/scope-project` skill picks a tier from a 2–3 question
-interview. Order matters — the enterprise check sits above the multi-user
-branch so a multi-user enterprise app doesn't short-circuit to `standard-app`.
+interview. The branches are evaluated top-down:
 
-```
-if features ≤ 1 and persistence trivial:        → mvp
-elif features ≤ 5 and single-user:              → simple-app
-elif multi-product or enterprise integration:   → complex-app
-elif features ≤ 20 or multi-user:               → standard-app
-else:                                           → complex-app   # explicit fall-through
+```mermaid
+flowchart TD
+  start([scope signals]) --> q1{"features ≤ 1<br/>and persistence trivial?"}
+  q1 -->|yes| mvp([mvp])
+  q1 -->|no| q2{"features ≤ 5<br/>and single-user?"}
+  q2 -->|yes| simple([simple-app])
+  q2 -->|no| q3{"multi-product or<br/>enterprise integration?"}
+  q3 -->|yes| complex([complex-app])
+  q3 -->|no| q4{"features ≤ 20<br/>or multi-user?"}
+  q4 -->|yes| standard([standard-app])
+  q4 -->|no| complex2([complex-app · fall-through])
 ```
 
 `multi-product or enterprise integration` is satisfied when
-`signals.persistence == "external"` OR `len(signals.integrations) >= 2`.
+`signals.persistence == "external"` OR `len(signals.integrations) >= 2` — this
+check sits **above** the multi-user branch so a multi-user enterprise app
+doesn't short-circuit to `standard-app`.
 
 The user can override at any time with `scope-project --tier=<name>`.
 
@@ -61,23 +69,26 @@ The user can override at any time with `scope-project --tier=<name>`.
    concept/goals                         ✓         ✓
    concept/comparable                    ✓         ✓
    design/brand-visual           ✓       ✓         ✓
+   design/inspiration                    ✓         ✓
    design/brand-voice                              ✓
    product-spec/features    ✓    ✓       ✓         ✓
    experience/journeys           ✓       ✓         ✓
    experience/screens            ✓       ✓         ✓
+   experience/behaviors                  ✓         ✓
    experience/components                 ✓         ✓
-   mockup-walkthrough-text      ✓
-   mockup-walkthrough-static-html      ✓
-   mockup-walkthrough-astro                        ✓ (default)
-   mockup-walkthrough-framework                                    ✓
-   mockup-component-isolated-html      ✓
-   mockup-component-storybook                      ✓               ✓
-   mockup-feedback-*                               ✓               ✓
+   mockup-walkthrough-text  ✓
+   mockup-walkthrough-static-html ✓
+   mockup-walkthrough-astro              ✓         ✓
+   mockup-walkthrough-framework                    ✓
+   mockup-component-isolated-html ✓
+   mockup-component-storybook            ✓         ✓
+   mockup-feedback-*                     ✓         ✓
    ─────────────────────────────────────────────────────
-   concept-slice/*                                 ✓               ✓
+   concept-slice/*                       ✓         ✓
    ─────────────────────────────────────────────────────
    impl-architecture/techstack ✓ ✓       ✓         ✓
    impl-architecture/datamodel    ✓      ✓         ✓
+   impl-architecture/system              ✓         ✓
    impl-plan/brainstorm                  ✓         ✓
    impl-plan/align                ✓      ✓         ✓
    impl-plan/plan-vertical  ✓    ✓       ✓         ✓
@@ -85,6 +96,9 @@ The user can override at any time with `scope-project --tier=<name>`.
    impl-build/scaffold      ✓    ✓       ✓         ✓
    impl-build/foundation         ✓       ✓         ✓
    impl-build/migrate            ✓       ✓         ✓
+   impl-build/seed               ✓       ✓         ✓
+   impl-build/infrastructure             ✓         ✓
+   impl-build/docs               ✓       ✓         ✓
    impl-slice/implement     ✓    ✓       ✓         ✓
    impl-slice/test               ✓       ✓         ✓
    impl-slice/recap              ✓       ✓         ✓
@@ -93,6 +107,8 @@ The user can override at any time with `scope-project --tier=<name>`.
    ─────────────────────────────────────────────────────
    impl-quality/test-unit   ✓    ✓       ✓         ✓
    impl-quality/test-e2e         ✓       ✓         ✓
+   impl-quality/test-integration         ✓         ✓
+   impl-quality/eval-code                          ✓
    impl-quality/audit                              ✓
    impl-quality/ready                    ✓         ✓
    ─────────────────────────────────────────────────────
@@ -104,6 +120,52 @@ The user can override at any time with `scope-project --tier=<name>`.
 Bundles inherit: `simple-app` includes `mvp`, `standard-app` includes `simple-app`,
 `complex-app` includes `standard-app`. Each bundle file lists only its
 *additions*.
+
+**concept-slice phases by tier:** `standard-app` runs `align → scope-feature → design-feature` (no brainstorm). `complex-app` adds `brainstorm` as the first phase. Both still require `/clear` between phases and read from `_slice/concept/<id>/` scratch files.
+
+## Skill alternatives
+
+Several skills are **mutually exclusive variants** — the tier (or a selector
+skill) picks exactly one. They produce the same kind of artifact at different
+fidelity, so installing more than one is redundant.
+
+### Walkthrough mockups — fidelity rises with tier
+
+```mermaid
+flowchart LR
+  screens[experience/screens] --> pick{tier?}
+  pick -->|mvp| text["mockup-walkthrough-text<br/><i>ASCII wireframes</i>"]
+  pick -->|simple| static["mockup-walkthrough-static-html<br/><i>zero-build HTML</i>"]
+  pick -->|standard| astro["mockup-walkthrough-astro<br/><i>Astro project (default)</i>"]
+  pick -->|complex| fw["mockup-walkthrough-framework<br/><i>full framework + lit variant</i>"]
+  astro --> fb[mockup-feedback loop]
+  fw --> fb
+```
+
+### Component mockups — two render targets
+
+```mermaid
+flowchart LR
+  screens[experience/components] --> pick{tier?}
+  pick -->|mvp · simple| iso["mockup-component-isolated-html<br/><i>single-file component</i>"]
+  pick -->|standard · complex| sb["mockup-component-storybook<br/><i>Storybook stories</i>"]
+```
+
+### Tech-stack template — one of seven, chosen at runtime
+
+```mermaid
+flowchart LR
+  ts[impl-architecture/techstack] --> sel[impl-architecture/templates-select]
+  sel --> t1[template-postxl]
+  sel --> t2[template-nextjs]
+  sel --> t3[template-...]
+  sel --> tn["(7 template-* assets)"]
+  sel -.writes.-> var[["tech_stack_skill"]]
+```
+
+`templates-select` is the **selector**: it reads the chosen stack and resolves
+exactly one `template-*` reference asset, writing `tech_stack_skill` for the
+build phase to consume. The templates are reference assets, not skills.
 
 ## Why slicing matters
 

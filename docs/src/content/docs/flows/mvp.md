@@ -1,6 +1,7 @@
 ---
 title: "mvp"
 description: "Smallest tier — a single-feature, trivial-persistence app built in one linear pass with no slice loops."
+sourcePath: "skaileup/flows/mvp/mvp.md"
 sidebar:
   label: "mvp"
   order: 1

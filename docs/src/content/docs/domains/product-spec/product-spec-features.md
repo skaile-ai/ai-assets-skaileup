@@ -1,6 +1,7 @@
 ---
 title: "product-spec-features"
 description: "Use after user journeys are approved to plan features. Derives features from stories.json candidate hints and the project brief. Writes feature files organized in numbered groups. Required before screens and datamodel skills."
+sourcePath: "skaileup/product-spec/features/SKILL.md"
 sidebar:
   label: "product-spec-features"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `product-spec-features`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** features, requirements, modules, functionality, planning, story-refs, must-have, nice-to-have
-**Source:** [`skaileup/product-spec/features/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/product-spec/features/SKILL.md)
 :::
 
 

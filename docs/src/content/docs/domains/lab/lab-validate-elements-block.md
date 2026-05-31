@@ -1,6 +1,7 @@
 ---
 title: "lab-validate-elements-block"
 description: "Use when validating the `elements:` block in screen frontmatter or example fixtures. Returns 0 for valid, non-zero with line numbers for invalid."
+sourcePath: "ai-assets-dev/lab/validate-elements-block/SKILL.md"
 sidebar:
   label: "lab-validate-elements-block"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-validate-elements-block`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** validation, elements, frontmatter, screens, lab
-**Source:** [`ai-assets-dev/lab/validate-elements-block/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/validate-elements-block/SKILL.md)
 :::
 
 

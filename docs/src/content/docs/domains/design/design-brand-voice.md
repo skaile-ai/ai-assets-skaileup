@@ -1,6 +1,7 @@
 ---
 title: "design-brand-voice"
 description: "Use when the visual brand exists and you need to define communication tone, error message style, empty state messaging, micro-copy guidelines, and notification voice. Produces behavioral.md + copy_guidelines.md in _concept/discovery/brand/."
+sourcePath: "skaileup/design/brand-voice/SKILL.md"
 sidebar:
   label: "design-brand-voice"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `design-brand-voice`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** brand, tone, voice, copy, microcopy, errors, empty-states, notifications, messaging, ux-writing
-**Source:** [`skaileup/design/brand-voice/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/design/brand-voice/SKILL.md)
 :::
 
 

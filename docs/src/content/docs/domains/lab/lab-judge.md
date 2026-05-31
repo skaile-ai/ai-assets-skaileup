@@ -1,6 +1,7 @@
 ---
 title: "lab-judge"
 description: "LLM-as-judge quality scoring for generated code against recipe specifications"
+sourcePath: "ai-assets-dev/lab/judge/SKILL.md"
 sidebar:
   label: "lab-judge"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-judge`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets-dev/lab/judge/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/judge/SKILL.md)
 :::
 
 

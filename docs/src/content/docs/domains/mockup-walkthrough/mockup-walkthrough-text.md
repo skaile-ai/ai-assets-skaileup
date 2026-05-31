@@ -1,6 +1,7 @@
 ---
 title: "mockup-walkthrough-text"
 description: "Use when screen specs are approved and user wants interactive HTML mockups. Also when user says 'mockup', 'prototype', 'show me what it looks like'. Generates a linked multi-page prototype. Supports 3 stacks: Alpine.js+Shoelace, Vue 3+PrimeVue, Preac"
+sourcePath: "skaileup/mockup-walkthrough/text/SKILL.md"
 sidebar:
   label: "mockup-walkthrough-text"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `mockup-walkthrough-text`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** ui, ux, design, frontend, mockups, prototype, linked, alpine, shoelace, primevue, vue3, preact, htm
-**Source:** [`skaileup/mockup-walkthrough/text/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/mockup-walkthrough/text/SKILL.md)
 :::
 
 

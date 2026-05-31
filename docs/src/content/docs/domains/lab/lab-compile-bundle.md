@@ -1,6 +1,7 @@
 ---
 title: "lab-compile-bundle"
 description: "Syncs bundles/*.bundle.yaml with flows/*.flow.yaml — adds any missing skill: entries to each bundle's requires: list. Additive only: never removes entries a user has added. Inheritance-aware: skips skills already provided by ancestor bundles."
+sourcePath: "ai-assets-dev/lab/compile-bundle/SKILL.md"
 sidebar:
   label: "lab-compile-bundle"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-compile-bundle`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** lab, bundle, flow, sync, maintenance
-**Source:** [`ai-assets-dev/lab/compile-bundle/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/compile-bundle/SKILL.md)
 :::
 
 

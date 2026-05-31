@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-test-plan"
 description: "Use when you need a comprehensive test plan derived from concept specs. Generates test scenarios per feature covering happy paths, error states, edge cases, and permissions, mapped to seed data scenarios."
+sourcePath: "skaileup/impl-quality/test-plan/SKILL.md"
 sidebar:
   label: "impl-quality-test-plan"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-test-plan`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** testing, test-plan, qa, scenarios, coverage, acceptance
-**Source:** [`skaileup/impl-quality/test-plan/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/test-plan/SKILL.md)
 :::
 
 

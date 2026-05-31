@@ -1,6 +1,7 @@
 ---
 title: "experience-screens-technical"
 description: "Technical variant of the screens skill with component inventories. Use when screen specs exist and require precise component-level breakdowns. NOT in pipeline — experimental variant for testing purposes."
+sourcePath: "skaileup/experience/screens-technical/SKILL.md"
 sidebar:
   label: "experience-screens-technical"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `experience-screens-technical`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** screens, pages, ui, layout, components, states, routes, navigation
-**Source:** [`skaileup/experience/screens-technical/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/experience/screens-technical/SKILL.md)
 :::
 
 

@@ -5,17 +5,28 @@ sidebar:
   order: 7
 ---
 
-A **flow** is a YAML graph of skill nodes and edges. A **bundle** is the matching list of skills that flow needs installed. They come in pairs:
+A **flow** is a YAML graph of skill nodes and edges. A **bundle** is the matching list of skills that flow needs installed. They come in pairs, co-located under `skaileup/flows/<tier>/`:
 
 ```
-flows/                                              bundles/
-├── concept-slice.flow.yaml   ◄── pair ──►        ├── concept-slice.bundle.yaml
-├── impl-slice.flow.yaml      ◄── pair ──►        ├── impl-slice.bundle.yaml
-├── mvp.flow.yaml             ◄── pair ──►        ├── mvp.bundle.yaml
-├── simple-app.flow.yaml      ◄── pair ──►        ├── simple-app.bundle.yaml
-├── standard-app.flow.yaml    ◄── pair ──►        ├── standard-app.bundle.yaml
-├── complex-app.flow.yaml     ◄── pair ──►        ├── complex-app.bundle.yaml
-└── custom.flow.yaml          ◄── pair ──►        └── custom.bundle.yaml
+skaileup/flows/
+├── concept-slice/
+│   ├── concept-slice.flow.yaml
+│   └── concept-slice.bundle.yaml
+├── impl-slice/
+│   ├── impl-slice.flow.yaml
+│   └── impl-slice.bundle.yaml
+├── mvp/
+│   ├── mvp.flow.yaml
+│   └── mvp.bundle.yaml
+├── simple-app/
+│   ├── simple-app.flow.yaml
+│   └── simple-app.bundle.yaml
+├── standard-app/
+│   ├── standard-app.flow.yaml
+│   └── standard-app.bundle.yaml
+└── complex-app/
+    ├── complex-app.flow.yaml
+    └── complex-app.bundle.yaml
 ```
 
 Use:
@@ -30,25 +41,36 @@ Tier flows compose them.
 
 ## Tier composition
 
+```mermaid
+flowchart LR
+  subgraph mvp["mvp.flow.yaml"]
+    direction LR
+    m1[scope-project] --> m2[linear concept] --> m3[impl-build/scaffold] --> m4["impl-slice<br/>1 iteration, no recap/refactor"] --> m5([done])
+  end
 ```
-mvp.flow.yaml:
-   scope-project ─► linear concept ─► impl-build/scaffold ─►
-   impl-slice (1 iteration, no recap, no refactor) ─► done
 
-simple-app.flow.yaml:
-   scope-project ─► linear concept ─► impl-build setup ─►
-   loop: impl-slice ─► done (when all features built)
+```mermaid
+flowchart LR
+  subgraph simple["simple-app.flow.yaml"]
+    direction LR
+    s1[scope-project] --> s2[linear concept] --> s3[impl-build setup] --> s4["loop: impl-slice"] --> s5([done — all features built])
+  end
+```
 
-standard-app.flow.yaml:
-   scope-project ─► high-level concept (brief, brand, journeys) ─►
-   impl-build setup ─►
-   loop: concept-slice ─► impl-slice ─► done
+```mermaid
+flowchart LR
+  subgraph standard["standard-app.flow.yaml"]
+    direction LR
+    t1[scope-project] --> t2["high-level concept<br/>brief · brand · journeys"] --> t3[impl-build setup] --> t4["loop: concept-slice → impl-slice"] --> t5([done])
+  end
+```
 
-complex-app.flow.yaml:
-   scope-project ─► high-level concept ─► project-overview ─►
-   impl-build setup ─►
-   loop: concept-slice ─► impl-slice (supervised plan) ─►
-        impl-quality/audit (every slice) ─► done
+```mermaid
+flowchart LR
+  subgraph complex["complex-app.flow.yaml"]
+    direction LR
+    c1[scope-project] --> c2[high-level concept] --> c3[project-overview] --> c4[impl-build setup] --> c5["loop: concept-slice → impl-slice<br/>supervised plan + impl-quality/audit every slice"] --> c6([done])
+  end
 ```
 
 Bundles inherit: `simple-app` includes `mvp`, `standard-app` includes
@@ -64,8 +86,7 @@ what the flow executes and what the bundle installs. The repo also ships a
 
 ## Custom flows
 
-`custom.flow.yaml` is the user's playground — start by inheriting a tier and
-override what you need:
+You can create your own flow by starting from a tier and overriding what you need. Create a file such as `skaileup/flows/custom/custom.flow.yaml`:
 
 ```yaml
 extends: standard-app

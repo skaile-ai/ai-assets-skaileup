@@ -1,0 +1,44 @@
+---
+// Custom footer: prepend the page's source file path (linked to GitHub) to the
+// default Starlight footer, so every rendered page shows where it comes from.
+//
+//   • Generated pages (skills/domains/flows) carry `sourcePath` frontmatter →
+//     points at the authoritative repo file (SKILL.md, DOMAIN.md, *.flow.yaml's .md).
+//   • Hand-written pages omit it → fall back to their own location under docs/,
+//     derived from Astro's project-root-relative `entry.filePath`.
+import Default from "@astrojs/starlight/components/Footer.astro";
+
+const GITHUB_BASE =
+  "https://github.com/skaile-ai/ai-assets-skaileup/blob/main";
+
+const { entry } = Astro.locals.starlightRoute;
+const sourcePath =
+  entry.data.sourcePath ??
+  (entry.filePath ? `docs/${entry.filePath}` : null);
+---
+
+{
+  sourcePath && (
+    <p class="source-path">
+      Source:{" "}
+      <a href={`${GITHUB_BASE}/${sourcePath}`}>
+        <code>{sourcePath}</code>
+      </a>
+    </p>
+  )
+}
+
+<Default><slot /></Default>
+
+<style>
+  .source-path {
+    margin: 0 0 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+  .source-path code {
+    font-size: inherit;
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 title: "impl-build-migrate"
 description: "Use after the data model is finalized and before feature implementation to generate database migration files. Reads model.dbml + model.json and stack.md and produces migration files for the target ORM (Prisma, Drizzle, Directus, raw SQL)."
+sourcePath: "skaileup/impl-build/migrate/SKILL.md"
 sidebar:
   label: "impl-build-migrate"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-build-migrate`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** migrate, database, schema, prisma, directus, drizzle, sql, ddl, migration
-**Source:** [`skaileup/impl-build/migrate/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/migrate/SKILL.md)
 :::
 
 

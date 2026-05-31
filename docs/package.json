@@ -12,6 +12,8 @@
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/starlight": "^0.37.7",
     "astro": "^5.18.0",
+    "astro-mermaid": "^2.0.1",
+    "mermaid": "^11.15.0",
     "yaml": "^2.8.3"
   }
 }

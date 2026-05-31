@@ -1,6 +1,7 @@
 ---
 title: "impl-build-scaffold"
 description: "Use when a concept is complete and no project directory exists yet. Reads stack.md, uses the stack profile for scaffold commands and conventions, creates the directory structure, initializes git, and sets up _implementation/ tracking. Run before foun"
+sourcePath: "skaileup/impl-build/scaffold/SKILL.md"
 sidebar:
   label: "impl-build-scaffold"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-build-scaffold`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** scaffold, init, setup, boilerplate, project, bootstrap, git, structure
-**Source:** [`skaileup/impl-build/scaffold/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-build/scaffold/SKILL.md)
 :::
 
 

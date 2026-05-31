@@ -1,6 +1,7 @@
 ---
 title: "ops-eval-product"
 description: "Use after all feature groups pass eval-feature as the final gate before release. Grades the complete application against original brief goals on quality, originality, craft, functionality, performance, accessibility, and mobile. Gate: release."
+sourcePath: "skaileup/ops/eval-product/SKILL.md"
 sidebar:
   label: "ops-eval-product"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `ops-eval-product`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** evaluate, product, goals, design, ux, accessibility, performance, graded, final-gate, adversarial
-**Source:** [`skaileup/ops/eval-product/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/ops/eval-product/SKILL.md)
 :::
 
 

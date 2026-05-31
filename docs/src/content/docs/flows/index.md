@@ -1,6 +1,7 @@
 ---
 title: "Flows"
 description: "The tier flows and the two reusable slice-loop building blocks, each paired with a bundle."
+sourcePath: "skaileup/flows/index.md"
 sidebar:
   label: "Overview"
   order: 0

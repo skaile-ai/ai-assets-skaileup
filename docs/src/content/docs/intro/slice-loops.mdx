@@ -5,97 +5,70 @@ sidebar:
   order: 6
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
 Both halves of the collection have a per-feature loop with the same shape. The
 shape is what makes context resets safe: each phase reads a scratch file from
 the prior phase, not chat history.
 
 ## concept-slice (per feature, big apps)
 
-```
-   pick next feature from product-spec/features/ (high-level)
-            │
-            ▼
-   ┌──────────────────────────┐   writes _slice/concept/<id>/brainstorm.md
-   │ concept-slice/brainstorm │   sparring on what this feature is
-   └────────┬─────────────────┘   ───── /clear ─────
-            ▼
-   ┌──────────────────────────┐   writes _slice/concept/<id>/align.md
-   │ concept-slice/align      │   ★ AI interviews user about this feature
-   │   ★ surfaces edge cases, │   ★ acceptance criteria become explicit
-   │     unstated rules       │
-   └────────┬─────────────────┘   ───── /clear ─────
-            ▼
-   ┌──────────────────────────┐   writes _slice/concept/<id>/scope.md
-   │ concept-slice/            │   what's IN, what's OUT for this feature
-   │   scope-feature          │   ★ prevents scope creep mid-design
-   └────────┬─────────────────┘   ───── /clear ─────
-            ▼
-   ┌──────────────────────────┐   appends to:
-   │ concept-slice/            │     product-spec/features/<feature>.md
-   │   design-feature         │     experience/screens/<feature>/*.md
-   │                          │     mockup/<tier>/<feature>.*
-   │                          │     datamodel: only this feature's entities
-   └────────┬─────────────────┘
-            │
-            └────────► hand off to impl-slice (or loop to next feature)
+<Aside type="note">
+`standard-app` runs the shorter three-phase loop: **align → scope-feature → design-feature** (no brainstorm). `complex-app` prepends **brainstorm** as the first phase. Both use `/clear` between phases and read from `_slice/concept/<id>/` scratch.
+</Aside>
+
+```mermaid
+flowchart TD
+  pick([pick next feature from product-spec/features/ — high-level])
+  pick --> brainstorm
+
+  brainstorm["<b>concept-slice/brainstorm</b> ⁽ᶜᵒᵐᵖˡᵉˣ ᵒⁿˡʸ⁾<br/>sparring on what this feature is<br/><i>writes _slice/concept/&lt;id&gt;/brainstorm.md</i>"]
+  brainstorm -->|/clear| align
+
+  align["<b>concept-slice/align</b><br/>★ AI interviews user · surfaces edge cases &amp; unstated rules<br/>★ acceptance criteria become explicit<br/><i>writes align.md</i>"]
+  align -->|/clear| scope
+
+  scope["<b>concept-slice/scope-feature</b><br/>what's IN, what's OUT for this feature<br/>★ prevents scope creep mid-design<br/><i>writes scope.md</i>"]
+  scope -->|/clear| design
+
+  design["<b>concept-slice/design-feature</b><br/>appends to product-spec/features · experience/screens<br/>mockup/&lt;tier&gt; · datamodel (this feature's entities only)"]
+  design --> handoff([hand off to impl-slice — or loop to next feature])
 ```
 
 ## impl-slice (per feature, runs N times)
 
-```
-   pick next feature (from product-spec, or just-produced concept-slice)
-            │
-            ▼
-   ┌──────────────────────────┐   writes _slice/impl/<id>/brainstorm.md
-   │ impl-plan/brainstorm     │   sparring · multi-method · idea space
-   └────────┬─────────────────┘   ───── /clear ─────
-            ▼
-   ┌──────────────────────────┐   writes _slice/impl/<id>/align.md
-   │ impl-plan/align          │   AI interviews user (grill-me style)
-   │   ★ shared understanding │   ★ surfaces unstated assumptions
-   └────────┬─────────────────┘   ───── /clear ─────
-            ▼
-   ┌──────────────────────────┐   writes _slice/impl/<id>/plan.md
-   │ impl-plan/plan-vertical  │   ★ vertical decomposition
-   │   ★ trims AI from        │     UI + logic + data for this slice
-   │     horizontal default   │   ★ defines testing strategy
-   └────────┬─────────────────┘   ───── /clear ─────
-            ▼
-   ┌──────────────────────────┐   reads plan.md
-   │ impl-slice/implement     │   codes the slice end-to-end
-   │   (page + logic +        │   verifies against testing strategy
-   │    schema if needed)     │   from plan
-   └────────┬─────────────────┘
-            ▼
-   ┌──────────────────────────┐   short feedback loops on usability:
-   │ impl-slice/test          │   too many buttons? too much text?
-   │  (NOT impl-quality/test) │   does it feel awkward to use?
-   └────────┬─────────────────┘   ────────────
-            ▼
-   ┌──────────────────────────┐   writes _slice/impl/<id>/recap.md
-   │ impl-slice/recap         │   ★ MANDATORY — explain the flow
-   │   ★ produces a diagram   │     so the user keeps the overview
-   │   ★ skipping it = losing │     after 5+ iterations
-   │     decision authority   │
-   └────────┬─────────────────┘
-            ▼
-   ┌──────────────────────────┐   ★ AI defaults to ADDING complexity
-   │ impl-slice/refactor      │     so refactor is FORCED, not optional
-   │   ★ smallest improvement?│   "could a new dev follow this without
-   │   ★ preserve behavior,   │    mental jumps?"
-   │     improve structure    │
-   └────────┬─────────────────┘
-            ▼
-   ┌──────────────────────────┐   atomic commits
-   │ impl-slice/commit        │   ★ deletes _slice/impl/<id>/ scratch
-   │                          │     (truth lives in code; stale planning
-   │                          │      docs confuse future iterations)
-   └────────┬─────────────────┘
-            │
-            └────────► loop back to "pick next feature"
+```mermaid
+flowchart TD
+  pick([pick next feature — from product-spec, or just-produced concept-slice])
+  pick --> brainstorm
 
-   ─── if stuck mid-slice ──►  impl-quality/debug-self-verify  or
-                               impl-quality/debug-handoff
+  brainstorm["<b>impl-plan/brainstorm</b><br/>sparring · multi-method · idea space<br/><i>writes _slice/impl/&lt;id&gt;/brainstorm.md</i>"]
+  brainstorm -->|/clear| align
+
+  align["<b>impl-plan/align</b><br/>AI interviews user (grill-me) · ★ shared understanding<br/>★ surfaces unstated assumptions<br/><i>writes align.md</i>"]
+  align -->|/clear| plan
+
+  plan["<b>impl-plan/plan-vertical</b><br/>★ vertical decomposition: UI + logic + data for this slice<br/>★ trims AI from horizontal default · defines testing strategy<br/><i>writes plan.md</i>"]
+  plan -->|/clear| implement
+
+  implement["<b>impl-slice/implement</b><br/>codes the slice end-to-end (page + logic + schema)<br/>verifies against the plan's testing strategy<br/><i>reads plan.md</i>"]
+  implement --> test
+
+  test["<b>impl-slice/test</b> (NOT impl-quality/test)<br/>short usability loops: too many buttons? awkward to use?"]
+  test --> recap
+
+  recap["<b>impl-slice/recap</b> ★ MANDATORY<br/>produces a diagram so the user keeps the overview<br/>skipping it = losing decision authority<br/><i>writes recap.md</i>"]
+  recap --> refactor
+
+  refactor["<b>impl-slice/refactor</b> ★ FORCED, not optional<br/>AI defaults to ADDING complexity<br/>'could a new dev follow this without mental jumps?'"]
+  refactor --> commit
+
+  commit["<b>impl-slice/commit</b><br/>atomic commits · ★ deletes _slice/impl/&lt;id&gt;/ scratch<br/>(truth lives in code; stale docs confuse future iterations)"]
+  commit -->|loop back| pick
+
+  implement -.->|stuck mid-slice| debug
+  plan -.->|stuck mid-slice| debug
+  debug["impl-quality/debug-self-verify<br/>or debug-handoff"]
 ```
 
 ## Why the resets work

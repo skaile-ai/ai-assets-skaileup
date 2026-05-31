@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-implement-page"
 description: "Use when implementing all features within a single page using outside-in TDD. Writes failing page tests first, then per-feature failing tests, implements until green. Uses Storybook page compositions as UI starting point if available. TDD Guard enfor"
+sourcePath: "skaileup/impl-slice/implement-page/SKILL.md"
 sidebar:
   label: "impl-slice-implement-page"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-implement-page`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** implement, feature, page, tdd, tdd-guard, test-first, e2e, component
-**Source:** [`skaileup/impl-slice/implement-page/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/implement-page/SKILL.md)
 :::
 
 
@@ -50,7 +50,7 @@ ROLE Page implementer — implements all features on one page using TDD Guard-en
 READS
 \_concept/experience/screens/<group>/<screen>.md — page spec: layout, states, routes, data
 \_concept/experience/features/<group>/<feature>.md — feature specs for features on this page
-? \_concept/experience/4_storybook/src/pages/ — storybook page composition (UI reference)
+? \_concept/prototype/storybook/src/pages/ — storybook page composition (UI reference)
 \_concept/blueprint/datamodel/model.json — data model (relevant entities)
 \_concept/blueprint/datamodel/seed.json — seed data scenarios
 \_concept/discovery/brand/tokens.json — brand tokens (never invent colors)

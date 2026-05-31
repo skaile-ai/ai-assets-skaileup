@@ -1,6 +1,7 @@
 ---
 title: "impl-quality-debug-handoff"
 description: "Use when the user is stuck on a bug and wants to hand off to a fresh agent (or themselves after /clear). Produces a self-contained markdown summary — bug description, attempts so far, current hypothesis, suggested next steps — pasteable into a new ch"
+sourcePath: "skaileup/impl-quality/debug-handoff/SKILL.md"
 sidebar:
   label: "impl-quality-debug-handoff"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-quality-debug-handoff`
 **Stage:** alpha · **Version:** 0.1.0
 **Tags:** debug, handoff, fresh-chat, escalation, context-transfer
-**Source:** [`skaileup/impl-quality/debug-handoff/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-quality/debug-handoff/SKILL.md)
 :::
 
 

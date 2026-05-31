@@ -1,6 +1,7 @@
 ---
 title: "impl-slice-git-prepare"
 description: "Use when no git repo exists or no implementation branch exists before starting a supervised implementation run. Initializes git if needed, creates the implementation branch, and optionally sets up a git worktree (Claude Code / local mode only)."
+sourcePath: "skaileup/impl-slice/git-prepare/SKILL.md"
 sidebar:
   label: "impl-slice-git-prepare"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-slice-git-prepare`
 **Stage:** beta · **Version:** 1.0.0
 **Tags:** git, setup, worktree, branch, prepare, repository
-**Source:** [`skaileup/impl-slice/git-prepare/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-slice/git-prepare/SKILL.md)
 :::
 
 

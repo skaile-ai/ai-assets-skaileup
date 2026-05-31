@@ -1,6 +1,7 @@
 ---
 title: "lab-learn"
 description: "Analyze skill usage observations and extract patterns, corrections, and test cases"
+sourcePath: "ai-assets-dev/lab/learn/SKILL.md"
 sidebar:
   label: "lab-learn"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `lab-learn`
 **Stage:** — · **Version:** —
 **Tags:** —
-**Source:** [`ai-assets-dev/lab/learn/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/ai-assets-dev/lab/learn/SKILL.md)
 :::
 
 

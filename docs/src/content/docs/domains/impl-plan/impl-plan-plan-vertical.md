@@ -1,6 +1,7 @@
 ---
 title: "impl-plan-plan-vertical"
 description: "Use when an implementation slice has its align.md (or, for mvp, its feature.md) ready and needs a vertical-decomposition plan. Reads _slice/impl/<id>/align.md + concept artifacts. Writes _slice/impl/<id>/plan.md containing one row per user-facing sli"
+sourcePath: "skaileup/impl-plan/plan-vertical/SKILL.md"
 sidebar:
   label: "impl-plan-plan-vertical"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `impl-plan-plan-vertical`
 **Stage:** alpha · **Version:** 2.0.0
 **Tags:** impl-plan, plan, vertical-slice, decomposition, testing-strategy, anti-horizontal, per-slice
-**Source:** [`skaileup/impl-plan/plan-vertical/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-plan/plan-vertical/SKILL.md)
 :::
 
 

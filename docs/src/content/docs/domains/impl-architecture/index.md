@@ -1,42 +1,50 @@
 ---
-title: "impl-architecture-templates"
-description: "stack-specific scaffold templates · selector entry point: impl-architecture-templates-select"
+title: "impl-architecture"
+description: "techstack · system · datamodel · templates/"
+sourcePath: "skaileup/impl-architecture/DOMAIN.md"
 sidebar:
   label: "Overview"
   order: 0
 ---
 
-:::note[Domain manifest]
-**Source:** [`skaileup/impl-architecture/templates/DOMAIN.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/impl-architecture/templates/DOMAIN.md)
-:::
 
+# impl-architecture
 
-# impl-architecture/templates/
+Establishes the technical foundation before any code is written: stack selection, system architecture, and data model. Agents run these three skills once per project, then pick a scaffold template to bootstrap the repo.
 
-Stack-specific scaffold templates. Each subdirectory is a concrete `SKILL.md` describing one stack's scaffold conventions (file layout, package manifest, dev-stack commands, foundation steps, recommended UI library).
+## Skills
 
 The collection references this cluster via the **selector** skill `impl-architecture-templates-select` (`../templates-select/SKILL.md`). At runtime the selector reads `_concept/_meta/scope.yaml` + `_concept/blueprint/techstack.md`, scores the concrete templates on frontend → UI library → backend/database, and writes the winner back as `tech_stack_skill` so the build skills resolve exactly one of the templates below.
 
-## Concrete templates
+## When to Use
 
-- **template-postxl** (`template-postxl/`) — PostXL full-stack template (FastAPI + Vue + PostgreSQL).
-- **template-nextjs-radix** (`template-nextjs-radix/`) — Next.js App Router + Radix UI primitives.
-- **template-nextjs-shadcn** (`template-nextjs-shadcn/`) — Next.js App Router + shadcn/ui components.
-- **template-nuxt-minimal** (`template-nuxt-minimal/`) — Nuxt 3 minimal scaffold (no UI library).
-- **template-nuxt-primevue** (`template-nuxt-primevue/`) — Nuxt 3 + PrimeVue.
-- **template-nuxt-ui** (`template-nuxt-ui/`) — Nuxt 3 + Nuxt UI.
-- **template-sveltekit-minimal** (`template-sveltekit-minimal/`) — SvelteKit minimal scaffold (no UI library).
+- Features are approved (`product-spec` done) and no `stack.md` exists yet.
+- Starting the implementation pipeline: `impl-plan` needs `stack.md` and `architecture.md` as inputs.
+- Data model is blank (`_concept/blueprint/datamodel/` empty) but features reference entities.
+- Scaffolding a new repo from scratch (templates cluster).
 
-## Naming exception
+## When NOT to Use
 
-Per `CONTRIBUTING.md`, these skills use the shortened form (`name: template-postxl`, etc.) instead of the path-based `impl-architecture-templates-template-postxl`. The cluster's selector skill — `impl-architecture-templates-select` — uses path-based naming because it is a regular Phase 3 skill, not a template profile.
+- Stack already locked and documented — skip `techstack`, run `system` and `datamodel` only.
+- Prototype or MVP tier with no backend — `datamodel` is optional; scaffold directly from a template.
+- Adding a feature to an existing repo — use `impl-plan` or `impl-slice` directly.
+
+## Sequence
+
+```
+impl-architecture-techstack
+        ↓
+impl-architecture-system   (parallel with)   impl-architecture-datamodel
+        ↓
+templates/<chosen-template>   (scaffold — one-time)
+```
 
 ## Cross-references
 
-- `../../../../../docs/devlog/SKILL_GRAPH.md` § 6 — tier-composition table (`impl-arch/templates-select`)
-- `../../contracts/skill_grammar.md` — SKILL.md DSL
-- `../techstack/SKILL.md` — discovers the available stacks from this directory and recommends one
-- `../templates-select/SKILL.md` — the runtime selector skill (built)
+- `../impl-plan/` — consumes `stack.md` and `architecture.md`.
+- `../impl-build/` — scaffold step also uses the chosen template.
+- `templates/DOMAIN.md` — template cluster details.
+- `../contracts/` — iron laws and golden principles every skill reads.
 
 
 ## Skills in this domain

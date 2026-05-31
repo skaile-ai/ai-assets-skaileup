@@ -1,6 +1,7 @@
 ---
 title: "concept-slice-scope-feature"
 description: "Use when concept-slice-align has completed and you need to draw the IN/OUT line for THIS feature — reads align's edge-case list, forces an IN/OUT/DEFER decision on each item, and produces the final scope decision that concept-slice-design-feature hon"
+sourcePath: "skaileup/concept-slice/scope-feature/SKILL.md"
 sidebar:
   label: "concept-slice-scope-feature"
 ---
@@ -9,7 +10,6 @@ sidebar:
 **Name:** `concept-slice-scope-feature`
 **Stage:** alpha · **Version:** 1.0.0
 **Tags:** concept-slice, scope-feature, in-out, boundary, interview
-**Source:** [`skaileup/concept-slice/scope-feature/SKILL.md`](https://github.com/skaile-ai/ai-assets-skaileup/blob/main/skaileup/concept-slice/scope-feature/SKILL.md)
 :::
 
 
