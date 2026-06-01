@@ -13,8 +13,9 @@ export default defineConfig({
       description:
         "Concept, build, and quality pipeline skills for the Skaile ecosystem.",
       components: {
-        // Shows each page's source file path (linked to GitHub) above the footer.
-        Footer: "./src/components/Footer.astro",
+        // Shows each page's source file path (linked to GitHub) on the first
+        // line, above the title heading.
+        PageTitle: "./src/components/PageTitle.astro",
       },
       social: [
         {
@@ -25,6 +26,15 @@ export default defineConfig({
       ],
       sidebar: [
         { label: "Overview", link: "/" },
+        {
+          label: "Project",
+          collapsed: false,
+          items: [
+            { label: "README", link: "/project/readme/" },
+            { label: "CLAUDE.md", link: "/project/claude/" },
+            { label: "Contributing", link: "/project/contributing/" },
+          ],
+        },
         {
           label: "Introduction",
           items: [
@@ -152,15 +162,7 @@ export default defineConfig({
         {
           label: "Reference",
           collapsed: true,
-          items: [
-            { label: "Skill DSL Grammar", link: "/reference/skill-grammar/" },
-            { label: "Asset Frontmatter", link: "/reference/asset-frontmatter/" },
-            { label: "Iron Laws", link: "/reference/iron-laws/" },
-            { label: "Golden Principles", link: "/reference/golden-principles/" },
-            { label: "Naming Conventions", link: "/reference/naming/" },
-            { label: "Flows & Bundles Schema", link: "/reference/flows-bundles/" },
-            { label: "Skill Authoring Guide", link: "/reference/contributing/" },
-          ],
+          autogenerate: { directory: "reference" },
         },
         { label: "Roadmap", link: "/improvements/" },
       ],

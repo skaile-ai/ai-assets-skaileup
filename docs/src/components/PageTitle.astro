@@ -1,0 +1,42 @@
+---
+// Custom page title: render the page's source file path (linked to GitHub) on
+// the first line, above the title heading, so every rendered page shows where
+// it comes from before its content.
+//
+//   • Generated pages (skills/domains/flows/project/reference) carry `sourcePath`
+//     frontmatter → points at the authoritative repo file.
+//   • Hand-written pages omit it → fall back to their own location under docs/.
+import Default from "@astrojs/starlight/components/PageTitle.astro";
+
+const GITHUB_BASE =
+  "https://github.com/skaile-ai/ai-assets-skaileup/blob/main";
+
+const { entry } = Astro.locals.starlightRoute;
+const sourcePath =
+  entry.data.sourcePath ??
+  (entry.filePath ? `docs/${entry.filePath}` : null);
+---
+
+{
+  sourcePath && (
+    <p class="source-path">
+      Source:{" "}
+      <a href={`${GITHUB_BASE}/${sourcePath}`}>
+        <code>{sourcePath}</code>
+      </a>
+    </p>
+  )
+}
+
+<Default><slot /></Default>
+
+<style>
+  .source-path {
+    margin: 0 0 0.5rem;
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+  .source-path code {
+    font-size: inherit;
+  }
+</style>

@@ -3,7 +3,9 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "predev": "npm run generate",
     "dev": "astro dev",
+    "prebuild": "npm run generate",
     "build": "astro build",
     "preview": "astro preview",
     "generate": "node scripts/generate-skill-pages.mjs"

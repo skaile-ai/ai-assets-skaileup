@@ -21,4 +21,4 @@ contracts every skill reads.
 
 - [How It's Consumed](../../intro/consumption/) — `skaile add` / `skaile run`
 - [Flows](../../flows/) — what the orchestrators execute
-- [Contributing](../../reference/contributing/) — authoring skills with the `skaile` CLI
+- [Contributing](../../project/contributing/) — authoring skills with the `skaile` CLI

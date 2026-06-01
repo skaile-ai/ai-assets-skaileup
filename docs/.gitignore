@@ -2,6 +2,16 @@
 dist/
 .astro/
 
+# generated content pages — regenerated from the real source files by
+# `npm run generate` (runs automatically on predev/prebuild). The source of
+# truth is the original SKILL.md / DOMAIN.md / README.md / CLAUDE.md / contracts
+# file; these are derived build artifacts, never hand-edited. Hand-written
+# overviews at domains/*.md (e.g. concept-group.md) stay tracked.
+src/content/docs/domains/*/
+src/content/docs/flows/
+src/content/docs/project/
+src/content/docs/reference/
+
 # dependencies
 node_modules/
 bun.lock

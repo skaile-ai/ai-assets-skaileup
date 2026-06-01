@@ -17,11 +17,28 @@ import { parse as parseYaml } from "yaml";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..", "..");
-const OUT_ROOT = join(__dirname, "..", "src", "content", "docs", "domains");
+const DOCS_ROOT = join(__dirname, "..", "src", "content", "docs");
+const OUT_ROOT = join(DOCS_ROOT, "domains");
 const FLOWS_SRC = join(REPO_ROOT, "skaileup", "flows");
-const FLOWS_OUT = join(__dirname, "..", "src", "content", "docs", "flows");
+const FLOWS_OUT = join(DOCS_ROOT, "flows");
 const GITHUB_BASE =
   "https://github.com/skaile-ai/ai-assets-skaileup/blob/main";
+
+// Real repo docs surfaced verbatim inside the site. The source file is the only
+// copy that exists in git — these pages are generated build artifacts (gitignored)
+// regenerated from the real file, so they can never drift. `out` is relative to
+// src/content/docs/; `sidebar` drives menu placement.
+const SOURCE_PAGES = [
+  { src: "README.md", out: "project/readme.md", label: "README", order: 1 },
+  { src: "CLAUDE.md", out: "project/claude.md", label: "CLAUDE.md", order: 2 },
+  { src: "CONTRIBUTING.md", out: "project/contributing.md", label: "Contributing", order: 3 },
+  { src: "skaileup/contracts/skill_grammar.md", out: "reference/skill-grammar.md", label: "Skill DSL Grammar", order: 1 },
+  { src: "skaileup/contracts/asset_frontmatter.md", out: "reference/asset-frontmatter.md", label: "Asset Frontmatter", order: 2 },
+  { src: "skaileup/contracts/iron_laws.md", out: "reference/iron-laws.md", label: "Iron Laws", order: 3 },
+  { src: "skaileup/contracts/golden_principles.md", out: "reference/golden-principles.md", label: "Golden Principles", order: 4 },
+  { src: "skaileup/contracts/semantic_types.md", out: "reference/semantic-types.md", label: "Semantic Types", order: 5 },
+  { src: "skaileup/contracts/flows.md", out: "reference/flows-and-bundles.md", label: "Flows & Bundles", order: 6 },
+];
 
 // Blanket-skipped at any depth. NOTE: "docs" is intentionally NOT here — a skill
 // legitimately lives at skaileup/impl-build/docs/. The repo-root docs/ site is
@@ -256,6 +273,65 @@ function generateFlows() {
   return count;
 }
 
+// Pull the first H1 off a markdown body: Starlight renders the frontmatter
+// `title` as the page's H1, so keeping the source's own H1 would double it.
+function splitLeadingTitle(body) {
+  const lines = body.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const m = /^#\s+(.+?)\s*$/.exec(line);
+    if (m) {
+      lines.splice(i, 1);
+      if (lines[i] === "") lines.splice(i, 1); // drop the blank line under it
+      return { title: m[1], body: lines.join("\n") };
+    }
+    if (line.trim() !== "") break; // real content before any H1 — leave body intact
+  }
+  return { title: null, body };
+}
+
+function firstParagraph(body) {
+  for (const raw of body.split("\n")) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#") || line.startsWith("```") || line.startsWith("|")) continue;
+    return line.replace(/[*_`>]/g, "").slice(0, 160);
+  }
+  return "";
+}
+
+function renderSourcePage({ body, repoRel, label, order }) {
+  const { title, body: stripped } = splitLeadingTitle(body);
+  const desc = firstParagraph(stripped).replace(/"/g, "'");
+  return `---
+title: "${(title || label).replace(/"/g, "'")}"
+description: "${desc}"
+sourcePath: "${repoRel}"
+sidebar:
+  label: "${label}"
+  order: ${order}
+---
+
+${asMdString(stripped)}
+`;
+}
+
+function generateSourcePages() {
+  let count = 0;
+  for (const { src, out, label, order } of SOURCE_PAGES) {
+    const srcPath = join(REPO_ROOT, src);
+    if (!existsSync(srcPath)) {
+      console.warn(`  skipped (missing source): ${src}`);
+      continue;
+    }
+    const { body } = parseFrontmatter(readFileSync(srcPath, "utf8"));
+    const outPath = join(DOCS_ROOT, out);
+    ensureDir(dirname(outPath));
+    writeFileSync(outPath, renderSourcePage({ body, repoRel: src, label, order }));
+    count++;
+  }
+  return count;
+}
+
 function main() {
   // Walk skaileup/ for user-facing skill domains, ai-assets/ for meta domains.
   // We walk REPO_ROOT but use the path structure to determine which domain each file belongs to.
@@ -394,6 +470,9 @@ ${skillsList}
 
   const flowCount = generateFlows();
   console.log(`Generated ${flowCount} pages under ${relative(process.cwd(), FLOWS_OUT)}`);
+
+  const sourceCount = generateSourcePages();
+  console.log(`Generated ${sourceCount} source pages (README/CLAUDE/contracts) under ${relative(process.cwd(), DOCS_ROOT)}`);
 }
 
 main();
