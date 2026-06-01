@@ -95,7 +95,7 @@ With `path:`, assets are symlinked so edits to SKILL.md are immediately reflecte
 
 ```yaml
 ---
-name: my-domain-function          # Required. kebab-case. Domain-relative path with / replaced by -.
+name: my-domain-function          # Required. kebab-case. Domain-relative path, NN_ prefixes stripped, / replaced by -.
 description: "Use when [trigger]. Describes what the skill does and when to invoke it."
 requires:                          # Optional. Root-level. Array of "kind:name" strings.
   - contract:my-contract           # Explicit kind prefix is required.
@@ -152,34 +152,44 @@ CHECKLIST
 - **Must be kebab-case**: `a-z`, `0-9`, hyphens only. No consecutive hyphens. Max 64 chars.
 - **Must be set explicitly** — the CLI uses the directory name as a fallback only when `name:`
   is absent. Always set it to avoid surprises.
-- **Convention: domain-relative path with `/` replaced by `-`.** The `name:` is the path
-  from the catalog root down to the skill directory, with slashes replaced by hyphens.
+- **Convention: domain-relative path with `/` replaced by `-`, after stripping each
+  segment's ordering prefix.** Domain and skill folders carry a two-digit run-order prefix
+  `NN_` (and `NN_<letter>_` for pick-one alternatives) so an alphabetical listing reads in
+  flow order. The prefix is **ordering metadata only** — strip `NN_` / `NN_<letter>_` from
+  each path segment, then join the segments with `-`.
 
   | Skill directory | `name:` |
   |---|---|
-  | `concept/brief/` | `concept-brief` |
-  | `design/brand-visual/` | `design-brand-visual` |
-  | `impl-architecture/techstack/` | `impl-architecture-techstack` |
-  | `impl-quality/test-unit/` | `impl-quality-test-unit` |
-  | `ops/review/` | `ops-review` |
+  | `01_concept/01_brief/` | `concept-brief` |
+  | `02_design/01_brand-visual/` | `design-brand-visual` |
+  | `09_impl-architecture/01_techstack/` | `impl-architecture-techstack` |
+  | `13_impl-quality/04_test-unit/` | `impl-quality-test-unit` |
+  | `05_mockup-walkthrough/01_c_astro/` | `mockup-walkthrough-astro` |
+  | `14_ops/08_review/` | `ops-review` |
 
-  The directory name is the **last segment** of the path-based name: `brief/` →
-  `concept-brief`. The two match only at the catalog root, not in nested domains.
+  Because the number is stripped, **renumbering a folder never changes a `name:`** — so no
+  flow, bundle, or `artifacts.yaml` reference is affected by reordering.
 
 - **Exceptions:**
   - `skaileup/` and `skaileup-build/` (base orchestrator skills in
-    `skaileup-orchestrator/skills/`) keep short names without the path prefix — doubled
-    prefixes (`skaileup-skaileup`) would be awkward for the entry-point skill.
-  - `template-*` skills in `impl-architecture/templates/` use the short directory name
-    directly (e.g. `template-sveltekit-minimal`) because the `template-` prefix already
-    identifies the category.
+    `00_skaileup-orchestrator/skills/`) keep short names without the path prefix — doubled
+    prefixes (`skaileup-skaileup`) would be awkward for the entry-point skill. The
+    orchestrator's `scope/`, `skills/`, `agents/`, `flows/` subdirs are structural and are
+    **not** numbered.
+  - `template-*` assets in `09_impl-architecture/templates/` use the short directory name
+    directly (e.g. `template-sveltekit-minimal`) and are **not** numbered — `tech_stack_skill`
+    resolves them by directory name at runtime.
+  - `contracts/` and `flows/` are reference/system layers, not pipeline steps — not numbered.
 
 ### Directory names
 
-- **Skill directories** should be the last segment of the skill's path-based `name:`. For
-  `name: concept-brief`, the directory is `brief/` inside the `concept/` domain.
-- **Domain directories** group related skills. Their names are used as the `domain` tag on
-  the catalog entry and should be consistent across the catalog.
+- **Skill directories** are `NN_<last-segment>` (or `NN_<letter>_<last-segment>` for
+  alternatives), where the stripped last segment is the final part of the path-based `name:`.
+  For `name: concept-brief`, the directory is `01_brief/` inside the `01_concept/` domain.
+- **Domain directories** are `NN_<domain>`; the stripped `<domain>` is the `domain` tag on the
+  catalog entry. Number domains by their first run position in the flows.
+- **Alternatives (pick-one sets)** share one slot number and differ by letter: e.g. the
+  walkthrough renderers `01_a_text · 01_b_static-html · 01_c_astro · 01_d_lit · 01_e_framework`.
 
 ### Naming pitfall: directory name ≠ frontmatter name
 
@@ -335,7 +345,7 @@ across all SKILL.md files after any domain rename.
 Before publishing a skill repository, verify:
 
 - [ ] `skaile.yaml` declares this repository with `url:` (or `path:` for dev)
-- [ ] Every `SKILL.md` has `name:` using the domain-relative path convention (e.g. `concept-brief`, not `brief`)
+- [ ] Every `SKILL.md` has `name:` using the domain-relative path convention with `NN_` prefixes stripped (e.g. `concept-brief`, not `01-concept-01-brief` or `brief`)
 - [ ] Every `SKILL.md` has `metadata.version:` (semver), `metadata.tags:` (≥2), `metadata.stage:`
 - [ ] `requires:` is declared in exactly one place (`metadata.requires:` preferred, root `requires:` legacy)
 - [ ] All `requires:` entries use `kind:name` format for non-skill dependencies

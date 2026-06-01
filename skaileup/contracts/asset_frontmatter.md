@@ -403,7 +403,7 @@ template-name/
 
 Consumers read `TEMPLATE.md` directly when the `tech_stack_skill` field in
 `_concept/blueprint/techstack.md` matches the template name. The Starlight site
-renders templates as reference pages in the `impl-architecture/templates/` section.
+renders templates as reference pages in the `09_impl-architecture/templates/` section.
 
 ---
 

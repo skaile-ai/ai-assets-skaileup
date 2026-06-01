@@ -15,44 +15,46 @@ All `skaileup-*` skills for the concept, build, and quality pipelines. Extracted
 ## Structure
 
 Skills are organized into 17 domains in three groups (Concept, Implementation, Meta).
+**Domain and skill folders carry a two-digit `NN_` run-order prefix** so an alphabetical
+listing reads in flow order; the prefix is stripped from `name:` (see *Naming Convention*).
 User-facing skill domains live under `skaileup/`. System/meta assets live under `ai-assets-dev/`.
 
 ### Concept  (`skaileup/`)
 ```
-skaileup/concept/                       brief · goals · comparable
-skaileup/design/                        brand-identity · tokens · voice
-skaileup/product-spec/                  features · acceptance criteria
-skaileup/experience/                    journeys · behaviors · screens · components
-skaileup/concept-slice/                 per-feature concept loop (big apps only)
-skaileup/mockup-component/              components in isolation: storybook + isolated-html
-skaileup/mockup-walkthrough/            clickable application: text · static-html · astro · framework
-skaileup/mockup-feedback/               annotation → patch loop
+01_concept/                  01_brief · 02_goals · 03_comparable · 04_grounding/{01_onboard,02_research,03_seeds,04_contracts}
+02_design/                   01_brand-visual · 02_brand-voice · 03_inspiration
+03_experience/               01_journeys · 02_behaviors · 03_screens · 04_screens-technical · 05_components
+04_product-spec/             01_features (with EARS acceptance criteria)
+05_mockup-walkthrough/       pick-one renderers: 01_a_text · 01_b_static-html · 01_c_astro · 01_d_lit · 01_e_framework
+06_mockup-component/         pick-one: 01_a_isolated-html · 01_b_storybook/{01_setup..06_orchestrator}
+07_mockup-feedback/          01_annotate → 02_triage → 03_patch → 04_apply
+08_concept-slice/            per-feature concept loop (standard/complex): 01_brainstorm · 02_align · 03_scope-feature · 04_design-feature  → _concept/slices/<id>/
 ```
 
 ### Implementation  (`skaileup/`)
 ```
-skaileup/impl-architecture/             techstack · system · datamodel · templates/
-skaileup/impl-plan/                     brainstorm · align · plan-vertical · supervised
-skaileup/impl-slice/                    per-slice loop: implement · test · recap · refactor · commit
-skaileup/impl-build/                    one-time: scaffold · foundation · infrastructure · migrate · seed · generate · docs
-skaileup/impl-quality/                  test-* · eval-code · audit · ready · standards-* · debug-*
+09_impl-architecture/        01_techstack · 02_templates-select · 03_system · 04_datamodel + templates/ (7 template-* assets, unnumbered)
+10_impl-build/               one-time: 01_scaffold · 02_foundation · 03_infrastructure · 04_migrate · 05_seed · 06_generate · 07_docs
+11_impl-plan/                01_brainstorm · 02_align · 03_plan-vertical · 04_supervised
+12_impl-slice/               per-slice loop: 01_git-prepare · 02_implement · 03_implement-page · 04_test · 05_recap · 06_refactor · 07_commit · 08_finish  → _implementation/slices/<id>/
+13_impl-quality/             01_test-plan · 02_eval-code · 03_audit · 04..06_test-{unit,integration,e2e} · 07_ready · 08..10_standards-{discover,inject,sync} · 11_12_debug-{self-verify,handoff}
 ```
 
 ### Meta — user-facing  (`skaileup/`)
 ```
-skaileup/skaileup-orchestrator/         base orchestrators (skaileup, skaileup-build) + scope/ — pipeline entry
-skaileup/ops/                           cross-cutting: review · sync · eval · add-feature · reverse-engineer · project-*
+00_skaileup-orchestrator/    base orchestrators (skills/{skaileup,skaileup-build}) · agents/ (SOULs) · scope/ · flows/ — pipeline entry (internals not numbered)
+14_ops/                      cross-cutting: 01..04_project-{overview,subsystem-map,integration,review} · 05..07_eval-{concept,feature,product} · 08_review · 09_sync · 10_add-feature · 11_reverse-engineer
 ```
 
 ### Meta — system assets  (`ai-assets-dev/` and `skaileup/`)
 ```
-skaileup/contracts/                     shared reference layer (every skill reads)
-skaileup/flows/                         flow + bundle YAMLs, co-located per app-type
-skaileup/flows/_meta/                   verify_flows.py · test_verify.py · deferred_skills.yaml
-ai-assets-dev/lab/                      skill-on-skill: validate · judge · improve · learn · compile-bundle
-ai-assets-dev/scripts/                  CI scripts (check-bundles.sh — drift guard against skaileup/flows/)
-ai-assets-dev/tests/                    test fixtures
-docs/devlog/                            plans, specs, design notes, improvement backlog
+skaileup/contracts/          shared reference layer (every skill reads) — unnumbered
+skaileup/flows/              flow + bundle YAMLs, co-located per app-type — unnumbered
+skaileup/flows/_meta/        verify_flows.py · test_verify.py · deferred_skills.yaml
+ai-assets-dev/lab/           skill-on-skill: validate · judge · improve · learn · compile-bundle
+ai-assets-dev/scripts/       CI scripts (check-bundles.sh — drift guard against skaileup/flows/)
+ai-assets-dev/tests/         test fixtures
+docs/devlog/                 plans, specs, design notes, improvement backlog
 ```
 
 ## Skill Structure
@@ -74,27 +76,64 @@ The DSL grammar is documented in [`skaileup/contracts/skill_grammar.md`](./skail
 
 The frontmatter schema is documented in [`skaileup/contracts/asset_frontmatter.md`](./skaileup/contracts/asset_frontmatter.md). It follows the [agentskills.io](https://agentskills.io/specification) spec — `name` and `description` at root, everything else under `metadata:`.
 
+## Project Artifacts (what skills write)
+
+Skills do not write into this collection — they write into the **target project**.
+The canonical output tree is defined in
+[`skaileup/contracts/concept_structure.md`](./skaileup/contracts/concept_structure.md)
+and the id↔path registry in
+[`skaileup/contracts/artifacts.yaml`](./skaileup/contracts/artifacts.yaml). In brief:
+
+```
+_concept/                 concept truth (durable)
+├── _meta/scope.yaml      chosen tier — gates linear vs. per-feature slice loop
+├── _grounding/           research · onboarding · seeds · standards
+├── discovery/            brief · goals · comparable · brand/
+├── experience/           journeys · features/<NN_group>/ · screens/<NN_group>/
+├── mockup-walkthrough/   · mockup-component/ · _feedback/
+├── slices/<id>/          per-feature concept dossier (frozen, kept): brainstorm · align · scope-feature · index
+└── blueprint/            techstack · architecture · datamodel/
+
+_implementation/          impl truth (durable ledgers)
+├── PLANS.md · progress.json · decisions.md · git-state.json
+└── slices/<id>/          per-feature impl dossier (frozen, kept): brainstorm · align · plan · test · recap · refactor · index
+```
+
+**Slice dossiers are frozen, not deleted** — see *Two-Group Architecture* below. The
+**general (non-slice) artifacts** (brief, goals, brand, journeys, blueprint) are produced
+once per project; only per-feature work lives under `slices/<id>/`.
+
 ## Contracts
 
 Shared contracts live in [`skaileup/contracts/`](./skaileup/contracts/). **Every skill reads from here.** The non-negotiable constraints (iron laws + golden principles) and shared schemas (semantic types, frontmatter, EARS acceptance criteria) live there.
 
 ## Naming Convention
 
-Every skill's `name:` follows the **domain-relative path** (without the `skaileup/` prefix) with `/` replaced by `-`. Examples:
+**Folders carry an ordering prefix; `name:` does not.** Each domain and skill
+directory is prefixed with a two-digit run-order number (`NN_`) so an alphabetical
+listing reads in the order the flows run the skills. Mutually-exclusive **alternative**
+skills (pick-one sets) share one slot number and add a letter: `NN_<letter>_<name>`.
+
+The skill's `name:` is the **domain-relative path with each segment's `NN_` / `NN_<letter>_`
+prefix stripped and `/` replaced by `-`** — so names are stable regardless of ordering
+edits, and every flow/bundle/`artifacts.yaml` reference is unaffected by renumbering.
 
 | Path | `name:` |
 |---|---|
-| `skaileup/concept/brief/SKILL.md` | `concept-brief` |
-| `skaileup/concept/grounding/onboard/SKILL.md` | `concept-grounding-onboard` |
-| `skaileup/design/brand-visual/SKILL.md` | `design-brand-visual` |
-| `skaileup/experience/screens/SKILL.md` | `experience-screens` |
-| `skaileup/impl-architecture/techstack/SKILL.md` | `impl-architecture-techstack` |
-| `skaileup/impl-architecture/templates/template-postxl/SKILL.md` | `template-postxl` (shortened — the directory already starts with `template-`) |
-| `skaileup/mockup-component/storybook/SKILL.md` | `mockup-component-storybook` |
+| `skaileup/01_concept/01_brief/SKILL.md` | `concept-brief` |
+| `skaileup/01_concept/04_grounding/01_onboard/SKILL.md` | `concept-grounding-onboard` |
+| `skaileup/02_design/01_brand-visual/SKILL.md` | `design-brand-visual` |
+| `skaileup/03_experience/03_screens/SKILL.md` | `experience-screens` |
+| `skaileup/05_mockup-walkthrough/01_c_astro/SKILL.md` | `mockup-walkthrough-astro` (alternative; `01_c_` stripped) |
+| `skaileup/09_impl-architecture/01_techstack/SKILL.md` | `impl-architecture-techstack` |
+| `skaileup/09_impl-architecture/templates/template-postxl/TEMPLATE.md` | `template-postxl` (template assets are **not** numbered — `tech_stack_skill` resolves them by directory name at runtime) |
+| `skaileup/06_mockup-component/01_b_storybook/SKILL.md` | `mockup-component-storybook` |
 
-**Exception — base orchestrator skills:** Skills inside `skaileup/skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`) instead of the path-based form. The base orchestrator is the collection's entry point; doubled prefixes would be awkward.
+**Exception — base orchestrator skills:** Skills inside `skaileup/00_skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`). The orchestrator's internal `scope/`, `skills/`, `agents/`, `flows/` subdirs are structural and are **not** numbered.
 
-> **Note.** The path-prefix convention is authoritative: `name:` = the domain-relative path with `/` → `-`, where the parent directory is the last segment (`brief/` → `concept-brief`). `CONTRIBUTING.md` § Naming Conventions matches this.
+**Not numbered:** `contracts/` and `flows/` (reference/system layers, not pipeline steps) and `09_impl-architecture/templates/` + its `template-*` assets (resolved by directory name at runtime).
+
+> **Note.** Number prefixes are *ordering metadata only* — strip `NN_` and an optional `NN_<letter>_` from each path segment to recover `name:`. `CONTRIBUTING.md` § Naming Conventions matches this.
 
 ## Two-Group Architecture
 
@@ -206,3 +245,10 @@ Tracked in [`docs/devlog/SKILL_GRAPH.md`](./docs/devlog/SKILL_GRAPH.md). All 11 
 - `concept-goals`, `concept-comparable` (`concept/`), `design-inspiration` (`design/`) — high-level concept pass for standard/complex tiers.
 - `impl-architecture-templates-select` — runtime selector over the 7 `template-*` reference assets; writes `tech_stack_skill`.
 - `mockup-walkthrough-astro` / `-lit` / `-framework` and the `mockup-feedback-{annotate,triage,patch,apply}` cluster — walkthrough renderers + feedback loop.
+
+### Phase 4 — slice dossiers as durable documentation (2026-06-01, complete)
+Slice artifacts moved under the side they belong to and are now **frozen, not deleted**:
+
+- `_slice/concept/<id>/` → `_concept/slices/<id>/`; `_slice/impl/<id>/` → `_implementation/slices/<id>/`.
+- The terminators (`concept-slice-design-feature`, `impl-slice-commit`) write an `index.md` and keep the phase handoffs as permanent per-feature documentation; `impl-slice-commit` removes only the transient `progress.json`. `impl-slice-finish` gates on "every slice frozen (has index.md)".
+- Contracts updated (`artifacts.yaml` slice ids → `durable` + new `slice-{concept,impl}-index`; `concept_structure.md` documents `slices/`). The orchestrators now route standard/complex tiers into the per-feature slice loops and assist within them.

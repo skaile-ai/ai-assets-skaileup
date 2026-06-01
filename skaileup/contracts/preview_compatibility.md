@@ -1,6 +1,6 @@
 # Preview Compatibility Contract
 
-> **Audience:** authors of stack profiles in `impl-architecture/templates/` and
+> **Audience:** authors of stack profiles in `09_impl-architecture/templates/` and
 > AI agents running the `impl-build-scaffold` / `impl-build-foundation`
 > skills.
 > **Used by:** every `template-*` profile that targets a web
