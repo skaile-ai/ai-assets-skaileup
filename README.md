@@ -2,7 +2,7 @@
 
 The Skaileup skill collection — concept, build, and quality pipeline skills for the Skaile ecosystem.
 
-**94 SKILL.md files in 20 top-level domains across three groups (Concept · Implementation · Meta)** covering the full product lifecycle: from problem-space discovery through per-slice implementation and quality gates, with a cross-cutting ops/lab/contracts meta layer.
+**93 SKILL.md files in 15 numbered domains across three groups (Concept · Implementation · Meta)** covering the full product lifecycle: from problem-space discovery through per-slice implementation and quality gates, with a cross-cutting ops/lab/contracts meta layer.
 
 ```
                               user input  /  existing repo
@@ -40,31 +40,31 @@ The Skaileup skill collection — concept, build, and quality pipeline skills fo
 
 | Domain | Purpose |
 |---|---|
-| [`skaileup/concept/`](skaileup/concept/DOMAIN.md) | Project brief, goals, comparable apps |
-| [`skaileup/design/`](skaileup/design/DOMAIN.md) | Brand identity, tokens, voice |
-| [`skaileup/product-spec/`](skaileup/product-spec/DOMAIN.md) | Feature specs + acceptance criteria |
-| [`skaileup/experience/`](skaileup/experience/DOMAIN.md) | Journeys, behaviors, screens, components |
-| [`skaileup/concept-slice/`](skaileup/concept-slice/DOMAIN.md) | Per-feature concept loop (big apps) |
-| [`skaileup/mockup-component/`](skaileup/mockup-component/DOMAIN.md) | Storybook + isolated HTML |
-| [`skaileup/mockup-walkthrough/`](skaileup/mockup-walkthrough/DOMAIN.md) | text · static-html · astro · framework |
-| [`skaileup/mockup-feedback/`](skaileup/mockup-feedback/DOMAIN.md) | Annotation → patch loop |
+| [`skaileup/01_concept/`](skaileup/01_concept/DOMAIN.md) | Project brief, goals, comparable apps |
+| [`skaileup/02_design/`](skaileup/02_design/DOMAIN.md) | Brand identity, tokens, voice |
+| [`skaileup/03_experience/`](skaileup/03_experience/DOMAIN.md) | Journeys, behaviors, screens, components |
+| [`skaileup/04_product-spec/`](skaileup/04_product-spec/DOMAIN.md) | Feature specs + acceptance criteria |
+| [`skaileup/05_mockup-walkthrough/`](skaileup/05_mockup-walkthrough/DOMAIN.md) | text · static-html · astro · framework |
+| [`skaileup/06_mockup-component/`](skaileup/06_mockup-component/DOMAIN.md) | Storybook + isolated HTML |
+| [`skaileup/07_mockup-feedback/`](skaileup/07_mockup-feedback/DOMAIN.md) | Annotation → patch loop |
+| [`skaileup/08_concept-slice/`](skaileup/08_concept-slice/DOMAIN.md) | Per-feature concept loop (big apps) |
 
 ### Implementation
 
 | Domain | Purpose |
 |---|---|
-| [`skaileup/impl-architecture/`](skaileup/impl-architecture/DOMAIN.md) | Techstack · system · datamodel · templates/ |
-| [`skaileup/impl-plan/`](skaileup/impl-plan/DOMAIN.md) | Brainstorm · align · plan-vertical · supervised |
-| [`skaileup/impl-slice/`](skaileup/impl-slice/DOMAIN.md) | Per-slice loop: implement → test → recap → refactor → commit |
-| [`skaileup/impl-build/`](skaileup/impl-build/DOMAIN.md) | One-time: scaffold · foundation · migrate · seed · generate · docs |
-| [`skaileup/impl-quality/`](skaileup/impl-quality/DOMAIN.md) | Tests · audit · ready · standards · debug |
+| [`skaileup/09_impl-architecture/`](skaileup/09_impl-architecture/DOMAIN.md) | Techstack · system · datamodel · templates/ |
+| [`skaileup/10_impl-build/`](skaileup/10_impl-build/DOMAIN.md) | One-time: scaffold · foundation · migrate · seed · generate · docs |
+| [`skaileup/11_impl-plan/`](skaileup/11_impl-plan/DOMAIN.md) | Brainstorm · align · plan-vertical · supervised |
+| [`skaileup/12_impl-slice/`](skaileup/12_impl-slice/DOMAIN.md) | Per-slice loop: implement → test → recap → refactor → commit |
+| [`skaileup/13_impl-quality/`](skaileup/13_impl-quality/DOMAIN.md) | Tests · audit · ready · standards · debug |
 
 ### Meta — user-facing
 
 | Domain | Purpose |
 |---|---|
-| [`skaileup/skaileup-orchestrator/`](skaileup/skaileup-orchestrator/DOMAIN.md) | Base orchestrators + `scope/` — pipeline entry point |
-| [`skaileup/ops/`](skaileup/ops/DOMAIN.md) | Cross-cutting: review · sync · eval · add-feature · project-* |
+| [`skaileup/00_skaileup-orchestrator/`](skaileup/00_skaileup-orchestrator/DOMAIN.md) | Base orchestrators + `scope/` — pipeline entry point |
+| [`skaileup/14_ops/`](skaileup/14_ops/DOMAIN.md) | Cross-cutting: review · sync · eval · add-feature · project-* |
 
 ### Meta — system assets
 
