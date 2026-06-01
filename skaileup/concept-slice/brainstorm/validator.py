@@ -2,7 +2,7 @@
 """Validator for concept-slice-brainstorm handoff files.
 
 Usage:
-    python3 validator.py <path/to/_slice/concept/<slice_id>/brainstorm.md>
+    python3 validator.py <path/to/_concept/slices/<slice_id>/brainstorm.md>
 
 Exit codes:
     0 — valid

@@ -1,6 +1,6 @@
 ---
 name: impl-slice-implement
-description: 'Use when implementing a single slice planned by impl-plan/plan-vertical. Reads _slice/impl/<slice_id>/plan.md, walks the vertical decomposition (UI + logic + data), writes failing tests first, implements with TDD Guard, persists per-slice progress to _slice/impl/<slice_id>/progress.json. Resumes interrupted runs from progress.json.'
+description: 'Use when implementing a single slice planned by impl-plan/plan-vertical. Reads _implementation/slices/<slice_id>/plan.md, walks the vertical decomposition (UI + logic + data), writes failing tests first, implements with TDD Guard, persists per-slice progress to _implementation/slices/<slice_id>/progress.json. Resumes interrupted runs from progress.json.'
 metadata:
   version: '2.0.0'
   tags:
@@ -34,9 +34,9 @@ metadata:
       - id: slice-impl-progress
   prerequisites:
     files:
-      - path: '_slice/impl/'
+      - path: '_implementation/slices/'
         gate: hard
-        description: 'Slice scratch dir; the active slice_id resolves to _slice/impl/<slice_id>/plan.md (written by impl-plan-plan-vertical)'
+        description: 'Slice scratch dir; the active slice_id resolves to _implementation/slices/<slice_id>/plan.md (written by impl-plan-plan-vertical)'
       - path: '_concept/experience/features'
         gate: hard
         description: 'Feature specs (the slice implements one feature from this set)'
@@ -53,7 +53,7 @@ metadata:
         description: 'Dev stack must be running (project scaffolded and foundation applied)'
     inputs_required:
       - id: slice_id
-        label: 'Slice id (kebab-case feature slug; matches _slice/impl/<slice_id>/ scratch dir)'
+        label: 'Slice id (kebab-case feature slug; matches _implementation/slices/<slice_id>/ scratch dir)'
         type: text
         hint: 'Same slug used by concept-slice and impl-plan; e.g. team-todo-comments.'
     inputs_optional:
@@ -131,7 +131,7 @@ without journey context (useful for `add-feature` follow-through).
 | Must read      | `_concept/blueprint/techstack.md`            | Yes                        |
 | Read if exists | `_concept/prototype/storybook/src/pages/` | Recommended (UI reference) |
 | Read if exists | `_concept/blueprint/datamodel/seed.json`     | Recommended                |
-| Read if exists | `_slice/impl/<slice_id>/progress.json`              | If resuming                |
+| Read if exists | `_implementation/slices/<slice_id>/progress.json`              | If resuming                |
 
 ---
 
@@ -144,11 +144,11 @@ READS
 ? \_concept/prototype/storybook/src/pages/ — storybook page compositions (UI reference)
 \_concept/blueprint/datamodel/model.json — data model
 \_concept/blueprint/datamodel/seed.json — seed data scenarios
-? \_slice/impl/<slice_id>/progress.json — resume state
+? \_implementation/slices/<slice_id>/progress.json — resume state
 
 WRITES
 e2e/specs/journeys/<stage>-<journey-slug>.spec.<ext> — journey-level e2e tests
-\_slice/impl/<slice_id>/progress.json — journey/page/feature status (per-slice resume state)
+\_implementation/slices/<slice_id>/progress.json — journey/page/feature status (per-slice resume state)
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
@@ -362,7 +362,7 @@ CHECKLIST
 - [ ] Journey e2e tests pass for each completed journey
 - [ ] All page and feature tests pass (no regressions)
 - [ ] Build passes (backend + frontend + lint)
-- [ ] _slice/impl/<slice_id>/progress.json updated
+- [ ] _implementation/slices/<slice_id>/progress.json updated
 
 ---
 
@@ -383,4 +383,4 @@ CHECKLIST
 - **Called by:** `implement` orchestrator or standalone
 - **Dispatches to:** `implement-feature-page` (per page)
 - **Reads:** `_concept/experience/` (journeys, features, screens, storybook)
-- **Writes:** E2E test files, `_slice/impl/<slice_id>/progress.json`
+- **Writes:** E2E test files, `_implementation/slices/<slice_id>/progress.json`

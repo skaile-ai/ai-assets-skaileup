@@ -1,6 +1,6 @@
 ---
 name: concept-slice-design-feature
-description: "Use when concept-slice-scope-feature has completed and you need to commit THIS feature's permanent _concept/ artifacts — the feature spec, all required screen specs, and the per-feature mockup-walkthrough stub. The only writer of permanent _concept/ artifacts in the concept-slice cluster. Deletes _slice/concept/<id>/ on success. Triggers on: 'design this feature', 'commit slice artifacts', 'design-feature'."
+description: "Use when concept-slice-scope-feature has completed and you need to commit THIS feature's permanent _concept/ artifacts — the feature spec, all required screen specs, and the per-feature mockup-walkthrough stub. The only writer of permanent _concept/ artifacts in the concept-slice cluster. Freezes _concept/slices/<id>/ on success by writing index.md and keeping the dossier as documentation. Triggers on: 'design this feature', 'commit slice artifacts', 'design-feature'."
 metadata:
   version: "1.0.0"
   tags:
@@ -34,15 +34,16 @@ metadata:
       - id: features
       - id: screens
       - id: walkthrough
+      - id: slice-concept-index
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
         description: "Tier context required."
-      - path: "_slice/concept/{slice_id}/scope-feature.md"
+      - path: "_concept/slices/{slice_id}/scope-feature.md"
         gate: hard
         description: "Predecessor handoff — produced by concept-slice-scope-feature."
-      - path: "_slice/concept/{slice_id}/align.md"
+      - path: "_concept/slices/{slice_id}/align.md"
         gate: hard
         description: "Acceptance criteria source — produced by concept-slice-align."
     inputs_required:
@@ -55,7 +56,7 @@ metadata:
         type: text
         hint: "Defaults to the feature_slug if not provided."
     reads:
-      - path: "_slice/concept/{slice_id}/brainstorm.md"
+      - path: "_concept/slices/{slice_id}/brainstorm.md"
         description: "Optional — used for agent_notes summary."
       - path: "_concept/discovery/brand/tokens.json"
         description: "Optional — referenced in screens."
@@ -72,6 +73,8 @@ metadata:
         description: "One screen file per entry in scope-feature.md `## Required screens`."
       - path: "_concept/mockup-walkthrough/{tier}/{feature_slug}.{ext}"
         description: "Walkthrough source stub (ext per tier: simple-app=.html, standard-app=.astro, complex-app=.html with framework-pending flag)."
+      - path: "_concept/slices/{slice_id}/index.md"
+        description: "Frozen slice dossier — links to the feature/screens/walkthrough artifacts; keeps the slice folder as documentation."
 ---
 
 # Concept-Slice Design-Feature
@@ -80,7 +83,7 @@ metadata:
 
 `concept-slice-design-feature` is the COMMIT phase of the concept-slice cluster.
 It is the only skill in the cluster that writes permanent `_concept/`
-artifacts and the only one that deletes the slice scratch dir.
+artifacts and the only one that freezes the slice dossier.
 
 **Three permanent writes:**
 
@@ -95,21 +98,25 @@ artifacts and the only one that deletes the slice scratch dir.
    - `standard-app` → `.astro`
    - `complex-app` → `.html` (framework variant pending; flagged via EMIT)
 
-**One deletion:** after every write succeeds AND the user has approved,
-`_slice/concept/<slice_id>/` is removed entirely.
+**One freeze:** after every write succeeds AND the user has approved, this skill
+writes `_concept/slices/<slice_id>/index.md` and **keeps** the slice folder. The
+phase handoffs (`brainstorm.md`, `align.md`, `scope-feature.md`) stay as the
+feature's permanent decision record; `index.md` links forward to the canonical
+artifacts above. Nothing is deleted. (This is the Suggestion-B convention: slices
+are durable per-feature documentation, not throwaway scratch.)
 
 **The path-segment rule** is the cluster's hardest invariant. See
 `concept-slice/design-feature/references/feature-portion-rule.md`.
 
 ---
 
-ROLE Per-feature commit — turns scope-feature.md + align.md into permanent _concept/ artifacts (feature spec + screens + walkthrough stub) and deletes the slice scratch.
+ROLE Per-feature commit — turns scope-feature.md + align.md into permanent _concept/ artifacts (feature spec + screens + walkthrough stub) and freezes the slice dossier with an index.md.
 
 READS
   _concept/_meta/scope.yaml                          — required; tier (drives walkthrough sub-dir)
-  _slice/concept/{slice_id}/scope-feature.md         — required; predecessor handoff
-  _slice/concept/{slice_id}/align.md                 — required; acceptance criteria source
-  ? _slice/concept/{slice_id}/brainstorm.md          — optional; for agent_notes
+  _concept/slices/{slice_id}/scope-feature.md         — required; predecessor handoff
+  _concept/slices/{slice_id}/align.md                 — required; acceptance criteria source
+  ? _concept/slices/{slice_id}/brainstorm.md          — optional; for agent_notes
   ? _concept/discovery/brand/tokens.json             — optional; referenced in screens
   ? _concept/blueprint/datamodel/model.json          — optional; data_entities
   ? _concept/experience/features/**/*.md             — REQUIRED for cross-feature collision check
@@ -119,9 +126,10 @@ WRITES
   _concept/experience/features/{feature_group}/{feature_slug}.md
   _concept/experience/screens/{feature_slug}/{screen_slug}.md   (1..N — one per required screen)
   _concept/mockup-walkthrough/{tier}/{feature_slug}.{ext}
+  _concept/slices/{slice_id}/index.md                 — frozen dossier; written only on success
 
-DELETES
-  _slice/concept/{slice_id}/                         — entire scratch dir, only on success
+FREEZES
+  _concept/slices/{slice_id}/                         — kept as documentation; index.md added, handoffs retained, nothing deleted
 
 REFERENCES
   SKILL_GRAPH.md                                     — § 4 concept-slice loop
@@ -132,8 +140,8 @@ REFERENCES
 
 REQUIRES
   hard: _concept/_meta/scope.yaml
-  hard: _slice/concept/{slice_id}/scope-feature.md
-  hard: _slice/concept/{slice_id}/align.md
+  hard: _concept/slices/{slice_id}/scope-feature.md
+  hard: _concept/slices/{slice_id}/align.md
   state: scope.yaml `tier` ∈ {simple-app, standard-app, complex-app}
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
@@ -143,12 +151,14 @@ MUST  apply the path-segment rule (see references/feature-portion-rule.md) to ev
 MUST  show a unified diff and require explicit yes/no/edit on every existing-file overwrite (iron_laws § 8)
 MUST  copy acceptance criteria from align.md verbatim into feature.md (no paraphrasing)
 MUST  pick mockup-walkthrough extension from tier per the table in this file (simple-app=html, standard-app=astro, complex-app=html+flag)
-MUST  delete _slice/concept/<slice_id>/ ONLY after every permanent write succeeds AND user has approved
+MUST  write _concept/slices/<slice_id>/index.md ONLY after every permanent write succeeds AND user has approved
+MUST  keep the slice folder and its phase handoffs (brainstorm/align/scope-feature) — they are permanent documentation
 MUST  send each overwrite-approval question as its own STANDALONE message (iron_laws § 9)
 MUST  refuse to run if scope.yaml `tier` == mvp
 
 NEVER  modify any path whose segment does not match <feature_slug>
-NEVER  delete _slice/concept/<slice_id>/ if any write was skipped, refused, or failed
+NEVER  delete _concept/slices/<slice_id>/ or any of its phase handoffs (freeze, never delete)
+NEVER  write index.md if any write was skipped, refused, or failed
 NEVER  invent screens not listed in scope-feature.md `## Required screens`
 NEVER  invent acceptance criteria not present in align.md
 NEVER  modify another feature's files even if they appear stale or wrong
@@ -164,9 +174,9 @@ INPUT
 STEP 0: Read all three handoffs + scope.yaml
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
     Refuse if tier == mvp.
-  - Open _slice/concept/<slice_id>/scope-feature.md; abort if missing.
-  - Open _slice/concept/<slice_id>/align.md; abort if missing.
-  - Open _slice/concept/<slice_id>/brainstorm.md if present; cache for
+  - Open _concept/slices/<slice_id>/scope-feature.md; abort if missing.
+  - Open _concept/slices/<slice_id>/align.md; abort if missing.
+  - Open _concept/slices/<slice_id>/brainstorm.md if present; cache for
     agent_notes summary.
   - Cache: tier, feature_slug (= slice_id), feature_title, required_screens,
     required_entities, in_scope_acceptance_criteria.
@@ -281,25 +291,52 @@ STEP 8: Final approval — show full plan
     >    create / overwrite: <feature.md path>
     >    create / overwrite: <screen.md paths (1..N)>
     >    create / overwrite: <walkthrough stub path>
-    >    delete: _slice/concept/<slice_id>/
+    >    freeze (write index.md, keep folder): _concept/slices/<slice_id>/
     >  Approve to execute, or tell me what to change."
 
 STEP 9: Execute writes in order
   - Write feature.md
   - Write each screen file
   - Write walkthrough stub
-  - On any write failure: STOP, do NOT delete scratch, surface error.
+  - On any write failure: STOP, do NOT write index.md, surface error.
 
 STEP 10: Verify all writes
   - Re-read each file; assert frontmatter parses.
-  - If any verification fails: STOP, do NOT delete scratch.
+  - If any verification fails: STOP, do NOT write index.md.
 
-STEP 11: Delete _slice/concept/<slice_id>/
-  - $ rm -rf _slice/concept/<slice_id>/
-  - Verify the directory no longer exists.
+STEP 11: Freeze the slice — write _concept/slices/<slice_id>/index.md
+  Do NOT delete anything. Keep brainstorm.md, align.md, scope-feature.md in place.
+  Write index.md with this shape:
+    ```
+    ---
+    slice_id: <slice_id>
+    feature_title: <feature_title>
+    phase: frozen
+    tier: <tier>
+    status: complete
+    last_updated: YYYY-MM-DD
+    ---
+
+    # Slice: <feature_title>
+
+    Frozen concept dossier. The phase handoffs below are the decision record;
+    the canonical artifacts are the truth.
+
+    ## Canonical artifacts
+    - Feature spec: _concept/experience/features/<feature_group>/<feature_slug>.md
+    - Screens:
+      - _concept/experience/screens/<feature_slug>/<screen_slug>.md   (1..N)
+    - Walkthrough: _concept/mockup-walkthrough/<tier>/<feature_slug>.<ext>
+
+    ## Process history (kept)
+    - brainstorm.md — feature framing + open questions
+    - align.md — acceptance criteria, edge cases, permissions
+    - scope-feature.md — in/out scope before design
+    ```
+  - Verify index.md exists and its frontmatter parses.
 
 STEP 12: EMIT
-  EMIT [concept-slice-design-feature] completed slice_id=<id> feature=<slug> tier=<tier> screens=<n>
+  EMIT [concept-slice-design-feature] completed slice_id=<id> feature=<slug> tier=<tier> screens=<n> frozen=_concept/slices/<id>/
 
 CHECKLIST
   - [ ] scope.yaml read; tier ∈ {simple-app, standard-app, complex-app}
@@ -311,4 +348,4 @@ CHECKLIST
   - [ ] Walkthrough extension matches tier
   - [ ] All overwrites approved via STANDALONE CHECKPOINT
   - [ ] All writes succeeded and verified
-  - [ ] _slice/concept/<slice_id>/ deleted
+  - [ ] _concept/slices/<slice_id>/index.md written; phase handoffs kept (nothing deleted)

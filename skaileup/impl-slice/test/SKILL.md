@@ -19,23 +19,23 @@ metadata:
       - id: slice-impl-test
   prerequisites:
     files:
-      - path: "_slice/impl/{slice_id}/plan.md"
+      - path: "_implementation/slices/{slice_id}/plan.md"
         gate: hard
         description: "Per-slice plan required — produced by impl-plan-plan-vertical."
     inputs_required:
       - id: slice_id
-        label: "Slice id (== feature_slug); resolves to _slice/impl/<slice_id>/plan.md"
+        label: "Slice id (== feature_slug); resolves to _implementation/slices/<slice_id>/plan.md"
         type: text
         hint: "Inherited verbatim from upstream phases. Regex ^[a-z][a-z0-9-]{1,47}$."
     reads:
-      - path: "_slice/impl/{slice_id}/test.md"
+      - path: "_implementation/slices/{slice_id}/test.md"
         description: "Re-entry mode — refine an existing test handoff."
       - path: "package.json"
         description: "Optional — test runner detection (npm/pnpm/bun)."
       - path: "pyproject.toml"
         description: "Optional — test runner detection (pytest/uv)."
     produces:
-      - path: "_slice/impl/{slice_id}/test.md"
+      - path: "_implementation/slices/{slice_id}/test.md"
         description: "Per-slice test handoff for impl-slice-recap."
 ---
 
@@ -66,7 +66,7 @@ suites cannot capture.
 
 - `impl-slice-implement` has just landed code for one slice and the slice needs
   to be gated before `recap`/`refactor`/`commit`.
-- The slice's `plan.md` exists at `_slice/impl/<slice_id>/plan.md`.
+- The slice's `plan.md` exists at `_implementation/slices/<slice_id>/plan.md`.
 - The user is available to answer 4 short usability questions.
 
 ## When NOT to Use
@@ -78,16 +78,16 @@ suites cannot capture.
 
 ---
 
-ROLE Per-slice usability gate — runs slice tests + asks usability questions; produces a Done/NeedsMoreWork/Blocked verdict in `_slice/impl/<slice_id>/test.md`.
+ROLE Per-slice usability gate — runs slice tests + asks usability questions; produces a Done/NeedsMoreWork/Blocked verdict in `_implementation/slices/<slice_id>/test.md`.
 
 READS
-  _slice/impl/{slice_id}/plan.md                              — required (predecessor handoff per Task 2C)
-  ? _slice/impl/{slice_id}/test.md                            — re-entry mode
+  _implementation/slices/{slice_id}/plan.md                              — required (predecessor handoff per Task 2C)
+  ? _implementation/slices/{slice_id}/test.md                            — re-entry mode
   ? package.json                                              — optional; test runner detection
   ? pyproject.toml                                            — optional; test runner detection
 
 WRITES
-  _slice/impl/{slice_id}/test.md                              — handoff for impl-slice-recap
+  _implementation/slices/{slice_id}/test.md                              — handoff for impl-slice-recap
 
 REFERENCES
   SKILL_GRAPH.md                                              — § 5.2 per-slice impl loop
@@ -99,12 +99,12 @@ REFERENCES
   docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned test.md Schema
 
 REQUIRES
-  hard: _slice/impl/{slice_id}/plan.md                        — predecessor handoff
+  hard: _implementation/slices/{slice_id}/plan.md                        — predecessor handoff
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  ask each usability question as its own standalone message (iron_laws § 9)
-MUST  refuse to run if _slice/impl/<slice_id>/plan.md is missing (iron_laws § 7)
+MUST  refuse to run if _implementation/slices/<slice_id>/plan.md is missing (iron_laws § 7)
 MUST  copy slice_id, feature_title, feature_path, tier from plan.md frontmatter unchanged
 MUST  tag every "## Manual checks done" bullet with [PASS|FAIL|SKIPPED]
 MUST  tag every "## Automated tests run" bullet with [PASS|FAIL|SKIPPED]
@@ -127,9 +127,9 @@ INPUT
 # ── Workflow ───────────────────────────────────────────────────────
 
 STEP 0: Verify predecessor handoff
-  - Resolve plan.md path: _slice/impl/<slice_id>/plan.md
+  - Resolve plan.md path: _implementation/slices/<slice_id>/plan.md
   - If missing: refuse with explicit message:
-    > "[impl-slice-test] _slice/impl/<slice_id>/plan.md is missing.
+    > "[impl-slice-test] _implementation/slices/<slice_id>/plan.md is missing.
     >  Run impl-plan-plan-vertical first (Iron Law § 7)."
   - Parse plan.md frontmatter; cache slice_id, feature_title, feature_path, tier.
   - Verify slice_id matches input slice_id; refuse on mismatch.
@@ -212,22 +212,22 @@ STEP 6: Write the handoff
   - `## Outstanding issues`: numbered list from STEP 4. `_(none)_` allowed.
   - `## Decision`: exactly one line: `Decision: Done` | `Decision: Needs more work` | `Decision: Blocked`.
 
-  Write to _slice/impl/<slice_id>/test.md.
+  Write to _implementation/slices/<slice_id>/test.md.
 
 STEP 7: Validate
-  - $ python3 impl-slice/test/validator.py _slice/impl/<slice_id>/test.md \
-        --plan _slice/impl/<slice_id>/plan.md
+  - $ python3 impl-slice/test/validator.py _implementation/slices/<slice_id>/test.md \
+        --plan _implementation/slices/<slice_id>/plan.md
   - On failure: report errors and STOP. Do not advance.
 
 EMIT  [impl-slice-test] completed slice_id=<id> decision=<value> blockers=<n>
 
 CHECKLIST
-  - [ ] _slice/impl/<slice_id>/plan.md read; frontmatter cached
+  - [ ] _implementation/slices/<slice_id>/plan.md read; frontmatter cached
   - [ ] All plan.md "### Manual checks" bullets answered and tagged [PASS|FAIL|SKIPPED]
   - [ ] All plan.md "### Automated tests" bullets executed and tagged [PASS|FAIL|SKIPPED]
   - [ ] 4 usability questions asked as standalone messages and answered
   - [ ] "## Decision" line emitted; if Done, zero [BLOCKER] in Outstanding issues
-  - [ ] _slice/impl/<slice_id>/test.md exists on disk and validator.py exits 0
+  - [ ] _implementation/slices/<slice_id>/test.md exists on disk and validator.py exits 0
 
 ---
 

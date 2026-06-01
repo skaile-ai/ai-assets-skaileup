@@ -1,6 +1,6 @@
 ---
 name: impl-plan-plan-vertical
-description: "Use when an implementation slice has its align.md (or, for mvp, its feature.md) ready and needs a vertical-decomposition plan. Reads _slice/impl/<id>/align.md + concept artifacts. Writes _slice/impl/<id>/plan.md containing one row per user-facing slice (UI + Logic + Data), testing strategy, and an anti-horizontal-nudge block. Resists the LLM default of horizontal layering. Triggers on: 'plan the slice', 'decompose into rows', 'write the per-slice implementation plan', 'plan-vertical for <feature>'."
+description: "Use when an implementation slice has its align.md (or, for mvp, its feature.md) ready and needs a vertical-decomposition plan. Reads _implementation/slices/<id>/align.md + concept artifacts. Writes _implementation/slices/<id>/plan.md containing one row per user-facing slice (UI + Logic + Data), testing strategy, and an anti-horizontal-nudge block. Resists the LLM default of horizontal layering. Triggers on: 'plan the slice', 'decompose into rows', 'write the per-slice implementation plan', 'plan-vertical for <feature>'."
 metadata:
   version: "2.0.0"
   tags:
@@ -43,7 +43,7 @@ metadata:
         gate: hard
         description: "Permanent screen specs (≥ 1 file)."
         min_entries: 1
-      - path: "_slice/impl/{slice_id}/align.md"
+      - path: "_implementation/slices/{slice_id}/align.md"
         gate: soft
         description: "Required when tier ∈ {simple-app, standard-app, complex-app}; STEP 1 enforces hard. For mvp this skill is the cluster entry point and align.md is not expected."
     inputs_required:
@@ -63,16 +63,16 @@ metadata:
           - screen
         default: feature
     reads:
-      - path: "_slice/impl/{slice_id}/brainstorm.md"
+      - path: "_implementation/slices/{slice_id}/brainstorm.md"
         description: "Optional context — referenced for 'why this row' notes."
       - path: "_concept/blueprint/datamodel/model.json"
         description: "Optional — entity dependency hints inform row order, NOT row shape."
       - path: "_concept/blueprint/techstack.md"
         description: "Optional — stack constraints for the Logic column."
-      - path: "_slice/impl/{slice_id}/plan.md"
+      - path: "_implementation/slices/{slice_id}/plan.md"
         description: "Re-entry mode — refine an existing plan."
     produces:
-      - path: "_slice/impl/{slice_id}/plan.md"
+      - path: "_implementation/slices/{slice_id}/plan.md"
         description: "Per-slice impl plan handoff for impl-slice/implement (Task 2D)."
 ---
 
@@ -91,9 +91,9 @@ next row begins.
 > layering ("scaffold every screen, wire every handler, run every migration"),
 > which produces N half-finished slices and zero working ones.
 
-The output is `_slice/impl/<slice_id>/plan.md` — a structured handoff file
+The output is `_implementation/slices/<slice_id>/plan.md` — a structured handoff file
 consumed by `impl-slice/implement`, `impl-slice/test`, and `impl-slice/recap`
-in Task 2D. The `_slice/impl/<slice_id>/` directory is scratch and is deleted
+in Task 2D. The `_implementation/slices/<slice_id>/` directory is scratch and is deleted
 by `impl-slice/commit` after the slice's atomic commit lands.
 
 ## When to Use
@@ -143,15 +143,15 @@ READS
   _concept/_meta/scope.yaml                                       — required; tier
   _concept/product-spec/features/{group}/{feature_slug}.md        — required; permanent feature artifact
   _concept/experience/screens/{feature_slug}/*.md                 — required; permanent screen specs (≥ 1)
-  _slice/impl/{slice_id}/align.md                                 — required IF tier ∈ {simple-app, standard-app, complex-app};
+  _implementation/slices/{slice_id}/align.md                                 — required IF tier ∈ {simple-app, standard-app, complex-app};
                                                                     ENTRY POINT IF tier == mvp
-  ? _slice/impl/{slice_id}/brainstorm.md                          — optional; "why this row" context
+  ? _implementation/slices/{slice_id}/brainstorm.md                          — optional; "why this row" context
   ? _concept/blueprint/datamodel/model.json                       — optional; entity dependency hints (row ORDER only)
   ? _concept/blueprint/techstack.md                               — optional; stack constraints for Logic column
-  ? _slice/impl/{slice_id}/plan.md                                — re-entry mode
+  ? _implementation/slices/{slice_id}/plan.md                                — re-entry mode
 
 WRITES
-  _slice/impl/{slice_id}/plan.md                                  — handoff for impl-slice/implement (Task 2D)
+  _implementation/slices/{slice_id}/plan.md                                  — handoff for impl-slice/implement (Task 2D)
 
 REFERENCES
   SKILL_GRAPH.md                                                  — § 5.2 per-slice impl loop, § 6 tier composition
@@ -174,12 +174,12 @@ MUST  refuse to write a plan whose rows have empty UI, Logic, or Data cells with
 MUST  embed the verbatim anti-horizontal-nudge template in the output plan.md `## Anti-horizontal nudge` section (validator pins exact-string match)
 MUST  ask any clarification question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing
-MUST  refuse to run if tier ∈ {simple-app, standard-app, complex-app} and _slice/impl/<slice_id>/align.md is missing (iron_laws § 7)
+MUST  refuse to run if tier ∈ {simple-app, standard-app, complex-app} and _implementation/slices/<slice_id>/align.md is missing (iron_laws § 7)
 MUST  refuse to write the plan if feature.md is missing
 MUST  copy EARS acceptance criteria from feature.md (or align.md "## Acceptance handoff") verbatim into "## Testing strategy ### Automated tests" — every EARS line maps to ≥ 1 test row
 MUST  include the 5 required Definition of Done items verbatim (see schema below)
 MUST  set phase: plan in the handoff frontmatter
-MUST  write to _slice/impl/<slice_id>/plan.md (per-slice scratch); never write to a project-wide path — the project-level PLANS.md is owned by a different skill
+MUST  write to _implementation/slices/<slice_id>/plan.md (per-slice scratch); never write to a project-wide path — the project-level PLANS.md is owned by a different skill
 
 NEVER  produce a plan that batches all UI as one row, then all logic as another row, then all data as a third
 NEVER  decompose by technical layer (frontend / backend / db) instead of by user-facing vertical
@@ -204,14 +204,14 @@ STEP 1: Read scope and resolve tier-dependent gate
     Refuse if zero or >1 matches.
   - slice_id := feature_slug (or slice_id_override).
   IF tier ∈ {simple-app, standard-app, complex-app}
-    - require _slice/impl/<slice_id>/align.md to exist
+    - require _implementation/slices/<slice_id>/align.md to exist
     - if missing, refuse with:
       > "[impl-plan-plan-vertical] tier=<tier> requires
-      >  _slice/impl/<slice_id>/align.md. Run impl-plan-align first."
+      >  _implementation/slices/<slice_id>/align.md. Run impl-plan-align first."
     - copy slice_id, feature_title, feature_path from align.md frontmatter (verify match).
   ELSE  # tier == mvp
     - align.md not required; this skill is the cluster entry.
-    - $ mkdir -p _slice/impl/<slice_id>/
+    - $ mkdir -p _implementation/slices/<slice_id>/
     - read feature_title from feature.md frontmatter.
 
 STEP 2: Read context
@@ -311,15 +311,15 @@ STEP 7: Approval
   CHECKPOINT plan_draft
     > "Here's the per-slice plan for `<slice_id>`. Does any row have empty
     >  UI / Logic / Data cells without a justification? If so we should
-    >  split or merge it. Approve to write to _slice/impl/<slice_id>/plan.md,
+    >  split or merge it. Approve to write to _implementation/slices/<slice_id>/plan.md,
     >  or tell me what to change."
 
 STEP 8: Write the handoff
-  - Write _slice/impl/<slice_id>/plan.md
+  - Write _implementation/slices/<slice_id>/plan.md
   - Verify file exists and frontmatter parses
 
 STEP 9: Validate
-  - $ python3 impl-plan/plan-vertical/validator.py _slice/impl/<slice_id>/plan.md
+  - $ python3 impl-plan/plan-vertical/validator.py _implementation/slices/<slice_id>/plan.md
   - On failure: report the validator errors and STOP. Do not commit.
   - Empty UI/Logic/Data cells produce a WARNING (stderr), not a failure;
     surface the warning to the user.
@@ -330,11 +330,11 @@ CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated
   - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
   - [ ] tier-dependent prerequisite check passed (align.md required for non-mvp tiers)
-  - [ ] _slice/impl/<slice_id>/ directory exists
+  - [ ] _implementation/slices/<slice_id>/ directory exists
   - [ ] All 6 top-level body sections present (Slice scope, Vertical decomposition, Testing strategy, Anti-horizontal nudge, Definition of done, Open carry-overs)
   - [ ] `## Vertical decomposition` table has header `| # | UI | Logic | Data |` and ≥ 1 data row
   - [ ] Every EARS line maps to ≥ 1 test in `### Automated tests`
   - [ ] Anti-horizontal nudge embedded VERBATIM (validator pins exact match)
   - [ ] 5 Definition of Done items present verbatim
   - [ ] User approved the draft via CHECKPOINT before write
-  - [ ] _slice/impl/<slice_id>/plan.md exists on disk and validator.py exits 0
+  - [ ] _implementation/slices/<slice_id>/plan.md exists on disk and validator.py exits 0

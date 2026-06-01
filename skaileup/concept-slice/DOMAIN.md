@@ -8,14 +8,14 @@ metadata:
 
 # concept-slice
 
-Runs the concept loop at per-feature granularity for large applications. Each pass through the four-skill sequence produces one feature's permanent `_concept/` artifacts (feature spec, screen specs, mockup stub) and then deletes its scratch. Use when `_concept/_meta/scope.yaml` declares tier `standard-app` or `complex-app`.
+Runs the concept loop at per-feature granularity for large applications. Each pass through the four-skill sequence produces one feature's permanent `_concept/` artifacts (feature spec, screen specs, mockup stub) and then freezes its slice dossier (writes `index.md`, keeps the phase handoffs as documentation). Use when `_concept/_meta/scope.yaml` declares tier `standard-app` or `complex-app`.
 
 ## Skills
 
-- **concept-slice-brainstorm** (`brainstorm/`) — Open-ended interview: surfaces who uses the feature, what triggers it, and the happy path. Writes `_slice/concept/{slice_id}/brainstorm.md`.
-- **concept-slice-align** (`align/`) — Adversarial grilling: edge cases, error states, role/permission gaps. Produces EARS-format acceptance criteria in `_slice/concept/{slice_id}/align.md`. Entry point for `simple-app` tier (skips brainstorm).
-- **concept-slice-scope-feature** (`scope-feature/`) — Forces an IN/OUT/DEFER decision on every edge-case item from align. Writes `_slice/concept/{slice_id}/scope-feature.md`.
-- **concept-slice-design-feature** (`design-feature/`) — Commits permanent artifacts: `_concept/experience/features/{slice_id}.md`, screen specs under `_concept/experience/screens/`, and a mockup-walkthrough stub. Deletes `_slice/concept/{slice_id}/` on success.
+- **concept-slice-brainstorm** (`brainstorm/`) — Open-ended interview: surfaces who uses the feature, what triggers it, and the happy path. Writes `_concept/slices/{slice_id}/brainstorm.md`.
+- **concept-slice-align** (`align/`) — Adversarial grilling: edge cases, error states, role/permission gaps. Produces EARS-format acceptance criteria in `_concept/slices/{slice_id}/align.md`. Entry point for `simple-app` tier (skips brainstorm).
+- **concept-slice-scope-feature** (`scope-feature/`) — Forces an IN/OUT/DEFER decision on every edge-case item from align. Writes `_concept/slices/{slice_id}/scope-feature.md`.
+- **concept-slice-design-feature** (`design-feature/`) — Commits permanent artifacts: `_concept/experience/features/{slice_id}.md`, screen specs under `_concept/experience/screens/`, and a mockup-walkthrough stub. Freezes `_concept/slices/{slice_id}/` on success (writes index.md, keeps the dossier as documentation).
 
 ## When to Use
 
@@ -36,7 +36,7 @@ Runs the concept loop at per-feature granularity for large applications. Each pa
 brainstorm → align → scope-feature → design-feature
 ```
 
-Each skill reads the previous phase's scratch file. `/clear` between phases. `design-feature` is the only step that writes to `_concept/`; the rest write only to `_slice/concept/{slice_id}/`.
+Each skill reads the previous phase's handoff. `/clear` between phases. `design-feature` is the only step that writes the canonical `_concept/experience/...` artifacts; all four write into the slice dossier `_concept/slices/{slice_id}/`, which is frozen (kept) on commit as permanent per-feature documentation.
 
 ## Cross-references
 

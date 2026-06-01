@@ -2,7 +2,7 @@
 
 Pinned format for every commit produced by `impl-slice-commit`. The body is
 the **only** durable place where slice context survives — once
-`_slice/impl/<id>/` is deleted, the commit body is the audit trail.
+`_implementation/slices/<id>/` is deleted, the commit body is the audit trail.
 
 ## Format
 

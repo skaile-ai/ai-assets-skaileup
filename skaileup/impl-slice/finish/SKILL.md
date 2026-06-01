@@ -1,6 +1,6 @@
 ---
 name: impl-slice-finish
-description: "Use when ending an implementation branch after all per-slice work is committed. Presents four options: merge to main, create pull request, keep branch, or discard. Requires explicit confirmation for merge and discard. Refuses if any _slice/impl/<id>/ scratch dirs remain (those signal uncommitted slices)."
+description: "Use when ending an implementation branch after all per-slice work is committed. Presents four options: merge to main, create pull request, keep branch, or discard. Requires explicit confirmation for merge and discard. Refuses if any _implementation/slices/<id>/ dossier is not yet frozen (missing index.md) — those signal uncommitted slices."
 metadata:
   version: '2.0.0'
   tags:
@@ -61,11 +61,11 @@ require typed confirmation before executing.
 ROLE Branch completion — presents merge / PR / keep / discard options and executes the chosen action with appropriate safeguards.
 
 READS
-\_slice/impl/ — must be empty or absent (any remaining `<id>/` subdirs signal uncommitted slices)
+\_implementation/slices/ — every `<id>/` must be FROZEN (contain index.md); any slice dir without index.md signals an uncommitted slice
 \_implementation/git-state.json — branch name, git_mode, worktree path
 \_implementation/decisions.md — concerns to include in PR/merge message (optional)
 
-MUST verify _slice/impl/ has no remaining slice dirs before merge or PR
+MUST verify every _implementation/slices/<id>/ contains index.md (is frozen) before merge or PR
 MUST require typed "merge" confirmation before squash-merging to main
 MUST require typed "discard" confirmation before deleting the branch
 MUST clean up worktree if git_mode=worktree and action is merge, keep, or discard
@@ -77,11 +77,12 @@ NEVER delete the branch without explicit typed confirmation
 
 STEP 1: Pre-flight checks
 
-- Scan `_slice/impl/` for remaining slice dirs:
-  $ find _slice/impl -mindepth 1 -maxdepth 1 -type d 2>/dev/null
-  IF any subdirs are returned
-  - STOP. Report: "N slices are not yet committed. Run `impl-slice-commit` for each remaining slice before closing the branch."
-  - List the remaining slice dirs
+- Scan `_implementation/slices/` for any slice dir that is NOT frozen (missing index.md):
+  $ find _implementation/slices -mindepth 1 -maxdepth 1 -type d \! -exec test -e '{}/index.md' \; -print 2>/dev/null
+  IF any dirs are returned
+  - STOP. Report: "N slices are not yet committed (no index.md). Run `impl-slice-commit` for each before closing the branch."
+  - List the un-frozen slice dirs
+  (Frozen slice dossiers — those WITH index.md — are kept as documentation and are expected to remain.)
 - Read git-state.json: branch, git_mode, worktree_path
 
 STEP 2: Run final tests
@@ -92,7 +93,7 @@ STEP 2: Run final tests
 
 STEP 3: Present options
 
-> "Implementation is complete. All slices committed (`_slice/impl/` is empty), all tests passing.
+> "Implementation is complete. All slices committed (every `_implementation/slices/<id>/` is frozen with an index.md), all tests passing.
 >
 > What would you like to do with the implementation branch?
 >
@@ -146,7 +147,7 @@ $ git branch -D implement/<app-slug> - Update git-state.json: status = discarded
 
 CHECKLIST
 
-- [ ] `_slice/impl/` verified empty before merge or PR
+- [ ] every `_implementation/slices/<id>/` verified frozen (has index.md) before merge or PR
 - [ ] Full test suite passed before merge or PR
 - [ ] Typed confirmation received for merge and discard
 - [ ] Worktree cleaned up if git_mode=worktree
@@ -158,7 +159,7 @@ CHECKLIST
 
 | Mistake                                                    | What to do instead                                      |
 | ---------------------------------------------------------- | ------------------------------------------------------- |
-| Closing the branch with uncommitted slices                 | Run `impl-slice-commit` for each remaining `_slice/impl/<id>/` first |
+| Closing the branch with uncommitted slices                 | Run `impl-slice-commit` for each un-frozen `_implementation/slices/<id>/` (no index.md) first |
 | Merging without typed "merge" confirmation                 | Always require it — prevents accidental merges          |
 | Forgetting to remove the worktree                          | Always clean up the worktree on merge, keep, or discard |
 | Using `git branch -D` without typed "discard" confirmation | Require the typed word — lost work destroys trust       |

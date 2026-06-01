@@ -6,8 +6,9 @@
 # nowhere else — skills never repeat them.
 #
 # Authority: concept-side paths are mirrored from contracts/concept_structure.md
-# (the canonical _concept/ tree). impl-side paths live under _implementation/ and
-# _slice/. Keep this file in sync with concept_structure.md; verify_artifacts.py
+# (the canonical _concept/ tree). Per-feature slice dossiers live under
+# _concept/slices/<id>/ and _implementation/slices/<id>/; impl-side ledgers live
+# directly under _implementation/. Keep this file in sync with concept_structure.md; verify_artifacts.py
 # enforces that every `produces`/`consumes`/`requires` id used by any skill exists
 # here, and that declared producers match `produced_by`.
 #
@@ -275,73 +276,91 @@ artifacts:
     produced_by: ops-review
     description: Concept health report — score, issues by severity.
 
-  # ── implementation — per-slice scratch (_slice/impl/) ───────────────────
-  # All deleted by impl-slice-commit. Carried only between adjacent phases.
+  # ── implementation — per-slice dossier (_implementation/slices/) ───────────────────
+  # Carried between adjacent phases, then FROZEN (not deleted) by impl-slice-commit:
+  # the folder is kept as permanent per-feature documentation alongside the shipped
+  # code. impl-slice-commit writes slice-impl-index and removes only the transient
+  # progress.json. A slice with an index.md is frozen; one without is still in flight.
   slice-impl-brainstorm:
-    path: _slice/impl/{slice_id}/brainstorm.md
-    kind: scratch
+    path: _implementation/slices/{slice_id}/brainstorm.md
+    kind: durable
     side: impl
     produced_by: impl-plan-brainstorm
     description: Per-slice risks, unknowns, P1/P2 questions.
   slice-impl-align:
-    path: _slice/impl/{slice_id}/align.md
-    kind: scratch
+    path: _implementation/slices/{slice_id}/align.md
+    kind: durable
     side: impl
     produced_by: impl-plan-align
     description: Grill results — edge cases, constraints, EARS handoff.
   slice-impl-plan:
-    path: _slice/impl/{slice_id}/plan.md
-    kind: scratch
+    path: _implementation/slices/{slice_id}/plan.md
+    kind: durable
     side: impl
     produced_by: impl-plan-plan-vertical
     description: Vertical decomposition rows, testing strategy, Definition of Done.
   slice-impl-test:
-    path: _slice/impl/{slice_id}/test.md
-    kind: scratch
+    path: _implementation/slices/{slice_id}/test.md
+    kind: durable
     side: impl
     produced_by: impl-slice-test
     description: Manual + automated checks, outstanding issues, Decision.
   slice-impl-recap:
-    path: _slice/impl/{slice_id}/recap.md
-    kind: scratch
+    path: _implementation/slices/{slice_id}/recap.md
+    kind: durable
     side: impl
     produced_by: impl-slice-recap
     description: What was built, ASCII diagram, files touched, outcome vs plan.
   slice-impl-refactor:
-    path: _slice/impl/{slice_id}/refactor.md
-    kind: scratch
+    path: _implementation/slices/{slice_id}/refactor.md
+    kind: durable
     side: impl
     produced_by: impl-slice-refactor
     description: 1-3 refactor candidates, approval status, applied changes.
+  slice-impl-index:
+    path: _implementation/slices/{slice_id}/index.md
+    kind: durable
+    side: impl
+    produced_by: impl-slice-commit
+    description: Frozen slice dossier — commit SHAs, feature spec link, process-history index.
 
-  # ── concept — per-slice scratch (_slice/concept/) ───────────────────────
-  # Deleted by concept-slice-design-feature on commit; truth → _concept/ artifacts.
+  # ── concept — per-slice dossier (_concept/slices/) ───────────────────────
+  # Carried between adjacent phases, then FROZEN (not deleted) by
+  # concept-slice-design-feature: kept as permanent per-feature documentation
+  # beside the canonical _concept/ artifacts. design-feature writes
+  # slice-concept-index. A slice with an index.md is frozen; one without is in flight.
   slice-concept-brainstorm:
-    path: _slice/concept/{slice_id}/brainstorm.md
-    kind: scratch
+    path: _concept/slices/{slice_id}/brainstorm.md
+    kind: durable
     side: concept
     produced_by: concept-slice-brainstorm
     description: Per-feature concept risks + open questions.
   slice-concept-align:
-    path: _slice/concept/{slice_id}/align.md
-    kind: scratch
+    path: _concept/slices/{slice_id}/align.md
+    kind: durable
     side: concept
     produced_by: concept-slice-align
     description: Aligned scope + decisions for one feature.
   slice-concept-scope:
-    path: _slice/concept/{slice_id}/scope-feature.md
-    kind: scratch
+    path: _concept/slices/{slice_id}/scope-feature.md
+    kind: durable
     side: concept
     produced_by: concept-slice-scope-feature
     description: Feature scope boundaries before design-feature.
+  slice-concept-index:
+    path: _concept/slices/{slice_id}/index.md
+    kind: durable
+    side: concept
+    produced_by: concept-slice-design-feature
+    description: Frozen slice dossier — links to feature spec, screens, walkthrough; process-history index.
 
   # ── implementation — per-slice progress + supervised ledger ─────────────
   slice-impl-progress:
-    path: _slice/impl/{slice_id}/progress.json
+    path: _implementation/slices/{slice_id}/progress.json
     kind: scratch
     side: impl
     produced_by: [impl-slice-implement, impl-slice-implement-page]
-    description: Per-slice resume state during implement.
+    description: Per-slice resume state during implement; removed by impl-slice-commit on freeze.
   superpowers-plan:
     path: _implementation/superpowers-plan.md
     kind: durable

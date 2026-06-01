@@ -3,15 +3,17 @@
 
 Three deterministic modes — does NOT actually run `git`; that is the skill
 body's job. The validator pins (A) the commit-plan JSON shape, (B) the
-post-commit absence of `_slice/impl/<id>/`, and (C) the pre-flight gate
-that all four handoffs exist with correct decisions.
+post-commit FREEZE of `_implementation/slices/<id>/` (dir kept, index.md present,
+progress.json removed), and (C) the pre-flight gate that all four handoffs exist
+with correct decisions.
 
 Usage:
     # Mode A: validate a commit-plan JSON.
     python3 validator.py --plan <path/to/commit-plan.json> [--expected-files <file>]
 
-    # Mode B: assert the lifecycle terminator deleted _slice/impl/<id>/.
-    python3 validator.py --post-commit <path/to/_slice/impl/<id>/>
+    # Mode B: assert the lifecycle terminator FROZE _implementation/slices/<id>/
+    #         (the dir still exists and contains index.md; progress.json is gone).
+    python3 validator.py --post-commit <path/to/_implementation/slices/<id>/>
 
     # Mode C: pre-flight — assert all 4 handoffs exist with correct values.
     python3 validator.py --pre-flight <slice_id> [--root <repo-root>]
@@ -136,16 +138,30 @@ def validate_plan(plan_path: Path, expected_files_path: Path | None) -> list[str
     return errors
 
 
-# ── Mode B: post-commit dir-gone ──────────────────────────────────
+# ── Mode B: post-commit dir-frozen ────────────────────────────────
 
 
 def validate_post_commit(slice_dir: Path) -> list[str]:
-    if slice_dir.exists():
+    """The lifecycle terminator FREEZES the slice: the dir is kept and gains an
+    index.md; only the transient progress.json is removed. (Suggestion-B: slices
+    are durable per-feature documentation, not throwaway scratch.)"""
+    errors: list[str] = []
+    if not slice_dir.exists():
         return [
-            f"lifecycle terminator failed: {slice_dir} still exists "
-            "(expected deletion after successful commits)"
+            f"lifecycle terminator failed: {slice_dir} does not exist "
+            "(expected the frozen slice dossier to be kept, not deleted)"
         ]
-    return []
+    if not (slice_dir / "index.md").exists():
+        errors.append(
+            f"lifecycle terminator failed: {slice_dir / 'index.md'} missing "
+            "(expected a frozen dossier index)"
+        )
+    if (slice_dir / "progress.json").exists():
+        errors.append(
+            f"{slice_dir / 'progress.json'} still exists "
+            "(transient resume state should be removed on freeze)"
+        )
+    return errors
 
 
 # ── Mode C: pre-flight 4-handoff gate ─────────────────────────────
@@ -167,7 +183,7 @@ def validate_pre_flight(slice_id: str, root: Path) -> list[str]:
         errors.append(
             f"slice_id {slice_id!r} does not match ^[a-z][a-z0-9-]{{1,47}}$"
         )
-    slice_dir = root / "_slice" / "impl" / slice_id
+    slice_dir = root / "_implementation" / "slices" / slice_id
     if not slice_dir.is_dir():
         errors.append(f"slice dir does not exist: {slice_dir}")
         return errors
@@ -208,7 +224,7 @@ def main(argv: list[str]) -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--plan", help="Mode A: path to commit-plan.json")
     group.add_argument(
-        "--post-commit", help="Mode B: path to _slice/impl/<id>/ that should NOT exist"
+        "--post-commit", help="Mode B: path to _implementation/slices/<id>/ that should be frozen (kept, with index.md)"
     )
     group.add_argument("--pre-flight", help="Mode C: slice_id to verify gates for")
     parser.add_argument(
@@ -219,7 +235,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument(
         "--root",
         default=".",
-        help="(Mode C) repo root containing _slice/impl/<id>/ (default: CWD)",
+        help="(Mode C) repo root containing _implementation/slices/<id>/ (default: CWD)",
     )
     args = parser.parse_args(argv[1:])
 

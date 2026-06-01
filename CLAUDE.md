@@ -129,9 +129,9 @@ The collection is shaped by one observation: **the work of figuring out a produc
                   ╚══════════════════════════╝
 ```
 
-Both slice loops follow the same five-phase shape with `/clear` between every phase: brainstorm → align → (scope-feature | plan-vertical) → (design-feature | implement → test → recap → refactor → commit). Phases read from the prior phase's scratch file in `_slice/concept/<id>/` or `_slice/impl/<id>/`. **No phase carries the whole slice in context** — that's how big apps stay buildable past the dumb-zone (~100k tokens).
+Both slice loops follow the same five-phase shape with `/clear` between every phase: brainstorm → align → (scope-feature | plan-vertical) → (design-feature | implement → test → recap → refactor → commit). Phases read from the prior phase's handoff file in `_concept/slices/<id>/` or `_implementation/slices/<id>/`. **No phase carries the whole slice in context** — that's how big apps stay buildable past the dumb-zone (~100k tokens).
 
-Scratch is **deleted on commit**: truth lives in code (impl-slice) or in permanent `_concept/` artifacts (concept-slice).
+The slice dossier is **frozen on commit, not deleted** (Suggestion-B organization): the terminator (`concept-slice-design-feature` / `impl-slice-commit`) writes an `index.md` and **keeps** the phase handoffs as permanent per-feature documentation under `_concept/slices/<id>/` and `_implementation/slices/<id>/`. Truth still lives in code (impl-slice) or in the canonical `_concept/experience/...` artifacts (concept-slice); the dossier is the decision record beside it. The **general (non-slice) part** — brief, goals, brand, journeys, datamodel, techstack, architecture — lives in its phase folders and is not per-slice. Only the impl side's transient `progress.json` is removed on freeze.
 
 ## Flows + Bundles
 

@@ -2,7 +2,7 @@
 """Validator for impl-plan-plan-vertical handoff files.
 
 Usage:
-    python3 validator.py <path/to/_slice/impl/<slice_id>/plan.md>
+    python3 validator.py <path/to/_implementation/slices/<slice_id>/plan.md>
 
 Exit codes:
     0 — valid (warnings may still be printed to stderr)

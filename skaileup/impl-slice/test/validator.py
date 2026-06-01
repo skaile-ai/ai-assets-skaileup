@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validator for impl-slice-test handoff files (`_slice/impl/<id>/test.md`).
+"""Validator for impl-slice-test handoff files (`_implementation/slices/<id>/test.md`).
 
 Usage:
     python3 validator.py <path/to/test.md> [--plan <path/to/plan.md>]

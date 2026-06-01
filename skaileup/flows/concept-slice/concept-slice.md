@@ -22,7 +22,7 @@ brainstorm → align → scope-feature → design-feature
    /clear      /clear     /clear
 ```
 
-Each phase writes a scratch file under `_slice/concept/<id>/` and `/clear`s
+Each phase writes a scratch file under `_concept/slices/<id>/` and `/clear`s
 before the next, so no phase holds the whole slice in context. On
 `design-feature` the result is appended to the permanent concept artifacts
 (`product-spec/features/`, `experience/screens/`, mockups, this feature's
@@ -43,7 +43,7 @@ inheritance; this bundle is for running the slice standalone.
 
 ## Scratch lifecycle
 
-Scratch in `_slice/concept/<id>/` is **deleted on completion** — truth lives in
+Scratch in `_concept/slices/<id>/` is **deleted on completion** — truth lives in
 the permanent `_concept/` artifacts the slice appends to.
 
 ## See also

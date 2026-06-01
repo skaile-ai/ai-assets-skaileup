@@ -1,6 +1,6 @@
 ---
 name: impl-plan-align
-description: "Use when an implementation slice has its concept artifacts (feature.md + screens) frozen and needs a grill-me interview to surface unstated assumptions, technical constraints, and edge cases before plan-vertical writes the slice plan. Reads _concept/product-spec/features/<group>/<feature_slug>.md + _slice/impl/<id>/brainstorm.md (if standard/complex tier). Writes _slice/impl/<id>/align.md. Triggers on: 'align this slice', 'grill me on the implementation', 'lock down impl assumptions', 'pre-plan grill'."
+description: "Use when an implementation slice has its concept artifacts (feature.md + screens) frozen and needs a grill-me interview to surface unstated assumptions, technical constraints, and edge cases before plan-vertical writes the slice plan. Reads _concept/product-spec/features/<group>/<feature_slug>.md + _implementation/slices/<id>/brainstorm.md (if standard/complex tier). Writes _implementation/slices/<id>/align.md. Triggers on: 'align this slice', 'grill me on the implementation', 'lock down impl assumptions', 'pre-plan grill'."
 metadata:
   version: "1.0.0"
   tags:
@@ -41,7 +41,7 @@ metadata:
         gate: hard
         description: "Permanent screen specs for this feature (≥ 1 file expected)."
         min_entries: 1
-      - path: "_slice/impl/{slice_id}/brainstorm.md"
+      - path: "_implementation/slices/{slice_id}/brainstorm.md"
         gate: soft
         description: "Required when tier is standard-app or complex-app (the strict gate is enforced in STEP 1 because for simple-app this skill is the cluster entry point and brainstorm.md does not exist)."
     inputs_required:
@@ -58,10 +58,10 @@ metadata:
         description: "Data model — surfaces entity-related grill questions."
       - path: "_concept/blueprint/techstack.md"
         description: "Stack constraints — informs the technical-constraints sub-section."
-      - path: "_slice/impl/{slice_id}/align.md"
+      - path: "_implementation/slices/{slice_id}/align.md"
         description: "Re-entry mode — refine an existing align."
     produces:
-      - path: "_slice/impl/{slice_id}/align.md"
+      - path: "_implementation/slices/{slice_id}/align.md"
         description: "Per-slice impl align handoff for impl-plan-plan-vertical."
 ---
 
@@ -77,8 +77,8 @@ The skill inverts brainstorm: now the AI asks pointed questions, the user defend
 Pillars covered: state transitions, boundary inputs, concurrency, permissions,
 persistence/offline, error states, cross-feature data, performance, test seam.
 
-The output is `_slice/impl/<slice_id>/align.md` — a structured handoff file consumed
-by `impl-plan-plan-vertical`. The `_slice/impl/<slice_id>/` directory is scratch and
+The output is `_implementation/slices/<slice_id>/align.md` — a structured handoff file consumed
+by `impl-plan-plan-vertical`. The `_implementation/slices/<slice_id>/` directory is scratch and
 is deleted by `impl-slice/commit` after the slice's atomic commit lands. None of the
 impl-plan skills delete the dir themselves.
 
@@ -91,7 +91,7 @@ features have their own slice align runs).
 - An implementation slice's concept artifacts (feature.md + screens) are frozen and
   the user is ready to commit to acceptance criteria for the implementation.
 - Tier is `simple-app`, `standard-app`, or `complex-app`.
-- For standard/complex: `_slice/impl/<id>/brainstorm.md` exists.
+- For standard/complex: `_implementation/slices/<id>/brainstorm.md` exists.
 
 ## When NOT to Use
 
@@ -107,14 +107,14 @@ READS
   _concept/_meta/scope.yaml                                       — required; tier
   _concept/product-spec/features/{group}/{feature_slug}.md        — required; permanent feature artifact
   _concept/experience/screens/{feature_slug}/*.md                 — required; permanent screen specs (≥ 1 file)
-  _slice/impl/{slice_id}/brainstorm.md                            — required IF tier ∈ {standard-app, complex-app};
+  _implementation/slices/{slice_id}/brainstorm.md                            — required IF tier ∈ {standard-app, complex-app};
                                                                     ENTRY POINT IF tier == simple-app
   ? _concept/blueprint/datamodel/model.json                       — optional; data model for entity grilling
   ? _concept/blueprint/techstack.md                               — optional; stack constraints
-  ? _slice/impl/{slice_id}/align.md                               — re-entry mode
+  ? _implementation/slices/{slice_id}/align.md                               — re-entry mode
 
 WRITES
-  _slice/impl/{slice_id}/align.md                                 — handoff for impl-plan-plan-vertical
+  _implementation/slices/{slice_id}/align.md                                 — handoff for impl-plan-plan-vertical
 
 REFERENCES
   SKILL_GRAPH.md                                                  — § 5.2 per-slice impl loop, § 6 tier composition
@@ -134,7 +134,7 @@ REQUIRES
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing or tier == mvp (mvp skips align per SKILL_GRAPH § 6)
 MUST  refuse to run if the feature.md at _concept/product-spec/features/<group>/<feature_slug>.md is missing (iron_laws § 7)
-MUST  refuse to run if tier ∈ {standard-app, complex-app} and _slice/impl/<slice_id>/brainstorm.md is missing
+MUST  refuse to run if tier ∈ {standard-app, complex-app} and _implementation/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id, feature_title, feature_path from brainstorm.md frontmatter when present; never re-derive
 MUST  surface every P1 question to the user as a standalone message before writing align.md
 MUST  copy EARS acceptance criteria from feature.md verbatim into "## Acceptance handoff"
@@ -164,14 +164,14 @@ STEP 1: Read scope and resolve tier-dependent gate
     Refuse if zero or >1 matches.
   - slice_id := feature_slug (or slice_id_override if set).
   IF tier ∈ {standard-app, complex-app}
-    - require _slice/impl/<slice_id>/brainstorm.md to exist
+    - require _implementation/slices/<slice_id>/brainstorm.md to exist
     - if missing, refuse with:
       > "[impl-plan-align] tier=<tier> requires
-      >  _slice/impl/<slice_id>/brainstorm.md. Run impl-plan-brainstorm first."
+      >  _implementation/slices/<slice_id>/brainstorm.md. Run impl-plan-brainstorm first."
     - copy slice_id, feature_title, feature_path from brainstorm.md frontmatter (verify match).
   ELSE  # tier == simple-app
     - brainstorm.md not required; this skill is the cluster entry.
-    - $ mkdir -p _slice/impl/<slice_id>/
+    - $ mkdir -p _implementation/slices/<slice_id>/
     - read feature_title from feature.md frontmatter (do not ask the user a redundant question).
 
 STEP 2: Read context
@@ -277,12 +277,12 @@ STEP 14: Draft align.md in memory
 STEP 15: Approval
   CHECKPOINT align_draft
     > "Here's the impl-plan align draft for slice `<slice_id>`.
-    >  Approve to write to _slice/impl/<slice_id>/align.md, or tell me what to change."
+    >  Approve to write to _implementation/slices/<slice_id>/align.md, or tell me what to change."
 
 STEP 16: Write the handoff
-  - Write _slice/impl/<slice_id>/align.md
+  - Write _implementation/slices/<slice_id>/align.md
   - Verify file exists and frontmatter parses
-  - $ python3 impl-plan/align/validator.py _slice/impl/<slice_id>/align.md
+  - $ python3 impl-plan/align/validator.py _implementation/slices/<slice_id>/align.md
 
 EMIT  [impl-plan-align] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 
@@ -290,11 +290,11 @@ CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {simple-app, standard-app, complex-app})
   - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
   - [ ] tier-dependent prerequisite check passed (brainstorm.md required for standard/complex)
-  - [ ] _slice/impl/<slice_id>/ directory exists
+  - [ ] _implementation/slices/<slice_id>/ directory exists
   - [ ] All grill questions sent as STANDALONE messages; each answered before next
   - [ ] All P1 blockers surfaced and answered before draft
   - [ ] All 7 body sections present; `## Constraints` has all 3 sub-sections
   - [ ] At least one P1/P2 question in `## Open questions` OR every prior P1 resolved in `## Decisions made`
   - [ ] EARS acceptance criteria copied verbatim into `## Acceptance handoff` (≥ 1 EARS line)
   - [ ] User approved the draft via CHECKPOINT before write
-  - [ ] _slice/impl/<slice_id>/align.md exists on disk and validator.py exits 0
+  - [ ] _implementation/slices/<slice_id>/align.md exists on disk and validator.py exits 0

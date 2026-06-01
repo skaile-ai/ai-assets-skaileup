@@ -2,7 +2,7 @@
 """Validator for concept-slice-scope-feature handoff files.
 
 Usage:
-    python3 validator.py <path/to/_slice/concept/<slice_id>/scope-feature.md>
+    python3 validator.py <path/to/_concept/slices/<slice_id>/scope-feature.md>
 
 Exit codes:
     0 — valid

@@ -2,7 +2,7 @@
 """Validator for concept-slice-align handoff files.
 
 Usage:
-    python3 validator.py <path/to/_slice/concept/<slice_id>/align.md>
+    python3 validator.py <path/to/_concept/slices/<slice_id>/align.md>
 
 Exit codes:
     0 — valid

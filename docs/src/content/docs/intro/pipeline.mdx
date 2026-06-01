@@ -112,8 +112,9 @@ impl-slice/recap → impl-slice/refactor → impl-slice/commit
 ```
 
 Between every phase the user runs `/clear`. Phases read from
-`_slice/impl/<id>/`. `commit` deletes the scratch directory after landing
-atomic commits.
+`_implementation/slices/<id>/`. After landing atomic commits, `commit` **freezes**
+the dossier — writes an `index.md` and keeps the phase handoffs as per-feature
+documentation (only the transient `progress.json` is removed).
 
 ## 5. Quality gates (between slices, or at release)
 

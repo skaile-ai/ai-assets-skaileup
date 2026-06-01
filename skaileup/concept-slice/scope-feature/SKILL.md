@@ -28,21 +28,21 @@ metadata:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
         description: "Tier context required."
-      - path: "_slice/concept/{slice_id}/align.md"
+      - path: "_concept/slices/{slice_id}/align.md"
         gate: hard
         description: "Predecessor handoff required — produced by concept-slice-align."
     inputs_required:
       - id: slice_id
         label: "Slice id (kebab-case)"
         type: text
-        hint: "Must match an existing _slice/concept/<slice_id>/ directory containing align.md."
+        hint: "Must match an existing _concept/slices/<slice_id>/ directory containing align.md."
     reads:
       - path: "_concept/experience/features"
         description: "Sibling features — to flag items already owned elsewhere."
-      - path: "_slice/concept/{slice_id}/scope-feature.md"
+      - path: "_concept/slices/{slice_id}/scope-feature.md"
         description: "Re-entry mode."
     produces:
-      - path: "_slice/concept/{slice_id}/scope-feature.md"
+      - path: "_concept/slices/{slice_id}/scope-feature.md"
         description: "Per-feature scope decision handoff for concept-slice-design-feature."
 ---
 
@@ -66,12 +66,12 @@ ROLE Per-feature scope adjudicator — turns align's edge cases into IN/OUT/DEFE
 
 READS
   _concept/_meta/scope.yaml                  — required; tier
-  _slice/concept/{slice_id}/align.md         — required (predecessor handoff)
+  _concept/slices/{slice_id}/align.md         — required (predecessor handoff)
   ? _concept/experience/features/**/*.md     — optional; sibling features
-  ? _slice/concept/{slice_id}/scope-feature.md — re-entry mode
+  ? _concept/slices/{slice_id}/scope-feature.md — re-entry mode
 
 WRITES
-  _slice/concept/{slice_id}/scope-feature.md — handoff for concept-slice-design-feature
+  _concept/slices/{slice_id}/scope-feature.md — handoff for concept-slice-design-feature
 
 REFERENCES
   SKILL_GRAPH.md                             — § 4 concept-slice loop
@@ -80,7 +80,7 @@ REFERENCES
 
 REQUIRES
   hard: _concept/_meta/scope.yaml
-  hard: _slice/concept/{slice_id}/align.md
+  hard: _concept/slices/{slice_id}/align.md
 
 # Constraints
 
@@ -105,8 +105,8 @@ INPUT
 STEP 1: Read predecessor handoffs
   - Open _concept/_meta/scope.yaml; abort if missing.
   - Refuse if scope.tier == mvp.
-  - Open _slice/concept/<slice_id>/align.md; abort with explicit error if missing:
-    > "[concept-slice-scope-feature] _slice/concept/<slice_id>/align.md
+  - Open _concept/slices/<slice_id>/align.md; abort with explicit error if missing:
+    > "[concept-slice-scope-feature] _concept/slices/<slice_id>/align.md
     >  is missing. Run concept-slice-align first."
   - Parse align.md frontmatter; cache slice_id, feature_title, tier.
   - Parse the "## Edge cases" and "## Open questions blocking scope-feature"
@@ -169,10 +169,10 @@ STEP 7: Approval
   CHECKPOINT scope_decision
     > "Here's the scope decision: <n> IN, <n> OUT, <n> DEFER.
     >  Required entities: <list>. Required screens: <list>.
-    >  Approve to write to _slice/concept/<slice_id>/scope-feature.md."
+    >  Approve to write to _concept/slices/<slice_id>/scope-feature.md."
 
 STEP 8: Write the handoff
-  - Write _slice/concept/<slice_id>/scope-feature.md
+  - Write _concept/slices/<slice_id>/scope-feature.md
   - Verify file exists and frontmatter parses
 
 EMIT  [concept-slice-scope-feature] completed slice_id=<id> in_scope=<n> out=<n> deferred=<n> screens=<n> entities=<n>
@@ -185,4 +185,4 @@ CHECKLIST
   - [ ] `## In scope` has ≥ 1 bullet
   - [ ] Every screen line matches `^- <group>/<screen>$`
   - [ ] User approved via CHECKPOINT before write
-  - [ ] _slice/concept/<slice_id>/scope-feature.md exists on disk
+  - [ ] _concept/slices/<slice_id>/scope-feature.md exists on disk

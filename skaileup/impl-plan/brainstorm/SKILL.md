@@ -1,6 +1,6 @@
 ---
 name: impl-plan-brainstorm
-description: "Use when starting per-slice implementation work for a feature in a standard-app or complex-app tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<group>/<feature_slug>.md and writes _slice/impl/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
+description: "Use when starting per-slice implementation work for a feature in a standard-app or complex-app tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<group>/<feature_slug>.md and writes _implementation/slices/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
 metadata:
   version: "2.0.0"
   tags:
@@ -54,10 +54,10 @@ metadata:
         description: "Data model — surfaces entity-touching risks."
       - path: "_concept/blueprint/techstack.md"
         description: "Stack constraints — surfaces stack-specific risks."
-      - path: "_slice/impl/{slice_id}/brainstorm.md"
+      - path: "_implementation/slices/{slice_id}/brainstorm.md"
         description: "Re-entry mode — resume or refine an existing per-slice brainstorm."
     produces:
-      - path: "_slice/impl/{slice_id}/brainstorm.md"
+      - path: "_implementation/slices/{slice_id}/brainstorm.md"
         description: "Per-slice impl brainstorm handoff for impl-plan-align."
 ---
 
@@ -70,8 +70,8 @@ and **complex-app** tiers. It is scoped to ONE feature (the slice), not the whol
 Its job is to surface implementation risks, unknowns, and dependencies — and to flush out
 P1 questions that would otherwise block `impl-plan-align` from running a useful grill.
 
-The output is `_slice/impl/<slice_id>/brainstorm.md` — a structured handoff file consumed
-by `impl-plan-align`. The `_slice/impl/<slice_id>/` directory is scratch and is deleted by
+The output is `_implementation/slices/<slice_id>/brainstorm.md` — a structured handoff file consumed
+by `impl-plan-align`. The `_implementation/slices/<slice_id>/` directory is scratch and is deleted by
 `impl-slice/commit` after the slice's atomic commit lands. None of the impl-plan skills
 delete the dir themselves.
 
@@ -84,7 +84,7 @@ them to those skills.
 
 - Starting per-slice implementation for a standard-app or complex-app feature whose
   concept artifacts (`feature.md` + screens) are already frozen.
-- Re-entering an existing slice (`_slice/impl/<id>/brainstorm.md` exists) to refine risks
+- Re-entering an existing slice (`_implementation/slices/<id>/brainstorm.md` exists) to refine risks
   or answer a previously-flagged P1 question.
 
 ## When NOT to Use
@@ -106,10 +106,10 @@ READS
   ? _concept/experience/screens/{feature_slug}/*.md               — optional; screen specs for this feature
   ? _concept/blueprint/datamodel/model.json                       — optional; data model (entity-touching risks)
   ? _concept/blueprint/techstack.md                               — optional; stack-specific risks
-  ? _slice/impl/{slice_id}/brainstorm.md                          — re-entry mode (resume/refine existing)
+  ? _implementation/slices/{slice_id}/brainstorm.md                          — re-entry mode (resume/refine existing)
 
 WRITES
-  _slice/impl/{slice_id}/brainstorm.md                            — handoff for impl-plan-align
+  _implementation/slices/{slice_id}/brainstorm.md                            — handoff for impl-plan-align
 
 REFERENCES
   SKILL_GRAPH.md                                                  — § 5.2 per-slice impl loop, § 6 tier composition, § 7 workspace zones
@@ -140,7 +140,7 @@ NEVER  expand the scope to project-wide risks (that's a different skill — ops/
 NEVER  write brainstorm.md before unresolved P1 blockers are surfaced and answered
 NEVER  enumerate edge cases — that is impl-plan-align's grill (separation of concerns)
 NEVER  invent acceptance criteria — they live in feature.md and are copied verbatim by impl-plan-align
-NEVER  silently overwrite an existing _slice/impl/<slice_id>/brainstorm.md (re-entry: load it, show diff, ask)
+NEVER  silently overwrite an existing _implementation/slices/<slice_id>/brainstorm.md (re-entry: load it, show diff, ask)
 
 INPUT
   Read from: _concept/_grounding/impl-plan-brainstorm/input.json
@@ -174,15 +174,15 @@ STEP 2: Resolve feature_slug → feature_path
     ELSE
       - feature_path := the single match; group := dirname.basename
   - slice_id := feature_slug.
-  - Check whether _slice/impl/<slice_id>/ already exists.
-    IF _slice/impl/<slice_id>/brainstorm.md exists
+  - Check whether _implementation/slices/<slice_id>/ already exists.
+    IF _implementation/slices/<slice_id>/brainstorm.md exists
       - Ask STANDALONE:
-        > "A brainstorm at _slice/impl/<slice_id>/brainstorm.md already exists.
+        > "A brainstorm at _implementation/slices/<slice_id>/brainstorm.md already exists.
         >  Do you want to (a) resume — refine the existing brainstorm,
         >  or (b) abandon and start fresh (overwrites)?"
       - Wait for answer. On (b), require explicit confirmation before any write.
     ELSE
-      - $ mkdir -p _slice/impl/<slice_id>/
+      - $ mkdir -p _implementation/slices/<slice_id>/
 
 STEP 3: Read concept artifacts
   - Read feature.md (required). Note: title (frontmatter), first paragraph of body, data_entities[] if present, journey_stage if present.
@@ -246,19 +246,19 @@ STEP 6: Draft handoff in memory
 STEP 7: Approval
   CHECKPOINT brainstorm_draft
     > "Here's the impl-plan brainstorm draft for slice `<slice_id>`.
-    >  Approve to write to _slice/impl/<slice_id>/brainstorm.md, or tell me what to change."
+    >  Approve to write to _implementation/slices/<slice_id>/brainstorm.md, or tell me what to change."
 
 STEP 8: Write the handoff
-  - Write _slice/impl/<slice_id>/brainstorm.md
+  - Write _implementation/slices/<slice_id>/brainstorm.md
   - Verify file exists and frontmatter parses
-  - $ python3 impl-plan/brainstorm/validator.py _slice/impl/<slice_id>/brainstorm.md
+  - $ python3 impl-plan/brainstorm/validator.py _implementation/slices/<slice_id>/brainstorm.md
 
 EMIT  [impl-plan-brainstorm] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 
 CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {standard-app, complex-app})
   - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
-  - [ ] _slice/impl/<slice_id>/ directory exists (created or pre-existing)
+  - [ ] _implementation/slices/<slice_id>/ directory exists (created or pre-existing)
   - [ ] All concept artifacts (feature.md required; screens/model/techstack optional) read
   - [ ] Risk areas assessed across all six dimensions, scoped to THIS feature
   - [ ] All P1 questions surfaced as STANDALONE messages and answered before draft
@@ -266,4 +266,4 @@ CHECKLIST
   - [ ] All 5 top-level body sections present; `## Risks and unknowns` has all 6 sub-headings
   - [ ] `## Open questions` has the priority table header line
   - [ ] User approved the draft via CHECKPOINT before write
-  - [ ] _slice/impl/<slice_id>/brainstorm.md exists on disk and validator.py exits 0
+  - [ ] _implementation/slices/<slice_id>/brainstorm.md exists on disk and validator.py exits 0

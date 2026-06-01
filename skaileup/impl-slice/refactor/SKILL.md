@@ -24,18 +24,18 @@ metadata:
       - id: slice-impl-refactor
   prerequisites:
     files:
-      - path: "_slice/impl/{slice_id}/recap.md"
+      - path: "_implementation/slices/{slice_id}/recap.md"
         gate: hard
         description: "Predecessor handoff — recap.md drives Files-touched and slice context."
-      - path: "_slice/impl/{slice_id}/plan.md"
+      - path: "_implementation/slices/{slice_id}/plan.md"
         gate: hard
         description: "Plan provides slice scope and Definition-of-done context."
-      - path: "_slice/impl/{slice_id}/test.md"
+      - path: "_implementation/slices/{slice_id}/test.md"
         gate: hard
         description: "Verify slice passes test gate (Decision: Done) before refactor."
     inputs_required:
       - id: slice_id
-        label: "Slice id (== feature_slug); resolves to _slice/impl/<slice_id>/*.md"
+        label: "Slice id (== feature_slug); resolves to _implementation/slices/<slice_id>/*.md"
         type: text
         hint: "Inherited verbatim from upstream phases."
     inputs_optional:
@@ -44,10 +44,10 @@ metadata:
         type: number
         default: 3
     reads:
-      - path: "_slice/impl/{slice_id}/refactor.md"
+      - path: "_implementation/slices/{slice_id}/refactor.md"
         description: "Re-entry mode — refine an existing refactor proposal."
     produces:
-      - path: "_slice/impl/{slice_id}/refactor.md"
+      - path: "_implementation/slices/{slice_id}/refactor.md"
         description: "Per-slice refactor handoff for impl-slice-commit."
 ---
 
@@ -63,7 +63,7 @@ After a slice has been recapped, this skill inspects the slice's files and
 proposes 1-3 SMALLEST-IMPROVEMENT candidates whose Type is one of
 `subtraction`, `simplification`, `clarification`. Each candidate must
 preserve behavior and declare HOW behavior preservation is verified. The
-skill writes `_slice/impl/<slice_id>/refactor.md` with `Approval status:
+skill writes `_implementation/slices/<slice_id>/refactor.md` with `Approval status:
 pending`, asks the user to approve / reject / modify, and only then applies
 edits to in-tree code (Iron Law § 8). The skill exits successfully whether
 or not any edits were applied — `refactor.md` is the durable record either
@@ -83,7 +83,7 @@ Sample questions to ask yourself before proposing a candidate:
 
 ## When to Use
 
-- `_slice/impl/<slice_id>/recap.md` exists and the slice's `test.md` shows `Decision: Done`.
+- `_implementation/slices/<slice_id>/recap.md` exists and the slice's `test.md` shows `Decision: Done`.
 - The user wants a forced-simplification pass before commit.
 
 ## When NOT to Use
@@ -97,14 +97,14 @@ Sample questions to ask yourself before proposing a candidate:
 ROLE Per-slice force-simplify — resists additions; proposes 1-3 subtract/simplify/clarify candidates with user approval before any in-tree edit.
 
 READS
-  _slice/impl/{slice_id}/recap.md                             — required (predecessor)
-  _slice/impl/{slice_id}/plan.md                              — required (slice goal context)
-  _slice/impl/{slice_id}/test.md                              — required (verify Decision: Done before refactor)
+  _implementation/slices/{slice_id}/recap.md                             — required (predecessor)
+  _implementation/slices/{slice_id}/plan.md                              — required (slice goal context)
+  _implementation/slices/{slice_id}/test.md                              — required (verify Decision: Done before refactor)
   ? <implementation files identified by recap.md "## Files touched">  — read-only inspection until approval
-  ? _slice/impl/{slice_id}/refactor.md                        — re-entry mode
+  ? _implementation/slices/{slice_id}/refactor.md                        — re-entry mode
 
 WRITES
-  _slice/impl/{slice_id}/refactor.md                          — handoff for impl-slice-commit
+  _implementation/slices/{slice_id}/refactor.md                          — handoff for impl-slice-commit
   <in-tree code files>                                        — ONLY after user approval (Iron Law § 8)
 
 REFERENCES
@@ -117,9 +117,9 @@ REFERENCES
   docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned refactor.md Schema
 
 REQUIRES
-  hard: _slice/impl/{slice_id}/recap.md                       — predecessor handoff
-  hard: _slice/impl/{slice_id}/plan.md
-  hard: _slice/impl/{slice_id}/test.md
+  hard: _implementation/slices/{slice_id}/recap.md                       — predecessor handoff
+  hard: _implementation/slices/{slice_id}/plan.md
+  hard: _implementation/slices/{slice_id}/test.md
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4 — these are LOAD-BEARING)
 
@@ -149,9 +149,9 @@ INPUT
 # ── Workflow ───────────────────────────────────────────────────────
 
 STEP 0: Verify predecessors
-  - Resolve recap.md, plan.md, test.md paths under _slice/impl/<slice_id>/.
+  - Resolve recap.md, plan.md, test.md paths under _implementation/slices/<slice_id>/.
   - If any is missing: refuse with explicit message:
-    > "[impl-slice-refactor] _slice/impl/<slice_id>/<file> missing.
+    > "[impl-slice-refactor] _implementation/slices/<slice_id>/<file> missing.
     >  Run upstream skill first (Iron Law § 7)."
   - Verify test.md contains the literal line `Decision: Done`. If not, refuse:
     > "[impl-slice-refactor] test.md decision is not Done. Resolve [BLOCKER]
@@ -218,12 +218,12 @@ STEP 5: Write refactor.md (Approval status: pending)
   - `## User approval gate`: exactly one line: `Approval status: pending`.
   - `## Applied changes`: exactly `_(none — approval pending)_`.
 
-  Write to _slice/impl/<slice_id>/refactor.md.
+  Write to _implementation/slices/<slice_id>/refactor.md.
 
 STEP 6: Approval gate (STANDALONE message per iron_laws § 9)
   CHECKPOINT refactor_approval
     > "Refactor proposal for `<slice_id>` is ready at
-    >  _slice/impl/<slice_id>/refactor.md. Which candidate(s) should I apply,
+    >  _implementation/slices/<slice_id>/refactor.md. Which candidate(s) should I apply,
     >  if any? You can also reject all and we move on to commit."
   Wait for response. NO in-tree edits before this CHECKPOINT resolves
   (iron_laws § 8).
@@ -244,10 +244,10 @@ STEP 7: Apply (or record rejection)
   ELSE  # user rejects all
     - Set `Approval status: rejected`.
     - Replace `## Applied changes` body with `_(none — user declined refactor)_`.
-  - Re-write _slice/impl/<slice_id>/refactor.md.
+  - Re-write _implementation/slices/<slice_id>/refactor.md.
 
 STEP 8: Validate
-  - $ python3 impl-slice/refactor/validator.py _slice/impl/<slice_id>/refactor.md
+  - $ python3 impl-slice/refactor/validator.py _implementation/slices/<slice_id>/refactor.md
   - On failure: report errors and STOP. Do not advance.
 
 EMIT  [impl-slice-refactor] completed slice_id=<id> approval=<status> applied=<n>
@@ -258,7 +258,7 @@ CHECKLIST
   - [ ] Approval gate started as `pending`; resolved to approved|rejected|modified
   - [ ] No in-tree edits before user approval
   - [ ] Validator green for the chosen approval state
-  - [ ] _slice/impl/<slice_id>/refactor.md exists with phase: refactor
+  - [ ] _implementation/slices/<slice_id>/refactor.md exists with phase: refactor
 
 ---
 

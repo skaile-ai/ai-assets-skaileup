@@ -36,7 +36,7 @@ Each DEFER bullet needs a "next-revisit" note:
 ```
 
 Note: deferred items do NOT survive the slice commit. They are visible
-during the slice (in `_slice/concept/<id>/scope-feature.md`) and lost
+during the slice (in `_concept/slices/<id>/scope-feature.md`) and lost
 afterward. This is intentional (matches `impl-slice/commit`'s scratch
 deletion). If the user wants persistence, they should put it in product
 backlog tooling, not the slice scratch.

@@ -57,6 +57,6 @@ This builds trust and lets the user catch misunderstandings early.
 
 ## Iron Law § 8 reminder
 
-If `_slice/concept/<slice_id>/align.md` already exists, do NOT silently
+If `_concept/slices/<slice_id>/align.md` already exists, do NOT silently
 overwrite. Show the existing content, ask the user whether to refine in
 place or restart.

@@ -45,7 +45,7 @@ metadata:
         description: "Shared interview state from a prior debug skill invocation (optional)"
       - path: "_debug/<id>/protocol.md"
         description: "If debug-self-verify ran first, executed steps and outcomes feed the handoff"
-      - path: "_slice/impl/<id>/plan.md"
+      - path: "_implementation/slices/<id>/plan.md"
         description: "If invoked from inside a slice, the slice plan's testing strategy"
     produces:
       - path: "_debug/<id>/handoff.md"
@@ -85,7 +85,7 @@ history into a new chat, the user pastes one file and the next agent has everyth
 
 ## Workspace Zone — `_debug/<id>/`
 
-This skill writes to a workspace zone `_debug/<id>/` mirroring `_slice/` and `_feedback/`. The zone is:
+This skill writes to a workspace zone `_debug/<id>/` mirroring the per-slice dossiers under `_implementation/slices/` and `_concept/_feedback/`. The zone is:
 
 - **Per-bug**, not per-slice — debug sessions are not always tied to a slice.
 - **Not committed by default** — handoff briefs are scratch artifacts, regenerated when the bug
@@ -103,7 +103,7 @@ ROLE  Debug Handoff Author — converts an in-progress debug session into a self
 READS
   ? _debug/<id>/context.md          — shared interview state (if a prior debug skill ran)
   ? _debug/<id>/protocol.md         — if debug-self-verify ran first, attempts and outcomes feed the handoff
-  ? _slice/impl/<id>/plan.md        — if invoked inside a slice, the plan's testing strategy
+  ? _implementation/slices/<id>/plan.md        — if invoked inside a slice, the plan's testing strategy
   git log -10 --oneline             — recent commit history for the "Last working commit" field
 
 WRITES

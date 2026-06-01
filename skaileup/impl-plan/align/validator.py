@@ -2,7 +2,7 @@
 """Validator for impl-plan-align handoff files.
 
 Usage:
-    python3 validator.py <path/to/_slice/impl/<slice_id>/align.md>
+    python3 validator.py <path/to/_implementation/slices/<slice_id>/align.md>
 
 Exit codes:
     0 — valid

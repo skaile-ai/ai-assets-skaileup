@@ -43,10 +43,10 @@ metadata:
         description: "Project-level context (audience, problem, hero flow)."
       - path: "_concept/experience/journeys/stories.json"
         description: "Existing user journeys — surfaces how this feature fits."
-      - path: "_slice/concept/{slice_id}/brainstorm.md"
+      - path: "_concept/slices/{slice_id}/brainstorm.md"
         description: "Re-entry mode — resume or refine an existing brainstorm."
     produces:
-      - path: "_slice/concept/{slice_id}/brainstorm.md"
+      - path: "_concept/slices/{slice_id}/brainstorm.md"
         description: "Per-feature brainstorm handoff for concept-slice-align."
 ---
 
@@ -56,7 +56,7 @@ metadata:
 
 This skill is the entry point of the per-feature concept loop for **standard-app**
 and **complex-app** tiers. It sits before `concept-slice-align` and produces a
-short, open-ended scratch document under `_slice/concept/<slice_id>/brainstorm.md`
+short, open-ended scratch document under `_concept/slices/<slice_id>/brainstorm.md`
 that captures the user's elevator pitch for ONE feature.
 
 **It is deliberately wide.** Edge cases, unstated rules, error states, and
@@ -67,7 +67,7 @@ the user has voiced what the feature even is.
 The handoff file is consumed by `concept-slice-align`. After the full slice
 chain (brainstorm → align → scope-feature → design-feature) commits the
 permanent artifacts, `concept-slice-design-feature` deletes the entire
-`_slice/concept/<slice_id>/` directory.
+`_concept/slices/<slice_id>/` directory.
 
 ---
 
@@ -77,10 +77,10 @@ READS
   _concept/_meta/scope.yaml                  — required; tier + project description
   ? _concept/discovery/brief.md              — optional; project-level context
   ? _concept/experience/journeys/stories.json — optional; existing journeys
-  ? _slice/concept/{slice_id}/brainstorm.md  — re-entry mode (resume / refine)
+  ? _concept/slices/{slice_id}/brainstorm.md  — re-entry mode (resume / refine)
 
 WRITES
-  _slice/concept/{slice_id}/brainstorm.md    — handoff for concept-slice-align
+  _concept/slices/{slice_id}/brainstorm.md    — handoff for concept-slice-align
 
 REFERENCES
   SKILL_GRAPH.md                             — § 4 concept-slice loop diagram
@@ -98,14 +98,14 @@ MUST  ask each interview question as its own standalone assistant message (iron_
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
 MUST  refuse to run if scope.yaml `tier` ∈ {mvp, simple-app} — those tiers do not run concept-slice-brainstorm (per SKILL_GRAPH § 6 tier-composition table)
 MUST  derive slice_id from feature_title via the kebab-case rule (lower → non-alnum→hyphen → strip-trim → max 48 chars) UNLESS slice_id_override is supplied
-MUST  refuse to overwrite an existing _slice/concept/<slice_id>/ — ask the user to (a) resume the existing slice, or (b) suffix -2 to the slug
+MUST  refuse to overwrite an existing _concept/slices/<slice_id>/ — ask the user to (a) resume the existing slice, or (b) suffix -2 to the slug
 MUST  write the handoff frontmatter exactly as specified (slice_id, feature_title, phase, tier, created_at, last_updated)
 MUST  wait for the user to answer each question before sending the next
 
 NEVER  enumerate edge cases — that is concept-slice-align's job
 NEVER  invent acceptance criteria
 NEVER  write the handoff before the user has confirmed feature_title and the happy path
-NEVER  silently overwrite an existing _slice/concept/<slice_id>/brainstorm.md
+NEVER  silently overwrite an existing _concept/slices/<slice_id>/brainstorm.md
 
 INPUT
   Read from: _concept/_grounding/concept-slice-brainstorm/input.json
@@ -127,7 +127,7 @@ STEP 2: Collect feature_title and derive slice_id
     > "What feature are we designing right now? Give me a one-sentence title."
   - Derive slice_id from feature_title using the kebab-case rule, OR use
     slice_id_override if provided. Validate against ^[a-z][a-z0-9-]{1,47}$.
-  - Check whether _slice/concept/<slice_id>/ already exists.
+  - Check whether _concept/slices/<slice_id>/ already exists.
     IF it exists
       - Ask STANDALONE:
         > "A slice with id `<slice_id>` already exists. Do you want to
@@ -135,7 +135,7 @@ STEP 2: Collect feature_title and derive slice_id
         >  (b) start a fresh slice with the suffix `-2`?"
       - Wait for answer. Branch accordingly.
     ELSE
-      - $ mkdir -p _slice/concept/<slice_id>/
+      - $ mkdir -p _concept/slices/<slice_id>/
 
 STEP 3: Open-ended interview (each question STANDALONE)
   Send these questions one at a time. Wait for the answer before sending the next.
@@ -181,10 +181,10 @@ STEP 4: Draft handoff in memory
 STEP 5: Approval
   CHECKPOINT brainstorm_draft
     > "Here's the brainstorm draft. Approve to write to
-    >  _slice/concept/<slice_id>/brainstorm.md, or tell me what to change."
+    >  _concept/slices/<slice_id>/brainstorm.md, or tell me what to change."
 
 STEP 6: Write the handoff
-  - Write _slice/concept/<slice_id>/brainstorm.md
+  - Write _concept/slices/<slice_id>/brainstorm.md
   - Verify file exists and frontmatter parses
 
 EMIT  [concept-slice-brainstorm] completed slice_id=<id> tier=<tier>
@@ -196,4 +196,4 @@ CHECKLIST
   - [ ] Handoff frontmatter contains all 6 keys (slice_id, feature_title, phase, tier, created_at, last_updated)
   - [ ] All 6 body section headers present
   - [ ] User approved the draft via CHECKPOINT before write
-  - [ ] _slice/concept/<slice_id>/brainstorm.md exists on disk
+  - [ ] _concept/slices/<slice_id>/brainstorm.md exists on disk

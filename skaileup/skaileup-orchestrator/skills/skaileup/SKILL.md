@@ -90,6 +90,8 @@ ROLE Concept Orchestrator — guides a project through Discovery, Experience, an
 READS
 ? \_concept/PLANS.md — resume state (if exists)
 ? \_concept/discovery/brief.md — app name, complexity tier (after Phase 1)
+? \_concept/\_meta/scope.yaml — tier; gates linear vs. per-feature concept-slice loop
+? \_concept/slices/<id>/index.md — frozen per-feature slice dossiers (resume: which features are done)
 contracts/concept_structure.md — canonical \_concept/ paths
 contracts/plans.md — PLANS.md format
 contracts/iron_laws.md — non-negotiable constraints
@@ -112,6 +114,9 @@ MUST update PLANS.md at every checkpoint
 MUST emit observability events at every transition
 MUST log significant decisions in \_concept/decisions.md
 MUST get user approval at phase boundaries (or auto-review if enabled)
+MUST read \_concept/\_meta/scope.yaml and, for tier ∈ {standard-app, complex-app}, guide the user through the per-feature concept-slice loop instead of designing all screens linearly
+MUST treat each feature as a slice with a dossier at \_concept/slices/<feature_slug>/ that is frozen (kept), not deleted, on design-feature
+MUST assist within each slice — surface edge cases at align, resist scope creep at scope-feature, confirm the frozen index.md after design-feature
 MUST dispatch eval-concept as a SEPARATE sub-agent after Blueprint — never same context as this pipeline
 MUST block proceeding to impl-build-implementation if eval-concept verdict != "pass"
 NEVER skip phase approval checkpoints
@@ -194,7 +199,51 @@ STEP 7: Features
 IF complexity_tier is complex
 CHECKPOINT features > "Features specified: [count] features across [count] groups. > Key features: [list top 5] > Approve to continue."
 
-STEP 8: Screens
+# ── Tier gate: per-feature concept slices (standard-app / complex-app) ──
+
+STEP 7b: Decide linear vs. per-feature slice loop
+
+- Read `_concept/_meta/scope.yaml` → `tier`.
+- IF tier ∈ {mvp, simple-app}: stay LINEAR — continue to STEP 8 (design every screen
+  and the data model in one pass).
+- IF tier ∈ {standard-app, complex-app}: the high-level pass is now done (brief, goals,
+  brand, journeys, high-level features). Do NOT design all screens linearly. Instead
+  GUIDE THE USER through the **concept-slice loop, one feature at a time**, and assist
+  at each phase. Skip STEP 8 (linear screens) — screens are produced per-feature inside
+  the loop by `concept-slice-design-feature`.
+
+STEP 7c: Run the concept-slice loop per feature (standard-app / complex-app only)
+
+For each high-level feature in `_concept/experience/features/` (drive in journey order
+hero → vital → hygiene when `stories.json` exists):
+
+  - Announce the feature in plain language and tell the user this is one *slice*.
+  - Guide the four phases, with `/clear` between each — each writes its handoff into the
+    feature's dossier at `_concept/slices/<feature_slug>/`:
+      1. `concept-slice-brainstorm`  (complex-app only — frames the feature)        → brainstorm.md
+      2. `concept-slice-align`       (interviews the user; EARS acceptance criteria) → align.md
+      3. `concept-slice-scope-feature` (locks IN / OUT / DEFER)                      → scope-feature.md
+      4. `concept-slice-design-feature` (writes the canonical feature spec, its
+         screens, and the mockup-walkthrough stub; then FREEZES the slice —
+         writes `_concept/slices/<feature_slug>/index.md` and keeps the dossier
+         as permanent per-feature documentation)
+  - ASSIST the user: surface edge cases in align, push back on scope creep in
+    scope-feature, and confirm the frozen `index.md` after design-feature.
+  - DO update_progress (check the feature off in PLANS.md). The frozen dossier is the
+    durable record that this slice is complete.
+  - EMIT [orchestrator] slice_complete feature=<feature_slug>
+
+  CHECKPOINT slice_<feature_slug>
+  > "Feature slice '<feature>' is designed and frozen at `_concept/slices/<feature_slug>/`
+  >  (spec + screens + walkthrough committed). Approve to start the next feature slice."
+
+UNTIL every must-have feature has a frozen slice dossier.
+
+After all slices are frozen, continue to STEP 10 (Blueprint). The **general (non-slice)
+artifacts** — tech stack, architecture, data model — are produced once for the whole
+project, not per slice.
+
+STEP 8: Screens — LINEAR PATH ONLY (mvp / simple-app)
 
 - RUN screens sub-skill → \_concept/experience/screens/
 - Produces: screen specs with cross-references to features
@@ -315,7 +364,9 @@ CHECKLIST
 | ------------------------------------------ | ---------------------------------------------------------------- |
 | Skipping the plan phase                    | Always create PLANS.md first                                     |
 | Running datamodel before features          | Features define what entities are needed — always features first |
-| Not checking for existing \_concept/       | Read PLANS.md if it exists — resume, don't restart               |
+| Designing all screens linearly for a standard-app/complex-app | Read scope.yaml; route each feature through the concept-slice loop (brainstorm → align → scope-feature → design-feature) |
+| Treating slice dossiers as throwaway scratch | They are frozen (kept) on design-feature — `_concept/slices/<id>/` is permanent per-feature documentation |
+| Not checking for existing \_concept/       | Read PLANS.md (and frozen `_concept/slices/*/index.md`) if they exist — resume, don't restart |
 | Presenting raw file contents as checkpoint | Summarize in plain language, not markdown dumps                  |
 | Running all skills without checkpoints     | User approval at phase boundaries is mandatory                   |
 
@@ -324,5 +375,6 @@ CHECKLIST
 - **Reads:** `contracts/` for rules and structure
 - **Writes:** `_concept/` pipeline artifacts, `LEARNINGS.md`
 - **Dispatches to:** `overview`, `research`, `brand-visual`, `journeys`, `features`, `screens`, `storybook`, `techstack`, `architecture`, `datamodel`
+- **For standard-app / complex-app, also guides the per-feature concept-slice loop:** `concept-slice-brainstorm`, `concept-slice-align`, `concept-slice-scope-feature`, `concept-slice-design-feature` (writes + freezes `_concept/slices/<feature_slug>/`)
 - **Called by:** user directly, CLI flows, or automated pipeline
 - **Hands off to:** Implementation orchestrator (impl-build-implementation)

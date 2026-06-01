@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validator for impl-slice-recap handoff files (`_slice/impl/<id>/recap.md`).
+"""Validator for impl-slice-recap handoff files (`_implementation/slices/<id>/recap.md`).
 
 Usage:
     python3 validator.py <path/to/recap.md>

@@ -31,14 +31,14 @@ metadata:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
         description: "Tier context required — produced by skaileup-scope-scope-project."
-      - path: "_slice/concept/{slice_id}/brainstorm.md"
+      - path: "_concept/slices/{slice_id}/brainstorm.md"
         gate: soft
         description: "Required when tier is standard-app or complex-app (the strict gate is enforced in STEP 1 because for simple-app tier this skill is the cluster entry point and brainstorm.md does not exist)."
     inputs_required:
       - id: slice_id
         label: "Slice id (kebab-case)"
         type: text
-        hint: "Must match an existing _slice/concept/<slice_id>/ directory or, for simple-app entry mode, become the new dir name."
+        hint: "Must match an existing _concept/slices/<slice_id>/ directory or, for simple-app entry mode, become the new dir name."
     inputs_optional:
       - id: feature_title
         label: "Feature title (only required when tier=simple-app and brainstorm.md is absent)"
@@ -48,10 +48,10 @@ metadata:
         description: "Project-level context."
       - path: "_concept/experience/features"
         description: "Sibling features — for cross-feature edge case discovery."
-      - path: "_slice/concept/{slice_id}/align.md"
+      - path: "_concept/slices/{slice_id}/align.md"
         description: "Re-entry mode — refine an existing align."
     produces:
-      - path: "_slice/concept/{slice_id}/align.md"
+      - path: "_concept/slices/{slice_id}/align.md"
         description: "Per-feature align handoff for concept-slice-scope-feature."
 ---
 
@@ -69,7 +69,7 @@ directly) and runs an adversarial interview that surfaces:
 - State transitions and concurrency rules
 - Unstated assumptions
 
-The output is `_slice/concept/<slice_id>/align.md`, which contains EARS-format
+The output is `_concept/slices/<slice_id>/align.md`, which contains EARS-format
 acceptance criteria, a permissions table, and a list of resolved/open
 questions. `concept-slice-scope-feature` consumes this next.
 
@@ -82,14 +82,14 @@ ROLE Per-feature alignment grill — adversarial interviewer that surfaces edge 
 
 READS
   _concept/_meta/scope.yaml                  — required; tier
-  _slice/concept/{slice_id}/brainstorm.md    — required IF tier ∈ {standard-app, complex-app}
+  _concept/slices/{slice_id}/brainstorm.md    — required IF tier ∈ {standard-app, complex-app}
                                                (simple-app skips brainstorm; align is the entry)
   ? _concept/discovery/brief.md              — optional; project-level context
   ? _concept/experience/features/**/*.md     — optional; sibling features
-  ? _slice/concept/{slice_id}/align.md       — re-entry mode
+  ? _concept/slices/{slice_id}/align.md       — re-entry mode
 
 WRITES
-  _slice/concept/{slice_id}/align.md         — handoff for concept-slice-scope-feature
+  _concept/slices/{slice_id}/align.md         — handoff for concept-slice-scope-feature
 
 REFERENCES
   SKILL_GRAPH.md                             — § 4 concept-slice loop diagram
@@ -106,7 +106,7 @@ REQUIRES
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
 MUST  produce acceptance criteria in EARS format ("WHEN <trigger>, THE <system> SHALL <response>")
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
-MUST  refuse to run if scope.yaml `tier` ∈ {standard-app, complex-app} AND _slice/concept/<slice_id>/brainstorm.md is missing
+MUST  refuse to run if scope.yaml `tier` ∈ {standard-app, complex-app} AND _concept/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id and feature_title from brainstorm.md when present; never re-derive
 MUST  surface every P1 (blocking) open question to the user as a standalone message before writing align.md
 MUST  emit an EARS-formatted acceptance criterion for every IN-scope happy-path bullet in brainstorm.md
@@ -127,13 +127,13 @@ STEP 1: Read scope and resolve tier-dependent gate
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
   - Read scope.tier.
   IF tier ∈ {standard-app, complex-app}
-    - require _slice/concept/<slice_id>/brainstorm.md to exist
+    - require _concept/slices/<slice_id>/brainstorm.md to exist
     - if missing, refuse with:
       > "[concept-slice-align] tier=<tier> requires
-      >  _slice/concept/<slice_id>/brainstorm.md. Run concept-slice-brainstorm first."
+      >  _concept/slices/<slice_id>/brainstorm.md. Run concept-slice-brainstorm first."
   ELSE IF tier == simple-app
     - brainstorm.md not required; this skill is the cluster entry.
-    - $ mkdir -p _slice/concept/<slice_id>/
+    - $ mkdir -p _concept/slices/<slice_id>/
     - if feature_title was not supplied, ask STANDALONE:
       > "What feature are we aligning on? One-sentence title."
   ELSE
@@ -213,11 +213,11 @@ STEP 11: Draft align.md in memory
 STEP 12: Approval
   CHECKPOINT align_draft
     > "Here's the align draft with EARS criteria and permissions table.
-    >  Approve to write to _slice/concept/<slice_id>/align.md, or tell me
+    >  Approve to write to _concept/slices/<slice_id>/align.md, or tell me
     >  what to change."
 
 STEP 13: Write the handoff
-  - Write _slice/concept/<slice_id>/align.md
+  - Write _concept/slices/<slice_id>/align.md
   - Verify file exists and frontmatter parses
 
 EMIT  [concept-slice-align] completed slice_id=<id> tier=<tier> ears_count=<n> roles=<n>
@@ -231,4 +231,4 @@ CHECKLIST
   - [ ] At least one EARS criterion present
   - [ ] Permissions table present (≥ 2 lines with `|`)
   - [ ] User approved draft via CHECKPOINT before write
-  - [ ] _slice/concept/<slice_id>/align.md exists on disk
+  - [ ] _concept/slices/<slice_id>/align.md exists on disk

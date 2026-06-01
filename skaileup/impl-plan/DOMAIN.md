@@ -12,9 +12,9 @@ Turns a frozen feature spec into a vertical-slice implementation plan, then opti
 
 ## Skills
 
-- **impl-plan-brainstorm** (`brainstorm/`) — Sparring partner on risks, unknowns, and dependencies for a single feature. Writes `_slice/impl/<id>/brainstorm.md`. Standard-app / complex-app tiers only.
-- **impl-plan-align** (`align/`) — Grill-me interview surfacing unstated assumptions, technical constraints, and edge cases. Reads brainstorm.md (if present) and feature/screen specs; writes `_slice/impl/<id>/align.md`.
-- **impl-plan-plan-vertical** (`plan-vertical/`) — Decomposes the feature into vertical slices (UI + Logic + Data rows), adds testing strategy and an anti-horizontal-layering block. Writes `_slice/impl/<id>/plan.md`.
+- **impl-plan-brainstorm** (`brainstorm/`) — Sparring partner on risks, unknowns, and dependencies for a single feature. Writes `_implementation/slices/<id>/brainstorm.md`. Standard-app / complex-app tiers only.
+- **impl-plan-align** (`align/`) — Grill-me interview surfacing unstated assumptions, technical constraints, and edge cases. Reads brainstorm.md (if present) and feature/screen specs; writes `_implementation/slices/<id>/align.md`.
+- **impl-plan-plan-vertical** (`plan-vertical/`) — Decomposes the feature into vertical slices (UI + Logic + Data rows), adds testing strategy and an anti-horizontal-layering block. Writes `_implementation/slices/<id>/plan.md`.
 - **impl-plan-supervised** (`supervised/`) — Dispatches one subagent per task from `_implementation/superpowers-plan.md`, enforces spec-compliance review before code-quality review, handles 4-status reports (DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED).
 
 ## When to Use
@@ -27,7 +27,7 @@ Turns a frozen feature spec into a vertical-slice implementation plan, then opti
 ## When NOT to Use
 
 - Concept work is still in progress — wait until `concept-slice` artifacts are frozen.
-- A plan already exists in `_slice/impl/<id>/plan.md` and the slice is underway — use `impl-slice` directly.
+- A plan already exists in `_implementation/slices/<id>/plan.md` and the slice is underway — use `impl-slice` directly.
 - Single-file fixes or hotfixes with no feature decomposition needed — skip to `impl-slice-implement`.
 
 ## Sequence
@@ -42,7 +42,7 @@ Each step reads the previous step's output. `/clear` between steps is recommende
 
 ## Cross-references
 
-- `../impl-slice/` — consumes `_slice/impl/<id>/plan.md` produced here.
+- `../impl-slice/` — consumes `_implementation/slices/<id>/plan.md` produced here.
 - `../concept-slice/` — produces the feature + screen artifacts this domain reads.
 - `../skaileup/contracts/skill_grammar.md` — DSL reference.
 - `../../../docs/devlog/SKILL_GRAPH.md` — collection-level view.

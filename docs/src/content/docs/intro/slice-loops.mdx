@@ -14,7 +14,7 @@ the prior phase, not chat history.
 ## concept-slice (per feature, big apps)
 
 <Aside type="note">
-`standard-app` runs the shorter three-phase loop: **align → scope-feature → design-feature** (no brainstorm). `complex-app` prepends **brainstorm** as the first phase. Both use `/clear` between phases and read from `_slice/concept/<id>/` scratch.
+`standard-app` runs the shorter three-phase loop: **align → scope-feature → design-feature** (no brainstorm). `complex-app` prepends **brainstorm** as the first phase. Both use `/clear` between phases and read from the `_concept/slices/<id>/` dossier (frozen, kept, on commit).
 </Aside>
 
 ```mermaid
@@ -22,16 +22,16 @@ flowchart TD
   pick([pick next feature from product-spec/features/ — high-level])
   pick --> brainstorm
 
-  brainstorm["<b>concept-slice/brainstorm</b> ⁽ᶜᵒᵐᵖˡᵉˣ ᵒⁿˡʸ⁾<br/>sparring on what this feature is<br/><i>writes _slice/concept/&lt;id&gt;/brainstorm.md</i>"]
+  brainstorm["<b>concept-slice/brainstorm</b> ⁽ᶜᵒᵐᵖˡᵉˣ ᵒⁿˡʸ⁾<br/>sparring on what this feature is<br/><i>writes _concept/slices/&lt;id&gt;/brainstorm.md</i>"]
   brainstorm -->|/clear| align
 
   align["<b>concept-slice/align</b><br/>★ AI interviews user · surfaces edge cases &amp; unstated rules<br/>★ acceptance criteria become explicit<br/><i>writes align.md</i>"]
   align -->|/clear| scope
 
-  scope["<b>concept-slice/scope-feature</b><br/>what's IN, what's OUT for this feature<br/>★ prevents scope creep mid-design<br/><i>writes scope.md</i>"]
+  scope["<b>concept-slice/scope-feature</b><br/>what's IN, what's OUT for this feature<br/>★ prevents scope creep mid-design<br/><i>writes scope-feature.md</i>"]
   scope -->|/clear| design
 
-  design["<b>concept-slice/design-feature</b><br/>appends to product-spec/features · experience/screens<br/>mockup/&lt;tier&gt; · datamodel (this feature's entities only)"]
+  design["<b>concept-slice/design-feature</b><br/>writes experience/features · experience/screens · mockup/&lt;tier&gt;<br/>★ freezes the slice: writes index.md, keeps the dossier"]
   design --> handoff([hand off to impl-slice — or loop to next feature])
 ```
 
@@ -42,7 +42,7 @@ flowchart TD
   pick([pick next feature — from product-spec, or just-produced concept-slice])
   pick --> brainstorm
 
-  brainstorm["<b>impl-plan/brainstorm</b><br/>sparring · multi-method · idea space<br/><i>writes _slice/impl/&lt;id&gt;/brainstorm.md</i>"]
+  brainstorm["<b>impl-plan/brainstorm</b><br/>sparring · multi-method · idea space<br/><i>writes _implementation/slices/&lt;id&gt;/brainstorm.md</i>"]
   brainstorm -->|/clear| align
 
   align["<b>impl-plan/align</b><br/>AI interviews user (grill-me) · ★ shared understanding<br/>★ surfaces unstated assumptions<br/><i>writes align.md</i>"]
@@ -63,7 +63,7 @@ flowchart TD
   refactor["<b>impl-slice/refactor</b> ★ FORCED, not optional<br/>AI defaults to ADDING complexity<br/>'could a new dev follow this without mental jumps?'"]
   refactor --> commit
 
-  commit["<b>impl-slice/commit</b><br/>atomic commits · ★ deletes _slice/impl/&lt;id&gt;/ scratch<br/>(truth lives in code; stale docs confuse future iterations)"]
+  commit["<b>impl-slice/commit</b><br/>atomic commits · ★ freezes _implementation/slices/&lt;id&gt;/ (writes index.md, keeps dossier)<br/>(truth lives in code; dossier is the kept decision record)"]
   commit -->|loop back| pick
 
   implement -.->|stuck mid-slice| debug
@@ -73,17 +73,22 @@ flowchart TD
 
 ## Why the resets work
 
-Every slice phase **reads from the prior phase's scratch file** rather than
+Every slice phase **reads from the prior phase's handoff file** rather than
 from chat history. After each phase the user runs `/clear` (or starts a new
 chat) — the next phase loads the handoff file and continues. The dumb zone
 (~100k tokens for most agents) is avoided because no single phase carries the
 whole slice in context.
 
-## Why scratch is deleted on commit
+## Why the slice dossier is frozen (not deleted) on commit
 
-Truth lives in **code** (impl-slice) or in **`_concept/` artifacts**
-(concept-slice) after a slice ships. Stale planning docs in the working tree
-confuse the next iteration. Previous slice docs survive in git history.
+After a slice ships, truth lives in **code** (impl-slice) or in the canonical
+**`_concept/experience/...` artifacts** (concept-slice). The slice folder is
+**frozen, not deleted**: the terminator writes an `index.md` and keeps the phase
+handoffs (`brainstorm · align · scope-feature` / `… · plan · test · recap ·
+refactor`) as permanent per-feature documentation under `_concept/slices/<id>/`
+and `_implementation/slices/<id>/`. The dossier is the decision record beside the
+shipped artifact; a folder with an `index.md` is frozen, one without is still in
+flight. (Only the impl side's transient `progress.json` is removed.)
 
 ## Mandatory phases
 

@@ -22,15 +22,15 @@ metadata:
       - id: slice-impl-recap
   prerequisites:
     files:
-      - path: "_slice/impl/{slice_id}/test.md"
+      - path: "_implementation/slices/{slice_id}/test.md"
         gate: hard
         description: "Predecessor handoff — slice must have passed the per-slice test gate."
-      - path: "_slice/impl/{slice_id}/plan.md"
+      - path: "_implementation/slices/{slice_id}/plan.md"
         gate: hard
         description: "Plan required for goal recap + Definition-of-done comparison."
     inputs_required:
       - id: slice_id
-        label: "Slice id (== feature_slug); resolves to _slice/impl/<slice_id>/*.md"
+        label: "Slice id (== feature_slug); resolves to _implementation/slices/<slice_id>/*.md"
         type: text
         hint: "Inherited verbatim from plan.md and test.md frontmatter."
     inputs_optional:
@@ -45,10 +45,10 @@ metadata:
           - request-lifecycle
         default: data-flow
     reads:
-      - path: "_slice/impl/{slice_id}/recap.md"
+      - path: "_implementation/slices/{slice_id}/recap.md"
         description: "Re-entry mode — refine an existing recap."
     produces:
-      - path: "_slice/impl/{slice_id}/recap.md"
+      - path: "_implementation/slices/{slice_id}/recap.md"
         description: "Per-slice recap handoff for impl-slice-refactor."
 ---
 
@@ -60,12 +60,12 @@ The diagram is mandatory. Skipping it produces a slice that no future agent
 can reason about without re-reading every file. After the slice has passed
 `impl-slice-test`, this skill captures (1) what was built in user-visible
 terms, (2) an ASCII diagram of the feature flow, (3) a Files-touched list,
-and (4) an Outcome-vs-plan comparison. The output is `_slice/impl/<slice_id>/
+and (4) an Outcome-vs-plan comparison. The output is `_implementation/slices/<slice_id>/
 recap.md` — the predecessor handoff for `impl-slice-refactor`.
 
 ## When to Use
 
-- `_slice/impl/<slice_id>/test.md` exists with `Decision: Done`.
+- `_implementation/slices/<slice_id>/test.md` exists with `Decision: Done`.
 - The user wants to lock in the slice's mental model before refactoring or committing.
 
 ## When NOT to Use
@@ -76,16 +76,16 @@ recap.md` — the predecessor handoff for `impl-slice-refactor`.
 
 ---
 
-ROLE Per-slice recap — produces a flow diagram + comparison to plan in `_slice/impl/<slice_id>/recap.md`.
+ROLE Per-slice recap — produces a flow diagram + comparison to plan in `_implementation/slices/<slice_id>/recap.md`.
 
 READS
-  _slice/impl/{slice_id}/test.md                              — required (predecessor)
-  _slice/impl/{slice_id}/plan.md                              — required (read for goal recap + DoD)
-  ? _slice/impl/{slice_id}/recap.md                           — re-entry mode
+  _implementation/slices/{slice_id}/test.md                              — required (predecessor)
+  _implementation/slices/{slice_id}/plan.md                              — required (read for goal recap + DoD)
+  ? _implementation/slices/{slice_id}/recap.md                           — re-entry mode
   ? <implementation files identified by git diff>             — optional; informs Files touched
 
 WRITES
-  _slice/impl/{slice_id}/recap.md                             — handoff for impl-slice-refactor
+  _implementation/slices/{slice_id}/recap.md                             — handoff for impl-slice-refactor
 
 REFERENCES
   SKILL_GRAPH.md                                              — § 5.2 per-slice impl loop
@@ -97,15 +97,15 @@ REFERENCES
   docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned recap.md Schema
 
 REQUIRES
-  hard: _slice/impl/{slice_id}/test.md                        — predecessor handoff
-  hard: _slice/impl/{slice_id}/plan.md                        — plan context
+  hard: _implementation/slices/{slice_id}/test.md                        — predecessor handoff
+  hard: _implementation/slices/{slice_id}/plan.md                        — plan context
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  produce an ASCII diagram in a fenced code block — diagram is MANDATORY (SKILL_GRAPH § 5.2)
 MUST  describe what was built in user-visible terms (what the user sees / does), NOT in implementation terms (which file changed)
 MUST  cover all 5 body sections; the diagram section is non-negotiable
-MUST  refuse to run if _slice/impl/<slice_id>/test.md is missing (iron_laws § 7)
+MUST  refuse to run if _implementation/slices/<slice_id>/test.md is missing (iron_laws § 7)
 MUST  refuse to run if test.md `Decision:` is not "Done"
 MUST  copy slice_id, feature_title, feature_path, tier from test.md frontmatter unchanged
 MUST  ask any clarification question as its own standalone message (iron_laws § 9)
@@ -124,9 +124,9 @@ INPUT
 # ── Workflow ───────────────────────────────────────────────────────
 
 STEP 0: Verify predecessors
-  - Resolve plan.md and test.md paths under _slice/impl/<slice_id>/.
+  - Resolve plan.md and test.md paths under _implementation/slices/<slice_id>/.
   - If either is missing: refuse with explicit message:
-    > "[impl-slice-recap] _slice/impl/<slice_id>/<file> missing. Run upstream
+    > "[impl-slice-recap] _implementation/slices/<slice_id>/<file> missing. Run upstream
     >  skill (impl-plan-plan-vertical or impl-slice-test) first (Iron Law § 7)."
   - Parse test.md frontmatter; cache slice_id, feature_title, feature_path, tier.
   - Verify test.md contains the literal line `Decision: Done`. If not, refuse:
@@ -178,7 +178,7 @@ STEP 5: Assemble draft recap.md in memory; show to user; CHECKPOINT
   CHECKPOINT recap_draft
     > "Here's the recap for `<slice_id>` — 1-3 sentence summary, ASCII
     >  diagram, files touched, outcome vs plan. Approve to write to
-    >  _slice/impl/<slice_id>/recap.md, or tell me what to change."
+    >  _implementation/slices/<slice_id>/recap.md, or tell me what to change."
 
 STEP 6: Write the handoff
   Frontmatter (cross-phase contract — copy from test.md):
@@ -204,20 +204,20 @@ STEP 6: Write the handoff
     ### Deviated
     ### Carried over
 
-  Write to _slice/impl/<slice_id>/recap.md.
+  Write to _implementation/slices/<slice_id>/recap.md.
 
 STEP 7: Validate
-  - $ python3 impl-slice/recap/validator.py _slice/impl/<slice_id>/recap.md
+  - $ python3 impl-slice/recap/validator.py _implementation/slices/<slice_id>/recap.md
   - On failure: report errors and STOP. Do not advance.
 
 EMIT  [impl-slice-recap] completed slice_id=<id> diagram_type=<type> files_touched=<n>
 
 CHECKLIST
-  - [ ] _slice/impl/<slice_id>/test.md verified Decision: Done
-  - [ ] _slice/impl/<slice_id>/plan.md read; "## Slice scope" + DoD cached
+  - [ ] _implementation/slices/<slice_id>/test.md verified Decision: Done
+  - [ ] _implementation/slices/<slice_id>/plan.md read; "## Slice scope" + DoD cached
   - [ ] All 5 body sections present
   - [ ] ASCII diagram present in fenced block, ≥ 5 lines, contains → > | ─ or +
-  - [ ] _slice/impl/<slice_id>/recap.md written; validator.py exits 0
+  - [ ] _implementation/slices/<slice_id>/recap.md written; validator.py exits 0
 
 ---
 

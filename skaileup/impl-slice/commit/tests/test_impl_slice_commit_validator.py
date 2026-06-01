@@ -86,21 +86,40 @@ def test_mode_a_summary_too_long_fails(tmp_path: Path):
     assert any(">" in e and "chars" in e for e in errors), errors
 
 
-# ── Mode B: post-commit dir-gone ────────────────────────────────
+# ── Mode B: post-commit dir-frozen ──────────────────────────────
 
 
-def test_mode_b_dir_absent_passes(tmp_path: Path):
+def test_mode_b_frozen_dir_passes(tmp_path: Path):
+    # Frozen slice: dir kept, index.md present, no progress.json.
     slice_dir = tmp_path / "team-todo-comments"
-    # Don't create it — Mode B passes when the dir is absent.
+    slice_dir.mkdir()
+    (slice_dir / "index.md").write_text("---\nphase: frozen\n---\n")
+    (slice_dir / "recap.md").write_text("kept handoff")
     errors = validator.validate_post_commit(slice_dir)
     assert errors == [], errors
 
 
-def test_mode_b_dir_present_fails(tmp_path: Path):
+def test_mode_b_dir_absent_fails(tmp_path: Path):
+    # Deleting the dossier is now a failure — freeze, never delete.
+    slice_dir = tmp_path / "team-todo-comments"
+    errors = validator.validate_post_commit(slice_dir)
+    assert any("does not exist" in e for e in errors), errors
+
+
+def test_mode_b_missing_index_fails(tmp_path: Path):
     slice_dir = tmp_path / "team-todo-comments"
     slice_dir.mkdir()
     errors = validator.validate_post_commit(slice_dir)
-    assert any("still exists" in e for e in errors), errors
+    assert any("index.md" in e for e in errors), errors
+
+
+def test_mode_b_lingering_progress_fails(tmp_path: Path):
+    slice_dir = tmp_path / "team-todo-comments"
+    slice_dir.mkdir()
+    (slice_dir / "index.md").write_text("---\nphase: frozen\n---\n")
+    (slice_dir / "progress.json").write_text("{}")
+    errors = validator.validate_post_commit(slice_dir)
+    assert any("progress.json" in e for e in errors), errors
 
 
 # ── Mode C: pre-flight 4-handoff gate ───────────────────────────
@@ -111,8 +130,8 @@ def _build_pre_flight_root(
     refactor_src: Path = REFACTOR_GOLDEN_APPROVED,
     test_src: Path = TEST_GOLDEN,
 ) -> Path:
-    """Build a fixture _slice/impl/<id>/ with all 4 handoffs."""
-    slice_dir = tmp_path / "_slice" / "impl" / "team-todo-comments"
+    """Build a fixture _implementation/slices/<id>/ with all 4 handoffs."""
+    slice_dir = tmp_path / "_implementation" / "slices" / "team-todo-comments"
     slice_dir.mkdir(parents=True)
     shutil.copy(test_src, slice_dir / "test.md")
     shutil.copy(RECAP_GOLDEN, slice_dir / "recap.md")
@@ -139,7 +158,7 @@ def test_mode_c_rejected_refactor_passes(tmp_path: Path):
 def test_mode_c_decision_needs_more_work_fails(tmp_path: Path):
     root = _build_pre_flight_root(tmp_path)
     test_md = (
-        root / "_slice" / "impl" / "team-todo-comments" / "test.md"
+        root / "_implementation" / "slices" / "team-todo-comments" / "test.md"
     )
     text = test_md.read_text().replace("Decision: Done", "Decision: Needs more work")
     test_md.write_text(text)
@@ -150,7 +169,7 @@ def test_mode_c_decision_needs_more_work_fails(tmp_path: Path):
 def test_mode_c_pending_approval_fails(tmp_path: Path):
     root = _build_pre_flight_root(tmp_path)
     refactor_md = (
-        root / "_slice" / "impl" / "team-todo-comments" / "refactor.md"
+        root / "_implementation" / "slices" / "team-todo-comments" / "refactor.md"
     )
     text = refactor_md.read_text().replace(
         "Approval status: approved", "Approval status: pending"
@@ -164,7 +183,7 @@ def test_mode_c_pending_approval_fails(tmp_path: Path):
 
 def test_mode_c_missing_handoff_fails(tmp_path: Path):
     root = _build_pre_flight_root(tmp_path)
-    (root / "_slice" / "impl" / "team-todo-comments" / "refactor.md").unlink()
+    (root / "_implementation" / "slices" / "team-todo-comments" / "refactor.md").unlink()
     errors = validator.validate_pre_flight("team-todo-comments", root)
     assert any("missing handoff" in e and "refactor.md" in e for e in errors), errors
 

@@ -2,7 +2,7 @@
 """Validator for impl-plan-brainstorm handoff files.
 
 Usage:
-    python3 validator.py <path/to/_slice/impl/<slice_id>/brainstorm.md>
+    python3 validator.py <path/to/_implementation/slices/<slice_id>/brainstorm.md>
 
 Exit codes:
     0 — valid

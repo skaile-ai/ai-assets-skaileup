@@ -44,7 +44,7 @@ metadata:
         description: "Detect runnable scripts (test, lint, typecheck, build) for protocol commands"
       - path: "pyproject.toml"
         description: "Python project marker — detect pytest / ruff configuration"
-      - path: "_slice/impl/<id>/plan.md"
+      - path: "_implementation/slices/<id>/plan.md"
         description: "If invoked from inside a slice, the slice plan's testing strategy"
     produces:
       - path: "_debug/<id>/protocol.md"
@@ -84,7 +84,7 @@ after each attempted fix, the AI captures the verification recipe up front and r
 
 ## Workspace Zone — `_debug/<id>/`
 
-This skill writes to a workspace zone `_debug/<id>/` mirroring `_slice/` and `_feedback/`. The zone is:
+This skill writes to a workspace zone `_debug/<id>/` mirroring the per-slice dossiers under `_implementation/slices/` and `_concept/_feedback/`. The zone is:
 
 - **Per-bug**, not per-slice — debug sessions are not always tied to a slice.
 - **Not committed by default** — protocols are scratch artifacts, intended to be regenerated when
@@ -103,7 +103,7 @@ READS
   ? _debug/<id>/context.md          — shared interview state (if a prior debug skill ran)
   package.json                      — detect runnable test/build/lint/typecheck scripts
   ? pyproject.toml                  — Python project marker (pytest / ruff config)
-  ? _slice/impl/<id>/plan.md        — if invoked inside a slice, the plan's testing strategy
+  ? _implementation/slices/<id>/plan.md        — if invoked inside a slice, the plan's testing strategy
 
 WRITES
   _debug/<id>/protocol.md           — the verification protocol (canonical schema below)

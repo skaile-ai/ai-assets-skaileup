@@ -159,6 +159,14 @@ _concept/
 │   ├── triage/  patches/  applied/      ← per-session <sid>.json through the loop
 │   └── devlog.md                        ← feedback-loop devlog
 │
+├── slices/                              ← per-feature concept dossiers (concept-slice loop; frozen, kept)
+│   └── <slice_id>/                      ← slice_id == feature_slug
+│       ├── brainstorm.md                ← phase handoff: feature framing + open questions
+│       ├── align.md                     ← phase handoff: acceptance criteria, edge cases, permissions
+│       ├── scope-feature.md             ← phase handoff: in/out scope before design
+│       └── index.md                     ← FROZEN dossier (by concept-slice-design-feature):
+│                                          links to the canonical feature/screens/walkthrough artifacts
+│
 ├── testing/
 │   └── test_plan.md                     ← test strategy (written by impl-quality-test-plan)
 │
@@ -247,6 +255,29 @@ conventions discovered from an existing codebase.
 When `_standards/` exists, skills check for applicable standards before making decisions
 (see Standards Injection pattern in `agent_patterns.md`).
 
+## slices/ — Per-Feature Concept Dossiers (frozen, kept)
+
+`slices/` holds one folder per feature run through the **concept-slice loop**
+(`brainstorm → align → scope-feature → design-feature`). `<slice_id> == feature_slug`.
+
+**Key rules:**
+
+- **Written by:** the concept-slice cluster. `brainstorm`, `align`, and `scope-feature`
+  each write their phase handoff; `design-feature` is the terminator.
+- **Frozen, not deleted:** when `design-feature` commits a feature's canonical artifacts
+  (`experience/features/...`, `experience/screens/<feature_slug>/...`,
+  `mockup-walkthrough/<tier>/<feature_slug>.<ext>`), it writes `index.md` and **keeps**
+  the slice folder as permanent per-feature documentation. The phase handoffs are the
+  decision record; `index.md` links forward to the canonical artifacts.
+- **The general (non-slice) part** — brief, goals, brand, journeys, grounding, datamodel,
+  techstack, architecture — lives in its phase folders and is **not** per-slice. Slices
+  hold only what is specific to one feature.
+- **Frozen vs in-flight:** a slice with an `index.md` is frozen (complete); a slice folder
+  without one is still in flight.
+
+The implementation side mirrors this exactly under `_implementation/slices/<slice_id>/`
+(`brainstorm · align · plan · test · recap · refactor · index`), frozen by `impl-slice-commit`.
+
 ## blueprint/datamodel/ — Schema Format
 
 The agent selects the schema format from the project's tech stack
@@ -271,7 +302,8 @@ and quality audit for cross-reference validation).
 - Discovery artifacts live directly in `discovery/` (brief.md, goals.md, comparable.md) or in `discovery/brand/`
 - Feature groups and screen groups: `01_<group_name>/` (two-digit prefix, matching across both)
 - Screen groups mirror feature group numbers exactly
-- Special folders: leading underscore (`_grounding/`, `_seeds/`, `_standards/`) — not sequential steps
+- Special folders: leading underscore (`_grounding/`, `_seeds/`, `_standards/`, `_feedback/`) — not sequential steps
+- `slices/` is a plain (unnumbered) folder of per-feature dossiers, one subfolder per `<slice_id>` (== feature_slug)
 - File names: lowercase, hyphen-separated or underscore-separated (`password_reset.md`)
 - No spaces in paths
 

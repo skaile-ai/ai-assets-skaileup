@@ -20,7 +20,7 @@ loop**, the canonical building block that `simple-app`, `standard-app`, and
 ```
 Plan:   impl-plan-brainstorm → impl-plan-align → impl-plan-plan-vertical
 Build:  implement → test → recap → refactor → commit
-          /clear between phases, scratch in _slice/impl/<id>/
+          /clear between phases, scratch in _implementation/slices/<id>/
 ```
 
 | Phase | What it does |
@@ -44,7 +44,7 @@ standalone.
 
 ## Scratch lifecycle
 
-Scratch in `_slice/impl/<id>/` is **deleted on commit** — truth lives in the
+Scratch in `_implementation/slices/<id>/` is **deleted on commit** — truth lives in the
 committed code.
 
 ## See also

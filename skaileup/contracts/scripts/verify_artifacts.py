@@ -75,7 +75,7 @@ def ids_from(block, key) -> list[str]:
 
 def _stem(p: str) -> str:
     """Path prefix up to the first placeholder (<id> or {id}), trailing / stripped.
-    Lets `_slice/impl/{slice_id}/x` and `_slice/impl/<slice_id>/x` compare equal."""
+    Lets `_implementation/slices/{slice_id}/x` and `_implementation/slices/<slice_id>/x` compare equal."""
     cut = len(p)
     for ch in ("<", "{", "*"):
         i = p.find(ch)

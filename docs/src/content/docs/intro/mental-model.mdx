@@ -65,14 +65,15 @@ hands off to the next via a scratch file:
 ¹ concept-slice brainstorm runs only in `complex-app`; `standard-app` starts at align.
 
 After every phase the user runs `/clear` (or starts a new chat) and the next
-phase reads the prior phase's scratch file from `_slice/concept/<id>/` or
-`_slice/impl/<id>/`. **No phase carries the whole slice in context** — that's
+phase reads the prior phase's handoff from `_concept/slices/<id>/` or
+`_implementation/slices/<id>/`. **No phase carries the whole slice in context** — that's
 how big apps stay buildable past the dumb-zone (~100k tokens).
 
-Scratch is **deleted on commit**: truth lives in code (`impl-slice`) or in
-permanent `_concept/` artifacts (`concept-slice`). Stale planning docs in the
-working tree confuse the next iteration. Previous slice docs survive in git
-history.
+The slice dossier is **frozen on commit, not deleted**: the terminator writes an
+`index.md` and keeps the phase handoffs as permanent per-feature documentation.
+Truth lives in code (`impl-slice`) or in the canonical `_concept/experience/...`
+artifacts (`concept-slice`); the dossier is the decision record beside them. A
+dossier with an `index.md` is frozen; one without is still in flight.
 
 ## The meta layer
 

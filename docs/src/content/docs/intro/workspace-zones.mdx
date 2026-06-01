@@ -18,17 +18,20 @@ The collection defines three filesystem zones with distinct lifetimes.
    │ _implementation/        │ permanent │ PLANS.md, progress.json,     │
    │                         │           │ decisions.md                 │
    ├─────────────────────────┼───────────┼──────────────────────────────┤
-   │ _slice/concept/<id>/    │ per-slice │ concept-slice scratch:       │
-   │                         │ (deleted) │   brainstorm.md align.md     │
-   │                         │           │   scope.md                   │
-   │                         │           │ ► deleted by concept-slice/  │
-   │                         │           │   design-feature on commit   │
+   │ _concept/slices/<id>/   │ per-slice │ concept-slice dossier:       │
+   │                         │ (frozen,  │   brainstorm.md align.md     │
+   │                         │  kept)    │   scope-feature.md index.md  │
+   │                         │           │ ► frozen by concept-slice/   │
+   │                         │           │   design-feature (index.md   │
+   │                         │           │   written; folder kept)      │
    ├─────────────────────────┼───────────┼──────────────────────────────┤
-   │ _slice/impl/<id>/       │ per-slice │ impl-slice scratch:          │
-   │                         │ (deleted) │   brainstorm.md align.md     │
-   │                         │           │   plan.md recap.md           │
-   │                         │           │ ► deleted by impl-slice/     │
-   │                         │           │   commit                     │
+   │ _implementation/        │ per-slice │ impl-slice dossier:          │
+   │   slices/<id>/          │ (frozen,  │   brainstorm.md align.md     │
+   │                         │  kept)    │   plan.md test.md recap.md   │
+   │                         │           │   refactor.md index.md       │
+   │                         │           │ ► frozen by impl-slice/      │
+   │                         │           │   commit (only progress.json │
+   │                         │           │   removed; folder kept)      │
    ├─────────────────────────┼───────────┼──────────────────────────────┤
    │ _feedback/              │ permanent │ mockup-feedback loop state — │
    │   sessions/<sid>.json   │ gitignore │ raw annotations              │
@@ -45,9 +48,11 @@ The collection defines three filesystem zones with distinct lifetimes.
 
 - **Permanent** zones survive every reset. They are the source of truth the
   agent reads from after a `/clear`.
-- **Per-slice** zones are deleted by the closing skill of their loop
-  (`design-feature` for concept-slice, `commit` for impl-slice). Previous
-  slice scratch survives in git history if you really need it.
+- **Per-slice** dossiers are **frozen** (not deleted) by the closing skill of
+  their loop (`design-feature` for concept-slice, `commit` for impl-slice): the
+  closing skill writes an `index.md` and keeps the phase handoffs as permanent
+  per-feature documentation. A dossier with an `index.md` is frozen; one without
+  is still in flight. (Only the impl side's transient `progress.json` is removed.)
 - **Permanent + gitignored** (`_feedback/sessions/`, `_feedback/patches/`)
   hold transient session state that doesn't belong in version control but
   still needs to outlive a `/clear`.
@@ -80,6 +85,9 @@ _concept/
 ├── mockup-component/
 │   ├── isolated-html/
 │   └── storybook/
+├── slices/<id>/                         ← per-feature concept dossier (frozen, kept)
+│   ├── brainstorm.md align.md scope-feature.md
+│   └── index.md                         ← links to the canonical feature/screens/walkthrough
 └── _feedback/                           ← see above
 ```
 

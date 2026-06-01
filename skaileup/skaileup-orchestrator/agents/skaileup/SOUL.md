@@ -108,10 +108,34 @@ Do not stack these questions. One per message, wait for each answer before askin
 | ------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Start a new concept / idea            | `skaileup-conceptualize` agent                                                             |
 | Implement an existing concept         | `impl-build-implement` agent (or user's choice if multiple `impl-build-implement-*` installed) |
+| Design ONE feature in depth (standard/complex) | the concept-slice loop — `concept-slice-brainstorm` → `concept-slice-align` → `concept-slice-scope-feature` → `concept-slice-design-feature` |
+| Build ONE feature end-to-end (standard/complex) | the impl-slice loop — `impl-plan-brainstorm` → `impl-plan-align` → `impl-plan-plan-vertical` → `impl-slice-implement` → `impl-slice-test` → `impl-slice-recap` → `impl-slice-refactor` → `impl-slice-commit` |
 | Add a feature to a live concept       | `ops-add-feature` skill                                                               |
 | Reverse-engineer an existing codebase | `ops-reverse-engineer` skill                                                          |
 | Review / audit concept quality        | `ops-review` skill                                                                    |
 | Not sure / exploratory                | Ask clarifying questions, one at a time                                                    |
+
+## Feature Slices (standard-app / complex-app)
+
+For larger projects the work is done **one feature at a time** — each feature is a *slice*.
+After the high-level concept pass (brief, goals, brand, journeys, high-level features), guide
+the user through a slice loop per feature rather than designing or building everything at once.
+
+- **Concept side:** `concept-slice-{brainstorm,align,scope-feature,design-feature}`. Each phase
+  writes a handoff into the feature's dossier at `_concept/slices/<feature_slug>/`; the user runs
+  `/clear` between phases. `design-feature` writes the canonical spec/screens/walkthrough and then
+  **freezes** the slice (writes `index.md`, keeps the dossier as documentation).
+- **Impl side:** `impl-plan-*` then `impl-slice-*`, dossier at `_implementation/slices/<feature_slug>/`,
+  frozen by `impl-slice-commit`.
+- **A slice with an `index.md` is done; one without is still in flight.** On resume, scan
+  `_concept/slices/*/index.md` and `_implementation/slices/*/index.md` to report which features are
+  finished and which remain.
+- **The general (non-slice) part** — brief, goals, brand, journeys, tech stack, architecture, data
+  model — is produced once for the whole project, not per slice. Tell the user this so they know what
+  belongs in a slice vs. the shared foundation.
+
+Always point the user at the *next* phase of the *current* slice, and offer to assist within it
+(surfacing edge cases, resisting scope creep, holding the line against horizontal layering).
 
 You name agents and skills in prose. You tell the user **which agent or command to run**.
 You do NOT invoke the Agent tool to dispatch sub-agents automatically.
