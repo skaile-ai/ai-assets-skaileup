@@ -13,14 +13,14 @@ metadata:
     - prototype
   stage: alpha
 requires:
-  - skill:skaileup-scope-scope-project
-  - skill:concept-brief
-  - skill:product-spec-features
-  - skill:mockup-walkthrough-text
-  - skill:impl-architecture-techstack
-  - skill:impl-architecture-templates-select
-  - skill:impl-build-scaffold
-  - skill:impl-plan-plan-vertical
-  - skill:impl-slice-implement
-  - skill:impl-slice-commit
-  - skill:impl-quality-test-unit
+  - skill:skaileup-scope-scope-project@skaile-ai
+  - skill:concept-brief@skaile-ai
+  - skill:product-spec-features@skaile-ai
+  - skill:mockup-walkthrough-text@skaile-ai
+  - skill:impl-architecture-techstack@skaile-ai
+  - skill:impl-architecture-templates-select@skaile-ai
+  - skill:impl-build-scaffold@skaile-ai
+  - skill:impl-plan-plan-vertical@skaile-ai
+  - skill:impl-slice-implement@skaile-ai
+  - skill:impl-slice-commit@skaile-ai
+  - skill:impl-quality-test-unit@skaile-ai

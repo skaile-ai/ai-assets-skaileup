@@ -14,15 +14,15 @@ metadata:
     - multi-product
   stage: alpha
 requires:
-  - bundle:standard-app
+  - bundle:standard-app@skaile-ai
   # delta vs standard-app (computed from flows):
-  - skill:design-brand-voice
-  - skill:mockup-walkthrough-framework
-  - skill:concept-slice-brainstorm
-  - skill:impl-plan-supervised
-  - skill:impl-quality-eval-code
-  - skill:impl-quality-audit
-  - skill:ops-project-overview
-  - skill:ops-project-subsystem-map
-  - skill:ops-project-integration
-  - skill:ops-project-review
+  - skill:design-brand-voice@skaile-ai
+  - skill:mockup-walkthrough-framework@skaile-ai
+  - skill:concept-slice-brainstorm@skaile-ai
+  - skill:impl-plan-supervised@skaile-ai
+  - skill:impl-quality-eval-code@skaile-ai
+  - skill:impl-quality-audit@skaile-ai
+  - skill:ops-project-overview@skaile-ai
+  - skill:ops-project-subsystem-map@skaile-ai
+  - skill:ops-project-integration@skaile-ai
+  - skill:ops-project-review@skaile-ai

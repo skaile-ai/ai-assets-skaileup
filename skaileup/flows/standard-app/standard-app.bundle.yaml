@@ -19,27 +19,27 @@ metadata:
     - multi-user
   stage: alpha
 requires:
-  - bundle:simple-app
+  - bundle:simple-app@skaile-ai
   # delta vs simple-app (computed from flows):
-  - skill:concept-goals
-  - skill:concept-comparable
-  - skill:design-inspiration
-  - skill:experience-behaviors
-  - skill:experience-components
-  - skill:mockup-walkthrough-astro
-  - skill:mockup-component-storybook
-  - skill:mockup-feedback-annotate
-  - skill:mockup-feedback-triage
-  - skill:mockup-feedback-patch
-  - skill:mockup-feedback-apply
-  - skill:impl-architecture-system
-  - skill:impl-build-infrastructure
-  - skill:impl-plan-brainstorm
-  - skill:concept-slice-align
-  - skill:concept-slice-scope-feature
-  - skill:concept-slice-design-feature
-  - skill:impl-slice-refactor
-  - skill:impl-quality-test-integration
-  - skill:impl-quality-ready
-  - skill:ops-review
-  - skill:ops-sync
+  - skill:concept-goals@skaile-ai
+  - skill:concept-comparable@skaile-ai
+  - skill:design-inspiration@skaile-ai
+  - skill:experience-behaviors@skaile-ai
+  - skill:experience-components@skaile-ai
+  - skill:mockup-walkthrough-astro@skaile-ai
+  - skill:mockup-component-storybook@skaile-ai
+  - skill:mockup-feedback-annotate@skaile-ai
+  - skill:mockup-feedback-triage@skaile-ai
+  - skill:mockup-feedback-patch@skaile-ai
+  - skill:mockup-feedback-apply@skaile-ai
+  - skill:impl-architecture-system@skaile-ai
+  - skill:impl-build-infrastructure@skaile-ai
+  - skill:impl-plan-brainstorm@skaile-ai
+  - skill:concept-slice-align@skaile-ai
+  - skill:concept-slice-scope-feature@skaile-ai
+  - skill:concept-slice-design-feature@skaile-ai
+  - skill:impl-slice-refactor@skaile-ai
+  - skill:impl-quality-test-integration@skaile-ai
+  - skill:impl-quality-ready@skaile-ai
+  - skill:ops-review@skaile-ai
+  - skill:ops-sync@skaile-ai

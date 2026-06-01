@@ -1,5 +1,7 @@
 name: ai-assets-skaileup
 description: ai-assets-skaileup AI skill dependencies
+publisher: skaile-ai
+version: 1.0.0
 agent-config:
   default:
     agent: claude-code
@@ -7,7 +9,298 @@ agent-config:
     model: claude-sonnet-4-6
     driver: claude-sdk
     max_turns: 200
-ai_resources: []
-repositories:
-  skaile-ai-assets:
-    url: https://github.com/skaile-ai/skaile-ai-assets
+assets:
+  # ── skills (84) ──
+  - kind: skill
+    name: concept-brief
+    root: skaileup/01_concept/01_brief
+  - kind: skill
+    name: concept-comparable
+    root: skaileup/01_concept/03_comparable
+  - kind: skill
+    name: concept-goals
+    root: skaileup/01_concept/02_goals
+  - kind: skill
+    name: concept-grounding-onboard
+    root: skaileup/01_concept/04_grounding/01_onboard
+  - kind: skill
+    name: concept-grounding-research
+    root: skaileup/01_concept/04_grounding/02_research
+  - kind: skill
+    name: concept-grounding-seeds
+    root: skaileup/01_concept/04_grounding/03_seeds
+  - kind: skill
+    name: concept-slice-align
+    root: skaileup/08_concept-slice/02_align
+  - kind: skill
+    name: concept-slice-brainstorm
+    root: skaileup/08_concept-slice/01_brainstorm
+  - kind: skill
+    name: concept-slice-design-feature
+    root: skaileup/08_concept-slice/04_design-feature
+  - kind: skill
+    name: concept-slice-scope-feature
+    root: skaileup/08_concept-slice/03_scope-feature
+  - kind: skill
+    name: design-brand-visual
+    root: skaileup/02_design/01_brand-visual
+  - kind: skill
+    name: design-brand-voice
+    root: skaileup/02_design/02_brand-voice
+  - kind: skill
+    name: design-inspiration
+    root: skaileup/02_design/03_inspiration
+  - kind: skill
+    name: experience-behaviors
+    root: skaileup/03_experience/02_behaviors
+  - kind: skill
+    name: experience-components
+    root: skaileup/03_experience/05_components
+  - kind: skill
+    name: experience-journeys
+    root: skaileup/03_experience/01_journeys
+  - kind: skill
+    name: experience-screens
+    root: skaileup/03_experience/03_screens
+  - kind: skill
+    name: experience-screens-technical
+    root: skaileup/03_experience/04_screens-technical
+  - kind: skill
+    name: impl-architecture-datamodel
+    root: skaileup/09_impl-architecture/04_datamodel
+  - kind: skill
+    name: impl-architecture-system
+    root: skaileup/09_impl-architecture/03_system
+  - kind: skill
+    name: impl-architecture-techstack
+    root: skaileup/09_impl-architecture/01_techstack
+  - kind: skill
+    name: impl-architecture-templates-select
+    root: skaileup/09_impl-architecture/02_templates-select
+  - kind: skill
+    name: impl-build-docs
+    root: skaileup/10_impl-build/07_docs
+  - kind: skill
+    name: impl-build-foundation
+    root: skaileup/10_impl-build/02_foundation
+  - kind: skill
+    name: impl-build-generate
+    root: skaileup/10_impl-build/06_generate
+  - kind: skill
+    name: impl-build-infrastructure
+    root: skaileup/10_impl-build/03_infrastructure
+  - kind: skill
+    name: impl-build-migrate
+    root: skaileup/10_impl-build/04_migrate
+  - kind: skill
+    name: impl-build-scaffold
+    root: skaileup/10_impl-build/01_scaffold
+  - kind: skill
+    name: impl-build-seed
+    root: skaileup/10_impl-build/05_seed
+  - kind: skill
+    name: impl-plan-align
+    root: skaileup/11_impl-plan/02_align
+  - kind: skill
+    name: impl-plan-brainstorm
+    root: skaileup/11_impl-plan/01_brainstorm
+  - kind: skill
+    name: impl-plan-plan-vertical
+    root: skaileup/11_impl-plan/03_plan-vertical
+  - kind: skill
+    name: impl-plan-supervised
+    root: skaileup/11_impl-plan/04_supervised
+  - kind: skill
+    name: impl-quality-audit
+    root: skaileup/13_impl-quality/03_audit
+  - kind: skill
+    name: impl-quality-debug-handoff
+    root: skaileup/13_impl-quality/12_debug-handoff
+  - kind: skill
+    name: impl-quality-debug-self-verify
+    root: skaileup/13_impl-quality/11_debug-self-verify
+  - kind: skill
+    name: impl-quality-eval-code
+    root: skaileup/13_impl-quality/02_eval-code
+  - kind: skill
+    name: impl-quality-ready
+    root: skaileup/13_impl-quality/07_ready
+  - kind: skill
+    name: impl-quality-standards-discover
+    root: skaileup/13_impl-quality/08_standards-discover
+  - kind: skill
+    name: impl-quality-standards-inject
+    root: skaileup/13_impl-quality/09_standards-inject
+  - kind: skill
+    name: impl-quality-standards-sync
+    root: skaileup/13_impl-quality/10_standards-sync
+  - kind: skill
+    name: impl-quality-test-e2e
+    root: skaileup/13_impl-quality/06_test-e2e
+  - kind: skill
+    name: impl-quality-test-integration
+    root: skaileup/13_impl-quality/05_test-integration
+  - kind: skill
+    name: impl-quality-test-plan
+    root: skaileup/13_impl-quality/01_test-plan
+  - kind: skill
+    name: impl-quality-test-unit
+    root: skaileup/13_impl-quality/04_test-unit
+  - kind: skill
+    name: impl-slice-commit
+    root: skaileup/12_impl-slice/07_commit
+  - kind: skill
+    name: impl-slice-finish
+    root: skaileup/12_impl-slice/08_finish
+  - kind: skill
+    name: impl-slice-git-prepare
+    root: skaileup/12_impl-slice/01_git-prepare
+  - kind: skill
+    name: impl-slice-implement
+    root: skaileup/12_impl-slice/02_implement
+  - kind: skill
+    name: impl-slice-implement-page
+    root: skaileup/12_impl-slice/03_implement-page
+  - kind: skill
+    name: impl-slice-recap
+    root: skaileup/12_impl-slice/05_recap
+  - kind: skill
+    name: impl-slice-refactor
+    root: skaileup/12_impl-slice/06_refactor
+  - kind: skill
+    name: impl-slice-test
+    root: skaileup/12_impl-slice/04_test
+  - kind: skill
+    name: mockup-component-isolated-html
+    root: skaileup/06_mockup-component/01_a_isolated-html
+  - kind: skill
+    name: mockup-component-storybook
+    root: skaileup/06_mockup-component/01_b_storybook/06_orchestrator
+  - kind: skill
+    name: mockup-component-storybook-components
+    root: skaileup/06_mockup-component/01_b_storybook/02_components
+  - kind: skill
+    name: mockup-component-storybook-journeys
+    root: skaileup/06_mockup-component/01_b_storybook/04_journeys
+  - kind: skill
+    name: mockup-component-storybook-pages
+    root: skaileup/06_mockup-component/01_b_storybook/03_pages
+  - kind: skill
+    name: mockup-component-storybook-setup
+    root: skaileup/06_mockup-component/01_b_storybook/01_setup
+  - kind: skill
+    name: mockup-component-storybook-types
+    root: skaileup/06_mockup-component/01_b_storybook/05_types
+  - kind: skill
+    name: mockup-feedback-annotate
+    root: skaileup/07_mockup-feedback/01_annotate
+  - kind: skill
+    name: mockup-feedback-apply
+    root: skaileup/07_mockup-feedback/04_apply
+  - kind: skill
+    name: mockup-feedback-patch
+    root: skaileup/07_mockup-feedback/03_patch
+  - kind: skill
+    name: mockup-feedback-triage
+    root: skaileup/07_mockup-feedback/02_triage
+  - kind: skill
+    name: mockup-walkthrough-astro
+    root: skaileup/05_mockup-walkthrough/01_c_astro
+  - kind: skill
+    name: mockup-walkthrough-framework
+    root: skaileup/05_mockup-walkthrough/01_e_framework
+  - kind: skill
+    name: mockup-walkthrough-lit
+    root: skaileup/05_mockup-walkthrough/01_d_lit
+  - kind: skill
+    name: mockup-walkthrough-static-html
+    root: skaileup/05_mockup-walkthrough/01_b_static-html
+  - kind: skill
+    name: mockup-walkthrough-text
+    root: skaileup/05_mockup-walkthrough/01_a_text
+  - kind: skill
+    name: ops-add-feature
+    root: skaileup/14_ops/10_add-feature
+  - kind: skill
+    name: ops-eval-concept
+    root: skaileup/14_ops/05_eval-concept
+  - kind: skill
+    name: ops-eval-feature
+    root: skaileup/14_ops/06_eval-feature
+  - kind: skill
+    name: ops-eval-product
+    root: skaileup/14_ops/07_eval-product
+  - kind: skill
+    name: ops-project-integration
+    root: skaileup/14_ops/03_project-integration
+  - kind: skill
+    name: ops-project-overview
+    root: skaileup/14_ops/01_project-overview
+  - kind: skill
+    name: ops-project-review
+    root: skaileup/14_ops/04_project-review
+  - kind: skill
+    name: ops-project-subsystem-map
+    root: skaileup/14_ops/02_project-subsystem-map
+  - kind: skill
+    name: ops-reverse-engineer
+    root: skaileup/14_ops/11_reverse-engineer
+  - kind: skill
+    name: ops-review
+    root: skaileup/14_ops/08_review
+  - kind: skill
+    name: ops-sync
+    root: skaileup/14_ops/09_sync
+  - kind: skill
+    name: product-spec-features
+    root: skaileup/04_product-spec/01_features
+  - kind: skill
+    name: skaileup
+    root: skaileup/00_skaileup-orchestrator/skills/skaileup
+  - kind: skill
+    name: skaileup-build
+    root: skaileup/00_skaileup-orchestrator/skills/skaileup-build
+  - kind: skill
+    name: skaileup-scope-scope-project
+    root: skaileup/00_skaileup-orchestrator/scope/scope-project
+  # ── contracts (5) ──
+  - kind: contract
+    name: conceptualization-contract
+    root: skaileup/01_concept/04_grounding/04_contracts/conceptualization-contract
+  - kind: contract
+    name: evaluate-contract
+    root: skaileup/13_impl-quality/contracts/evaluate-contract
+  - kind: contract
+    name: implementation-contract
+    root: skaileup/10_impl-build/contracts/implementation-contract
+  - kind: contract
+    name: meta-concept-contract
+    root: skaileup/14_ops/contracts
+  - kind: contract
+    name: standards-contract
+    root: skaileup/13_impl-quality/contracts/standards-contract
+  # ── bundles (6) ──
+  - kind: bundle
+    name: complex-app
+    files:
+      - skaileup/flows/complex-app/complex-app.bundle.yaml
+  - kind: bundle
+    name: concept-slice
+    files:
+      - skaileup/flows/concept-slice/concept-slice.bundle.yaml
+  - kind: bundle
+    name: impl-slice
+    files:
+      - skaileup/flows/impl-slice/impl-slice.bundle.yaml
+  - kind: bundle
+    name: mvp
+    files:
+      - skaileup/flows/mvp/mvp.bundle.yaml
+  - kind: bundle
+    name: simple-app
+    files:
+      - skaileup/flows/simple-app/simple-app.bundle.yaml
+  - kind: bundle
+    name: standard-app
+    files:
+      - skaileup/flows/standard-app/standard-app.bundle.yaml

@@ -12,7 +12,7 @@ metadata:
     - slice
   stage: alpha
 requires:
-  - skill:concept-slice-brainstorm
-  - skill:concept-slice-align
-  - skill:concept-slice-scope-feature
-  - skill:concept-slice-design-feature
+  - skill:concept-slice-brainstorm@skaile-ai
+  - skill:concept-slice-align@skaile-ai
+  - skill:concept-slice-scope-feature@skaile-ai
+  - skill:concept-slice-design-feature@skaile-ai

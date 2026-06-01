@@ -16,19 +16,19 @@ metadata:
     - small
   stage: alpha
 requires:
-  - bundle:mvp
+  - bundle:mvp@skaile-ai
   # delta vs mvp (computed from flows):
-  - skill:design-brand-visual
-  - skill:experience-journeys
-  - skill:experience-screens
-  - skill:mockup-walkthrough-static-html
-  - skill:mockup-component-isolated-html
-  - skill:impl-architecture-datamodel
-  - skill:impl-build-foundation
-  - skill:impl-build-migrate
-  - skill:impl-build-seed
-  - skill:impl-build-docs
-  - skill:impl-plan-align
-  - skill:impl-slice-test
-  - skill:impl-slice-recap
-  - skill:impl-quality-test-e2e
+  - skill:design-brand-visual@skaile-ai
+  - skill:experience-journeys@skaile-ai
+  - skill:experience-screens@skaile-ai
+  - skill:mockup-walkthrough-static-html@skaile-ai
+  - skill:mockup-component-isolated-html@skaile-ai
+  - skill:impl-architecture-datamodel@skaile-ai
+  - skill:impl-build-foundation@skaile-ai
+  - skill:impl-build-migrate@skaile-ai
+  - skill:impl-build-seed@skaile-ai
+  - skill:impl-build-docs@skaile-ai
+  - skill:impl-plan-align@skaile-ai
+  - skill:impl-slice-test@skaile-ai
+  - skill:impl-slice-recap@skaile-ai
+  - skill:impl-quality-test-e2e@skaile-ai
