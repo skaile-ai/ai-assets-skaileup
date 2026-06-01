@@ -6,6 +6,21 @@ runnable path through the skill tree for a specific use case (MVP, prototype, co
 **Pipeline.json is removed.** All skill metadata that was in pipeline.json now lives on
 the skill nodes inside each flow. Global agent config lives in `contracts/agent-config.json`.
 
+## Install vs. run
+
+- **Bundles install, they do not run.** A `<name>.bundle.yaml` is an installation
+  manifest naming the skills a flow needs. Install the whole collection
+  (`skaile add skill:*`) or only a flow's subset (`skaile add bundle:<name>`) via the
+  **skaile workspace CLI**.
+- **Flows are run two interchangeable ways**, once the skills are installed:
+  1. the **skaile workspace flow engine** (the flow connector) executes the
+     `.flow.yaml` directly (`skaile run flow:<name>`);
+  2. **the orchestrator** (`skaileup` / `skaileup-build`) reads the same flow file and
+     guides/executes the node graph conversationally — used when there is no flow
+     engine, or for a human-in-the-loop run.
+
+  Both follow the identical node graph described below.
+
 ---
 
 ## Skill Name Convention

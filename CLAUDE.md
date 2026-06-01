@@ -135,12 +135,27 @@ The slice dossier is **frozen on commit, not deleted** (Suggestion-B organizatio
 
 ## Flows + Bundles
 
-Each flow has a paired bundle. The bundle lists exactly the skills the flow runs:
+**Bundles are installation manifests, not runners.** A bundle names a subset of
+skills to install via the **skaile workspace CLI**. You can install *all* skills,
+or install only the subset some flow needs by adding its bundle:
 
 ```
-$ skaile add bundle:standard-app        # install the skills
-$ skaile run flow:standard-app          # execute the flow
+$ skaile add skill:*                    # install every skill (whole collection)
+$ skaile add bundle:standard-app        # OR install only the subset standard-app needs
 ```
+
+**Flows are run, not installed** — two interchangeable ways:
+
+1. **skaile workspace flow engine** (the flow connector) executes a `.flow.yaml` directly:
+   ```
+   $ skaile run flow:standard-app       # engine drives the flow node-by-node
+   ```
+2. **The orchestrator** (`skaileup` / `skaileup-build`) **understands the flow files** and
+   guides/executes the same path conversationally — used when no flow engine is present, or
+   when you want a human-in-the-loop run.
+
+Either way the skills the flow references must already be installed (install everything, or the
+flow's bundle). A flow has a paired bundle so "install what this flow needs" is one command.
 
 Flows and bundles are co-located under `skaileup/flows/<app-type>/`:
 

@@ -88,11 +88,22 @@ The first thing the agent does is pick a tier. The rest of the pipeline is shape
 
 ## Flows + bundles
 
-Each flow is paired with a bundle of identical name. The bundle lists exactly the skills the flow runs.
+Each flow is paired with a bundle of identical name. **Bundles install, they do not run** —
+a bundle is an install manifest naming the skills a flow needs. Install the whole collection,
+or only a flow's subset, via the **skaile workspace CLI**:
 
 ```
-$ skaile add bundle:simple-app          # install the skills the flow needs
-$ skaile run flow:simple-app            # execute the flow
+$ skaile add skill:*                    # install every skill (whole collection)
+$ skaile add bundle:simple-app          # OR install only the subset simple-app needs
+```
+
+**Flows are run two interchangeable ways** once the skills are installed:
+
+```
+$ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
+#                                         2. OR the orchestrator (skaileup / skaileup-build),
+#                                            which understands the flow files and runs them
+#                                            conversationally (human-in-the-loop)
 ```
 
 ```

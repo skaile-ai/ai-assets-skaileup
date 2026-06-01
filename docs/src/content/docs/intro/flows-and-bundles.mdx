@@ -1,11 +1,13 @@
 ---
 title: Flows & Bundles
-description: How tier flows compose slice flows, and how bundles install only the skills a flow needs.
+description: How tier flows compose slice flows, how bundles install skill subsets, and the two ways a flow is run.
 sidebar:
   order: 7
 ---
 
-A **flow** is a YAML graph of skill nodes and edges. A **bundle** is the matching list of skills that flow needs installed. They come in pairs, co-located under `skaileup/flows/<tier>/`:
+A **flow** is a YAML graph of skill nodes and edges — a runnable path through the
+skill tree. A **bundle** is an **installation manifest**: the list of skills that
+flow needs installed. They come in pairs, co-located under `skaileup/flows/<tier>/`:
 
 ```
 skaileup/flows/
@@ -29,12 +31,35 @@ skaileup/flows/
     └── complex-app.bundle.yaml
 ```
 
-Use:
+## Install — bundles are subsets
+
+Bundles install skills via the **skaile workspace CLI**. Install the whole
+collection, or only the subset a flow needs:
 
 ```bash
-$ skaile add bundle:simple-app          # install the skills the flow needs
-$ skaile run flow:simple-app            # execute the flow
+$ skaile add skill:*                    # install every skill
+$ skaile add bundle:simple-app          # OR install only what simple-app needs
 ```
+
+A bundle never *runs* anything — it only decides which skills land in the workspace.
+
+## Run — engine or orchestrator
+
+Once the skills are installed, a flow can be run **two interchangeable ways**:
+
+```bash
+$ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
+```
+
+```text
+2. the orchestrator (skaileup / skaileup-build) reads the same .flow.yaml and
+   guides/executes it conversationally — used when there's no flow engine, or
+   when you want a human-in-the-loop run.
+```
+
+Both follow the identical node graph; pick the engine for hands-off execution,
+the orchestrator for a guided run. Either way, the flow's skills must already be
+installed (whole collection, or the flow's bundle).
 
 The two slice flows (`concept-slice`, `impl-slice`) are **building blocks**.
 Tier flows compose them.
