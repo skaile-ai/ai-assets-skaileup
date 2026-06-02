@@ -118,12 +118,32 @@ def test_unresolved_skill_fails(tmp_path):
 # ---------------------------------------------------------------------------
 def test_deferred_skill_warns_only(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
+    # deferred_skills.yaml is empty in the live repo (Phase 3 complete), so inject
+    # a deferred skill and point an mvp flow node at it: a deferred reference must
+    # WARN (not ERROR) and leave the overall exit code at 0.
+    deferred_path = (
+        tmp_path / "skaileup" / "flows" / "_meta" / "deferred_skills.yaml"
+    )
+    deferred_path.write_text(
+        yaml.safe_dump({"deferred_phase_3": ["zz-deferred-demo"]}, sort_keys=False)
+    )
+    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    data = yaml.safe_load(flow_path.read_text())
+    data["nodes"][1]["data"]["skill"] = "zz-deferred-demo"
+    flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    # The mvp bundle still requires the original skill name, which now appears as a
+    # tier-shape extra (WARN), and the flow's deferred skill is uncovered. Cover it
+    # so the only signal under test is the deferred WARN, not a coverage ERROR.
+    bundle_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.bundle.yaml"
+    bdata = yaml.safe_load(bundle_path.read_text())
+    bdata["requires"].append("skill:@skaile-ai/zz-deferred-demo")
+    bundle_path.write_text(yaml.safe_dump(bdata, sort_keys=False))
     proc = _run(verifier)
-    # mvp already references impl-architecture-templates-select (deferred), so we
-    # expect a WARN line for it and overall exit 0.
-    assert proc.returncode == 0
+    assert proc.returncode == 0, (
+        f"expected exit 0, got {proc.returncode}\nstderr={proc.stderr}"
+    )
     assert "deferred skill referenced" in proc.stderr
-    assert "impl-architecture-templates-select" in proc.stderr
+    assert "zz-deferred-demo" in proc.stderr
 
 
 # ---------------------------------------------------------------------------
@@ -136,7 +156,7 @@ def test_bundle_missing_flow_skill_fails(tmp_path):
     # Drop concept-brief from the requires (mvp.flow.yaml still uses it)
     data["requires"] = [
         r for r in data["requires"]
-        if r != "skill:concept-brief"
+        if r != "skill:@skaile-ai/concept-brief"
     ]
     bundle_path.write_text(yaml.safe_dump(data, sort_keys=False))
     proc = _run(verifier)

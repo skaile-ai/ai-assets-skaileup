@@ -73,6 +73,16 @@ PHASE_2_PLANNED = {
 }
 
 
+def bare_name(name: str) -> str:
+    """Strip any publisher segment from a ref body, returning the bare asset name.
+
+    Accepts the canonical ``@publisher/name`` shape and the legacy ``name@publisher``.
+    """
+    if name.startswith("@"):
+        return name.split("/", 1)[1] if "/" in name else name
+    return name.split("@", 1)[0]
+
+
 def load_schema() -> dict:
     return json.loads(SCHEMA_PATH.read_text())
 
@@ -125,11 +135,22 @@ def parse_bundle(bundle_path: Path) -> tuple[dict, set[str], list[str]]:
         if not isinstance(r, str):
             continue
         kind, _, name = r.partition(":")
+        name = bare_name(name)
         if kind == "skill":
             skills.add(name)
         elif kind == "bundle":
             parents.append(name)
     return data, skills, parents
+
+
+def bundle_flow_refs(bundle_path: Path) -> set[str]:
+    """Return the bare names of every ``flow:`` ref in a bundle's requires."""
+    data = yaml.safe_load(bundle_path.read_text())
+    return {
+        bare_name(r.partition(":")[2])
+        for r in data.get("requires", [])
+        if isinstance(r, str) and r.startswith("flow:")
+    }
 
 
 def effective_bundle_skills(tier: str) -> set[str]:
@@ -267,6 +288,17 @@ def main() -> int:
             errors.append(
                 f"{bp}: requires set {sorted(skills)} != flow nodes {sorted(flow_set)}"
             )
+
+    # ------------------------------------------------------------------
+    # 7. Every bundle must provision its own flow asset, so installing the
+    #    bundle yields a runnable workspace (flow + skills + contracts).
+    # ------------------------------------------------------------------
+    for fid in ALL_FLOWS:
+        bp = FLOWS / fid / f"{fid}.bundle.yaml"
+        if not bp.exists():
+            continue
+        if fid not in bundle_flow_refs(bp):
+            errors.append(f"{bp}: bundle does not require its own flow:{fid}")
 
     # ------------------------------------------------------------------
     # Print summary

@@ -263,7 +263,10 @@ assets:
   - kind: skill
     name: skaileup-scope-scope-project
     root: skaileup/00_skaileup-orchestrator/scope/scope-project
-  # ── contracts (5) ──
+  # ── contracts (6) ──
+  - kind: contract
+    name: shared-contracts
+    root: skaileup/contracts
   - kind: contract
     name: conceptualization-contract
     root: skaileup/01_concept/04_grounding/04_contracts/conceptualization-contract
@@ -279,6 +282,31 @@ assets:
   - kind: contract
     name: standards-contract
     root: skaileup/13_impl-quality/contracts/standards-contract
+  # ── flows (6) ──
+  - kind: flow
+    name: complex-app
+    files:
+      - skaileup/flows/complex-app/complex-app.flow.yaml
+  - kind: flow
+    name: concept-slice
+    files:
+      - skaileup/flows/concept-slice/concept-slice.flow.yaml
+  - kind: flow
+    name: impl-slice
+    files:
+      - skaileup/flows/impl-slice/impl-slice.flow.yaml
+  - kind: flow
+    name: mvp
+    files:
+      - skaileup/flows/mvp/mvp.flow.yaml
+  - kind: flow
+    name: simple-app
+    files:
+      - skaileup/flows/simple-app/simple-app.flow.yaml
+  - kind: flow
+    name: standard-app
+    files:
+      - skaileup/flows/standard-app/standard-app.flow.yaml
   # ── bundles (6) ──
   - kind: bundle
     name: complex-app

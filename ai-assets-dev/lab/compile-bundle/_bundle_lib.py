@@ -12,6 +12,18 @@ from typing import TypedDict
 import yaml
 
 
+def bare_name(ref: str) -> str:
+    """Strip the `kind:` prefix and any publisher segment, returning the bare asset name.
+
+    Canonical ref form is ``kind:@publisher/name`` (e.g. ``skill:@skaile-ai/concept-brief``).
+    Also tolerates legacy ``kind:name`` and ``kind:name@publisher`` shapes.
+    """
+    body = ref.split(":", 1)[1] if ":" in ref else ref
+    if body.startswith("@"):
+        return body.split("/", 1)[1] if "/" in body else body
+    return body.split("@", 1)[0]
+
+
 class BundleData(TypedDict):
     bundle_refs: list[str]   # bare parent stems, e.g. ["mvp"]
     skill_refs: list[str]    # bare skill names, e.g. ["concept-brief"]
@@ -64,8 +76,8 @@ def load_bundles(flows_dir: Path) -> dict[str, BundleData]:
             sys.exit(1)
         requires = [str(r) for r in (data.get("requires") or [])]
         result[stem] = BundleData(
-            bundle_refs=[r.removeprefix("bundle:") for r in requires if r.startswith("bundle:")],
-            skill_refs=[r.removeprefix("skill:") for r in requires if r.startswith("skill:")],
+            bundle_refs=[bare_name(r) for r in requires if r.startswith("bundle:")],
+            skill_refs=[bare_name(r) for r in requires if r.startswith("skill:")],
             other_refs=[r for r in requires if not r.startswith(("bundle:", "skill:"))],
             raw_text=raw_text,
             path=path,

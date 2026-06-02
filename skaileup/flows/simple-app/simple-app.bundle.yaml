@@ -16,19 +16,22 @@ metadata:
     - small
   stage: alpha
 requires:
-  - bundle:mvp@skaile-ai
+  - flow:@skaile-ai/simple-app
+  - bundle:@skaile-ai/mvp
+  # contract added by impl-build-docs (shared-contracts inherited from mvp):
+  - contract:@skaile-ai/implementation-contract
   # delta vs mvp (computed from flows):
-  - skill:design-brand-visual@skaile-ai
-  - skill:experience-journeys@skaile-ai
-  - skill:experience-screens@skaile-ai
-  - skill:mockup-walkthrough-static-html@skaile-ai
-  - skill:mockup-component-isolated-html@skaile-ai
-  - skill:impl-architecture-datamodel@skaile-ai
-  - skill:impl-build-foundation@skaile-ai
-  - skill:impl-build-migrate@skaile-ai
-  - skill:impl-build-seed@skaile-ai
-  - skill:impl-build-docs@skaile-ai
-  - skill:impl-plan-align@skaile-ai
-  - skill:impl-slice-test@skaile-ai
-  - skill:impl-slice-recap@skaile-ai
-  - skill:impl-quality-test-e2e@skaile-ai
+  - skill:@skaile-ai/design-brand-visual
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/experience-screens
+  - skill:@skaile-ai/mockup-walkthrough-static-html
+  - skill:@skaile-ai/mockup-component-isolated-html
+  - skill:@skaile-ai/impl-architecture-datamodel
+  - skill:@skaile-ai/impl-build-foundation
+  - skill:@skaile-ai/impl-build-migrate
+  - skill:@skaile-ai/impl-build-seed
+  - skill:@skaile-ai/impl-build-docs
+  - skill:@skaile-ai/impl-plan-align
+  - skill:@skaile-ai/impl-slice-test
+  - skill:@skaile-ai/impl-slice-recap
+  - skill:@skaile-ai/impl-quality-test-e2e
