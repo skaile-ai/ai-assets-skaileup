@@ -16,6 +16,8 @@ metadata:
     requires:
       - id: features
         gate: hard
+      - id: journeys
+        gate: hard
       - id: screens
         gate: hard
       - id: datamodel
@@ -31,6 +33,9 @@ metadata:
         gate: hard
         description: 'Feature specs required to generate test scenarios'
         min_entries: 1
+      - path: '_concept/experience/journeys/stories.json'
+        gate: hard
+        description: 'Stories with EARS acceptance criteria — every criterion must map to at least one test scenario'
       - path: '_concept/experience/screens'
         gate: hard
         description: 'Screen specs required for UI state test coverage'
@@ -95,6 +100,7 @@ Before starting, read:
 - `contracts/frontmatter.md` — feature frontmatter fields
 - `contracts/feedback_loop.md` — cross-reference protocol
 - `contracts/seed_data.md` — scenario-based seed data convention
+- `contracts/acceptance_criteria.md` — EARS patterns; every criterion must be traced to a test
 - `contracts/iron_laws.md` — non-negotiable constraints
 
 ## Context Budget
@@ -103,6 +109,7 @@ Before starting, read:
 | ----------------------------------------- | -------- |
 | `_concept/discovery/brief.md`             | Required |
 | `_concept/experience/features/**/*.md`    | Required |
+| `_concept/experience/journeys/stories.json` | Required |
 | `_concept/blueprint/datamodel/model.json` | Required |
 | `_concept/blueprint/datamodel/seed.json`  | Required |
 | `_concept/experience/screens/**/*.md`     | Required |
@@ -114,10 +121,16 @@ Before starting, read:
 
 1. Read `_concept/discovery/brief.md` — app overview
 2. Read `_concept/experience/features/**/*.md` — all feature specs
-3. Read `_concept/experience/screens/**/*.md` — all screen specs
-4. Read `_concept/blueprint/datamodel/model.json` — entities, relationships, field constraints
-5. Read `_concept/blueprint/datamodel/seed.json` — named scenarios (if exists)
-6. Read `_concept/experience/behaviors/*.allium` — behavioral rules (if exists)
+3. Read `_concept/experience/journeys/stories.json` — stories + EARS `acceptance_criteria` (and `gherkin_scenarios` if present)
+4. Read `_concept/experience/screens/**/*.md` — all screen specs
+5. Read `_concept/blueprint/datamodel/model.json` — entities, relationships, field constraints
+6. Read `_concept/blueprint/datamodel/seed.json` — named scenarios (if exists)
+7. Read `_concept/experience/behaviors/*.allium` — behavioral rules (if exists)
+
+Build an **acceptance-criteria index**: every story's EARS criteria, keyed by
+`story-id`. Each feature lists its `story_refs:` — this is how feature scenarios
+trace back to the originating stories. Each EARS criterion (and each
+`gherkin_scenario`) is a test obligation that MUST be covered in Step 2.
 
 Apply `test_scope` filter:
 
@@ -133,6 +146,9 @@ For each in-scope feature, produce four scenario categories:
 What happens when everything works correctly.
 
 - One scenario per requirement checkbox in the feature spec
+- **One scenario per EARS acceptance criterion** of every story in the feature's
+  `story_refs:` — the criterion text is the expected outcome; tag the scenario
+  with its `story-id`. Expand any `gherkin_scenarios` step-by-step.
 - Map to `populated` seed data scenario
 - Include expected UI state from screen spec
 
@@ -179,16 +195,34 @@ For each scenario, specify which seed data scenario and entities to use:
 
 ### Step 4: Calculate Coverage Summary
 
+The `AC` columns track acceptance-criteria traceability: `AC` = EARS criteria
+reachable via this feature's `story_refs`, `AC✓` = criteria with at least one
+mapped scenario. **`AC✓` must equal `AC` for every feature** — any gap is listed
+in the Uncovered Criteria section below and flagged to the user.
+
 ```
 ## Coverage Summary
 
-| Feature | Happy | Error | Edge | Permissions | Total |
-|---------|-------|-------|------|-------------|-------|
-| Login | 3 | 4 | 2 | 2 | 11 |
-| Dashboard | 5 | 2 | 3 | 1 | 11 |
-| Settings | 2 | 1 | 2 | 0 | 5 |
-| **Total** | **10** | **7** | **7** | **3** | **27** |
+| Feature | Happy | Error | Edge | Permissions | Total | AC | AC✓ |
+|---------|-------|-------|------|-------------|-------|----|----|
+| Login | 3 | 4 | 2 | 2 | 11 | 5 | 5 |
+| Dashboard | 5 | 2 | 3 | 1 | 11 | 4 | 4 |
+| Settings | 2 | 1 | 2 | 0 | 5 | 2 | 2 |
+| **Total** | **10** | **7** | **7** | **3** | **27** | **11** | **11** |
 ```
+
+If any `AC✓ < AC`, list the unmapped criteria:
+
+```
+## Uncovered Acceptance Criteria
+
+| Story | Criterion (EARS) | Feature | Reason |
+|-------|------------------|---------|--------|
+| story-04 | WHEN session expires THE SYSTEM SHALL re-prompt login | Login | No screen spec for expiry state |
+```
+
+Resolve each gap by adding a scenario, or record why it cannot be tested here
+(e.g. requires load testing). **Do not silently drop a criterion.**
 
 ### Step 5: Write Test Plan
 
@@ -201,6 +235,8 @@ scope: all-features # or must-have-only
 feature_count: N
 scenario_count: N
 seed_data_mapped: true
+ac_total: N # EARS criteria in scope
+ac_covered: N # criteria with >=1 mapped scenario (must equal ac_total)
 ---
 ```
 
@@ -217,12 +253,16 @@ Structure the file:
 
 [table from Step 4]
 
+## Uncovered Acceptance Criteria
+
+[table from Step 4 — empty if every criterion is covered]
+
 ## Feature: <Name>
 
 ### Happy Path
 
 - [ ] **Scenario name** — Description. Route: /path. Seed: populated.
-      Expected: [outcome]. Evidence: [what to check].
+      AC: story-02. Expected: [outcome]. Evidence: [what to check].
 
 ### Error States
 
@@ -263,9 +303,10 @@ Show the coverage summary table and ask:
 | Ignoring seed.json scenarios                      | Map every scenario to a named seed data scenario                  |
 | Only testing happy paths                          | Require at least 1 error + 1 edge case per feature                |
 | Inventing requirements not in specs               | Every scenario must trace to a feature requirement or screen spec |
+| Ignoring stories.json EARS criteria               | Every acceptance criterion must map to ≥1 scenario; gaps go in Uncovered Acceptance Criteria |
 | Skipping permissions when roles exist             | If `roles:` has multiple entries, generate permission scenarios   |
 | Testing nice-to-have when scope is must-have-only | Respect the `test_scope` user input                               |
 
 EMIT [test-plan] started run_id=<uuid> scope=<scope>
-EMIT [test-plan] checkpoint phase=scenarios_generated features=<N> scenarios=<N>
-EMIT [test-plan] completed run_id=<uuid> output=\_concept/testing/test_plan.md features=<N> scenarios=<N>
+EMIT [test-plan] checkpoint phase=scenarios_generated features=<N> scenarios=<N> ac_total=<N> ac_covered=<N>
+EMIT [test-plan] completed run_id=<uuid> output=\_concept/testing/test_plan.md features=<N> scenarios=<N> ac_total=<N> ac_covered=<N>

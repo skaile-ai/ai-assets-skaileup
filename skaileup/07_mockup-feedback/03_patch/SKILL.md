@@ -35,7 +35,9 @@ For each `(file, annotations)` group in `triage/<sid>.json`:
    target file's prose voice.
 3. For annotations on provisional elements, also emit a
    `kind: "provisional-promotion"` diff.
-4. Write `patches/<sid>.json` (machine-readable) and
+4. For annotations that change **testable behavior** (see *Test impact* below),
+   author a one-line suggested test scenario.
+5. Write `patches/<sid>.json` (machine-readable) and
    `patches/<sid>.review.md` (human checklist, all auto-items pre-checked).
 
 Each patch entry in `patches/<sid>.json` must include a `body` field copied
@@ -140,6 +142,31 @@ a warning — do not abort.
 
 ---
 
+## Test impact
+
+A patch changes **testable behavior** when:
+
+- the target is a **feature** file and the diff touches `## Requirements`,
+  `## Error States`, `## Success Criteria`, or `## Permissions`, or
+- the target is a **screen** file and the diff touches `## Behavior` or
+  `## States`, or
+- `category=add` introduces a new state, behavior, or error case.
+
+For each such patch, author a single suggested test scenario tagged with its
+category (Happy / Error / Edge / Permissions) and, where the target feature has
+`story_refs:`, the relevant `story-id`. These are **suggestions for `test-plan`**,
+not diffs — they are not applied to concept files and never carry a checkbox.
+
+Collect them under `## Test impact` in `review.md` (see format below). They close
+the feedback→test loop: after `mockup-feedback-apply` lands the spec edits,
+re-running `impl-quality-test-plan` regenerates scenarios from the updated
+features/screens, and these suggestions flag what to confirm got covered.
+
+Purely cosmetic patches (copy, tokens, layout, provisional-promotion) have no
+test impact — omit them.
+
+---
+
 ## Handling unautomatable annotations
 
 If an annotation cannot be patched (empty body, contradictory intent,
@@ -182,10 +209,20 @@ DO add a bullet under `## Needs manual review` in `review.md`:
   ```diff
   <diff text>
   ```
+
+## Test impact
+
+(omit this section when no patch changes testable behavior)
+
+Re-run `impl-quality-test-plan` after applying — these spec changes affect coverage:
+
+- `<feature-or-screen path>` — <category>: <suggested scenario> (AC: <story-id>)
 ```
 
 All auto-generated patches start as `- [x]` (checked). Users toggle
-`[x]` → `[ ]` to skip a patch, or hand-edit the diff in-place.
+`[x]` → `[ ]` to skip a patch, or hand-edit the diff in-place. The
+`## Test impact` bullets are advisory notes, **not** patches — they carry no
+checkbox and `apply.py` ignores them.
 
 ---
 
@@ -197,8 +234,10 @@ After writing both files, print:
 mockup-feedback-patch complete: <sid>
   N patches authored across M files
   K needs_manual (see review.md preamble)
+  T test-impact scenarios suggested (see review.md ## Test impact)
   review at: _concept/_feedback/patches/<sid>.review.md
 Next: edit review.md as needed, then run mockup-feedback-apply
+  (if T > 0, re-run impl-quality-test-plan after apply)
 ```
 
 ---

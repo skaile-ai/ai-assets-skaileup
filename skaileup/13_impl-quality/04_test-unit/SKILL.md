@@ -22,6 +22,8 @@ metadata:
     consumes:
       - id: test-plan
         gate: soft
+      - id: journeys
+        gate: soft
   prerequisites:
     files:
       - path: 'package.json'
@@ -37,6 +39,8 @@ metadata:
     reads:
       - path: '_concept/testing/test_plan.md'
         description: 'Test plan for structured test scenario coverage'
+      - path: '_concept/experience/journeys/stories.json'
+        description: 'EARS acceptance criteria — reference each test back to the criterion it covers'
     produces:
       - path: 'src'
         description: 'One test file per feature (in stack-appropriate test directory)'
@@ -92,6 +96,7 @@ Before starting, read:
 | Existing test files (pattern discovery) | Required |
 | Source code for features under test     | Required |
 | `_concept/testing/test_plan.md`         | Optional |
+| `_concept/experience/journeys/stories.json` | Optional |
 
 ## Workflow
 
@@ -117,11 +122,12 @@ If no test framework is configured:
 For each feature in `_concept/experience/features/`:
 
 1. Read the feature spec — extract requirements and success criteria
-2. Find the corresponding source files (pages, components, composables, API routes)
-3. Identify testable units: exported functions, composables, utility methods, API handlers
-4. Map each requirement to one or more testable units
+2. Look up the feature's `story_refs:` in `stories.json` (if present) and collect the EARS acceptance criteria for those stories
+3. Find the corresponding source files (pages, components, composables, API routes)
+4. Identify testable units: exported functions, composables, utility methods, API handlers
+5. Map each requirement **and each unit-testable acceptance criterion** to one or more testable units (criteria that need a browser/DB belong to e2e/integration — note them, don't force a unit test)
 
-Return: feature → source file → testable units → requirements mapping.
+Return: feature → source file → testable units → requirement/AC mapping.
 
 ### Phase 2: Generate Test Files
 
@@ -160,7 +166,7 @@ describe('Feature: <feature_name>', () => {
 - **Mocking:** mock external dependencies the same way existing tests do
 - **One file per feature:** group all tests for a feature together
 - **Describe blocks map to requirements:** each requirement checkbox = one `describe`
-- **Test names reference spec:** include the requirement text in test description
+- **Test names reference spec:** include the requirement text in test description; where a test covers an EARS criterion, cite its `story-id` in the test name or a comment
 
 #### What to Test
 
@@ -192,10 +198,10 @@ report them, do not change the test.
 ## Unit Test Generation Report
 
 ### Tests Generated
-| Feature | File | Tests | Requirements Covered |
-|---------|------|-------|---------------------|
-| Login | tests/auth/login.test.ts | 8 | 4/4 |
-| Dashboard | tests/dashboard/overview.test.ts | 12 | 6/6 |
+| Feature | File | Tests | Requirements Covered | AC Covered |
+|---------|------|-------|---------------------|-----------|
+| Login | tests/auth/login.test.ts | 8 | 4/4 | story-01, story-02 |
+| Dashboard | tests/dashboard/overview.test.ts | 12 | 6/6 | story-05 |
 
 ### Test Results
 - Total: N tests
