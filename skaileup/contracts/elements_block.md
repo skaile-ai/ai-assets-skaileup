@@ -165,13 +165,14 @@ frontmatter and subsequent renders drop `data-spec-provisional`.
 ## Validation
 
 The schema is enforced by `lab/validate-elements-block/` (a Python
-validator that uses `contracts/scripts/validator_lib.py`). Reference
-fixtures live at `tests/elements_block_examples.md` (3 valid, 3 invalid).
+validator that uses `contracts/scripts/validator_lib.py`, shipped in the
+sister repo `ai-assets-skill-development`). Reference fixtures live at
+`skaileup/contracts/tests/elements_block_examples.md` (3 valid, 3 invalid).
 
 Run:
 
 ```
-python lab/validate-elements-block/validator.py tests/elements_block_examples.md
+python lab/validate-elements-block/validator.py skaileup/contracts/tests/elements_block_examples.md
 ```
 
 Exit code is `0` when every example matches its declared `expect:`,

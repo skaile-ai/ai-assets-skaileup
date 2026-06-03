@@ -17,7 +17,7 @@ All `skaileup-*` skills for the concept, build, and quality pipelines. Extracted
 Skills are organized into 17 domains in three groups (Concept, Implementation, Meta).
 **Domain and skill folders carry a two-digit `NN_` run-order prefix** so an alphabetical
 listing reads in flow order; the prefix is stripped from `name:` (see *Naming Convention*).
-User-facing skill domains live under `skaileup/`. System/meta assets live under `ai-assets-dev/`.
+User-facing skill domains live under `skaileup/`. System/meta assets (contracts, flows, CI scripts) live under `skaileup/`.
 
 ### Concept  (`skaileup/`)
 ```
@@ -46,16 +46,17 @@ User-facing skill domains live under `skaileup/`. System/meta assets live under 
 14_ops/                      cross-cutting: 01..04_project-{overview,subsystem-map,integration,review} · 05..07_eval-{concept,feature,product} · 08_review · 09_sync · 10_add-feature · 11_reverse-engineer
 ```
 
-### Meta — system assets  (`ai-assets-dev/` and `skaileup/`)
+### Meta — system assets  (`skaileup/`)
 ```
 skaileup/contracts/          shared reference layer (every skill reads) — unnumbered
+skaileup/contracts/scripts/  CI scripts (pre-commit hook · verify_artifacts.py · validator_lib.py)
+skaileup/contracts/tests/    contract fixtures (elements_block_examples.md)
 skaileup/flows/              self-contained flow YAMLs (graph + requires: manifest) + docs, per app-type — unnumbered
 skaileup/flows/_meta/        verify_flows.py · test_verify.py · deferred_skills.yaml
-ai-assets-dev/lab/           the collection-agnostic lab skills (validate · judge · improve · learn · report · compile-validators · archive · validate-elements-block) live in github.com/skaile-ai/ai-assets-skill-development
-ai-assets-dev/scripts/       CI scripts (pre-commit hook)
-ai-assets-dev/tests/         test fixtures
 docs/devlog/                 plans, specs, design notes, improvement backlog
 ```
+
+The collection-agnostic lab skills (validate · judge · improve · learn · report · compile-validators · archive · validate-elements-block) live in github.com/skaile-ai/ai-assets-skill-development.
 
 ## Skill Structure
 

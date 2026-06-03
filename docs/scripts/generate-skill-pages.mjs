@@ -95,9 +95,6 @@ function slugify(name) {
 // Domain directories to include.
 // User-facing domains live under skaileup/<domain>/
 // contracts is now also under skaileup/ (moved from ai-assets/)
-// Meta lab domain lives under ai-assets-dev/lab/
-// The set uses the bare domain name; the root prefix (skaileup/ vs ai-assets-dev/)
-// is matched in main() when classifying each file.
 const SKAILEUP_DOMAINS = new Set([
   "concept",
   "contracts",
@@ -115,10 +112,6 @@ const SKAILEUP_DOMAINS = new Set([
   "impl-quality",
   "skaileup-orchestrator",
   "ops",
-]);
-
-const AI_ASSETS_DOMAINS = new Set([
-  "lab",
 ]);
 
 function ensureDir(p) {
@@ -332,18 +325,16 @@ function generateSourcePages() {
 }
 
 function main() {
-  // Walk skaileup/ for user-facing skill domains, ai-assets/ for meta domains.
+  // Walk skaileup/ for user-facing skill domains.
   // We walk REPO_ROOT but use the path structure to determine which domain each file belongs to.
   const files = walk(REPO_ROOT);
-  // Group by domain name (second path segment for skaileup/*, or second segment for ai-assets/*)
+  // Group by domain name (second path segment for skaileup/*)
   const byDomain = new Map();
   for (const f of files) {
     const rel = relative(REPO_ROOT, f);
     const parts = rel.split("/");
     let domain = null;
     if (parts[0] === "skaileup" && SKAILEUP_DOMAINS.has(parts[1])) {
-      domain = parts[1];
-    } else if (parts[0] === "ai-assets-dev" && AI_ASSETS_DOMAINS.has(parts[1])) {
       domain = parts[1];
     }
     if (!domain) continue;
@@ -447,7 +438,7 @@ ${skillsList}
   // Prune stale output: remove orphan domain dirs (old naming) and any per-domain
   // page no longer backed by a source SKILL.md/DOMAIN.md. Loose files at the
   // domains/ root (e.g. hand-written *-group.md overviews) are left untouched.
-  const knownDomains = new Set([...SKAILEUP_DOMAINS, ...AI_ASSETS_DOMAINS]);
+  const knownDomains = new Set([...SKAILEUP_DOMAINS]);
   let pruned = 0;
   for (const entry of readdirSync(OUT_ROOT)) {
     const entryPath = join(OUT_ROOT, entry);

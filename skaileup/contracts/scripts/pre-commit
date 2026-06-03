@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # pre-commit — catalog integrity hooks
 #
-# Install: cp ai-assets-dev/scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
-# Or use symlink: ln -s ../../ai-assets-dev/scripts/pre-commit .git/hooks/pre-commit
+# Install: cp skaileup/contracts/scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Or use symlink: ln -s ../../skaileup/contracts/scripts/pre-commit .git/hooks/pre-commit
 #
 # Checks:
 #   1. No SKILL.md files reference the old _grounding/general/ path

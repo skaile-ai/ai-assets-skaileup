@@ -148,11 +148,6 @@ export default defineConfig({
               collapsed: true,
             },
             {
-              label: "lab",
-              autogenerate: { directory: "domains/lab" },
-              collapsed: true,
-            },
-            {
               label: "contracts",
               autogenerate: { directory: "domains/contracts" },
               collapsed: true,

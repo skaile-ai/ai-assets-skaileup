@@ -72,8 +72,7 @@ The Skaileup skill collection — concept, build, and quality pipeline skills fo
 |---|---|
 | [`skaileup/contracts/`](skaileup/contracts/DOMAIN.md) | Reference layer (every skill reads) |
 | [`skaileup/flows/`](skaileup/flows/) | Self-contained flow YAMLs (graph + `requires:` manifest), per app-type |
-| [`ai-assets-dev/lab/`](ai-assets-dev/lab/DOMAIN.md) | Skill-on-skill tooling (collection-agnostic skills live in `ai-assets-skill-development`) |
-| [`ai-assets-dev/scripts/`](ai-assets-dev/scripts/) | CI scripts (pre-commit hook) |
+| [`skaileup/contracts/scripts/`](skaileup/contracts/scripts/) | CI scripts (pre-commit hook, artifact/flow verifiers) |
 
 ## Tiers
 

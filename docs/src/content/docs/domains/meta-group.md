@@ -1,6 +1,6 @@
 ---
 title: "Meta group"
-description: "The cross-cutting layer — orchestrators, ops, the skill-on-skill lab, and the shared contracts every skill reads."
+description: "The cross-cutting layer — orchestrators, ops, and the shared contracts every skill reads."
 sidebar:
   label: "Overview"
   order: 0
@@ -14,7 +14,6 @@ contracts every skill reads.
 
 - [**skaileup-orchestrator**](./skaileup-orchestrator/) — base orchestrators + scope/ — pipeline entry
 - [**ops**](./ops/) — review · sync · add-feature · reverse-engineer · eval-* · project-*
-- [**lab**](./lab/) — skill-on-skill tooling (collection-agnostic skills live in `ai-assets-skill-development`)
 - [**contracts**](./contracts/) — the shared reference layer (iron laws, golden principles, schemas)
 
 ## See also
