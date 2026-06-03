@@ -84,7 +84,6 @@ files at startup and building a name→path registry.
 | `impl-quality-test-unit`            | impl-quality      | Unit test generation and execution                      |
 | `impl-quality-test-integration`     | impl-quality      | Integration test generation and execution               |
 | `impl-quality-test-plan`            | impl-quality      | Test plan from features, screens, data model            |
-| `lab-compile-validators`   | impl-quality      | Compile all validator.py files into unified suite       |
 | `impl-quality-standards-discover`   | impl-architecture    | Discover codebase conventions → \_standards/            |
 | `impl-quality-standards-inject`     | impl-architecture    | Match standards to requesting skill                     |
 
