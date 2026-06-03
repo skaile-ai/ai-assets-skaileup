@@ -121,7 +121,7 @@ documentation (only the transient `progress.json` is removed).
 For `standard-app`:
 
 ```
-impl-quality/test-unit · test-integration · test-e2e · ready
+impl-quality/test-plan → test-unit · test-integration · test-e2e · ready
 ops/review · ops/sync
 ```
 
@@ -133,6 +133,30 @@ impl-quality/eval-code · audit          ← between each impl-slice
 
 `ready` is the release gate. `audit` and `eval-code` run between slices in
 complex-app to catch drift before it compounds.
+
+### Concept scenarios drive the tests
+
+Tests trace back to the **feature scenarios from the concept** — the EARS
+acceptance criteria written into `journeys/stories.json`:
+
+| Skill | How concept scenarios reach the tests |
+|---|---|
+| `test-plan` | Reads `stories.json`; every EARS criterion of a feature's `story_refs` maps to ≥1 scenario. A coverage gate (`AC✓` must equal `AC`) flags any criterion with no test in an **Uncovered Acceptance Criteria** section. |
+| `test-e2e` | Runs one journey per story; the story's EARS criteria are the journey's pass/fail conditions. |
+| `test-unit` | References the acceptance criterion (`story-id`) each unit test covers in its report. |
+
+Seed data is the shared fixture layer: `seed.json` scenarios (`empty` ·
+`single_user` · `populated` · `edge_cases`) feed both the **mockups**
+(walkthrough switcher and `mockup-component-storybook` `WithData`/`Empty`
+stories) and the **tests** (`test-integration`, `test-e2e`), so prototypes and
+tests exercise the same data.
+
+### Feedback closes the loop
+
+When `mockup-feedback` patches a spec change that affects testable behavior, the
+`patch` step emits **Test impact** suggestions and `apply` points back to
+`test-plan` — re-running it regenerates scenarios from the updated
+features/screens.
 
 ## End-to-end
 
