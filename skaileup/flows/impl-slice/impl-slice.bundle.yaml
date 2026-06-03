@@ -13,11 +13,13 @@ metadata:
     - slice
   stage: alpha
 requires:
-  - skill:impl-plan-brainstorm@skaile-ai
-  - skill:impl-plan-align@skaile-ai
-  - skill:impl-plan-plan-vertical@skaile-ai
-  - skill:impl-slice-implement@skaile-ai
-  - skill:impl-slice-test@skaile-ai
-  - skill:impl-slice-recap@skaile-ai
-  - skill:impl-slice-refactor@skaile-ai
-  - skill:impl-slice-commit@skaile-ai
+  - flow:@skaile-ai/impl-slice
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/impl-plan-brainstorm
+  - skill:@skaile-ai/impl-plan-align
+  - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-test
+  - skill:@skaile-ai/impl-slice-recap
+  - skill:@skaile-ai/impl-slice-refactor
+  - skill:@skaile-ai/impl-slice-commit

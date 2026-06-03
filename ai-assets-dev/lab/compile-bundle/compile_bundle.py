@@ -58,8 +58,8 @@ def insert_skills(raw_text: str, missing: list[str]) -> str:
     else:
         raise ValueError("No 'requires:' key found in bundle text; cannot insert skills.")
 
-    # no space after colon — domain convention; loaded as plain string by PyYAML
-    new_lines = [f"  - skill:{name}\n" for name in missing]
+    # canonical ref form: skill:@<publisher>/<name>; loaded as plain string by PyYAML
+    new_lines = [f"  - skill:@skaile-ai/{name}\n" for name in missing]
     lines[insert_at:insert_at] = new_lines
     return "".join(lines)
 

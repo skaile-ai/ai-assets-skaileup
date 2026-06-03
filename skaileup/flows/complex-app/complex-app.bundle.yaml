@@ -14,15 +14,18 @@ metadata:
     - multi-product
   stage: alpha
 requires:
-  - bundle:standard-app@skaile-ai
+  - flow:@skaile-ai/complex-app
+  - bundle:@skaile-ai/standard-app
+  # contract added by ops-project-* (shared + implementation inherited):
+  - contract:@skaile-ai/meta-concept-contract
   # delta vs standard-app (computed from flows):
-  - skill:design-brand-voice@skaile-ai
-  - skill:mockup-walkthrough-framework@skaile-ai
-  - skill:concept-slice-brainstorm@skaile-ai
-  - skill:impl-plan-supervised@skaile-ai
-  - skill:impl-quality-eval-code@skaile-ai
-  - skill:impl-quality-audit@skaile-ai
-  - skill:ops-project-overview@skaile-ai
-  - skill:ops-project-subsystem-map@skaile-ai
-  - skill:ops-project-integration@skaile-ai
-  - skill:ops-project-review@skaile-ai
+  - skill:@skaile-ai/design-brand-voice
+  - skill:@skaile-ai/mockup-walkthrough-framework
+  - skill:@skaile-ai/concept-slice-brainstorm
+  - skill:@skaile-ai/impl-plan-supervised
+  - skill:@skaile-ai/impl-quality-eval-code
+  - skill:@skaile-ai/impl-quality-audit
+  - skill:@skaile-ai/ops-project-overview
+  - skill:@skaile-ai/ops-project-subsystem-map
+  - skill:@skaile-ai/ops-project-integration
+  - skill:@skaile-ai/ops-project-review

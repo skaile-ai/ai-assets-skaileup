@@ -174,16 +174,39 @@ The slice dossier is **frozen on commit, not deleted** (Suggestion-B organizatio
 
 ## Flows + Bundles
 
-**Bundles are installation manifests, not runners.** A bundle names a subset of
-skills to install via the **skaile workspace CLI**. You can install *all* skills,
-or install only the subset some flow needs by adding its bundle:
+**Bundles are installation manifests, not runners.** A bundle is the **complete
+workspace manifest for one flow**: its `requires:` names the flow asset itself,
+every skill the flow runs, and the contracts those skills need — so installing the
+bundle provisions a runnable workspace (flow + skills + contracts), not just skills.
+You can install *all* assets, or install only what one flow needs by adding its bundle:
 
 ```
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add bundle:standard-app        # OR install only the subset standard-app needs
+$ skaile add bundle:standard-app        # OR provision exactly standard-app's workspace
 ```
 
-**Flows are run, not installed** — two interchangeable ways:
+Each bundle's `requires:` therefore mixes asset kinds, written in the npm-style
+scoped ref grammar `kind:@publisher/name[#version]` (`@` = scope sigil, `#` = version
+sigil; per `workspaces/.../2026-06-02-scoped-asset-ref-grammar.md`):
+
+```yaml
+requires:
+  - flow:@skaile-ai/standard-app          # the flow this workspace runs
+  - bundle:@skaile-ai/simple-app          # inherited parent (skills + contracts)
+  - contract:@skaile-ai/shared-contracts  # shared reference layer (via mvp base)
+  - skill:@skaile-ai/concept-goals        # …the flow's skills (version pin optional)
+```
+
+**Contracts.** Two layers, both installed by the bundles that need them:
+the shared `skaileup/contracts/` reference layer (registered as `shared-contracts`,
+read by every skill — carried by the base `mvp` bundle and each leaf slice bundle),
+plus the domain contracts a flow's skills actually reference
+(`implementation-contract` for `impl-build-docs`; `meta-concept-contract` for the
+`ops-project-*` suite). The needed contracts are derived per flow by analyzing which
+contracts its skills cite.
+
+**Installing a bundle places the flow file in the workspace; running it is a
+separate act** — two interchangeable ways:
 
 1. **skaile workspace flow engine** (the flow connector) executes a `.flow.yaml` directly:
    ```
@@ -193,8 +216,9 @@ $ skaile add bundle:standard-app        # OR install only the subset standard-ap
    guides/executes the same path conversationally — used when no flow engine is present, or
    when you want a human-in-the-loop run.
 
-Either way the skills the flow references must already be installed (install everything, or the
-flow's bundle). A flow has a paired bundle so "install what this flow needs" is one command.
+Either way the flow plus the skills and contracts it references must already be installed
+(install everything, or the flow's bundle). A flow has a paired bundle so "provision this
+flow's whole workspace" is one command.
 
 Flows and bundles are co-located under `skaileup/flows/<app-type>/`:
 
@@ -213,7 +237,7 @@ skaileup/flows/
     └── deferred_skills.yaml
 ```
 
-Bundles inherit: `mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`. Each file lists only its *additions*. `ai-assets-dev/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file; run on every flow change to prevent drift. CI: `ai-assets-dev/scripts/check-bundles.sh`.
+Bundles inherit: `mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`. Each file lists only its *additions* — including the `flow:` and `contract:` refs (leaf slice bundles carry `shared-contracts` directly since they don't inherit). `ai-assets-dev/lab/compile-bundle` walks a flow's node graph and emits the matching `skill:` refs; the `flow:` and `contract:` refs are authored. `skaileup/flows/_meta/verify_flows.py` enforces that every bundle requires its own flow, and `check-bundles.sh` guards skill drift. CI: `ai-assets-dev/scripts/check-bundles.sh`.
 
 ## Reorganization Status
 

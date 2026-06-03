@@ -13,14 +13,18 @@ metadata:
     - prototype
   stage: alpha
 requires:
-  - skill:skaileup-scope-scope-project@skaile-ai
-  - skill:concept-brief@skaile-ai
-  - skill:product-spec-features@skaile-ai
-  - skill:mockup-walkthrough-text@skaile-ai
-  - skill:impl-architecture-techstack@skaile-ai
-  - skill:impl-architecture-templates-select@skaile-ai
-  - skill:impl-build-scaffold@skaile-ai
-  - skill:impl-plan-plan-vertical@skaile-ai
-  - skill:impl-slice-implement@skaile-ai
-  - skill:impl-slice-commit@skaile-ai
-  - skill:impl-quality-test-unit@skaile-ai
+  # the flow this bundle provisions a workspace for
+  - flow:@skaile-ai/mvp
+  # shared reference layer every skill reads (skaileup/contracts/)
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/skaileup-scope-scope-project
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/product-spec-features
+  - skill:@skaile-ai/mockup-walkthrough-text
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-templates-select
+  - skill:@skaile-ai/impl-build-scaffold
+  - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-commit
+  - skill:@skaile-ai/impl-quality-test-unit
