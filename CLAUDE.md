@@ -51,7 +51,7 @@ User-facing skill domains live under `skaileup/`. System/meta assets live under 
 skaileup/contracts/          shared reference layer (every skill reads) — unnumbered
 skaileup/flows/              flow + bundle YAMLs, co-located per app-type — unnumbered
 skaileup/flows/_meta/        verify_flows.py · test_verify.py · deferred_skills.yaml
-ai-assets-dev/lab/           skill-on-skill: validate · judge · improve · learn · compile-bundle
+ai-assets-dev/lab/           skill-on-skill (skaileup-specific): compile-bundle. The collection-agnostic lab skills (validate · judge · improve · learn · report · compile-validators · archive · validate-elements-block) live in github.com/skaile-ai/ai-assets-skill-development
 ai-assets-dev/scripts/       CI scripts (check-bundles.sh — drift guard against skaileup/flows/)
 ai-assets-dev/tests/         test fixtures
 docs/devlog/                 plans, specs, design notes, improvement backlog
@@ -67,7 +67,7 @@ my-skill/
 ├── CLI.md          ← Optional: CLI invocation docs
 ├── references/     ← Optional: reference material loaded on demand
 ├── scripts/        ← Optional: helper scripts
-├── tests/          ← Optional: test manifest + fixtures (lab/validate)
+├── tests/          ← Optional: test manifest + fixtures (consumed by lab/validate in ai-assets-skill-development)
 └── validator.py    ← Optional: compiled MUST/NEVER validator
 ```
 
