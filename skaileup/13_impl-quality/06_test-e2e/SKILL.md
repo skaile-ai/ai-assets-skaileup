@@ -20,6 +20,8 @@ metadata:
         gate: hard
       - id: features
         gate: hard
+      - id: journeys
+        gate: hard
       - id: screens
         gate: hard
       - id: datamodel
@@ -39,6 +41,9 @@ metadata:
         gate: hard
         description: 'Feature specs required for user journey test coverage'
         min_entries: 1
+      - path: '_concept/experience/journeys/stories.json'
+        gate: hard
+        description: 'Stories drive the journeys to run; EARS acceptance criteria are the pass/fail conditions'
       - path: '_concept/experience/screens'
         gate: hard
         description: 'Screen specs required for route and interaction testing'
@@ -95,6 +100,7 @@ database records.
 | -------------- | --------------------------------------------------- | --------------------------- |
 | **Must read**  | `_concept/discovery/brief.md`                       | Yes                         |
 | **Must read**  | `_concept/experience/features/**/*.md`              | Yes                         |
+| **Must read**  | `_concept/experience/journeys/stories.json`         | Yes                         |
 | **Must read**  | `_concept/blueprint/datamodel/model.json`           | Yes                         |
 | **Must read**  | `_concept/blueprint/datamodel/seed.json`            | Yes                         |
 | **Must read**  | `_concept/experience/screens/**/*.md`               | Yes                         |
@@ -119,6 +125,7 @@ ROLE E2E Testing agent — runs browser tests against every user journey, captur
 READS
 \_concept/discovery/brief.md — app name, purpose
 \_concept/experience/features/**/\*.md — feature specs, requirements, success criteria
+\_concept/experience/journeys/stories.json — stories + EARS acceptance criteria (the journeys to run and their pass conditions)
 \_concept/blueprint/datamodel/model.json — model definitions for DB validation
 \_concept/experience/screens/**/\*.md — screen specs with routes, components, states
 ? \_concept/blueprint/datamodel/seed.json — scenario-based test data
@@ -139,6 +146,8 @@ state: \_concept/experience/screens/**/\*.md exist
 state: \_concept/experience/features/**/\*.md exist
 
 MUST run audit before this skill for static analysis
+MUST derive the journeys to run from stories.json stories (not just feature specs) — one journey per story, covering hero and vital stages first
+MUST treat each story's EARS acceptance criteria as the pass/fail conditions for its journey — a journey passes only when all its criteria are observably met
 MUST use seed.json scenario data for all form inputs (never invent test data)
 MUST screenshot every step to e2e-screenshots/<journey>/
 MUST validate database records after data-modifying interactions
@@ -162,11 +171,12 @@ STEP 2: Parallel research (two sub-agents)
 
 - Sub-agent 1 — Concept & User Journeys:
   - Read \_concept/discovery/brief.md for app name, purpose
+  - Read \_concept/experience/journeys/stories.json for every story + its EARS acceptance_criteria (and gherkin_scenarios if present) — these are the journeys to run
   - Read \_concept/experience/features/\*_/_.md for every feature, requirements, success criteria
   - Read \_concept/experience/screens/\*_/_.md for every screen: route, components, template data, states
   - Read package.json for dev server command, port, URL
   - Read .env.example or feature docs for auth info
-  - Synthesize: startup guide (exact commands) + user journey list (steps, interactions, expected outcomes)
+  - Synthesize: startup guide (exact commands) + user journey list — one journey per story, each with its steps, interactions, and its EARS criteria as explicit pass conditions
 - Sub-agent 2 — Database Schema & Data Flows:
   - Read \_concept/blueprint/datamodel/model.json for models, relationships, field types
   - Cross-reference .env.example for connection details
@@ -185,7 +195,7 @@ EMIT [e2e] checkpoint phase=app_started url=<url>
 
 STEP 4: Test user journeys
 
-- For each journey from Step 2 sub-agent 1:
+- For each journey (= story) from Step 2 sub-agent 1:
   - Use agent-browser commands with seed data from \_concept/blueprint/datamodel/seed.json
     (see references/report_template.md for scenario mapping)
   - Screenshot every interaction step to e2e-screenshots/<journey>/
@@ -193,6 +203,7 @@ STEP 4: Test user journeys
   - $ agent-browser console
   - Check for JS errors in console output
   - After data-modifying interactions, query DB to verify records match model.json definitions
+  - Evaluate each of the story's EARS acceptance criteria against observed behaviour + DB state; mark the journey PASS only if all criteria hold, else FAIL with the failing criterion
     IF issue found - Document the issue - Attempt fix in source code - Re-test and screenshot the fix
     UNTIL all journeys tested
 
@@ -226,6 +237,7 @@ EMIT [e2e] completed run_id=<uuid> journeys=<N> screenshots=<N> issues_found=<N>
 CHECKLIST
 
 - [ ] Pre-flight checks passed (platform, frontend, agent-browser)
+- [ ] One journey run per stories.json story; every EARS criterion evaluated PASS/FAIL
 - [ ] All user journeys tested with seed scenario data
 - [ ] Screenshots captured for every step
 - [ ] Database records validated after data-modifying actions

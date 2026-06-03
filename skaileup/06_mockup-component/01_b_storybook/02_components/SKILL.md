@@ -37,6 +37,8 @@ metadata:
     reads:
       - path: '_concept/discovery/brand/tokens.json'
         description: 'Brand tokens for component styling'
+      - path: '_concept/blueprint/datamodel/seed.json'
+        description: 'Seed scenarios — source the WithData/Empty story variants from real seed data (if datamodel exists)'
     produces:
       - path: '_concept/prototype/storybook/src/components'
         description: 'Custom building-block component files and barrel export'
@@ -50,6 +52,7 @@ library, builds them, and creates their Storybook stories.
 READS
 \_concept/experience/screens/\*_/_.md — UI elements from all screen specs
 \_concept/discovery/brand/tokens.json — brand tokens for styling
+? \_concept/blueprint/datamodel/seed.json — seed scenarios for realistic story data (WithData/Empty)
 [passed by orchestrator]: component_library, story_extension, icon_library, component_import
 
 WRITES
@@ -96,9 +99,10 @@ For EACH custom component:
 
 a) Write src/components/<ComponentName>.<story_extension> - Import types from src/@types/ - Compose from component_library primitives where possible - If no suitable library primitive exists, use plain HTML/CSS with brand tokens - Use icon_library for all icons — never emojis or icon fonts - Apply brand tokens via CSS custom properties (--color-_, --font-_, --radius) - Document props via JSDoc/comments for Storybook autodocs
 
-b) Write src/stories/Components/<ComponentName>.stories.<story_extension> - title: 'Components/<ComponentName>' - Include variant stories as applicable: - Default — standard rendering - AllVariants — all variants/sizes side by side - WithData — populated with realistic domain data - Empty — empty state (if component supports it) - Loading — skeleton/spinner state (if applicable)
+b) Write src/stories/Components/<ComponentName>.stories.<story_extension> - title: 'Components/<ComponentName>' - Include variant stories as applicable: - Default — standard rendering - AllVariants — all variants/sizes side by side - WithData — populated from the `populated` seed.json scenario (matching entity) when seed.json exists; otherwise realistic domain data - Empty — empty state from the `empty` seed.json scenario (if component supports it) - Loading — skeleton/spinner state (if applicable)
 IF component appears in multiple screens with different configurations - Add a story variant per unique configuration
 MUST use realistic domain-appropriate data — never "Lorem ipsum"
+MUST source WithData/Empty from seed.json scenarios when seed.json exists, so stories and tests share the same fixtures
 
 STEP 4: Write barrel export
 OUTPUT \_concept/prototype/storybook/src/components/index.<ts|js> - Re-export all custom components built in Step 3

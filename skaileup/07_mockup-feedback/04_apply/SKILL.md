@@ -103,6 +103,12 @@ For each failed patch:
   → edit _concept/_feedback/patches/<sid>.review.md and re-run to retry
 ```
 
+If `patches/<sid>.review.md` contains a non-empty `## Test impact` section, add:
+```
+  Test impact: spec changes affect coverage — re-run impl-quality-test-plan
+  to regenerate scenarios from the updated features/screens.
+```
+
 ---
 
 ## Failure recovery
