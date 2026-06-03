@@ -8,6 +8,7 @@
 #   1. No SKILL.md files reference the old _grounding/general/ path
 #   2. No SKILL.md files use deprecated user_inputs / reads_from / writes_to
 #   3. Artifact registry consistency (when SKILL.md or artifacts.yaml staged)
+#   4. Flow manifest consistency (when a *.flow.yaml is staged)
 
 set -euo pipefail
 
@@ -55,6 +56,19 @@ if git diff --cached --name-only | grep -qE "(SKILL\.md|contracts/artifacts\.yam
         fi
     else
         echo "WARN: PyYAML not installed — skipping artifact registry check (CI still enforces it)"
+    fi
+fi
+
+# 4. Flow manifest consistency — each flow's requires: must match its node graph
+if git diff --cached --name-only | grep -qE "\.flow\.yaml$"; then
+    if python3 -c "import yaml, jsonschema" 2>/dev/null; then
+        if ! python3 skaileup/flows/_meta/verify_flows.py > /dev/null; then
+            python3 skaileup/flows/_meta/verify_flows.py 2>&1 | grep "^ERROR" || true
+            echo "ERROR: flow manifest check failed (see skaileup/flows/_meta/verify_flows.py)"
+            FAILED=1
+        fi
+    else
+        echo "WARN: PyYAML/jsonschema not installed — skipping flow manifest check (CI still enforces it)"
     fi
 fi
 

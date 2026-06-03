@@ -8,7 +8,7 @@ All `skaileup-*` skills for the concept, build, and quality pipelines. Extracted
 
 ## Documentation
 
-- **Starlight site** at [`docs/`](./docs/) — `npm run docs` (or `cd docs && npm install && npm run dev`). Every SKILL.md is rendered as its own page with frontmatter + body, plus pages for the mental model, slice loops, tiers, flows + bundles, and the contracts reference layer.
+- **Starlight site** at [`docs/`](./docs/) — `npm run docs` (or `cd docs && npm install && npm run dev`). Every SKILL.md is rendered as its own page with frontmatter + body, plus pages for the mental model, slice loops, tiers, flows, and the contracts reference layer.
 - **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — skill-authoring guide for the `skaile` CLI.
 - **[`docs/devlog/`](./docs/devlog/)** — plans, specs, design notes, and the improvement backlog.
 
@@ -49,10 +49,10 @@ User-facing skill domains live under `skaileup/`. System/meta assets live under 
 ### Meta — system assets  (`ai-assets-dev/` and `skaileup/`)
 ```
 skaileup/contracts/          shared reference layer (every skill reads) — unnumbered
-skaileup/flows/              flow + bundle YAMLs, co-located per app-type — unnumbered
+skaileup/flows/              self-contained flow YAMLs (graph + requires: manifest) + docs, per app-type — unnumbered
 skaileup/flows/_meta/        verify_flows.py · test_verify.py · deferred_skills.yaml
-ai-assets-dev/lab/           skill-on-skill (skaileup-specific): compile-bundle. The collection-agnostic lab skills (validate · judge · improve · learn · report · compile-validators · archive · validate-elements-block) live in github.com/skaile-ai/ai-assets-skill-development
-ai-assets-dev/scripts/       CI scripts (check-bundles.sh — drift guard against skaileup/flows/)
+ai-assets-dev/lab/           the collection-agnostic lab skills (validate · judge · improve · learn · report · compile-validators · archive · validate-elements-block) live in github.com/skaile-ai/ai-assets-skill-development
+ai-assets-dev/scripts/       CI scripts (pre-commit hook)
 ai-assets-dev/tests/         test fixtures
 docs/devlog/                 plans, specs, design notes, improvement backlog
 ```
@@ -116,7 +116,7 @@ skills (pick-one sets) share one slot number and add a letter: `NN_<letter>_<nam
 
 The skill's `name:` is the **domain-relative path with each segment's `NN_` / `NN_<letter>_`
 prefix stripped and `/` replaced by `-`** — so names are stable regardless of ordering
-edits, and every flow/bundle/`artifacts.yaml` reference is unaffected by renumbering.
+edits, and every flow/`artifacts.yaml` reference is unaffected by renumbering.
 
 | Path | `name:` |
 |---|---|
@@ -172,41 +172,47 @@ Both slice loops follow the same five-phase shape with `/clear` between every ph
 
 The slice dossier is **frozen on commit, not deleted** (Suggestion-B organization): the terminator (`concept-slice-design-feature` / `impl-slice-commit`) writes an `index.md` and **keeps** the phase handoffs as permanent per-feature documentation under `_concept/slices/<id>/` and `_implementation/slices/<id>/`. Truth still lives in code (impl-slice) or in the canonical `_concept/experience/...` artifacts (concept-slice); the dossier is the decision record beside it. The **general (non-slice) part** — brief, goals, brand, journeys, datamodel, techstack, architecture — lives in its phase folders and is not per-slice. Only the impl side's transient `progress.json` is removed on freeze.
 
-## Flows + Bundles
+## Flows
 
-**Bundles are installation manifests, not runners.** A bundle is the **complete
-workspace manifest for one flow**: its `requires:` names the flow asset itself,
-every skill the flow runs, and the contracts those skills need — so installing the
-bundle provisions a runnable workspace (flow + skills + contracts), not just skills.
-You can install *all* assets, or install only what one flow needs by adding its bundle:
+**Each flow is its own install manifest — there are no separate bundles.** A
+`<name>.flow.yaml` carries a top-level `requires:` block that lists everything
+provisioned when the flow is installed: the contracts its skills read plus every
+skill its nodes run. Installing the flow yields a runnable workspace (flow +
+skills + contracts). Install *all* assets, or just one flow's dependencies:
 
 ```
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add bundle:standard-app        # OR provision exactly standard-app's workspace
+$ skaile add flow:standard-app          # OR provision exactly standard-app's deps
 ```
 
-Each bundle's `requires:` therefore mixes asset kinds, written in the npm-style
-scoped ref grammar `kind:@publisher/name[#version]` (`@` = scope sigil, `#` = version
-sigil; per `workspaces/.../2026-06-02-scoped-asset-ref-grammar.md`):
+The `requires:` refs use the npm-style scoped ref grammar
+`kind:@publisher/name[#version]` (`@` = scope sigil, `#` = version sigil; per
+`workspaces/.../2026-06-02-scoped-asset-ref-grammar.md`). Only `contract:` and
+`skill:` kinds appear — a flow does not require other flows or bundles:
 
 ```yaml
+# inside standard-app.flow.yaml, above globals:
 requires:
-  - flow:@skaile-ai/standard-app          # the flow this workspace runs
-  - bundle:@skaile-ai/simple-app          # inherited parent (skills + contracts)
-  - contract:@skaile-ai/shared-contracts  # shared reference layer (via mvp base)
-  - skill:@skaile-ai/concept-goals        # …the flow's skills (version pin optional)
+  - contract:@skaile-ai/shared-contracts        # shared reference layer
+  - contract:@skaile-ai/implementation-contract # domain contract its skills cite
+  - skill:@skaile-ai/concept-goals              # …every skill its nodes run
+  # …exactly the flow's node skills, no more
 ```
 
-**Contracts.** Two layers, both installed by the bundles that need them:
-the shared `skaileup/contracts/` reference layer (registered as `shared-contracts`,
-read by every skill — carried by the base `mvp` bundle and each leaf slice bundle),
-plus the domain contracts a flow's skills actually reference
-(`implementation-contract` for `impl-build-docs`; `meta-concept-contract` for the
-`ops-project-*` suite). The needed contracts are derived per flow by analyzing which
-contracts its skills cite.
+The `requires:` set is **exact and self-contained**: it lists exactly the skills
+the flow's nodes run — **no inheritance, no extras**. Larger tiers are supersets
+of smaller ones by construction, but each flow repeats its own complete manifest
+rather than inheriting. (This replaced the old inheriting `*.bundle.yaml` files,
+which dragged in "tier-shape extra" skills a flow never ran.)
 
-**Installing a bundle places the flow file in the workspace; running it is a
-separate act** — two interchangeable ways:
+**Contracts.** Two layers, listed directly in each flow's `requires:`:
+the shared `skaileup/contracts/` reference layer (registered as
+`shared-contracts`, read by every skill — so every flow lists it), plus the
+domain contracts a flow's skills actually reference (`implementation-contract`
+for `impl-build-docs`; `meta-concept-contract` for the `ops-project-*` suite).
+
+**Installing a flow provisions its deps; running it is a separate act** — two
+interchangeable ways:
 
 1. **skaile workspace flow engine** (the flow connector) executes a `.flow.yaml` directly:
    ```
@@ -216,20 +222,19 @@ separate act** — two interchangeable ways:
    guides/executes the same path conversationally — used when no flow engine is present, or
    when you want a human-in-the-loop run.
 
-Either way the flow plus the skills and contracts it references must already be installed
-(install everything, or the flow's bundle). A flow has a paired bundle so "provision this
-flow's whole workspace" is one command.
+Either way the flow plus the skills and contracts in its `requires:` must already
+be installed (install everything, or just `skaile add flow:<name>`).
 
-Flows and bundles are co-located under `skaileup/flows/<app-type>/`:
+Flows live under `skaileup/flows/<app-type>/`:
 
 ```
 skaileup/flows/
 ├── mvp/
-│   ├── mvp.flow.yaml
-│   └── mvp.bundle.yaml
+│   ├── mvp.flow.yaml      ← graph + requires: manifest
+│   └── mvp.md             ← human doc
 ├── simple-app/
 │   ├── simple-app.flow.yaml
-│   └── simple-app.bundle.yaml
+│   └── simple-app.md
 ... (standard-app, complex-app, concept-slice, impl-slice)
 └── _meta/
     ├── verify_flows.py
@@ -237,7 +242,10 @@ skaileup/flows/
     └── deferred_skills.yaml
 ```
 
-Bundles inherit: `mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`. Each file lists only its *additions* — including the `flow:` and `contract:` refs (leaf slice bundles carry `shared-contracts` directly since they don't inherit). `ai-assets-dev/lab/compile-bundle` walks a flow's node graph and emits the matching `skill:` refs; the `flow:` and `contract:` refs are authored. `skaileup/flows/_meta/verify_flows.py` enforces that every bundle requires its own flow, and `check-bundles.sh` guards skill drift. CI: `ai-assets-dev/scripts/check-bundles.sh`.
+`skaileup/flows/_meta/verify_flows.py` is the single guard: it validates each
+flow against `flow.schema.json` and enforces that every flow's `requires:` skill
+set **exactly** matches its node-skill set (no missing, no extra) and that its
+`contract:` refs resolve in `skaile.yaml`. `test_verify.py` covers it.
 
 ## Reorganization Status
 

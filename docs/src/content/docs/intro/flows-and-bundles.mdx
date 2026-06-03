@@ -1,51 +1,64 @@
 ---
-title: Flows & Bundles
-description: How tier flows compose slice flows, how bundles install skill subsets, and the two ways a flow is run.
+title: Flows
+description: How tier flows compose slice flows, how each flow carries its own dependency manifest, and the two ways a flow is run.
 sidebar:
   order: 7
 ---
 
 A **flow** is a YAML graph of skill nodes and edges — a runnable path through the
-skill tree. A **bundle** is an **installation manifest**: the list of skills that
-flow needs installed. They come in pairs, co-located under `skaileup/flows/<tier>/`:
+skill tree. Each flow is **self-contained**: it carries a top-level `requires:`
+block — its **installation manifest** — naming the contracts its skills read plus
+every skill its nodes run. There are no separate bundle files; the flow *is* the
+manifest. Flows live under `skaileup/flows/<tier>/`:
 
 ```
 skaileup/flows/
 ├── concept-slice/
-│   ├── concept-slice.flow.yaml
-│   └── concept-slice.bundle.yaml
+│   ├── concept-slice.flow.yaml   ← graph + requires: manifest
+│   └── concept-slice.md
 ├── impl-slice/
 │   ├── impl-slice.flow.yaml
-│   └── impl-slice.bundle.yaml
+│   └── impl-slice.md
 ├── mvp/
 │   ├── mvp.flow.yaml
-│   └── mvp.bundle.yaml
+│   └── mvp.md
 ├── simple-app/
 │   ├── simple-app.flow.yaml
-│   └── simple-app.bundle.yaml
+│   └── simple-app.md
 ├── standard-app/
 │   ├── standard-app.flow.yaml
-│   └── standard-app.bundle.yaml
+│   └── standard-app.md
 └── complex-app/
     ├── complex-app.flow.yaml
-    └── complex-app.bundle.yaml
+    └── complex-app.md
 ```
 
-## Install — bundles are subsets
+## Install — a flow installs its own deps
 
-Bundles install skills via the **skaile workspace CLI**. Install the whole
-collection, or only the subset a flow needs:
+Installing a flow provisions everything in its `requires:` via the **skaile
+workspace CLI**. Install the whole collection, or just one flow's dependencies:
 
 ```bash
 $ skaile add skill:*                    # install every skill
-$ skaile add bundle:simple-app          # OR install only what simple-app needs
+$ skaile add flow:simple-app            # OR install exactly what simple-app needs
 ```
 
-A bundle never *runs* anything — it only decides which skills land in the workspace.
+The `requires:` block lists scoped asset refs (`kind:@publisher/name`) — only
+`contract:` and `skill:` kinds. It is **exact**: exactly the skills the flow's
+nodes run, **no inheritance and no extras**.
+
+```yaml
+# inside mvp.flow.yaml, above globals:
+requires:
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/product-spec-features
+  # …every skill mvp's nodes run, and nothing else
+```
 
 ## Run — engine or orchestrator
 
-Once the skills are installed, a flow can be run **two interchangeable ways**:
+Once installed, a flow can be run **two interchangeable ways**:
 
 ```bash
 $ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
@@ -58,8 +71,8 @@ $ skaile run flow:simple-app            # 1. the skaile workspace flow engine (c
 ```
 
 Both follow the identical node graph; pick the engine for hands-off execution,
-the orchestrator for a guided run. Either way, the flow's skills must already be
-installed (whole collection, or the flow's bundle).
+the orchestrator for a guided run. Either way, the flow's skills + contracts must
+already be installed (whole collection, or `skaile add flow:<name>`).
 
 The two slice flows (`concept-slice`, `impl-slice`) are **building blocks**.
 Tier flows compose them.
@@ -98,16 +111,17 @@ flowchart LR
   end
 ```
 
-Bundles inherit: `simple-app` includes `mvp`, `standard-app` includes
-`simple-app`, `complex-app` includes `standard-app`. Each bundle file lists
-only its *additions*.
+Larger tiers are supersets of smaller ones by construction (`mvp ⊂ simple-app ⊂
+standard-app ⊂ complex-app`), but each flow lists its **own complete** `requires:`
+manifest rather than inheriting — so what installs is always exactly what runs.
 
-## Bundle-from-flow generation
+## Drift guard
 
-`lab/compile-bundle` walks a flow's node graph and emits the matching
-`<name>.bundle.yaml`. **Run on every flow change** to prevent drift between
-what the flow executes and what the bundle installs. The repo also ships a
-`scripts/check-bundles.sh` that enforces this in CI.
+`skaileup/flows/_meta/verify_flows.py` validates every flow against
+`flow.schema.json` and enforces that each flow's `requires:` skill set **exactly**
+matches the skills its nodes run (nothing missing, nothing extra) and that its
+`contract:` refs resolve in `skaile.yaml`. Run it on every flow change;
+`test_verify.py` covers it.
 
 ## Custom flows
 
@@ -115,10 +129,14 @@ You can create your own flow by starting from a tier and overriding what you nee
 
 ```yaml
 extends: standard-app
+requires:
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/ops-sync
+  # …list every skill your nodes run
 nodes:
   - id: my-extra-step
     type: skill
     data:
-      skill: ops/sync
+      skill: ops-sync
       after: [impl-slice]
 ```

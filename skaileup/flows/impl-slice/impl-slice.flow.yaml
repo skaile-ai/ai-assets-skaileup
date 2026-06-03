@@ -15,6 +15,18 @@ meta:
     - per-feature
     - slice
   icon: i-heroicons-arrow-path
+requires:
+  # Everything installed when this flow is installed: the contract its skills
+  # read + every skill its nodes run (flow node order). Self-contained.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/impl-plan-brainstorm
+  - skill:@skaile-ai/impl-plan-align
+  - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-test
+  - skill:@skaile-ai/impl-slice-recap
+  - skill:@skaile-ai/impl-slice-refactor
+  - skill:@skaile-ai/impl-slice-commit
 globals:
   research_depth: skip
   approval_mode: checkpoint

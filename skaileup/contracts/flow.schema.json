@@ -19,6 +19,15 @@
     "name": { "type": "string" },
     "description": { "type": "string" },
 
+    "requires": {
+      "type": "array",
+      "description": "Self-contained install manifest: everything provisioned when this flow is installed. Scoped asset refs in the form kind:@publisher/name — the contracts the flow's skills read plus every skill its nodes run. Exact set (no inheritance, no extras): each skill: ref MUST correspond 1:1 with a nodes[].data.skill, and every node skill MUST appear here.",
+      "items": {
+        "type": "string",
+        "pattern": "^(skill|contract|flow|bundle):"
+      }
+    },
+
     "meta": {
       "type": "object",
       "additionalProperties": false,

@@ -18,18 +18,20 @@ jobs:
       - name: Run frontmatter audit
         run: python3 docs/scripts/audit.py
 
-  bundles:
-    name: Bundle drift check
+  flows:
+    name: Flow manifest check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install PyYAML
-        run: pip install pyyaml
-      - name: Check bundles in sync with flows
-        run: bash ai-assets-dev/scripts/check-bundles.sh
+      - name: Install deps
+        run: pip install pyyaml jsonschema pytest
+      - name: Verify flow manifests match node graphs
+        run: python3 skaileup/flows/_meta/verify_flows.py
+      - name: Run flow verifier tests
+        run: python3 -m pytest skaileup/flows/_meta/test_verify.py -q
 
   artifacts:
     name: Artifact registry check

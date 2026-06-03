@@ -1,22 +1,24 @@
 ---
 title: "Flows"
-description: "The tier flows and the two reusable slice-loop building blocks, each paired with a bundle."
+description: "The tier flows and the two reusable slice-loop building blocks. Each flow is self-contained — it carries its own dependency manifest."
 order: 0
 ---
 
-A **flow** is an executable pipeline; its paired **bundle** lists exactly the
-skills the flow runs. Install the bundle, run the flow:
+A **flow** is an executable pipeline. Each flow is **self-contained**: its
+top-level `requires:` block is the install manifest — the contracts its skills
+read plus every skill its nodes run. Installing the flow provisions everything;
+then run it:
 
 ```bash
-skaile add bundle:<name>     # install the skills
-skaile run flow:<name>       # execute the pipeline
+skaile add flow:<name>      # install the flow + its skills + contracts
+skaile run flow:<name>      # execute the pipeline
 ```
 
 ## Tier flows
 
-Four sizes, chosen by `scope-project`. Bundles inherit
-(`mvp ⊂ simple-app ⊂ standard-app ⊂ complex-app`); each bundle lists only its
-additions.
+Four sizes, chosen by `scope-project`. Each flow's `requires:` is the **exact**
+set it runs — no inheritance, no extras. (Larger tiers are supersets of smaller
+ones by construction, but each lists its own complete manifest.)
 
 | Flow | Scope | Shape |
 |---|---|---|
@@ -38,5 +40,5 @@ Both are standalone-runnable.
 ## See also
 
 - [Tiers](../intro/tiers/) — the `scope-project` decision rule
-- [Flows + Bundles](../intro/flows-and-bundles/) — the flow↔bundle contract and drift guard
+- [Flows](../intro/flows-and-bundles/) — how a flow declares its dependencies + the drift guard
 - [Slice loops](../intro/slice-loops/) — the shared five-phase shape

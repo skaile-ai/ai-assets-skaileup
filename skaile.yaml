@@ -307,28 +307,3 @@ assets:
     name: standard-app
     files:
       - skaileup/flows/standard-app/standard-app.flow.yaml
-  # ── bundles (6) ──
-  - kind: bundle
-    name: complex-app
-    files:
-      - skaileup/flows/complex-app/complex-app.bundle.yaml
-  - kind: bundle
-    name: concept-slice
-    files:
-      - skaileup/flows/concept-slice/concept-slice.bundle.yaml
-  - kind: bundle
-    name: impl-slice
-    files:
-      - skaileup/flows/impl-slice/impl-slice.bundle.yaml
-  - kind: bundle
-    name: mvp
-    files:
-      - skaileup/flows/mvp/mvp.bundle.yaml
-  - kind: bundle
-    name: simple-app
-    files:
-      - skaileup/flows/simple-app/simple-app.bundle.yaml
-  - kind: bundle
-    name: standard-app
-    files:
-      - skaileup/flows/standard-app/standard-app.bundle.yaml

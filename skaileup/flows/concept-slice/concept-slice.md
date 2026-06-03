@@ -35,11 +35,12 @@ datamodel entities).
 | `scope-feature` | Fixes what's IN and OUT — prevents mid-design scope creep |
 | `design-feature` | Appends feature spec, screens, mockup, datamodel entities |
 
-## Paired bundle
+## Install manifest
 
-`concept-slice.bundle.yaml` is a **leaf bundle** (no inheritance) listing the
-four `concept-slice-*` skills. Tier bundles install these via their own
-inheritance; this bundle is for running the slice standalone.
+`concept-slice.flow.yaml` carries a top-level `requires:` block listing
+`shared-contracts` plus the four `concept-slice-*` skills — everything installed
+when you `skaile add flow:concept-slice` to run the slice standalone. Tier flows
+that inline these nodes list the same skills in their own `requires:`.
 
 ## Scratch lifecycle
 

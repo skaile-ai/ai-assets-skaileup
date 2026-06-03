@@ -14,7 +14,7 @@ contracts every skill reads.
 
 - [**skaileup-orchestrator**](./skaileup-orchestrator/) — base orchestrators + scope/ — pipeline entry
 - [**ops**](./ops/) — review · sync · add-feature · reverse-engineer · eval-* · project-*
-- [**lab**](./lab/) — skill-on-skill: validate · judge · improve · learn · compile-bundle
+- [**lab**](./lab/) — skill-on-skill tooling (collection-agnostic skills live in `ai-assets-skill-development`)
 - [**contracts**](./contracts/) — the shared reference layer (iron laws, golden principles, schemas)
 
 ## See also

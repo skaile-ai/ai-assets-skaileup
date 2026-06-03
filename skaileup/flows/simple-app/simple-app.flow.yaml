@@ -17,6 +17,36 @@ meta:
     - simple-app
     - small
   icon: i-heroicons-cube
+requires:
+  # Everything installed when this flow is installed: the contracts its skills
+  # read + every skill its nodes run (flow node order). Self-contained — no
+  # inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/implementation-contract
+  - skill:@skaile-ai/skaileup-scope-scope-project
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/design-brand-visual
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/product-spec-features
+  - skill:@skaile-ai/experience-screens
+  - skill:@skaile-ai/mockup-walkthrough-static-html
+  - skill:@skaile-ai/mockup-component-isolated-html
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-templates-select
+  - skill:@skaile-ai/impl-architecture-datamodel
+  - skill:@skaile-ai/impl-build-scaffold
+  - skill:@skaile-ai/impl-build-foundation
+  - skill:@skaile-ai/impl-build-migrate
+  - skill:@skaile-ai/impl-build-seed
+  - skill:@skaile-ai/impl-build-docs
+  - skill:@skaile-ai/impl-plan-align
+  - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-test
+  - skill:@skaile-ai/impl-slice-recap
+  - skill:@skaile-ai/impl-slice-commit
+  - skill:@skaile-ai/impl-quality-test-unit
+  - skill:@skaile-ai/impl-quality-test-e2e
 globals:
   research_depth: light
   approval_mode: checkpoint

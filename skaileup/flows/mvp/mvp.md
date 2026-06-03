@@ -38,21 +38,21 @@ scope-project → concept-brief → product-spec-features
 One impl pass, then commit. No `test`/`recap`/`refactor` phase — those start at
 `simple-app`.
 
-## Paired bundle
+## Install manifest
 
-`mvp.bundle.yaml` is the root of the inheritance chain (`mvp ⊂ simple-app ⊂
-standard-app ⊂ complex-app`) and lists every skill the flow runs — 11 skills,
-no inheritance.
+The flow is self-contained: `mvp.flow.yaml` carries a top-level `requires:`
+block listing exactly what it installs — `shared-contracts` plus the 11 skills
+its nodes run. No separate bundle, no inheritance, no extras.
 
 ## Run it
 
 ```bash
-skaile add bundle:mvp     # install the 11 skills
+skaile add flow:mvp       # install the flow + its 11 skills + contract
 skaile run flow:mvp       # execute the linear pipeline
 ```
 
 ## See also
 
 - [Tiers](../../../intro/tiers/) — how `scope-project` chooses a tier
-- [Flows + Bundles](../../../intro/flows-and-bundles/) — the flow↔bundle contract
+- [Flows](../../../intro/flows-and-bundles/) — how a flow declares its dependencies
 - [`simple-app`](../simple-app/) — the next tier up

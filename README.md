@@ -71,9 +71,9 @@ The Skaileup skill collection — concept, build, and quality pipeline skills fo
 | Location | Purpose |
 |---|---|
 | [`skaileup/contracts/`](skaileup/contracts/DOMAIN.md) | Reference layer (every skill reads) |
-| [`skaileup/flows/`](skaileup/flows/) | Flow + bundle YAMLs, co-located per app-type |
-| [`ai-assets-dev/lab/`](ai-assets-dev/lab/DOMAIN.md) | Skill-on-skill: validate · improve · compile-bundle |
-| [`ai-assets-dev/scripts/`](ai-assets-dev/scripts/) | CI scripts (check-bundles.sh) |
+| [`skaileup/flows/`](skaileup/flows/) | Self-contained flow YAMLs (graph + `requires:` manifest), per app-type |
+| [`ai-assets-dev/lab/`](ai-assets-dev/lab/DOMAIN.md) | Skill-on-skill tooling (collection-agnostic skills live in `ai-assets-skill-development`) |
+| [`ai-assets-dev/scripts/`](ai-assets-dev/scripts/) | CI scripts (pre-commit hook) |
 
 ## Tiers
 
@@ -86,18 +86,20 @@ The first thing the agent does is pick a tier. The rest of the pipeline is shape
 | `standard-app` | Linear high-level + N × concept-slice | N × impl-slice (full + recap mandatory) | Mostly autonomous, plan checkpoint per slice |
 | `complex-app` | Linear high-level + N × concept-slice + project-overview | N × impl-slice (supervised + audit between slices) | HITL |
 
-## Flows + bundles
+## Flows
 
-Each flow is paired with a bundle of identical name. **Bundles install, they do not run** —
-a bundle is an install manifest naming the skills a flow needs. Install the whole collection,
-or only a flow's subset, via the **skaile workspace CLI**:
+**Each flow is its own install manifest — there are no separate bundles.** A
+`<name>.flow.yaml` carries a top-level `requires:` block naming the contracts its
+skills read plus every skill its nodes run. Install the whole collection, or just
+one flow's dependencies, via the **skaile workspace CLI**:
 
 ```
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add bundle:simple-app          # OR install only the subset simple-app needs
+$ skaile add flow:simple-app            # OR install exactly what simple-app needs
 ```
 
-**Flows are run two interchangeable ways** once the skills are installed:
+The `requires:` set is **exact** — the skills the flow's nodes run, no
+inheritance and no extras. **Flows are run two interchangeable ways** once installed:
 
 ```
 $ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
@@ -109,30 +111,32 @@ $ skaile run flow:simple-app            # 1. the skaile workspace flow engine (c
 ```
 skaileup/flows/
 ├── complex-app/
-│   ├── complex-app.flow.yaml
-│   └── complex-app.bundle.yaml
+│   ├── complex-app.flow.yaml     ← graph + requires: manifest
+│   └── complex-app.md
 ├── concept-slice/
 │   ├── concept-slice.flow.yaml
-│   └── concept-slice.bundle.yaml
+│   └── concept-slice.md
 ├── impl-slice/
 │   ├── impl-slice.flow.yaml
-│   └── impl-slice.bundle.yaml
+│   └── impl-slice.md
 ├── mvp/
 │   ├── mvp.flow.yaml
-│   └── mvp.bundle.yaml
+│   └── mvp.md
 ├── simple-app/
 │   ├── simple-app.flow.yaml
-│   └── simple-app.bundle.yaml
+│   └── simple-app.md
 ├── standard-app/
 │   ├── standard-app.flow.yaml
-│   └── standard-app.bundle.yaml
+│   └── standard-app.md
 └── _meta/
     ├── verify_flows.py
     ├── test_verify.py
     └── deferred_skills.yaml
 ```
 
-`ai-assets-dev/lab/compile-bundle` walks a flow's node graph and emits the matching bundle YAML next to the flow file — run on every flow change to prevent drift. CI: `ai-assets-dev/scripts/check-bundles.sh`.
+`skaileup/flows/_meta/verify_flows.py` validates each flow and enforces that its
+`requires:` manifest exactly matches the skills its nodes run — run on every flow
+change to prevent drift.
 
 ## How this is consumed
 
@@ -150,7 +154,7 @@ Then install:
 
 ```bash
 $ skaile add skill:concept-brief        # one skill + its requires
-$ skaile add bundle:standard-app        # full bundle, all dependencies
+$ skaile add flow:standard-app          # a flow + all its dependencies
 ```
 
 Local checkouts use `path:` instead of `url:` and are symlinked so edits to SKILL.md are immediately reflected.

@@ -35,12 +35,13 @@ Build:  implement → test → recap → refactor → commit
 Lower tiers run a trimmed loop: `mvp` is `plan-vertical → implement → commit`;
 `simple-app` adds `align`, `test`, `recap`; `refactor` starts at `standard-app`.
 
-## Paired bundle
+## Install manifest
 
-`impl-slice.bundle.yaml` is a **leaf bundle** (no inheritance) listing the
-`impl-plan-*` planning skills and the `impl-slice-*` build skills. Tier bundles
-install these via their own inheritance; this bundle is for running the slice
-standalone.
+`impl-slice.flow.yaml` carries a top-level `requires:` block listing
+`shared-contracts` plus the `impl-plan-*` planning skills and the `impl-slice-*`
+build skills — everything installed when you `skaile add flow:impl-slice` to run
+the slice standalone. Tier flows that inline these nodes list the same skills in
+their own `requires:`.
 
 ## Scratch lifecycle
 
