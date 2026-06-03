@@ -37,8 +37,8 @@ The 2026-05-10 collection review backlog was worked through across five commits:
 - **Descriptions** — normalized toward the "Use when…" router pattern.
 - **Naming** — `CLAUDE.md` and `CONTRIBUTING.md` reconciled on the path-prefix
   convention.
-- **CI gates** — frontmatter audit, bundle↔flow drift guard
-  (`check-bundles.sh`), and a pre-commit hook.
+- **CI gates** — frontmatter audit, flow-manifest drift guard
+  (`verify_flows.py`), and a pre-commit hook.
 
 ## Phase 3 — SKILL_GRAPH migration (complete)
 
@@ -61,9 +61,9 @@ the flow verifier emits no deferred-skill warnings:
 
 Small, non-blocking items tracked outside the phase plan:
 
-- **Tier-shape extras** — `simple/standard/complex` bundles inherit
-  `mockup-walkthrough-text` (and `-isolated-html`) that those tiers don't run in
-  their flow node graph. Installing the inherited variant is a no-op; the
-  verifier reports it as a warning by design.
+- **Tier-shape extras** — ✅ resolved. Bundles were folded into the flows: each
+  flow now carries an **exact** `requires:` manifest (no inheritance), so a flow
+  no longer drags in skills it doesn't run. The verifier enforces the manifest
+  matches the node graph 1:1.
 - **Validator coverage** — roughly half the skills ship a `validator.py`; no
   rule yet requires one for a given stage.

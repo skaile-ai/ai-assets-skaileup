@@ -14,6 +14,14 @@ meta:
     - per-feature
     - slice
   icon: i-heroicons-light-bulb
+requires:
+  # Everything installed when this flow is installed: the contract its skills
+  # read + every skill its nodes run (flow node order). Self-contained.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/concept-slice-brainstorm
+  - skill:@skaile-ai/concept-slice-align
+  - skill:@skaile-ai/concept-slice-scope-feature
+  - skill:@skaile-ai/concept-slice-design-feature
 globals:
   research_depth: light
   approval_mode: checkpoint

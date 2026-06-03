@@ -117,9 +117,9 @@ The user can override at any time with `scope-project --tier=<name>`.
    ops/project-*                                   ✓
 ```
 
-Bundles inherit: `simple-app` includes `mvp`, `standard-app` includes `simple-app`,
-`complex-app` includes `standard-app`. Each bundle file lists only its
-*additions*.
+Larger tiers are supersets of smaller ones (`mvp ⊂ simple-app ⊂ standard-app ⊂
+complex-app`), but each flow carries its **own complete** `requires:` manifest —
+the exact skills its nodes run, no inheritance.
 
 **concept-slice phases by tier:** `standard-app` runs `align → scope-feature → design-feature` (no brainstorm). `complex-app` adds `brainstorm` as the first phase. Both still require `/clear` between phases and read from `_concept/slices/<id>/` dossier files (frozen, kept, on commit).
 

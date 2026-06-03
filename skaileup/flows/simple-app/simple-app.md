@@ -43,22 +43,19 @@ Quality:
   test-unit + test-e2e
 ```
 
-## Paired bundle
+## Install manifest
 
-`simple-app.bundle.yaml` **inherits `mvp`** and lists only its additions
-(brand-visual, journeys, screens, static-html walkthrough, isolated-html
-component mockup, datamodel, the `impl-build` setup skills, impl-slice
-`test`/`recap`, and `test-e2e`).
-
-> **Note — inherited variant.** The bundle carries `mockup-walkthrough-text`
-> from mvp even though this tier renders with `mockup-walkthrough-static-html`.
-> Installing the inherited variant is a no-op; the flow verifier reports it as a
-> "tier-shape extra" warning by design.
+The flow is self-contained: `simple-app.flow.yaml` carries a top-level
+`requires:` block listing exactly what it installs — `shared-contracts` +
+`implementation-contract` plus the 24 skills its nodes run, no more. No
+inheritance and no extras: unlike the old inherited bundle it carries only the
+skills this tier actually renders with (e.g. `mockup-walkthrough-static-html`,
+never mvp's `mockup-walkthrough-text`).
 
 ## Run it
 
 ```bash
-skaile add bundle:simple-app
+skaile add flow:simple-app    # install the flow + its skills + contracts
 skaile run flow:simple-app
 ```
 
@@ -66,4 +63,4 @@ skaile run flow:simple-app
 
 - [`mvp`](../mvp/) — the tier below · [`standard-app`](../standard-app/) — the tier above
 - [`impl-slice`](../impl-slice/) — the per-feature loop reused here
-- [Tiers](../../../intro/tiers/) · [Flows + Bundles](../../../intro/flows-and-bundles/)
+- [Tiers](../../../intro/tiers/) · [Flows](../../../intro/flows-and-bundles/)

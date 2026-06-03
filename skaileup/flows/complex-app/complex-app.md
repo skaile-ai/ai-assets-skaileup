@@ -48,17 +48,20 @@ concrete `template-*` first; it renders the walkthrough in the project's actual
 framework (Next/Nuxt/SvelteKit). A static-html fallback node covers the case
 where no template is resolved.
 
-## Paired bundle
+## Install manifest
 
-`complex-app.bundle.yaml` **inherits `standard-app`** and adds only the deltas:
-`brand-voice`, `mockup-walkthrough-framework`, `concept-slice-brainstorm`,
+The flow is self-contained: `complex-app.flow.yaml` carries a top-level
+`requires:` block listing exactly what it installs — `shared-contracts` +
+`implementation-contract` + `meta-concept-contract` plus every skill its nodes
+run (the full standard-app set plus `brand-voice`,
+`mockup-walkthrough-framework`, `concept-slice-brainstorm`,
 `impl-plan-supervised`, `eval-code`, `audit`, and the four `project-*` ops
-skills.
+skills). No inheritance, no extras.
 
 ## Run it
 
 ```bash
-skaile add bundle:complex-app
+skaile add flow:complex-app    # install the flow + its skills + contracts
 skaile run flow:complex-app
 ```
 
@@ -66,4 +69,4 @@ skaile run flow:complex-app
 
 - [`standard-app`](../standard-app/) — the tier this extends
 - [`concept-slice`](../concept-slice/) (with brainstorm) and [`impl-slice`](../impl-slice/) — the per-feature loops
-- [Slice loops](../../../intro/slice-loops/) · [Tiers](../../../intro/tiers/)
+- [Slice loops](../../../intro/slice-loops/) · [Tiers](../../../intro/tiers/) · [Flows](../../../intro/flows-and-bundles/)

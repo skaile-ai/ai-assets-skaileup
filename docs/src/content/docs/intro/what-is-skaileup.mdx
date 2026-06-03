@@ -11,8 +11,8 @@ agent runtime use to drive an LLM through the full product-build pipeline:
 problem framing → concept → implementation → quality gates → release.
 
 It is **not** a code library. It is a directory of `SKILL.md` files, plus the
-`flow.yaml` + `bundle.yaml` pairs that compose them, plus the shared `contracts/`
-reference layer that every skill reads.
+self-contained `flow.yaml` files (each carrying its own dependency manifest) that
+compose them, plus the shared `contracts/` reference layer that every skill reads.
 
 ## What's in a skill
 

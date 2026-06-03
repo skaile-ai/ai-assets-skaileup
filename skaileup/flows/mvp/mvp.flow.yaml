@@ -17,6 +17,22 @@ meta:
     - fast
     - single-feature
   icon: i-heroicons-rocket-launch
+requires:
+  # Everything installed when this flow is installed: the contracts its skills
+  # read + every skill its nodes run (flow node order). Self-contained — no
+  # inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/skaileup-scope-scope-project
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/product-spec-features
+  - skill:@skaile-ai/mockup-walkthrough-text
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-templates-select
+  - skill:@skaile-ai/impl-build-scaffold
+  - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-commit
+  - skill:@skaile-ai/impl-quality-test-unit
 globals:
   research_depth: skip
   approval_mode: checkpoint

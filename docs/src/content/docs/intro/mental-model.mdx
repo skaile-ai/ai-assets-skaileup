@@ -21,7 +21,7 @@ flowchart TD
   scope["<b>skaileup/scope/scope-project</b><br/>2–3 questions: how many features?<br/>single- or multi-user? integrations?<br/>► writes _concept/_meta/scope.yaml {tier, flow}<br/>► picks tier: mvp · simple · standard · complex"]
   scope -->|user can override| flow
 
-  flow["<b>flows/&lt;tier&gt;.flow.yaml</b><br/>bundles/&lt;tier&gt;.bundle.yaml<br/>◄ install only what the tier needs"]
+  flow["<b>flows/&lt;tier&gt;.flow.yaml</b><br/>graph + requires: manifest<br/>◄ install only what the tier needs"]
   flow --> concept
   flow --> impl
 
@@ -82,7 +82,8 @@ dossier with an `index.md` is frozen; one without is still in flight.
 - **`ops/`** — operates on artifacts: `review`, `sync`, `eval-{concept,feature,product}`,
   `add-feature`, `reverse-engineer`, `project-{overview,review,subsystem-map,integration}`.
 - **`lab/`** — operates on **skills themselves**: `validate`, `judge`, `improve`,
-  `learn`, `report`, `compile-validators`, `compile-bundle`, `archive`.
+  `learn`, `report`, `compile-validators`, `archive` (collection-agnostic, in
+  `ai-assets-skill-development`).
 - **`contracts/`** — shared reference layer. **Every skill reads from here.**
   Iron laws, golden principles, semantic types, frontmatter schemas, the DSL
   grammar itself.
@@ -93,7 +94,7 @@ dossier with an `index.md` is frozen; one without is still in flight.
 flowchart TD
   platform["<b>Skaile platform / forge / IDE</b>"]
   runtime["<b>skaile-agent-framework</b> (runtime)<br/>• bridge (claude-sdk / omp / codex)<br/>• runner (flow execution)<br/>• connectors (MCP, capability registry)"]
-  catalog["<b>ai-assets-skaileup</b> ← you are here<br/>• SKILL.md / DOMAIN.md / CONTRACT.md<br/>• flows + bundles"]
+  catalog["<b>ai-assets-skaileup</b> ← you are here<br/>• SKILL.md / DOMAIN.md / CONTRACT.md<br/>• self-contained flows"]
 
   platform -->|runs| runtime
   runtime -->|reads SKILL.md from| catalog

@@ -49,6 +49,5 @@ Reference material consumed by every skill in the collection. Not invocable — 
 
 ## Cross-references
 
-- `skaileup/flows/_meta/` — `verify_flows.py` validates bundles match flow node graphs.
-- `ai-assets/lab/compile-bundle/` — reads `profiles/` to emit bundle YAMLs.
+- `skaileup/flows/_meta/` — `verify_flows.py` validates each flow's `requires:` manifest against its node graph.
 - `SKILL_GRAPH.md` — collection-level view of domain relationships.

@@ -57,12 +57,12 @@ repositories:
     path: ../ai-assets-skaileup
 ```
 
-Then install assets — everything, or only the subset a flow needs (a **bundle**
-is an install manifest, not a runner):
+Then install assets — everything, or just one flow's dependencies (each flow
+carries its own `requires:` manifest):
 
 ```bash
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add bundle:simple-app          # OR install only the subset simple-app needs
+$ skaile add flow:simple-app            # OR install exactly what simple-app needs
 $ skaile add skill:concept-brief        # OR install one skill + its requires
 $ skaile add --global skill:my-skill    # install globally (~/.claude/skills/)
 $ skaile list                           # show installed assets
@@ -82,7 +82,7 @@ $ skaile run flow:simple-app            # 1. the skaile workspace flow engine (c
    files and guides/executes the same node graph conversationally. Use it when no
    flow engine is present, or when you want a human-in-the-loop run.
 
-See [Flows & Bundles](/intro/flows-and-bundles/) for the node-graph details.
+See [Flows](/intro/flows-and-bundles/) for the node-graph details.
 
 ## Submodule layout in skaile-dev
 

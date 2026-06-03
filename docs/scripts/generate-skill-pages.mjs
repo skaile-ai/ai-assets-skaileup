@@ -37,7 +37,7 @@ const SOURCE_PAGES = [
   { src: "skaileup/contracts/iron_laws.md", out: "reference/iron-laws.md", label: "Iron Laws", order: 3 },
   { src: "skaileup/contracts/golden_principles.md", out: "reference/golden-principles.md", label: "Golden Principles", order: 4 },
   { src: "skaileup/contracts/semantic_types.md", out: "reference/semantic-types.md", label: "Semantic Types", order: 5 },
-  { src: "skaileup/contracts/flows.md", out: "reference/flows-and-bundles.md", label: "Flows & Bundles", order: 6 },
+  { src: "skaileup/contracts/flows.md", out: "reference/flows-and-bundles.md", label: "Flows", order: 6 },
 ];
 
 // Blanket-skipped at any depth. NOTE: "docs" is intentionally NOT here — a skill
@@ -197,8 +197,9 @@ ${skillsList || "_No skills found._"}
 }
 
 function renderFlowPage({ fm, body, type }) {
-  // type is the flow directory name, e.g. "standard-app". Each carries a paired
-  // <type>.flow.yaml + <type>.bundle.yaml alongside the source markdown.
+  // type is the flow directory name, e.g. "standard-app". Each carries a
+  // self-contained <type>.flow.yaml (graph + top-level requires: manifest)
+  // alongside the source markdown.
   const title = fm.title || type;
   const description = (fm.description || `Flow: ${type}`)
     .replace(/\n/g, " ")
@@ -206,7 +207,6 @@ function renderFlowPage({ fm, body, type }) {
     .slice(0, 250);
   const order = typeof fm.order === "number" ? fm.order : 99;
   const flowRel = `skaileup/flows/${type}/${type}.flow.yaml`;
-  const bundleRel = `skaileup/flows/${type}/${type}.bundle.yaml`;
   const mdRel = `skaileup/flows/${type}/${type}.md`;
 
   return `---
@@ -219,8 +219,7 @@ sidebar:
 ---
 
 :::note[Flow manifest]
-**Flow:** [\`${flowRel}\`](${GITHUB_BASE}/${flowRel})
-**Bundle:** [\`${bundleRel}\`](${GITHUB_BASE}/${bundleRel})
+**Flow:** [\`${flowRel}\`](${GITHUB_BASE}/${flowRel}) — self-contained: graph + \`requires:\` install manifest.
 :::
 
 ${asMdString(body)}

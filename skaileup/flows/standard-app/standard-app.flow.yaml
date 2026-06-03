@@ -18,6 +18,57 @@ meta:
     - standard-app
     - multi-user
   icon: i-heroicons-squares-2x2
+requires:
+  # Everything installed when this flow is installed: the contracts its skills
+  # read + every skill its nodes run (flow node order). Self-contained — no
+  # inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/implementation-contract
+  - skill:@skaile-ai/skaileup-scope-scope-project
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/concept-goals
+  - skill:@skaile-ai/concept-comparable
+  - skill:@skaile-ai/design-brand-visual
+  - skill:@skaile-ai/design-inspiration
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/experience-behaviors
+  - skill:@skaile-ai/product-spec-features
+  - skill:@skaile-ai/experience-screens
+  - skill:@skaile-ai/experience-components
+  - skill:@skaile-ai/mockup-walkthrough-astro
+  - skill:@skaile-ai/mockup-walkthrough-static-html
+  - skill:@skaile-ai/mockup-component-storybook
+  - skill:@skaile-ai/mockup-feedback-annotate
+  - skill:@skaile-ai/mockup-feedback-triage
+  - skill:@skaile-ai/mockup-feedback-patch
+  - skill:@skaile-ai/mockup-feedback-apply
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-templates-select
+  - skill:@skaile-ai/impl-architecture-system
+  - skill:@skaile-ai/impl-architecture-datamodel
+  - skill:@skaile-ai/impl-build-scaffold
+  - skill:@skaile-ai/impl-build-foundation
+  - skill:@skaile-ai/impl-build-infrastructure
+  - skill:@skaile-ai/impl-build-migrate
+  - skill:@skaile-ai/impl-build-seed
+  - skill:@skaile-ai/impl-build-docs
+  - skill:@skaile-ai/concept-slice-align
+  - skill:@skaile-ai/concept-slice-scope-feature
+  - skill:@skaile-ai/concept-slice-design-feature
+  - skill:@skaile-ai/impl-plan-brainstorm
+  - skill:@skaile-ai/impl-plan-align
+  - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-test
+  - skill:@skaile-ai/impl-slice-recap
+  - skill:@skaile-ai/impl-slice-refactor
+  - skill:@skaile-ai/impl-slice-commit
+  - skill:@skaile-ai/impl-quality-test-unit
+  - skill:@skaile-ai/impl-quality-test-integration
+  - skill:@skaile-ai/impl-quality-test-e2e
+  - skill:@skaile-ai/impl-quality-ready
+  - skill:@skaile-ai/ops-review
+  - skill:@skaile-ai/ops-sync
 globals:
   research_depth: moderate
   approval_mode: checkpoint

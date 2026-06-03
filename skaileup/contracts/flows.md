@@ -8,11 +8,15 @@ the skill nodes inside each flow. Global agent config lives in `contracts/agent-
 
 ## Install vs. run
 
-- **Bundles install, they do not run.** A `<name>.bundle.yaml` is an installation
-  manifest naming the skills a flow needs. Install the whole collection
-  (`skaile add skill:*`) or only a flow's subset (`skaile add bundle:<name>`) via the
-  **skaile workspace CLI**.
-- **Flows are run two interchangeable ways**, once the skills are installed:
+- **A flow is its own install manifest.** Each `<name>.flow.yaml` carries a
+  top-level `requires:` block — the contracts its skills read plus every skill
+  its nodes run, as scoped asset refs (`kind:@publisher/name`). Installing the
+  flow provisions everything it needs: `skaile add flow:<name>` (or install the
+  whole collection with `skaile add skill:*`) via the **skaile workspace CLI**.
+  The `requires:` set is **exact** — it lists exactly the skills the flow's nodes
+  run, no inheritance and no extras. (There are no separate `*.bundle.yaml`
+  files; the flow *is* the manifest.)
+- **Flows are run two interchangeable ways**, once installed:
   1. the **skaile workspace flow engine** (the flow connector) executes the
      `.flow.yaml` directly (`skaile run flow:<name>`);
   2. **the orchestrator** (`skaileup` / `skaileup-build`) reads the same flow file and

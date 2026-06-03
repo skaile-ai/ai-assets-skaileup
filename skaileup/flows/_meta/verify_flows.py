@@ -1,29 +1,31 @@
 #!/usr/bin/env python3
-"""Verifier for Phase 2 Task 2H artifacts.
+"""Verifier for the flow manifests.
 
 Exits 0 if all checks pass (warnings allowed); exits 2 on any error.
 
+Each flow is **self-contained**: its top-level ``requires:`` block is the
+install manifest — everything provisioned when the flow is installed. There are
+no separate ``*.bundle.yaml`` files and no inheritance. ``requires:`` lists the
+contracts the flow's skills read plus every skill its nodes run, as scoped asset
+refs (``kind:@publisher/name``).
+
 Checks performed:
-1. Every flow file (`flows/*.flow.yaml`) validates against
+1. Every flow file (`flows/*/<id>.flow.yaml`) validates against
    `contracts/flow.schema.json`.
-2. Every flow's `id` matches its filename stem.
+2. Every flow's `id` matches its directory/filename stem.
 3. Every `nodes[].data.skill` resolves to either:
    (a) an existing SKILL.md `name:` (Bucket A: existing),
    (b) a Phase-2 planned skill name (Bucket B: planned), or
    (c) a deferred Phase-3 skill in `flows/_meta/deferred_skills.yaml`
        (Bucket C: deferred — emits WARN, not ERROR).
    Anything else → ERROR (unresolved).
-4. Each tier bundle inherits its predecessor: simple-app→mvp,
-   standard-app→simple-app, complex-app→standard-app. mvp must NOT inherit.
-5. Every flow node skill MUST be present in its tier bundle's effective
-   `requires:` set (transitive via `bundle:` inheritance).
-   Skills present in effective set but NOT in the tier's flow are reported
-   as informational extras (WARN), not errors — this is intentional because
-   inherited tiers may carry skills used by the predecessor's mockup variant
-   (e.g. simple-app inherits mockup-walkthrough-text from mvp even though
-   simple-app uses mockup-walkthrough-static-html).
-6. Slice bundles (concept-slice, impl-slice) MUST be leaf bundles with
-   `requires:` matching their flow's nodes exactly (no inheritance).
+4. Each flow's `requires:` skill set EXACTLY equals its flow's node-skill set —
+   no skill the flow runs is missing from the manifest, and no skill is listed
+   that the flow does not run. (Self-contained, exact: no inheritance, no extras.)
+5. Every `contract:` ref in a flow's `requires:` resolves to a contract declared
+   in `skaile.yaml`.
+6. `requires:` refs use the scoped grammar `kind:@publisher/name` and only the
+   `skill`/`contract` kinds (a flow manifest does not require other flows/bundles).
 """
 from __future__ import annotations
 
@@ -40,19 +42,13 @@ except ImportError as e:  # pragma: no cover
 
 REPO = Path(__file__).resolve().parents[3]  # repo root (skaileup/flows/_meta/ is 3 levels deep)
 FLOWS = REPO / "skaileup" / "flows"
-# Bundles are co-located with flows: skaileup/flows/<app>/<app>.bundle.yaml
 SCHEMA_PATH = REPO / "skaileup" / "contracts" / "flow.schema.json"
 DEFERRED_PATH = FLOWS / "_meta" / "deferred_skills.yaml"
+SKAILE_YAML = REPO / "skaile.yaml"
 
 TIER_FLOWS = ["mvp", "simple-app", "standard-app", "complex-app"]
 SLICE_FLOWS = ["concept-slice", "impl-slice"]
 ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS
-
-EXPECTED_PARENTS = {
-    "simple-app": "mvp",
-    "standard-app": "simple-app",
-    "complex-app": "standard-app",
-}
 
 # Skills authored by Phase-2 mini-plans 2A/2B/2C/2D/2F/2G — these are added
 # to the "knowable" set for resolution checks even if SKILL.md gathering misses
@@ -122,54 +118,39 @@ def gather_existing_skill_names() -> set[str]:
     return names
 
 
+def gather_known_contracts() -> set[str]:
+    """Return the set of contract names declared in skaile.yaml."""
+    data = yaml.safe_load(SKAILE_YAML.read_text()) or {}
+    return {
+        str(a["name"])
+        for a in data.get("assets", [])
+        if isinstance(a, dict) and a.get("kind") == "contract" and "name" in a
+    }
+
+
 def collect_flow_skills(flow_data: dict) -> set[str]:
     return {n["data"]["skill"] for n in flow_data["nodes"] if n.get("type") == "skill"}
 
 
-def parse_bundle(bundle_path: Path) -> tuple[dict, set[str], list[str]]:
-    """Return (full bundle dict, set of skill names, list of parent bundle names)."""
-    data = yaml.safe_load(bundle_path.read_text())
+def parse_requires(flow_data: dict) -> tuple[set[str], set[str], list[str]]:
+    """Return (skill names, contract names, malformed refs) from a flow's requires."""
     skills: set[str] = set()
-    parents: list[str] = []
-    for r in data.get("requires", []):
-        if not isinstance(r, str):
+    contracts: set[str] = set()
+    bad: list[str] = []
+    for r in flow_data.get("requires", []) or []:
+        if not isinstance(r, str) or ":" not in r:
+            bad.append(str(r))
             continue
-        kind, _, name = r.partition(":")
-        name = bare_name(name)
-        if kind == "skill":
-            skills.add(name)
-        elif kind == "bundle":
-            parents.append(name)
-    return data, skills, parents
-
-
-def bundle_flow_refs(bundle_path: Path) -> set[str]:
-    """Return the bare names of every ``flow:`` ref in a bundle's requires."""
-    data = yaml.safe_load(bundle_path.read_text())
-    return {
-        bare_name(r.partition(":")[2])
-        for r in data.get("requires", [])
-        if isinstance(r, str) and r.startswith("flow:")
-    }
-
-
-def effective_bundle_skills(tier: str) -> set[str]:
-    """Walk the bundle inheritance chain and return the union of all skills."""
-    seen: set[str] = set()
-    eff: set[str] = set()
-    stack = [tier]
-    while stack:
-        cur = stack.pop()
-        if cur in seen:
+        kind, _, body = r.partition(":")
+        if kind not in ("skill", "contract"):
+            bad.append(r)
             continue
-        seen.add(cur)
-        bp = FLOWS / cur / f"{cur}.bundle.yaml"
-        if not bp.exists():
-            raise FileNotFoundError(bp)
-        _, skills, parents = parse_bundle(bp)
-        eff |= skills
-        stack.extend(parents)
-    return eff
+        if not body.startswith("@") or "/" not in body:
+            bad.append(r)
+            continue
+        name = bare_name(body)
+        (skills if kind == "skill" else contracts).add(name)
+    return skills, contracts, bad
 
 
 def main() -> int:
@@ -177,6 +158,7 @@ def main() -> int:
     deferred = load_deferred()
     existing = gather_existing_skill_names()
     knowable = existing | PHASE_2_PLANNED
+    known_contracts = gather_known_contracts()
 
     errors: list[str] = []
     warnings: list[str] = []
@@ -184,6 +166,7 @@ def main() -> int:
     # ------------------------------------------------------------------
     # 1+2. Validate every flow + check id matches filename stem
     # ------------------------------------------------------------------
+    flow_data_by_id: dict[str, dict] = {}
     flow_skills_by_id: dict[str, set[str]] = {}
     for fid in ALL_FLOWS:
         fp = FLOWS / fid / f"{fid}.flow.yaml"
@@ -204,10 +187,11 @@ def main() -> int:
             continue
         if data.get("id") != fid:
             errors.append(f"{fp}: id={data.get('id')!r} != filename stem {fid!r}")
+        flow_data_by_id[fid] = data
         flow_skills_by_id[fid] = collect_flow_skills(data)
 
     # ------------------------------------------------------------------
-    # 3. Resolve every skill referenced
+    # 3. Resolve every skill referenced by a node
     # ------------------------------------------------------------------
     for fid, skills in flow_skills_by_id.items():
         for s in sorted(skills):
@@ -219,86 +203,45 @@ def main() -> int:
                 errors.append(f"{fid}: unresolved skill name: {s}")
 
     # ------------------------------------------------------------------
-    # 4 + 5. Tier-bundle inheritance + flow ⊆ effective bundle skills
-    # ------------------------------------------------------------------
-    for tier in TIER_FLOWS:
-        bp = FLOWS / tier / f"{tier}.bundle.yaml"
-        if not bp.exists():
-            errors.append(f"missing tier bundle: {bp}")
-            continue
-        try:
-            _, _, parents = parse_bundle(bp)
-        except Exception as e:
-            errors.append(f"{bp}: parse failed: {e}")
-            continue
-
-        # Inheritance pin
-        if tier == "mvp":
-            if parents:
-                errors.append(
-                    f"{bp}: mvp must NOT have parent bundles, found {parents!r}"
-                )
-        else:
-            expected = EXPECTED_PARENTS[tier]
-            if expected not in parents:
-                errors.append(
-                    f"{bp}: missing required parent bundle:{expected} (found parents={parents!r})"
-                )
-
-        # Effective skills via transitive inheritance
-        try:
-            eff = effective_bundle_skills(tier)
-        except FileNotFoundError as e:
-            errors.append(f"{bp}: declared parent bundle missing: {e}")
-            continue
-
-        flow_set = flow_skills_by_id.get(tier, set())
-        # MUST: every flow skill is bundled
-        missing = flow_set - eff
-        if missing:
-            errors.append(
-                f"{bp}: flow references skills NOT in effective bundle: {sorted(missing)}"
-            )
-        # INFO: extras present in inherited chain but not used by this flow
-        extras = eff - flow_set
-        if extras:
-            warnings.append(
-                f"{bp}: tier-shape extras (in inherited bundle, not in flow): {sorted(extras)}"
-            )
-
-    # ------------------------------------------------------------------
-    # 6. Slice bundles must be leaves and exactly match their flow nodes
-    # ------------------------------------------------------------------
-    for sid in SLICE_FLOWS:
-        bp = FLOWS / sid / f"{sid}.bundle.yaml"
-        if not bp.exists():
-            errors.append(f"missing slice bundle: {bp}")
-            continue
-        try:
-            _, skills, parents = parse_bundle(bp)
-        except Exception as e:
-            errors.append(f"{bp}: parse failed: {e}")
-            continue
-        if parents:
-            errors.append(
-                f"{bp}: slice bundle must not inherit (no bundle: entries), found {parents!r}"
-            )
-        flow_set = flow_skills_by_id.get(sid, set())
-        if skills != flow_set:
-            errors.append(
-                f"{bp}: requires set {sorted(skills)} != flow nodes {sorted(flow_set)}"
-            )
-
-    # ------------------------------------------------------------------
-    # 7. Every bundle must provision its own flow asset, so installing the
-    #    bundle yields a runnable workspace (flow + skills + contracts).
+    # 4 + 5 + 6. Per-flow requires: manifest is exact + well-formed
     # ------------------------------------------------------------------
     for fid in ALL_FLOWS:
-        bp = FLOWS / fid / f"{fid}.bundle.yaml"
-        if not bp.exists():
+        data = flow_data_by_id.get(fid)
+        if data is None:
             continue
-        if fid not in bundle_flow_refs(bp):
-            errors.append(f"{bp}: bundle does not require its own flow:{fid}")
+        if "requires" not in data:
+            errors.append(f"{fid}: flow has no top-level requires: manifest")
+            continue
+        req_skills, req_contracts, bad = parse_requires(data)
+        node_skills = flow_skills_by_id.get(fid, set())
+
+        for b in bad:
+            errors.append(
+                f"{fid}: malformed requires ref {b!r} "
+                f"(expected skill:@pub/name or contract:@pub/name)"
+            )
+
+        # Exact match: requires' skill set == flow node-skill set
+        missing = node_skills - req_skills
+        extra = req_skills - node_skills
+        if missing:
+            errors.append(
+                f"{fid}: requires missing skills the flow runs: {sorted(missing)}"
+            )
+        if extra:
+            errors.append(
+                f"{fid}: requires lists skills the flow does NOT run: {sorted(extra)}"
+            )
+
+        # Contracts must resolve to a declared contract
+        for c in sorted(req_contracts):
+            if c not in known_contracts:
+                errors.append(
+                    f"{fid}: requires unknown contract {c!r} "
+                    f"(not declared in skaile.yaml)"
+                )
+        if not req_contracts:
+            warnings.append(f"{fid}: requires lists no contract (expected shared-contracts)")
 
     # ------------------------------------------------------------------
     # Print summary
@@ -315,8 +258,8 @@ def main() -> int:
         )
         return 2
     print(
-        f"OK: 6 flows + 6 bundles consistent ({len(warnings)} warning(s): "
-        f"deferred-skill + tier-shape extras)"
+        f"OK: {len(flow_data_by_id)} flows consistent — each requires: manifest "
+        f"exactly covers its nodes ({len(warnings)} warning(s))"
     )
     return 0
 

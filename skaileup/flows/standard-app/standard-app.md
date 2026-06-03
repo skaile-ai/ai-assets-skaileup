@@ -49,18 +49,19 @@ The high-level pass designs the "grand scheme"; the per-feature loop designs and
 builds one feature at a time, learning from delivery before the next. See
 [Slice loops](../../../intro/slice-loops/) for why.
 
-## Paired bundle
+## Install manifest
 
-`standard-app.bundle.yaml` **inherits `simple-app`** and adds the high-level
-concept skills (`goals`, `comparable`, `inspiration`), the Astro walkthrough +
-Storybook component mockups, the full `mockup-feedback` cluster, the
-`concept-slice` skills, `impl-slice-refactor`, integration tests, `ready`, and
-`ops` review/sync.
+The flow is self-contained: `standard-app.flow.yaml` carries a top-level
+`requires:` block listing exactly what it installs — `shared-contracts` +
+`implementation-contract` plus every skill its nodes run (the full high-level
+concept pass, Astro walkthrough + Storybook mockups, the `mockup-feedback`
+cluster, the `concept-slice` skills, `impl-slice-refactor`, integration tests,
+`ready`, and `ops` review/sync). No inheritance, no extras.
 
 ## Run it
 
 ```bash
-skaile add bundle:standard-app
+skaile add flow:standard-app    # install the flow + its skills + contracts
 skaile run flow:standard-app
 ```
 
@@ -68,4 +69,4 @@ skaile run flow:standard-app
 
 - [`simple-app`](../simple-app/) — the tier below · [`complex-app`](../complex-app/) — the tier above
 - [`concept-slice`](../concept-slice/) and [`impl-slice`](../impl-slice/) — the per-feature loops reused here
-- [Slice loops](../../../intro/slice-loops/) · [Tiers](../../../intro/tiers/)
+- [Slice loops](../../../intro/slice-loops/) · [Tiers](../../../intro/tiers/) · [Flows](../../../intro/flows-and-bundles/)

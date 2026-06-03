@@ -1,6 +1,6 @@
 ---
 name: lab
-description: "Skaileup-specific skill-on-skill tooling: compile-bundle (flow↔bundle sync)"
+description: "Skaileup-specific skill-on-skill tooling (currently none — all lab skills are collection-agnostic and live in ai-assets-skill-development)"
 metadata:
   stage: alpha
   type: domain
@@ -8,18 +8,23 @@ metadata:
 
 # lab
 
-Skaileup-specific skill-on-skill tooling. The **collection-agnostic** lab skills
-(validate · judge · improve · learn · report · compile-validators · archive ·
-validate-elements-block, plus the lab agent, contract, and flows) were extracted to
-their own repository — [`skaile-ai/ai-assets-skill-development`](https://github.com/skaile-ai/ai-assets-skill-development) —
-so they can run against any skill collection. What remains here is tightly coupled
-to skaileup's flow/bundle model:
+Home for **skaileup-specific** skill-on-skill tooling. The
+**collection-agnostic** lab skills (validate · judge · improve · learn · report ·
+compile-validators · archive · validate-elements-block, plus the lab agent,
+contract, and flows) were extracted to their own repository —
+[`skaile-ai/ai-assets-skill-development`](https://github.com/skaile-ai/ai-assets-skill-development) —
+so they can run against any skill collection.
 
 ## Skills
 
-- **lab-compile-bundle** (`compile-bundle/`) — Syncs `*.bundle.yaml` with `*.flow.yaml` by adding any missing `skill:` entries. Additive only — never removes user-added entries. Run after modifying a flow. Hardcoded to `skaileup/flows/` and the `@skaile-ai/` publisher. CI guard: `ai-assets-dev/scripts/check-bundles.sh`.
+_None at present._ The former **lab-compile-bundle** skill (which synced
+`*.bundle.yaml` against `*.flow.yaml`) was removed when bundles were folded into
+the flows: each flow now carries its own `requires:` install manifest, so there
+is nothing to compile. Manifest correctness is enforced by
+`skaileup/flows/_meta/verify_flows.py`, not a lab skill.
 
 ## Cross-references
 
-- `skaileup/flows/` — the flow + bundle YAMLs this skill keeps in sync.
+- `skaileup/flows/` — self-contained flow YAMLs (graph + `requires:` manifest).
+- `skaileup/flows/_meta/verify_flows.py` — validates each flow's manifest.
 - `docs/devlog/SKILL_GRAPH.md` — collection-level view.

@@ -2,9 +2,12 @@
 """Test harness for flows/_meta/verify_flows.py.
 
 Invokes the verifier as a subprocess against:
-  (a) the live repo (happy path → exit 0, with warnings),
+  (a) the live repo (happy path → exit 0),
   (b) a temp scratch repo with a synthesized flow that fails one specific
       check (exit 2 in each case).
+
+Flows are self-contained: each carries a top-level ``requires:`` manifest.
+There are no ``*.bundle.yaml`` files.
 
 Run:  python3 -m pytest flows/_meta/test_verify.py -v
 """
@@ -23,6 +26,7 @@ REPO = Path(__file__).resolve().parents[3]  # repo root (skaileup/flows/_meta/ i
 FLOWS = REPO / "skaileup" / "flows"
 VERIFIER = FLOWS / "_meta" / "verify_flows.py"
 SCHEMA = REPO / "skaileup" / "contracts" / "flow.schema.json"
+SKAILE_YAML = REPO / "skaile.yaml"
 
 
 def _run(verifier_path: Path) -> subprocess.CompletedProcess:
@@ -50,14 +54,15 @@ def test_happy_path_exits_zero():
 def _build_scratch_repo(tmp_path: Path) -> Path:
     """Mirror the minimum repo structure the verifier touches.
 
-    Layout (co-located flows + bundles, new contracts location):
+    Layout (self-contained flows; new contracts location):
+      <root>/skaile.yaml                                 (copied)
       <root>/skaileup/contracts/flow.schema.json         (copied)
       <root>/skaileup/flows/_meta/deferred_skills.yaml   (copied)
       <root>/skaileup/flows/_meta/verify_flows.py        (copied)
       <root>/skaileup/flows/<app>/<app>.flow.yaml        (copied)
-      <root>/skaileup/flows/<app>/<app>.bundle.yaml      (copied)
       <root>/<each existing SKILL.md as a stub so name-resolution works>
     """
+    shutil.copy2(SKAILE_YAML, tmp_path / "skaile.yaml")
     (tmp_path / "skaileup" / "contracts").mkdir(parents=True)
     shutil.copy2(SCHEMA, tmp_path / "skaileup" / "contracts" / "flow.schema.json")
     (tmp_path / "skaileup" / "flows" / "_meta").mkdir(parents=True)
@@ -65,26 +70,21 @@ def _build_scratch_repo(tmp_path: Path) -> Path:
                  tmp_path / "skaileup" / "flows" / "_meta" / "verify_flows.py")
     shutil.copy2(FLOWS / "_meta" / "deferred_skills.yaml",
                  tmp_path / "skaileup" / "flows" / "_meta" / "deferred_skills.yaml")
-    # Copy co-located flow + bundle pairs
+    # Copy flow files
     for flow_file in FLOWS.glob("*/*.flow.yaml"):
         app = flow_file.parent.name
         dest_dir = tmp_path / "skaileup" / "flows" / app
         dest_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(flow_file, dest_dir / flow_file.name)
-        bundle_file = flow_file.parent / f"{app}.bundle.yaml"
-        if bundle_file.exists():
-            shutil.copy2(bundle_file, dest_dir / bundle_file.name)
     # Mirror real SKILL.md files so the verifier's name-resolution finds the
     # full set. We only copy frontmatter (a stub body is fine).
     for skill_md in REPO.glob("**/SKILL.md"):
         rel = skill_md.relative_to(REPO)
-        # Skip anything we already populated under skaileup/flows/
         if rel.parts[0] in ("node_modules", "_concept", ".git", "docs"):
             continue
         if rel.parts[:2] == ("skaileup", "flows"):
             continue
         text = skill_md.read_text()
-        # Keep only the frontmatter block to keep the scratch repo small
         if text.startswith("---"):
             parts = text.split("---", 2)
             if len(parts) >= 3:
@@ -102,8 +102,13 @@ def test_unresolved_skill_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
     flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
-    # Inject an unresolvable skill name
+    # Repoint a node + its requires entry at an unresolvable skill so the only
+    # failing signal is name-resolution (not a requires-coverage mismatch).
     data["nodes"][1]["data"]["skill"] = "this-does-not-exist-anywhere"
+    data["requires"] = [
+        "skill:@skaile-ai/this-does-not-exist-anywhere" if r == "skill:@skaile-ai/concept-brief" else r
+        for r in data["requires"]
+    ]
     flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
     proc = _run(verifier)
     assert proc.returncode == 2, (
@@ -118,9 +123,6 @@ def test_unresolved_skill_fails(tmp_path):
 # ---------------------------------------------------------------------------
 def test_deferred_skill_warns_only(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    # deferred_skills.yaml is empty in the live repo (Phase 3 complete), so inject
-    # a deferred skill and point an mvp flow node at it: a deferred reference must
-    # WARN (not ERROR) and leave the overall exit code at 0.
     deferred_path = (
         tmp_path / "skaileup" / "flows" / "_meta" / "deferred_skills.yaml"
     )
@@ -130,14 +132,13 @@ def test_deferred_skill_warns_only(tmp_path):
     flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     data["nodes"][1]["data"]["skill"] = "zz-deferred-demo"
+    # Keep requires in sync so the only signal is the deferred WARN, not a
+    # requires-coverage ERROR.
+    data["requires"] = [
+        "skill:@skaile-ai/zz-deferred-demo" if r == "skill:@skaile-ai/concept-brief" else r
+        for r in data["requires"]
+    ]
     flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
-    # The mvp bundle still requires the original skill name, which now appears as a
-    # tier-shape extra (WARN), and the flow's deferred skill is uncovered. Cover it
-    # so the only signal under test is the deferred WARN, not a coverage ERROR.
-    bundle_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.bundle.yaml"
-    bdata = yaml.safe_load(bundle_path.read_text())
-    bdata["requires"].append("skill:@skaile-ai/zz-deferred-demo")
-    bundle_path.write_text(yaml.safe_dump(bdata, sort_keys=False))
     proc = _run(verifier)
     assert proc.returncode == 0, (
         f"expected exit 0, got {proc.returncode}\nstderr={proc.stderr}"
@@ -147,33 +148,60 @@ def test_deferred_skill_warns_only(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Case 4: bundle missing a flow's skill → exit 2
+# Case 4: requires missing a flow's skill → exit 2
 # ---------------------------------------------------------------------------
-def test_bundle_missing_flow_skill_fails(tmp_path):
+def test_requires_missing_flow_skill_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    bundle_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.bundle.yaml"
-    data = yaml.safe_load(bundle_path.read_text())
-    # Drop concept-brief from the requires (mvp.flow.yaml still uses it)
+    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    data = yaml.safe_load(flow_path.read_text())
+    # Drop concept-brief from requires (mvp.flow.yaml still runs it as a node)
     data["requires"] = [
-        r for r in data["requires"]
-        if r != "skill:@skaile-ai/concept-brief"
+        r for r in data["requires"] if r != "skill:@skaile-ai/concept-brief"
     ]
-    bundle_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
     proc = _run(verifier)
     assert proc.returncode == 2
-    assert "flow references skills NOT in effective bundle" in proc.stderr
+    assert "requires missing skills the flow runs" in proc.stderr
     assert "concept-brief" in proc.stderr
 
 
 # ---------------------------------------------------------------------------
-# Case 5: jsonschema validation failure → exit 2
+# Case 5: requires lists a skill the flow does NOT run → exit 2
+# ---------------------------------------------------------------------------
+def test_requires_extra_skill_fails(tmp_path):
+    verifier = _build_scratch_repo(tmp_path)
+    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    data = yaml.safe_load(flow_path.read_text())
+    data.setdefault("requires", []).append("skill:@skaile-ai/ops-review")
+    flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    proc = _run(verifier)
+    assert proc.returncode == 2
+    assert "requires lists skills the flow does NOT run" in proc.stderr
+    assert "ops-review" in proc.stderr
+
+
+# ---------------------------------------------------------------------------
+# Case 6: unknown contract in requires → exit 2
+# ---------------------------------------------------------------------------
+def test_requires_unknown_contract_fails(tmp_path):
+    verifier = _build_scratch_repo(tmp_path)
+    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    data = yaml.safe_load(flow_path.read_text())
+    data["requires"].append("contract:@skaile-ai/not-a-real-contract")
+    flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    proc = _run(verifier)
+    assert proc.returncode == 2
+    assert "unknown contract" in proc.stderr
+
+
+# ---------------------------------------------------------------------------
+# Case 7: jsonschema validation failure → exit 2
 # ---------------------------------------------------------------------------
 def test_schema_violation_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
     flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     # Break: add a top-level key the schema rejects
-    # (top-level additionalProperties is False)
     data["this_is_not_a_known_key"] = "bad"
     flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
     proc = _run(verifier)
@@ -182,7 +210,7 @@ def test_schema_violation_fails(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Case 6: schema accepts router/gate/sub-flow node types + review-loop edge
+# Case 8: schema accepts router/gate/sub-flow node types + review-loop edge
 # ---------------------------------------------------------------------------
 def test_schema_accepts_new_node_and_edge_types():
     """Regression guard for the v1.1 schema bump (router, gate, sub-flow, review-loop)."""
@@ -193,6 +221,7 @@ def test_schema_accepts_new_node_and_edge_types():
         "id": "smoke",
         "name": "Smoke",
         "description": "exercises router + gate + sub-flow + review-loop",
+        "requires": ["contract:@skaile-ai/shared-contracts"],
         "nodes": [
             {
                 "id": "r1",
@@ -246,6 +275,27 @@ def test_schema_accepts_new_node_and_edge_types():
         "entry": "r1",
     }
     jsonschema.validate(flow, schema)
+
+
+# ---------------------------------------------------------------------------
+# Case 9: schema rejects a malformed requires ref
+# ---------------------------------------------------------------------------
+def test_schema_rejects_bad_requires_ref():
+    import jsonschema
+
+    schema = json.loads(SCHEMA.read_text())
+    flow = {
+        "id": "smoke",
+        "name": "Smoke",
+        "requires": ["not-a-scoped-ref"],
+        "nodes": [
+            {"id": "s1", "type": "skill", "position": {"x": 0, "y": 0},
+             "data": {"skill": "impl-slice-implement"}},
+        ],
+        "edges": [],
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(flow, schema)
 
 
 @pytest.mark.parametrize(
