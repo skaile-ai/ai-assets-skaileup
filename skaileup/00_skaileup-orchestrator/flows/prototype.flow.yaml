@@ -1,6 +1,6 @@
 id: 'prototype'
 version: '2.0.0'
-name: 'Quick Prototype'
+name: 'prototype'
 description: 'Concept + interactive mockups only. No data model, no implementation. Fastest path to a clickable prototype for user validation.'
 metadata:
   tags:
