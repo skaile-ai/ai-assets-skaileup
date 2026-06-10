@@ -1,5 +1,5 @@
 ---
-name: design
+slug: design
 description: "brand-identity · tokens · voice · inspiration"
 metadata:
   stage: alpha

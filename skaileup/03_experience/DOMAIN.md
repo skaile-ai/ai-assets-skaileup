@@ -1,5 +1,5 @@
 ---
-name: experience
+slug: experience
 description: "journeys · behaviors · screens · components"
 metadata:
   stage: alpha

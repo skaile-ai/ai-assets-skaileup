@@ -1,5 +1,5 @@
 ---
-name: skaileup
+slug: skaileup
 description: Top-level conversational guide for the skaileup concept → implementation pipeline
 ---
 

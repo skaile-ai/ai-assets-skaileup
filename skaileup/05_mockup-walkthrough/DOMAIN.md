@@ -1,5 +1,5 @@
 ---
-name: mockup-walkthrough
+slug: mockup-walkthrough
 description: "Clickable application walkthrough: text · static-html · lit · astro · framework"
 metadata:
   stage: alpha

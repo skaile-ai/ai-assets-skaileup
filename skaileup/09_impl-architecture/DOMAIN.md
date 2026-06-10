@@ -1,5 +1,5 @@
 ---
-name: impl-architecture
+slug: impl-architecture
 description: "techstack · system · datamodel · templates/"
 metadata:
   stage: alpha

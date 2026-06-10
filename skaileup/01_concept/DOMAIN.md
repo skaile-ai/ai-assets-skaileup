@@ -1,5 +1,5 @@
 ---
-name: concept
+slug: concept
 description: "brief · goals · comparable"
 metadata:
   stage: alpha

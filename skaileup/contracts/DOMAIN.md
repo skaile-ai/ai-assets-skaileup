@@ -1,5 +1,5 @@
 ---
-name: contracts
+slug: contracts
 description: "Shared reference layer (every skill reads)"
 metadata:
   stage: alpha

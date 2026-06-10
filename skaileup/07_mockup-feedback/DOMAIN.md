@@ -1,5 +1,5 @@
 ---
-name: mockup-feedback
+slug: mockup-feedback
 description: "Annotation → patch loop: annotate · triage · patch · apply (+ bidirectional sync via references + devlog)"
 metadata:
   stage: alpha

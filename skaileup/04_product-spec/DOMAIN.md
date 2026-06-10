@@ -1,5 +1,5 @@
 ---
-name: product-spec
+slug: product-spec
 description: "features · acceptance criteria"
 metadata:
   stage: alpha
