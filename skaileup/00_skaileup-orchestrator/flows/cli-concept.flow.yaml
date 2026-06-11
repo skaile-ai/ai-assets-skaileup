@@ -1,6 +1,6 @@
 id: 'cli-concept'
 version: '2.0.0'
-name: 'CLI Concept'
+name: 'cli-concept'
 description: 'Concept phase for command-line tools. No UI, no brand, no screens. Covers project brief, commands/features, tech stack, and data model.'
 metadata:
   tags:
