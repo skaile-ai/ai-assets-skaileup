@@ -1,5 +1,5 @@
 ---
-name: ops
+slug: ops
 description: "Cross-cutting: review · sync · eval · add-feature · reverse-engineer · project-*"
 metadata:
   stage: alpha

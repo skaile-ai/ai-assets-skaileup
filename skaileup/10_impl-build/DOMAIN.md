@@ -1,5 +1,5 @@
 ---
-name: impl-build
+slug: impl-build
 description: "One-time / project-level: scaffold · foundation · infrastructure · migrate · seed · generate · docs"
 metadata:
   stage: alpha

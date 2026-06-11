@@ -1,5 +1,5 @@
 ---
-name: concept-slice
+slug: concept-slice
 description: "Per-feature concept loop (big apps only): brainstorm · align · scope-feature · design-feature"
 metadata:
   stage: alpha

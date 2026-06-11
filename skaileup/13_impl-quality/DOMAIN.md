@@ -1,5 +1,5 @@
 ---
-name: impl-quality
+slug: impl-quality
 description: "test-{plan,unit,integration,e2e} · eval-code · audit · ready · standards-* · debug-{self-verify, handoff}"
 metadata:
   stage: alpha

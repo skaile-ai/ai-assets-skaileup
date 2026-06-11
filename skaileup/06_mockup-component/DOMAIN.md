@@ -1,5 +1,5 @@
 ---
-name: mockup-component
+slug: mockup-component
 description: "Components in isolation: storybook + isolated-html (see docs/devlog/mockup-design.md)"
 metadata:
   stage: alpha

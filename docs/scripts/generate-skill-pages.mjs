@@ -160,7 +160,9 @@ ${asMdString(body)}
 }
 
 function renderDomainPage({ domainPath, fm, body, repoRel, skillsInDomain }) {
-  const name = fm.name || basename(dirname(domainPath));
+  // DOMAIN.md carries the domain identifier in `slug:` (skaile-workspaces
+  // domain schema); fall back to legacy `name:` then the directory basename.
+  const name = fm.slug || fm.name || basename(dirname(domainPath));
   const description = fm.description || `Domain: ${name}`;
   const skillsList = skillsInDomain
     .map((s) => {
@@ -341,10 +343,10 @@ function main() {
     if (!byDomain.has(domain)) byDomain.set(domain, { domainFile: null, skills: [] });
     const entry = byDomain.get(domain);
     if (basename(f) === "DOMAIN.md") {
-      // A domain can carry DOMAIN.md at multiple depths (e.g. concept/ and
-      // concept/grounding/). The domain index must use the canonical top-level
-      // one — keep whichever sits shallowest under the domain root. Compare on
-      // repo-relative depth (`parts`), not the absolute path.
+      // Domains are non-nested (skaile-workspaces rule): exactly one DOMAIN.md
+      // per domain, at its root. Keep the shallowest defensively in case a
+      // stray sub-DOMAIN.md reappears. Compare on repo-relative depth
+      // (`parts`), not the absolute path.
       const prevDepth = entry.domainFile
         ? relative(REPO_ROOT, entry.domainFile).split("/").length
         : Infinity;

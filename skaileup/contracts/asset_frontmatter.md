@@ -352,17 +352,28 @@ Flows keep `id`, `version`, `name`, `description` at root because the flow-engin
 
 ## Domain — DOMAIN.md
 
-Domain manifest for directories under `ai-assets/`. Not managed by arm but read by agents and documentation.
+Domain manifest for a directory. Read by the skaile-workspaces indexer (for
+domain navigation) and by the docs generator. The identifier field is `slug:`
+(GitHub-shaped: lowercase `a-z0-9` with single hyphens, ≤39 chars) — **not**
+`name:`. The indexer ignores everything outside its schema (`slug`, `title`,
+`description`, `relation`, `order`, `members`); the `metadata:` block is
+project-local.
 
 ```yaml
 ---
-name: domain-name
+slug: domain-name
 description: "One-line summary of this domain."
 metadata:
   stage: alpha | beta | stable
   type: domain
 ---
 ```
+
+**Domains are strictly non-nested.** A DOMAIN.md claims the directory it lives in
+plus everything below it, so a DOMAIN.md inside another domain's subtree is a
+hard `DomainNesting` error. Sub-clusters that need their own prose (e.g.
+`concept/grounding/`, `impl-architecture/templates/`) use a plain `README.md`,
+not a second DOMAIN.md — their assets belong to the enclosing domain.
 
 ---
 

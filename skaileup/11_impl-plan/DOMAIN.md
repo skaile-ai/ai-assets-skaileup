@@ -1,5 +1,5 @@
 ---
-name: impl-plan
+slug: impl-plan
 description: "brainstorm · align · plan-vertical · supervised (testing-strategy is part of plan output)"
 metadata:
   stage: alpha

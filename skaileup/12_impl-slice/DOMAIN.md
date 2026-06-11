@@ -1,5 +1,5 @@
 ---
-name: impl-slice
+slug: impl-slice
 description: "Per-slice impl loop — runs N times: implement · test · recap · refactor · commit (phase handoffs in _implementation/slices/<id>/, frozen on commit)"
 metadata:
   stage: alpha
