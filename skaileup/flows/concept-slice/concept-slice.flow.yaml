@@ -1,6 +1,6 @@
 id: concept-slice
 version: '2.0.0'
-name: 'Concept Slice'
+name: 'concept-slice'
 description: >-
   Per-feature concept loop: brainstorm -> align -> scope-feature -> design-feature.
   Canonical building block consumed by tier flows (standard-app, complex-app)

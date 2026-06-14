@@ -1,6 +1,6 @@
 id: impl-slice
 version: '2.0.0'
-name: 'Impl Slice'
+name: 'impl-slice'
 description: >-
   Per-feature implementation loop: impl-plan brainstorm -> align -> plan-vertical,
   then impl-slice implement -> test -> recap -> refactor -> commit. Canonical

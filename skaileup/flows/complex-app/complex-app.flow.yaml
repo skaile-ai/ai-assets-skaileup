@@ -1,6 +1,6 @@
 id: complex-app
 version: '2.0.0'
-name: 'Complex App'
+name: 'complex-app'
 description: >-
   Multi-product / enterprise. Superset of standard-app plus brand-voice,
   mockup-walkthrough-framework, non-optional infrastructure,

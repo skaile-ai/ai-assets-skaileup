@@ -1,6 +1,6 @@
 id: standard-app
 version: '2.0.0'
-name: 'Standard App'
+name: 'standard-app'
 description: >-
   Multi-user / ≤20 features. High-level concept (brief, goals,
   comparable, brand-visual, inspiration, journeys,

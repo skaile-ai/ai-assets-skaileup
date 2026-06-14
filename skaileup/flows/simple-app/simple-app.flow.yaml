@@ -1,6 +1,6 @@
 id: simple-app
 version: '2.0.0'
-name: 'Simple App'
+name: 'simple-app'
 description: >-
   Single-user, ≤5 features. Linear concept pipeline (with brand-visual,
   journeys, screens, static-html walkthrough mockup, isolated-html component
