@@ -1,6 +1,6 @@
 id: 'prototype'
 version: '2.0.0'
-name: 'Prototype Implementation'
+name: 'prototype'
 description: 'Minimal implementation pass for rapid prototypes. Scaffold, implement features (no strict TDD), light E2E smoke test. Optimized for speed and user testing — not production readiness.'
 metadata:
   tags:

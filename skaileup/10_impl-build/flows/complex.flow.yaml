@@ -1,6 +1,6 @@
 id: 'complex'
 version: '2.0.0'
-name: 'Complex Implementation'
+name: 'complex'
 description: 'Full-checkpoint implementation for complex projects: every setup phase (scaffold, foundation, infrastructure) gets its own approval gate before proceeding. Maximum visibility and control.'
 metadata:
   tags:

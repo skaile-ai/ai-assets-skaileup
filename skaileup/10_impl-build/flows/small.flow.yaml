@@ -1,6 +1,6 @@
 id: 'small'
 version: '2.0.0'
-name: 'Small Implementation'
+name: 'small'
 description: 'Consolidated setup for small projects: scaffold and foundation run as a single checkpoint, no infrastructure phase, then features and verify.'
 metadata:
   tags:

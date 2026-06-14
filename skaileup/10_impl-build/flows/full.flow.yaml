@@ -1,6 +1,6 @@
 id: 'full'
 version: '2.0.0'
-name: 'Full Production'
+name: 'full'
 description: 'Complete implementation pipeline — readiness gate, scaffold, foundation, optional design pass, migrate/seed, feature TDD, full test suite (unit, integration, E2E), verify.'
 metadata:
   tags:
