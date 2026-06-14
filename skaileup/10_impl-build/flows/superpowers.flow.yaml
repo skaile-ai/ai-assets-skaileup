@@ -1,6 +1,6 @@
 id: 'superpowers'
 version: '2.0.0'
-name: 'Superpowers — Supervised Implementation'
+name: 'superpowers'
 description: 'Disciplined subagent-driven implementation: git preparation, structured brainstorming, spec-first planning, supervised dispatch with two-stage review, and controlled branch completion.'
 metadata:
   tags:
