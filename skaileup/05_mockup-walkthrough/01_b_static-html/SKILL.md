@@ -1,6 +1,6 @@
 ---
 name: mockup-walkthrough-static-html
-description: "Use when stakeholders need a clickable static HTML walkthrough of the application — zero build, no JS framework, openable directly in a browser. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads to resolve clicks back to source artefacts. Best for simple-app tier."
+description: "Use when stakeholders need a clickable static HTML walkthrough of the application — zero build, no JS framework, openable directly in a browser. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads to resolve clicks back to source artefacts. Best for appbuilder-simple tier."
 metadata:
   version: "0.1.0"
   tags:
@@ -8,7 +8,7 @@ metadata:
     - mockup
     - static-html
     - zero-build
-    - simple-app
+    - appbuilder-simple
     - frontend
     - prototype
     - data-spec

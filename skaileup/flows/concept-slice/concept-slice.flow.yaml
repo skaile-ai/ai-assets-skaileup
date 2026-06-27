@@ -3,7 +3,7 @@ version: '2.0.0'
 name: 'Concept Slice'
 description: >-
   Per-feature concept loop: brainstorm -> align -> scope-feature -> design-feature.
-  Canonical building block consumed by tier flows (standard-app, complex-app)
+  Canonical building block consumed by tier flows (appbuilder-standard, appbuilder-complex)
   via node inlining. Iteration semantics: tier orchestrators run this slice
   once per feature in their feature backlog. Slice flow is standalone-runnable
   for testability of the slice loop.

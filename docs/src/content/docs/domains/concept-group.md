@@ -7,8 +7,8 @@ sidebar:
 ---
 
 The **Concept group** is the half of the collection that figures out *what* to
-build. For `mvp` and `simple-app` it runs linearly; for `standard-app` and
-`complex-app` it runs a high-level pass followed by a per-feature
+build. For `appbuilder-mvp` and `appbuilder-simple` it runs linearly; for `appbuilder-standard` and
+`appbuilder-complex` it runs a high-level pass followed by a per-feature
 [`concept-slice`](../../flows/concept-slice/) loop.
 
 ## Domains

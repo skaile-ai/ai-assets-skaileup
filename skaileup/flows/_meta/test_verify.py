@@ -100,7 +100,7 @@ def _build_scratch_repo(tmp_path: Path) -> Path:
 # ---------------------------------------------------------------------------
 def test_unresolved_skill_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     # Repoint a node + its requires entry at an unresolvable skill so the only
     # failing signal is name-resolution (not a requires-coverage mismatch).
@@ -129,7 +129,7 @@ def test_deferred_skill_warns_only(tmp_path):
     deferred_path.write_text(
         yaml.safe_dump({"deferred_phase_3": ["zz-deferred-demo"]}, sort_keys=False)
     )
-    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     data["nodes"][1]["data"]["skill"] = "zz-deferred-demo"
     # Keep requires in sync so the only signal is the deferred WARN, not a
@@ -152,9 +152,9 @@ def test_deferred_skill_warns_only(tmp_path):
 # ---------------------------------------------------------------------------
 def test_requires_missing_flow_skill_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
-    # Drop concept-brief from requires (mvp.flow.yaml still runs it as a node)
+    # Drop concept-brief from requires (appbuilder-mvp.flow.yaml still runs it as a node)
     data["requires"] = [
         r for r in data["requires"] if r != "skill:@skaile-ai/concept-brief"
     ]
@@ -170,7 +170,7 @@ def test_requires_missing_flow_skill_fails(tmp_path):
 # ---------------------------------------------------------------------------
 def test_requires_extra_skill_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     data.setdefault("requires", []).append("skill:@skaile-ai/ops-review")
     flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
@@ -185,7 +185,7 @@ def test_requires_extra_skill_fails(tmp_path):
 # ---------------------------------------------------------------------------
 def test_requires_unknown_contract_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     data["requires"].append("contract:@skaile-ai/not-a-real-contract")
     flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
@@ -199,7 +199,7 @@ def test_requires_unknown_contract_fails(tmp_path):
 # ---------------------------------------------------------------------------
 def test_schema_violation_fails(tmp_path):
     verifier = _build_scratch_repo(tmp_path)
-    flow_path = tmp_path / "skaileup" / "flows" / "mvp" / "mvp.flow.yaml"
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
     # Break: add a top-level key the schema rejects
     data["this_is_not_a_known_key"] = "bad"
@@ -230,7 +230,7 @@ def test_schema_accepts_new_node_and_edge_types():
                 "data": {
                     "label": "Tier Router",
                     "routes": [
-                        {"condition": "tier == 'mvp'", "target": "g1"},
+                        {"condition": "tier == 'appbuilder-mvp'", "target": "g1"},
                         {"condition": "default", "target": None},
                     ],
                 },

@@ -43,9 +43,9 @@ REQUIRED_TESTING_SUBSECTIONS = [
     "### Exit criteria",
 ]
 
-# Routes that run this skill. cli-app is a variant route (no UI) that still
+# Routes that run this skill. appbuilder-cli is a variant route (no UI) that still
 # runs the impl-plan/impl-slice loop; concept-only/reverse-engineer don't.
-ALLOWED_TIERS = {"mvp", "simple-app", "standard-app", "complex-app", "cli-app"}
+ALLOWED_TIERS = {"appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex", "appbuilder-cli"}
 SLICE_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,47}$")
 
 # The VERBATIM anti-horizontal nudge body that MUST appear under

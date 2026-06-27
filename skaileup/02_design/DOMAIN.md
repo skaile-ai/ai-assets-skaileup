@@ -20,7 +20,7 @@ Produces the visual and verbal identity of a product: design tokens consumed by 
 
 - `_concept/discovery/brief.md` exists and is approved, but `_concept/discovery/brand/` is empty or incomplete.
 - User mentions "brand", "colors", "fonts", "tokens", "visual identity", or "tone of voice".
-- Concept tier is `mvp` or higher and at least one downstream skill (screens, mockup, scaffold) needs `tokens.json`.
+- Concept tier is `appbuilder-mvp` or higher and at least one downstream skill (screens, mockup, scaffold) needs `tokens.json`.
 
 ## When NOT to Use
 

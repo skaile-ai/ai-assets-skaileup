@@ -36,7 +36,7 @@ REQUIRED_SECTIONS = [
     "## Required screens",
 ]
 
-ALLOWED_TIERS = {"simple-app", "standard-app", "complex-app"}
+ALLOWED_TIERS = {"appbuilder-simple", "appbuilder-standard", "appbuilder-complex"}
 SLICE_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,47}$")
 SCREEN_LINE_RE = re.compile(r"^- [a-z0-9-]+/[a-z0-9-]+$")
 

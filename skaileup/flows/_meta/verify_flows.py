@@ -49,10 +49,20 @@ SCHEMA_PATH = REPO / "skaileup" / "contracts" / "flow.schema.json"
 DEFERRED_PATH = FLOWS / "_meta" / "deferred_skills.yaml"
 SKAILE_YAML = REPO / "skaile.yaml"
 
-TIER_FLOWS = ["mvp", "simple-app", "standard-app", "complex-app"]
+TIER_FLOWS = ["appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex"]
 SLICE_FLOWS = ["concept-slice", "impl-slice"]
 # Variant flows: not tiers — alternate shapes the scope step routes to.
-VARIANT_FLOWS = ["cli-app", "concept-only", "reverse-engineer"]
+# skaileup-impl / -standalone are implementation-only variants (no concept pass):
+# the first reads a handed-off concept package, the second generates its own
+# architecture subset.
+VARIANT_FLOWS = [
+    "appbuilder-cli",
+    "concept-only",
+    "reverse-engineer",
+    "skaileup-impl",
+    "skaileup-impl-standalone",
+    "skaileup-implementation",
+]
 ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS
 
 # Skills authored by Phase-2 mini-plans 2A/2B/2C/2D/2F/2G — these are added

@@ -24,7 +24,7 @@ One-time, project-level setup tasks that run before feature slices begin. Agents
 
 - Starting a greenfield project from a finished concept (`stack.md` exists, no `src/` yet).
 - Tech stack is decided and `impl-architecture` artifacts are present in `_concept/blueprint/`.
-- Running `standard-app` or `complex-app` flow (scaffold → foundation → infrastructure → migrate → seed precede the first impl-slice).
+- Running `appbuilder-standard` or `appbuilder-complex` flow (scaffold → foundation → infrastructure → migrate → seed precede the first impl-slice).
 - After any coding step that may have drifted docs (triggers `impl-build-docs`).
 
 ## When NOT to Use

@@ -5,21 +5,21 @@ sidebar:
   order: 3
 ---
 
-This page walks the collection end-to-end for a `standard-app`. (The other tiers
+This page walks the collection end-to-end for a `appbuilder-standard`. (The other tiers
 are slimmer specializations of the same pipeline — see [Tiers](/intro/tiers/).)
 
 ## 0. Scope
 
 ```
-$ skaile run flow:standard-app
+$ skaile run flow:appbuilder-standard
 ```
 
 `skaileup/` is the entry orchestrator. Its first move is `skaileup/scope/scope-project`,
 which interviews the user (2–3 questions) and writes `_concept/_meta/scope.yaml`:
 
 ```yaml
-tier: standard-app
-flow: standard-app.flow.yaml
+tier: appbuilder-standard
+flow: appbuilder-standard.flow.yaml
 signals:
   features: ~12
   multi_user: true
@@ -32,7 +32,7 @@ the skills that tier needs.
 
 ## 1. Concept — high-level pass
 
-For `standard-app` and `complex-app`, the concept side runs in two passes.
+For `appbuilder-standard` and `appbuilder-complex`, the concept side runs in two passes.
 **Pass 1** establishes the grand scheme (one linear pass through discovery,
 design, experience, and mockups):
 
@@ -118,21 +118,21 @@ documentation (only the transient `progress.json` is removed).
 
 ## 5. Quality gates (between slices, or at release)
 
-For `standard-app`:
+For `appbuilder-standard`:
 
 ```
 impl-quality/test-plan → test-unit · test-integration · test-e2e · ready
 ops/review · ops/sync
 ```
 
-`complex-app` adds:
+`appbuilder-complex` adds:
 
 ```
 impl-quality/eval-code · audit          ← between each impl-slice
 ```
 
 `ready` is the release gate. `audit` and `eval-code` run between slices in
-complex-app to catch drift before it compounds.
+appbuilder-complex to catch drift before it compounds.
 
 ### Concept scenarios drive the tests
 
@@ -162,14 +162,14 @@ features/screens.
 
 ```mermaid
 flowchart TD
-  scope["scope-project"] --> flow["flows/standard-app.flow.yaml"]
+  scope["scope-project"] --> flow["flows/appbuilder-standard.flow.yaml"]
   flow --> p1["<b>concept Pass 1</b><br/>brief · goals · comparable · brand · design-inspiration<br/>journeys · behaviors · features · screens · components<br/>mockup-walkthrough-astro · mockup-feedback loop"]
   p1 --> build["<b>impl-build (once)</b><br/>techstack · templates-select · system · datamodel<br/>scaffold · foundation · infrastructure · migrate · seed · docs"]
   build --> loop
 
   subgraph loop["loop until done"]
     direction TB
-    cs["concept-slice<br/>align → scope → design<br/><i>(no brainstorm in standard-app)</i>"] --> is["impl-slice<br/>brainstorm → align → plan →<br/>implement → test → recap → refactor → commit"]
+    cs["concept-slice<br/>align → scope → design<br/><i>(no brainstorm in appbuilder-standard)</i>"] --> is["impl-slice<br/>brainstorm → align → plan →<br/>implement → test → recap → refactor → commit"]
     is -.->|optional| audit["impl-quality/audit<br/>between slices"]
   end
 

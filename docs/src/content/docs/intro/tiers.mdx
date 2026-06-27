@@ -1,6 +1,6 @@
 ---
 title: Tiers
-description: How mvp / simple-app / standard-app / complex-app differ — what each tier slices, what it skips, and how the agent decides.
+description: How appbuilder-mvp / appbuilder-simple / appbuilder-standard / appbuilder-complex differ — what each tier slices, what it skips, and how the agent decides.
 sidebar:
   order: 4
 ---
@@ -15,19 +15,19 @@ required.
 ```
               concept side             implementation side       supervision
               ─────────────            ─────────────────────     ──────────
-mvp           linear, minimal          single impl-slice         autonomous
+appbuilder-mvp           linear, minimal          single impl-slice         autonomous
               (no design slicing)      (skip recap, refactor)
 
-simple-app    linear, full             N × impl-slice            autonomous
+appbuilder-simple    linear, full             N × impl-slice            autonomous
               (one pass through all    (full slice loop)
               features upfront)
 
-standard-app  linear high-level +      N × impl-slice            mostly autonomous,
+appbuilder-standard  linear high-level +      N × impl-slice            mostly autonomous,
               N × concept-slice        (full slice loop +        plan checkpoint
               (no brainstorm;           recap mandatory)         per slice
                align+scope+design)
 
-complex-app   linear high-level +      N × impl-slice            HITL — supervised
+appbuilder-complex   linear high-level +      N × impl-slice            HITL — supervised
               N × concept-slice        (full slice loop +        plan + brainstorm
               (full; incl. brainstorm) audit between slices)     + align per slice
               + project-overview
@@ -41,27 +41,27 @@ interview. The branches are evaluated top-down:
 ```mermaid
 flowchart TD
   start([scope signals]) --> q1{"features ≤ 1<br/>and persistence trivial?"}
-  q1 -->|yes| mvp([mvp])
+  q1 -->|yes| appbuilder-mvp([appbuilder-mvp])
   q1 -->|no| q2{"features ≤ 5<br/>and single-user?"}
-  q2 -->|yes| simple([simple-app])
+  q2 -->|yes| simple([appbuilder-simple])
   q2 -->|no| q3{"multi-product or<br/>enterprise integration?"}
-  q3 -->|yes| complex([complex-app])
+  q3 -->|yes| complex([appbuilder-complex])
   q3 -->|no| q4{"features ≤ 20<br/>or multi-user?"}
-  q4 -->|yes| standard([standard-app])
-  q4 -->|no| complex2([complex-app · fall-through])
+  q4 -->|yes| standard([appbuilder-standard])
+  q4 -->|no| complex2([appbuilder-complex · fall-through])
 ```
 
 `multi-product or enterprise integration` is satisfied when
 `signals.persistence == "external"` OR `len(signals.integrations) >= 2` — this
 check sits **above** the multi-user branch so a multi-user enterprise app
-doesn't short-circuit to `standard-app`.
+doesn't short-circuit to `appbuilder-standard`.
 
 The user can override at any time with `scope-project --tier=<name>`.
 
 ## Skill composition by tier
 
 ```
-                            mvp  simple  standard  complex
+                            appbuilder-mvp  simple  standard  complex
                             ────────────────────────────────
    skaileup/scope/scope     ✓    ✓       ✓         ✓
    ─────────────────────────────────────────────────────
@@ -117,11 +117,11 @@ The user can override at any time with `scope-project --tier=<name>`.
    ops/project-*                                   ✓
 ```
 
-Larger tiers are supersets of smaller ones (`mvp ⊂ simple-app ⊂ standard-app ⊂
-complex-app`), but each flow carries its **own complete** `requires:` manifest —
+Larger tiers are supersets of smaller ones (`appbuilder-mvp ⊂ appbuilder-simple ⊂ appbuilder-standard ⊂
+appbuilder-complex`), but each flow carries its **own complete** `requires:` manifest —
 the exact skills its nodes run, no inheritance.
 
-**concept-slice phases by tier:** `standard-app` runs `align → scope-feature → design-feature` (no brainstorm). `complex-app` adds `brainstorm` as the first phase. Both still require `/clear` between phases and read from `_concept/slices/<id>/` dossier files (frozen, kept, on commit).
+**concept-slice phases by tier:** `appbuilder-standard` runs `align → scope-feature → design-feature` (no brainstorm). `appbuilder-complex` adds `brainstorm` as the first phase. Both still require `/clear` between phases and read from `_concept/slices/<id>/` dossier files (frozen, kept, on commit).
 
 ## Skill alternatives
 
@@ -134,7 +134,7 @@ fidelity, so installing more than one is redundant.
 ```mermaid
 flowchart LR
   screens[experience/screens] --> pick{tier?}
-  pick -->|mvp| text["mockup-walkthrough-text<br/><i>ASCII wireframes</i>"]
+  pick -->|appbuilder-mvp| text["mockup-walkthrough-text<br/><i>ASCII wireframes</i>"]
   pick -->|simple| static["mockup-walkthrough-static-html<br/><i>zero-build HTML</i>"]
   pick -->|standard| astro["mockup-walkthrough-astro<br/><i>Astro project (default)</i>"]
   pick -->|complex| fw["mockup-walkthrough-framework<br/><i>full framework + lit variant</i>"]
@@ -147,7 +147,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   screens[experience/components] --> pick{tier?}
-  pick -->|mvp · simple| iso["mockup-component-isolated-html<br/><i>single-file component</i>"]
+  pick -->|appbuilder-mvp · simple| iso["mockup-component-isolated-html<br/><i>single-file component</i>"]
   pick -->|standard · complex| sb["mockup-component-storybook<br/><i>Storybook stories</i>"]
 ```
 

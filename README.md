@@ -80,10 +80,10 @@ The first thing the agent does is pick a tier. The rest of the pipeline is shape
 
 | Tier | Concept | Implementation | Supervision |
 |---|---|---|---|
-| `mvp` | Linear, minimal (no design slicing) | Single impl-slice (skip recap, refactor) | Autonomous |
-| `simple-app` | Linear, full (one pass) | N × impl-slice (full slice loop) | Autonomous |
-| `standard-app` | Linear high-level + N × concept-slice | N × impl-slice (full + recap mandatory) | Mostly autonomous, plan checkpoint per slice |
-| `complex-app` | Linear high-level + N × concept-slice + project-overview | N × impl-slice (supervised + audit between slices) | HITL |
+| `appbuilder-mvp` | Linear, minimal (no design slicing) | Single impl-slice (skip recap, refactor) | Autonomous |
+| `appbuilder-simple` | Linear, full (one pass) | N × impl-slice (full slice loop) | Autonomous |
+| `appbuilder-standard` | Linear high-level + N × concept-slice | N × impl-slice (full + recap mandatory) | Mostly autonomous, plan checkpoint per slice |
+| `appbuilder-complex` | Linear high-level + N × concept-slice + project-overview | N × impl-slice (supervised + audit between slices) | HITL |
 
 ## Flows
 
@@ -94,14 +94,14 @@ one flow's dependencies, via the **skaile workspace CLI**:
 
 ```
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add flow:simple-app            # OR install exactly what simple-app needs
+$ skaile add flow:appbuilder-simple            # OR install exactly what appbuilder-simple needs
 ```
 
 The `requires:` set is **exact** — the skills the flow's nodes run, no
 inheritance and no extras. **Flows are run two interchangeable ways** once installed:
 
 ```
-$ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
+$ skaile run flow:appbuilder-simple            # 1. the skaile workspace flow engine (connector)
 #                                         2. OR the orchestrator (skaileup / skaileup-build),
 #                                            which understands the flow files and runs them
 #                                            conversationally (human-in-the-loop)
@@ -109,24 +109,24 @@ $ skaile run flow:simple-app            # 1. the skaile workspace flow engine (c
 
 ```
 skaileup/flows/
-├── complex-app/
-│   ├── complex-app.flow.yaml     ← graph + requires: manifest
-│   └── complex-app.md
+├── appbuilder-complex/
+│   ├── appbuilder-complex.flow.yaml     ← graph + requires: manifest
+│   └── appbuilder-complex.md
 ├── concept-slice/
 │   ├── concept-slice.flow.yaml
 │   └── concept-slice.md
 ├── impl-slice/
 │   ├── impl-slice.flow.yaml
 │   └── impl-slice.md
-├── mvp/
-│   ├── mvp.flow.yaml
-│   └── mvp.md
-├── simple-app/
-│   ├── simple-app.flow.yaml
-│   └── simple-app.md
-├── standard-app/
-│   ├── standard-app.flow.yaml
-│   └── standard-app.md
+├── appbuilder-mvp/
+│   ├── appbuilder-mvp.flow.yaml
+│   └── appbuilder-mvp.md
+├── appbuilder-simple/
+│   ├── appbuilder-simple.flow.yaml
+│   └── appbuilder-simple.md
+├── appbuilder-standard/
+│   ├── appbuilder-standard.flow.yaml
+│   └── appbuilder-standard.md
 └── _meta/
     ├── verify_flows.py
     ├── test_verify.py
@@ -153,7 +153,7 @@ Then install:
 
 ```bash
 $ skaile add skill:concept-brief        # one skill + its requires
-$ skaile add flow:standard-app          # a flow + all its dependencies
+$ skaile add flow:appbuilder-standard          # a flow + all its dependencies
 ```
 
 Local checkouts use `path:` instead of `url:` and are symlinked so edits to SKILL.md are immediately reflected.

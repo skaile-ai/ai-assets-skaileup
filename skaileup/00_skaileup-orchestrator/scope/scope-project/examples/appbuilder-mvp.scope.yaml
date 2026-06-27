@@ -1,6 +1,6 @@
 schema_version: "1.0"
-tier: mvp
-flow_to_run: "flow:mvp"
+tier: appbuilder-mvp
+flow_to_run: "flow:appbuilder-mvp"
 reasoning: |
   features_estimate is 1 and persistence is trivial, so the first branch of the
   decision rule fires: this is an MVP. Single-user, no integrations, local JSON

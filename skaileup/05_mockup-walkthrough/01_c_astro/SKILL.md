@@ -1,6 +1,6 @@
 ---
 name: mockup-walkthrough-astro
-description: "Use when stakeholders need a clickable Astro walkthrough of the application — built static site, Tailwind-styled, openable directly in a browser. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads. Best for standard-app tier."
+description: "Use when stakeholders need a clickable Astro walkthrough of the application — built static site, Tailwind-styled, openable directly in a browser. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads. Best for appbuilder-standard tier."
 metadata:
   version: "0.1.0"
   tags:
@@ -8,7 +8,7 @@ metadata:
     - mockup
     - astro
     - tailwind
-    - standard-app
+    - appbuilder-standard
     - frontend
     - prototype
     - data-spec

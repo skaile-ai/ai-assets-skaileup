@@ -1,6 +1,6 @@
 ---
 name: mockup-walkthrough-lit
-description: "Use when stakeholders need a clickable Lit web-components walkthrough of the application — built with Vite, rendered as custom elements whose built HTML is openable directly in a browser AND embeddable into a host page. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads. Best for standard-app tier when the mockup must drop into an existing host shell."
+description: "Use when stakeholders need a clickable Lit web-components walkthrough of the application — built with Vite, rendered as custom elements whose built HTML is openable directly in a browser AND embeddable into a host page. Generates one HTML file per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads. Best for appbuilder-standard tier when the mockup must drop into an existing host shell."
 metadata:
   version: "0.1.0"
   tags:
@@ -9,7 +9,7 @@ metadata:
     - lit
     - web-components
     - embeddable
-    - standard-app
+    - appbuilder-standard
     - frontend
     - prototype
     - data-spec

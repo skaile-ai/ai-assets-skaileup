@@ -22,7 +22,7 @@ Produces the full UX specification layer — personas, story maps, behavioral ru
 
 - Features are approved (`_concept/experience/features/`) and you need UX artifacts before mockup or implementation.
 - User says "map journeys", "write screen specs", "behavioral rules", or "component inventory".
-- Concept pipeline is running at `simple-app` tier or higher (journeys + screens are standard; behaviors optional).
+- Concept pipeline is running at `appbuilder-simple` tier or higher (journeys + screens are standard; behaviors optional).
 - Entering an impl-slice and the screen spec for that feature is missing.
 
 ## When NOT to Use

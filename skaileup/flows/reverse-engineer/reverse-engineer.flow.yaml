@@ -7,7 +7,7 @@ description: >-
   optional project orientation (overview, subsystem-map) and convention
   discovery (standards-discover -> standards-inject). The extracted concept can
   then be enriched with journeys, architecture, datamodel, and screens. No
-  build pass — hand off to a tier flow (e.g. standard-app) to implement.
+  build pass — hand off to a tier flow (e.g. appbuilder-standard) to implement.
 meta:
   category: maintenance
   tags:

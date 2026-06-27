@@ -89,7 +89,7 @@ MUST  refuse to run if align.md is missing (iron_laws § 7)
 MUST  copy slice_id and feature_title from align.md unchanged
 MUST  filter acceptance criteria to IN-scope only (drop criteria whose edge case was marked OUT or DEFER)
 MUST  list required screens in "<group>/<screen>" form (matches experience/screens/ directory layout)
-MUST  refuse to run if scope.yaml `tier` ∈ {mvp} (mvp does not run concept-slice)
+MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp} (appbuilder-mvp does not run concept-slice)
 
 NEVER  silently move an item between IN/OUT/DEFER without user confirmation
 NEVER  add edge cases align.md did not surface (cite-only — scope is a filter, not a generator)
@@ -104,7 +104,7 @@ INPUT
 
 STEP 1: Read predecessor handoffs
   - Open _concept/_meta/scope.yaml; abort if missing.
-  - Refuse if scope.tier == mvp.
+  - Refuse if scope.tier == appbuilder-mvp.
   - Open _concept/slices/<slice_id>/align.md; abort with explicit error if missing:
     > "[concept-slice-scope-feature] _concept/slices/<slice_id>/align.md
     >  is missing. Run concept-slice-align first."

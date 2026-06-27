@@ -1,4 +1,4 @@
-id: cli-app
+id: appbuilder-cli
 version: '2.0.0'
 name: 'CLI App'
 description: >-

@@ -1,6 +1,6 @@
 ---
 name: concept-goals
-description: "Use on standard-app / complex-app concepts after the brief is approved, when goals deserve their own focused pass beyond the light version concept-brief writes. Interviews the user on success criteria, measurable KPIs, constraints, deadlines, and explicit non-goals, then writes (or deepens) _concept/discovery/goals.md."
+description: "Use on appbuilder-standard / appbuilder-complex concepts after the brief is approved, when goals deserve their own focused pass beyond the light version concept-brief writes. Interviews the user on success criteria, measurable KPIs, constraints, deadlines, and explicit non-goals, then writes (or deepens) _concept/discovery/goals.md."
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -48,20 +48,20 @@ metadata:
 ## Overview
 
 The **goals** skill is the focused success-criteria pass for larger concepts.
-`concept-brief` writes a light `goals.md` inline; on standard-app / complex-app
+`concept-brief` writes a light `goals.md` inline; on appbuilder-standard / appbuilder-complex
 this skill deepens it into measurable success criteria, explicit non-goals, and
 hard constraints that downstream features, scope, and acceptance criteria are
 checked against. It writes only `_concept/discovery/goals.md`.
 
 ## When to Use
 
-- The brief is approved and the tier is standard-app or complex-app
+- The brief is approved and the tier is appbuilder-standard or appbuilder-complex
 - The user wants to pin down "what does success look like" before designing features
 - The orchestrator dispatches this in the high-level concept pass, after `concept-brief`
 
 ## When NOT to Use
 
-- mvp / simple-app tiers — the light `goals.md` from `concept-brief` is enough
+- appbuilder-mvp / appbuilder-simple tiers — the light `goals.md` from `concept-brief` is enough
 - No `_concept/discovery/brief.md` yet — run `concept-brief` first
 - The user wants per-feature acceptance criteria — that's `product-spec-features`
 

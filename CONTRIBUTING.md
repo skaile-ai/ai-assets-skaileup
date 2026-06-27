@@ -375,7 +375,7 @@ Then install specific assets:
 
 ```bash
 skaile add skill:my-domain-function       # install one skill + its requires
-skaile add flow:standard-app              # install a flow + all its dependencies
+skaile add flow:appbuilder-standard              # install a flow + all its dependencies
 skaile add --global skill:my-skill        # install globally (~/.claude/skills/)
 skaile list                               # show installed assets
 skaile search skill my-domain             # search catalog

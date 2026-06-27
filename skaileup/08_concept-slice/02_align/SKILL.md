@@ -1,6 +1,6 @@
 ---
 name: concept-slice-align
-description: "Use when concept-slice-brainstorm has completed (or as the entry point for simple-app) and you need to grill the user about THIS feature — surfaces edge cases, unstated rules, error states, role/permission gaps, and produces EARS-format acceptance criteria. Inverts the brainstorm: now the AI asks pointed questions, the user defends their assumptions. Triggers on: 'align this feature', 'grill me on edge cases', 'lock down acceptance criteria'."
+description: "Use when concept-slice-brainstorm has completed (or as the entry point for appbuilder-simple) and you need to grill the user about THIS feature — surfaces edge cases, unstated rules, error states, role/permission gaps, and produces EARS-format acceptance criteria. Inverts the brainstorm: now the AI asks pointed questions, the user defends their assumptions. Triggers on: 'align this feature', 'grill me on edge cases', 'lock down acceptance criteria'."
 metadata:
   version: "1.0.0"
   tags:
@@ -33,15 +33,15 @@ metadata:
         description: "Tier context required — produced by skaileup-scope-scope-project."
       - path: "_concept/slices/{slice_id}/brainstorm.md"
         gate: soft
-        description: "Required when tier is standard-app or complex-app (the strict gate is enforced in STEP 1 because for simple-app tier this skill is the cluster entry point and brainstorm.md does not exist)."
+        description: "Required when tier is appbuilder-standard or appbuilder-complex (the strict gate is enforced in STEP 1 because for appbuilder-simple tier this skill is the cluster entry point and brainstorm.md does not exist)."
     inputs_required:
       - id: slice_id
         label: "Slice id (kebab-case)"
         type: text
-        hint: "Must match an existing _concept/slices/<slice_id>/ directory or, for simple-app entry mode, become the new dir name."
+        hint: "Must match an existing _concept/slices/<slice_id>/ directory or, for appbuilder-simple entry mode, become the new dir name."
     inputs_optional:
       - id: feature_title
-        label: "Feature title (only required when tier=simple-app and brainstorm.md is absent)"
+        label: "Feature title (only required when tier=appbuilder-simple and brainstorm.md is absent)"
         type: text
     reads:
       - path: "_concept/discovery/brief.md"
@@ -60,7 +60,7 @@ metadata:
 ## Overview
 
 `concept-slice-align` is the grill phase of the per-feature concept loop. It
-reads the brainstorm handoff (or, for simple-app, kicks off the slice
+reads the brainstorm handoff (or, for appbuilder-simple, kicks off the slice
 directly) and runs an adversarial interview that surfaces:
 
 - Edge cases the user hasn't voiced
@@ -82,8 +82,8 @@ ROLE Per-feature alignment grill — adversarial interviewer that surfaces edge 
 
 READS
   _concept/_meta/scope.yaml                  — required; tier
-  _concept/slices/{slice_id}/brainstorm.md    — required IF tier ∈ {standard-app, complex-app}
-                                               (simple-app skips brainstorm; align is the entry)
+  _concept/slices/{slice_id}/brainstorm.md    — required IF tier ∈ {appbuilder-standard, appbuilder-complex}
+                                               (appbuilder-simple skips brainstorm; align is the entry)
   ? _concept/discovery/brief.md              — optional; project-level context
   ? _concept/experience/features/**/*.md     — optional; sibling features
   ? _concept/slices/{slice_id}/align.md       — re-entry mode
@@ -99,14 +99,14 @@ REFERENCES
 
 REQUIRES
   hard: _concept/_meta/scope.yaml            — tier context
-  state: scope.yaml `tier` ∈ {simple-app, standard-app, complex-app}
+  state: scope.yaml `tier` ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
 
 # Constraints
 
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
 MUST  produce acceptance criteria in EARS format ("WHEN <trigger>, THE <system> SHALL <response>")
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
-MUST  refuse to run if scope.yaml `tier` ∈ {standard-app, complex-app} AND _concept/slices/<slice_id>/brainstorm.md is missing
+MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-standard, appbuilder-complex} AND _concept/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id and feature_title from brainstorm.md when present; never re-derive
 MUST  surface every P1 (blocking) open question to the user as a standalone message before writing align.md
 MUST  emit an EARS-formatted acceptance criterion for every IN-scope happy-path bullet in brainstorm.md
@@ -119,25 +119,25 @@ INPUT
   Read from: _concept/_grounding/concept-slice-align/input.json
   If missing, ask the user:
   - slice_id: Slice id (required) default: <none>
-  - feature_title: Feature title (optional, required for simple-app entry) default: <none>
+  - feature_title: Feature title (optional, required for appbuilder-simple entry) default: <none>
 
 # ── Workflow ───────────────────────────────────────────────────────
 
 STEP 1: Read scope and resolve tier-dependent gate
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
   - Read scope.tier.
-  IF tier ∈ {standard-app, complex-app}
+  IF tier ∈ {appbuilder-standard, appbuilder-complex}
     - require _concept/slices/<slice_id>/brainstorm.md to exist
     - if missing, refuse with:
       > "[concept-slice-align] tier=<tier> requires
       >  _concept/slices/<slice_id>/brainstorm.md. Run concept-slice-brainstorm first."
-  ELSE IF tier == simple-app
+  ELSE IF tier == appbuilder-simple
     - brainstorm.md not required; this skill is the cluster entry.
     - $ mkdir -p _concept/slices/<slice_id>/
     - if feature_title was not supplied, ask STANDALONE:
       > "What feature are we aligning on? One-sentence title."
   ELSE
-    - refuse: tier=mvp does not run concept-slice-align (use impl-plan/plan-vertical).
+    - refuse: tier=appbuilder-mvp does not run concept-slice-align (use impl-plan/plan-vertical).
 
 STEP 2: Read brainstorm context (when present)
   - Load brainstorm.md frontmatter; copy slice_id, feature_title verbatim.
@@ -183,7 +183,7 @@ STEP 10: Surface P1 open questions
 
 STEP 11: Draft align.md in memory
   Frontmatter (copy slice_id and feature_title from brainstorm.md, or fresh
-  for simple-app):
+  for appbuilder-simple):
     ```
     ---
     slice_id: <slug>

@@ -5,8 +5,8 @@ order: 6
 ---
 
 The **impl-slice** flow is not a tier — it is the **per-feature implementation
-loop**, the canonical building block that `simple-app`, `standard-app`,
-`complex-app`, and `cli-app` delegate to via a **sub-flow node**, once per
+loop**, the canonical building block that `appbuilder-simple`, `appbuilder-standard`,
+`appbuilder-complex`, and `appbuilder-cli` delegate to via a **sub-flow node**, once per
 feature. It cuts a vertical slice (UI + logic + data) for one feature and is
 standalone-runnable.
 
@@ -40,8 +40,8 @@ The full loop runs the same way standalone and when delegated to from a tier:
 | `git-finish` | Close out the slice / branch, persist git preferences, and gate the loop's completion |
 
 The tier flows delegate to this full loop via a sub-flow node, so
-`simple-app`, `standard-app`, `complex-app`, and `cli-app` all run every phase.
-Only `mvp` keeps a trimmed inline pass (`plan-vertical → implement → commit`),
+`appbuilder-simple`, `appbuilder-standard`, `appbuilder-complex`, and `appbuilder-cli` all run every phase.
+Only `appbuilder-mvp` keeps a trimmed inline pass (`plan-vertical → implement → commit`),
 since its defining trait is a single linear build with no loop.
 
 ## Install manifest
@@ -61,4 +61,4 @@ committed code.
 
 - [Slice loops](../../../intro/slice-loops/) — the shared five-phase shape
 - [`concept-slice`](../concept-slice/) — the concept-side counterpart
-- [`simple-app`](../simple-app/) · [`standard-app`](../standard-app/) · [`complex-app`](../complex-app/)
+- [`appbuilder-simple`](../appbuilder-simple/) · [`appbuilder-standard`](../appbuilder-standard/) · [`appbuilder-complex`](../appbuilder-complex/)

@@ -22,7 +22,7 @@ slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
 feature_path: _concept/product-spec/features/team-todo/team-todo-comments.md
 phase: brainstorm
-tier: standard-app
+tier: appbuilder-standard
 created_at: 2026-05-08T12:34:56Z
 last_updated: 2026-05-08T13:00:00Z
 ---
@@ -30,7 +30,7 @@ last_updated: 2026-05-08T13:00:00Z
 
 GOOD_BODY = """
 ## App-level summary (1 paragraph)
-Team-todo is a shared list app for small teams. Tier: standard-app.
+Team-todo is a shared list app for small teams. Tier: appbuilder-standard.
 
 ## Feature summary (1 paragraph)
 Members can attach short comments to any team todo item. Comments appear
@@ -124,7 +124,7 @@ def test_missing_top_section_fails(tmp_path: Path):
 
 def test_mvp_tier_fails(tmp_path: Path):
     f = write_good(tmp_path)
-    text = f.read_text().replace("tier: standard-app", "tier: mvp")
+    text = f.read_text().replace("tier: appbuilder-standard", "tier: appbuilder-mvp")
     f.write_text(text)
     errors = validator.validate(f)
     assert any("tier must be one of" in e for e in errors), errors
@@ -132,7 +132,7 @@ def test_mvp_tier_fails(tmp_path: Path):
 
 def test_simple_app_tier_fails(tmp_path: Path):
     f = write_good(tmp_path)
-    text = f.read_text().replace("tier: standard-app", "tier: simple-app")
+    text = f.read_text().replace("tier: appbuilder-standard", "tier: appbuilder-simple")
     f.write_text(text)
     errors = validator.validate(f)
     assert any("tier must be one of" in e for e in errors), errors

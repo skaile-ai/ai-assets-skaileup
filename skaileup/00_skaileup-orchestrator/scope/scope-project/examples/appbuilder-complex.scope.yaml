@@ -1,12 +1,12 @@
 schema_version: "1.0"
-tier: complex-app
-flow_to_run: "flow:complex-app"
+tier: appbuilder-complex
+flow_to_run: "flow:appbuilder-complex"
 reasoning: |
-  Branch 1 (mvp) fails: features_estimate is 35 (> 1). Branch 2 (simple-app) fails:
-  features_estimate is 35 (> 5). Branch 3 (complex-app) fires because persistence is
+  Branch 1 (appbuilder-mvp) fails: features_estimate is 35 (> 1). Branch 2 (appbuilder-simple) fails:
+  features_estimate is 35 (> 5). Branch 3 (appbuilder-complex) fires because persistence is
   "external" (queue/bus, multi-product) and three integrations are in scope —
   this branch sits above the multi-user/feature-count branch so multi-tenant
-  enterprise apps don't short-circuit to standard-app. HITL supervision and
+  enterprise apps don't short-circuit to appbuilder-standard. HITL supervision and
   per-slice audits are mandated for this tier.
 description: "A multi-tenant B2B portal with assignee/role hierarchies, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline."
 signals:

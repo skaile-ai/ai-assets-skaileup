@@ -1,6 +1,6 @@
 schema_version: "1.0"
-tier: standard-app
-flow_to_run: "flow:standard-app"
+tier: appbuilder-standard
+flow_to_run: "flow:appbuilder-standard"
 description: "Team todo app with shared lists and per-item comments."
 signals:
   features_estimate: 12

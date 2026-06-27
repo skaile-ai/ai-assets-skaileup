@@ -19,18 +19,18 @@ skaileup/flows/
 ├── impl-slice/
 │   ├── impl-slice.flow.yaml
 │   └── impl-slice.md
-├── mvp/
-│   ├── mvp.flow.yaml
-│   └── mvp.md
-├── simple-app/
-│   ├── simple-app.flow.yaml
-│   └── simple-app.md
-├── standard-app/
-│   ├── standard-app.flow.yaml
-│   └── standard-app.md
-└── complex-app/
-    ├── complex-app.flow.yaml
-    └── complex-app.md
+├── appbuilder-mvp/
+│   ├── appbuilder-mvp.flow.yaml
+│   └── appbuilder-mvp.md
+├── appbuilder-simple/
+│   ├── appbuilder-simple.flow.yaml
+│   └── appbuilder-simple.md
+├── appbuilder-standard/
+│   ├── appbuilder-standard.flow.yaml
+│   └── appbuilder-standard.md
+└── appbuilder-complex/
+    ├── appbuilder-complex.flow.yaml
+    └── appbuilder-complex.md
 ```
 
 ## Install — a flow installs its own deps
@@ -40,7 +40,7 @@ workspace CLI**. Install the whole collection, or just one flow's dependencies:
 
 ```bash
 $ skaile add skill:*                    # install every skill
-$ skaile add flow:simple-app            # OR install exactly what simple-app needs
+$ skaile add flow:appbuilder-simple            # OR install exactly what appbuilder-simple needs
 ```
 
 The `requires:` block lists scoped asset refs (`kind:@publisher/name`) — only
@@ -48,12 +48,12 @@ The `requires:` block lists scoped asset refs (`kind:@publisher/name`) — only
 nodes run, **no inheritance and no extras**.
 
 ```yaml
-# inside mvp.flow.yaml, above globals:
+# inside appbuilder-mvp.flow.yaml, above globals:
 requires:
   - contract:@skaile-ai/shared-contracts
   - skill:@skaile-ai/concept-brief
   - skill:@skaile-ai/product-spec-features
-  # …every skill mvp's nodes run, and nothing else
+  # …every skill appbuilder-mvp's nodes run, and nothing else
 ```
 
 ## Run — engine or orchestrator
@@ -61,7 +61,7 @@ requires:
 Once installed, a flow can be run **two interchangeable ways**:
 
 ```bash
-$ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
+$ skaile run flow:appbuilder-simple            # 1. the skaile workspace flow engine (connector)
 ```
 
 ```text
@@ -81,7 +81,7 @@ Tier flows compose them.
 
 ```mermaid
 flowchart LR
-  subgraph mvp["mvp.flow.yaml"]
+  subgraph appbuilder-mvp["appbuilder-mvp.flow.yaml"]
     direction LR
     m1[scope-project] --> m2[linear concept] --> m3[impl-build/scaffold] --> m4["impl-slice<br/>1 iteration, no recap/refactor"] --> m5([done])
   end
@@ -89,7 +89,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  subgraph simple["simple-app.flow.yaml"]
+  subgraph simple["appbuilder-simple.flow.yaml"]
     direction LR
     s1[scope-project] --> s2[linear concept] --> s3[impl-build setup] --> s4["loop: impl-slice"] --> s5([done — all features built])
   end
@@ -97,7 +97,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  subgraph standard["standard-app.flow.yaml"]
+  subgraph standard["appbuilder-standard.flow.yaml"]
     direction LR
     t1[scope-project] --> t2["high-level concept<br/>brief · brand · journeys"] --> t3[impl-build setup] --> t4["loop: concept-slice → impl-slice"] --> t5([done])
   end
@@ -105,14 +105,14 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  subgraph complex["complex-app.flow.yaml"]
+  subgraph complex["appbuilder-complex.flow.yaml"]
     direction LR
     c1[scope-project] --> c2[high-level concept] --> c3[project-overview] --> c4[impl-build setup] --> c5["loop: concept-slice → impl-slice<br/>supervised plan + impl-quality/audit every slice"] --> c6([done])
   end
 ```
 
-Larger tiers are supersets of smaller ones by construction (`mvp ⊂ simple-app ⊂
-standard-app ⊂ complex-app`), but each flow lists its **own complete** `requires:`
+Larger tiers are supersets of smaller ones by construction (`appbuilder-mvp ⊂ appbuilder-simple ⊂
+appbuilder-standard ⊂ appbuilder-complex`), but each flow lists its **own complete** `requires:`
 manifest rather than inheriting — so what installs is always exactly what runs.
 
 ## Drift guard
@@ -128,7 +128,7 @@ matches the skills its nodes run (nothing missing, nothing extra) and that its
 You can create your own flow by starting from a tier and overriding what you need. Create a file such as `skaileup/flows/custom/custom.flow.yaml`:
 
 ```yaml
-extends: standard-app
+extends: appbuilder-standard
 requires:
   - contract:@skaile-ai/shared-contracts
   - skill:@skaile-ai/ops-sync

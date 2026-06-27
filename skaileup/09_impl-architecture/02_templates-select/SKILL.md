@@ -89,7 +89,7 @@ approved stack and writes the single best match back as `tech_stack_skill`.
 READS
 \_concept/blueprint/techstack.md — frontend, ui_library, backend, database, tech_stack_skill
 09_impl-architecture/templates/template-\*/TEMPLATE.md — candidate templates (discovered at runtime)
-? \_concept/\_meta/scope.yaml — tier (mvp|simple-app|standard-app|complex-app) for weighting
+? \_concept/\_meta/scope.yaml — tier (appbuilder-mvp|appbuilder-simple|appbuilder-standard|appbuilder-complex) for weighting
 
 WRITES
 \_concept/blueprint/techstack.md — tech_stack_skill set to the chosen template-\* id
@@ -115,7 +115,7 @@ STEP 1: Read the stack decision
 - IF `tech_stack_skill` already names an existing `template-*` directory
   - > "techstack.md already targets [id]. Re-pick the scaffold template?"
   - UNLESS the user wants to re-pick, skip to STEP 5 (no change)
-- Check `_concept/_meta/scope.yaml` for `tier` (default: standard-app)
+- Check `_concept/_meta/scope.yaml` for `tier` (default: appbuilder-standard)
 
 EMIT [templates-select] checkpoint phase=stack_read frontend=<value> ui=<value>
 
@@ -145,8 +145,8 @@ STEP 3: Score and rank
   - ui_library match — **weight 2**
   - backend + database match — **weight 1 each**
 - Tier tie-break from scope.yaml:
-  - `mvp` / `simple-app` → prefer the lighter `*-minimal` template when frontend ties
-  - `standard-app` / `complex-app` → prefer the fuller UI-library template
+  - `appbuilder-mvp` / `appbuilder-simple` → prefer the lighter `*-minimal` template when frontend ties
+  - `appbuilder-standard` / `appbuilder-complex` → prefer the fuller UI-library template
 - IF the top frontend score is 0 (no framework matches the chosen frontend)
   - Do NOT force a pick. Report the gap and offer the closest framework match,
     or `tech_stack_skill: custom` (no template — scaffold runs from techstack.md alone)

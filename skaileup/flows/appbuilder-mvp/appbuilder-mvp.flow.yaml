@@ -1,4 +1,4 @@
-id: mvp
+id: appbuilder-mvp
 version: '2.0.0'
 name: 'MVP'
 description: >-
@@ -7,13 +7,13 @@ description: >-
   scope-project -> brief -> features -> mockup-walkthrough-text -> techstack ->
   templates -> scaffold -> impl-plan-plan-vertical ->
   impl-slice-implement -> impl-slice-commit -> impl-quality-test-unit.
-  Per SKILL_GRAPH § 6 mvp column: only impl-quality-test-unit; no
+  Per SKILL_GRAPH § 6 appbuilder-mvp column: only impl-quality-test-unit; no
   impl-slice-test/recap/refactor; no concept-slice phases.
 meta:
   category: prototype
   tags:
     - tier
-    - mvp
+    - appbuilder-mvp
     - fast
     - single-feature
   icon: i-heroicons-rocket-launch

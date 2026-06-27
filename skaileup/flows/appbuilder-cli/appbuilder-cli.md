@@ -1,10 +1,10 @@
 ---
-title: "cli-app"
+title: "appbuilder-cli"
 description: "Variant tier for command-line tools — end-to-end, no UI/brand/screens/mockups, unit + integration tests (no E2E)."
 order: 7
 ---
 
-The **cli-app** flow is the tier for command-line tools. It runs the full
+The **appbuilder-cli** flow is the tier for command-line tools. It runs the full
 concept→build→slice pipeline like the UI tiers, but drops everything UI: no
 brand, no journeys, no screens, no mockups, no E2E. Features are described as
 commands. It replaces the legacy split `cli-concept` + `cli` flows with one
@@ -15,7 +15,7 @@ conformant, self-contained flow.
 Picked by `scope-project` when the deliverable is a headless tool — a CLI,
 script, or daemon — rather than an app with a UI.
 
-| Signal | cli-app |
+| Signal | appbuilder-cli |
 |---|---|
 | UI | none (headless) |
 | Design / mockups | skipped |
@@ -35,19 +35,19 @@ scope-project → concept-brief → product-spec-features   (features as command
 
 ## Install manifest
 
-Self-contained: `cli-app.flow.yaml` carries a top-level `requires:` block —
+Self-contained: `appbuilder-cli.flow.yaml` carries a top-level `requires:` block —
 `shared-contracts` + `implementation-contract` plus exactly the 19 skills its
 nodes run. No inheritance, no extras.
 
 ## Run it
 
 ```bash
-skaile add flow:cli-app       # install the flow + its skills + contracts
-skaile run flow:cli-app       # execute the pipeline
+skaile add flow:appbuilder-cli       # install the flow + its skills + contracts
+skaile run flow:appbuilder-cli       # execute the pipeline
 ```
 
 ## See also
 
 - [Tiers](../../../intro/tiers/) — how `scope-project` chooses a flow
-- [`mvp`](../mvp/) — the smallest UI-oriented tier
+- [`appbuilder-mvp`](../appbuilder-mvp/) — the smallest UI-oriented tier
 - [`impl-slice`](../impl-slice/) — the per-feature loop this flow inlines

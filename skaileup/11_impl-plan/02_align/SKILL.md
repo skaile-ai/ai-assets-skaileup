@@ -43,7 +43,7 @@ metadata:
         min_entries: 1
       - path: "_implementation/slices/{slice_id}/brainstorm.md"
         gate: soft
-        description: "Required when tier is standard-app or complex-app (the strict gate is enforced in STEP 1 because for simple-app this skill is the cluster entry point and brainstorm.md does not exist)."
+        description: "Required when tier is appbuilder-standard or appbuilder-complex (the strict gate is enforced in STEP 1 because for appbuilder-simple this skill is the cluster entry point and brainstorm.md does not exist)."
     inputs_required:
       - id: feature_slug
         label: "Kebab-case feature slug; resolves to _concept/product-spec/features/<group>/<feature_slug>.md"
@@ -70,8 +70,8 @@ metadata:
 ## Overview
 
 `impl-plan-align` is the implementation-readiness grill of the per-slice impl-loop.
-It runs after `impl-plan-brainstorm` (when tier ∈ {standard-app, complex-app}) or as
-the cluster entry point (when tier == simple-app). It does NOT run for tier == mvp.
+It runs after `impl-plan-brainstorm` (when tier ∈ {appbuilder-standard, appbuilder-complex}) or as
+the cluster entry point (when tier == appbuilder-simple). It does NOT run for tier == appbuilder-mvp.
 
 The skill inverts brainstorm: now the AI asks pointed questions, the user defends.
 Pillars covered: state transitions, boundary inputs, concurrency, permissions,
@@ -90,12 +90,12 @@ features have their own slice align runs).
 
 - An implementation slice's concept artifacts (feature.md + screens) are frozen and
   the user is ready to commit to acceptance criteria for the implementation.
-- Tier is `simple-app`, `standard-app`, or `complex-app`.
+- Tier is `appbuilder-simple`, `appbuilder-standard`, or `appbuilder-complex`.
 - For standard/complex: `_implementation/slices/<id>/brainstorm.md` exists.
 
 ## When NOT to Use
 
-- Tier is `mvp` — mvp skips align per SKILL_GRAPH § 6. Use `impl-plan-plan-vertical`.
+- Tier is `appbuilder-mvp` — appbuilder-mvp skips align per SKILL_GRAPH § 6. Use `impl-plan-plan-vertical`.
 - Concept artifacts are missing — refer the caller to `concept-slice/design-feature`.
 - For standard/complex without brainstorm — refer the caller to `impl-plan-brainstorm`.
 
@@ -107,8 +107,8 @@ READS
   _concept/_meta/scope.yaml                                       — required; tier
   _concept/product-spec/features/{group}/{feature_slug}.md        — required; permanent feature artifact
   _concept/experience/screens/{feature_slug}/*.md                 — required; permanent screen specs (≥ 1 file)
-  _implementation/slices/{slice_id}/brainstorm.md                            — required IF tier ∈ {standard-app, complex-app};
-                                                                    ENTRY POINT IF tier == simple-app
+  _implementation/slices/{slice_id}/brainstorm.md                            — required IF tier ∈ {appbuilder-standard, appbuilder-complex};
+                                                                    ENTRY POINT IF tier == appbuilder-simple
   ? _concept/blueprint/datamodel/model.json                       — optional; data model for entity grilling
   ? _concept/blueprint/techstack.md                               — optional; stack constraints
   ? _implementation/slices/{slice_id}/align.md                               — re-entry mode
@@ -127,14 +127,14 @@ REFERENCES
 
 REQUIRES
   hard: _concept/_meta/scope.yaml                                 — tier context
-  state: scope.yaml `tier` ∈ {simple-app, standard-app, complex-app}
+  state: scope.yaml `tier` ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
-MUST  refuse to run if _concept/_meta/scope.yaml is missing or tier == mvp (mvp skips align per SKILL_GRAPH § 6)
+MUST  refuse to run if _concept/_meta/scope.yaml is missing or tier == appbuilder-mvp (appbuilder-mvp skips align per SKILL_GRAPH § 6)
 MUST  refuse to run if the feature.md at _concept/product-spec/features/<group>/<feature_slug>.md is missing (iron_laws § 7)
-MUST  refuse to run if tier ∈ {standard-app, complex-app} and _implementation/slices/<slice_id>/brainstorm.md is missing
+MUST  refuse to run if tier ∈ {appbuilder-standard, appbuilder-complex} and _implementation/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id, feature_title, feature_path from brainstorm.md frontmatter when present; never re-derive
 MUST  surface every P1 question to the user as a standalone message before writing align.md
 MUST  copy EARS acceptance criteria from feature.md verbatim into "## Acceptance handoff"
@@ -157,19 +157,19 @@ INPUT
 STEP 1: Read scope and resolve tier-dependent gate
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
   - Read scope.tier.
-  IF tier == mvp
-    - refuse: "[impl-plan-align] tier=mvp does not run align. Use impl-plan-plan-vertical."
+  IF tier == appbuilder-mvp
+    - refuse: "[impl-plan-align] tier=appbuilder-mvp does not run align. Use impl-plan-plan-vertical."
   - Resolve feature_slug → feature_path:
     $ ls _concept/product-spec/features/*/<feature_slug>.md
     Refuse if zero or >1 matches.
   - slice_id := feature_slug (or slice_id_override if set).
-  IF tier ∈ {standard-app, complex-app}
+  IF tier ∈ {appbuilder-standard, appbuilder-complex}
     - require _implementation/slices/<slice_id>/brainstorm.md to exist
     - if missing, refuse with:
       > "[impl-plan-align] tier=<tier> requires
       >  _implementation/slices/<slice_id>/brainstorm.md. Run impl-plan-brainstorm first."
     - copy slice_id, feature_title, feature_path from brainstorm.md frontmatter (verify match).
-  ELSE  # tier == simple-app
+  ELSE  # tier == appbuilder-simple
     - brainstorm.md not required; this skill is the cluster entry.
     - $ mkdir -p _implementation/slices/<slice_id>/
     - read feature_title from feature.md frontmatter (do not ask the user a redundant question).
@@ -287,7 +287,7 @@ STEP 16: Write the handoff
 EMIT  [impl-plan-align] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 
 CHECKLIST
-  - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {simple-app, standard-app, complex-app})
+  - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex})
   - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
   - [ ] tier-dependent prerequisite check passed (brainstorm.md required for standard/complex)
   - [ ] _implementation/slices/<slice_id>/ directory exists

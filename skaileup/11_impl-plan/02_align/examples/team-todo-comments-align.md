@@ -3,7 +3,7 @@ slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
 feature_path: _concept/product-spec/features/team-todo/team-todo-comments.md
 phase: align
-tier: standard-app
+tier: appbuilder-standard
 created_at: 2026-05-08T12:34:56Z
 last_updated: 2026-05-08T13:30:00Z
 ---
@@ -44,7 +44,7 @@ guard already implemented.
 - DEFERRED to a later slice: moderation by admin, threaded replies, emoji reactions.
 
 ### Deadline / supervision
-- Tier supervision: mostly autonomous (per scope.yaml.tier=standard-app).
+- Tier supervision: mostly autonomous (per scope.yaml.tier=appbuilder-standard).
 - HITL checkpoint at plan-vertical approval; no HITL during implementation.
 
 ## Decisions made

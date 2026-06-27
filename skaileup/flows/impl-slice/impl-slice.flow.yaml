@@ -6,7 +6,7 @@ description: >-
   then the full impl-slice loop git-prepare -> supervised -> implement ->
   implement-page -> test -> recap -> refactor -> commit -> git-finish. Supervised
   dispatch (two-stage review) runs inside every slice. Canonical building block
-  consumed by the tier flows (simple-app, standard-app, complex-app, cli-app),
+  consumed by the tier flows (appbuilder-simple, appbuilder-standard, appbuilder-complex, appbuilder-cli),
   which delegate to it via a sub-flow node rather than inlining. Iteration
   semantics: tier orchestrators run this slice once per feature in their
   plan-vertical backlog. Slice flow is standalone-runnable for testability.

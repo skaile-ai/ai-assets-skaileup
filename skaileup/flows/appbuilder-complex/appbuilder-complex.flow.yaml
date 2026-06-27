@@ -1,8 +1,8 @@
-id: complex-app
+id: appbuilder-complex
 version: '2.0.0'
 name: 'Complex App'
 description: >-
-  Multi-product / enterprise. Superset of standard-app plus brand-voice,
+  Multi-product / enterprise. Superset of appbuilder-standard plus brand-voice,
   mockup-walkthrough-framework, non-optional infrastructure,
   project-overview/subsystem-map/integration/review project ops, eval-code +
   audit quality (audit runs every slice — expressed via edge ordering since the
@@ -20,7 +20,7 @@ meta:
   category: full-stack
   tags:
     - tier
-    - complex-app
+    - appbuilder-complex
     - enterprise
     - multi-product
   icon: i-heroicons-building-library

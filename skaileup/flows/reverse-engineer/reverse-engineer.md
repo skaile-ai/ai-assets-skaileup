@@ -52,4 +52,4 @@ skaile run flow:reverse-engineer       # execute the extraction pipeline
 ## See also
 
 - [`concept-only`](../concept-only/) — the inverse: concept *from* an idea
-- [`standard-app`](../standard-app/) — the tier to continue into for a rebuild
+- [`appbuilder-standard`](../appbuilder-standard/) — the tier to continue into for a rebuild

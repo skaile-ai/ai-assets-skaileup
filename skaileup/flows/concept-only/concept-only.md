@@ -47,11 +47,11 @@ skaile add flow:concept-only       # install the flow + its skills + contracts
 skaile run flow:concept-only       # execute the concept pipeline
 ```
 
-When ready to build, hand the concept to a tier flow (e.g. `standard-app`) — the
+When ready to build, hand the concept to a tier flow (e.g. `appbuilder-standard`) — the
 concept artifacts it produced are the inputs those flows read.
 
 ## See also
 
-- [`standard-app`](../standard-app/) — the tier to continue into for implementation
+- [`appbuilder-standard`](../appbuilder-standard/) — the tier to continue into for implementation
 - [`reverse-engineer`](../reverse-engineer/) — the inverse: concept *from* code
 - [Slice loops](../../../intro/slice-loops/) — how concept work scales per-feature

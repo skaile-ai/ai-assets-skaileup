@@ -84,12 +84,12 @@ artifacts:
     kind: durable
     side: concept
     produced_by: skaileup-scope-scope-project
-    description: Tier signal (mvp|simple-app|standard-app|complex-app) — weights downstream skills.
+    description: Tier signal (appbuilder-mvp|appbuilder-simple|appbuilder-standard|appbuilder-complex) — weights downstream skills.
 
   # ── discovery ───────────────────────────────────────────────────────────
   # produced_by lists ALL skills that write the artifact; the FIRST entry is the
   # canonical pipeline producer, the rest are alternates (reverse-engineer from
-  # code, ops mutators, mvp all-in-one skills).
+  # code, ops mutators, appbuilder-mvp all-in-one skills).
   brief:
     path: _concept/discovery/brief.md
     kind: durable
@@ -100,7 +100,7 @@ artifacts:
     path: _concept/discovery/goals.md
     kind: durable
     side: concept
-    # mvp tier: concept-brief writes all three discovery docs; standard+ tier
+    # appbuilder-mvp tier: concept-brief writes all three discovery docs; standard+ tier
     # splits goals/comparable into their own skills.
     produced_by: [concept-goals, concept-brief, ops-reverse-engineer, ops-project-overview]
     description: Success criteria, constraints, deadlines.

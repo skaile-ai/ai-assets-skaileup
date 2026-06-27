@@ -1,4 +1,4 @@
-id: simple-app
+id: appbuilder-simple
 version: '2.0.0'
 name: 'Simple App'
 description: >-
@@ -14,7 +14,7 @@ meta:
   category: full-stack
   tags:
     - tier
-    - simple-app
+    - appbuilder-simple
     - small
   icon: i-heroicons-cube
 requires:

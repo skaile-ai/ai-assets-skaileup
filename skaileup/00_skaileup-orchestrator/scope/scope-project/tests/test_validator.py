@@ -26,7 +26,7 @@ def run_validator(yaml_path):
     )
 
 
-VARIANT_EXAMPLES = ["cli-app", "concept-only", "reverse-engineer"]
+VARIANT_EXAMPLES = ["appbuilder-cli", "concept-only", "reverse-engineer"]
 
 
 def test_all_four_examples_pass():
@@ -67,7 +67,7 @@ def _variant_yaml(shape, tier, flow_to_run):
 
 def test_variant_route_passes(tmp_path):
     p = tmp_path / "ok.yaml"
-    p.write_text(_variant_yaml("cli", "cli-app", "flow:cli-app"))
+    p.write_text(_variant_yaml("cli", "appbuilder-cli", "flow:appbuilder-cli"))
     r = run_validator(p)
     assert r.returncode == 0, f"stderr={r.stderr} stdout={r.stdout}"
 
@@ -75,7 +75,7 @@ def test_variant_route_passes(tmp_path):
 def test_variant_flow_must_match_tier(tmp_path):
     # tier is a variant but flow_to_run points elsewhere → reject
     p = tmp_path / "bad.yaml"
-    p.write_text(_variant_yaml("cli", "cli-app", "flow:mvp"))
+    p.write_text(_variant_yaml("cli", "appbuilder-cli", "flow:appbuilder-mvp"))
     r = run_validator(p)
     assert r.returncode != 0
 
@@ -83,7 +83,7 @@ def test_variant_flow_must_match_tier(tmp_path):
 def test_shape_must_agree_with_tier(tmp_path):
     # shape says cli but tier is a sizing tier → reject
     p = tmp_path / "bad.yaml"
-    p.write_text(_variant_yaml("cli", "mvp", "flow:mvp"))
+    p.write_text(_variant_yaml("cli", "appbuilder-mvp", "flow:appbuilder-mvp"))
     r = run_validator(p)
     assert r.returncode != 0
     combined = (r.stderr + r.stdout).lower()
@@ -92,14 +92,14 @@ def test_shape_must_agree_with_tier(tmp_path):
 
 def test_unknown_shape_rejected(tmp_path):
     p = tmp_path / "bad.yaml"
-    p.write_text(_variant_yaml("desktop", "mvp", "flow:mvp"))
+    p.write_text(_variant_yaml("desktop", "appbuilder-mvp", "flow:appbuilder-mvp"))
     r = run_validator(p)
     assert r.returncode != 0
 
 
 def test_missing_tier_fails(tmp_path):
     p = tmp_path / "bad.yaml"
-    p.write_text('schema_version: "1.0"\nflow_to_run: "flow:mvp"\n')
+    p.write_text('schema_version: "1.0"\nflow_to_run: "flow:appbuilder-mvp"\n')
     r = run_validator(p)
     assert r.returncode != 0
     combined = (r.stderr + r.stdout).lower()
@@ -110,8 +110,8 @@ def test_flow_must_match_tier(tmp_path):
     p = tmp_path / "bad.yaml"
     p.write_text(
         'schema_version: "1.0"\n'
-        'tier: mvp\n'
-        'flow_to_run: "flow:standard-app"\n'
+        'tier: appbuilder-mvp\n'
+        'flow_to_run: "flow:appbuilder-standard"\n'
         'reasoning: "this reasoning is exactly long enough to satisfy the validator length floor."\n'
         'description: "x"\n'
         'signals:\n'
@@ -135,14 +135,14 @@ def test_snapshot_rule_for_each_fixture():
 
     def rule(s):
         if s["features_estimate"] <= 1 and s["persistence"] == "trivial":
-            return "mvp"
+            return "appbuilder-mvp"
         if s["features_estimate"] <= 5 and not s["multi_user"]:
-            return "simple-app"
+            return "appbuilder-simple"
         if s["persistence"] == "external" or len(s["integrations"]) >= 2:
-            return "complex-app"
+            return "appbuilder-complex"
         if s["features_estimate"] <= 20 or s["multi_user"]:
-            return "standard-app"
-        return "complex-app"
+            return "appbuilder-standard"
+        return "appbuilder-complex"
 
     for f in FIXTURES:
         assert rule(f["signals"]) == f["expected_tier"], f
@@ -157,10 +157,10 @@ def test_shape_routing_snapshot():
         if shape == "concept-only":
             return "concept-only"
         if shape == "cli":
-            return "cli-app"
+            return "appbuilder-cli"
         return sizing_tier  # shape == "app"
 
-    assert route("cli", "mvp") == "cli-app"
-    assert route("concept-only", "standard-app") == "concept-only"
-    assert route("reverse-engineer", "complex-app") == "reverse-engineer"
-    assert route("app", "simple-app") == "simple-app"
+    assert route("cli", "appbuilder-mvp") == "appbuilder-cli"
+    assert route("concept-only", "appbuilder-standard") == "concept-only"
+    assert route("reverse-engineer", "appbuilder-complex") == "reverse-engineer"
+    assert route("app", "appbuilder-simple") == "appbuilder-simple"

@@ -2,7 +2,7 @@
 slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
 phase: scope-feature
-tier: standard-app
+tier: appbuilder-standard
 created_at: 2026-05-08T12:34:56Z
 last_updated: 2026-05-08T13:30:00Z
 ---

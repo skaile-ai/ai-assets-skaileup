@@ -12,7 +12,7 @@ Manifest schema:
     {
       "feature_slug": "team-todo-comments",
       "feature_group": "team-todo",
-      "tier": "standard-app",
+      "tier": "appbuilder-standard",
       "files": [<path>, ...]
     }
 
@@ -31,9 +31,9 @@ from pathlib import Path
 import yaml
 
 WALKTHROUGH_EXT_BY_TIER = {
-    "simple-app": "html",
-    "standard-app": "astro",
-    "complex-app": "html",
+    "appbuilder-simple": "html",
+    "appbuilder-standard": "astro",
+    "appbuilder-complex": "html",
 }
 
 FEATURE_REQUIRED_KEYS = {

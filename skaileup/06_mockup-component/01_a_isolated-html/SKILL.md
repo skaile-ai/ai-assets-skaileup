@@ -1,6 +1,6 @@
 ---
 name: mockup-component-isolated-html
-description: "Use when components are specced and an mvp/simple-app team needs a quick visual reference without a Storybook build. Renders one standalone HTML file per component showing all variants × states in a token-driven grid; no JS, no framework, openable via file://."
+description: "Use when components are specced and an appbuilder-mvp/appbuilder-simple team needs a quick visual reference without a Storybook build. Renders one standalone HTML file per component showing all variants × states in a token-driven grid; no JS, no framework, openable via file://."
 metadata:
   version: '1.0.0'
   tags:
@@ -11,7 +11,7 @@ metadata:
     - 'tokens'
     - 'no-build'
     - 'low-fidelity'
-    - 'simple-app'
+    - 'appbuilder-simple'
   stage: alpha
   source: NEW
   parameters:
@@ -49,7 +49,7 @@ Renders one standalone HTML page per component spec — variants × states in a
 labeled grid, all styling driven by inlined CSS custom properties from
 `_concept/discovery/brand/tokens.json`. **No build, no JS, no framework.** Each
 output is a single `.html` file openable directly via `file://`. The skill is
-the **early-design quick reference** for mvp/simple-app teams; once
+the **early-design quick reference** for appbuilder-mvp/appbuilder-simple teams; once
 component-library decisions are made, switch to `mockup-component-storybook`.
 
 **Rendering technology decision (pinned):** stdlib-only Python string
@@ -73,14 +73,14 @@ upstream skill that produces it.
 
 - Components are specced (`_concept/experience/screens/components/*.md` exists).
 - Tokens exist (`_concept/discovery/brand/tokens.json`).
-- Team is on the **mvp** or **simple-app** tier, OR wants a quick
+- Team is on the **appbuilder-mvp** or **appbuilder-simple** tier, OR wants a quick
   pre-Storybook visual reference.
 - User asks for "isolated mockup", "static HTML preview", "component sheet",
   "no-build component view".
 
 ## When NOT to Use
 
-- Standard-app or complex-app tier — use `mockup-component-storybook` for the
+- Standard-app or appbuilder-complex tier — use `mockup-component-storybook` for the
   full 3-layer build with controls, knobs, journeys.
 - No component specs yet — run `experience-components` first.
 - No tokens.json — run `design-brand-visual` (or equivalent) first.
@@ -98,7 +98,7 @@ upstream skill that produces it.
 
 | Aspect                | `mockup-component-isolated-html` (this) | `mockup-component-storybook` (sibling)     |
 | --------------------- | --------------------------------------- | ------------------------------------------ |
-| Tier                  | mvp / simple-app                        | standard-app / complex-app                 |
+| Tier                  | appbuilder-mvp / appbuilder-simple                        | appbuilder-standard / appbuilder-complex                 |
 | Output                | `<component>.html` per component        | full Storybook 8 site under `_concept/prototype/storybook/` |
 | Build                 | none                                    | runs `storybook dev` / `storybook build`   |
 | Interactivity         | none (static grid)                      | controls panel, knobs, args                |
@@ -228,6 +228,6 @@ CHECKLIST
 
 ## Integration
 
-- **Called by:** `concept-orchestrator` for mvp / simple-app bundles, or standalone
+- **Called by:** `concept-orchestrator` for appbuilder-mvp / appbuilder-simple bundles, or standalone
 - **Requires:** `experience-components` output, `design-brand-visual` tokens
-- **Sister skill:** `mockup-component-storybook` (for standard-app+ tiers)
+- **Sister skill:** `mockup-component-storybook` (for appbuilder-standard+ tiers)

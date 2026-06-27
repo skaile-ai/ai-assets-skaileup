@@ -53,17 +53,17 @@ _concept/experience/screens/team-todo/comments-list.md
 
 ## Example C — walkthrough stub (allowed)
 
-`<feature_slug>` = `team-todo-comments`, tier = `standard-app`
+`<feature_slug>` = `team-todo-comments`, tier = `appbuilder-standard`
 
 Allowed:
 ```
-_concept/mockup-walkthrough/standard-app/team-todo-comments.astro
+_concept/mockup-walkthrough/appbuilder-standard/team-todo-comments.astro
                                           ^^^^^^^^^^^^^^^^^^ matches
 ```
 
 Rejected:
 ```
-_concept/mockup-walkthrough/standard-app/index.astro
+_concept/mockup-walkthrough/appbuilder-standard/index.astro
                                           ^^^^^ does not match
 ```
 

@@ -86,7 +86,7 @@ def test_manifest_missing_walkthrough_fails(tmp_path: Path):
     manifest = {
         "feature_slug": "team-todo-comments",
         "feature_group": "team-todo",
-        "tier": "standard-app",
+        "tier": "appbuilder-standard",
         "files": [
             "expected_output/product-spec/features/team-todo/team-todo-comments.md",
             "expected_output/experience/screens/team-todo-comments/list.md",
@@ -109,7 +109,7 @@ def test_feature_md_missing_acceptance_section_fails(tmp_path: Path):
 
 
 def test_manifest_wrong_tier_walkthrough_ext_fails(tmp_path: Path):
-    """Walkthrough has .astro extension but manifest.tier=simple-app expects .html."""
+    """Walkthrough has .astro extension but manifest.tier=appbuilder-simple expects .html."""
     base = tmp_path / "ex"
     base.mkdir()
     # Copy expected files into base
@@ -117,25 +117,25 @@ def test_manifest_wrong_tier_walkthrough_ext_fails(tmp_path: Path):
         "expected_output/product-spec/features/team-todo/team-todo-comments.md",
         "expected_output/experience/screens/team-todo-comments/list.md",
         "expected_output/experience/screens/team-todo-comments/detail.md",
-        "expected_output/mockup-walkthrough/standard-app/team-todo-comments.astro",
+        "expected_output/mockup-walkthrough/appbuilder-standard/team-todo-comments.astro",
     ]:
         dst = base / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(EXPECTED_OUTPUT / Path(rel).relative_to("expected_output"), dst)
-    # Move walkthrough into a `simple-app/` dir but keep `.astro` ext to trigger mismatch
-    src_wt = base / "expected_output/mockup-walkthrough/standard-app/team-todo-comments.astro"
-    dst_wt = base / "expected_output/mockup-walkthrough/simple-app/team-todo-comments.astro"
+    # Move walkthrough into a `appbuilder-simple/` dir but keep `.astro` ext to trigger mismatch
+    src_wt = base / "expected_output/mockup-walkthrough/appbuilder-standard/team-todo-comments.astro"
+    dst_wt = base / "expected_output/mockup-walkthrough/appbuilder-simple/team-todo-comments.astro"
     dst_wt.parent.mkdir(parents=True, exist_ok=True)
     shutil.move(src_wt, dst_wt)
     manifest = {
         "feature_slug": "team-todo-comments",
         "feature_group": "team-todo",
-        "tier": "simple-app",
+        "tier": "appbuilder-simple",
         "files": [
             "expected_output/product-spec/features/team-todo/team-todo-comments.md",
             "expected_output/experience/screens/team-todo-comments/list.md",
             "expected_output/experience/screens/team-todo-comments/detail.md",
-            "expected_output/mockup-walkthrough/simple-app/team-todo-comments.astro",
+            "expected_output/mockup-walkthrough/appbuilder-simple/team-todo-comments.astro",
         ],
     }
     mf = base / "manifest.json"

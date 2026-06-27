@@ -1,9 +1,9 @@
 schema_version: "1.0"
-tier: standard-app
-flow_to_run: "flow:standard-app"
+tier: appbuilder-standard
+flow_to_run: "flow:appbuilder-standard"
 reasoning: |
   features_estimate is 12 (<= 20) and multi_user is true, so branch 3 of the
-  decision rule fires: standard-app. Multiple roles share state, persistence
+  decision rule fires: appbuilder-standard. Multiple roles share state, persistence
   is structured, and one integration (sendgrid) is in scope. The concept-slice
   loop and per-slice plan checkpoint are warranted.
 description: "A team todo app with assignees, due-date reminders, comments, and per-project views."

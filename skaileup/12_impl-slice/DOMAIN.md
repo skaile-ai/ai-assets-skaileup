@@ -23,13 +23,13 @@ Executes one feature slice end-to-end: outside-in TDD implementation → usabili
 ## When to Use
 
 - `impl-plan/plan-vertical` has produced a `plan.md` and the agent is ready to implement a specific slice.
-- Project is `standard-app` or `complex-app` tier (multi-slice build).
+- Project is `appbuilder-standard` or `appbuilder-complex` tier (multi-slice build).
 - A previous slice run was interrupted and `_implementation/slices/<id>/progress.json` exists (resume path).
 - All slices are committed and the branch needs to be closed out (`impl-slice-git-finish`).
 
 ## When NOT to Use
 
-- `mvp` or `simple-app` tier — use `impl-build/` one-shot skills instead.
+- `appbuilder-mvp` or `appbuilder-simple` tier — use `impl-build/` one-shot skills instead.
 - Project-wide regression testing — use `impl-quality/test-{unit,integration,e2e}` instead of `impl-slice-test`.
 - No `plan.md` exists yet — run `impl-plan/plan-vertical` first.
 

@@ -37,7 +37,7 @@ REQUIRED_SECTIONS = [
     "## Open questions blocking scope-feature",
 ]
 
-ALLOWED_TIERS = {"simple-app", "standard-app", "complex-app"}
+ALLOWED_TIERS = {"appbuilder-simple", "appbuilder-standard", "appbuilder-complex"}
 SLICE_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,47}$")
 
 # Event-driven EARS only — full EARS is deferred (Open Question § 7 in plan)

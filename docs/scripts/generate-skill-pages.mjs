@@ -192,7 +192,7 @@ ${skillsList || "_No skills found._"}
 }
 
 function renderFlowPage({ fm, body, type }) {
-  // type is the flow directory name, e.g. "standard-app". Each carries a
+  // type is the flow directory name, e.g. "appbuilder-standard". Each carries a
   // self-contained <type>.flow.yaml (graph + top-level requires: manifest)
   // alongside the source markdown.
   const title = fm.title || type;

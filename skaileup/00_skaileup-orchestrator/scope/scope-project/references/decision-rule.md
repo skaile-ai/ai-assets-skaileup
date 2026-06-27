@@ -25,7 +25,7 @@ and, for any non-`app` shape, short-circuits the sizing rule entirely:
 ```
 if existing codebase to extract a concept from:   → reverse-engineer   (shape: reverse-engineer)
 elif concept/spec package only, no implementation: → concept-only       (shape: concept-only)
-elif headless command-line tool, no UI:            → cli-app            (shape: cli)
+elif headless command-line tool, no UI:            → appbuilder-cli            (shape: cli)
 else:                                              → run Stage 1 sizing (shape: app)
 ```
 
@@ -33,19 +33,19 @@ else:                                              → run Stage 1 sizing (shape
 | ------------------ | -------------------- | ----------------------------------------------------------------- |
 | `reverse-engineer` | `reverse-engineer`   | Input is an existing repo; extract a concept, then optionally enrich |
 | `concept-only`     | `concept-only`       | Deliverable is a concept/handoff package; no build pass            |
-| `cli`              | `cli-app`            | Headless CLI tool — no UI, brand, screens, or mockups             |
+| `cli`              | `appbuilder-cli`            | Headless CLI tool — no UI, brand, screens, or mockups             |
 | `app`              | one of the 4 tiers   | A normal UI application — fall through to Stage 1 sizing           |
 
 The shape is recorded in the optional top-level `shape` field of `scope.yaml`.
 When absent it defaults to `app` (backward-compatible with pre-variant scopes).
-`shape == app` requires `tier ∈ {mvp, simple-app, standard-app, complex-app}`;
-each variant shape requires its 1:1 routed flow (`cli → cli-app`,
+`shape == app` requires `tier ∈ {appbuilder-mvp, appbuilder-simple, appbuilder-standard, appbuilder-complex}`;
+each variant shape requires its 1:1 routed flow (`cli → appbuilder-cli`,
 `concept-only → concept-only`, `reverse-engineer → reverse-engineer`). The
 validator enforces this agreement.
 
-> Variants are **orthogonal to size** — `cli-app`, `concept-only`, and
+> Variants are **orthogonal to size** — `appbuilder-cli`, `concept-only`, and
 > `reverse-engineer` are single end-to-end flows, not sized tiers. A CLI tool of
-> any size routes to `cli-app`; the sizing rule below applies only to `app`.
+> any size routes to `appbuilder-cli`; the sizing rule below applies only to `app`.
 
 ---
 
@@ -58,30 +58,30 @@ then mirror the change here, then bump `metadata.version` in the skill.
 ```
               concept side             implementation side       supervision
               ─────────────            ─────────────────────     ──────────
-mvp           linear, minimal          single impl-slice         autonomous
+appbuilder-mvp           linear, minimal          single impl-slice         autonomous
               (no design slicing)      (skip recap, refactor)
 
-simple-app    linear, full             N × impl-slice            autonomous
+appbuilder-simple    linear, full             N × impl-slice            autonomous
               (one pass through all    (full slice loop)
               features upfront)
 
-standard-app  linear high-level +      N × impl-slice            mostly autonomous,
+appbuilder-standard  linear high-level +      N × impl-slice            mostly autonomous,
               N × concept-slice        (full slice loop +        plan checkpoint
               (per-feature design)      recap mandatory)         per slice
 
-complex-app   linear high-level +      N × impl-slice            HITL — supervised
+appbuilder-complex   linear high-level +      N × impl-slice            HITL — supervised
               N × concept-slice        (full slice loop +        plan + brainstorm
               + project-overview       audit between slices)     + align per slice
 ```
 
-**Decision rule** the `scope-project` skill follows (order matters — enterprise check sits above the multi-user/feature-count branch so a multi-user enterprise app does not short-circuit to `standard-app`):
+**Decision rule** the `scope-project` skill follows (order matters — enterprise check sits above the multi-user/feature-count branch so a multi-user enterprise app does not short-circuit to `appbuilder-standard`):
 
 ```
-if features ≤ 1 and persistence trivial:        → mvp
-elif features ≤ 5 and single-user:              → simple-app
-elif multi-product or enterprise integration:   → complex-app
-elif features ≤ 20 or multi-user:               → standard-app
-else:                                           → complex-app   # explicit fall-through (large but unclassified)
+if features ≤ 1 and persistence trivial:        → appbuilder-mvp
+elif features ≤ 5 and single-user:              → appbuilder-simple
+elif multi-product or enterprise integration:   → appbuilder-complex
+elif features ≤ 20 or multi-user:               → appbuilder-standard
+else:                                           → appbuilder-complex   # explicit fall-through (large but unclassified)
 ```
 
 User can override at any time by re-running `scope-project --tier=<name>`.
@@ -104,11 +104,11 @@ the skill body both implement it.
 | `multi-product or enterprise integration` | `signals.persistence == "external"` OR `len(signals.integrations) >= 2` |
 
 Stage 0 maps a non-`app` shape directly to its routed `tier`:
-`cli → cli-app`, `concept-only → concept-only`, `reverse-engineer → reverse-engineer`.
+`cli → appbuilder-cli`, `concept-only → concept-only`, `reverse-engineer → reverse-engineer`.
 Stage 1 (sizing) runs only when `shape == app`.
 
 `flow_to_run` is derived deterministically from `tier` as `flow:<tier>`
-(e.g. `flow:simple-app`, `flow:cli-app`). Bare flow ids (the `id:` field inside each
+(e.g. `flow:appbuilder-simple`, `flow:appbuilder-cli`). Bare flow ids (the `id:` field inside each
 `*.flow.yaml`, per `contracts/asset_frontmatter.md` § Flow) drop the
 `flow:` prefix; the prefix is the **runtime reference** form used by
 `scope.yaml` consumers, not the flow-file's own id.
@@ -117,28 +117,28 @@ Stage 1 (sizing) runs only when `shape == app`.
 
 ## 3. Branches — One Sentence + One Example Each
 
-### Branch 1 — `mvp`
+### Branch 1 — `appbuilder-mvp`
 Fires when `features_estimate <= 1 AND persistence == "trivial"`. This is
 the smallest viable shape: one feature, local state, no DB, no
 collaboration. Example: a single-user budget tracker that stores entries
 in one local JSON file.
 
-### Branch 2 — `simple-app`
+### Branch 2 — `appbuilder-simple`
 Fires when the previous didn't and `features_estimate <= 5 AND multi_user == false`.
 A solo product with up to five features and a real (but single)
 data shape. Example: a personal recipe collector with tagging, search,
 and a print-friendly view.
 
-### Branch 3 — `complex-app` (enterprise check, runs BEFORE the standard-app catch-all)
+### Branch 3 — `appbuilder-complex` (enterprise check, runs BEFORE the appbuilder-standard catch-all)
 Fires when the previous didn't and `persistence == "external" OR len(integrations) >= 2`.
 Multi-product, enterprise integrations, queue/bus persistence. This branch
 sits above the multi-user/feature-count branch on purpose: a multi-user
-enterprise app would otherwise short-circuit to `standard-app` via Branch 4's
-`OR multi_user` clause and never reach the complex-app check. Example:
+enterprise app would otherwise short-circuit to `appbuilder-standard` via Branch 4's
+`OR multi_user` clause and never reach the appbuilder-complex check. Example:
 a multi-tenant B2B portal integrating Stripe billing, Salesforce CRM sync,
 and a queue-driven order pipeline.
 
-### Branch 4 — `standard-app`
+### Branch 4 — `appbuilder-standard`
 Fires when none of the above and `features_estimate <= 20 OR multi_user == true`.
 This catches both larger single-user apps and any multi-user app that did NOT
 already trip the enterprise check. Example: a team todo app with assignees,
@@ -157,15 +157,15 @@ integrations = []`:
 - Branch 3 fails (persistence != "external" AND len(integrations) < 2).
 - Branch 4 fails (features_estimate > 20 AND multi_user == false).
 
-The skill **falls through to `complex-app`** in this case and explicitly
+The skill **falls through to `appbuilder-complex`** in this case and explicitly
 documents the fall-through in `reasoning`. Rationale: a 30-feature app
 that escapes the first three branches is by feature count alone large
-enough to warrant `complex-app`'s HITL supervision and per-slice audit.
+enough to warrant `appbuilder-complex`'s HITL supervision and per-slice audit.
 
 If you ever encounter a fall-through in practice, the `reasoning` block
 of the produced `scope.yaml` must include a sentence such as:
 "None of the four rule branches matched (30 features, single-user,
-structured persistence, no integrations); fell through to complex-app."
+structured persistence, no integrations); fell through to appbuilder-complex."
 
 ---
 
@@ -175,25 +175,25 @@ Each example below is also stored as a fixture in
 `skaileup/scope/scope-project/examples/fixtures.json` and as a snapshot
 output in `skaileup/scope/scope-project/examples/<tier>.scope.yaml`.
 
-### Example A — mvp
+### Example A — appbuilder-mvp
 - description: "A single-user personal budget tracker that stores entries in one local JSON file."
 - signals: `features_estimate=1`, `multi_user=false`, `persistence="trivial"`, `integrations=[]`
-- Branch 1 fires (1 <= 1 AND persistence trivial) → `mvp`.
+- Branch 1 fires (1 <= 1 AND persistence trivial) → `appbuilder-mvp`.
 
-### Example B — simple-app
+### Example B — appbuilder-simple
 - description: "A solo recipe collector with tagging, search, and a print-friendly view."
 - signals: `features_estimate=4`, `multi_user=false`, `persistence="structured"`, `integrations=[]`
-- Branch 1 fails (persistence not trivial). Branch 2 fires (4 <= 5 AND single-user) → `simple-app`.
+- Branch 1 fails (persistence not trivial). Branch 2 fires (4 <= 5 AND single-user) → `appbuilder-simple`.
 
-### Example C — standard-app
+### Example C — appbuilder-standard
 - description: "A team todo app with assignees, due-date reminders, comments, and per-project views."
 - signals: `features_estimate=12`, `multi_user=true`, `persistence="structured"`, `integrations=["sendgrid"]`
-- Branch 1 fails. Branch 2 fails (multi_user). Branch 3 fails (persistence != external AND only 1 integration). Branch 4 fires (12 <= 20 OR multi_user) → `standard-app`.
+- Branch 1 fails. Branch 2 fails (multi_user). Branch 3 fails (persistence != external AND only 1 integration). Branch 4 fires (12 <= 20 OR multi_user) → `appbuilder-standard`.
 
-### Example D — complex-app
+### Example D — appbuilder-complex
 - description: "A multi-tenant B2B portal with assignee/role hierarchies, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline."
 - signals: `features_estimate=35`, `multi_user=true`, `persistence="external"`, `integrations=["stripe", "salesforce", "rabbitmq"]`
-- Branch 1 fails (35 > 1). Branch 2 fails (35 > 5). Branch 3 fires (persistence == "external" — and 3 integrations also satisfies `len >= 2`) → `complex-app`. Note: the enterprise check sits above the multi-user/feature-count branch precisely so this case doesn't short-circuit to standard-app.
+- Branch 1 fails (35 > 1). Branch 2 fails (35 > 5). Branch 3 fires (persistence == "external" — and 3 integrations also satisfies `len >= 2`) → `appbuilder-complex`. Note: the enterprise check sits above the multi-user/feature-count branch precisely so this case doesn't short-circuit to appbuilder-standard.
 
 (Implementation note: the fixtures' `expected_tier` is what the rule
 returns, NOT what a human would pick. The four canonical examples are
@@ -216,8 +216,8 @@ override:
 ```
 
 This makes re-scoping decisions auditable: a future human can see that
-the rule would have picked `standard-app` but the user forced
-`complex-app`. The validator enforces `override.requested_tier == tier`
+the rule would have picked `appbuilder-standard` but the user forced
+`appbuilder-complex`. The validator enforces `override.requested_tier == tier`
 when `override.applied == true`.
 
 ---
@@ -232,8 +232,8 @@ updates to every consumer.
 
 Consumers may rely on:
 - `tier` being one of the seven route values — the four sizing tiers
-  (`mvp`, `simple-app`, `standard-app`, `complex-app`) or the three variant
-  flows (`cli-app`, `concept-only`, `reverse-engineer`).
+  (`appbuilder-mvp`, `appbuilder-simple`, `appbuilder-standard`, `appbuilder-complex`) or the three variant
+  flows (`appbuilder-cli`, `concept-only`, `reverse-engineer`).
 - `flow_to_run` being `flow:<tier>` exactly.
 - `shape` (optional) being one of `app` / `cli` / `concept-only` /
   `reverse-engineer`; absent means `app`. When present it agrees with `tier`.

@@ -26,8 +26,8 @@ Gate: None (entry point).
 Steps: user journeys, features (derived from journeys), screens, Storybook.
 Gate: Phase 1 approved.
 
-**Tier-aware:** I read `_concept/_meta/scope.yaml`. For `mvp` / `simple-app` I design all
-screens in one linear pass. For `standard-app` / `complex-app` I stop after the high-level
+**Tier-aware:** I read `_concept/_meta/scope.yaml`. For `appbuilder-mvp` / `appbuilder-simple` I design all
+screens in one linear pass. For `appbuilder-standard` / `appbuilder-complex` I stop after the high-level
 features and **guide the user through the per-feature concept-slice loop**, one feature at a
 time: `concept-slice-brainstorm` (complex only) → `concept-slice-align` →
 `concept-slice-scope-feature` → `concept-slice-design-feature`, with `/clear` between phases.
@@ -67,7 +67,7 @@ Activated when user says "auto-review", "autonomous", or "run without stopping":
 
 ## Collaboration Style
 
-I dispatch each pipeline step as a sub-skill (subagent when configured). I collect user inputs directly before each relevant phase rather than forwarding the full conversation. For `standard-app` / `complex-app` I dispatch the concept-slice cluster once per feature and track per-feature progress by whether `_concept/slices/<feature_slug>/index.md` exists (frozen = done). After the Blueprint phase I append an implementation plan to `PLANS.md` and hand off to the Implementation orchestrator — where the same per-feature rhythm continues as the impl-slice loop under `_implementation/slices/<feature_slug>/`.
+I dispatch each pipeline step as a sub-skill (subagent when configured). I collect user inputs directly before each relevant phase rather than forwarding the full conversation. For `appbuilder-standard` / `appbuilder-complex` I dispatch the concept-slice cluster once per feature and track per-feature progress by whether `_concept/slices/<feature_slug>/index.md` exists (frozen = done). After the Blueprint phase I append an implementation plan to `PLANS.md` and hand off to the Implementation orchestrator — where the same per-feature rhythm continues as the impl-slice loop under `_implementation/slices/<feature_slug>/`.
 
 ## Name
 

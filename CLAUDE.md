@@ -158,7 +158,7 @@ The collection is shaped by one observation: **the work of figuring out a produc
    ╔═══════════════════════════╗        ╔══════════════════════════╗
    ║          CONCEPT          ║        ║      IMPLEMENTATION      ║
    ╚═══════════════════════════╝        ╚══════════════════════════╝
-   linear (mvp/simple) OR                   one-time setup +
+   linear (appbuilder-mvp/simple) OR                   one-time setup +
    high-level + slice loop ↻                slice loop ↻
                                                           │
                                                           ▼
@@ -183,7 +183,7 @@ skills + contracts). Install *all* assets, or just one flow's dependencies:
 
 ```
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add flow:standard-app          # OR provision exactly standard-app's deps
+$ skaile add flow:appbuilder-standard          # OR provision exactly appbuilder-standard's deps
 ```
 
 The `requires:` refs use the npm-style scoped ref grammar
@@ -194,7 +194,7 @@ node** (e.g. the tiers delegate their per-feature loops to the `concept-slice` /
 `impl-slice` flows instead of inlining them):
 
 ```yaml
-# inside standard-app.flow.yaml, above globals:
+# inside appbuilder-standard.flow.yaml, above globals:
 requires:
   - contract:@skaile-ai/shared-contracts        # shared reference layer
   - contract:@skaile-ai/implementation-contract # domain contract its skills cite
@@ -222,7 +222,7 @@ interchangeable ways:
 
 1. **skaile workspace flow engine** (the flow connector) executes a `.flow.yaml` directly:
    ```
-   $ skaile run flow:standard-app       # engine drives the flow node-by-node
+   $ skaile run flow:appbuilder-standard       # engine drives the flow node-by-node
    ```
 2. **The orchestrator** (`skaileup` / `skaileup-build`) **understands the flow files** and
    guides/executes the same path conversationally — used when no flow engine is present, or
@@ -235,13 +235,13 @@ Flows live under `skaileup/flows/<app-type>/`:
 
 ```
 skaileup/flows/
-├── mvp/
-│   ├── mvp.flow.yaml      ← graph + requires: manifest
-│   └── mvp.md             ← human doc
-├── simple-app/
-│   ├── simple-app.flow.yaml
-│   └── simple-app.md
-... (standard-app, complex-app, concept-slice, impl-slice)
+├── appbuilder-mvp/
+│   ├── appbuilder-mvp.flow.yaml      ← graph + requires: manifest
+│   └── appbuilder-mvp.md             ← human doc
+├── appbuilder-simple/
+│   ├── appbuilder-simple.flow.yaml
+│   └── appbuilder-simple.md
+... (appbuilder-standard, appbuilder-complex, concept-slice, impl-slice)
 └── _meta/
     ├── verify_flows.py
     ├── test_verify.py

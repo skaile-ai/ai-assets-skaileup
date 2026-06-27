@@ -1,10 +1,10 @@
 ---
-title: "mvp"
+title: "appbuilder-mvp"
 description: "Smallest tier — a single-feature, trivial-persistence app built in one linear pass with no slice loops."
 order: 1
 ---
 
-The **mvp** flow is the smallest tier. One feature, trivial persistence, one
+The **appbuilder-mvp** flow is the smallest tier. One feature, trivial persistence, one
 implementation pass — no concept-slice loop, no impl-slice loop, no recap or
 refactor. The whole concept→build pipeline runs linearly.
 
@@ -13,7 +13,7 @@ refactor. The whole concept→build pipeline runs linearly.
 Picked by `scope-project` when the idea is a single capability with throwaway
 or trivial persistence — a demo, a spike, a one-screen tool.
 
-| Signal | mvp |
+| Signal | appbuilder-mvp |
 |---|---|
 | Feature count | 1 |
 | Users | single |
@@ -21,7 +21,7 @@ or trivial persistence — a demo, a spike, a one-screen tool.
 | Slice loops | none — one linear pass |
 
 If the app has more than one real feature, `scope-project` picks
-[`simple-app`](../simple-app/) instead.
+[`appbuilder-simple`](../appbuilder-simple/) instead.
 
 ## Pipeline
 
@@ -36,23 +36,23 @@ scope-project → concept-brief → product-spec-features
 ```
 
 One impl pass, then commit. No `test`/`recap`/`refactor` phase — those start at
-`simple-app`.
+`appbuilder-simple`.
 
 ## Install manifest
 
-The flow is self-contained: `mvp.flow.yaml` carries a top-level `requires:`
+The flow is self-contained: `appbuilder-mvp.flow.yaml` carries a top-level `requires:`
 block listing exactly what it installs — `shared-contracts` plus the 11 skills
 its nodes run. No separate bundle, no inheritance, no extras.
 
 ## Run it
 
 ```bash
-skaile add flow:mvp       # install the flow + its 11 skills + contract
-skaile run flow:mvp       # execute the linear pipeline
+skaile add flow:appbuilder-mvp       # install the flow + its 11 skills + contract
+skaile run flow:appbuilder-mvp       # execute the linear pipeline
 ```
 
 ## See also
 
 - [Tiers](../../../intro/tiers/) — how `scope-project` chooses a tier
 - [Flows](../../../intro/flows-and-bundles/) — how a flow declares its dependencies
-- [`simple-app`](../simple-app/) — the next tier up
+- [`appbuilder-simple`](../appbuilder-simple/) — the next tier up

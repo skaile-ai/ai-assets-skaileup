@@ -66,8 +66,8 @@ Why it fails:
 - Row 1 produces a schema with no consumer. The schema reflects
   speculation, not verified UI need.
 - Row 2 is a TODO, not a row.
-- "MVP means just data" confuses TIER (mvp tier of skaileup) with
-  LAYER (data layer). The mvp TIER still ships vertical rows.
+- "MVP means just data" confuses TIER (appbuilder-mvp tier of skaileup) with
+  LAYER (data layer). The appbuilder-mvp TIER still ships vertical rows.
 
 ## Worked example — a small, correctly vertical decomposition
 

@@ -1,6 +1,6 @@
 ---
 name: concept-comparable
-description: "Use on standard-app / complex-app concepts after brief and goals exist, when reference apps deserve their own focused pass beyond the light version concept-brief writes. Studies 3-6 comparable products, captures what to borrow and what to avoid, and locates the positioning gap, then writes (or deepens) _concept/discovery/comparable.md."
+description: "Use on appbuilder-standard / appbuilder-complex concepts after brief and goals exist, when reference apps deserve their own focused pass beyond the light version concept-brief writes. Studies 3-6 comparable products, captures what to borrow and what to avoid, and locates the positioning gap, then writes (or deepens) _concept/discovery/comparable.md."
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -51,7 +51,7 @@ metadata:
 ## Overview
 
 The **comparable** skill is the focused reference-apps pass for larger concepts.
-`concept-brief` lists comparables lightly; on standard-app / complex-app this
+`concept-brief` lists comparables lightly; on appbuilder-standard / appbuilder-complex this
 skill turns them into actionable lessons — what to borrow, what to avoid — and
 names the positioning gap this product fills. It writes only
 `_concept/discovery/comparable.md`. It is the *discovery-level* summary, distinct
@@ -60,13 +60,13 @@ produces; if that research exists, this skill distills it rather than redoing it
 
 ## When to Use
 
-- Brief (and ideally goals) approved, tier is standard-app or complex-app
+- Brief (and ideally goals) approved, tier is appbuilder-standard or appbuilder-complex
 - The user wants to learn from existing apps before designing features
 - The orchestrator dispatches this after `concept-goals` in the high-level pass
 
 ## When NOT to Use
 
-- mvp / simple-app — the light `comparable.md` from `concept-brief` is enough
+- appbuilder-mvp / appbuilder-simple — the light `comparable.md` from `concept-brief` is enough
 - No `_concept/discovery/brief.md` yet — run `concept-brief` first
 - The user wants exhaustive market research — run `concept-grounding-research` (writes `_grounding/research/competitors.md`)
 

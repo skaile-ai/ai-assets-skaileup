@@ -23,8 +23,8 @@ Renders UI components in isolation — either as a live Storybook project (`_con
 ## When to Use
 
 - Screens are approved (`_concept/experience/`) and the team needs a visual reference before writing implementation code.
-- Standard-app or complex-app tier: use `mockup-component-storybook` for a live, interactive component library.
-- MVP or simple-app tier: use `mockup-component-isolated-html` for a quick, zero-build visual reference.
+- Standard-app or appbuilder-complex tier: use `mockup-component-storybook` for a live, interactive component library.
+- MVP or appbuilder-simple tier: use `mockup-component-isolated-html` for a quick, zero-build visual reference.
 - PostXL projects: run `mockup-component-storybook-types` after `impl-architecture/datamodel` is finalized.
 
 ## When NOT to Use

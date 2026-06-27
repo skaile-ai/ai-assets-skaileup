@@ -22,10 +22,10 @@ ones by construction, but each lists its own complete manifest.)
 
 | Flow | Scope | Shape |
 |---|---|---|
-| [`mvp`](./mvp/) | 1 feature, trivial persistence | one linear pass |
-| [`simple-app`](./simple-app/) | single-user, ≤5 features | linear concept + impl-slice loop |
-| [`standard-app`](./standard-app/) | multi-user, ≤20 features | high-level concept + concept-slice & impl-slice loops |
-| [`complex-app`](./complex-app/) | multi-product / enterprise | standard-app superset + project-ops + audit |
+| [`appbuilder-mvp`](./appbuilder-mvp/) | 1 feature, trivial persistence | one linear pass |
+| [`appbuilder-simple`](./appbuilder-simple/) | single-user, ≤5 features | linear concept + impl-slice loop |
+| [`appbuilder-standard`](./appbuilder-standard/) | multi-user, ≤20 features | high-level concept + concept-slice & impl-slice loops |
+| [`appbuilder-complex`](./appbuilder-complex/) | multi-product / enterprise | appbuilder-standard superset + project-ops + audit |
 
 ## Slice-loop building blocks
 
@@ -44,9 +44,20 @@ the four UI-oriented tiers. Each is self-contained with its own `requires:`.
 
 | Flow | Shape |
 |---|---|
-| [`cli-app`](./cli-app/) | CLI tier — no UI/brand/screens/mockups; end-to-end concept + build + impl-slice loop + unit/integration tests |
+| [`appbuilder-cli`](./appbuilder-cli/) | CLI tier — no UI/brand/screens/mockups; end-to-end concept + build + impl-slice loop + unit/integration tests |
 | [`concept-only`](./concept-only/) | full concept package, no implementation — planning / team handoff |
 | [`reverse-engineer`](./reverse-engineer/) | extract a concept from an existing codebase, then optionally enrich |
+
+## Implementation-first flows
+
+Implementation-led shapes that minimise or skip the upfront concept pass. Each
+is self-contained with its own `requires:`.
+
+| Flow | Shape |
+|---|---|
+| [`skaileup-impl`](./skaileup-impl/) | Handoff: gate on an existing concept package → build + impl-slice loop + quality. Carries zero concept skills. |
+| [`skaileup-impl-standalone`](./skaileup-impl-standalone/) | Self-sufficient: generate architecture subset → build + impl-slice loop (spec per slice) + quality |
+| [`skaileup-implementation`](./skaileup-implementation/) | Start-in-the-middle: thin foundation → per-feature loop interleaving concept-slice (discover concept, ask open questions) → impl-slice. Full concept grown just-in-time. |
 
 ## See also
 

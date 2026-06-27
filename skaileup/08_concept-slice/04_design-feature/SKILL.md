@@ -72,7 +72,7 @@ metadata:
       - path: "_concept/experience/screens/{feature_slug}/{screen_slug}.md"
         description: "One screen file per entry in scope-feature.md `## Required screens`."
       - path: "_concept/mockup-walkthrough/{tier}/{feature_slug}.{ext}"
-        description: "Walkthrough source stub (ext per tier: simple-app=.html, standard-app=.astro, complex-app=.html with framework-pending flag)."
+        description: "Walkthrough source stub (ext per tier: appbuilder-simple=.html, appbuilder-standard=.astro, appbuilder-complex=.html with framework-pending flag)."
       - path: "_concept/slices/{slice_id}/index.md"
         description: "Frozen slice dossier — links to the feature/screens/walkthrough artifacts; keeps the slice folder as documentation."
 ---
@@ -94,9 +94,9 @@ artifacts and the only one that freezes the slice dossier.
    each path is `<feature_slug>` (this is the path-segment rule).
 3. `_concept/mockup-walkthrough/<tier>/<feature_slug>.<ext>` — one walkthrough
    source stub. Extension depends on tier:
-   - `simple-app` → `.html`
-   - `standard-app` → `.astro`
-   - `complex-app` → `.html` (framework variant pending; flagged via EMIT)
+   - `appbuilder-simple` → `.html`
+   - `appbuilder-standard` → `.astro`
+   - `appbuilder-complex` → `.html` (framework variant pending; flagged via EMIT)
 
 **One freeze:** after every write succeeds AND the user has approved, this skill
 writes `_concept/slices/<slice_id>/index.md` and **keeps** the slice folder. The
@@ -142,7 +142,7 @@ REQUIRES
   hard: _concept/_meta/scope.yaml
   hard: _concept/slices/{slice_id}/scope-feature.md
   hard: _concept/slices/{slice_id}/align.md
-  state: scope.yaml `tier` ∈ {simple-app, standard-app, complex-app}
+  state: scope.yaml `tier` ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
@@ -150,11 +150,11 @@ MUST  read scope.yaml AND scope-feature.md AND align.md before any write (iron_l
 MUST  apply the path-segment rule (see references/feature-portion-rule.md) to every proposed write
 MUST  show a unified diff and require explicit yes/no/edit on every existing-file overwrite (iron_laws § 8)
 MUST  copy acceptance criteria from align.md verbatim into feature.md (no paraphrasing)
-MUST  pick mockup-walkthrough extension from tier per the table in this file (simple-app=html, standard-app=astro, complex-app=html+flag)
+MUST  pick mockup-walkthrough extension from tier per the table in this file (appbuilder-simple=html, appbuilder-standard=astro, appbuilder-complex=html+flag)
 MUST  write _concept/slices/<slice_id>/index.md ONLY after every permanent write succeeds AND user has approved
 MUST  keep the slice folder and its phase handoffs (brainstorm/align/scope-feature) — they are permanent documentation
 MUST  send each overwrite-approval question as its own STANDALONE message (iron_laws § 9)
-MUST  refuse to run if scope.yaml `tier` == mvp
+MUST  refuse to run if scope.yaml `tier` == appbuilder-mvp
 
 NEVER  modify any path whose segment does not match <feature_slug>
 NEVER  delete _concept/slices/<slice_id>/ or any of its phase handoffs (freeze, never delete)
@@ -173,7 +173,7 @@ INPUT
 
 STEP 0: Read all three handoffs + scope.yaml
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
-    Refuse if tier == mvp.
+    Refuse if tier == appbuilder-mvp.
   - Open _concept/slices/<slice_id>/scope-feature.md; abort if missing.
   - Open _concept/slices/<slice_id>/align.md; abort if missing.
   - Open _concept/slices/<slice_id>/brainstorm.md if present; cache for
@@ -272,14 +272,14 @@ STEP 6: Compose mockup-walkthrough stub
   - Determine extension from tier:
     | tier         | extension | note                                       |
     |--------------|-----------|--------------------------------------------|
-    | simple-app   | html      | static placeholder                         |
-    | standard-app | astro     | Astro page placeholder                     |
-    | complex-app  | html      | with HTML comment "framework variant pending" |
+    | appbuilder-simple   | html      | static placeholder                         |
+    | appbuilder-standard | astro     | Astro page placeholder                     |
+    | appbuilder-complex  | html      | with HTML comment "framework variant pending" |
   - Path: _concept/mockup-walkthrough/<tier>/<feature_slug>.<ext>
   - Body: a placeholder noting the feature_title, the list of required
-    screens, and (for complex-app) a flag comment.
-  - For tier == complex-app, additionally:
-    EMIT [concept-slice-design-feature] warning complex-app-stub feature_slug=<slug>
+    screens, and (for appbuilder-complex) a flag comment.
+  - For tier == appbuilder-complex, additionally:
+    EMIT [concept-slice-design-feature] warning appbuilder-complex-stub feature_slug=<slug>
 
 STEP 7: Pre-write check for walkthrough stub
   - Apply path-segment rule: filename stem MUST equal <feature_slug>.
@@ -339,7 +339,7 @@ STEP 12: EMIT
   EMIT [concept-slice-design-feature] completed slice_id=<id> feature=<slug> tier=<tier> screens=<n> frozen=_concept/slices/<id>/
 
 CHECKLIST
-  - [ ] scope.yaml read; tier ∈ {simple-app, standard-app, complex-app}
+  - [ ] scope.yaml read; tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
   - [ ] All three handoffs (scope-feature.md, align.md, scope.yaml) read; brainstorm.md cached if present
   - [ ] Cross-feature collision check passed (or user disambiguated)
   - [ ] Path-segment rule applied to every proposed write

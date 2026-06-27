@@ -1,6 +1,6 @@
 ---
 name: impl-plan-plan-vertical
-description: "Use when an implementation slice has its align.md (or, for mvp, its feature.md) ready and needs a vertical-decomposition plan. Reads _implementation/slices/<id>/align.md + concept artifacts. Writes _implementation/slices/<id>/plan.md containing one row per user-facing slice (UI + Logic + Data), testing strategy, and an anti-horizontal-nudge block. Resists the LLM default of horizontal layering. Triggers on: 'plan the slice', 'decompose into rows', 'write the per-slice implementation plan', 'plan-vertical for <feature>'."
+description: "Use when an implementation slice has its align.md (or, for appbuilder-mvp, its feature.md) ready and needs a vertical-decomposition plan. Reads _implementation/slices/<id>/align.md + concept artifacts. Writes _implementation/slices/<id>/plan.md containing one row per user-facing slice (UI + Logic + Data), testing strategy, and an anti-horizontal-nudge block. Resists the LLM default of horizontal layering. Triggers on: 'plan the slice', 'decompose into rows', 'write the per-slice implementation plan', 'plan-vertical for <feature>'."
 metadata:
   version: "2.0.0"
   tags:
@@ -45,7 +45,7 @@ metadata:
         min_entries: 1
       - path: "_implementation/slices/{slice_id}/align.md"
         gate: soft
-        description: "Required when tier ∈ {simple-app, standard-app, complex-app}; STEP 1 enforces hard. For mvp this skill is the cluster entry point and align.md is not expected."
+        description: "Required when tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}; STEP 1 enforces hard. For appbuilder-mvp this skill is the cluster entry point and align.md is not expected."
     inputs_required:
       - id: feature_slug
         label: "Kebab-case feature slug; resolves to _concept/product-spec/features/<group>/<feature_slug>.md"
@@ -99,7 +99,7 @@ by `impl-slice/commit` after the slice's atomic commit lands.
 ## When to Use
 
 - An implementation slice's `align.md` is approved (tier ∈ {simple, standard, complex}).
-- OR tier == mvp and the feature.md is ready (mvp's plan-vertical is the cluster entry).
+- OR tier == appbuilder-mvp and the feature.md is ready (appbuilder-mvp's plan-vertical is the cluster entry).
 - The user wants to convert the slice into an actionable, vertically-decomposed plan.
 
 ## When NOT to Use
@@ -143,8 +143,8 @@ READS
   _concept/_meta/scope.yaml                                       — required; tier
   _concept/product-spec/features/{group}/{feature_slug}.md        — required; permanent feature artifact
   _concept/experience/screens/{feature_slug}/*.md                 — required; permanent screen specs (≥ 1)
-  _implementation/slices/{slice_id}/align.md                                 — required IF tier ∈ {simple-app, standard-app, complex-app};
-                                                                    ENTRY POINT IF tier == mvp
+  _implementation/slices/{slice_id}/align.md                                 — required IF tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex};
+                                                                    ENTRY POINT IF tier == appbuilder-mvp
   ? _implementation/slices/{slice_id}/brainstorm.md                          — optional; "why this row" context
   ? _concept/blueprint/datamodel/model.json                       — optional; entity dependency hints (row ORDER only)
   ? _concept/blueprint/techstack.md                               — optional; stack constraints for Logic column
@@ -174,7 +174,7 @@ MUST  refuse to write a plan whose rows have empty UI, Logic, or Data cells with
 MUST  embed the verbatim anti-horizontal-nudge template in the output plan.md `## Anti-horizontal nudge` section (validator pins exact-string match)
 MUST  ask any clarification question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing
-MUST  refuse to run if tier ∈ {simple-app, standard-app, complex-app} and _implementation/slices/<slice_id>/align.md is missing (iron_laws § 7)
+MUST  refuse to run if tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex} and _implementation/slices/<slice_id>/align.md is missing (iron_laws § 7)
 MUST  refuse to write the plan if feature.md is missing
 MUST  copy EARS acceptance criteria from feature.md (or align.md "## Acceptance handoff") verbatim into "## Testing strategy ### Automated tests" — every EARS line maps to ≥ 1 test row
 MUST  include the 5 required Definition of Done items verbatim (see schema below)
@@ -203,13 +203,13 @@ STEP 1: Read scope and resolve tier-dependent gate
     $ ls _concept/product-spec/features/*/<feature_slug>.md
     Refuse if zero or >1 matches.
   - slice_id := feature_slug (or slice_id_override).
-  IF tier ∈ {simple-app, standard-app, complex-app}
+  IF tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
     - require _implementation/slices/<slice_id>/align.md to exist
     - if missing, refuse with:
       > "[impl-plan-plan-vertical] tier=<tier> requires
       >  _implementation/slices/<slice_id>/align.md. Run impl-plan-align first."
     - copy slice_id, feature_title, feature_path from align.md frontmatter (verify match).
-  ELSE  # tier == mvp
+  ELSE  # tier == appbuilder-mvp
     - align.md not required; this skill is the cluster entry.
     - $ mkdir -p _implementation/slices/<slice_id>/
     - read feature_title from feature.md frontmatter.
@@ -253,7 +253,7 @@ STEP 4: Fill UI / Logic / Data per row
 
 STEP 5: Derive testing strategy
   For each EARS line in align.md "## Acceptance handoff" (or feature.md
-  "## Acceptance Criteria" for mvp), assign at least one row to cover it AND
+  "## Acceptance Criteria" for appbuilder-mvp), assign at least one row to cover it AND
   at least one test in `### Automated tests`.
 
   Test tags: each automated-test bullet starts with `[unit]`, `[integration]`,
@@ -329,7 +329,7 @@ EMIT  [impl-plan-plan-vertical] completed slice_id=<id> tier=<tier> rows=<n> tes
 CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated
   - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
-  - [ ] tier-dependent prerequisite check passed (align.md required for non-mvp tiers)
+  - [ ] tier-dependent prerequisite check passed (align.md required for non-appbuilder-mvp tiers)
   - [ ] _implementation/slices/<slice_id>/ directory exists
   - [ ] All 6 top-level body sections present (Slice scope, Vertical decomposition, Testing strategy, Anti-horizontal nudge, Definition of done, Open carry-overs)
   - [ ] `## Vertical decomposition` table has header `| # | UI | Logic | Data |` and ≥ 1 data row

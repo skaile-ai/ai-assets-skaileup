@@ -35,7 +35,7 @@ REQUIRED_SECTIONS = [
     "## Open questions for align",
 ]
 
-ALLOWED_TIERS = {"standard-app", "complex-app"}
+ALLOWED_TIERS = {"appbuilder-standard", "appbuilder-complex"}
 SLICE_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,47}$")
 
 

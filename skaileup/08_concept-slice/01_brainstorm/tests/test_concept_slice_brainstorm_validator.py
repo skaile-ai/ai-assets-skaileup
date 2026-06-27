@@ -26,7 +26,7 @@ GOOD_FRONTMATTER = """---
 slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
 phase: brainstorm
-tier: standard-app
+tier: appbuilder-standard
 created_at: 2026-05-08T12:34:56Z
 last_updated: 2026-05-08T12:34:56Z
 ---
@@ -106,7 +106,7 @@ def test_missing_section_header_fails(tmp_path: Path):
 
 def test_tier_mvp_fails(tmp_path: Path):
     f = write_good(tmp_path)
-    text = f.read_text().replace("tier: standard-app", "tier: mvp")
+    text = f.read_text().replace("tier: appbuilder-standard", "tier: appbuilder-mvp")
     f.write_text(text)
     errors = validator.validate(f)
     assert any("tier must be one of" in e for e in errors), errors
@@ -114,7 +114,7 @@ def test_tier_mvp_fails(tmp_path: Path):
 
 def test_complex_app_tier_passes(tmp_path: Path):
     f = write_good(tmp_path)
-    text = f.read_text().replace("tier: standard-app", "tier: complex-app")
+    text = f.read_text().replace("tier: appbuilder-standard", "tier: appbuilder-complex")
     f.write_text(text)
     errors = validator.validate(f)
     assert errors == [], errors

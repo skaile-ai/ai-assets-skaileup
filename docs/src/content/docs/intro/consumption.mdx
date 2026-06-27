@@ -62,7 +62,7 @@ carries its own `requires:` manifest):
 
 ```bash
 $ skaile add skill:*                    # install every skill (whole collection)
-$ skaile add flow:simple-app            # OR install exactly what simple-app needs
+$ skaile add flow:appbuilder-simple            # OR install exactly what appbuilder-simple needs
 $ skaile add skill:concept-brief        # OR install one skill + its requires
 $ skaile add --global skill:my-skill    # install globally (~/.claude/skills/)
 $ skaile list                           # show installed assets
@@ -75,7 +75,7 @@ Installing skills doesn't run anything. Once installed, a flow (`<name>.flow.yam
 runs **two interchangeable ways**:
 
 ```bash
-$ skaile run flow:simple-app            # 1. the skaile workspace flow engine (connector)
+$ skaile run flow:appbuilder-simple            # 1. the skaile workspace flow engine (connector)
 ```
 
 2. **the orchestrator** (`skaileup` / `skaileup-build`) — it understands the flow

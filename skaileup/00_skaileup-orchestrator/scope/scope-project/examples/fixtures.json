@@ -3,24 +3,24 @@
     "id": "mvp-personal-budget",
     "description": "A single-user personal budget tracker that stores entries in one local JSON file.",
     "signals": {"features_estimate": 1, "multi_user": false, "persistence": "trivial", "integrations": []},
-    "expected_tier": "mvp"
+    "expected_tier": "appbuilder-mvp"
   },
   {
     "id": "simple-recipe-saver",
     "description": "A solo recipe collector with tagging, search, and a print-friendly view.",
     "signals": {"features_estimate": 4, "multi_user": false, "persistence": "structured", "integrations": []},
-    "expected_tier": "simple-app"
+    "expected_tier": "appbuilder-simple"
   },
   {
     "id": "standard-team-todo",
     "description": "A team todo app with assignees, due-date reminders, comments, and per-project views.",
     "signals": {"features_estimate": 12, "multi_user": true, "persistence": "structured", "integrations": ["sendgrid"]},
-    "expected_tier": "standard-app"
+    "expected_tier": "appbuilder-standard"
   },
   {
     "id": "complex-erp-portal",
     "description": "A multi-tenant B2B portal with assignee/role hierarchies, integrating Stripe billing, Salesforce CRM sync, and a queue-driven order pipeline.",
     "signals": {"features_estimate": 35, "multi_user": true, "persistence": "external", "integrations": ["stripe", "salesforce", "rabbitmq"]},
-    "expected_tier": "complex-app"
+    "expected_tier": "appbuilder-complex"
   }
 ]

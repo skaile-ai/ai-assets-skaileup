@@ -1,6 +1,6 @@
 ---
 name: skaileup-scope-scope-project
-description: "Use when the user starts a new project and no _concept/_meta/scope.yaml exists yet, or when re-scoping (--tier= override). First checks the project shape (CLI tool, concept-only package, or reverse-engineering an existing repo) then, for a normal app, sizes it to one of mvp / simple-app / standard-app / complex-app — routing to one of seven flows. Writes _concept/_meta/scope.yaml. First action in the skaileup pipeline; gates which flow runs next."
+description: "Use when the user starts a new project and no _concept/_meta/scope.yaml exists yet, or when re-scoping (--tier= override). First checks the project shape (CLI tool, concept-only package, or reverse-engineering an existing repo) then, for a normal app, sizes it to one of appbuilder-mvp / appbuilder-simple / appbuilder-standard / appbuilder-complex — routing to one of seven flows. Writes _concept/_meta/scope.yaml. First action in the skaileup pipeline; gates which flow runs next."
 metadata:
   version: "1.2.0"
   tags:
@@ -30,11 +30,11 @@ metadata:
         type: select
         options: [app, cli, concept-only, reverse-engineer]
         default: app
-        hint: "Stage-0 route. 'app' falls through to tier sizing; the others route to cli-app / concept-only / reverse-engineer."
+        hint: "Stage-0 route. 'app' falls through to tier sizing; the others route to appbuilder-cli / concept-only / reverse-engineer."
       - id: tier_override
         label: "Force a specific flow (skips interview)"
         type: select
-        options: [mvp, simple-app, standard-app, complex-app, cli-app, concept-only, reverse-engineer]
+        options: [appbuilder-mvp, appbuilder-simple, appbuilder-standard, appbuilder-complex, appbuilder-cli, concept-only, reverse-engineer]
         default: null
         hint: "Equivalent to --tier=<name>. Bypasses the decision rule but records what the rule would have picked."
       - id: features_estimate
@@ -65,7 +65,7 @@ ROLE  Project scoper — interviews the user briefly, first classifies the
       project shape (Stage 0), then for a normal app applies the verbatim tier
       sizing rule (Stage 1), and writes _concept/_meta/scope.yaml. The
       pipeline's first action; downstream flows (the four sizing tiers plus the
-      cli-app / concept-only / reverse-engineer variants) depend on this output.
+      appbuilder-cli / concept-only / reverse-engineer variants) depend on this output.
 
 READS
   ? _concept/_meta/scope.yaml         — existing scope (re-scoping case only)
@@ -105,7 +105,7 @@ INPUT
   If missing, ask the user:
   - project_description: One-sentence project description (required)
   - shape: Project shape (optional) [app | cli | concept-only | reverse-engineer] default: app
-  - tier_override: Force a specific flow (optional) [mvp | simple-app | standard-app | complex-app | cli-app | concept-only | reverse-engineer] default: <none>
+  - tier_override: Force a specific flow (optional) [appbuilder-mvp | appbuilder-simple | appbuilder-standard | appbuilder-complex | appbuilder-cli | concept-only | reverse-engineer] default: <none>
   - features_estimate: Estimated number of distinct user-facing features (optional)
   - multi_user: Multiple user roles or shared state? (optional) [true | false]
   - persistence: Data persistence shape (optional) [trivial | structured | external]
@@ -143,20 +143,20 @@ STEP 3: Apply the decision rule (verbatim from references/decision-rule.md)
     rule_route = (
       "reverse-engineer" if shape == "reverse-engineer"
       else "concept-only"     if shape == "concept-only"
-      else "cli-app"          if shape == "cli"
+      else "appbuilder-cli"          if shape == "cli"
       else <STAGE 1 sizing>   # shape == "app"
     )
 
   STAGE 1 — tier sizing (only when shape == "app").
   Order matters — enterprise check sits ABOVE the multi-user/feature-count branch
-  so that a multi-user enterprise app does not short-circuit to `standard-app`.
+  so that a multi-user enterprise app does not short-circuit to `appbuilder-standard`.
 
   rule_tier = (
-    "mvp"          if features_estimate <= 1 and persistence == "trivial"
-    else "simple-app"   if features_estimate <= 5 and not multi_user
-    else "complex-app"  if persistence == "external" or len(integrations) >= 2
-    else "standard-app" if features_estimate <= 20 or multi_user
-    else "complex-app"  # explicit fall-through (large but unclassified)
+    "appbuilder-mvp"          if features_estimate <= 1 and persistence == "trivial"
+    else "appbuilder-simple"   if features_estimate <= 5 and not multi_user
+    else "appbuilder-complex"  if persistence == "external" or len(integrations) >= 2
+    else "appbuilder-standard" if features_estimate <= 20 or multi_user
+    else "appbuilder-complex"  # explicit fall-through (large but unclassified)
   )
 
   rule_route is the variant flow (Stage 0) or rule_tier (Stage 1). Throughout
@@ -175,7 +175,7 @@ STEP 4: Resolve override
       override.rule_would_have_picked = null
 
   Set chosen_shape: "app" for a sizing tier, else the variant's shape
-  (cli-app → "cli"; concept-only → "concept-only"; reverse-engineer →
+  (appbuilder-cli → "cli"; concept-only → "concept-only"; reverse-engineer →
   "reverse-engineer"). Write it to the top-level `shape` field.
 
 STEP 5: Compose reasoning (2-6 sentences)

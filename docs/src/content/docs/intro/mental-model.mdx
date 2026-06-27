@@ -18,7 +18,7 @@ flowchart TD
   base["<b>skaileup-base</b><br/>routes user · runs flows"]
   base --> scope
 
-  scope["<b>skaileup/scope/scope-project</b><br/>2–3 questions: how many features?<br/>single- or multi-user? integrations?<br/>► writes _concept/_meta/scope.yaml {tier, flow}<br/>► picks tier: mvp · simple · standard · complex"]
+  scope["<b>skaileup/scope/scope-project</b><br/>2–3 questions: how many features?<br/>single- or multi-user? integrations?<br/>► writes _concept/_meta/scope.yaml {tier, flow}<br/>► picks tier: appbuilder-mvp · simple · standard · complex"]
   scope -->|user can override| flow
 
   flow["<b>flows/&lt;tier&gt;.flow.yaml</b><br/>graph + requires: manifest<br/>◄ install only what the tier needs"]
@@ -62,7 +62,7 @@ hands off to the next via a scratch file:
 | design-feature | implement → test | build it |
 |  | recap → refactor → commit | lock it in |
 
-¹ concept-slice brainstorm runs only in `complex-app`; `standard-app` starts at align.
+¹ concept-slice brainstorm runs only in `appbuilder-complex`; `appbuilder-standard` starts at align.
 
 After every phase the user runs `/clear` (or starts a new chat) and the next
 phase reads the prior phase's handoff from `_concept/slices/<id>/` or

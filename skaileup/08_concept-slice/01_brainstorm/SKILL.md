@@ -1,6 +1,6 @@
 ---
 name: concept-slice-brainstorm
-description: "Use when starting per-feature concept work for a standard-app or complex-app — sparring partner that surfaces the user's mental model for THIS one feature (who uses it, what triggers it, the happy path, what's clearly out). Strictly open-ended — edge-case grilling is the next phase (concept-slice-align). Triggers on: 'brainstorm this feature', 'design a new feature', 'concept-slice start', 'feature kickoff'."
+description: "Use when starting per-feature concept work for a appbuilder-standard or appbuilder-complex — sparring partner that surfaces the user's mental model for THIS one feature (who uses it, what triggers it, the happy path, what's clearly out). Strictly open-ended — edge-case grilling is the next phase (concept-slice-align). Triggers on: 'brainstorm this feature', 'design a new feature', 'concept-slice start', 'feature kickoff'."
 metadata:
   version: "1.0.0"
   tags:
@@ -27,7 +27,7 @@ metadata:
     files:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
-        description: "Tier context required — produced by skaileup-scope-scope-project. Determines whether brainstorm runs (standard-app/complex-app) or is skipped (simple-app)."
+        description: "Tier context required — produced by skaileup-scope-scope-project. Determines whether brainstorm runs (appbuilder-standard/appbuilder-complex) or is skipped (appbuilder-simple)."
     inputs_required:
       - id: feature_title
         label: "One-sentence title for the feature you want to design now"
@@ -54,8 +54,8 @@ metadata:
 
 ## Overview
 
-This skill is the entry point of the per-feature concept loop for **standard-app**
-and **complex-app** tiers. It sits before `concept-slice-align` and produces a
+This skill is the entry point of the per-feature concept loop for **appbuilder-standard**
+and **appbuilder-complex** tiers. It sits before `concept-slice-align` and produces a
 short, open-ended scratch document under `_concept/slices/<slice_id>/brainstorm.md`
 that captures the user's elevator pitch for ONE feature.
 
@@ -90,13 +90,13 @@ REFERENCES
 
 REQUIRES
   hard: _concept/_meta/scope.yaml            — tier context
-  state: scope.yaml `tier` ∈ {standard-app, complex-app}
+  state: scope.yaml `tier` ∈ {appbuilder-standard, appbuilder-complex}
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
-MUST  refuse to run if scope.yaml `tier` ∈ {mvp, simple-app} — those tiers do not run concept-slice-brainstorm (per SKILL_GRAPH § 6 tier-composition table)
+MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp, appbuilder-simple} — those tiers do not run concept-slice-brainstorm (per SKILL_GRAPH § 6 tier-composition table)
 MUST  derive slice_id from feature_title via the kebab-case rule (lower → non-alnum→hyphen → strip-trim → max 48 chars) UNLESS slice_id_override is supplied
 MUST  refuse to overwrite an existing _concept/slices/<slice_id>/ — ask the user to (a) resume the existing slice, or (b) suffix -2 to the slug
 MUST  write the handoff frontmatter exactly as specified (slice_id, feature_title, phase, tier, created_at, last_updated)
@@ -117,9 +117,9 @@ INPUT
 
 STEP 1: Read scope and validate tier
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
-  - Read scope.tier. If tier ∈ {mvp, simple-app}, refuse with:
+  - Read scope.tier. If tier ∈ {appbuilder-mvp, appbuilder-simple}, refuse with:
     > "[concept-slice-brainstorm] tier=<tier> does not run brainstorm.
-    >  For simple-app start with concept-slice-align directly. For mvp run impl-plan/plan-vertical."
+    >  For appbuilder-simple start with concept-slice-align directly. For appbuilder-mvp run impl-plan/plan-vertical."
   - Cache scope.tier and scope.description for later.
 
 STEP 2: Collect feature_title and derive slice_id

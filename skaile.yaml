@@ -282,11 +282,11 @@ assets:
   - kind: contract
     name: standards-contract
     root: skaileup/13_impl-quality/contracts/standards-contract
-  # ── flows (6) ──
+  # ── flows (9) ──
   - kind: flow
-    name: complex-app
+    name: appbuilder-complex
     files:
-      - skaileup/flows/complex-app/complex-app.flow.yaml
+      - skaileup/flows/appbuilder-complex/appbuilder-complex.flow.yaml
   - kind: flow
     name: concept-slice
     files:
@@ -296,14 +296,26 @@ assets:
     files:
       - skaileup/flows/impl-slice/impl-slice.flow.yaml
   - kind: flow
-    name: mvp
+    name: appbuilder-mvp
     files:
-      - skaileup/flows/mvp/mvp.flow.yaml
+      - skaileup/flows/appbuilder-mvp/appbuilder-mvp.flow.yaml
   - kind: flow
-    name: simple-app
+    name: appbuilder-simple
     files:
-      - skaileup/flows/simple-app/simple-app.flow.yaml
+      - skaileup/flows/appbuilder-simple/appbuilder-simple.flow.yaml
   - kind: flow
-    name: standard-app
+    name: appbuilder-standard
     files:
-      - skaileup/flows/standard-app/standard-app.flow.yaml
+      - skaileup/flows/appbuilder-standard/appbuilder-standard.flow.yaml
+  - kind: flow
+    name: skaileup-impl
+    files:
+      - skaileup/flows/skaileup-impl/skaileup-impl.flow.yaml
+  - kind: flow
+    name: skaileup-impl-standalone
+    files:
+      - skaileup/flows/skaileup-impl-standalone/skaileup-impl-standalone.flow.yaml
+  - kind: flow
+    name: skaileup-implementation
+    files:
+      - skaileup/flows/skaileup-implementation/skaileup-implementation.flow.yaml

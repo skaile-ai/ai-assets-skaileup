@@ -1,6 +1,6 @@
 ---
 name: impl-plan-brainstorm
-description: "Use when starting per-slice implementation work for a feature in a standard-app or complex-app tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<group>/<feature_slug>.md and writes _implementation/slices/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
+description: "Use when starting per-slice implementation work for a feature in a appbuilder-standard or appbuilder-complex tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<group>/<feature_slug>.md and writes _implementation/slices/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
 metadata:
   version: "2.0.0"
   tags:
@@ -33,7 +33,7 @@ metadata:
     files:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
-        description: "Tier context required — produced by skaileup-scope-scope-project. Determines whether this skill runs (standard-app/complex-app) or is skipped (mvp/simple-app)."
+        description: "Tier context required — produced by skaileup-scope-scope-project. Determines whether this skill runs (appbuilder-standard/appbuilder-complex) or is skipped (appbuilder-mvp/appbuilder-simple)."
       - path: "_concept/product-spec/features/{feature_slug}.md"
         gate: hard
         description: "Permanent feature artifact written by concept-slice-design-feature; THIS feature is the brainstorm scope."
@@ -65,8 +65,8 @@ metadata:
 
 ## Overview
 
-`impl-plan-brainstorm` is the entry point of the per-slice impl-loop for **standard-app**
-and **complex-app** tiers. It is scoped to ONE feature (the slice), not the whole project.
+`impl-plan-brainstorm` is the entry point of the per-slice impl-loop for **appbuilder-standard**
+and **appbuilder-complex** tiers. It is scoped to ONE feature (the slice), not the whole project.
 Its job is to surface implementation risks, unknowns, and dependencies — and to flush out
 P1 questions that would otherwise block `impl-plan-align` from running a useful grill.
 
@@ -82,16 +82,16 @@ them to those skills.
 
 ## When to Use
 
-- Starting per-slice implementation for a standard-app or complex-app feature whose
+- Starting per-slice implementation for a appbuilder-standard or appbuilder-complex feature whose
   concept artifacts (`feature.md` + screens) are already frozen.
 - Re-entering an existing slice (`_implementation/slices/<id>/brainstorm.md` exists) to refine risks
   or answer a previously-flagged P1 question.
 
 ## When NOT to Use
 
-- Tier is `mvp` or `simple-app` — those tiers skip brainstorm per SKILL_GRAPH § 6 tier
-  composition. Their entry point is `impl-plan-plan-vertical` (mvp) or `impl-plan-align`
-  (simple-app). Refuse and point the caller at the right skill.
+- Tier is `appbuilder-mvp` or `appbuilder-simple` — those tiers skip brainstorm per SKILL_GRAPH § 6 tier
+  composition. Their entry point is `impl-plan-plan-vertical` (appbuilder-mvp) or `impl-plan-align`
+  (appbuilder-simple). Refuse and point the caller at the right skill.
 - Project-wide brainstorming — out of scope. Use `ops/audit` or `impl-quality/audit`.
 - Concept artifacts are missing (`_concept/product-spec/features/<group>/<feature_slug>.md`
   not present). Refuse and refer the caller to `concept-slice/design-feature`.
@@ -121,13 +121,13 @@ REFERENCES
 
 REQUIRES
   hard: _concept/_meta/scope.yaml                                 — tier context
-  state: scope.yaml `tier` ∈ {standard-app, complex-app}
+  state: scope.yaml `tier` ∈ {appbuilder-standard, appbuilder-complex}
 
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
-MUST  refuse to run if scope.yaml `tier` ∈ {mvp, simple-app} — those tiers do not run impl-plan-brainstorm (per SKILL_GRAPH § 6 tier-composition table); the base orchestrator is responsible for not invoking this skill at those tiers
+MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp, appbuilder-simple} — those tiers do not run impl-plan-brainstorm (per SKILL_GRAPH § 6 tier-composition table); the base orchestrator is responsible for not invoking this skill at those tiers
 MUST  resolve feature_slug to _concept/product-spec/features/<group>/<feature_slug>.md before any other step; refuse if file missing (iron_laws § 7)
 MUST  scope brainstorm to THIS ONE feature; do NOT enumerate risks for other features
 MUST  surface every P1 question to the user as a standalone message before writing brainstorm.md
@@ -154,9 +154,9 @@ STEP 1: Read scope and validate tier
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing:
     > "[impl-plan-brainstorm] required file _concept/_meta/scope.yaml not found.
     >  Run skaileup-scope-scope-project first."
-  - Read scope.tier. If tier ∈ {mvp, simple-app}, refuse with:
+  - Read scope.tier. If tier ∈ {appbuilder-mvp, appbuilder-simple}, refuse with:
     > "[impl-plan-brainstorm] tier=<tier> does not run brainstorm.
-    >  For simple-app start with impl-plan-align directly. For mvp run impl-plan-plan-vertical."
+    >  For appbuilder-simple start with impl-plan-align directly. For appbuilder-mvp run impl-plan-plan-vertical."
   - Cache scope.tier and scope.description for later.
   - Reminder placed inline (per skill_grammar.md § Authoring tip 1):
     MUST scope brainstorm to THIS ONE feature; do NOT enumerate risks for other features.
@@ -256,7 +256,7 @@ STEP 8: Write the handoff
 EMIT  [impl-plan-brainstorm] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 
 CHECKLIST
-  - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {standard-app, complex-app})
+  - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {appbuilder-standard, appbuilder-complex})
   - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
   - [ ] _implementation/slices/<slice_id>/ directory exists (created or pre-existing)
   - [ ] All concept artifacts (feature.md required; screens/model/techstack optional) read

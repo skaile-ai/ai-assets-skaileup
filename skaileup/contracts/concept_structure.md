@@ -55,7 +55,7 @@ _concept/
 ├── quality.json                         ← concept health report (written by ops-review)
 │
 ├── _meta/                               ← orchestration signals (read by routing/tier-aware skills)
-│   └── scope.yaml                       ← tier signal: mvp | simple-app | standard-app | complex-app
+│   └── scope.yaml                       ← tier signal: appbuilder-mvp | appbuilder-simple | appbuilder-standard | appbuilder-complex
 │
 ├── _grounding/                          ← research, reference material & user inputs (read by ALL skills)
 │   ├── onboarding/                      ← structured onboarding output

@@ -165,7 +165,7 @@ MUST use git branching (feature branches → squash-merge to implement/<slug>)
 MUST emit observability events at every transition
 MUST log significant decisions in \_implementation/decisions.md
 MUST get user approval for: plan, foundation, each feature group, final verification
-MUST read \_concept/\_meta/scope.yaml and, for tier ∈ {standard-app, complex-app}, guide the user through the per-feature impl-slice loop (impl-plan → impl-slice) instead of batching features through implement-feature
+MUST read \_concept/\_meta/scope.yaml and, for tier ∈ {appbuilder-standard, appbuilder-complex}, guide the user through the per-feature impl-slice loop (impl-plan → impl-slice) instead of batching features through implement-feature
 MUST treat each feature as a slice with a dossier at \_implementation/slices/<feature_slug>/ that is frozen (kept), not deleted, on impl-slice-commit
 MUST assist within each slice — unstated assumptions at align, anti-horizontal nudge at plan-vertical, mandatory recap, confirm frozen index.md after commit
 NEVER skip feature group approval checkpoints
@@ -256,23 +256,23 @@ EMIT [implement] infrastructure_complete modules=<N> processes=<M>
 
 # ── Phase 2: Features (journey-first) ─────────────────────────────
 
-STEP 5b: Tier gate — per-feature impl-slice loop (standard-app / complex-app)
+STEP 5b: Tier gate — per-feature impl-slice loop (appbuilder-standard / appbuilder-complex)
 
 - Read `_concept/_meta/scope.yaml` → `tier`.
-- IF tier ∈ {mvp, simple-app}: use the LINEAR path — STEP 6 below (`implement-feature`
+- IF tier ∈ {appbuilder-mvp, appbuilder-simple}: use the LINEAR path — STEP 6 below (`implement-feature`
   per journey/group in one pass).
-- IF tier ∈ {standard-app, complex-app}: do NOT batch features through `implement-feature`.
+- IF tier ∈ {appbuilder-standard, appbuilder-complex}: do NOT batch features through `implement-feature`.
   Instead GUIDE THE USER through the **impl-slice loop, one feature at a time**, and assist
   at each phase. Each feature is a *slice* with a dossier at `_implementation/slices/<feature_slug>/`.
   Drive features in journey order (hero → vital → hygiene) and run STEP 6-slice per feature.
 
-STEP 6-slice: Run the impl-slice loop per feature (standard-app / complex-app only)
+STEP 6-slice: Run the impl-slice loop per feature (appbuilder-standard / appbuilder-complex only)
 
 For each feature (journey-first), guide these phases with `/clear` between each — each
 writes its handoff into `_implementation/slices/<feature_slug>/`:
 
   Plan (impl-plan):
-    1. `impl-plan-brainstorm`   (complex-app only — risks, unknowns)      → brainstorm.md
+    1. `impl-plan-brainstorm`   (appbuilder-complex only — risks, unknowns)      → brainstorm.md
     2. `impl-plan-align`        (interviews the user; locks acceptance)   → align.md
     3. `impl-plan-plan-vertical` (vertical decomposition: UI+logic+data)  → plan.md
   Build (impl-slice):
@@ -296,7 +296,7 @@ writes its handoff into `_implementation/slices/<feature_slug>/`:
 UNTIL every must-have feature has a frozen slice dossier. Then continue to Phase 3 (UAT).
 Project-wide setup (scaffold, foundation, infrastructure) and quality gates are NOT per-slice.
 
-STEP 6: Implement feature groups / journeys — LINEAR PATH ONLY (mvp / simple-app)
+STEP 6: Implement feature groups / journeys — LINEAR PATH ONLY (appbuilder-mvp / appbuilder-simple)
 
 - Process journeys in stage order: hero → vital → hygiene (if stories.json exists)
 - OR process feature groups in numeric order (if no stories.json)
@@ -401,7 +401,7 @@ CHECKLIST
 | --------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Skipping the plan phase                             | Always create PLANS.md first — it defines the dependency order                   |
 | Feature-group-number order instead of journey order | Use stories.json hero→vital→hygiene order when available                         |
-| Batching all features through implement-feature on a standard-app/complex-app | Read scope.yaml; route each feature through the impl-slice loop (impl-plan → impl-slice), one slice at a time |
+| Batching all features through implement-feature on a appbuilder-standard/appbuilder-complex | Read scope.yaml; route each feature through the impl-slice loop (impl-plan → impl-slice), one slice at a time |
 | Treating slice dossiers as throwaway scratch | They are frozen (kept) on impl-slice-commit — `_implementation/slices/<id>/` is permanent per-feature documentation |
 | Running eval-code/eval-product before UAT           | UAT comes first — user confirms app works, then eval-code and eval-product gates |
 | Not logging learnings                               | Append to LEARNINGS.md at every checkpoint — institutional knowledge             |
@@ -411,6 +411,6 @@ CHECKLIST
 
 - **Reads:** entire `_concept/` pipeline
 - **Writes:** `_implementation/` tracking, `LEARNINGS.md`
-- **Dispatches to:** `scaffold`, `foundation`, `infrastructure`, `implement-feature` (mvp/simple-app), `eval-feature`, `eval-product`, `eval-code`
-- **For standard-app / complex-app, also guides the per-feature impl-slice loop:** `impl-plan-brainstorm`, `impl-plan-align`, `impl-plan-plan-vertical`, `impl-slice-implement`, `impl-slice-test`, `impl-slice-recap`, `impl-slice-refactor`, `impl-slice-commit` (writes + freezes `_implementation/slices/<feature_slug>/`)
+- **Dispatches to:** `scaffold`, `foundation`, `infrastructure`, `implement-feature` (appbuilder-mvp/appbuilder-simple), `eval-feature`, `eval-product`, `eval-code`
+- **For appbuilder-standard / appbuilder-complex, also guides the per-feature impl-slice loop:** `impl-plan-brainstorm`, `impl-plan-align`, `impl-plan-plan-vertical`, `impl-slice-implement`, `impl-slice-test`, `impl-slice-recap`, `impl-slice-refactor`, `impl-slice-commit` (writes + freezes `_implementation/slices/<feature_slug>/`)
 - **Called by:** user directly or automated pipeline

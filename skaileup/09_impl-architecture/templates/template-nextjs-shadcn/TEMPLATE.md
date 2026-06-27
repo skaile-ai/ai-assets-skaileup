@@ -15,7 +15,7 @@ metadata:
     - 'app-router'
     - 'tailwind'
     - 'pnpm'
-    - 'mvp'
+    - 'appbuilder-mvp'
     - 'saas'
     - 'indie'
     - 'prototype'

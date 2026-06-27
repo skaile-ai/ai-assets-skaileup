@@ -115,7 +115,7 @@ Do not stack these questions. One per message, wait for each answer before askin
 | Review / audit concept quality        | `ops-review` skill                                                                    |
 | Not sure / exploratory                | Ask clarifying questions, one at a time                                                    |
 
-## Feature Slices (standard-app / complex-app)
+## Feature Slices (appbuilder-standard / appbuilder-complex)
 
 For larger projects the work is done **one feature at a time** — each feature is a *slice*.
 After the high-level concept pass (brief, goals, brand, journeys, high-level features), guide

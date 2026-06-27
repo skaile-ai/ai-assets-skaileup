@@ -1,0 +1,211 @@
+id: skaileup-implementation
+version: '2.0.0'
+name: 'Skaileup Implementation (spec-first)'
+description: >-
+  Start-in-the-middle flow — implement features immediately while the concept
+  is discovered gradually, feature by feature. A thin foundation is laid once
+  (scope -> one-line brief(opt) -> techstack -> datamodel skeleton -> scaffold
+  -> foundation -> migrate(opt)), then a single per-feature loop interleaves
+  the two slice sub-flows: concept-slice builds THIS feature's concept (its
+  journeys/screens/behaviors/design), then impl-slice builds it — and the loop
+  repeats for the next feature. The concept is never front-loaded: concept-slice
+  transparently discovers the missing concept information for each feature and
+  surfaces open questions to the user before implementing, accreting the answers
+  into the canonical _concept/ tree. The "spec" is the full concept (all its
+  parts), grown just-in-time, not a one-off plan. No new skills — delegates the
+  loops to the concept-slice + impl-slice flows.
+meta:
+  category: incremental
+  tags:
+    - spec-first
+    - start-in-the-middle
+    - gradual-concept
+    - interleaved
+    - per-feature
+  icon: i-heroicons-sparkles
+  onboarding:
+    input_style: freeform
+    placeholder: >-
+      Describe the first feature you want to build. The flow will ask open
+      questions to fill in the concept as it goes.
+requires:
+  # Self-contained install manifest: contracts its skills read + every skill its
+  # nodes run + the sub-flows it delegates to. Exact — no inheritance, no extras.
+  # The per-feature concept + impl loops are provided by the two slice sub-flows.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/conceptualization-contract
+  - contract:@skaile-ai/implementation-contract
+  - skill:@skaile-ai/skaileup-scope-scope-project
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-datamodel
+  - skill:@skaile-ai/impl-build-scaffold
+  - skill:@skaile-ai/impl-build-foundation
+  - skill:@skaile-ai/impl-build-migrate
+  - flow:@skaile-ai/concept-slice
+  - flow:@skaile-ai/impl-slice
+  - skill:@skaile-ai/impl-quality-ready
+globals:
+  research_depth: light
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: detailed
+entry: scope
+nodes:
+  # --- Thin foundation (laid once) ---
+  - id: scope
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: skaileup-scope-scope-project
+      label: 'Scope Project'
+      optional: false
+      parameters:
+        note: 'Asks open questions about shape/size; writes _concept/_meta/scope.yaml'
+  - id: brief
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: concept-brief
+      label: 'One-line Brief (opt)'
+      optional: true
+      parameters:
+        note: 'A one-paragraph seed only; the rest of the concept is discovered per feature'
+  - id: techstack
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
+      optional: false
+      parameters: {}
+  - id: datamodel
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: impl-architecture-datamodel
+      label: 'Data Model (skeleton)'
+      optional: false
+      parameters:
+        note: 'Skeleton only; each feature evolves it via impl-slice migrations'
+  - id: scaffold
+    type: skill
+    position:
+      x: 800
+      y: 200
+    data:
+      skill: impl-build-scaffold
+      label: 'Scaffold'
+      optional: false
+      parameters: {}
+  - id: foundation
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: impl-build-foundation
+      label: 'Foundation'
+      optional: false
+      parameters: {}
+  - id: migrate
+    type: skill
+    position:
+      x: 1200
+      y: 200
+    data:
+      skill: impl-build-migrate
+      label: 'Migrate (opt)'
+      optional: true
+      parameters: {}
+  # --- Per-feature loop: discover concept, then build (interleaved) ---
+  - id: feat-concept
+    type: sub-flow
+    position:
+      x: 1400
+      y: 200
+    data:
+      flow: concept-slice
+      domain: concept-slice
+      label: 'Discover feature concept (asks open questions)'
+      pass_context: true
+  - id: feat-impl
+    type: sub-flow
+    position:
+      x: 1600
+      y: 200
+    data:
+      flow: impl-slice
+      domain: impl-slice
+      label: 'Build the feature'
+      pass_context: true
+  # --- Close-out ---
+  - id: q-ready
+    type: skill
+    position:
+      x: 1800
+      y: 200
+    data:
+      skill: impl-quality-ready
+      label: 'Release Ready'
+      optional: true
+      parameters: {}
+edges:
+  - id: e-scope-brief
+    source: scope
+    target: brief
+    type: optional
+  - id: e-brief-techstack
+    source: brief
+    target: techstack
+    type: flow
+  - id: e-techstack-datamodel
+    source: techstack
+    target: datamodel
+    type: flow
+  - id: e-datamodel-scaffold
+    source: datamodel
+    target: scaffold
+    type: flow
+  - id: e-scaffold-foundation
+    source: scaffold
+    target: foundation
+    type: flow
+  - id: e-foundation-migrate
+    source: foundation
+    target: migrate
+    type: optional
+  - id: e-foundation-feat-concept
+    source: foundation
+    target: feat-concept
+    type: flow
+  - id: e-migrate-feat-concept
+    source: migrate
+    target: feat-concept
+    type: optional
+  - id: e-feat-concept-feat-impl
+    source: feat-concept
+    target: feat-impl
+    type: flow
+  # Per-feature interleave: after building a feature, loop back to discover the
+  # next feature's concept. Exits to q-ready when the backlog is exhausted.
+  - id: e-feat-impl-feat-concept
+    source: feat-impl
+    target: feat-concept
+    type: review-loop
+    max_iterations: 50
+    exit_condition: >-
+      no unbuilt features remain — every feature the user still wants has a
+      frozen concept-slice (index.md) and a committed impl-slice
+  - id: e-feat-impl-q-ready
+    source: feat-impl
+    target: q-ready
+    type: flow

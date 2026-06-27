@@ -1,6 +1,6 @@
 ---
 name: mockup-walkthrough-framework
-description: "Use when stakeholders need the highest-fidelity clickable walkthrough rendered in the project's CHOSEN stack framework (Next.js / Nuxt / SvelteKit), resolved from the selected scaffold template. Generates a stack-native built site — one route/page per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads. Best for complex-app tier."
+description: "Use when stakeholders need the highest-fidelity clickable walkthrough rendered in the project's CHOSEN stack framework (Next.js / Nuxt / SvelteKit), resolved from the selected scaffold template. Generates a stack-native built site — one route/page per screen and per journey, plus a manifest.json that the mockup-feedback cluster reads. Best for appbuilder-complex tier."
 metadata:
   version: "0.1.0"
   tags:
@@ -8,7 +8,7 @@ metadata:
     - mockup
     - framework
     - stack-native
-    - complex-app
+    - appbuilder-complex
     - frontend
     - prototype
     - data-spec
@@ -62,7 +62,7 @@ metadata:
 ## Overview
 
 Highest-fidelity variant of the walkthrough mockup cluster, used by the
-**complex-app** tier. Consumes the same four inputs as
+**appbuilder-complex** tier. Consumes the same four inputs as
 `mockup-walkthrough-static-html` (screen specs, journey definitions, brand
 tokens, feature files) PLUS one more — `_concept/blueprint/techstack.md` —
 and produces a built site rendered in the **project's chosen framework**
@@ -380,7 +380,7 @@ framework is not fixed — it is read from the project's stack decision.
     > then re-run this skill." Append `kind: "unresolved_template"` to
     > `warnings[]` (in the diagnostic, not a manifest — no manifest is
     > written on hard-fail). You MAY note that a static-html fallback exists
-    > (the complex-app flow's `mock-static-fallback`) if the user wants a
+    > (the appbuilder-complex flow's `mock-static-fallback`) if the user wants a
     > walkthrough without resolving the template.
   - **If the directory does not exist on disk** — same hard-fail; the id is
     stale.

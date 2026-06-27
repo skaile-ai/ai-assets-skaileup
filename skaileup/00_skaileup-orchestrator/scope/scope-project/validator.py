@@ -19,16 +19,16 @@ except ImportError:
     sys.exit(2)
 
 # Sizing tiers — chosen by the feature-count/persistence rule (shape == "app").
-ALLOWED_TIERS = {"mvp", "simple-app", "standard-app", "complex-app"}
+ALLOWED_TIERS = {"appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex"}
 # Variant flows — selected by the shape check that runs BEFORE sizing.
-ALLOWED_VARIANTS = {"cli-app", "concept-only", "reverse-engineer"}
+ALLOWED_VARIANTS = {"appbuilder-cli", "concept-only", "reverse-engineer"}
 # Every value `tier` (the routed flow id) may take.
 ALLOWED_ROUTES = ALLOWED_TIERS | ALLOWED_VARIANTS
 # The project shape. "app" falls through to tier sizing; the rest map 1:1 to a
 # variant flow id via SHAPE_TO_ROUTE.
 ALLOWED_SHAPES = {"app", "cli", "concept-only", "reverse-engineer"}
 SHAPE_TO_ROUTE = {
-    "cli": "cli-app",
+    "cli": "appbuilder-cli",
     "concept-only": "concept-only",
     "reverse-engineer": "reverse-engineer",
 }

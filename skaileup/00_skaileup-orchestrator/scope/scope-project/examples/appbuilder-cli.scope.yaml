@@ -1,12 +1,12 @@
 schema_version: "1.0"
 shape: cli
-tier: cli-app
-flow_to_run: "flow:cli-app"
+tier: appbuilder-cli
+flow_to_run: "flow:appbuilder-cli"
 reasoning: |
   Stage 0 shape check fires: this is a headless command-line tool with no UI,
-  so it routes to cli-app and the sizing rule is skipped. The recorded signals
+  so it routes to appbuilder-cli and the sizing rule is skipped. The recorded signals
   (3 features, single-user, structured config persistence, no integrations)
-  inform concept depth but do not change the route — any-size CLI uses cli-app.
+  inform concept depth but do not change the route — any-size CLI uses appbuilder-cli.
 description: "A CLI that converts CSV files to JSON with column filtering and schema validation."
 signals:
   features_estimate: 3

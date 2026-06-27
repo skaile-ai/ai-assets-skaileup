@@ -12,7 +12,7 @@ Turns a frozen feature spec into a vertical-slice implementation plan, then opti
 
 ## Skills
 
-- **impl-plan-brainstorm** (`brainstorm/`) — Sparring partner on risks, unknowns, and dependencies for a single feature. Writes `_implementation/slices/<id>/brainstorm.md`. Standard-app / complex-app tiers only.
+- **impl-plan-brainstorm** (`brainstorm/`) — Sparring partner on risks, unknowns, and dependencies for a single feature. Writes `_implementation/slices/<id>/brainstorm.md`. Standard-app / appbuilder-complex tiers only.
 - **impl-plan-align** (`align/`) — Grill-me interview surfacing unstated assumptions, technical constraints, and edge cases. Reads brainstorm.md (if present) and feature/screen specs; writes `_implementation/slices/<id>/align.md`.
 - **impl-plan-plan-vertical** (`plan-vertical/`) — Decomposes the feature into vertical slices (UI + Logic + Data rows), adds testing strategy and an anti-horizontal-layering block. Writes `_implementation/slices/<id>/plan.md`.
 - **impl-plan-supervised** (`supervised/`) — Dispatches one subagent per task from `_implementation/superpowers-plan.md`, enforces spec-compliance review before code-quality review, handles 4-status reports (DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED).
@@ -20,7 +20,7 @@ Turns a frozen feature spec into a vertical-slice implementation plan, then opti
 ## When to Use
 
 - Feature spec (`_concept/product-spec/features/<group>/<feature_slug>.md`) and screen specs are frozen and implementation is about to start.
-- Any tier: mvp enters at plan-vertical; simple-app skips brainstorm; standard-app/complex-app run the full chain.
+- Any tier: appbuilder-mvp enters at plan-vertical; appbuilder-simple skips brainstorm; appbuilder-standard/appbuilder-complex run the full chain.
 - Agent needs a decomposition that resists horizontal layering (all-API-first or all-DB-first patterns).
 - Supervised subagent dispatch is wanted for parallelism or spec-compliance enforcement.
 
@@ -33,9 +33,9 @@ Turns a frozen feature spec into a vertical-slice implementation plan, then opti
 ## Sequence
 
 ```
-[standard-app / complex-app]  brainstorm → align → plan-vertical → (optional) supervised
-[simple-app]                  align → plan-vertical → (optional) supervised
-[mvp]                         plan-vertical → (optional) supervised
+[appbuilder-standard / appbuilder-complex]  brainstorm → align → plan-vertical → (optional) supervised
+[appbuilder-simple]                  align → plan-vertical → (optional) supervised
+[appbuilder-mvp]                         plan-vertical → (optional) supervised
 ```
 
 Each step reads the previous step's output. `/clear` between steps is recommended to avoid context bloat.

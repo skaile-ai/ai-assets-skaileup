@@ -1,6 +1,6 @@
 ---
 name: design-inspiration
-description: "Use on standard-app / complex-app concepts after brand-visual, to collect concrete visual references — layout patterns, color/typography directions, component patterns — that ground downstream screens and mockups. Reads the chosen brand tokens and comparables, then writes _concept/_grounding/research/design-inspiration.md per the design-inspiration-v1 schema."
+description: "Use on appbuilder-standard / appbuilder-complex concepts after brand-visual, to collect concrete visual references — layout patterns, color/typography directions, component patterns — that ground downstream screens and mockups. Reads the chosen brand tokens and comparables, then writes _concept/_grounding/research/design-inspiration.md per the design-inspiration-v1 schema."
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -59,13 +59,13 @@ the same artifact `concept-grounding-research` produces autonomously.
 
 ## When to Use
 
-- `_concept/discovery/brand/tokens.json` exists, tier is standard-app or complex-app
+- `_concept/discovery/brand/tokens.json` exists, tier is appbuilder-standard or appbuilder-complex
 - The user wants reference patterns captured before screens are designed
 - The orchestrator dispatches this after `design-brand-visual` in the high-level pass
 
 ## When NOT to Use
 
-- mvp / simple-app — inspiration is optional; brand tokens are enough to start
+- appbuilder-mvp / appbuilder-simple — inspiration is optional; brand tokens are enough to start
 - No brand tokens yet — run `design-brand-visual` first
 - API-only service with no UI — skip design entirely
 

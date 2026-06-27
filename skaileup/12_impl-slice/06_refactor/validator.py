@@ -35,7 +35,7 @@ REQUIRED_TOP_SECTIONS = [
     "## Applied changes",
 ]
 
-ALLOWED_TIERS = {"mvp", "simple-app", "standard-app", "complex-app"}
+ALLOWED_TIERS = {"appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex"}
 ALLOWED_TYPES = {"subtraction", "simplification", "clarification"}
 SLICE_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,47}$")
 APPROVAL_RE = re.compile(

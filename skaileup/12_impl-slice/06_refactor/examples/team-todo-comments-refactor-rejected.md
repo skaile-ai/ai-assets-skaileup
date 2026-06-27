@@ -3,7 +3,7 @@ slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
 feature_path: _concept/product-spec/features/team-todo/team-todo-comments.md
 phase: refactor
-tier: standard-app
+tier: appbuilder-standard
 created_at: 2026-05-08T17:00:00Z
 last_updated: 2026-05-08T17:45:00Z
 ---

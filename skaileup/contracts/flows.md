@@ -103,9 +103,9 @@ are no separate per-domain concept/build flow sets (the old split `concept-*` +
 
 | Kind    | IDs                                                  |
 | ------- | ---------------------------------------------------- |
-| Tier    | `mvp`, `simple-app`, `standard-app`, `complex-app`   |
+| Tier    | `appbuilder-mvp`, `appbuilder-simple`, `appbuilder-standard`, `appbuilder-complex`   |
 | Slice   | `concept-slice`, `impl-slice` (reusable per-feature loops) |
-| Variant | `cli-app`, `concept-only`, `reverse-engineer`        |
+| Variant | `appbuilder-cli`, `concept-only`, `reverse-engineer`        |
 | Schema  | `contracts/flow.schema.json` (JSON Schema for all flow files) |
 
 ### Flow Catalogue
@@ -114,10 +114,10 @@ are no separate per-domain concept/build flow sets (the old split `concept-*` +
 
 | ID             | Description                                                          |
 | -------------- | -------------------------------------------------------------------- |
-| `mvp`          | Single feature, trivial persistence — one linear pass                |
-| `simple-app`   | Single-user, ≤5 features — linear concept + impl-slice loop          |
-| `standard-app` | Multi-user, ≤20 features — high-level concept + concept/impl slice loops |
-| `complex-app`  | Multi-product / enterprise — standard-app superset + project-ops + audit |
+| `appbuilder-mvp`          | Single feature, trivial persistence — one linear pass                |
+| `appbuilder-simple`   | Single-user, ≤5 features — linear concept + impl-slice loop          |
+| `appbuilder-standard` | Multi-user, ≤20 features — high-level concept + concept/impl slice loops |
+| `appbuilder-complex`  | Multi-product / enterprise — appbuilder-standard superset + project-ops + audit |
 
 **Slice loops** — reusable per-feature loops the tier flows inline once per feature:
 
@@ -130,7 +130,7 @@ are no separate per-domain concept/build flow sets (the old split `concept-*` +
 
 | ID                 | Description                                                              |
 | ------------------ | ----------------------------------------------------------------------- |
-| `cli-app`          | CLI tier — no UI/brand/screens/mockups; concept + build + impl-slice + unit/integration |
+| `appbuilder-cli`          | CLI tier — no UI/brand/screens/mockups; concept + build + impl-slice + unit/integration |
 | `concept-only`     | Full concept package, no implementation — for planning/handoff          |
 | `reverse-engineer` | Extract a concept from an existing codebase, then optionally enrich     |
 

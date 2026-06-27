@@ -1,9 +1,9 @@
 schema_version: "1.0"
-tier: simple-app
-flow_to_run: "flow:simple-app"
+tier: appbuilder-simple
+flow_to_run: "flow:appbuilder-simple"
 reasoning: |
   features_estimate is 4 (<= 5) and multi_user is false, so branch 2 of the
-  decision rule fires: simple-app. Persistence is structured (single relational
+  decision rule fires: appbuilder-simple. Persistence is structured (single relational
   schema) and there are no integrations — the linear concept-and-impl shape
   fits a solo product with up to five features.
 description: "A solo recipe collector with tagging, search, and a print-friendly view."

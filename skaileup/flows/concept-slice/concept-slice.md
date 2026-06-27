@@ -1,11 +1,11 @@
 ---
 title: "concept-slice"
-description: "The per-feature concept loop — a reusable building block that standard-app and complex-app inline once per feature."
+description: "The per-feature concept loop — a reusable building block that appbuilder-standard and appbuilder-complex inline once per feature."
 order: 5
 ---
 
 The **concept-slice** flow is not a tier — it is the **per-feature concept
-loop**, a canonical building block that the `standard-app` and `complex-app`
+loop**, a canonical building block that the `appbuilder-standard` and `appbuilder-complex`
 tier flows inline as nodes, once per feature in their backlog. It is also
 standalone-runnable for designing a single feature.
 
@@ -30,7 +30,7 @@ datamodel entities).
 
 | Phase | What it does |
 |---|---|
-| `brainstorm` | Sparring on what the feature is (complex-app only; standard-app skips it) |
+| `brainstorm` | Sparring on what the feature is (appbuilder-complex only; appbuilder-standard skips it) |
 | `align` | AI interviews the user — surfaces edge cases, makes acceptance criteria explicit |
 | `scope-feature` | Fixes what's IN and OUT — prevents mid-design scope creep |
 | `design-feature` | Appends feature spec, screens, mockup, datamodel entities |
@@ -51,4 +51,4 @@ the permanent `_concept/` artifacts the slice appends to.
 
 - [Slice loops](../../../intro/slice-loops/) — the shared five-phase shape
 - [`impl-slice`](../impl-slice/) — the implementation-side counterpart
-- [`standard-app`](../standard-app/) · [`complex-app`](../complex-app/) — the tiers that inline this
+- [`appbuilder-standard`](../appbuilder-standard/) · [`appbuilder-complex`](../appbuilder-complex/) — the tiers that inline this
