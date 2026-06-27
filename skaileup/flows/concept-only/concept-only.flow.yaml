@@ -1,0 +1,370 @@
+id: concept-only
+version: '2.0.0'
+name: 'Concept Only'
+description: >-
+  Produces a complete concept document package without implementation — for
+  planning, documentation, or handing off to a development team. Full concept
+  pass: grounding (onboard -> seeds -> research) -> discovery (brief, goals,
+  comparable) -> design (brand-visual, brand-voice, inspiration) -> experience
+  (journeys, features, behaviors, screens, screens-technical, components) ->
+  architecture (techstack, system, datamodel) -> optional text walkthrough
+  mockup -> concept review. No build, no impl-slice loop. Replaces the legacy
+  concept-only + prototype flows and is the canonical home for the
+  concept-grounding-* skills.
+meta:
+  category: concept
+  tags:
+    - variant
+    - concept
+    - documentation
+    - handoff
+    - no-code
+  icon: i-heroicons-document-text
+  onboarding:
+    input_style: structured
+    fields:
+      - app_name
+      - problem
+      - audience
+      - notes
+requires:
+  # Self-contained install manifest: contracts its skills read + every skill its
+  # nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/conceptualization-contract
+  - contract:@skaile-ai/meta-concept-contract
+  - skill:@skaile-ai/skaileup-scope-scope-project
+  - skill:@skaile-ai/concept-grounding-onboard
+  - skill:@skaile-ai/concept-grounding-seeds
+  - skill:@skaile-ai/concept-grounding-research
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/concept-goals
+  - skill:@skaile-ai/concept-comparable
+  - skill:@skaile-ai/design-brand-visual
+  - skill:@skaile-ai/design-brand-voice
+  - skill:@skaile-ai/design-inspiration
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/product-spec-features
+  - skill:@skaile-ai/experience-behaviors
+  - skill:@skaile-ai/experience-screens
+  - skill:@skaile-ai/experience-screens-technical
+  - skill:@skaile-ai/experience-components
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-system
+  - skill:@skaile-ai/impl-architecture-datamodel
+  - skill:@skaile-ai/mockup-walkthrough-text
+  - skill:@skaile-ai/ops-review
+globals:
+  research_depth: moderate
+  approval_mode: checkpoint
+  subagent_mode: true
+  verbosity: detailed
+entry: scope
+nodes:
+  # --- Scope ---
+  - id: scope
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: skaileup-scope-scope-project
+      label: 'Scope Project'
+      optional: false
+      parameters: {}
+  # --- Grounding ---
+  - id: onboard
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: concept-grounding-onboard
+      label: 'Project Onboarding'
+      optional: false
+      parameters: {}
+  - id: seeds
+    type: skill
+    position:
+      x: 400
+      y: 120
+    data:
+      skill: concept-grounding-seeds
+      label: 'Ingest Seeds'
+      optional: true
+      parameters: {}
+  - id: research
+    type: skill
+    position:
+      x: 400
+      y: 280
+    data:
+      skill: concept-grounding-research
+      label: 'Domain Research'
+      optional: true
+      parameters: {}
+  # --- Discovery ---
+  - id: brief
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: concept-brief
+      label: 'Project Brief'
+      optional: false
+      parameters: {}
+  - id: goals
+    type: skill
+    position:
+      x: 800
+      y: 120
+    data:
+      skill: concept-goals
+      label: 'Goals'
+      optional: false
+      parameters: {}
+  - id: comparable
+    type: skill
+    position:
+      x: 800
+      y: 280
+    data:
+      skill: concept-comparable
+      label: 'Comparables'
+      optional: true
+      parameters: {}
+  # --- Design ---
+  - id: brand-visual
+    type: skill
+    position:
+      x: 1000
+      y: 120
+    data:
+      skill: design-brand-visual
+      label: 'Brand Visual'
+      optional: false
+      parameters: {}
+  - id: brand-voice
+    type: skill
+    position:
+      x: 1000
+      y: 280
+    data:
+      skill: design-brand-voice
+      label: 'Brand Voice'
+      optional: true
+      parameters: {}
+  - id: inspiration
+    type: skill
+    position:
+      x: 1200
+      y: 120
+    data:
+      skill: design-inspiration
+      label: 'Inspiration'
+      optional: true
+      parameters: {}
+  # --- Experience ---
+  - id: journeys
+    type: skill
+    position:
+      x: 1400
+      y: 200
+    data:
+      skill: experience-journeys
+      label: 'User Journeys'
+      optional: false
+      parameters: {}
+  - id: features
+    type: skill
+    position:
+      x: 1600
+      y: 200
+    data:
+      skill: product-spec-features
+      label: 'Features'
+      optional: false
+      parameters: {}
+  - id: behaviors
+    type: skill
+    position:
+      x: 1800
+      y: 120
+    data:
+      skill: experience-behaviors
+      label: 'Behaviors'
+      optional: true
+      parameters: {}
+  - id: screens
+    type: skill
+    position:
+      x: 1800
+      y: 280
+    data:
+      skill: experience-screens
+      label: 'Screens'
+      optional: false
+      parameters: {}
+  - id: screens-technical
+    type: skill
+    position:
+      x: 2000
+      y: 280
+    data:
+      skill: experience-screens-technical
+      label: 'Screens (technical)'
+      optional: true
+      parameters: {}
+  - id: components
+    type: skill
+    position:
+      x: 2000
+      y: 120
+    data:
+      skill: experience-components
+      label: 'Components'
+      optional: true
+      parameters: {}
+  # --- Architecture ---
+  - id: techstack
+    type: skill
+    position:
+      x: 2200
+      y: 200
+    data:
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
+      optional: false
+      parameters: {}
+  - id: system
+    type: skill
+    position:
+      x: 2400
+      y: 120
+    data:
+      skill: impl-architecture-system
+      label: 'Architecture'
+      optional: false
+      parameters: {}
+  - id: datamodel
+    type: skill
+    position:
+      x: 2400
+      y: 280
+    data:
+      skill: impl-architecture-datamodel
+      label: 'Data Model'
+      optional: false
+      parameters: {}
+  # --- Mockup (optional) ---
+  - id: mock
+    type: skill
+    position:
+      x: 2600
+      y: 200
+    data:
+      skill: mockup-walkthrough-text
+      label: 'Text Walkthrough'
+      optional: true
+      parameters: {}
+  # --- Review ---
+  - id: review
+    type: skill
+    position:
+      x: 2800
+      y: 200
+    data:
+      skill: ops-review
+      label: 'Concept Review'
+      optional: true
+      parameters: {}
+edges:
+  - id: e-scope-onboard
+    source: scope
+    target: onboard
+    type: flow
+  - id: e-onboard-seeds
+    source: onboard
+    target: seeds
+    type: optional
+  - id: e-onboard-research
+    source: onboard
+    target: research
+    type: optional
+  - id: e-onboard-brief
+    source: onboard
+    target: brief
+    type: flow
+  - id: e-brief-goals
+    source: brief
+    target: goals
+    type: flow
+  - id: e-brief-comparable
+    source: brief
+    target: comparable
+    type: optional
+  - id: e-goals-brand-visual
+    source: goals
+    target: brand-visual
+    type: flow
+  - id: e-brand-visual-brand-voice
+    source: brand-visual
+    target: brand-voice
+    type: optional
+  - id: e-brand-visual-inspiration
+    source: brand-visual
+    target: inspiration
+    type: optional
+  - id: e-brand-visual-journeys
+    source: brand-visual
+    target: journeys
+    type: flow
+  - id: e-journeys-features
+    source: journeys
+    target: features
+    type: flow
+  - id: e-features-behaviors
+    source: features
+    target: behaviors
+    type: optional
+  - id: e-features-screens
+    source: features
+    target: screens
+    type: flow
+  - id: e-screens-screens-technical
+    source: screens
+    target: screens-technical
+    type: optional
+  - id: e-screens-components
+    source: screens
+    target: components
+    type: optional
+  - id: e-screens-techstack
+    source: screens
+    target: techstack
+    type: flow
+  - id: e-techstack-system
+    source: techstack
+    target: system
+    type: flow
+  - id: e-techstack-datamodel
+    source: techstack
+    target: datamodel
+    type: flow
+  - id: e-system-mock
+    source: system
+    target: mock
+    type: optional
+  - id: e-datamodel-mock
+    source: datamodel
+    target: mock
+    type: optional
+  - id: e-datamodel-review
+    source: datamodel
+    target: review
+    type: flow
+  - id: e-mock-review
+    source: mock
+    target: review
+    type: optional

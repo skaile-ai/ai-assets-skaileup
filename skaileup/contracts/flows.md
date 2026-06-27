@@ -80,7 +80,7 @@ files at startup and building a name→path registry.
 | `impl-plan-brainstorm`           | impl-build        | Structured problem decomposition before planning        |
 | `impl-plan-plan-vertical`           | impl-build        | Decomposed implementation plan from concept artifacts   |
 | `impl-build-implement-supervised` | impl-build        | Supervised subagent-driven implementation               |
-| `impl-slice-finish`        | impl-build        | Controlled branch completion (merge/PR/keep/discard)    |
+| `impl-slice-git-finish`    | impl-build        | Controlled branch completion (merge/PR/keep/discard) + session prefs |
 | `impl-quality-audit`                | impl-quality      | Static code + structure analysis                        |
 | `impl-quality-test-e2e`                  | impl-quality      | Browser-based E2E journey testing                       |
 | `impl-quality-ready`                | impl-quality      | Pre-flight readiness gate                               |
@@ -95,38 +95,44 @@ files at startup and building a name→path registry.
 
 ## Where Flows Live
 
-| Domain  | Path                               | Flows                                                                     |
-| ------- | ---------------------------------- | ------------------------------------------------------------------------- |
-| Onboard | `concept-grounding-onboard/flows/`          | `concept-only`, `prototype`, `cli-concept`, `reverse-engineer`            |
-| Build   | `impl-build/flows/`            | `standard`, `full`, `cli`, `prototype`, `small`, `complex`, `superpowers` |
-| Quality | `impl-quality/flows/`          | `audit`, `review`, `readiness` (add as needed)                            |
-| Schema  | `contracts/flow.schema.json` | JSON Schema for all flow files                                            |
+**All flows live under `skaileup/flows/<id>/<id>.flow.yaml`** — one self-contained,
+end-to-end file per flow, each carrying its own `requires:` install manifest. There
+are no separate per-domain concept/build flow sets (the old split `concept-*` +
+`impl-build/flows/*` model was consolidated). `verify_flows.py` enforces this: any
+`*.flow.yaml` outside `skaileup/flows/` is a hard error.
 
-Each concept flow ends with a `next_flows` array pointing to the appropriate implementation
-(or other follow-on) flows. Use these to chain domains without bundling them into one file.
+| Kind    | IDs                                                  |
+| ------- | ---------------------------------------------------- |
+| Tier    | `mvp`, `simple-app`, `standard-app`, `complex-app`   |
+| Slice   | `concept-slice`, `impl-slice` (reusable per-feature loops) |
+| Variant | `cli-app`, `concept-only`, `reverse-engineer`        |
+| Schema  | `contracts/flow.schema.json` (JSON Schema for all flow files) |
 
 ### Flow Catalogue
 
-**Concept flows** (`concept-grounding-onboard/flows/`):
+**Tier flows** — chosen by `scope-project`, each end-to-end (concept → impl):
 
-| ID                 | Description                                                          |
-| ------------------ | -------------------------------------------------------------------- |
-| `concept-only`     | Full concept pipeline — brief through screens, components, storybook |
-| `prototype`        | Fast concept — brief, brand, features, screens, mockups              |
-| `cli-concept`      | CLI concept — brief, features, tech stack, data model (no UI)        |
-| `reverse-engineer` | Extract full concept from an existing codebase                       |
+| ID             | Description                                                          |
+| -------------- | -------------------------------------------------------------------- |
+| `mvp`          | Single feature, trivial persistence — one linear pass                |
+| `simple-app`   | Single-user, ≤5 features — linear concept + impl-slice loop          |
+| `standard-app` | Multi-user, ≤20 features — high-level concept + concept/impl slice loops |
+| `complex-app`  | Multi-product / enterprise — standard-app superset + project-ops + audit |
 
-**Implementation flows** (`impl-build/flows/`):
+**Slice loops** — reusable per-feature loops the tier flows inline once per feature:
 
-| ID            | Description                                                                   |
-| ------------- | ----------------------------------------------------------------------------- |
-| `standard`    | Scaffold, foundation, migrate/seed, feature TDD, tests, verify                |
-| `full`        | Readiness gate, scaffold, foundation, design(opt), full test suite, verify    |
-| `cli`         | CLI scaffold, foundation(headless,opt), feature TDD, unit+integration, verify |
-| `prototype`   | Minimal: scaffold, implement, smoke E2E — fast path for user testing          |
-| `small`       | Consolidated scaffold+foundation, features, verify — no test suite            |
-| `complex`     | Fully checkpointed setup phases, full test suite                              |
-| `superpowers` | Supervised: git prep, brainstorm, spec plan, subagent dispatch, branch close  |
+| ID              | Loop                                                       |
+| --------------- | ---------------------------------------------------------- |
+| `concept-slice` | brainstorm → align → scope-feature → design-feature        |
+| `impl-slice`    | plan → implement → test → recap → refactor → commit        |
+
+**Variant flows** — alternate shapes the scope step routes to:
+
+| ID                 | Description                                                              |
+| ------------------ | ----------------------------------------------------------------------- |
+| `cli-app`          | CLI tier — no UI/brand/screens/mockups; concept + build + impl-slice + unit/integration |
+| `concept-only`     | Full concept package, no implementation — for planning/handoff          |
+| `reverse-engineer` | Extract a concept from an existing codebase, then optionally enrich     |
 
 ---
 

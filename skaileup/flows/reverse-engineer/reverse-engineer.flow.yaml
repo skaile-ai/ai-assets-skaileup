@@ -1,0 +1,173 @@
+id: reverse-engineer
+version: '2.0.0'
+name: 'Reverse Engineer'
+description: >-
+  Extract a full concept from an existing codebase, then optionally enrich it
+  with concept steps. Extraction (ops-reverse-engineer) maps the repo, with
+  optional project orientation (overview, subsystem-map) and convention
+  discovery (standards-discover -> standards-inject). The extracted concept can
+  then be enriched with journeys, architecture, datamodel, and screens. No
+  build pass — hand off to a tier flow (e.g. standard-app) to implement.
+meta:
+  category: maintenance
+  tags:
+    - variant
+    - reverse-engineer
+    - existing-codebase
+    - extraction
+  icon: i-heroicons-arrow-path
+  onboarding:
+    input_style: repo
+    fields:
+      - repo_path
+      - branch
+      - context
+requires:
+  # Self-contained install manifest: contracts its skills read + every skill its
+  # nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/meta-concept-contract
+  - contract:@skaile-ai/conceptualization-contract
+  - contract:@skaile-ai/standards-contract
+  - skill:@skaile-ai/ops-reverse-engineer
+  - skill:@skaile-ai/ops-project-overview
+  - skill:@skaile-ai/ops-project-subsystem-map
+  - skill:@skaile-ai/impl-quality-standards-discover
+  - skill:@skaile-ai/impl-quality-standards-inject
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/impl-architecture-system
+  - skill:@skaile-ai/impl-architecture-datamodel
+  - skill:@skaile-ai/experience-screens
+globals:
+  research_depth: light
+  approval_mode: checkpoint
+  subagent_mode: true
+  verbosity: detailed
+entry: reverse-engineer
+nodes:
+  # --- Extraction ---
+  - id: reverse-engineer
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: ops-reverse-engineer
+      label: 'Reverse Engineer'
+      optional: false
+      parameters: {}
+  - id: overview
+    type: skill
+    position:
+      x: 200
+      y: 120
+    data:
+      skill: ops-project-overview
+      label: 'Project Overview'
+      optional: true
+      parameters: {}
+  - id: subsystem-map
+    type: skill
+    position:
+      x: 200
+      y: 280
+    data:
+      skill: ops-project-subsystem-map
+      label: 'Subsystem Map'
+      optional: true
+      parameters: {}
+  # --- Convention discovery ---
+  - id: standards-discover
+    type: skill
+    position:
+      x: 400
+      y: 120
+    data:
+      skill: impl-quality-standards-discover
+      label: 'Discover Standards'
+      optional: true
+      parameters: {}
+  - id: standards-inject
+    type: skill
+    position:
+      x: 600
+      y: 120
+    data:
+      skill: impl-quality-standards-inject
+      label: 'Inject Standards'
+      optional: true
+      parameters: {}
+  # --- Optional concept enrichment ---
+  - id: journeys
+    type: skill
+    position:
+      x: 400
+      y: 280
+    data:
+      skill: experience-journeys
+      label: 'User Journeys'
+      optional: true
+      parameters: {}
+  - id: system
+    type: skill
+    position:
+      x: 600
+      y: 280
+    data:
+      skill: impl-architecture-system
+      label: 'Architecture'
+      optional: true
+      parameters: {}
+  - id: datamodel
+    type: skill
+    position:
+      x: 800
+      y: 280
+    data:
+      skill: impl-architecture-datamodel
+      label: 'Data Model'
+      optional: true
+      parameters: {}
+  - id: screens
+    type: skill
+    position:
+      x: 1000
+      y: 280
+    data:
+      skill: experience-screens
+      label: 'Screens'
+      optional: true
+      parameters: {}
+edges:
+  - id: e-re-overview
+    source: reverse-engineer
+    target: overview
+    type: optional
+  - id: e-re-subsystem-map
+    source: reverse-engineer
+    target: subsystem-map
+    type: optional
+  - id: e-overview-standards-discover
+    source: overview
+    target: standards-discover
+    type: optional
+  - id: e-standards-discover-inject
+    source: standards-discover
+    target: standards-inject
+    type: optional
+  - id: e-re-journeys
+    source: reverse-engineer
+    target: journeys
+    type: optional
+  - id: e-journeys-system
+    source: journeys
+    target: system
+    type: optional
+  - id: e-system-datamodel
+    source: system
+    target: datamodel
+    type: optional
+  - id: e-datamodel-screens
+    source: datamodel
+    target: screens
+    type: optional

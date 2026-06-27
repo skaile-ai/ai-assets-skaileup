@@ -4,16 +4,18 @@ name: 'Complex App'
 description: >-
   Multi-product / enterprise. Superset of standard-app plus brand-voice,
   mockup-walkthrough-framework, non-optional infrastructure,
-  project-overview/subsystem-map/integration/review project ops, supervised
-  impl-plan, eval-code + audit quality (audit runs every slice — expressed
-  via edge ordering since the schema has no loop construct), full
-  concept-slice WITH brainstorm, full mockup-feedback cluster.
-  Iteration semantics: cs-brainstorm..q-audit run once per feature; the
-  linear graph below shows one iteration. Tier-flow composition rule (per
-  SKILL_GRAPH § 6 prose): scope-project -> high-level concept ->
-  project-overview -> impl-build setup -> loop: concept-slice (full —
-  INCLUDING brainstorm) -> impl-slice (supervised plan) -> impl-quality/audit
-  (every slice) -> done.
+  project-overview/subsystem-map/integration/review project ops, eval-code +
+  audit quality (audit runs every slice — expressed via edge ordering since the
+  schema has no loop construct), full mockup-feedback cluster. Both per-feature
+  loops are delegated to sub-flows: the concept-slice flow and the (full)
+  impl-slice flow — supervised dispatch now runs inside the impl-slice flow
+  itself (every slice, every tier), so it is no longer a complex-only node.
+  eval-code + audit run after each slice loop. Iteration semantics: the
+  per-feature loops + q-eval-code/q-audit run once per feature; the linear
+  graph below shows one iteration. Composition: scope-project -> high-level
+  concept -> project-overview -> impl-build setup -> loop: [sub-flow]
+  concept-slice -> [sub-flow] impl-slice -> impl-quality/audit (every slice)
+  -> done.
 meta:
   category: full-stack
   tags:
@@ -63,19 +65,12 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - skill:@skaile-ai/concept-slice-brainstorm
-  - skill:@skaile-ai/concept-slice-align
-  - skill:@skaile-ai/concept-slice-scope-feature
-  - skill:@skaile-ai/concept-slice-design-feature
-  - skill:@skaile-ai/impl-plan-brainstorm
-  - skill:@skaile-ai/impl-plan-align
-  - skill:@skaile-ai/impl-plan-plan-vertical
-  - skill:@skaile-ai/impl-plan-supervised
-  - skill:@skaile-ai/impl-slice-implement
-  - skill:@skaile-ai/impl-slice-test
-  - skill:@skaile-ai/impl-slice-recap
-  - skill:@skaile-ai/impl-slice-refactor
-  - skill:@skaile-ai/impl-slice-commit
+  # Per-feature loops delegated to sub-flows (their own manifests provide the
+  # loop skills, including impl-plan-supervised, which now runs inside the
+  # impl-slice flow on every slice). eval-code + audit stay — complex-only,
+  # run after each slice loop.
+  - flow:@skaile-ai/concept-slice
+  - flow:@skaile-ai/impl-slice
   - skill:@skaile-ai/impl-quality-eval-code
   - skill:@skaile-ai/impl-quality-audit
   - skill:@skaile-ai/impl-quality-test-unit
@@ -441,138 +436,27 @@ nodes:
       label: 'Build Docs'
       optional: false
       parameters: {}
-  # --- Per-feature loop: concept-slice FULL (with brainstorm) ---
-  - id: cs-brainstorm
-    type: skill
+  # --- Per-feature loops (delegated to the slice flows) ---
+  - id: concept-slice-loop
+    type: sub-flow
     position:
       x: 6200
       y: 200
     data:
-      skill: concept-slice-brainstorm
-      label: 'Concept Slice: Brainstorm'
-      optional: false
-      parameters: {}
-  - id: cs-align
-    type: skill
-    position:
-      x: 6400
-      y: 200
-    data:
-      skill: concept-slice-align
-      label: 'Concept Slice: Align'
-      optional: false
-      parameters: {}
-  - id: cs-scope-feature
-    type: skill
+      flow: concept-slice
+      domain: concept-slice
+      label: 'Per-feature concept-slice loop'
+      pass_context: true
+  - id: impl-slice-loop
+    type: sub-flow
     position:
       x: 6600
       y: 200
     data:
-      skill: concept-slice-scope-feature
-      label: 'Concept Slice: Scope Feature'
-      optional: false
-      parameters: {}
-  - id: cs-design-feature
-    type: skill
-    position:
-      x: 6800
-      y: 200
-    data:
-      skill: concept-slice-design-feature
-      label: 'Concept Slice: Design Feature'
-      optional: false
-      parameters: {}
-  # --- Per-feature loop: impl-slice (full + supervised) ---
-  - id: i-brainstorm
-    type: skill
-    position:
-      x: 7000
-      y: 200
-    data:
-      skill: impl-plan-brainstorm
-      label: 'Impl Plan: Brainstorm'
-      optional: false
-      parameters: {}
-  - id: i-align
-    type: skill
-    position:
-      x: 7200
-      y: 200
-    data:
-      skill: impl-plan-align
-      label: 'Impl Plan: Align'
-      optional: false
-      parameters: {}
-  - id: i-plan-vertical
-    type: skill
-    position:
-      x: 7400
-      y: 200
-    data:
-      skill: impl-plan-plan-vertical
-      label: 'Impl Plan: Vertical Plan'
-      optional: false
-      parameters: {}
-  - id: i-supervised
-    type: skill
-    position:
-      x: 7600
-      y: 200
-    data:
-      skill: impl-plan-supervised
-      label: 'Impl Plan: Supervised'
-      optional: false
-      parameters: {}
-  - id: i-implement
-    type: skill
-    position:
-      x: 7800
-      y: 200
-    data:
-      skill: impl-slice-implement
-      label: 'Impl Slice: Implement'
-      optional: false
-      parameters: {}
-  - id: i-test
-    type: skill
-    position:
-      x: 8000
-      y: 200
-    data:
-      skill: impl-slice-test
-      label: 'Impl Slice: Test'
-      optional: false
-      parameters: {}
-  - id: i-recap
-    type: skill
-    position:
-      x: 8200
-      y: 200
-    data:
-      skill: impl-slice-recap
-      label: 'Impl Slice: Recap'
-      optional: false
-      parameters: {}
-  - id: i-refactor
-    type: skill
-    position:
-      x: 8400
-      y: 200
-    data:
-      skill: impl-slice-refactor
-      label: 'Impl Slice: Refactor'
-      optional: false
-      parameters: {}
-  - id: i-commit
-    type: skill
-    position:
-      x: 8600
-      y: 200
-    data:
-      skill: impl-slice-commit
-      label: 'Impl Slice: Commit'
-      optional: false
-      parameters: {}
+      flow: impl-slice
+      domain: impl-slice
+      label: 'Per-feature impl-slice loop'
+      pass_context: true
   # --- Per-slice quality (audit every slice) ---
   - id: q-eval-code
     type: skill
@@ -801,60 +685,16 @@ edges:
     source: seed
     target: docs
     type: flow
-  - id: e-docs-cs-brainstorm
+  - id: e-docs-concept-slice-loop
     source: docs
-    target: cs-brainstorm
+    target: concept-slice-loop
     type: flow
-  - id: e-cs-brainstorm-cs-align
-    source: cs-brainstorm
-    target: cs-align
+  - id: e-concept-slice-loop-impl-slice-loop
+    source: concept-slice-loop
+    target: impl-slice-loop
     type: flow
-  - id: e-cs-align-cs-scope-feature
-    source: cs-align
-    target: cs-scope-feature
-    type: flow
-  - id: e-cs-scope-feature-cs-design-feature
-    source: cs-scope-feature
-    target: cs-design-feature
-    type: flow
-  - id: e-cs-design-feature-i-brainstorm
-    source: cs-design-feature
-    target: i-brainstorm
-    type: flow
-  - id: e-i-brainstorm-i-align
-    source: i-brainstorm
-    target: i-align
-    type: flow
-  - id: e-i-align-i-plan-vertical
-    source: i-align
-    target: i-plan-vertical
-    type: flow
-  - id: e-i-plan-vertical-i-supervised
-    source: i-plan-vertical
-    target: i-supervised
-    type: flow
-  - id: e-i-supervised-i-implement
-    source: i-supervised
-    target: i-implement
-    type: flow
-  - id: e-i-implement-i-test
-    source: i-implement
-    target: i-test
-    type: flow
-  - id: e-i-test-i-recap
-    source: i-test
-    target: i-recap
-    type: flow
-  - id: e-i-recap-i-refactor
-    source: i-recap
-    target: i-refactor
-    type: flow
-  - id: e-i-refactor-i-commit
-    source: i-refactor
-    target: i-commit
-    type: flow
-  - id: e-i-commit-q-eval-code
-    source: i-commit
+  - id: e-impl-slice-loop-q-eval-code
+    source: impl-slice-loop
     target: q-eval-code
     type: flow
   - id: e-q-eval-code-q-audit

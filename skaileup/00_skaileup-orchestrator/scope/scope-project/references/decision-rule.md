@@ -1,9 +1,51 @@
-# Decision Rule — Tier Selection (long form)
+# Decision Rule — Route Selection (long form)
 
 This document is the long-form companion to `SKILL.md`. The skill body keeps
 the deterministic rule short; this file documents the verbatim source, the
 literal interpretation, the fall-through behavior, one worked example per
 tier, and the schema-stability contract for downstream tasks.
+
+Routing has **two stages**:
+
+- **Stage 0 — Shape check (runs first).** Picks a non-app *variant flow* when
+  the project isn't a standard sized application. Orthogonal to size.
+- **Stage 1 — Tier sizing.** Only runs when Stage 0 resolves to `app`. Picks
+  one of the four sizing tiers from the feature/persistence/user signals.
+
+The resolved value (a variant flow id or a sizing tier) is written to `tier`,
+and `flow_to_run` is always `flow:<tier>`.
+
+---
+
+## 0. Stage 0 — Shape Check (BEFORE sizing)
+
+The `shape` signal classifies the *kind* of deliverable. It is evaluated first
+and, for any non-`app` shape, short-circuits the sizing rule entirely:
+
+```
+if existing codebase to extract a concept from:   → reverse-engineer   (shape: reverse-engineer)
+elif concept/spec package only, no implementation: → concept-only       (shape: concept-only)
+elif headless command-line tool, no UI:            → cli-app            (shape: cli)
+else:                                              → run Stage 1 sizing (shape: app)
+```
+
+| Shape signal       | Routed flow (`tier`) | When                                                              |
+| ------------------ | -------------------- | ----------------------------------------------------------------- |
+| `reverse-engineer` | `reverse-engineer`   | Input is an existing repo; extract a concept, then optionally enrich |
+| `concept-only`     | `concept-only`       | Deliverable is a concept/handoff package; no build pass            |
+| `cli`              | `cli-app`            | Headless CLI tool — no UI, brand, screens, or mockups             |
+| `app`              | one of the 4 tiers   | A normal UI application — fall through to Stage 1 sizing           |
+
+The shape is recorded in the optional top-level `shape` field of `scope.yaml`.
+When absent it defaults to `app` (backward-compatible with pre-variant scopes).
+`shape == app` requires `tier ∈ {mvp, simple-app, standard-app, complex-app}`;
+each variant shape requires its 1:1 routed flow (`cli → cli-app`,
+`concept-only → concept-only`, `reverse-engineer → reverse-engineer`). The
+validator enforces this agreement.
+
+> Variants are **orthogonal to size** — `cli-app`, `concept-only`, and
+> `reverse-engineer` are single end-to-end flows, not sized tiers. A CLI tool of
+> any size routes to `cli-app`; the sizing rule below applies only to `app`.
 
 ---
 
@@ -54,14 +96,19 @@ the skill body both implement it.
 
 | Rule term                              | Signal expression                                                  |
 | -------------------------------------- | ------------------------------------------------------------------ |
+| `shape`                                | `shape` (one of `app` / `cli` / `concept-only` / `reverse-engineer`) |
 | `features`                             | `signals.features_estimate` (integer)                              |
 | `persistence trivial`                  | `signals.persistence == "trivial"`                                 |
 | `single-user`                          | `signals.multi_user == false`                                      |
 | `multi-user`                           | `signals.multi_user == true`                                       |
 | `multi-product or enterprise integration` | `signals.persistence == "external"` OR `len(signals.integrations) >= 2` |
 
+Stage 0 maps a non-`app` shape directly to its routed `tier`:
+`cli → cli-app`, `concept-only → concept-only`, `reverse-engineer → reverse-engineer`.
+Stage 1 (sizing) runs only when `shape == app`.
+
 `flow_to_run` is derived deterministically from `tier` as `flow:<tier>`
-(e.g. `flow:simple-app`). Bare flow ids (the `id:` field inside each
+(e.g. `flow:simple-app`, `flow:cli-app`). Bare flow ids (the `id:` field inside each
 `*.flow.yaml`, per `contracts/asset_frontmatter.md` § Flow) drop the
 `flow:` prefix; the prefix is the **runtime reference** form used by
 `scope.yaml` consumers, not the flow-file's own id.
@@ -184,12 +231,18 @@ canonical contract for downstream tasks 2B / 2C / 2D / 2H. Bumping
 updates to every consumer.
 
 Consumers may rely on:
-- `tier` being one of the four enum values.
+- `tier` being one of the seven route values — the four sizing tiers
+  (`mvp`, `simple-app`, `standard-app`, `complex-app`) or the three variant
+  flows (`cli-app`, `concept-only`, `reverse-engineer`).
 - `flow_to_run` being `flow:<tier>` exactly.
+- `shape` (optional) being one of `app` / `cli` / `concept-only` /
+  `reverse-engineer`; absent means `app`. When present it agrees with `tier`.
 - All four `signals.*` keys being present.
 - `override.applied` being a boolean.
 - `chosen_at` parsing as ISO-8601 UTC with a `Z` suffix.
 
-The validator (`validator.py`) enforces all five.
+The validator (`validator.py`) enforces all of these. The variant routes were
+added additively (the four-tier files remain valid), so `schema_version` stays
+`"1.0"`.
 
 > **Schema stability:** the schema in this skill is the canonical contract for downstream tasks 2B / 2C / 2D / 2H. Bumping `schema_version` is a major version bump (per `contracts/asset_frontmatter.md` § Skills) and requires updates to every consumer.

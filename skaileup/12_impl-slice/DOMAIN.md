@@ -18,14 +18,14 @@ Executes one feature slice end-to-end: outside-in TDD implementation → usabili
 - **impl-slice-recap** (`recap/`) — Mandatory post-test summary: 1-3 sentences, ASCII feature-flow diagram, files-touched list, outcome-vs-plan. Writes `_implementation/slices/<id>/recap.md`.
 - **impl-slice-refactor** (`refactor/`) — Forced-simplification pass; proposes 1-3 smallest-improvement candidates (subtractions/simplifications only, no additions), requires user approval. Writes `_implementation/slices/<id>/refactor.md`.
 - **impl-slice-commit** (`commit/`) — Verifies the three predecessor handoffs (test, recap, refactor), decomposes working tree into atomic commits with user approval, then freezes `_implementation/slices/<id>/` on success (writes index.md, keeps the dossier, removes only progress.json).
-- **impl-slice-finish** (`finish/`) — Branch closeout: merge to main, open PR, keep branch, or discard. Refuses if any `_implementation/slices/<id>/` is not yet frozen (missing index.md).
+- **impl-slice-git-finish** (`git-finish/`) — Branch closeout: merge to main, open PR, keep branch, or discard, and persist the choice to session preferences. Refuses if any `_implementation/slices/<id>/` is not yet frozen (missing index.md).
 
 ## When to Use
 
 - `impl-plan/plan-vertical` has produced a `plan.md` and the agent is ready to implement a specific slice.
 - Project is `standard-app` or `complex-app` tier (multi-slice build).
 - A previous slice run was interrupted and `_implementation/slices/<id>/progress.json` exists (resume path).
-- All slices are committed and the branch needs to be closed out (`impl-slice-finish`).
+- All slices are committed and the branch needs to be closed out (`impl-slice-git-finish`).
 
 ## When NOT to Use
 
@@ -38,7 +38,7 @@ Executes one feature slice end-to-end: outside-in TDD implementation → usabili
 ```
 [once]  git-prepare
 [×N]    implement → test → recap → refactor → commit
-[once]  finish
+[once]  git-finish
 ```
 
 Each phase reads the prior phase's handoff from `_implementation/slices/<slice_id>/`. On commit the slice is **frozen, not deleted**: an `index.md` is written and the handoffs are kept as permanent per-feature documentation (only the transient `progress.json` is removed). Truth lives in the committed codebase; the dossier is the decision record.

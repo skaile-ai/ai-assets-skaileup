@@ -1,6 +1,6 @@
 ---
 name: impl-slice-commit
-description: "Use when a slice has been recapped and refactored and is ready to land. Verifies all 3 predecessor handoffs (test, recap, refactor), inventories the working tree, decomposes into 1-N atomic commits with user approval, lands the commits, and freezes _implementation/slices/<id>/ on success (writes index.md, keeps the dossier as documentation, removes only transient progress.json). Does NOT replace impl-slice-git-prepare (project setup) or impl-slice-finish (branch closeout)."
+description: "Use when a slice has been recapped and refactored and is ready to land. Verifies all 3 predecessor handoffs (test, recap, refactor), inventories the working tree, decomposes into 1-N atomic commits with user approval, lands the commits, and freezes _implementation/slices/<id>/ on success (writes index.md, keeps the dossier as documentation, removes only transient progress.json). Does NOT replace impl-slice-git-prepare (project setup) or impl-slice-git-finish (branch closeout)."
 metadata:
   version: "1.0.0"
   tags:
@@ -74,7 +74,7 @@ documentation, not throwaway scratch.)
 |---|---|---|
 | `impl-slice-git-prepare` (existing) | Project-level git setup | ONCE per project at start |
 | `impl-slice-commit` (this) | Per-slice atomic commits | ONCE per slice during the loop |
-| `impl-slice-finish` (existing) | Branch closeout / merge | ONCE per project at end |
+| `impl-slice-git-finish` (existing) | Branch closeout / merge | ONCE per project at end |
 
 The lifetimes do not overlap: `git-prepare` runs at project start, this skill
 runs N times during slice work, `finish` runs at project end.
@@ -89,7 +89,7 @@ runs N times during slice work, `finish` runs at project end.
 ## When NOT to Use
 
 - If you have not yet run recap or refactor — those are required prerequisites; run `impl-slice-recap` and `impl-slice-refactor` first.
-- If you want to merge the implementation branch — use `impl-slice-finish`.
+- If you want to merge the implementation branch — use `impl-slice-git-finish`.
 - If you need to set up git for a new project — use `impl-slice-git-prepare`.
 - If the working tree has changes from MULTIPLE slices interleaved — separate them first; this skill commits ONE slice's work.
 

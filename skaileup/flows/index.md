@@ -37,6 +37,17 @@ Both are standalone-runnable.
 | [`concept-slice`](./concept-slice/) | brainstorm → align → scope-feature → design-feature |
 | [`impl-slice`](./impl-slice/) | plan → implement → test → recap → refactor → commit |
 
+## Variant flows
+
+Alternate shapes the `scope-project` step routes to when a project doesn't fit
+the four UI-oriented tiers. Each is self-contained with its own `requires:`.
+
+| Flow | Shape |
+|---|---|
+| [`cli-app`](./cli-app/) | CLI tier — no UI/brand/screens/mockups; end-to-end concept + build + impl-slice loop + unit/integration tests |
+| [`concept-only`](./concept-only/) | full concept package, no implementation — planning / team handoff |
+| [`reverse-engineer`](./reverse-engineer/) | extract a concept from an existing codebase, then optionally enrich |
+
 ## See also
 
 - [Tiers](../intro/tiers/) — the `scope-project` decision rule

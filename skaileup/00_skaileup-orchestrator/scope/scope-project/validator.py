@@ -18,7 +18,20 @@ except ImportError:
     print("ERROR: PyYAML required (pip install pyyaml)", file=sys.stderr)
     sys.exit(2)
 
+# Sizing tiers — chosen by the feature-count/persistence rule (shape == "app").
 ALLOWED_TIERS = {"mvp", "simple-app", "standard-app", "complex-app"}
+# Variant flows — selected by the shape check that runs BEFORE sizing.
+ALLOWED_VARIANTS = {"cli-app", "concept-only", "reverse-engineer"}
+# Every value `tier` (the routed flow id) may take.
+ALLOWED_ROUTES = ALLOWED_TIERS | ALLOWED_VARIANTS
+# The project shape. "app" falls through to tier sizing; the rest map 1:1 to a
+# variant flow id via SHAPE_TO_ROUTE.
+ALLOWED_SHAPES = {"app", "cli", "concept-only", "reverse-engineer"}
+SHAPE_TO_ROUTE = {
+    "cli": "cli-app",
+    "concept-only": "concept-only",
+    "reverse-engineer": "reverse-engineer",
+}
 ALLOWED_PERSISTENCE = {"trivial", "structured", "external"}
 ISO8601_Z = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")
 REQUIRED_KEYS = (
@@ -55,19 +68,38 @@ def validate(path: Path) -> int:
         if k not in data:
             errors.append(f"missing key: {k}")
 
-    # tier enum
-    if data.get("tier") not in ALLOWED_TIERS:
+    # tier enum — the routed flow id: a sizing tier or a variant flow.
+    if data.get("tier") not in ALLOWED_ROUTES:
         errors.append(
-            f"tier must be one of {sorted(ALLOWED_TIERS)}; got {data.get('tier')!r}"
+            f"tier must be one of {sorted(ALLOWED_ROUTES)}; got {data.get('tier')!r}"
         )
 
     # flow_to_run derivation: must be "flow:<tier>"
-    if data.get("tier") in ALLOWED_TIERS:
+    if data.get("tier") in ALLOWED_ROUTES:
         expected_flow = f"flow:{data['tier']}"
         if data.get("flow_to_run") != expected_flow:
             errors.append(
                 f"flow_to_run must be {expected_flow!r}; got {data.get('flow_to_run')!r}"
             )
+
+    # shape (optional) — when present, must be a known shape and must agree with tier.
+    if "shape" in data:
+        shape = data.get("shape")
+        if shape not in ALLOWED_SHAPES:
+            errors.append(
+                f"shape must be one of {sorted(ALLOWED_SHAPES)}; got {shape!r}"
+            )
+        elif shape == "app":
+            if data.get("tier") not in ALLOWED_TIERS:
+                errors.append(
+                    f"shape 'app' requires tier in {sorted(ALLOWED_TIERS)}; got {data.get('tier')!r}"
+                )
+        else:  # variant shape — tier must be its 1:1 routed flow
+            expected_route = SHAPE_TO_ROUTE[shape]
+            if data.get("tier") != expected_route:
+                errors.append(
+                    f"shape {shape!r} requires tier {expected_route!r}; got {data.get('tier')!r}"
+                )
 
     # reasoning length (30..800 after trim)
     r = (data.get("reasoning") or "")
@@ -115,9 +147,9 @@ def validate(path: Path) -> int:
             errors.append(
                 "override.requested_tier must equal tier when applied=true"
             )
-        if o.get("rule_would_have_picked") not in ALLOWED_TIERS:
+        if o.get("rule_would_have_picked") not in ALLOWED_ROUTES:
             errors.append(
-                "override.rule_would_have_picked must be a valid tier when applied=true"
+                "override.rule_would_have_picked must be a valid route when applied=true"
             )
     elif o.get("applied") is False:
         if o.get("requested_tier") is not None:

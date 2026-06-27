@@ -1,36 +1,32 @@
-id: simple-app
+id: cli-app
 version: '2.0.0'
-name: 'Simple App'
+name: 'CLI App'
 description: >-
-  Single-user, ≤5 features. Linear concept pipeline (with brand-visual,
-  journeys, screens, static-html walkthrough mockup, isolated-html component
-  mockup, datamodel, full impl-build setup) followed by per-feature work
-  delegated to the impl-slice sub-flow (the full loop: brainstorm -> align ->
+  Command-line tool — no UI shell, no brand, no journeys/screens, no mockups,
+  no E2E. End-to-end: linear CLI concept (scope -> brief -> features-as-commands
+  -> techstack -> templates -> datamodel) then build setup (scaffold ->
+  foundation headless -> migrate/seed -> docs) then delegates per-feature
+  work to the impl-slice sub-flow (full loop: brainstorm -> align ->
   plan-vertical -> git-prepare -> implement -> implement-page -> test ->
-  recap -> refactor -> commit -> git-finish), run once per feature in the
-  plan-vertical backlog. Quality: unit + e2e. No concept-slice loop. The
-  impl-slice loop is delegated, not inlined — see flow:@skaile-ai/impl-slice.
+  recap -> refactor -> commit -> git-finish), run once per feature.
+  Quality: unit + integration (no E2E). Replaces the legacy split cli-concept
+  + cli flows with one conformant, self-contained tier.
 meta:
-  category: full-stack
+  category: cli
   tags:
-    - tier
-    - simple-app
-    - small
-  icon: i-heroicons-cube
+    - variant
+    - cli
+    - no-ui
+    - headless
+  icon: i-heroicons-command-line
 requires:
-  # Everything installed when this flow is installed: the contracts its skills
-  # read + every skill its nodes run (flow node order). Self-contained — no
-  # inheritance, no extras.
+  # Self-contained install manifest: contracts its skills read + every skill its
+  # nodes run (flow node order). Exact — no inheritance, no extras.
   - contract:@skaile-ai/shared-contracts
   - contract:@skaile-ai/implementation-contract
   - skill:@skaile-ai/skaileup-scope-scope-project
   - skill:@skaile-ai/concept-brief
-  - skill:@skaile-ai/design-brand-visual
-  - skill:@skaile-ai/experience-journeys
   - skill:@skaile-ai/product-spec-features
-  - skill:@skaile-ai/experience-screens
-  - skill:@skaile-ai/mockup-walkthrough-static-html
-  - skill:@skaile-ai/mockup-component-isolated-html
   - skill:@skaile-ai/impl-architecture-techstack
   - skill:@skaile-ai/impl-architecture-templates-select
   - skill:@skaile-ai/impl-architecture-datamodel
@@ -41,11 +37,11 @@ requires:
   - skill:@skaile-ai/impl-build-docs
   - flow:@skaile-ai/impl-slice
   - skill:@skaile-ai/impl-quality-test-unit
-  - skill:@skaile-ai/impl-quality-test-e2e
+  - skill:@skaile-ai/impl-quality-test-integration
 globals:
   research_depth: light
   approval_mode: checkpoint
-  subagent_mode: false
+  subagent_mode: true
   verbosity: standard
 entry: scope
 nodes:
@@ -60,7 +56,7 @@ nodes:
       label: 'Scope Project'
       optional: false
       parameters: {}
-  # --- Linear concept ---
+  # --- Linear CLI concept (no UI) ---
   - id: brief
     type: skill
     position:
@@ -70,74 +66,24 @@ nodes:
       skill: concept-brief
       label: 'Concept Brief'
       optional: false
-      parameters: {}
-  - id: brand-visual
+      parameters:
+        note: 'Describe CLI commands, flags, and expected output'
+  - id: features
     type: skill
     position:
       x: 400
       y: 200
     data:
-      skill: design-brand-visual
-      label: 'Brand Visual'
-      optional: false
-      parameters: {}
-  - id: journeys
-    type: skill
-    position:
-      x: 600
-      y: 200
-    data:
-      skill: experience-journeys
-      label: 'Experience Journeys'
-      optional: false
-      parameters: {}
-  - id: features
-    type: skill
-    position:
-      x: 800
-      y: 200
-    data:
       skill: product-spec-features
-      label: 'Product Features'
+      label: 'Features (commands)'
       optional: false
-      parameters: {}
-  - id: screens
-    type: skill
-    position:
-      x: 1000
-      y: 200
-    data:
-      skill: experience-screens
-      label: 'Experience Screens'
-      optional: false
-      parameters: {}
-  - id: mock-static
-    type: skill
-    position:
-      x: 1200
-      y: 100
-    data:
-      skill: mockup-walkthrough-static-html
-      label: 'Static HTML Walkthrough'
-      optional: false
-      parallel_group: mockups
-      parameters: {}
-  - id: comp-isolated
-    type: skill
-    position:
-      x: 1200
-      y: 300
-    data:
-      skill: mockup-component-isolated-html
-      label: 'Isolated HTML Components'
-      optional: false
-      parallel_group: mockups
-      parameters: {}
-  # --- Architecture ---
+      parameters:
+        cli_mode: true
+        describe_as_commands: true
   - id: techstack
     type: skill
     position:
-      x: 1400
+      x: 600
       y: 200
     data:
       skill: impl-architecture-techstack
@@ -147,7 +93,7 @@ nodes:
   - id: templates
     type: skill
     position:
-      x: 1600
+      x: 800
       y: 200
     data:
       skill: impl-architecture-templates-select
@@ -157,58 +103,61 @@ nodes:
   - id: datamodel
     type: skill
     position:
-      x: 1800
+      x: 1000
       y: 200
     data:
       skill: impl-architecture-datamodel
       label: 'Data Model'
       optional: false
-      parameters: {}
-  # --- Build ---
+      parameters:
+        note: 'Config files, storage schemas, output formats'
+  # --- Build (headless) ---
   - id: scaffold
     type: skill
     position:
-      x: 2000
+      x: 1200
       y: 200
     data:
       skill: impl-build-scaffold
       label: 'Scaffold'
       optional: false
-      parameters: {}
+      parameters:
+        project_type: cli
   - id: foundation
     type: skill
     position:
-      x: 2200
+      x: 1400
       y: 200
     data:
       skill: impl-build-foundation
       label: 'Foundation'
       optional: false
-      parameters: {}
+      parameters:
+        skip_ui_shell: true
   - id: migrate
     type: skill
     position:
-      x: 2400
-      y: 200
+      x: 1600
+      y: 120
     data:
       skill: impl-build-migrate
       label: 'Migrate'
-      optional: false
+      optional: true
       parameters: {}
   - id: seed
     type: skill
     position:
-      x: 2600
-      y: 200
+      x: 1600
+      y: 280
     data:
       skill: impl-build-seed
       label: 'Seed'
-      optional: false
+      optional: true
       parameters: {}
   - id: docs
     type: skill
     position:
-      x: 2800
+      x: 1800
       y: 200
     data:
       skill: impl-build-docs
@@ -219,32 +168,32 @@ nodes:
   - id: impl-slice-loop
     type: sub-flow
     position:
-      x: 3000
+      x: 2000
       y: 200
     data:
       flow: impl-slice
       domain: impl-slice
       label: 'Per-feature impl-slice loop'
       pass_context: true
-  # --- Quality ---
+  # --- Quality (unit + integration, no E2E) ---
   - id: q-test-unit
     type: skill
     position:
-      x: 4200
-      y: 200
+      x: 3200
+      y: 120
     data:
       skill: impl-quality-test-unit
       label: 'Unit Tests'
       optional: false
       parameters: {}
-  - id: q-test-e2e
+  - id: q-test-integration
     type: skill
     position:
-      x: 4400
-      y: 200
+      x: 3200
+      y: 280
     data:
-      skill: impl-quality-test-e2e
-      label: 'E2E Tests'
+      skill: impl-quality-test-integration
+      label: 'Integration Tests'
       optional: false
       parameters: {}
 edges:
@@ -252,36 +201,12 @@ edges:
     source: scope
     target: brief
     type: flow
-  - id: e-brief-brand-visual
+  - id: e-brief-features
     source: brief
-    target: brand-visual
-    type: flow
-  - id: e-brand-visual-journeys
-    source: brand-visual
-    target: journeys
-    type: flow
-  - id: e-journeys-features
-    source: journeys
     target: features
     type: flow
-  - id: e-features-screens
+  - id: e-features-techstack
     source: features
-    target: screens
-    type: flow
-  - id: e-screens-mock-static
-    source: screens
-    target: mock-static
-    type: parallel
-  - id: e-screens-comp-isolated
-    source: screens
-    target: comp-isolated
-    type: parallel
-  - id: e-mock-static-techstack
-    source: mock-static
-    target: techstack
-    type: flow
-  - id: e-comp-isolated-techstack
-    source: comp-isolated
     target: techstack
     type: flow
   - id: e-techstack-templates
@@ -303,13 +228,13 @@ edges:
   - id: e-foundation-migrate
     source: foundation
     target: migrate
-    type: flow
+    type: optional
   - id: e-migrate-seed
     source: migrate
     target: seed
-    type: flow
-  - id: e-seed-docs
-    source: seed
+    type: optional
+  - id: e-foundation-docs
+    source: foundation
     target: docs
     type: flow
   - id: e-docs-impl-slice-loop
@@ -320,7 +245,7 @@ edges:
     source: impl-slice-loop
     target: q-test-unit
     type: flow
-  - id: e-q-test-unit-q-test-e2e
-    source: q-test-unit
-    target: q-test-e2e
+  - id: e-impl-slice-loop-q-test-integration
+    source: impl-slice-loop
+    target: q-test-integration
     type: flow

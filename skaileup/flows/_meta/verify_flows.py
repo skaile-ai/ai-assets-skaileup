@@ -19,13 +19,16 @@ Checks performed:
    (c) a deferred Phase-3 skill in `flows/_meta/deferred_skills.yaml`
        (Bucket C: deferred — emits WARN, not ERROR).
    Anything else → ERROR (unresolved).
-4. Each flow's `requires:` skill set EXACTLY equals its flow's node-skill set —
-   no skill the flow runs is missing from the manifest, and no skill is listed
-   that the flow does not run. (Self-contained, exact: no inheritance, no extras.)
+4. Each flow's `requires:` skill set EXACTLY equals its flow's node-skill set,
+   AND its `requires:` flow set EXACTLY equals its sub-flow node targets — no
+   skill/flow the flow runs is missing from the manifest, and none is listed that
+   the flow does not run. (Self-contained, exact: no inheritance, no extras.)
+   A tier that delegates a loop to a sub-flow node requires that `flow:` instead
+   of re-listing the loop's skills; the sub-flow's own manifest provides them.
 5. Every `contract:` ref in a flow's `requires:` resolves to a contract declared
-   in `skaile.yaml`.
-6. `requires:` refs use the scoped grammar `kind:@publisher/name` and only the
-   `skill`/`contract` kinds (a flow manifest does not require other flows/bundles).
+   in `skaile.yaml`; every sub-flow node target resolves to a known flow id.
+6. `requires:` refs use the scoped grammar `kind:@publisher/name` with the
+   `skill`/`contract`/`flow` kinds (`flow:` only when a sub-flow node delegates).
 """
 from __future__ import annotations
 
@@ -48,7 +51,9 @@ SKAILE_YAML = REPO / "skaile.yaml"
 
 TIER_FLOWS = ["mvp", "simple-app", "standard-app", "complex-app"]
 SLICE_FLOWS = ["concept-slice", "impl-slice"]
-ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS
+# Variant flows: not tiers — alternate shapes the scope step routes to.
+VARIANT_FLOWS = ["cli-app", "concept-only", "reverse-engineer"]
+ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS
 
 # Skills authored by Phase-2 mini-plans 2A/2B/2C/2D/2F/2G — these are added
 # to the "knowable" set for resolution checks even if SKILL.md gathering misses
@@ -132,25 +137,40 @@ def collect_flow_skills(flow_data: dict) -> set[str]:
     return {n["data"]["skill"] for n in flow_data["nodes"] if n.get("type") == "skill"}
 
 
-def parse_requires(flow_data: dict) -> tuple[set[str], set[str], list[str]]:
-    """Return (skill names, contract names, malformed refs) from a flow's requires."""
+def collect_subflows(flow_data: dict) -> set[str]:
+    """Flow ids referenced by sub-flow nodes (type == 'sub-flow')."""
+    return {
+        n["data"]["flow"]
+        for n in flow_data["nodes"]
+        if n.get("type") == "sub-flow"
+    }
+
+
+def parse_requires(flow_data: dict) -> tuple[set[str], set[str], set[str], list[str]]:
+    """Return (skill names, contract names, flow names, malformed refs) from requires.
+
+    A flow may require other flows (``flow:@pub/name``) when it delegates a loop to
+    a sub-flow node instead of inlining it. The required flow's own manifest then
+    transitively provides that loop's skills.
+    """
     skills: set[str] = set()
     contracts: set[str] = set()
+    flows: set[str] = set()
     bad: list[str] = []
+    bucket = {"skill": skills, "contract": contracts, "flow": flows}
     for r in flow_data.get("requires", []) or []:
         if not isinstance(r, str) or ":" not in r:
             bad.append(str(r))
             continue
         kind, _, body = r.partition(":")
-        if kind not in ("skill", "contract"):
+        if kind not in bucket:
             bad.append(r)
             continue
         if not body.startswith("@") or "/" not in body:
             bad.append(r)
             continue
-        name = bare_name(body)
-        (skills if kind == "skill" else contracts).add(name)
-    return skills, contracts, bad
+        bucket[kind].add(bare_name(body))
+    return skills, contracts, flows, bad
 
 
 def main() -> int:
@@ -162,6 +182,20 @@ def main() -> int:
 
     errors: list[str] = []
     warnings: list[str] = []
+
+    # ------------------------------------------------------------------
+    # 0. No stray flow files: every *.flow.yaml must live under skaileup/flows/.
+    #    Guards against the pre-consolidation pattern of parallel flow sets in
+    #    orchestrator/ and impl-build/ drifting back in.
+    # ------------------------------------------------------------------
+    for fp in REPO.glob("**/*.flow.yaml"):
+        try:
+            fp.relative_to(FLOWS)
+        except ValueError:
+            errors.append(
+                f"stray flow file outside skaileup/flows/: "
+                f"{fp.relative_to(REPO)} (all flows must live under skaileup/flows/)"
+            )
 
     # ------------------------------------------------------------------
     # 1+2. Validate every flow + check id matches filename stem
@@ -212,13 +246,14 @@ def main() -> int:
         if "requires" not in data:
             errors.append(f"{fid}: flow has no top-level requires: manifest")
             continue
-        req_skills, req_contracts, bad = parse_requires(data)
+        req_skills, req_contracts, req_flows, bad = parse_requires(data)
         node_skills = flow_skills_by_id.get(fid, set())
+        node_subflows = collect_subflows(data)
 
         for b in bad:
             errors.append(
                 f"{fid}: malformed requires ref {b!r} "
-                f"(expected skill:@pub/name or contract:@pub/name)"
+                f"(expected skill:/contract:/flow:@pub/name)"
             )
 
         # Exact match: requires' skill set == flow node-skill set
@@ -232,6 +267,24 @@ def main() -> int:
             errors.append(
                 f"{fid}: requires lists skills the flow does NOT run: {sorted(extra)}"
             )
+
+        # Exact match: requires' flow set == flow's sub-flow node targets.
+        # A flow that delegates a loop to a sub-flow node requires that flow;
+        # a flow listed but not delegated to (or vice versa) is an error.
+        missing_f = node_subflows - req_flows
+        extra_f = req_flows - node_subflows
+        if missing_f:
+            errors.append(
+                f"{fid}: requires missing sub-flows the flow delegates to: {sorted(missing_f)}"
+            )
+        if extra_f:
+            errors.append(
+                f"{fid}: requires lists flows the flow does NOT delegate to: {sorted(extra_f)}"
+            )
+        # Every sub-flow target must be a real flow id
+        for sf in sorted(node_subflows):
+            if sf not in ALL_FLOWS:
+                errors.append(f"{fid}: sub-flow node targets unknown flow {sf!r}")
 
         # Contracts must resolve to a declared contract
         for c in sorted(req_contracts):

@@ -41,7 +41,9 @@ REQUIRED_OUTCOME_SUBSECTIONS = [
     "### Carried over",
 ]
 
-ALLOWED_TIERS = {"mvp", "simple-app", "standard-app", "complex-app"}
+# Routes that run this skill. cli-app is a variant route (no UI) that still
+# runs the impl-plan/impl-slice loop; concept-only/reverse-engineer don't.
+ALLOWED_TIERS = {"mvp", "simple-app", "standard-app", "complex-app", "cli-app"}
 SLICE_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,47}$")
 FENCED_BLOCK_RE = re.compile(r"```(\w*)\n(.*?)\n```", re.DOTALL)
 DIAGRAM_CHARS = {"→", ">", "|", "─", "+"}

@@ -1,6 +1,6 @@
 ---
-name: impl-slice-finish
-description: "Use when ending an implementation branch after all per-slice work is committed. Presents four options: merge to main, create pull request, keep branch, or discard. Requires explicit confirmation for merge and discard. Refuses if any _implementation/slices/<id>/ dossier is not yet frozen (missing index.md) — those signal uncommitted slices."
+name: impl-slice-git-finish
+description: "Use when ending an implementation branch after all per-slice work is committed — the git-prepare ↔ git-finish bookend. Presents four git actions: merge to main, open a pull request, keep branch, or discard. Requires explicit confirmation for merge and discard. Persists the user's choices (PR vs merge, squash, base branch) to session preferences so later runs default to them. Refuses if any _implementation/slices/<id>/ dossier is not yet frozen (missing index.md) — those signal uncommitted slices."
 metadata:
   version: '2.0.0'
   tags:
@@ -35,14 +35,17 @@ metadata:
         hint: 'merge = squash-merge to main now; pull-request = open PR for review; keep = leave branch as-is; discard = delete branch and worktree'
 ---
 
-# Finish Branch
+# Git Finish
 
 ## Overview
 
-Closes out the supervised implementation run by handling the implementation branch.
+Closes out the implementation run by handling the git side of the branch — the
+closing bookend to `impl-slice-git-prepare`.
 
-Four options are presented — the user must choose one. Destructive options (merge and discard)
-require typed confirmation before executing.
+Four git actions are presented — the user must choose one. Destructive actions (merge and
+discard) require typed confirmation before executing. The chosen action and its parameters
+(PR vs merge, squash, base branch) are stored as **session preferences** so the next run
+defaults to them instead of re-asking.
 
 | Option         | When to use                                                                 |
 | -------------- | --------------------------------------------------------------------------- |
@@ -58,20 +61,26 @@ require typed confirmation before executing.
 
 ---
 
-ROLE Branch completion — presents merge / PR / keep / discard options and executes the chosen action with appropriate safeguards.
+ROLE Git finish — presents merge / PR / keep / discard actions, executes the chosen one with appropriate safeguards, and persists the choice to session preferences.
 
 READS
 \_implementation/slices/ — every `<id>/` must be FROZEN (contain index.md); any slice dir without index.md signals an uncommitted slice
-\_implementation/git-state.json — branch name, git_mode, worktree path
+\_implementation/git-state.json — branch name, git_mode, worktree path, and `preferences` (session defaults from prior runs)
 \_implementation/decisions.md — concerns to include in PR/merge message (optional)
 
+WRITES
+\_implementation/git-state.json — final `status` and a `preferences` object recording the chosen action and its parameters
+
+MUST read git-state.json `preferences` first and pre-select the previously chosen action as the default (still confirmable, never auto-executed for merge/discard)
 MUST verify every _implementation/slices/<id>/ contains index.md (is frozen) before merge or PR
 MUST require typed "merge" confirmation before squash-merging to main
 MUST require typed "discard" confirmation before deleting the branch
 MUST clean up worktree if git_mode=worktree and action is merge, keep, or discard
+MUST persist the chosen action + parameters (pr_vs_merge, squash, base_branch) to git-state.json `preferences` as session defaults
 NEVER squash-merge without running the full test suite first
 NEVER force-push or rewrite git history
 NEVER delete the branch without explicit typed confirmation
+NEVER auto-execute a destructive action from a stored preference — preferences set the default, confirmation is still required
 
 # ── Workflow ───────────────────────────────────────────────────────
 
@@ -92,6 +101,8 @@ STEP 2: Run final tests
   - STOP. Report failing tests. Do not offer merge/PR until tests pass.
 
 STEP 3: Present options
+
+- If git-state.json `preferences.finish_action` is set, mark that option as the default ("[default — last used]") but still require an explicit choice.
 
 > "Implementation is complete. All slices committed (every `_implementation/slices/<id>/` is frozen with an index.md), all tests passing.
 >
@@ -145,13 +156,27 @@ $ git worktree remove .worktrees/<app-slug> --force
 $ git checkout main
 $ git branch -D implement/<app-slug> - Update git-state.json: status = discarded > "Branch implement/<app-slug> deleted. Implementation work has been discarded."
 
+STEP 5: Persist session preferences
+
+- Write the chosen action and its parameters to git-state.json `preferences` so the next run defaults to them:
+```json
+"preferences": {
+  "finish_action": "pull-request",   // last chosen action
+  "pr_vs_merge": "pr",               // pr | merge
+  "squash": true,                     // squash on merge
+  "base_branch": "main"
+}
+```
+- These are session defaults only — they pre-select the option in STEP 3; they never bypass the typed confirmation for merge or discard.
+
 CHECKLIST
 
+- [ ] git-state.json `preferences` read and used to default the option in STEP 3
 - [ ] every `_implementation/slices/<id>/` verified frozen (has index.md) before merge or PR
 - [ ] Full test suite passed before merge or PR
 - [ ] Typed confirmation received for merge and discard
 - [ ] Worktree cleaned up if git_mode=worktree
-- [ ] git-state.json updated with final status
+- [ ] git-state.json updated with final status and `preferences`
 
 ---
 

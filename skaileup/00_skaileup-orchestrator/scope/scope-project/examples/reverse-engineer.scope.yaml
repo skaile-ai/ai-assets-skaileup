@@ -1,0 +1,22 @@
+schema_version: "1.0"
+shape: reverse-engineer
+tier: reverse-engineer
+flow_to_run: "flow:reverse-engineer"
+reasoning: |
+  Stage 0 shape check fires: the input is an existing codebase to extract a
+  concept from, so it routes to reverse-engineer and the sizing rule is
+  skipped. Signals (15 features, multi-user, external persistence, one
+  integration) describe the extracted system and seed optional enrichment.
+description: "Extract a full concept from an inherited Rails monolith handling orders, billing, and fulfillment."
+signals:
+  features_estimate: 15
+  multi_user: true
+  persistence: external
+  integrations:
+    - stripe
+override:
+  applied: false
+  requested_tier: null
+  rule_would_have_picked: null
+chosen_at: "2026-05-07T00:00:00Z"
+chosen_by: "skaileup-scope-scope-project@1.2.0"

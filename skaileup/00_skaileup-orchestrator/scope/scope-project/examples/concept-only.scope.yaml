@@ -1,0 +1,21 @@
+schema_version: "1.0"
+shape: concept-only
+tier: concept-only
+flow_to_run: "flow:concept-only"
+reasoning: |
+  Stage 0 shape check fires: the deliverable is a concept/spec package for
+  planning and team handoff, with no implementation pass, so it routes to
+  concept-only and the sizing rule is skipped. Signals (8 features, multi-user,
+  structured persistence) are recorded to scope the concept depth only.
+description: "A concept package for a multi-team incident-response portal, for handoff to an external dev shop."
+signals:
+  features_estimate: 8
+  multi_user: true
+  persistence: structured
+  integrations: []
+override:
+  applied: false
+  requested_tier: null
+  rule_would_have_picked: null
+chosen_at: "2026-05-07T00:00:00Z"
+chosen_by: "skaileup-scope-scope-project@1.2.0"

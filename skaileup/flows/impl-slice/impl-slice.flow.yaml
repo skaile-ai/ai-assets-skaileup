@@ -3,11 +3,13 @@ version: '2.0.0'
 name: 'Impl Slice'
 description: >-
   Per-feature implementation loop: impl-plan brainstorm -> align -> plan-vertical,
-  then impl-slice implement -> test -> recap -> refactor -> commit. Canonical
-  building block consumed by tier flows (simple-app, standard-app, complex-app)
-  via node inlining. Iteration semantics: tier orchestrators run this slice
-  once per feature in their plan-vertical backlog. Slice flow is
-  standalone-runnable for testability of the slice loop.
+  then the full impl-slice loop git-prepare -> supervised -> implement ->
+  implement-page -> test -> recap -> refactor -> commit -> git-finish. Supervised
+  dispatch (two-stage review) runs inside every slice. Canonical building block
+  consumed by the tier flows (simple-app, standard-app, complex-app, cli-app),
+  which delegate to it via a sub-flow node rather than inlining. Iteration
+  semantics: tier orchestrators run this slice once per feature in their
+  plan-vertical backlog. Slice flow is standalone-runnable for testability.
 meta:
   category: incremental
   tags:
@@ -22,11 +24,15 @@ requires:
   - skill:@skaile-ai/impl-plan-brainstorm
   - skill:@skaile-ai/impl-plan-align
   - skill:@skaile-ai/impl-plan-plan-vertical
+  - skill:@skaile-ai/impl-slice-git-prepare
+  - skill:@skaile-ai/impl-plan-supervised
   - skill:@skaile-ai/impl-slice-implement
+  - skill:@skaile-ai/impl-slice-implement-page
   - skill:@skaile-ai/impl-slice-test
   - skill:@skaile-ai/impl-slice-recap
   - skill:@skaile-ai/impl-slice-refactor
   - skill:@skaile-ai/impl-slice-commit
+  - skill:@skaile-ai/impl-slice-git-finish
 globals:
   research_depth: skip
   approval_mode: checkpoint
@@ -67,10 +73,32 @@ nodes:
       optional: false
       subagent: false
       parameters: {}
-  - id: i-implement
+  - id: i-git-prepare
     type: skill
     position:
       x: 600
+      y: 200
+    data:
+      skill: impl-slice-git-prepare
+      label: 'Slice: Git Prepare'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-supervised
+    type: skill
+    position:
+      x: 700
+      y: 200
+    data:
+      skill: impl-plan-supervised
+      label: 'Slice: Supervised Dispatch'
+      optional: false
+      subagent: true
+      parameters: {}
+  - id: i-implement
+    type: skill
+    position:
+      x: 800
       y: 200
     data:
       skill: impl-slice-implement
@@ -78,10 +106,21 @@ nodes:
       optional: false
       subagent: false
       parameters: {}
+  - id: i-implement-page
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: impl-slice-implement-page
+      label: 'Slice: Implement Page'
+      optional: true
+      subagent: false
+      parameters: {}
   - id: i-test
     type: skill
     position:
-      x: 800
+      x: 1200
       y: 200
     data:
       skill: impl-slice-test
@@ -92,7 +131,7 @@ nodes:
   - id: i-recap
     type: skill
     position:
-      x: 1000
+      x: 1400
       y: 200
     data:
       skill: impl-slice-recap
@@ -103,7 +142,7 @@ nodes:
   - id: i-refactor
     type: skill
     position:
-      x: 1200
+      x: 1600
       y: 200
     data:
       skill: impl-slice-refactor
@@ -114,11 +153,22 @@ nodes:
   - id: i-commit
     type: skill
     position:
-      x: 1400
+      x: 1800
       y: 200
     data:
       skill: impl-slice-commit
       label: 'Slice: Commit'
+      optional: false
+      subagent: false
+      parameters: {}
+  - id: i-finish
+    type: skill
+    position:
+      x: 2000
+      y: 200
+    data:
+      skill: impl-slice-git-finish
+      label: 'Slice: Git Finish'
       optional: false
       subagent: false
       parameters: {}
@@ -131,12 +181,24 @@ edges:
     source: i-align
     target: i-plan-vertical
     type: flow
-  - id: e-i-plan-vertical-i-implement
+  - id: e-i-plan-vertical-i-git-prepare
     source: i-plan-vertical
+    target: i-git-prepare
+    type: flow
+  - id: e-i-git-prepare-i-supervised
+    source: i-git-prepare
+    target: i-supervised
+    type: flow
+  - id: e-i-supervised-i-implement
+    source: i-supervised
     target: i-implement
     type: flow
-  - id: e-i-implement-i-test
+  - id: e-i-implement-i-implement-page
     source: i-implement
+    target: i-implement-page
+    type: optional
+  - id: e-i-implement-page-i-test
+    source: i-implement-page
     target: i-test
     type: flow
   - id: e-i-test-i-recap
@@ -150,4 +212,8 @@ edges:
   - id: e-i-refactor-i-commit
     source: i-refactor
     target: i-commit
+    type: flow
+  - id: e-i-commit-i-finish
+    source: i-commit
+    target: i-finish
     type: flow

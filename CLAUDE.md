@@ -36,7 +36,7 @@ User-facing skill domains live under `skaileup/`. System/meta assets (contracts,
 09_impl-architecture/        01_techstack · 02_templates-select · 03_system · 04_datamodel + templates/ (7 template-* assets, unnumbered)
 10_impl-build/               one-time: 01_scaffold · 02_foundation · 03_infrastructure · 04_migrate · 05_seed · 06_generate · 07_docs
 11_impl-plan/                01_brainstorm · 02_align · 03_plan-vertical · 04_supervised
-12_impl-slice/               per-slice loop: 01_git-prepare · 02_implement · 03_implement-page · 04_test · 05_recap · 06_refactor · 07_commit · 08_finish  → _implementation/slices/<id>/
+12_impl-slice/               per-slice loop: 01_git-prepare · 02_implement · 03_implement-page · 04_test · 05_recap · 06_refactor · 07_commit · 08_git-finish  → _implementation/slices/<id>/
 13_impl-quality/             01_test-plan · 02_eval-code · 03_audit · 04..06_test-{unit,integration,e2e} · 07_ready · 08..10_standards-{discover,inject,sync} · 11_12_debug-{self-verify,handoff}
 ```
 
@@ -188,8 +188,10 @@ $ skaile add flow:standard-app          # OR provision exactly standard-app's de
 
 The `requires:` refs use the npm-style scoped ref grammar
 `kind:@publisher/name[#version]` (`@` = scope sigil, `#` = version sigil; per
-`workspaces/.../2026-06-02-scoped-asset-ref-grammar.md`). Only `contract:` and
-`skill:` kinds appear — a flow does not require other flows or bundles:
+`workspaces/.../2026-06-02-scoped-asset-ref-grammar.md`). The `contract:` and
+`skill:` kinds appear, plus `flow:` when a flow delegates a loop to a **sub-flow
+node** (e.g. the tiers delegate their per-feature loops to the `concept-slice` /
+`impl-slice` flows instead of inlining them):
 
 ```yaml
 # inside standard-app.flow.yaml, above globals:
@@ -197,14 +199,17 @@ requires:
   - contract:@skaile-ai/shared-contracts        # shared reference layer
   - contract:@skaile-ai/implementation-contract # domain contract its skills cite
   - skill:@skaile-ai/concept-goals              # …every skill its nodes run
-  # …exactly the flow's node skills, no more
+  # …exactly the flow's own node skills, no more
+  - flow:@skaile-ai/concept-slice               # …plus any flow a sub-flow node delegates to
+  - flow:@skaile-ai/impl-slice
 ```
 
-The `requires:` set is **exact and self-contained**: it lists exactly the skills
-the flow's nodes run — **no inheritance, no extras**. Larger tiers are supersets
-of smaller ones by construction, but each flow repeats its own complete manifest
-rather than inheriting. (This replaced the old inheriting `*.bundle.yaml` files,
-which dragged in "tier-shape extra" skills a flow never ran.)
+The `requires:` set is **exact and self-contained**: its `skill:` refs equal
+exactly the skills the flow's own nodes run, and its `flow:` refs equal exactly
+the flows its sub-flow nodes delegate to — **no inheritance, no extras**. A
+delegated loop's skills are provided transitively by the sub-flow's own manifest,
+so the parent does not re-list them. (This replaced the old inheriting
+`*.bundle.yaml` files, which dragged in "tier-shape extra" skills a flow never ran.)
 
 **Contracts.** Two layers, listed directly in each flow's `requires:`:
 the shared `skaileup/contracts/` reference layer (registered as
@@ -283,5 +288,5 @@ Tracked in [`docs/devlog/SKILL_GRAPH.md`](./docs/devlog/SKILL_GRAPH.md). All 11 
 Slice artifacts moved under the side they belong to and are now **frozen, not deleted**:
 
 - `_slice/concept/<id>/` → `_concept/slices/<id>/`; `_slice/impl/<id>/` → `_implementation/slices/<id>/`.
-- The terminators (`concept-slice-design-feature`, `impl-slice-commit`) write an `index.md` and keep the phase handoffs as permanent per-feature documentation; `impl-slice-commit` removes only the transient `progress.json`. `impl-slice-finish` gates on "every slice frozen (has index.md)".
+- The terminators (`concept-slice-design-feature`, `impl-slice-commit`) write an `index.md` and keep the phase handoffs as permanent per-feature documentation; `impl-slice-commit` removes only the transient `progress.json`. `impl-slice-git-finish` gates on "every slice frozen (has index.md)".
 - Contracts updated (`artifacts.yaml` slice ids → `durable` + new `slice-{concept,impl}-index`; `concept_structure.md` documents `slices/`). The orchestrators now route standard/complex tiers into the per-feature slice loops and assist within them.

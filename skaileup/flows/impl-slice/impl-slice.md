@@ -1,13 +1,14 @@
 ---
 title: "impl-slice"
-description: "The per-feature implementation loop — a reusable building block that simple-app, standard-app, and complex-app inline once per feature."
+description: "The per-feature implementation loop — a reusable building block the tier flows delegate to via a sub-flow node, once per feature."
 order: 6
 ---
 
 The **impl-slice** flow is not a tier — it is the **per-feature implementation
-loop**, the canonical building block that `simple-app`, `standard-app`, and
-`complex-app` inline as nodes, once per feature. It cuts a vertical slice
-(UI + logic + data) for one feature and is standalone-runnable.
+loop**, the canonical building block that `simple-app`, `standard-app`,
+`complex-app`, and `cli-app` delegate to via a **sub-flow node**, once per
+feature. It cuts a vertical slice (UI + logic + data) for one feature and is
+standalone-runnable.
 
 ## When to use
 
@@ -19,21 +20,29 @@ loop**, the canonical building block that `simple-app`, `standard-app`, and
 
 ```
 Plan:   impl-plan-brainstorm → impl-plan-align → impl-plan-plan-vertical
-Build:  implement → test → recap → refactor → commit
+Build:  git-prepare → supervised → implement → implement-page? → test → recap → refactor → commit → git-finish
           /clear between phases, scratch in _implementation/slices/<id>/
 ```
+
+The full loop runs the same way standalone and when delegated to from a tier:
 
 | Phase | What it does |
 |---|---|
 | `brainstorm` → `align` → `plan-vertical` | Shape the slice; vertical plan = UI + logic + data for one feature |
+| `git-prepare` | Cut the slice branch / prepare the working tree |
+| `supervised` | Supervised dispatch with two-stage review — runs on every slice |
 | `implement` | Write the slice |
+| `implement-page` | Build the page(s) for the slice — optional, skipped for non-UI slices |
 | `test` | Cover it |
 | `recap` | Capture what changed / learned |
-| `refactor` | Forced simplification pass — subtractions only (standard/complex tiers) |
+| `refactor` | Forced simplification pass — subtractions only |
 | `commit` | Land it; scratch deleted |
+| `git-finish` | Close out the slice / branch, persist git preferences, and gate the loop's completion |
 
-Lower tiers run a trimmed loop: `mvp` is `plan-vertical → implement → commit`;
-`simple-app` adds `align`, `test`, `recap`; `refactor` starts at `standard-app`.
+The tier flows delegate to this full loop via a sub-flow node, so
+`simple-app`, `standard-app`, `complex-app`, and `cli-app` all run every phase.
+Only `mvp` keeps a trimmed inline pass (`plan-vertical → implement → commit`),
+since its defining trait is a single linear build with no loop.
 
 ## Install manifest
 
