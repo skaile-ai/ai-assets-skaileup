@@ -8,7 +8,7 @@ sidebar:
 
 The **Implementation group** is the half of the collection that *builds* the
 product. It has a one-time project setup and a repeating per-feature
-[`impl-slice`](../../flows/impl-slice/) loop — the same rhythm as the concept
+[`skaileup-impl-slice`](../../flows/skaileup-impl-slice/) loop — the same rhythm as the concept
 side.
 
 ## Domains

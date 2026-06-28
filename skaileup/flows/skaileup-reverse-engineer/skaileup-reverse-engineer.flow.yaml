@@ -1,6 +1,6 @@
-id: reverse-engineer
+id: skaileup-reverse-engineer
 version: '2.0.0'
-name: 'Reverse Engineer'
+name: 'SkaileUp Reverse Engineer'
 description: >-
   Extract a full concept from an existing codebase, then optionally enrich it
   with concept steps. Extraction (ops-reverse-engineer) maps the repo, with

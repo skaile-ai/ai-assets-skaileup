@@ -26,7 +26,7 @@ def run_validator(yaml_path):
     )
 
 
-VARIANT_EXAMPLES = ["appbuilder-cli", "concept-only", "reverse-engineer"]
+VARIANT_EXAMPLES = ["appbuilder-cli", "skaileup-concept-only", "skaileup-reverse-engineer"]
 
 
 def test_all_four_examples_pass():
@@ -153,14 +153,14 @@ def test_shape_routing_snapshot():
 
     def route(shape, sizing_tier):
         if shape == "reverse-engineer":
-            return "reverse-engineer"
+            return "skaileup-reverse-engineer"
         if shape == "concept-only":
-            return "concept-only"
+            return "skaileup-concept-only"
         if shape == "cli":
             return "appbuilder-cli"
         return sizing_tier  # shape == "app"
 
     assert route("cli", "appbuilder-mvp") == "appbuilder-cli"
-    assert route("concept-only", "appbuilder-standard") == "concept-only"
-    assert route("reverse-engineer", "appbuilder-complex") == "reverse-engineer"
+    assert route("concept-only", "appbuilder-standard") == "skaileup-concept-only"
+    assert route("reverse-engineer", "appbuilder-complex") == "skaileup-reverse-engineer"
     assert route("app", "appbuilder-simple") == "appbuilder-simple"

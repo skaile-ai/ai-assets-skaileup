@@ -1,6 +1,6 @@
 id: appbuilder-complex
 version: '2.0.0'
-name: 'Complex App'
+name: 'Appbuilder Complex'
 description: >-
   Multi-product / enterprise. Superset of appbuilder-standard plus brand-voice,
   mockup-walkthrough-framework, non-optional infrastructure,
@@ -69,8 +69,8 @@ requires:
   # loop skills, including impl-plan-supervised, which now runs inside the
   # impl-slice flow on every slice). eval-code + audit stay — complex-only,
   # run after each slice loop.
-  - flow:@skaile-ai/concept-slice
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-concept-slice
+  - flow:@skaile-ai/skaileup-impl-slice
   - skill:@skaile-ai/impl-quality-eval-code
   - skill:@skaile-ai/impl-quality-audit
   - skill:@skaile-ai/impl-quality-test-unit
@@ -443,7 +443,7 @@ nodes:
       x: 6200
       y: 200
     data:
-      flow: concept-slice
+      flow: skaileup-concept-slice
       domain: concept-slice
       label: 'Per-feature concept-slice loop'
       pass_context: true
@@ -453,7 +453,7 @@ nodes:
       x: 6600
       y: 200
     data:
-      flow: impl-slice
+      flow: skaileup-impl-slice
       domain: impl-slice
       label: 'Per-feature impl-slice loop'
       pass_context: true

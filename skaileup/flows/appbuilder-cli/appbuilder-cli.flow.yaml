@@ -1,6 +1,6 @@
 id: appbuilder-cli
 version: '2.0.0'
-name: 'CLI App'
+name: 'Appbuilder CLI'
 description: >-
   Command-line tool — no UI shell, no brand, no journeys/screens, no mockups,
   no E2E. End-to-end: linear CLI concept (scope -> brief -> features-as-commands
@@ -35,7 +35,7 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-impl-slice
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-integration
 globals:
@@ -171,7 +171,7 @@ nodes:
       x: 2000
       y: 200
     data:
-      flow: impl-slice
+      flow: skaileup-impl-slice
       domain: impl-slice
       label: 'Per-feature impl-slice loop'
       pass_context: true

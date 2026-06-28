@@ -1,6 +1,6 @@
 id: appbuilder-standard
 version: '2.0.0'
-name: 'Standard App'
+name: 'Appbuilder Standard'
 description: >-
   Multi-user / ≤20 features. High-level concept (brief, goals,
   comparable, brand-visual, inspiration, journeys,
@@ -53,8 +53,8 @@ requires:
   - skill:@skaile-ai/impl-build-docs
   # Per-feature loops are delegated to the slice sub-flows; their manifests
   # transitively provide the concept-slice / impl-plan / impl-slice skills.
-  - flow:@skaile-ai/concept-slice
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-concept-slice
+  - flow:@skaile-ai/skaileup-impl-slice
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-integration
   - skill:@skaile-ai/impl-quality-test-e2e
@@ -363,7 +363,7 @@ nodes:
       x: 5200
       y: 200
     data:
-      flow: concept-slice
+      flow: skaileup-concept-slice
       domain: concept-slice
       label: 'Per-feature concept-slice loop'
       pass_context: true
@@ -373,7 +373,7 @@ nodes:
       x: 5400
       y: 200
     data:
-      flow: impl-slice
+      flow: skaileup-impl-slice
       domain: impl-slice
       label: 'Per-feature impl-slice loop'
       pass_context: true

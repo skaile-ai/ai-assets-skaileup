@@ -54,7 +54,7 @@ Self-contained: `skaileup-implementation.flow.yaml` carries a top-level
 `requires:` block — `shared-contracts` + `conceptualization-contract` +
 `implementation-contract`, the thin-foundation skills (scope, brief, techstack,
 datamodel, scaffold, foundation, migrate), `impl-quality-ready`, and the two
-sub-flows `flow:concept-slice` + `flow:impl-slice`. **No new skills** — the loops
+sub-flows `flow:skaileup-concept-slice` + `flow:skaileup-impl-slice`. **No new skills** — the loops
 are delegated to the slice flows, whose own manifests provide their skills.
 
 ## Run it

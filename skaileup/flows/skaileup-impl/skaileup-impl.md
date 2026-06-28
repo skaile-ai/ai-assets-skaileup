@@ -43,7 +43,7 @@ architecture subset itself.
 
 Self-contained: `skaileup-impl.flow.yaml` carries a top-level `requires:` block —
 `shared-contracts` + `implementation-contract`, the 6 build skills, the 4 quality
-skills, and `flow:impl-slice`. No concept skills, no inheritance, no extras.
+skills, and `flow:skaileup-impl-slice`. No concept skills, no inheritance, no extras.
 
 ## Run it
 

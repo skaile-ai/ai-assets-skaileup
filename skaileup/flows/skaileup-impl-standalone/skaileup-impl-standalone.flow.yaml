@@ -1,6 +1,6 @@
 id: skaileup-impl-standalone
 version: '2.0.0'
-name: 'Skaileup Impl (standalone)'
+name: 'SkaileUp Impl Standalone'
 description: >-
   Self-sufficient implementation flow — needs no prior concept package. It
   produces just the technical concept it requires (techstack -> system
@@ -36,7 +36,7 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-impl-slice
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-integration
   - skill:@skaile-ai/impl-quality-test-e2e
@@ -148,7 +148,7 @@ nodes:
       x: 1800
       y: 200
     data:
-      flow: impl-slice
+      flow: skaileup-impl-slice
       domain: impl-slice
       label: 'Per-feature impl-slice loop (spec elicited per slice)'
       pass_context: true

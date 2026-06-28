@@ -282,19 +282,23 @@ assets:
   - kind: contract
     name: standards-contract
     root: skaileup/13_impl-quality/contracts/standards-contract
-  # ── flows (9) ──
+  # ── flows (12) ──
   - kind: flow
     name: appbuilder-complex
     files:
       - skaileup/flows/appbuilder-complex/appbuilder-complex.flow.yaml
   - kind: flow
-    name: concept-slice
+    name: appbuilder-cli
     files:
-      - skaileup/flows/concept-slice/concept-slice.flow.yaml
+      - skaileup/flows/appbuilder-cli/appbuilder-cli.flow.yaml
   - kind: flow
-    name: impl-slice
+    name: skaileup-concept-slice
     files:
-      - skaileup/flows/impl-slice/impl-slice.flow.yaml
+      - skaileup/flows/skaileup-concept-slice/skaileup-concept-slice.flow.yaml
+  - kind: flow
+    name: skaileup-impl-slice
+    files:
+      - skaileup/flows/skaileup-impl-slice/skaileup-impl-slice.flow.yaml
   - kind: flow
     name: appbuilder-mvp
     files:
@@ -319,3 +323,11 @@ assets:
     name: skaileup-implementation
     files:
       - skaileup/flows/skaileup-implementation/skaileup-implementation.flow.yaml
+  - kind: flow
+    name: skaileup-concept-only
+    files:
+      - skaileup/flows/skaileup-concept-only/skaileup-concept-only.flow.yaml
+  - kind: flow
+    name: skaileup-reverse-engineer
+    files:
+      - skaileup/flows/skaileup-reverse-engineer/skaileup-reverse-engineer.flow.yaml

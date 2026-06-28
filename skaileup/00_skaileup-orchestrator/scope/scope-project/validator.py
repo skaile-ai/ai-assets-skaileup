@@ -21,7 +21,7 @@ except ImportError:
 # Sizing tiers — chosen by the feature-count/persistence rule (shape == "app").
 ALLOWED_TIERS = {"appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex"}
 # Variant flows — selected by the shape check that runs BEFORE sizing.
-ALLOWED_VARIANTS = {"appbuilder-cli", "concept-only", "reverse-engineer"}
+ALLOWED_VARIANTS = {"appbuilder-cli", "skaileup-concept-only", "skaileup-reverse-engineer"}
 # Every value `tier` (the routed flow id) may take.
 ALLOWED_ROUTES = ALLOWED_TIERS | ALLOWED_VARIANTS
 # The project shape. "app" falls through to tier sizing; the rest map 1:1 to a
@@ -29,8 +29,8 @@ ALLOWED_ROUTES = ALLOWED_TIERS | ALLOWED_VARIANTS
 ALLOWED_SHAPES = {"app", "cli", "concept-only", "reverse-engineer"}
 SHAPE_TO_ROUTE = {
     "cli": "appbuilder-cli",
-    "concept-only": "concept-only",
-    "reverse-engineer": "reverse-engineer",
+    "concept-only": "skaileup-concept-only",
+    "reverse-engineer": "skaileup-reverse-engineer",
 }
 ALLOWED_PERSISTENCE = {"trivial", "structured", "external"}
 ISO8601_Z = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")

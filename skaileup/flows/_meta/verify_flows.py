@@ -50,15 +50,15 @@ DEFERRED_PATH = FLOWS / "_meta" / "deferred_skills.yaml"
 SKAILE_YAML = REPO / "skaile.yaml"
 
 TIER_FLOWS = ["appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex"]
-SLICE_FLOWS = ["concept-slice", "impl-slice"]
+SLICE_FLOWS = ["skaileup-concept-slice", "skaileup-impl-slice"]
 # Variant flows: not tiers — alternate shapes the scope step routes to.
 # skaileup-impl / -standalone are implementation-only variants (no concept pass):
 # the first reads a handed-off concept package, the second generates its own
 # architecture subset.
 VARIANT_FLOWS = [
     "appbuilder-cli",
-    "concept-only",
-    "reverse-engineer",
+    "skaileup-concept-only",
+    "skaileup-reverse-engineer",
     "skaileup-impl",
     "skaileup-impl-standalone",
     "skaileup-implementation",

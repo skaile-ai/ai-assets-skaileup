@@ -14,7 +14,7 @@ standalone-runnable.
 
 - A tier flow runs it automatically, once per feature.
 - Standalone: to implement one feature against an existing architecture —
-  `skaile run flow:impl-slice`.
+  `skaile run flow:skaileup-impl-slice`.
 
 ## Pipeline
 
@@ -48,7 +48,7 @@ since its defining trait is a single linear build with no loop.
 
 `impl-slice.flow.yaml` carries a top-level `requires:` block listing
 `shared-contracts` plus the `impl-plan-*` planning skills and the `impl-slice-*`
-build skills — everything installed when you `skaile add flow:impl-slice` to run
+build skills — everything installed when you `skaile add flow:skaileup-impl-slice` to run
 the slice standalone. Tier flows that inline these nodes list the same skills in
 their own `requires:`.
 

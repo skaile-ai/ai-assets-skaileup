@@ -47,7 +47,7 @@ techstack → system → datamodel
 Self-contained: `skaileup-impl-standalone.flow.yaml` carries a top-level
 `requires:` block — `shared-contracts` + `implementation-contract`, the 3
 architecture skills, the 6 build skills, the 4 quality skills, and
-`flow:impl-slice`. No UX/experience concept skills, no inheritance, no extras.
+`flow:skaileup-impl-slice`. No UX/experience concept skills, no inheritance, no extras.
 
 ## Run it
 

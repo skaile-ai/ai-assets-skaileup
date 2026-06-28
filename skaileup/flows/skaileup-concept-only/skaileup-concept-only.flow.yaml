@@ -1,6 +1,6 @@
-id: concept-only
+id: skaileup-concept-only
 version: '2.0.0'
-name: 'Concept Only'
+name: 'SkaileUp Concept Only'
 description: >-
   Produces a complete concept document package without implementation — for
   planning, documentation, or handing off to a development team. Full concept

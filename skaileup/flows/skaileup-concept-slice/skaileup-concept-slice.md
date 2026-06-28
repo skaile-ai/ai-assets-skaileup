@@ -13,7 +13,7 @@ standalone-runnable for designing a single feature.
 
 - A tier flow runs it automatically, once per feature.
 - Standalone: when you want to design one feature in depth against an existing
-  concept — `skaile run flow:concept-slice`.
+  concept — `skaile run flow:skaileup-concept-slice`.
 
 ## Pipeline
 
@@ -39,7 +39,7 @@ datamodel entities).
 
 `concept-slice.flow.yaml` carries a top-level `requires:` block listing
 `shared-contracts` plus the four `concept-slice-*` skills — everything installed
-when you `skaile add flow:concept-slice` to run the slice standalone. Tier flows
+when you `skaile add flow:skaileup-concept-slice` to run the slice standalone. Tier flows
 that inline these nodes list the same skills in their own `requires:`.
 
 ## Scratch lifecycle

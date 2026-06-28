@@ -43,8 +43,8 @@ exactly the concept skills its nodes run. No inheritance, no extras.
 ## Run it
 
 ```bash
-skaile add flow:concept-only       # install the flow + its skills + contracts
-skaile run flow:concept-only       # execute the concept pipeline
+skaile add flow:skaileup-concept-only       # install the flow + its skills + contracts
+skaile run flow:skaileup-concept-only       # execute the concept pipeline
 ```
 
 When ready to build, hand the concept to a tier flow (e.g. `appbuilder-standard`) — the

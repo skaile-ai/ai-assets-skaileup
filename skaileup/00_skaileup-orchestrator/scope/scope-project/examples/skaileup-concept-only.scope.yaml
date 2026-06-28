@@ -1,7 +1,7 @@
 schema_version: "1.0"
 shape: concept-only
-tier: concept-only
-flow_to_run: "flow:concept-only"
+tier: skaileup-concept-only
+flow_to_run: "flow:skaileup-concept-only"
 reasoning: |
   Stage 0 shape check fires: the deliverable is a concept/spec package for
   planning and team handoff, with no implementation pass, so it routes to

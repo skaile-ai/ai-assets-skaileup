@@ -45,8 +45,8 @@ extras.
 ## Run it
 
 ```bash
-skaile add flow:reverse-engineer       # install the flow + its skills + contracts
-skaile run flow:reverse-engineer       # execute the extraction pipeline
+skaile add flow:skaileup-reverse-engineer       # install the flow + its skills + contracts
+skaile run flow:skaileup-reverse-engineer       # execute the extraction pipeline
 ```
 
 ## See also

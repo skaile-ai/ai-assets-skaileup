@@ -1,6 +1,6 @@
 id: skaileup-implementation
 version: '2.0.0'
-name: 'Skaileup Implementation (spec-first)'
+name: 'SkaileUp Implementation'
 description: >-
   Start-in-the-middle flow — implement features immediately while the concept
   is discovered gradually, feature by feature. A thin foundation is laid once
@@ -42,8 +42,8 @@ requires:
   - skill:@skaile-ai/impl-build-scaffold
   - skill:@skaile-ai/impl-build-foundation
   - skill:@skaile-ai/impl-build-migrate
-  - flow:@skaile-ai/concept-slice
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-concept-slice
+  - flow:@skaile-ai/skaileup-impl-slice
   - skill:@skaile-ai/impl-quality-ready
 globals:
   research_depth: light
@@ -133,7 +133,7 @@ nodes:
       x: 1400
       y: 200
     data:
-      flow: concept-slice
+      flow: skaileup-concept-slice
       domain: concept-slice
       label: 'Discover feature concept (asks open questions)'
       pass_context: true
@@ -143,7 +143,7 @@ nodes:
       x: 1600
       y: 200
     data:
-      flow: impl-slice
+      flow: skaileup-impl-slice
       domain: impl-slice
       label: 'Build the feature'
       pass_context: true

@@ -1,6 +1,6 @@
 id: appbuilder-simple
 version: '2.0.0'
-name: 'Simple App'
+name: 'Appbuilder Simple'
 description: >-
   Single-user, ≤5 features. Linear concept pipeline (with brand-visual,
   journeys, screens, static-html walkthrough mockup, isolated-html component
@@ -9,7 +9,7 @@ description: >-
   plan-vertical -> git-prepare -> implement -> implement-page -> test ->
   recap -> refactor -> commit -> git-finish), run once per feature in the
   plan-vertical backlog. Quality: unit + e2e. No concept-slice loop. The
-  impl-slice loop is delegated, not inlined — see flow:@skaile-ai/impl-slice.
+  impl-slice loop is delegated, not inlined — see flow:@skaile-ai/skaileup-impl-slice.
 meta:
   category: full-stack
   tags:
@@ -39,7 +39,7 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-impl-slice
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-e2e
 globals:
@@ -222,7 +222,7 @@ nodes:
       x: 3000
       y: 200
     data:
-      flow: impl-slice
+      flow: skaileup-impl-slice
       domain: impl-slice
       label: 'Per-feature impl-slice loop'
       pass_context: true
