@@ -362,7 +362,7 @@ In the project's `skaile.yaml`:
 ```yaml
 repositories:
   # Remote (install by copying)
-  skaileup:
+  ai-assets-skaileup:
     url: https://github.com/skaile-ai/ai-assets-skaileup
     branch: main
 

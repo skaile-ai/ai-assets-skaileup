@@ -144,7 +144,7 @@ The `skaile` CLI and the agent runtime read SKILL.md files from disk. This repo 
 ```yaml
 # project skaile.yaml
 repositories:
-  skaileup:
+  ai-assets-skaileup:
     url: https://github.com/skaile-ai/ai-assets-skaileup
     branch: main
 ```
