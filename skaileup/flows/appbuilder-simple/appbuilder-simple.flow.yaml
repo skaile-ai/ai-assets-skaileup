@@ -5,11 +5,12 @@ description: >-
   Single-user, ≤5 features. Linear concept pipeline (with brand-visual,
   journeys, screens, static-html walkthrough mockup, isolated-html component
   mockup, datamodel, full impl-build setup) followed by per-feature work
-  delegated to the impl-slice sub-flow (the full loop: brainstorm -> align ->
-  plan-vertical -> git-prepare -> implement -> implement-page -> test ->
+  delegated to the skaileup-slice-impl sub-flow (the full loop: brainstorm ->
+  align -> plan-vertical -> git-prepare -> implement -> implement-page -> test ->
   recap -> refactor -> commit -> git-finish), run once per feature in the
-  plan-vertical backlog. Quality: unit + e2e. No concept-slice loop. The
-  impl-slice loop is delegated, not inlined — see flow:@skaile-ai/skaileup-impl-slice.
+  plan-vertical backlog. Quality: unit + e2e. Concept is built up-front linearly,
+  so this uses the impl half of the slice directly (no per-feature concept loop)
+  — see flow:@skaile-ai/skaileup-slice-impl.
 meta:
   category: full-stack
   tags:
@@ -39,7 +40,7 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - flow:@skaile-ai/skaileup-impl-slice
+  - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-e2e
 globals:
@@ -215,16 +216,16 @@ nodes:
       label: 'Build Docs'
       optional: false
       parameters: {}
-  # --- Per-feature impl-slice loop (delegated to the impl-slice flow) ---
+  # --- Per-feature impl loop (delegated to the slice-impl flow) ---
   - id: impl-slice-loop
     type: sub-flow
     position:
       x: 3000
       y: 200
     data:
-      flow: skaileup-impl-slice
-      domain: impl-slice
-      label: 'Per-feature impl-slice loop'
+      flow: skaileup-slice-impl
+      domain: slice
+      label: 'Per-feature impl loop'
       pass_context: true
   # --- Quality ---
   - id: q-test-unit

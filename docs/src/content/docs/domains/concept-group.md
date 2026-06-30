@@ -9,7 +9,8 @@ sidebar:
 The **Concept group** is the half of the collection that figures out *what* to
 build. For `appbuilder-mvp` and `appbuilder-simple` it runs linearly; for `appbuilder-standard` and
 `appbuilder-complex` it runs a high-level pass followed by a per-feature
-[`skaileup-concept-slice`](../../flows/skaileup-concept-slice/) loop.
+[`skaileup-slice`](../../flows/skaileup-slice/) loop (its concept half,
+`skaileup-slice-concept`).
 
 ## Domains
 

@@ -1,19 +1,19 @@
-id: skaileup-impl-slice
+id: skaileup-slice-impl
 version: '2.0.0'
-name: 'SkaileUp Impl Slice'
+name: 'SkaileUp Slice — Impl'
 description: >-
   Per-feature implementation loop: impl-plan brainstorm -> align -> plan-vertical,
   then the full impl-slice loop git-prepare -> supervised -> implement ->
   implement-page -> test -> recap -> refactor -> commit -> git-finish. Supervised
-  dispatch (two-stage review) runs inside every slice. Canonical building block
-  consumed by the tier flows (appbuilder-simple, appbuilder-standard, appbuilder-complex, appbuilder-cli),
-  which delegate to it via a sub-flow node rather than inlining. Iteration
-  semantics: tier orchestrators run this slice once per feature in their
-  plan-vertical backlog. Slice flow is standalone-runnable for testability.
+  dispatch (two-stage review) runs inside every slice. The impl half of the
+  unified skaileup-slice block; consumed by the skaileup-slice parent and by the
+  impl-only/linear tier flows (appbuilder-simple, appbuilder-cli, skaileup-impl)
+  via a sub-flow node, and standalone-runnable for testability. Iteration
+  semantics: run once per feature in the plan-vertical backlog.
 meta:
   category: incremental
   tags:
-    - impl-slice
+    - slice-impl
     - per-feature
     - slice
   icon: i-heroicons-arrow-path

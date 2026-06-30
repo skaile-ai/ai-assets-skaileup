@@ -1,18 +1,18 @@
-id: skaileup-reverse-engineer
+id: skaileup-concept-reverse
 version: '2.0.0'
-name: 'SkaileUp Reverse Engineer'
+name: 'SkaileUp Concept Reverse'
 description: >-
-  Extract a full concept from an existing codebase, then optionally enrich it
-  with concept steps. Extraction (ops-reverse-engineer) maps the repo, with
-  optional project orientation (overview, subsystem-map) and convention
-  discovery (standards-discover -> standards-inject). The extracted concept can
-  then be enriched with journeys, architecture, datamodel, and screens. No
-  build pass — hand off to a tier flow (e.g. appbuilder-standard) to implement.
+  Reverse a concept out of an existing codebase, then optionally enrich it.
+  Extraction (the ops-reverse-engineer skill) maps the repo, with optional
+  project orientation (overview, subsystem-map) and convention discovery
+  (standards-discover -> standards-inject). The extracted concept can then be
+  enriched with journeys, architecture, datamodel, and screens. No build pass —
+  hand off to skaileup-impl or a tier flow (e.g. appbuilder-standard) to build.
 meta:
   category: maintenance
   tags:
     - variant
-    - reverse-engineer
+    - concept-reverse
     - existing-codebase
     - extraction
   icon: i-heroicons-arrow-path

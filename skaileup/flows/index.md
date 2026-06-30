@@ -29,13 +29,15 @@ ones by construction, but each lists its own complete manifest.)
 
 ## Slice-loop building blocks
 
-Not tiers — reusable per-feature loops the tier flows inline once per feature.
-Both are standalone-runnable.
+Not tiers — reusable per-feature loops the tier flows delegate to once per
+feature. All standalone-runnable. `skaileup-slice` is the unified parent that
+runs its two halves in sequence; consumers usually delegate to it.
 
 | Flow | Loop |
 |---|---|
-| [`skaileup-concept-slice`](./skaileup-concept-slice/) | brainstorm → align → scope-feature → design-feature |
-| [`skaileup-impl-slice`](./skaileup-impl-slice/) | plan → implement → test → recap → refactor → commit |
+| [`skaileup-slice`](./skaileup-slice/) | slice-concept → slice-impl (parent; `concept_depth`: full \| just-in-time \| skip) |
+| [`skaileup-slice-concept`](./skaileup-slice-concept/) | brainstorm → align → scope-feature → design-feature (concept-needs check in just-in-time mode) |
+| [`skaileup-slice-impl`](./skaileup-slice-impl/) | plan → implement → test → recap → refactor → commit |
 
 ## Variant flows
 
@@ -46,7 +48,7 @@ the four UI-oriented tiers. Each is self-contained with its own `requires:`.
 |---|---|
 | [`appbuilder-cli`](./appbuilder-cli/) | CLI tier — no UI/brand/screens/mockups; end-to-end concept + build + impl-slice loop + unit/integration tests |
 | [`skaileup-concept-only`](./skaileup-concept-only/) | full concept package, no implementation — planning / team handoff |
-| [`skaileup-reverse-engineer`](./skaileup-reverse-engineer/) | extract a concept from an existing codebase, then optionally enrich |
+| [`skaileup-concept-reverse`](./skaileup-concept-reverse/) | reverse a concept out of an existing codebase, then optionally enrich |
 
 ## Implementation-first flows
 
@@ -55,9 +57,8 @@ is self-contained with its own `requires:`.
 
 | Flow | Shape |
 |---|---|
-| [`skaileup-impl`](./skaileup-impl/) | Handoff: gate on an existing concept package → build + impl-slice loop + quality. Carries zero concept skills. |
-| [`skaileup-impl-standalone`](./skaileup-impl-standalone/) | Self-sufficient: generate architecture subset → build + impl-slice loop (spec per slice) + quality |
-| [`skaileup-implementation`](./skaileup-implementation/) | Start-in-the-middle: thin foundation → per-feature loop interleaving concept-slice (discover concept, ask open questions) → impl-slice. Full concept grown just-in-time. |
+| [`skaileup-impl`](./skaileup-impl/) | Code-build, no concept-design pass. Architecture is read-or-generate (reads an existing concept package if present, else generates the subset) → build + `skaileup-slice-impl` loop + quality. |
+| [`skaileup-implementation`](./skaileup-implementation/) | Start-in-the-middle: thin foundation → per-feature loop of `skaileup-slice` at `concept_depth: just-in-time`. The slice's concept half builds only the concept each feature needs, on demand, as a by-product of building. |
 
 ## See also
 

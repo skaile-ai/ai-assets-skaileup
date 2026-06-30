@@ -5,11 +5,11 @@ description: >-
   Multi-user / ≤20 features. High-level concept (brief, goals,
   comparable, brand-visual, inspiration, journeys,
   behaviors(opt), screens, components, features, mockups, mockup-feedback
-  cluster) -> impl-build setup -> per-feature work delegated to two sub-flows:
-  the concept-slice loop then the impl-slice loop (each run once per feature)
-  -> done. Quality: unit + integration + e2e + ready. Ops: review + sync.
-  Iteration semantics: the concept-slice-loop and impl-slice-loop sub-flow
-  nodes run once per feature; the linear graph below shows one iteration.
+  cluster) -> impl-build setup -> per-feature work delegated to the unified
+  skaileup-slice sub-flow (concept_depth: full — full per-feature concept design
+  then impl, run once per feature) -> done. Quality: unit + integration + e2e +
+  ready. Ops: review + sync. Iteration semantics: the slice-loop sub-flow node
+  runs once per feature; the linear graph below shows one iteration.
 meta:
   category: full-stack
   tags:
@@ -51,10 +51,9 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  # Per-feature loops are delegated to the slice sub-flows; their manifests
-  # transitively provide the concept-slice / impl-plan / impl-slice skills.
-  - flow:@skaile-ai/skaileup-concept-slice
-  - flow:@skaile-ai/skaileup-impl-slice
+  # Per-feature work is delegated to the unified slice sub-flow; its manifest
+  # (and its two sub-flows') transitively provide the slice-concept / impl skills.
+  - flow:@skaile-ai/skaileup-slice
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-integration
   - skill:@skaile-ai/impl-quality-test-e2e
@@ -356,27 +355,19 @@ nodes:
       label: 'Build Docs'
       optional: false
       parameters: {}
-  # --- Per-feature loops (delegated to the slice flows) ---
-  - id: concept-slice-loop
+  # --- Per-feature loop (delegated to the unified slice flow) ---
+  - id: slice-loop
     type: sub-flow
     position:
       x: 5200
       y: 200
     data:
-      flow: skaileup-concept-slice
-      domain: concept-slice
-      label: 'Per-feature concept-slice loop'
+      flow: skaileup-slice
+      domain: slice
+      label: 'Per-feature slice loop (concept then impl, full concept design)'
       pass_context: true
-  - id: impl-slice-loop
-    type: sub-flow
-    position:
-      x: 5400
-      y: 200
-    data:
-      flow: skaileup-impl-slice
-      domain: impl-slice
-      label: 'Per-feature impl-slice loop'
-      pass_context: true
+      parameters:
+        concept_depth: full
   # --- Quality ---
   - id: q-test-unit
     type: skill
@@ -556,16 +547,12 @@ edges:
     source: seed
     target: docs
     type: flow
-  - id: e-docs-concept-slice-loop
+  - id: e-docs-slice-loop
     source: docs
-    target: concept-slice-loop
+    target: slice-loop
     type: flow
-  - id: e-concept-slice-loop-impl-slice-loop
-    source: concept-slice-loop
-    target: impl-slice-loop
-    type: flow
-  - id: e-impl-slice-loop-q-test-unit
-    source: impl-slice-loop
+  - id: e-slice-loop-q-test-unit
+    source: slice-loop
     target: q-test-unit
     type: flow
   - id: e-q-test-unit-q-test-integration

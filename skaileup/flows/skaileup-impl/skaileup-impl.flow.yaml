@@ -2,69 +2,92 @@ id: skaileup-impl
 version: '2.0.0'
 name: 'SkaileUp Impl'
 description: >-
-  Implementation-only flow — no concept pass. Assumes a concept package already
-  exists (produced by concept-only, or handed off from another team): it reads
-  _concept/blueprint/ (techstack, architecture, datamodel) and
-  _concept/experience/features. A precondition gate verifies those inputs are
-  present, then runs build setup (scaffold -> foundation -> infrastructure(opt)
-  -> migrate -> seed -> docs), delegates per-feature work to the impl-slice
-  sub-flow (run once per feature), and finishes with quality (unit +
-  integration + e2e + ready). This is the smallest full-build install that
-  carries zero concept skills — its requires: manifest provisions only the
-  build + quality skills plus the impl-slice loop.
+  The code-build flow — no concept-design pass. The architecture step is
+  read-or-generate: if a concept package already exists (handed off, or produced
+  by skaileup-concept-only / skaileup-concept-reverse) it reads
+  _concept/blueprint/ (techstack -> system -> datamodel); otherwise it generates
+  that architecture subset from a one-line product description. Then build setup
+  (scaffold -> foundation -> infrastructure(opt) -> migrate -> seed -> docs),
+  per-feature work delegated to the skaileup-slice-impl sub-flow (each feature's
+  spec elicited just-in-time by the slice's impl-plan brainstorm/align phase),
+  and quality (unit + integration + e2e + ready). No UX/brand/journeys/screens/
+  mockups — only the architecture needed to write and run code. Use when you want
+  to build from an existing concept, or start building immediately without one.
+  (Replaces the former skaileup-impl gate flow + skaileup-impl-standalone, which
+  differed only by whether the concept pre-existed.)
 meta:
   category: incremental
   tags:
     - impl-only
-    - handoff
-    - no-concept
+    - no-concept-design
+    - read-or-generate
     - build
-  icon: i-heroicons-wrench-screwdriver
+  icon: i-heroicons-bolt
 requires:
   # Self-contained install manifest: contracts its skills read + every skill its
   # nodes run + the sub-flow it delegates to. Exact — no inheritance, no extras.
-  # No concept skills: the concept package is a precondition, not produced here.
+  # The architecture subset (techstack/system/datamodel) reads an existing
+  # concept package if present, else generates it; no UX/brand/experience skills.
   - contract:@skaile-ai/shared-contracts
   - contract:@skaile-ai/implementation-contract
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-system
+  - skill:@skaile-ai/impl-architecture-datamodel
   - skill:@skaile-ai/impl-build-scaffold
   - skill:@skaile-ai/impl-build-foundation
   - skill:@skaile-ai/impl-build-infrastructure
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - flow:@skaile-ai/skaileup-impl-slice
+  - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-integration
   - skill:@skaile-ai/impl-quality-test-e2e
   - skill:@skaile-ai/impl-quality-ready
 globals:
-  research_depth: skip
+  research_depth: light
   approval_mode: checkpoint
   subagent_mode: true
   verbosity: standard
-entry: gate-concept
+entry: techstack
 nodes:
-  # --- Precondition: a concept package must already exist ---
-  - id: gate-concept
-    type: gate
+  # --- Technical concept subset (generated here, not handed off) ---
+  - id: techstack
+    type: skill
     position:
       x: 0
       y: 200
     data:
-      label: 'Require concept package'
-      check: "exists('_concept/blueprint/') && exists('_concept/experience/features/')"
-      on_fail: pause-for-human
-      message: >-
-        skaileup-impl is implementation-only: it needs an existing concept
-        package. Expected _concept/blueprint/ (techstack, architecture,
-        datamodel) and _concept/experience/features/. Run concept-only (or
-        skaileup-impl-standalone, which generates the architecture itself)
-        first, or hand off a concept built by another team.
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
+      optional: false
+      parameters:
+        note: 'Read-or-generate: read _concept/blueprint/ if present, else elicit the stack from a one-line product description'
+  - id: arch-system
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: impl-architecture-system
+      label: 'System Architecture'
+      optional: false
+      parameters: {}
+  - id: datamodel
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: impl-architecture-datamodel
+      label: 'Data Model'
+      optional: false
+      parameters: {}
   # --- Build setup ---
   - id: scaffold
     type: skill
     position:
-      x: 200
+      x: 600
       y: 200
     data:
       skill: impl-build-scaffold
@@ -74,7 +97,7 @@ nodes:
   - id: foundation
     type: skill
     position:
-      x: 400
+      x: 800
       y: 200
     data:
       skill: impl-build-foundation
@@ -84,7 +107,7 @@ nodes:
   - id: infra-opt
     type: skill
     position:
-      x: 600
+      x: 1000
       y: 200
     data:
       skill: impl-build-infrastructure
@@ -94,7 +117,7 @@ nodes:
   - id: migrate
     type: skill
     position:
-      x: 800
+      x: 1200
       y: 200
     data:
       skill: impl-build-migrate
@@ -104,7 +127,7 @@ nodes:
   - id: seed
     type: skill
     position:
-      x: 1000
+      x: 1400
       y: 200
     data:
       skill: impl-build-seed
@@ -114,7 +137,7 @@ nodes:
   - id: docs
     type: skill
     position:
-      x: 1200
+      x: 1600
       y: 200
     data:
       skill: impl-build-docs
@@ -125,18 +148,18 @@ nodes:
   - id: impl-slice-loop
     type: sub-flow
     position:
-      x: 1400
+      x: 1800
       y: 200
     data:
-      flow: skaileup-impl-slice
-      domain: impl-slice
-      label: 'Per-feature impl-slice loop'
+      flow: skaileup-slice-impl
+      domain: slice
+      label: 'Per-feature impl loop (spec elicited per slice)'
       pass_context: true
   # --- Quality ---
   - id: q-test-unit
     type: skill
     position:
-      x: 1600
+      x: 2000
       y: 200
     data:
       skill: impl-quality-test-unit
@@ -146,7 +169,7 @@ nodes:
   - id: q-test-integration
     type: skill
     position:
-      x: 1800
+      x: 2200
       y: 200
     data:
       skill: impl-quality-test-integration
@@ -156,17 +179,17 @@ nodes:
   - id: q-test-e2e
     type: skill
     position:
-      x: 2000
+      x: 2400
       y: 200
     data:
       skill: impl-quality-test-e2e
       label: 'E2E Tests'
-      optional: false
+      optional: true
       parameters: {}
   - id: q-ready
     type: skill
     position:
-      x: 2200
+      x: 2600
       y: 200
     data:
       skill: impl-quality-ready
@@ -174,8 +197,16 @@ nodes:
       optional: false
       parameters: {}
 edges:
-  - id: e-gate-concept-scaffold
-    source: gate-concept
+  - id: e-techstack-arch-system
+    source: techstack
+    target: arch-system
+    type: flow
+  - id: e-arch-system-datamodel
+    source: arch-system
+    target: datamodel
+    type: flow
+  - id: e-datamodel-scaffold
+    source: datamodel
     target: scaffold
     type: flow
   - id: e-scaffold-foundation

@@ -1,18 +1,25 @@
-id: skaileup-concept-slice
+id: skaileup-slice-concept
 version: '2.0.0'
-name: 'SkaileUp Concept Slice'
+name: 'SkaileUp Slice — Concept'
 description: >-
   Per-feature concept loop: brainstorm -> align -> scope-feature -> design-feature.
-  Canonical building block consumed by tier flows (appbuilder-standard, appbuilder-complex)
-  via node inlining. Iteration semantics: tier orchestrators run this slice
-  once per feature in their feature backlog. Slice flow is standalone-runnable
-  for testability of the slice loop.
+  The concept half of the unified skaileup-slice block; consumed by the
+  skaileup-slice parent (and standalone-runnable for testability). A
+  concept_depth global controls how much it produces per feature:
+  `full` runs all four phases (complete per-feature concept design);
+  `just-in-time` runs a concept-needs check — it detects which canonical concept
+  artifacts are missing or insufficient for THIS feature, surfaces the open
+  questions to the user, and writes only the minimal versions needed to build it
+  (behavior + key screens + data needs), so concept accretes into _concept/ as a
+  by-product of building; `skip` no-ops (concept already exists up-front).
+  Iteration semantics: the parent runs this once per feature in the backlog.
 meta:
   category: concept
   tags:
-    - concept-slice
+    - slice-concept
     - per-feature
     - slice
+    - concept-on-demand
   icon: i-heroicons-light-bulb
 requires:
   # Everything installed when this flow is installed: the contract its skills
@@ -27,6 +34,9 @@ globals:
   approval_mode: checkpoint
   subagent_mode: false
   verbosity: standard
+  # full | just-in-time | skip — overridable by the parent via the sub-flow
+  # node's parameters.concept_depth. Default is full (complete per-feature design).
+  concept_depth: full
 entry: c-brainstorm
 nodes:
   - id: c-brainstorm
@@ -39,7 +49,13 @@ nodes:
       label: 'Slice: Brainstorm'
       optional: false
       subagent: false
-      parameters: {}
+      parameters:
+        concept_depth: '${concept_depth}'
+        note: >-
+          In just-in-time mode this phase runs the concept-needs check: detect
+          which concept artifacts this feature is missing, ask the user the open
+          questions, and seed only the minimal answers. In full mode it runs the
+          normal brainstorm.
   - id: c-align
     type: skill
     position:
@@ -61,7 +77,9 @@ nodes:
       label: 'Slice: Scope Feature'
       optional: false
       subagent: false
-      parameters: {}
+      parameters:
+        concept_depth: '${concept_depth}'
+        note: 'just-in-time: scope only the artifacts the feature actually needs.'
   - id: c-design-feature
     type: skill
     position:
@@ -72,7 +90,9 @@ nodes:
       label: 'Slice: Design Feature'
       optional: false
       subagent: false
-      parameters: {}
+      parameters:
+        concept_depth: '${concept_depth}'
+        note: 'just-in-time: design only what this feature requires, not the full UX.'
 edges:
   - id: e-c-brainstorm-c-align
     source: c-brainstorm

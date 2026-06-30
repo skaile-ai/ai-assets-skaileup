@@ -6,15 +6,14 @@ description: >-
   mockup-walkthrough-framework, non-optional infrastructure,
   project-overview/subsystem-map/integration/review project ops, eval-code +
   audit quality (audit runs every slice — expressed via edge ordering since the
-  schema has no loop construct), full mockup-feedback cluster. Both per-feature
-  loops are delegated to sub-flows: the concept-slice flow and the (full)
-  impl-slice flow — supervised dispatch now runs inside the impl-slice flow
-  itself (every slice, every tier), so it is no longer a complex-only node.
-  eval-code + audit run after each slice loop. Iteration semantics: the
-  per-feature loops + q-eval-code/q-audit run once per feature; the linear
-  graph below shows one iteration. Composition: scope-project -> high-level
-  concept -> project-overview -> impl-build setup -> loop: [sub-flow]
-  concept-slice -> [sub-flow] impl-slice -> impl-quality/audit (every slice)
+  schema has no loop construct), full mockup-feedback cluster. Per-feature work
+  is delegated to the unified skaileup-slice sub-flow (concept_depth: full) —
+  supervised dispatch runs inside the impl half (every slice, every tier), so it
+  is no longer a complex-only node. eval-code + audit run after each slice loop.
+  Iteration semantics: the slice loop + q-eval-code/q-audit run once per feature;
+  the linear graph below shows one iteration. Composition: scope-project ->
+  high-level concept -> project-overview -> impl-build setup -> loop: [sub-flow]
+  skaileup-slice (concept then impl) -> impl-quality/audit (every slice)
   -> done.
 meta:
   category: full-stack
@@ -65,12 +64,11 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  # Per-feature loops delegated to sub-flows (their own manifests provide the
-  # loop skills, including impl-plan-supervised, which now runs inside the
-  # impl-slice flow on every slice). eval-code + audit stay — complex-only,
-  # run after each slice loop.
-  - flow:@skaile-ai/skaileup-concept-slice
-  - flow:@skaile-ai/skaileup-impl-slice
+  # Per-feature work delegated to the unified slice sub-flow (its manifest and
+  # its two sub-flows' manifests provide the loop skills, including
+  # impl-plan-supervised, which runs inside the impl half on every slice).
+  # eval-code + audit stay — complex-only, run after each slice loop.
+  - flow:@skaile-ai/skaileup-slice
   - skill:@skaile-ai/impl-quality-eval-code
   - skill:@skaile-ai/impl-quality-audit
   - skill:@skaile-ai/impl-quality-test-unit
@@ -436,27 +434,19 @@ nodes:
       label: 'Build Docs'
       optional: false
       parameters: {}
-  # --- Per-feature loops (delegated to the slice flows) ---
-  - id: concept-slice-loop
+  # --- Per-feature loop (delegated to the unified slice flow) ---
+  - id: slice-loop
     type: sub-flow
     position:
       x: 6200
       y: 200
     data:
-      flow: skaileup-concept-slice
-      domain: concept-slice
-      label: 'Per-feature concept-slice loop'
+      flow: skaileup-slice
+      domain: slice
+      label: 'Per-feature slice loop (concept then impl, full concept design)'
       pass_context: true
-  - id: impl-slice-loop
-    type: sub-flow
-    position:
-      x: 6600
-      y: 200
-    data:
-      flow: skaileup-impl-slice
-      domain: impl-slice
-      label: 'Per-feature impl-slice loop'
-      pass_context: true
+      parameters:
+        concept_depth: full
   # --- Per-slice quality (audit every slice) ---
   - id: q-eval-code
     type: skill
@@ -685,16 +675,12 @@ edges:
     source: seed
     target: docs
     type: flow
-  - id: e-docs-concept-slice-loop
+  - id: e-docs-slice-loop
     source: docs
-    target: concept-slice-loop
+    target: slice-loop
     type: flow
-  - id: e-concept-slice-loop-impl-slice-loop
-    source: concept-slice-loop
-    target: impl-slice-loop
-    type: flow
-  - id: e-impl-slice-loop-q-eval-code
-    source: impl-slice-loop
+  - id: e-slice-loop-q-eval-code
+    source: slice-loop
     target: q-eval-code
     type: flow
   - id: e-q-eval-code-q-audit

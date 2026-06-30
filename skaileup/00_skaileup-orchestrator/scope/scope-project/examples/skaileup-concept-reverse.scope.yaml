@@ -1,7 +1,7 @@
 schema_version: "1.0"
 shape: reverse-engineer
-tier: skaileup-reverse-engineer
-flow_to_run: "flow:skaileup-reverse-engineer"
+tier: skaileup-concept-reverse
+flow_to_run: "flow:skaileup-concept-reverse"
 reasoning: |
   Stage 0 shape check fires: the input is an existing codebase to extract a
   concept from, so it routes to reverse-engineer and the sizing rule is

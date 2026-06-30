@@ -104,8 +104,8 @@ are no separate per-domain concept/build flow sets (the old split `concept-*` +
 | Kind    | IDs                                                  |
 | ------- | ---------------------------------------------------- |
 | Tier    | `appbuilder-mvp`, `appbuilder-simple`, `appbuilder-standard`, `appbuilder-complex`   |
-| Slice   | `concept-slice`, `impl-slice` (reusable per-feature loops) |
-| Variant | `appbuilder-cli`, `concept-only`, `reverse-engineer`        |
+| Slice   | `skaileup-slice` (parent), `skaileup-slice-concept`, `skaileup-slice-impl` (reusable per-feature loops) |
+| Variant | `appbuilder-cli`, `skaileup-concept-only`, `skaileup-concept-reverse`, `skaileup-impl`, `skaileup-implementation` |
 | Schema  | `contracts/flow.schema.json` (JSON Schema for all flow files) |
 
 ### Flow Catalogue
@@ -115,24 +115,27 @@ are no separate per-domain concept/build flow sets (the old split `concept-*` +
 | ID             | Description                                                          |
 | -------------- | -------------------------------------------------------------------- |
 | `appbuilder-mvp`          | Single feature, trivial persistence — one linear pass                |
-| `appbuilder-simple`   | Single-user, ≤5 features — linear concept + impl-slice loop          |
-| `appbuilder-standard` | Multi-user, ≤20 features — high-level concept + concept/impl slice loops |
+| `appbuilder-simple`   | Single-user, ≤5 features — linear concept + `skaileup-slice-impl` loop |
+| `appbuilder-standard` | Multi-user, ≤20 features — high-level concept + `skaileup-slice` loop (`concept_depth: full`) |
 | `appbuilder-complex`  | Multi-product / enterprise — appbuilder-standard superset + project-ops + audit |
 
-**Slice loops** — reusable per-feature loops the tier flows inline once per feature:
+**Slice loops** — reusable per-feature loops the tier flows delegate to once per feature:
 
-| ID              | Loop                                                       |
-| --------------- | ---------------------------------------------------------- |
-| `concept-slice` | brainstorm → align → scope-feature → design-feature        |
-| `impl-slice`    | plan → implement → test → recap → refactor → commit        |
+| ID                       | Loop                                                       |
+| ------------------------ | ---------------------------------------------------------- |
+| `skaileup-slice`         | slice-concept → slice-impl (parent; `concept_depth`: full \| just-in-time \| skip) |
+| `skaileup-slice-concept` | brainstorm → align → scope-feature → design-feature (concept-needs check in just-in-time mode) |
+| `skaileup-slice-impl`    | plan → implement → test → recap → refactor → commit        |
 
 **Variant flows** — alternate shapes the scope step routes to:
 
 | ID                 | Description                                                              |
 | ------------------ | ----------------------------------------------------------------------- |
-| `appbuilder-cli`          | CLI tier — no UI/brand/screens/mockups; concept + build + impl-slice + unit/integration |
-| `concept-only`     | Full concept package, no implementation — for planning/handoff          |
-| `reverse-engineer` | Extract a concept from an existing codebase, then optionally enrich     |
+| `appbuilder-cli`          | CLI tier — no UI/brand/screens/mockups; concept + build + `skaileup-slice-impl` + unit/integration |
+| `skaileup-concept-only`     | Full concept package, no implementation — for planning/handoff          |
+| `skaileup-concept-reverse` | Reverse a concept out of an existing codebase, then optionally enrich     |
+| `skaileup-impl`        | Code-build, no concept-design pass — architecture read-or-generate + `skaileup-slice-impl` loop + quality |
+| `skaileup-implementation` | Start-in-the-middle — thin foundation + `skaileup-slice` loop at `concept_depth: just-in-time` |
 
 ---
 

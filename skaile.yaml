@@ -292,13 +292,17 @@ assets:
     files:
       - skaileup/flows/appbuilder-cli/appbuilder-cli.flow.yaml
   - kind: flow
-    name: skaileup-concept-slice
+    name: skaileup-slice
     files:
-      - skaileup/flows/skaileup-concept-slice/skaileup-concept-slice.flow.yaml
+      - skaileup/flows/skaileup-slice/skaileup-slice.flow.yaml
   - kind: flow
-    name: skaileup-impl-slice
+    name: skaileup-slice-concept
     files:
-      - skaileup/flows/skaileup-impl-slice/skaileup-impl-slice.flow.yaml
+      - skaileup/flows/skaileup-slice-concept/skaileup-slice-concept.flow.yaml
+  - kind: flow
+    name: skaileup-slice-impl
+    files:
+      - skaileup/flows/skaileup-slice-impl/skaileup-slice-impl.flow.yaml
   - kind: flow
     name: appbuilder-mvp
     files:
@@ -316,10 +320,6 @@ assets:
     files:
       - skaileup/flows/skaileup-impl/skaileup-impl.flow.yaml
   - kind: flow
-    name: skaileup-impl-standalone
-    files:
-      - skaileup/flows/skaileup-impl-standalone/skaileup-impl-standalone.flow.yaml
-  - kind: flow
     name: skaileup-implementation
     files:
       - skaileup/flows/skaileup-implementation/skaileup-implementation.flow.yaml
@@ -328,6 +328,6 @@ assets:
     files:
       - skaileup/flows/skaileup-concept-only/skaileup-concept-only.flow.yaml
   - kind: flow
-    name: skaileup-reverse-engineer
+    name: skaileup-concept-reverse
     files:
-      - skaileup/flows/skaileup-reverse-engineer/skaileup-reverse-engineer.flow.yaml
+      - skaileup/flows/skaileup-concept-reverse/skaileup-concept-reverse.flow.yaml

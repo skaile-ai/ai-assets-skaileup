@@ -23,7 +23,7 @@ The `shape` signal classifies the *kind* of deliverable. It is evaluated first
 and, for any non-`app` shape, short-circuits the sizing rule entirely:
 
 ```
-if existing codebase to extract a concept from:   → skaileup-reverse-engineer   (shape: reverse-engineer)
+if existing codebase to extract a concept from:   → skaileup-concept-reverse   (shape: reverse-engineer)
 elif concept/spec package only, no implementation: → skaileup-concept-only       (shape: concept-only)
 elif headless command-line tool, no UI:            → appbuilder-cli            (shape: cli)
 else:                                              → run Stage 1 sizing (shape: app)
@@ -31,7 +31,7 @@ else:                                              → run Stage 1 sizing (shape
 
 | Shape signal       | Routed flow (`tier`) | When                                                              |
 | ------------------ | -------------------- | ----------------------------------------------------------------- |
-| `reverse-engineer` | `skaileup-reverse-engineer`   | Input is an existing repo; extract a concept, then optionally enrich |
+| `reverse-engineer` | `skaileup-concept-reverse`   | Input is an existing repo; extract a concept, then optionally enrich |
 | `concept-only`     | `skaileup-concept-only`       | Deliverable is a concept/handoff package; no build pass            |
 | `cli`              | `appbuilder-cli`            | Headless CLI tool — no UI, brand, screens, or mockups             |
 | `app`              | one of the 4 tiers   | A normal UI application — fall through to Stage 1 sizing           |
@@ -40,11 +40,11 @@ The shape is recorded in the optional top-level `shape` field of `scope.yaml`.
 When absent it defaults to `app` (backward-compatible with pre-variant scopes).
 `shape == app` requires `tier ∈ {appbuilder-mvp, appbuilder-simple, appbuilder-standard, appbuilder-complex}`;
 each variant shape requires its 1:1 routed flow (`cli → appbuilder-cli`,
-`concept-only → skaileup-concept-only`, `reverse-engineer → skaileup-reverse-engineer`). The
+`concept-only → skaileup-concept-only`, `reverse-engineer → skaileup-concept-reverse`). The
 validator enforces this agreement.
 
 > Variants are **orthogonal to size** — `appbuilder-cli`, `skaileup-concept-only`, and
-> `skaileup-reverse-engineer` are single end-to-end flows, not sized tiers. A CLI tool of
+> `skaileup-concept-reverse` are single end-to-end flows, not sized tiers. A CLI tool of
 > any size routes to `appbuilder-cli`; the sizing rule below applies only to `app`.
 
 ---
@@ -104,7 +104,7 @@ the skill body both implement it.
 | `multi-product or enterprise integration` | `signals.persistence == "external"` OR `len(signals.integrations) >= 2` |
 
 Stage 0 maps a non-`app` shape directly to its routed `tier`:
-`cli → appbuilder-cli`, `concept-only → skaileup-concept-only`, `reverse-engineer → skaileup-reverse-engineer`.
+`cli → appbuilder-cli`, `concept-only → skaileup-concept-only`, `reverse-engineer → skaileup-concept-reverse`.
 Stage 1 (sizing) runs only when `shape == app`.
 
 `flow_to_run` is derived deterministically from `tier` as `flow:<tier>`
@@ -233,7 +233,7 @@ updates to every consumer.
 Consumers may rely on:
 - `tier` being one of the seven route values — the four sizing tiers
   (`appbuilder-mvp`, `appbuilder-simple`, `appbuilder-standard`, `appbuilder-complex`) or the three variant
-  flows (`appbuilder-cli`, `skaileup-concept-only`, `skaileup-reverse-engineer`).
+  flows (`appbuilder-cli`, `skaileup-concept-only`, `skaileup-concept-reverse`).
 - `flow_to_run` being `flow:<tier>` exactly.
 - `shape` (optional) being one of `app` / `cli` / `concept-only` /
   `reverse-engineer`; absent means `app`. When present it agrees with `tier`.

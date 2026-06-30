@@ -5,15 +5,14 @@ description: >-
   Start-in-the-middle flow — implement features immediately while the concept
   is discovered gradually, feature by feature. A thin foundation is laid once
   (scope -> one-line brief(opt) -> techstack -> datamodel skeleton -> scaffold
-  -> foundation -> migrate(opt)), then a single per-feature loop interleaves
-  the two slice sub-flows: concept-slice builds THIS feature's concept (its
-  journeys/screens/behaviors/design), then impl-slice builds it — and the loop
-  repeats for the next feature. The concept is never front-loaded: concept-slice
-  transparently discovers the missing concept information for each feature and
-  surfaces open questions to the user before implementing, accreting the answers
-  into the canonical _concept/ tree. The "spec" is the full concept (all its
-  parts), grown just-in-time, not a one-off plan. No new skills — delegates the
-  loops to the concept-slice + impl-slice flows.
+  -> foundation -> migrate(opt)), then a single per-feature loop runs the unified
+  skaileup-slice block at concept_depth: just-in-time. The slice's concept half
+  runs the concept-needs check — it detects which concept information THIS feature
+  is missing, surfaces the open questions to the user, and seeds only the minimal
+  answers into the canonical _concept/ tree — then its impl half builds the
+  feature; the loop repeats for the next one. The concept is never front-loaded:
+  it accretes as a by-product of building, only what each feature needs. No new
+  skills — delegates the per-feature work to the skaileup-slice flow.
 meta:
   category: incremental
   tags:
@@ -42,8 +41,7 @@ requires:
   - skill:@skaile-ai/impl-build-scaffold
   - skill:@skaile-ai/impl-build-foundation
   - skill:@skaile-ai/impl-build-migrate
-  - flow:@skaile-ai/skaileup-concept-slice
-  - flow:@skaile-ai/skaileup-impl-slice
+  - flow:@skaile-ai/skaileup-slice
   - skill:@skaile-ai/impl-quality-ready
 globals:
   research_depth: light
@@ -126,27 +124,22 @@ nodes:
       label: 'Migrate (opt)'
       optional: true
       parameters: {}
-  # --- Per-feature loop: discover concept, then build (interleaved) ---
-  - id: feat-concept
+  # --- Per-feature loop: grow concept just-in-time, then build ---
+  # One unified slice node at concept_depth: just-in-time. Its concept half runs
+  # the concept-needs check (detect missing concept for THIS feature, ask the
+  # user, seed the minimum), then its impl half builds. Looped per feature below.
+  - id: slice-loop
     type: sub-flow
     position:
       x: 1400
       y: 200
     data:
-      flow: skaileup-concept-slice
-      domain: concept-slice
-      label: 'Discover feature concept (asks open questions)'
+      flow: skaileup-slice
+      domain: slice
+      label: 'Feature slice (concept just-in-time, then build)'
       pass_context: true
-  - id: feat-impl
-    type: sub-flow
-    position:
-      x: 1600
-      y: 200
-    data:
-      flow: skaileup-impl-slice
-      domain: impl-slice
-      label: 'Build the feature'
-      pass_context: true
+      parameters:
+        concept_depth: just-in-time
   # --- Close-out ---
   - id: q-ready
     type: skill
@@ -183,29 +176,26 @@ edges:
     source: foundation
     target: migrate
     type: optional
-  - id: e-foundation-feat-concept
+  - id: e-foundation-slice-loop
     source: foundation
-    target: feat-concept
+    target: slice-loop
     type: flow
-  - id: e-migrate-feat-concept
+  - id: e-migrate-slice-loop
     source: migrate
-    target: feat-concept
+    target: slice-loop
     type: optional
-  - id: e-feat-concept-feat-impl
-    source: feat-concept
-    target: feat-impl
-    type: flow
-  # Per-feature interleave: after building a feature, loop back to discover the
-  # next feature's concept. Exits to q-ready when the backlog is exhausted.
-  - id: e-feat-impl-feat-concept
-    source: feat-impl
-    target: feat-concept
+  # Per-feature loop: after building a feature, run the slice again for the next
+  # one (its concept half discovers that feature's concept just-in-time). Exits
+  # to q-ready when the backlog is exhausted.
+  - id: e-slice-loop-slice-loop
+    source: slice-loop
+    target: slice-loop
     type: review-loop
     max_iterations: 50
     exit_condition: >-
       no unbuilt features remain — every feature the user still wants has a
-      frozen concept-slice (index.md) and a committed impl-slice
-  - id: e-feat-impl-q-ready
-    source: feat-impl
+      frozen concept slice (index.md) and a committed impl slice
+  - id: e-slice-loop-q-ready
+    source: slice-loop
     target: q-ready
     type: flow

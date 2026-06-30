@@ -6,7 +6,7 @@ description: >-
   no E2E. End-to-end: linear CLI concept (scope -> brief -> features-as-commands
   -> techstack -> templates -> datamodel) then build setup (scaffold ->
   foundation headless -> migrate/seed -> docs) then delegates per-feature
-  work to the impl-slice sub-flow (full loop: brainstorm -> align ->
+  work to the skaileup-slice-impl sub-flow (full loop: brainstorm -> align ->
   plan-vertical -> git-prepare -> implement -> implement-page -> test ->
   recap -> refactor -> commit -> git-finish), run once per feature.
   Quality: unit + integration (no E2E). Replaces the legacy split cli-concept
@@ -35,7 +35,7 @@ requires:
   - skill:@skaile-ai/impl-build-migrate
   - skill:@skaile-ai/impl-build-seed
   - skill:@skaile-ai/impl-build-docs
-  - flow:@skaile-ai/skaileup-impl-slice
+  - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-integration
 globals:
@@ -164,16 +164,16 @@ nodes:
       label: 'Build Docs'
       optional: false
       parameters: {}
-  # --- Per-feature impl-slice loop (delegated to the impl-slice flow) ---
+  # --- Per-feature impl loop (delegated to the slice-impl flow) ---
   - id: impl-slice-loop
     type: sub-flow
     position:
       x: 2000
       y: 200
     data:
-      flow: skaileup-impl-slice
-      domain: impl-slice
-      label: 'Per-feature impl-slice loop'
+      flow: skaileup-slice-impl
+      domain: slice
+      label: 'Per-feature impl loop'
       pass_context: true
   # --- Quality (unit + integration, no E2E) ---
   - id: q-test-unit

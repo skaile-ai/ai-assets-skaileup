@@ -190,8 +190,8 @@ The `requires:` refs use the npm-style scoped ref grammar
 `kind:@publisher/name[#version]` (`@` = scope sigil, `#` = version sigil; per
 `workspaces/.../2026-06-02-scoped-asset-ref-grammar.md`). The `contract:` and
 `skill:` kinds appear, plus `flow:` when a flow delegates a loop to a **sub-flow
-node** (e.g. the tiers delegate their per-feature loops to the `concept-slice` /
-`impl-slice` flows instead of inlining them):
+node** (e.g. the standard/complex tiers delegate their per-feature loop to the
+unified `skaileup-slice` flow instead of inlining it):
 
 ```yaml
 # inside appbuilder-standard.flow.yaml, above globals:
@@ -200,8 +200,7 @@ requires:
   - contract:@skaile-ai/implementation-contract # domain contract its skills cite
   - skill:@skaile-ai/concept-goals              # …every skill its nodes run
   # …exactly the flow's own node skills, no more
-  - flow:@skaile-ai/concept-slice               # …plus any flow a sub-flow node delegates to
-  - flow:@skaile-ai/impl-slice
+  - flow:@skaile-ai/skaileup-slice              # …plus any flow a sub-flow node delegates to
 ```
 
 The `requires:` set is **exact and self-contained**: its `skill:` refs equal
@@ -241,7 +240,8 @@ skaileup/flows/
 ├── appbuilder-simple/
 │   ├── appbuilder-simple.flow.yaml
 │   └── appbuilder-simple.md
-... (appbuilder-standard, appbuilder-complex, concept-slice, impl-slice)
+... (appbuilder-standard, appbuilder-complex, skaileup-slice{,-concept,-impl},
+    skaileup-impl, skaileup-implementation, skaileup-concept-only, skaileup-concept-reverse)
 └── _meta/
     ├── verify_flows.py
     ├── test_verify.py
