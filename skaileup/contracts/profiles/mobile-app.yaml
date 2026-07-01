@@ -59,7 +59,7 @@ artifacts:
     type: json
 
   journeys:
-    path: "experience/journeys/stories.json"
+    path: "experience/journeys/stories.yaml"
     type: json
 
   features:

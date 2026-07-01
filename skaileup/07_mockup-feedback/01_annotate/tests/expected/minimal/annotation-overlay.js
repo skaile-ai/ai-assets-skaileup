@@ -7,7 +7,7 @@
  *   iframe      → postMessage to parent (forge-concept context)
  *   standalone  → floating toolbar with "Download annotations" button
  *
- * postMessage protocol (from docs/superpowers/notes/forge-concept-walkthrough.md):
+ * postMessage protocol (from docs/devlog/forge-concept-walkthrough.md):
  *   overlay→parent: { type: "overlay.ready",      route, manifest?: undefined }
  *     (manifest omitted in v0.1 — requires runtime fetch of manifest.json; TODO Task 3A+)
  *   overlay→parent: { type: "overlay.annotation",  annotation }

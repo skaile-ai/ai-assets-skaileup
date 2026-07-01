@@ -53,7 +53,7 @@
     {
       "journey_id": "sign-in",
       "rendered_html": "journey/sign-in.html",
-      "source": "experience/journeys/stories.json#sign-in",
+      "source": "experience/journeys/stories.yaml#sign-in",
       "screen_sequence": ["experience/screens/00_auth/login.md"]
     }
   ],

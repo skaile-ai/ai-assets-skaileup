@@ -55,7 +55,7 @@ metadata:
     reads:
       - path: '_concept/_grounding/overview/user_input.json'
         description: 'Complexity tier for model depth'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'User journeys for data flow context'
       - path: '_concept/blueprint/architecture.md'
         description: 'Architecture for service boundaries and data ownership'
@@ -125,7 +125,7 @@ regenerating; only produce the model from scratch when the folder is empty.
 | Must read        | `_concept/experience/features/**/*.md`                      | Yes             |
 | Must read        | `_concept/blueprint/techstack.md`                           | Yes             |
 | Check if present | `_concept/_grounding/overview/user_input.json`              | No (complexity) |
-| Check if present | `_concept/experience/journeys/stories.json`                 | No              |
+| Check if present | `_concept/experience/journeys/stories.yaml`                 | No              |
 | Check if present | `_concept/blueprint/architecture.md`                        | No              |
 | Check if present | `_concept/experience/behaviors/*.allium`                    | No              |
 | Check if present | `_concept/_grounding/research/patterns.md`                   | No              |
@@ -146,7 +146,7 @@ READS
 \_concept/experience/features/\*_/_.md — feature requirements
 \_concept/blueprint/techstack.md — stack constraints (for translation hints)
 ? \_concept/\_grounding/overview/user_input.json — complexity field (drives involvement level)
-? \_concept/experience/journeys/stories.json — EARS criteria → state machine derivation
+? \_concept/experience/journeys/stories.yaml — EARS criteria → state machine derivation
 ? \_concept/blueprint/architecture.md — custom modules → additional entities
 ? \_concept/experience/behaviors/\*.allium — entity state machines, enum values
 ? \_concept/\_grounding/research/patterns.md — domain-specific data patterns
@@ -184,8 +184,8 @@ STEP 1: Read context
 - Read all feature files for functional requirements
 - Read stack.md for backend constraints (informs translation hints only)
 - Check \_grounding/overview/user_input.json for complexity field
-  IF \_concept/experience/journeys/stories.json exists
-  - Read stories.json; derive state machines from EARS acceptance criteria: - Event-driven criteria (WHEN ... THE SYSTEM SHALL ...) → state transitions - State-driven criteria (IF status is X ...) → guard conditions - Story downstream.candidate_entities hints → model candidates
+  IF \_concept/experience/journeys/stories.yaml exists
+  - Read stories.yaml; derive state machines from EARS acceptance criteria: - Event-driven criteria (WHEN ... THE SYSTEM SHALL ...) → state transitions - State-driven criteria (IF status is X ...) → guard conditions - Story downstream.candidate_entities hints → model candidates
     IF \_concept/blueprint/architecture.md exists
   - Note custom modules → may need their own entities or configuration models
   - Note communication protocols → may need session, message, or event models

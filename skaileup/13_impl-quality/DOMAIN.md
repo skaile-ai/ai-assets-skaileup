@@ -16,7 +16,7 @@ Produces test artifacts, code evaluations, and debug outputs that gate each impl
 - **impl-quality-test-unit** (`test-unit/`) — Reads feature specs + `_concept/testing/test_plan.md`, writes one unit test file per feature following existing source patterns.
 - **impl-quality-test-integration** (`test-integration/`) — Generates API endpoint and cross-feature integration tests against a real database from feature specs and data model.
 - **impl-quality-test-e2e** (`test-e2e/`) — Runs every user journey via agent-browser, writes `e2e-screenshots/**/*.png` and optional `e2e-test-report.md`.
-- **impl-quality-eval-code** (`eval-code/`) — Verifies build then dispatches three parallel sub-agents (logic, security, UI/UX); writes `_implementation/eval-code.json`.
+- **impl-quality-eval-code** (`eval-code/`) — Verifies build then dispatches three parallel sub-agents (logic, security, UI/UX); writes `_implementation/eval-code.yaml`.
 - **impl-quality-audit** (`audit/`) — Static audit via three parallel sub-agents; also checks `_concept/` structure integrity; writes optional `audit-report.md`.
 - **impl-quality-ready** (`ready/`) — Read-only pre-flight check: every feature must have concept doc, screen spec, data model entry, brand tokens, and tech stack before E2E can run.
 - **impl-quality-standards-discover** (`standards-discover/`) — Analyzes an existing codebase; writes one `.md` per convention to `_concept/_standards/{domain}/` and generates `_concept/_standards/index.yml`.

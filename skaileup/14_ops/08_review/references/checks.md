@@ -18,7 +18,7 @@ Uses `contracts/concept_structure.md` for expected phase-grouped paths.
 |---|---|---|
 | `discovery/` | `brief.md`, `goals.md` | `comparable.md` |
 | `discovery/brand/` | `identity.md`, `tokens.json` | `behavioral.md`, `copy_guidelines.md`, `brandbook.html` |
-| `experience/journeys/` | `stories.json` | `journey_stages.md` |
+| `experience/journeys/` | `stories.yaml` | `journey_stages.md` |
 | `experience/features/` | At least one feature group `NN_*/` | — |
 | `experience/screens/` | At least one screen group `NN_*/` | `components/` |
 | `blueprint/` | `stack.md` | — |

@@ -78,7 +78,7 @@ artifacts:
 
   # -- Experience --
   journeys:
-    path: "experience/journeys/stories.json"
+    path: "experience/journeys/stories.yaml"
     type: json
     schema: stories-v1
 

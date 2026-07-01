@@ -51,7 +51,7 @@ metadata:
     reads:
       - path: '_concept/discovery/brief.md'
         description: 'Project goals, problem statement, target user, success metrics'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'User journeys for end-to-end traceability check'
       - path: '_concept/experience/features'
         description: 'Feature specs with acceptance criteria'
@@ -62,7 +62,7 @@ metadata:
       - path: '_concept/blueprint/techstack.md'
         description: 'Tech stack for implementation feasibility check'
     produces:
-      - path: '_concept/eval-concept.json'
+      - path: '_concept/eval-concept.yaml'
         description: 'Evaluation result with scores, verdict, and resolution flags'
 ---
 
@@ -84,16 +84,16 @@ READS
 ! \_concept/experience/features/**/\*.md — feature specs + acceptance criteria
 ! \_concept/experience/screens/**/\*.md — screen specs
 ! \_concept/blueprint/datamodel/model.json — data model
-? \_concept/experience/journeys/stories.json — journey traceability
+? \_concept/experience/journeys/stories.yaml — journey traceability
 ? \_concept/blueprint/techstack.md — feasibility check
 
 WRITES
-\_concept/eval-concept.json — MUST write before reporting
+\_concept/eval-concept.yaml — MUST write before reporting
 
 MUST read all artifacts silently before scoring
 MUST quote the exact problematic text in every flag description
 MUST provide a specific actionable resolution for every flag
-MUST write eval-concept.json before reporting to user
+MUST write eval-concept.yaml before reporting to user
 MUST apply all scoring deductions listed in each dimension
 NEVER infer intent — unstated means missing
 NEVER approve (verdict: pass) with any blocking flags
@@ -107,7 +107,7 @@ Required:
 
 - brief.md has: problem statement, target user, success metrics, ≥3 goals
 - Every feature has: title, description, ≥1 acceptance criterion
-- Every journey in stories.json has features assigned
+- Every journey in stories.yaml has features assigned
 - Every feature appears in ≥1 screen spec
 - Every screen references ≥1 feature
 - model.json has entities for every feature that creates or reads persistent data
@@ -154,14 +154,12 @@ STEP 1: Read all artifacts silently. Do not produce output.
 
 STEP 2: Apply scoring deductions. For each deduction, create a flag:
 
-```json
-{
-  "type": "missing|ambiguous|contradiction|orphan|untraceable",
-  "severity": "blocking|warning",
-  "location": "<exact path>",
-  "description": "<quote the problematic text>",
-  "resolution": "<specific action to fix>"
-}
+```yaml
+- type: missing|ambiguous|contradiction|orphan|untraceable
+  severity: blocking|warning
+  location: <exact path>
+  description: <quote the problematic text>
+  resolution: <specific action to fix>
 ```
 
 Blocking: missing artifacts, non-verifiable criteria, contradictions, score < 70
@@ -175,7 +173,7 @@ STEP 4: Determine verdict:
 - needs_resolution: any score 60–79 OR blocking flags
 - fail: any score < 60
 
-STEP 5: Write \_concept/eval-concept.json
+STEP 5: Write \_concept/eval-concept.yaml
 
 STEP 6: Report
 

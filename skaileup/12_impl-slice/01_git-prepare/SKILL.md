@@ -43,7 +43,7 @@ metadata:
 Initializes or verifies the git repository and creates a clean implementation branch
 (or worktree) ready for the supervised implementation run.
 
-This is a prerequisite for the superpowers workflow — all implementation work happens
+This is a prerequisite for the supervised implementation workflow — all implementation work happens
 on a dedicated `implement/<app-slug>` branch, not on `main`.
 
 ## When to Use
@@ -81,11 +81,11 @@ READS
 WRITES
 .git/ — git init if not present
 .gitignore — created if not present (standard template)
-\_implementation/git-state.json — records branch, mode, worktree path (if any)
+\_implementation/git-state.yaml — records branch, mode, worktree path (if any)
 
 MUST read brief.md to derive the app slug before creating branches
 MUST check if the implementation branch already exists — do not recreate if resuming
-MUST record git_mode and branch name in \_implementation/git-state.json
+MUST record git_mode and branch name in \_implementation/git-state.yaml
 MUST use `branch` mode by default unless git_mode=worktree is explicitly set
 NEVER create a worktree if git_mode=branch
 NEVER force-push or rewrite git history
@@ -118,11 +118,11 @@ $ git commit --allow-empty -m "chore: start supervised implementation of <app-na
 STEP 5: Worktree setup (worktree mode only)
 IF git_mode = worktree
 IF .worktrees/<app-slug>/ does not exist
-$ git worktree add .worktrees/<app-slug> implement/<app-slug> - Add .worktrees/ to .gitignore (worktrees are local, not committed) - Record worktree_path: ".worktrees/<app-slug>" in git-state.json - Report: "Worktree created at .worktrees/<app-slug>"
+$ git worktree add .worktrees/<app-slug> implement/<app-slug> - Add .worktrees/ to .gitignore (worktrees are local, not committed) - Record worktree_path: ".worktrees/<app-slug>" in git-state.yaml - Report: "Worktree created at .worktrees/<app-slug>"
 
-STEP 6: Write git-state.json
+STEP 6: Write git-state.yaml
 
-- Write \_implementation/git-state.json:
+- Write \_implementation/git-state.yaml:
   {
   "app_slug": "<slug>",
   "branch": "implement/<slug>",
@@ -131,7 +131,7 @@ STEP 6: Write git-state.json
   "created_at": "<ISO timestamp>",
   "status": "ready"
   }
-  $ git add \_implementation/git-state.json
+  $ git add \_implementation/git-state.yaml
   $ git commit -m "chore: record git state for supervised implementation"
 
 CHECKLIST
@@ -140,7 +140,7 @@ CHECKLIST
 - [ ] Git repo initialized or verified
 - [ ] Implementation branch created or verified (implement/<slug>)
 - [ ] Worktree created if git_mode=worktree
-- [ ] git-state.json written and committed
+- [ ] git-state.yaml written and committed
 
 ---
 
@@ -150,4 +150,4 @@ CHECKLIST
 | ------------------------------------------------ | ------------------------------------------------------------------------------- |
 | Creating branch with uncommitted changes on main | Stash or commit first; clean working tree is required                           |
 | Using worktree mode for sequential subagent work | Use branch mode; worktrees add overhead without benefit for sequential dispatch |
-| Forgetting to write git-state.json               | Downstream skills read this file; always write it                               |
+| Forgetting to write git-state.yaml               | Downstream skills read this file; always write it                               |

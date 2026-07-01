@@ -12,13 +12,13 @@ Cross-cutting skills that operate on an existing concept or implementation: heal
 
 ## Skills
 
-- **ops-review** (`review/`) — Audit or auto-fix `_concept/`; produces `_concept/quality.json` with a completeness + entropy score.
+- **ops-review** (`review/`) — Audit or auto-fix `_concept/`; produces `_concept/quality.yaml` with a completeness + entropy score.
 - **ops-sync** (`sync/`) — Repair broken cross-references and orphaned entities in `_concept/`; shows diff before applying.
 - **ops-add-feature** (`add-feature/`) — Add or modify a feature in a live concept; cascades through journeys, tech stack, architecture, data model, and screens.
 - **ops-reverse-engineer** (`reverse-engineer/`) — Bootstrap a `_concept/` folder from an existing repository.
-- **ops-eval-concept** (`eval-concept/`) — Adversarial completeness gate; produces `_concept/eval-concept.json`. Run before implementation begins.
-- **ops-eval-feature** (`eval-feature/`) — Browser-based feature verifier after each feature group; produces `_implementation/eval-feature/{group}.json`.
-- **ops-eval-product** (`eval-product/`) — Whole-product final gate; grades quality, craft, accessibility, and mobile; produces `_implementation/eval-product.json`.
+- **ops-eval-concept** (`eval-concept/`) — Adversarial completeness gate; produces `_concept/eval-concept.yaml`. Run before implementation begins.
+- **ops-eval-feature** (`eval-feature/`) — Browser-based feature verifier after each feature group; produces `_implementation/eval-feature/{group}.yaml`.
+- **ops-eval-product** (`eval-product/`) — Whole-product final gate; grades quality, craft, accessibility, and mobile; produces `_implementation/eval-product.yaml`.
 - **ops-project-overview** (`project-overview/`) — Generates `discovery/` in a meta-concept: ecosystem brief, goals, competitive positioning.
 - **ops-project-subsystem-map** (`project-subsystem-map/`) — Generates `2_subsystems/` in a meta-concept: subsystem index with maturity, audience, and tech stack.
 - **ops-project-integration** (`project-integration/`) — Generates `3_integration/` in a meta-concept: inter-repo architecture, deployment topology, shared contracts.

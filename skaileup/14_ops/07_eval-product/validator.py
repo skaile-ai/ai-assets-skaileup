@@ -12,15 +12,15 @@ def validate(cwd: str) -> dict:
 
     # File existence
     v.must(
-        "eval-product.json exists",
-        lambda: v.file_exists("_implementation/eval-product.json"),
+        "eval-product.yaml exists",
+        lambda: v.file_exists("_implementation/eval-product.yaml"),
     )
 
     # Required top-level fields
     v.must(
         "has required fields",
         lambda: v.json_field_exists(
-            "_implementation/eval-product.json",
+            "_implementation/eval-product.yaml",
             "schema_version",
             "goals",
             "design",
@@ -34,7 +34,7 @@ def validate(cwd: str) -> dict:
 
     # Score ranges
     def check_accessibility_score():
-        data = v.read_json("_implementation/eval-product.json")
+        data = v.read_json("_implementation/eval-product.yaml")
         if data is None:
             return False, "file not readable"
         s = data.get("accessibility_score", -1)
@@ -43,7 +43,7 @@ def validate(cwd: str) -> dict:
         return True, ""
 
     def check_mobile_score():
-        data = v.read_json("_implementation/eval-product.json")
+        data = v.read_json("_implementation/eval-product.yaml")
         if data is None:
             return False, "file not readable"
         s = data.get("mobile_score", -1)
@@ -56,7 +56,7 @@ def validate(cwd: str) -> dict:
 
     # Verdict enum
     def check_verdict():
-        data = v.read_json("_implementation/eval-product.json")
+        data = v.read_json("_implementation/eval-product.yaml")
         if data is None:
             return False, "file not readable"
         verdict = data.get("verdict")
@@ -69,7 +69,7 @@ def validate(cwd: str) -> dict:
 
     # design object fields
     def check_design_fields():
-        data = v.read_json("_implementation/eval-product.json")
+        data = v.read_json("_implementation/eval-product.yaml")
         if data is None:
             return False, "file not readable"
         design = data.get("design")
@@ -85,7 +85,7 @@ def validate(cwd: str) -> dict:
     # design dimension ranges (0-10)
     def make_design_dim_check(dim):
         def check():
-            data = v.read_json("_implementation/eval-product.json")
+            data = v.read_json("_implementation/eval-product.yaml")
             if data is None:
                 return False, "file not readable"
             design = data.get("design", {})
@@ -102,7 +102,7 @@ def validate(cwd: str) -> dict:
 
     # goals structure
     def check_goals_fields():
-        data = v.read_json("_implementation/eval-product.json")
+        data = v.read_json("_implementation/eval-product.yaml")
         if data is None:
             return False, "file not readable"
         goals = data.get("goals", [])
@@ -116,7 +116,7 @@ def validate(cwd: str) -> dict:
         return True, ""
 
     def check_goals_achieved_enum():
-        data = v.read_json("_implementation/eval-product.json")
+        data = v.read_json("_implementation/eval-product.yaml")
         if data is None:
             return False, "file not readable"
         goals = data.get("goals", [])

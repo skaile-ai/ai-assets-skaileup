@@ -210,7 +210,7 @@ question whether it belongs in the model.
 
 ## Journey-Derived State Machines
 
-When `_concept/experience/journeys/stories.json` exists, use EARS acceptance criteria
+When `_concept/experience/journeys/stories.yaml` exists, use EARS acceptance criteria
 to derive entity state machines:
 
 - **Event-driven** (`WHEN user submits ... THE SYSTEM SHALL transition status to Done`)

@@ -40,15 +40,15 @@ Expected: each contains a single `SKILL.md` from Phase 1 migration.
 
 - [ ] **Pre-4: Confirm source documents readable**
 
-Run: `wc -l SKILL_GRAPH.md contracts/iron_laws.md contracts/skill_grammar.md contracts/asset_frontmatter.md contracts/plans.md CONTRIBUTING.md docs/superpowers/plans/2A-scope-project.md docs/superpowers/plans/2B-concept-slice-cluster.md impl-plan/brainstorm/SKILL.md impl-plan/plan-vertical/SKILL.md`
+Run: `wc -l SKILL_GRAPH.md contracts/iron_laws.md contracts/skill_grammar.md contracts/asset_frontmatter.md contracts/plans.md CONTRIBUTING.md docs/devlog/2A-scope-project.md docs/devlog/2B-concept-slice-cluster.md impl-plan/brainstorm/SKILL.md impl-plan/plan-vertical/SKILL.md`
 Expected: all line counts non-zero.
 
 - [ ] **Pre-5: Confirm 2A and 2B mini-plans pin the schemas this cluster reads**
 
-Run: `grep -n "schema_version\|tier:" docs/superpowers/plans/2A-scope-project.md | head -3`
+Run: `grep -n "schema_version\|tier:" docs/devlog/2A-scope-project.md | head -3`
 Expected: matches (the `scope.yaml` schema is pinned in 2A).
 
-Run: `grep -n "product-spec/features\|experience/screens" docs/superpowers/plans/2B-concept-slice-cluster.md | head -5`
+Run: `grep -n "product-spec/features\|experience/screens" docs/devlog/2B-concept-slice-cluster.md | head -5`
 Expected: matches (the per-feature artifact paths are pinned in 2B).
 
 - [ ] **Pre-6: Confirm naming convention**
@@ -66,8 +66,8 @@ Each `name:` MUST equal the parent directory name exactly (no shortening).
 
 The executing agent MUST read each of these once, in this order, before starting Task 1:
 
-1. `docs/superpowers/plans/2A-scope-project.md` — § "Pinned Schema — `_concept/_meta/scope.yaml`". The `tier`/`signals` schema is the contract for every read in this cluster. **Do not redefine.**
-2. `docs/superpowers/plans/2B-concept-slice-cluster.md` — pinned permanent artifact paths (`_concept/product-spec/features/<group>/<feature_slug>.md`, `_concept/experience/screens/<feature_slug>/<screen>.md`, `_concept/walkthrough-mockup/<tier>/<feature_slug>.<ext>`) AND § "Pinned: Slice-ID Format" (this cluster reuses the `<feature_slug>` rule — see § "Slice-id continuity" below). **Note the lifecycle distinction:** `_slice/concept/<id>/` has been DELETED by `concept-slice/design-feature` before this cluster runs; this cluster reads PERMANENT artifacts only.
+1. `docs/devlog/2A-scope-project.md` — § "Pinned Schema — `_concept/_meta/scope.yaml`". The `tier`/`signals` schema is the contract for every read in this cluster. **Do not redefine.**
+2. `docs/devlog/2B-concept-slice-cluster.md` — pinned permanent artifact paths (`_concept/product-spec/features/<group>/<feature_slug>.md`, `_concept/experience/screens/<feature_slug>/<screen>.md`, `_concept/walkthrough-mockup/<tier>/<feature_slug>.<ext>`) AND § "Pinned: Slice-ID Format" (this cluster reuses the `<feature_slug>` rule — see § "Slice-id continuity" below). **Note the lifecycle distinction:** `_slice/concept/<id>/` has been DELETED by `concept-slice/design-feature` before this cluster runs; this cluster reads PERMANENT artifacts only.
 3. `SKILL_GRAPH.md` — § 5.2 (per-slice impl loop, brainstorm/align/plan-vertical phases) and § 7 (workspace zones; `_slice/impl/<id>/` lifetime).
 4. `contracts/iron_laws.md` — § 7 (no artifact without prerequisites), § 9 (questions are standalone messages).
 5. `contracts/skill_grammar.md` — DSL keywords (ROLE, READS, WRITES, MUST, NEVER, STEP, CHECKPOINT, OUTPUT, IF/ELSE, EMIT, CHECKLIST, INPUT, REQUIRES). Especially § "Authoring tips" #4 (place constraints early).
@@ -431,7 +431,7 @@ Sections in order:
 - `## When to Use` and `## When NOT to Use` (keep existing structure but update for per-slice scope).
 - `ROLE` line.
 - `READS` / `WRITES` (copy from § "READS / WRITES (pinned)").
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `docs/superpowers/plans/2A-scope-project.md` (for scope.yaml schema), `docs/superpowers/plans/2B-concept-slice-cluster.md` (for permanent artifact paths).
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `docs/devlog/2A-scope-project.md` (for scope.yaml schema), `docs/devlog/2B-concept-slice-cluster.md` (for permanent artifact paths).
 - MUST/NEVER block (place EARLY per skill_grammar.md § Authoring tip 4):
   - `MUST  ask each interview question as its own standalone message (iron_laws § 9)`
   - `MUST  refuse to run if scope.yaml is missing or tier is not in {standard-app, complex-app}`
@@ -582,7 +582,7 @@ Suggested: `Use when an implementation slice has its concept artifacts (feature.
 Sections in order:
 - `ROLE` — implementation-readiness grill partner, per-slice.
 - `READS` / `WRITES` — copy from § "READS / WRITES (pinned)".
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `contracts/skill_grammar.md`, `impl-plan/align/references/grill-style.md`, `docs/superpowers/plans/2A-scope-project.md`, `docs/superpowers/plans/2B-concept-slice-cluster.md`.
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `contracts/skill_grammar.md`, `impl-plan/align/references/grill-style.md`, `docs/devlog/2A-scope-project.md`, `docs/devlog/2B-concept-slice-cluster.md`.
 - MUST/NEVER block (EARLY):
   - `MUST  ask each grill question as its own standalone message (iron_laws § 9)`
   - `MUST  refuse to run if scope.yaml is missing or tier == mvp (mvp skips align per SKILL_GRAPH § 6)`
@@ -718,7 +718,7 @@ Sections in order:
 - `## When to Use` and `## When NOT to Use`.
 - `ROLE` — Per-slice plan writer; resists horizontal decomposition.
 - `READS` / `WRITES` — copy from § "READS / WRITES (pinned)".
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `contracts/plans.md`, `impl-plan/plan-vertical/references/anti-horizontal-rules.md`, `docs/superpowers/plans/2A-scope-project.md`, `docs/superpowers/plans/2B-concept-slice-cluster.md`.
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `contracts/plans.md`, `impl-plan/plan-vertical/references/anti-horizontal-rules.md`, `docs/devlog/2A-scope-project.md`, `docs/devlog/2B-concept-slice-cluster.md`.
 - **The verbatim anti-horizontal nudge template** (per § "Pinned: Anti-Horizontal Nudge Template") goes EARLY in the body — before MUST/NEVER. This is critical: per `skill_grammar.md` § Authoring tip 4, constraints early in the body have better compliance. The nudge IS a constraint.
 - MUST/NEVER block (EARLY, immediately after the nudge):
   - `MUST  produce one row per user-facing slice; each row crosses UI + Logic + Data`

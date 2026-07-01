@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "skaileup" / "contr
 from validator_lib import Validator, main  # noqa: E402
 
 SKILL = "journeys"
-STORIES = "_concept/experience/journeys/stories.json"
+STORIES = "_concept/experience/journeys/stories.yaml"
 SCHEMA = "contracts/stories_schema.json"
 
 
@@ -37,7 +37,7 @@ def validate(cwd: str) -> dict:
     def check_ears():
         stories = _all_stories(v)
         if not stories:
-            return False, "No stories found in stories.json"
+            return False, "No stories found in stories.yaml"
         for s in stories:
             ac = s.get("acceptance_criteria", [])
             if not ac:
@@ -46,7 +46,7 @@ def validate(cwd: str) -> dict:
 
     v.must("write EARS acceptance criteria for every story", check_ears)
 
-    v.must("include personas in stories.json", lambda: (
+    v.must("include personas in stories.yaml", lambda: (
         v.json_array_all_have(
             (v.read_json(STORIES) or {}).get("personas", []),
             "id",
@@ -54,7 +54,7 @@ def validate(cwd: str) -> dict:
         ) if (v.read_json(STORIES) or {}).get("personas") else (False, "No personas found")
     ))
 
-    v.must("validate stories.json against schema", lambda: (
+    v.must("validate stories.yaml against schema", lambda: (
         v.json_schema_validate(STORIES, SCHEMA)
     ))
 
@@ -130,14 +130,14 @@ def validate(cwd: str) -> dict:
 
     v.checklist("Every story has downstream hints", check_downstream)
 
-    v.checklist("stories.json validates against schema", lambda: (
+    v.checklist("stories.yaml validates against schema", lambda: (
         v.json_schema_validate(STORIES, SCHEMA)
     ))
 
     def check_priority_dist():
         data = v.read_json(STORIES)
         if not data:
-            return False, "No stories.json"
+            return False, "No stories.yaml"
         for m in data.get("story_maps", []):
             stage = m.get("stage")
             for s in m.get("stories", []):

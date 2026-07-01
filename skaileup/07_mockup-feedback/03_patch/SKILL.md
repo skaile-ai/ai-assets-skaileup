@@ -260,4 +260,4 @@ Next: edit review.md as needed, then run mockup-feedback-apply
 
 - `contracts/elements_block.md` — `elements:` frontmatter schema, provisional ID rules (4-space indent)
 - `mockup-feedback/schemas/patches.schema.json` — output shape
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D2, D4, D5
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D2, D4, D5

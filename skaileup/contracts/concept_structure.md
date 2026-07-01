@@ -52,7 +52,8 @@ onboarding:
 ```
 _concept/
 ├── concept.yaml                         ← project manifest (type, profile, artifact status, seed mapping)
-├── quality.json                         ← concept health report (written by ops-review)
+├── quality.yaml                         ← concept health report (written by ops-review)
+├── decisions.md                         ← design-time decision records (ADRs) — append-only, 3-test gate; see contracts/domain_model.md
 │
 ├── _meta/                               ← orchestration signals (read by routing/tier-aware skills)
 │   └── scope.yaml                       ← tier signal: appbuilder-mvp | appbuilder-simple | appbuilder-standard | appbuilder-complex
@@ -111,7 +112,7 @@ _concept/
 │
 ├── experience/
 │   ├── journeys/                        ← optional: user journeys
-│   │   └── stories.json                 ← personas, story maps (hero/vital/hygiene/backlog), EARS criteria
+│   │   └── stories.yaml                 ← personas, story maps (hero/vital/hygiene/backlog), EARS criteria
 │   │
 │   ├── features/
 │   │   ├── 01_<group_name>/             ← numbered feature groups
@@ -172,6 +173,8 @@ _concept/
 │
 └── blueprint/
     ├── techstack.md                     ← chosen technologies + reasoning
+    │
+    ├── glossary.md                      ← ubiquitous-language glossary (term → definition), read by ALL skills; see contracts/domain_model.md
     │
     ├── architecture.md                  ← optional: system architecture, modules, data flow, protocols
     │

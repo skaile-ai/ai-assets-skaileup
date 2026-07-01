@@ -11,13 +11,13 @@ def validate(cwd: str) -> dict:
     v = Validator(cwd, "eval-concept")
 
     # File existence
-    v.must("eval-concept.json exists", lambda: v.file_exists("_concept/eval-concept.json"))
+    v.must("eval-concept.yaml exists", lambda: v.file_exists("_concept/eval-concept.yaml"))
 
     # Required top-level fields
     v.must(
         "has required fields",
         lambda: v.json_field_exists(
-            "_concept/eval-concept.json",
+            "_concept/eval-concept.yaml",
             "schema_version",
             "evaluated_at",
             "completeness_score",
@@ -33,7 +33,7 @@ def validate(cwd: str) -> dict:
 
     # Score ranges
     def check_completeness_score():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         s = data.get("completeness_score", -1)
@@ -42,7 +42,7 @@ def validate(cwd: str) -> dict:
         return True, ""
 
     def check_clarity_score():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         s = data.get("clarity_score", -1)
@@ -51,7 +51,7 @@ def validate(cwd: str) -> dict:
         return True, ""
 
     def check_traceability_score():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         s = data.get("traceability_score", -1)
@@ -60,7 +60,7 @@ def validate(cwd: str) -> dict:
         return True, ""
 
     def check_overall_score():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         s = data.get("overall_score", -1)
@@ -75,7 +75,7 @@ def validate(cwd: str) -> dict:
 
     # Verdict enum
     def check_verdict():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         verdict = data.get("verdict")
@@ -88,7 +88,7 @@ def validate(cwd: str) -> dict:
 
     # blocking_flags structure
     def check_blocking_flags_fields():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         flags = data.get("blocking_flags", [])
@@ -101,7 +101,7 @@ def validate(cwd: str) -> dict:
         return True, ""
 
     def check_blocking_flags_type_enum():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         flags = data.get("blocking_flags", [])
@@ -119,7 +119,7 @@ def validate(cwd: str) -> dict:
 
     # Contradiction check: pass verdict with non-empty blocking_flags
     def check_verdict_contradiction():
-        data = v.read_json("_concept/eval-concept.json")
+        data = v.read_json("_concept/eval-concept.yaml")
         if data is None:
             return False, "file not readable"
         if data.get("verdict") == "pass" and data.get("blocking_flags"):

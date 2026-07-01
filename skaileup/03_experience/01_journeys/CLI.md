@@ -6,7 +6,7 @@ Invoke with: "map user journeys", "define user stories", "what will users do", o
 
 ## Output
 
-- `_concept/experience/journeys/stories.json`
+- `_concept/experience/journeys/stories.yaml`
 
 ## Next Steps
 

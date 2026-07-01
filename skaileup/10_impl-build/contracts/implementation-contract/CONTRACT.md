@@ -1,6 +1,6 @@
 ---
 name: 'implementation-contract'
-description: 'Shared contract for all impl-build-implementation skills. Describes _implementation/ folder layout, scaffold-to-verify pipeline, progress.json format, git workflow, and how implementation reads from _concept/. REQUIRED reading for any implementation skill.'
+description: 'Shared contract for all impl-build-implementation skills. Describes _implementation/ folder layout, scaffold-to-verify pipeline, progress.yaml format, git workflow, and how implementation reads from _concept/. REQUIRED reading for any implementation skill.'
 metadata:
   stage: 'alpha'
   do_not_invoke: true
@@ -32,29 +32,24 @@ _concept/experience/screens/**/*.md           ← screen specs (for verification
 
 ```
 _implementation/
-├── PLANS.md              ← durable implementation plan (phases, feature checklist)
-├── progress.json         ← machine-readable feature status
-├── decisions.md          ← dated implementation decisions
+├── PLANS.md              ← durable implementation plan — lean scope + ordered phases (no status)
+├── progress.yaml         ← machine-readable feature status (completion source of truth)
+├── decisions.md          ← build-time decision records (ADRs) — append-only, 3-test gate
 └── <framework-specific>/ ← scaffold output (managed by foundation/scaffold skills)
 ```
 
-## progress.json Format
+## progress.yaml Format
 
-```json
-{
-  "schema_version": "1.0",
-  "app": "<slug>",
-  "updated_at": "YYYY-MM-DDTHH:MM:SSZ",
-  "features": [
-    {
-      "id": "<group>/<feature-slug>",
-      "label": "<Human Label>",
-      "status": "not_started | in_progress | implemented | verified",
-      "impl_status": "pending | scaffolded | coded | tested",
-      "last_updated": "YYYY-MM-DD"
-    }
-  ]
-}
+```yaml
+schema_version: "1.0"
+app: <slug>
+updated_at: YYYY-MM-DDTHH:MM:SSZ
+features:
+  - id: <group>/<feature-slug>
+    label: <Human Label>
+    status: not_started | in_progress | implemented | verified
+    impl_status: pending | scaffolded | coded | tested
+    last_updated: YYYY-MM-DD
 ```
 
 ## Pipeline Phase Structure
@@ -84,23 +79,26 @@ During implementation, skills search for matching `skaileup-prog-expert-*` skill
 
 ## PLANS.md (Implementation Phase)
 
+Lean scope + ordered phases only. **No status checkboxes** (live status is
+`progress.yaml`) and **no decisions section** (decisions are ADRs in `decisions.md`,
+per `contracts/domain_model.md`). See `contracts/plans.md` for the canonical shape.
+
 ```markdown
 ## Implementation Plan: <App Name>
 
-### Stack
+### Scope
+<What's built this phase, what's out.>
 
+### Stack
 - Framework: <framework>
 - Profile: <profile>
 
 ### Phases
+1. scaffold
+2. foundation
+3. feature/user_auth
+4. feature/dashboard
+   ...
 
-- [x] scaffold — completed YYYY-MM-DD
-- [x] foundation — completed YYYY-MM-DD
-- [ ] feature/user_auth — in_progress
-- [ ] feature/dashboard — not_started
-      ...
-
-### Decisions
-
-### Blockers
+> Live status: progress.yaml. Decisions: decisions.md.
 ```

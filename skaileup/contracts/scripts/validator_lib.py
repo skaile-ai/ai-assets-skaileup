@@ -138,13 +138,25 @@ class Validator:
     # ── Text / JSON readers ──────────────────────────────────────────
 
     def read_json(self, rel_path: str) -> dict | list | None:
-        """Read and parse a JSON file. Returns None if missing/invalid."""
+        """Read and parse a structured data file. Returns None if missing/invalid.
+
+        Format is chosen by extension: .yaml/.yml parse as YAML, everything else
+        as JSON. Skaileup state/report artifacts are YAML; JSON Schemas and
+        ecosystem files (package.json, tsconfig.json, …) stay JSON.
+        """
         p = self.cwd / rel_path
         if not p.exists():
             return None
         try:
-            return json.loads(p.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, UnicodeDecodeError):
+            text = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            return None
+        try:
+            if rel_path.endswith((".yaml", ".yml")):
+                import yaml  # PyYAML is available (used elsewhere in the toolchain)
+                return yaml.safe_load(text)
+            return json.loads(text)
+        except Exception:
             return None
 
     def read_text(self, rel_path: str) -> str | None:

@@ -9,7 +9,7 @@ Invoke with: "implement the app", "build the app from concept", "start implement
 
 - **New implementation**: reads `_concept/`, creates PLANS.md, runs all phases
 - **Resume**: detects existing `_implementation/PLANS.md`, resumes from last phase
-- **Journey-first**: features built in hero → vital → hygiene order (from `stories.json`)
+- **Journey-first**: features built in hero → vital → hygiene order (from `stories.yaml`)
 
 ## Complexity Tiers
 
@@ -22,7 +22,7 @@ Invoke with: "implement the app", "build the app from concept", "start implement
 ## Output
 
 - `_implementation/PLANS.md` — implementation plan with phase and feature checkboxes
-- `_implementation/progress.json` — machine-readable status tracking
+- `_implementation/progress.yaml` — machine-readable status tracking
 - `_implementation/decisions.md` — decision log
 - `LEARNINGS.md` — institutional knowledge journal
 - Project source code (via `scaffold`, `foundation`, `implement-feature` sub-skills)

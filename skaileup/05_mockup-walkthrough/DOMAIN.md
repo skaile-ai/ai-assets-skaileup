@@ -46,5 +46,5 @@ All renderers share the same output contract; `manifest.json` is consumed by `mo
 ## Cross-references
 
 - `../mockup-feedback/DOMAIN.md` — reads `manifest.json` produced here
-- `../experience/DOMAIN.md` — screen specs and `stories.json` are the primary inputs
+- `../experience/DOMAIN.md` — screen specs and `stories.yaml` are the primary inputs
 - `../contracts/elements_block.md` — `data-spec-*` attribute contract shared across all three skills

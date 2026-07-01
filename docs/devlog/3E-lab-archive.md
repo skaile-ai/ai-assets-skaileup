@@ -10,7 +10,7 @@
 
 **Spec references:**
 - `REFACTOR_MOCKUP.md §5` — devlog format and append protocol
-- `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` Task 3E — trigger and output spec
+- `docs/devlog/2026-05-07-skill-graph-migration.md` Task 3E — trigger and output spec
 
 **Working directory:** `/mnt/localvault/workBench/SKAILE/skaile-dev-matthias/ai-assets/ai-assets-skaileup`
 

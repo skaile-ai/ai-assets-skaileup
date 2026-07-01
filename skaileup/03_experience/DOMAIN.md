@@ -12,7 +12,7 @@ Produces the full UX specification layer — personas, story maps, behavioral ru
 
 ## Skills
 
-- **experience-journeys** (`journeys/`) — Maps personas and story maps from the approved brief; writes `_concept/experience/journeys/stories.json` with EARS acceptance criteria staged hero/vital/hygiene/backlog.
+- **experience-journeys** (`journeys/`) — Maps personas and story maps from the approved brief; writes `_concept/experience/journeys/stories.yaml` with EARS acceptance criteria staged hero/vital/hygiene/backlog.
 - **experience-behaviors** (`behaviors/`) — Formalizes entity state machines and lifecycle rules per feature group; writes `_concept/experience/behaviors/<group>.allium` (one file per feature group).
 - **experience-screens** (`screens/`) — Writes per-screen specs from approved features; outputs `_concept/experience/screens/00_layout/shell.md` and `_concept/experience/screens/<NN_group>/<screen>.md`; registers screens back into feature frontmatter.
 - **experience-components** (`components/`) — Identifies shared UI patterns across all screens; writes `_concept/experience/screens/components/<name>.md` per reusable component, mapped to the tech stack's component library.

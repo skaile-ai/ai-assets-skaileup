@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "skaileup" / "contr
 from validator_lib import Validator, main  # noqa: E402
 
 SKILL = "review"
-QUALITY = "_concept/quality.json"
+QUALITY = "_concept/quality.yaml"
 
 REQUIRED_QUALITY_FIELDS = ("timestamp", "score", "breakdown", "issues")
 BREAKDOWN_FIELDS = (
@@ -30,32 +30,32 @@ def validate(cwd: str) -> dict:
     v.skip("classify every issue by severity (CRITICAL, HIGH, MEDIUM, LOW)",
            reason="semantic — content classification")
 
-    # quality.json must be written
-    v.must("write _concept/quality.json after every run", lambda: (
+    # quality.yaml must be written
+    v.must("write _concept/quality.yaml after every run", lambda: (
         v.file_exists(QUALITY)
     ))
 
-    # Check quality.json structure
+    # Check quality.yaml structure
     def check_quality_structure():
         data = v.read_json(QUALITY)
         if data is None:
             return False, f"Cannot read {QUALITY}"
         missing = [k for k in REQUIRED_QUALITY_FIELDS if k not in data]
         if missing:
-            return False, f"quality.json missing fields: {', '.join(missing)}"
+            return False, f"quality.yaml missing fields: {', '.join(missing)}"
         breakdown = data.get("breakdown", {})
         if isinstance(breakdown, dict):
             missing_bd = [k for k in BREAKDOWN_FIELDS if k not in breakdown]
             if missing_bd:
-                return False, f"quality.json breakdown missing: {', '.join(missing_bd)}"
+                return False, f"quality.yaml breakdown missing: {', '.join(missing_bd)}"
         issues = data.get("issues", {})
         if isinstance(issues, dict):
             missing_iss = [k for k in ISSUES_FIELDS if k not in issues]
             if missing_iss:
-                return False, f"quality.json issues missing: {', '.join(missing_iss)}"
+                return False, f"quality.yaml issues missing: {', '.join(missing_iss)}"
         return True, ""
 
-    v.must("quality.json has complete structure (all 6 breakdown + 4 issue fields)",
+    v.must("quality.yaml has complete structure (all 6 breakdown + 4 issue fields)",
            check_quality_structure)
 
     v.skip("emit started and completed events with run_id",
@@ -74,7 +74,7 @@ def validate(cwd: str) -> dict:
 
     # ── CHECKLIST ──
 
-    v.checklist("quality.json written with all 6 breakdown fields", check_quality_structure)
+    v.checklist("quality.yaml written with all 6 breakdown fields", check_quality_structure)
 
     v.skip("All contracts/ read before checks",
            rule_type="CHECKLIST", reason="process — cannot verify")

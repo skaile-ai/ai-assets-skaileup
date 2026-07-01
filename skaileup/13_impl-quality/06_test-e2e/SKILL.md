@@ -41,7 +41,7 @@ metadata:
         gate: hard
         description: 'Feature specs required for user journey test coverage'
         min_entries: 1
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         gate: hard
         description: 'Stories drive the journeys to run; EARS acceptance criteria are the pass/fail conditions'
       - path: '_concept/experience/screens'
@@ -100,7 +100,7 @@ database records.
 | -------------- | --------------------------------------------------- | --------------------------- |
 | **Must read**  | `_concept/discovery/brief.md`                       | Yes                         |
 | **Must read**  | `_concept/experience/features/**/*.md`              | Yes                         |
-| **Must read**  | `_concept/experience/journeys/stories.json`         | Yes                         |
+| **Must read**  | `_concept/experience/journeys/stories.yaml`         | Yes                         |
 | **Must read**  | `_concept/blueprint/datamodel/model.json`           | Yes                         |
 | **Must read**  | `_concept/blueprint/datamodel/seed.json`            | Yes                         |
 | **Must read**  | `_concept/experience/screens/**/*.md`               | Yes                         |
@@ -125,7 +125,7 @@ ROLE E2E Testing agent — runs browser tests against every user journey, captur
 READS
 \_concept/discovery/brief.md — app name, purpose
 \_concept/experience/features/**/\*.md — feature specs, requirements, success criteria
-\_concept/experience/journeys/stories.json — stories + EARS acceptance criteria (the journeys to run and their pass conditions)
+\_concept/experience/journeys/stories.yaml — stories + EARS acceptance criteria (the journeys to run and their pass conditions)
 \_concept/blueprint/datamodel/model.json — model definitions for DB validation
 \_concept/experience/screens/**/\*.md — screen specs with routes, components, states
 ? \_concept/blueprint/datamodel/seed.json — scenario-based test data
@@ -146,7 +146,7 @@ state: \_concept/experience/screens/**/\*.md exist
 state: \_concept/experience/features/**/\*.md exist
 
 MUST run audit before this skill for static analysis
-MUST derive the journeys to run from stories.json stories (not just feature specs) — one journey per story, covering hero and vital stages first
+MUST derive the journeys to run from stories.yaml stories (not just feature specs) — one journey per story, covering hero and vital stages first
 MUST treat each story's EARS acceptance criteria as the pass/fail conditions for its journey — a journey passes only when all its criteria are observably met
 MUST use seed.json scenario data for all form inputs (never invent test data)
 MUST screenshot every step to e2e-screenshots/<journey>/
@@ -171,7 +171,7 @@ STEP 2: Parallel research (two sub-agents)
 
 - Sub-agent 1 — Concept & User Journeys:
   - Read \_concept/discovery/brief.md for app name, purpose
-  - Read \_concept/experience/journeys/stories.json for every story + its EARS acceptance_criteria (and gherkin_scenarios if present) — these are the journeys to run
+  - Read \_concept/experience/journeys/stories.yaml for every story + its EARS acceptance_criteria (and gherkin_scenarios if present) — these are the journeys to run
   - Read \_concept/experience/features/\*_/_.md for every feature, requirements, success criteria
   - Read \_concept/experience/screens/\*_/_.md for every screen: route, components, template data, states
   - Read package.json for dev server command, port, URL
@@ -237,7 +237,7 @@ EMIT [e2e] completed run_id=<uuid> journeys=<N> screenshots=<N> issues_found=<N>
 CHECKLIST
 
 - [ ] Pre-flight checks passed (platform, frontend, agent-browser)
-- [ ] One journey run per stories.json story; every EARS criterion evaluated PASS/FAIL
+- [ ] One journey run per stories.yaml story; every EARS criterion evaluated PASS/FAIL
 - [ ] All user journeys tested with seed scenario data
 - [ ] Screenshots captured for every step
 - [ ] Database records validated after data-modifying actions

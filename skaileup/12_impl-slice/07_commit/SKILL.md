@@ -1,6 +1,6 @@
 ---
 name: impl-slice-commit
-description: "Use when a slice has been recapped and refactored and is ready to land. Verifies all 3 predecessor handoffs (test, recap, refactor), inventories the working tree, decomposes into 1-N atomic commits with user approval, lands the commits, and freezes _implementation/slices/<id>/ on success (writes index.md, keeps the dossier as documentation, removes only transient progress.json). Does NOT replace impl-slice-git-prepare (project setup) or impl-slice-git-finish (branch closeout)."
+description: "Use when a slice has been recapped and refactored and is ready to land. Verifies all 3 predecessor handoffs (test, recap, refactor), inventories the working tree, decomposes into 1-N atomic commits with user approval, lands the commits, and freezes _implementation/slices/<id>/ on success (writes index.md, keeps the dossier as documentation, removes only transient progress.yaml). Does NOT replace impl-slice-git-prepare (project setup) or impl-slice-git-finish (branch closeout)."
 metadata:
   version: "1.0.0"
   tags:
@@ -52,7 +52,7 @@ metadata:
       - path: "<git commits on the active branch>"
         description: "1-N atomic commits per logical unit; each commit body embeds slice_id, feature_title, feature_path."
       - path: "_implementation/slices/{slice_id}/index.md"
-        description: "Frozen slice dossier written on successful completion (lifecycle terminator). Folder kept as documentation; only progress.json is removed."
+        description: "Frozen slice dossier written on successful completion (lifecycle terminator). Folder kept as documentation; only progress.yaml is removed."
 ---
 
 # impl-slice-commit — atomic commits + lifecycle terminator
@@ -63,7 +63,7 @@ This is the lifecycle terminator for the impl slice. After this skill runs, the
 slice's work lives in commits + permanent code, and `_implementation/slices/<slice_id>/`
 is **frozen, not deleted**: the skill writes `index.md` and keeps the phase
 handoffs (`brainstorm · align · plan · test · recap · refactor`) as permanent
-per-feature documentation, removing only the transient `progress.json`. The skill
+per-feature documentation, removing only the transient `progress.yaml`. The skill
 verifies all three predecessor handoffs, inventories the working tree, asks the
 user to approve a commit-plan (1-N atomic commits), lands the commits, and freezes
 the dossier on success. Mirrors `concept-slice/design-feature` (the concept-side
@@ -107,7 +107,7 @@ READS
 WRITES
   <git commits>                                               — atomic; per logical unit; user-approved file list
   _implementation/slices/{slice_id}/index.md                  — frozen dossier; ONLY on success
-  (FREEZES) _implementation/slices/{slice_id}/                — kept as documentation; handoffs retained, only progress.json removed
+  (FREEZES) _implementation/slices/{slice_id}/                — kept as documentation; handoffs retained, only progress.yaml removed
 
 REFERENCES
   SKILL_GRAPH.md                                              — § 5.2 per-slice impl loop
@@ -115,9 +115,9 @@ REFERENCES
   contracts/skill_grammar.md                                  — DSL keywords
   contracts/asset_frontmatter.md                              — Skill SKILL.md schema
   impl-slice/commit/references/commit-message-format.md       — commit message format pin
-  docs/superpowers/plans/2B-concept-slice-cluster.md          — parallel terminator pattern (concept-slice/design-feature)
-  docs/superpowers/plans/2C-impl-plan-align-vertical.md       — _implementation/slices/<id>/ lifecycle pin
-  docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned commit behavior
+  docs/devlog/2B-concept-slice-cluster.md          — parallel terminator pattern (concept-slice/design-feature)
+  docs/devlog/2C-impl-plan-align-vertical.md       — _implementation/slices/<id>/ lifecycle pin
+  docs/devlog/2D-impl-slice-cluster.md             — § Pinned commit behavior
 
 REQUIRES
   hard: _implementation/slices/{slice_id}/test.md
@@ -138,7 +138,7 @@ MUST  show the commit-plan to the user and obtain approval BEFORE any "git add" 
 MUST  ask the commit-plan question as its own standalone message (iron_laws § 9)
 MUST  write _implementation/slices/<slice_id>/index.md ONLY after every commit lands successfully
 MUST  keep _implementation/slices/<slice_id>/ and its phase handoffs — they are permanent documentation
-MUST  remove ONLY the transient _implementation/slices/<slice_id>/progress.json at STEP 5 (never the handoffs)
+MUST  remove ONLY the transient _implementation/slices/<slice_id>/progress.yaml at STEP 5 (never the handoffs)
 
 NEVER  force-push or rewrite history
 NEVER  use "git add ." or "git add -A" — always stage explicit file lists from the approved plan
@@ -221,7 +221,7 @@ Feature spec: <feature_path>"
     - Verify: $ git log -1 --pretty=%H returns a hash; $ git status --porcelain
       shows the staged files cleared.
     - On failure (e.g., pre-commit hook blocks):
-      - STOP. Do NOT freeze the slice (do NOT write index.md, do NOT remove progress.json).
+      - STOP. Do NOT freeze the slice (do NOT write index.md, do NOT remove progress.yaml).
       - Do NOT roll back successful prior commits — they are valid work.
       - Tell the user:
         > "Commit N of M failed. Slice dossier is intact at
@@ -258,7 +258,7 @@ STEP 5: Lifecycle-terminator freeze
      - brainstorm.md · align.md · plan.md · test.md · recap.md · refactor.md
      ```
   2. Remove ONLY the transient resume state:
-     $ rm -f _implementation/slices/<slice_id>/progress.json
+     $ rm -f _implementation/slices/<slice_id>/progress.yaml
   3. Verify index.md exists and its frontmatter parses; verify the handoffs are
      still present. If index.md is missing, surface the failure and exit non-zero.
 
@@ -271,7 +271,7 @@ CHECKLIST
   - [ ] Active branch is NOT main/master
   - [ ] commit-plan approved by user (CHECKPOINT commit_plan)
   - [ ] Every commit landed with `Slice:`/`Feature:`/`Feature spec:` audit trail
-  - [ ] _implementation/slices/<slice_id>/index.md written; handoffs kept; progress.json removed (lifecycle freeze)
+  - [ ] _implementation/slices/<slice_id>/index.md written; handoffs kept; progress.yaml removed (lifecycle freeze)
   - [ ] No force-push, no --amend across already-pushed commits
 
 ---

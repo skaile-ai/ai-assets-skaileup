@@ -459,7 +459,7 @@ Step 1 unblocks SKILL_GRAPH cleanup. Steps 2-5 are each their own slice.
 
 Investigation completed 2026-05-09 (skill-graph migration plan
 Task 3.0). See full findings in
-`docs/superpowers/notes/forge-concept-walkthrough.md`.
+`docs/devlog/forge-concept-walkthrough.md`.
 
 **Outcome:** forge-concept has **no working** overlay / annotation /
 walkthrough code yet. It does have one detailed draft proposal —

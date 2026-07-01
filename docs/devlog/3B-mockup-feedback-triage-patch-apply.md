@@ -9,8 +9,8 @@
 **Tech Stack:** Python 3 stdlib only (`triage.py`, `apply.py`, validators); vanilla Markdown for `review.md`; git CLI for commit; ULID/UUID session IDs (short test strings for fixtures).
 
 **Prereqs read before starting:**
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` — binding design decisions D1–D7
-- `docs/superpowers/plans/3A-mockup-feedback-annotate.md` — sibling plan template
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` — binding design decisions D1–D7
+- `docs/devlog/3A-mockup-feedback-annotate.md` — sibling plan template
 - `contracts/elements_block.md` — `elements:` frontmatter schema, provisional ID rules
 - `REFACTOR_MOCKUP.md` §5 (devlog format), §11 (resolved decisions)
 - `mockup-feedback/annotate/overlay/annotation-overlay.js` — confirms session JSON shape: `{sessionId, annotations}`, no top-level `createdAt`
@@ -798,7 +798,7 @@ For unresolved items, print the reason for each.
 
 - `mockup-feedback/schemas/session.schema.json` — input validation
 - `mockup-feedback/schemas/triage.schema.json` — output shape
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D1
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D1
 ```
 
 - [ ] **Step 1.9: Commit**
@@ -1377,7 +1377,7 @@ Next: edit review.md as needed, then run mockup-feedback-apply
 
 - `contracts/elements_block.md` — `elements:` frontmatter schema, provisional ID rules (4-space indent)
 - `mockup-feedback/schemas/patches.schema.json` — output shape
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D2, D4, D5
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D2, D4, D5
 ```
 
 - [ ] **Step 2.6: Verify validator parses correctly**
@@ -2625,7 +2625,7 @@ For each failed patch:
 
 - `mockup-feedback/schemas/patches.schema.json` — input validation
 - `REFACTOR_MOCKUP.md` §5 — devlog format
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D3, D6, D7
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D3, D6, D7
 ```
 
 - [ ] **Step 5.4: Verify SKILL.md frontmatter**

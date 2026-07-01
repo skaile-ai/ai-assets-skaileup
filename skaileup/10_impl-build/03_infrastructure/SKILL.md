@@ -213,7 +213,7 @@ STEP 10: Verify
 
 - Build all (backend + frontend)
 - Start all processes — verify connectivity (WebSocket handshake, SSE stream)
-- Update \_implementation/progress.json: infrastructure phase → approved
+- Update \_implementation/progress.yaml: infrastructure phase → approved
   EMIT [infrastructure] completed run_id=<uuid> layers=5 modules=<N> processes=<M>
 
 CHECKPOINT infrastructure_complete
@@ -235,4 +235,4 @@ CHECKLIST
 - [ ] Layer 4: Communication protocols functional (verified handshake/stream)
 - [ ] Layer 5: Additional processes start without crashes
 - [ ] Full build passes
-- [ ] progress.json and PLANS.md updated
+- [ ] progress.yaml updated (completion source of truth; PLANS.md carries no status)

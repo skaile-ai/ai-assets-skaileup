@@ -104,7 +104,7 @@ Reference scenarios from `_concept/blueprint/datamodel/seed.json`:
 
 ## Enrichment from User Journeys
 
-When `_concept/experience/journeys/stories.json` exists, use it to inform screen design:
+When `_concept/experience/journeys/stories.yaml` exists, use it to inform screen design:
 
 | Journey element              | Maps to screen section  |
 |------------------------------|-------------------------|

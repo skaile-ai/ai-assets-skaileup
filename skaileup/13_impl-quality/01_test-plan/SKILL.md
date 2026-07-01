@@ -33,7 +33,7 @@ metadata:
         gate: hard
         description: 'Feature specs required to generate test scenarios'
         min_entries: 1
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         gate: hard
         description: 'Stories with EARS acceptance criteria — every criterion must map to at least one test scenario'
       - path: '_concept/experience/screens'
@@ -109,7 +109,7 @@ Before starting, read:
 | ----------------------------------------- | -------- |
 | `_concept/discovery/brief.md`             | Required |
 | `_concept/experience/features/**/*.md`    | Required |
-| `_concept/experience/journeys/stories.json` | Required |
+| `_concept/experience/journeys/stories.yaml` | Required |
 | `_concept/blueprint/datamodel/model.json` | Required |
 | `_concept/blueprint/datamodel/seed.json`  | Required |
 | `_concept/experience/screens/**/*.md`     | Required |
@@ -121,7 +121,7 @@ Before starting, read:
 
 1. Read `_concept/discovery/brief.md` — app overview
 2. Read `_concept/experience/features/**/*.md` — all feature specs
-3. Read `_concept/experience/journeys/stories.json` — stories + EARS `acceptance_criteria` (and `gherkin_scenarios` if present)
+3. Read `_concept/experience/journeys/stories.yaml` — stories + EARS `acceptance_criteria` (and `gherkin_scenarios` if present)
 4. Read `_concept/experience/screens/**/*.md` — all screen specs
 5. Read `_concept/blueprint/datamodel/model.json` — entities, relationships, field constraints
 6. Read `_concept/blueprint/datamodel/seed.json` — named scenarios (if exists)
@@ -303,7 +303,7 @@ Show the coverage summary table and ask:
 | Ignoring seed.json scenarios                      | Map every scenario to a named seed data scenario                  |
 | Only testing happy paths                          | Require at least 1 error + 1 edge case per feature                |
 | Inventing requirements not in specs               | Every scenario must trace to a feature requirement or screen spec |
-| Ignoring stories.json EARS criteria               | Every acceptance criterion must map to ≥1 scenario; gaps go in Uncovered Acceptance Criteria |
+| Ignoring stories.yaml EARS criteria               | Every acceptance criterion must map to ≥1 scenario; gaps go in Uncovered Acceptance Criteria |
 | Skipping permissions when roles exist             | If `roles:` has multiple entries, generate permission scenarios   |
 | Testing nice-to-have when scope is must-have-only | Respect the `test_scope` user input                               |
 

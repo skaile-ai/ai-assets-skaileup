@@ -1,6 +1,6 @@
 ---
 name: impl-quality-eval-code
-description: 'Use when a pipeline checkpoint is reached (after scaffold, after each feature group, or before release) to evaluate code quality. Verifies build, then dispatches three parallel sub-agents for logic errors, security, and UI/UX concerns. Three scopes: scaffold / feature / full. Produces _implementation/eval-code.json.'
+description: 'Use when a pipeline checkpoint is reached (after scaffold, after each feature group, or before release) to evaluate code quality. Verifies build, then dispatches three parallel sub-agents for logic errors, security, and UI/UX concerns. Three scopes: scaffold / feature / full. Produces _implementation/eval-code.yaml.'
 metadata:
   version: '1.0.0'
   tags:
@@ -45,7 +45,7 @@ metadata:
       - path: '_concept/_standards/index.yml'
         description: 'Project coding standards (if available)'
     produces:
-      - path: '_implementation/eval-code.json'
+      - path: '_implementation/eval-code.yaml'
         description: 'Code quality evaluation result'
 ---
 
@@ -68,7 +68,7 @@ READS
 ? \_concept/_standards/index.yml — project coding standards
 
 WRITES
-\_implementation/eval-code.json — MUST write before reporting
+\_implementation/eval-code.yaml — MUST write before reporting
 
 MUST run build verification before any sub-agent analysis
 MUST dispatch logic, security, and ui_ux as parallel sub-agents (scope=full)
@@ -89,7 +89,7 @@ Execute in sequence: lint → typecheck → build
 IF any command fails:
 Set build.<key> = "fail"
 Set verdict = "fail"
-Write eval-code.json with partial results
+Write eval-code.yaml with partial results
 Report: "[eval-code] FAIL — build did not pass (<command>). Fix before re-running."
 STOP.
 
@@ -100,7 +100,7 @@ Capture: pass count, fail count, skip count, coverage summary.
 IF tests fail:
 Set verdict = "fail"
 Include failing test names in blocking_issues
-Write \_implementation/eval-code.json with partial results
+Write \_implementation/eval-code.yaml with partial results
 Report: "[eval-code] FAIL — {n} tests failing. Fix before re-running."
 STOP.
 
@@ -126,7 +126,7 @@ STEP 6: Determine verdict:
 - warn: build clean AND tests pass AND medium findings only
 - fail: build fails OR tests fail OR any critical finding
 
-STEP 7: Write \_implementation/eval-code.json
+STEP 7: Write \_implementation/eval-code.yaml
 
 STEP 8: Report
 [eval-code] scope={scope} → {verdict}

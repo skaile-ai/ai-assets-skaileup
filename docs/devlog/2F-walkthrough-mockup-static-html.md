@@ -1,6 +1,6 @@
 # Task 2F — `walkthrough-mockup-static-html` Skill Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This is a **mini-plan** — a sub-plan of `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` (Phase 2, Task 2F).
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This is a **mini-plan** — a sub-plan of `docs/devlog/2026-05-07-skill-graph-migration.md` (Phase 2, Task 2F).
 
 **Goal:** Author the `walkthrough-mockup-static-html` skill — the contract anchor among walkthrough renderers. It consumes the screen-frontmatter `elements:` block (pinned by Task 2.0) and produces a zero-build, openable static HTML walkthrough at `_concept/walkthrough-mockup/static-html/`. Every rendered DOM node carries `data-spec-screen` + `data-spec-element` attributes (and `data-spec-provisional="true"` when the id was auto-slugged) so the Phase 3 mockup-feedback cluster can resolve clicks back to source artefacts. Output also includes a `manifest.json` index keyed for `mockup-feedback-annotate`.
 
@@ -29,7 +29,7 @@
 
 - [ ] **PF-3: Confirm Task 2.0 mini-plan exists (this skill consumes its schema).**
 
-  Run: `test -r docs/superpowers/plans/2.0-elements-block-contract.md && echo OK`
+  Run: `test -r docs/devlog/2.0-elements-block-contract.md && echo OK`
   Expected: `OK`. If missing, **STOP** — Task 2.0 is the contract anchor; this skill cannot pin its renderer behaviour without it.
 
   Then: confirm the contract artefacts produced by Task 2.0 are present:
@@ -65,7 +65,7 @@
 
 - [ ] **PF-7: Read the load-bearing source sections (mandatory before Task 1).**
 
-  - `docs/superpowers/plans/2.0-elements-block-contract.md` — entire file. The pinned `elements:` schema and the renderer contract section are authoritative for this skill.
+  - `docs/devlog/2.0-elements-block-contract.md` — entire file. The pinned `elements:` schema and the renderer contract section are authoritative for this skill.
   - `REFACTOR_MOCKUP.md` § 4 (walkthrough tiers — shared input contract), § 6 (`elements:` block + renderer MUST list + hybrid ID strategy), § 7 (workspace zones — `_feedback/` lives outside this skill but `_concept/walkthrough-mockup/static-html/` is the output zone), § 9 (tier composition — confirms static-html targets simple-app), § 10 step 3 (build order rationale).
   - `SKILL_GRAPH.md` § 4 (concept-group artefact flow — confirms input set), § 7 (workspace zones).
   - `CONTRIBUTING.md` § "SKILL.md Format" + § "Naming Conventions" (path-based name = `walkthrough-mockup-static-html`).

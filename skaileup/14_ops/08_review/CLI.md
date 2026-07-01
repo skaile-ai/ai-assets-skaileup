@@ -7,12 +7,12 @@ Invoke with: "review", "audit the concept", "check for issues", "concept health"
 
 ## Modes
 
-- **Audit** (default): scans `_concept/`, reports issues, writes `quality.json`
+- **Audit** (default): scans `_concept/`, reports issues, writes `quality.yaml`
 - **Garden**: auto-fixes safe issues (stale fields, broken refs, status removal), reports changes
 
 ## Output
 
-- `_concept/quality.json` — quality score (0–100) with 6-category breakdown
+- `_concept/quality.yaml` — quality score (0–100) with 6-category breakdown
 - Audit report printed in the conversation
 - Gardening report printed with before → after score
 

@@ -8,7 +8,7 @@
 
 **Tech Stack:** Markdown + YAML (SKILL.md format), Python 3 stdlib + PyYAML (validator.py), same test harness as static-html (fixtures/ + expected/ + run_validator.sh).
 
-**Spec:** `docs/superpowers/specs/2026-05-09-walkthrough-mockup-astro-design.md`
+**Spec:** `docs/devlog/2026-05-09-walkthrough-mockup-astro-design.md`
 **Reference:** `walkthrough-mockup/static-html/SKILL.md` and `walkthrough-mockup/static-html/validator.py`
 
 **Working directory:** `/mnt/localvault/workBench/SKAILE/skaile-dev-matthias/ai-assets/ai-assets-skaileup`

@@ -69,7 +69,7 @@ metadata:
           - new
           - modification
     reads:
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'Existing journeys for cascade impact assessment'
       - path: '_concept/blueprint/techstack.md'
         description: 'Tech stack for implementation cascade planning'
@@ -120,7 +120,7 @@ It never touches artifacts that haven't been created yet.
 | ---------------- | ----------------------------------------------- | ------------------------------- |
 | Must read        | `_concept/discovery/brief.md`                   | Yes                             |
 | Must read        | `_concept/experience/features/**/*.md`          | Yes                             |
-| Check if present | `_concept/experience/journeys/stories.json`     | No                              |
+| Check if present | `_concept/experience/journeys/stories.yaml`     | No                              |
 | Check if present | `_concept/discovery/brand/tokens.json`          | No                              |
 | Check if present | `_concept/blueprint/techstack.md`               | No                              |
 | Check if present | `_concept/blueprint/architecture.md`            | No                              |
@@ -129,7 +129,7 @@ It never touches artifacts that haven't been created yet.
 | Check if present | `_concept/blueprint/datamodel/seed.json`        | No                              |
 | Check if present | `_concept/blueprint/datamodel/feature_map.json` | No                              |
 | Check if present | `_concept/experience/screens/**/*.md`           | No                              |
-| Check if present | `_implementation/progress.json`                 | No (determines if Phase 4 runs) |
+| Check if present | `_implementation/progress.yaml`                 | No (determines if Phase 4 runs) |
 
 ## Standalone Mode
 
@@ -144,7 +144,7 @@ changes through all existing downstream artifacts.
 READS
 \_concept/discovery/brief.md — app purpose, audience
 \_concept/experience/features/**/\*.md — all existing features (names, groups, priorities)
-? \_concept/experience/journeys/stories.json — user journey context
+? \_concept/experience/journeys/stories.yaml — user journey context
 ? \_concept/discovery/brand/tokens.json — brand tokens (for screen cascade)
 ? \_concept/blueprint/techstack.md — tech stack
 ? \_concept/blueprint/architecture.md — architecture
@@ -153,12 +153,12 @@ READS
 ? \_concept/blueprint/datamodel/seed.json — seed data
 ? \_concept/blueprint/datamodel/feature_map.json — model-to-feature mapping
 ? \_concept/experience/screens/**/\*.md — screen specs
-? \_implementation/progress.json — implementation status (determines if Phase 4 runs)
+? \_implementation/progress.yaml — implementation status (determines if Phase 4 runs)
 
 WRITES
 \_concept/experience/features/<NN_group>/<feature>.md — new or updated feature spec
 Cascades (only to artifacts that already exist):
-\_concept/experience/journeys/stories.json
+\_concept/experience/journeys/stories.yaml
 \_concept/blueprint/techstack.md
 \_concept/blueprint/architecture.md
 \_concept/blueprint/datamodel/model.json + model.dbml + seed.json + feature_map.json
@@ -190,7 +190,7 @@ STEP 1: Read existing concept
 - Read brief.md for app context
 - Read ALL files in \_concept/experience/features/ (all groups, all specs)
 - Read each optional artifact that exists (journeys, techstack, architecture, model, screens)
-- Check if \_implementation/progress.json exists (determines if Phase 4 runs)
+- Check if \_implementation/progress.yaml exists (determines if Phase 4 runs)
 - Build a mental map of:
   - Existing feature groups (numbering, names, coverage)
   - Existing entities + relations (from model.json/model.dbml)
@@ -233,7 +233,7 @@ STEP 5: Cascade changes (only to existing artifacts)
 
 - Follow cascade order from references/cascade_rules.md:
   1. Journeys → 2. Tech Stack → 3. Architecture → 4. Data Model → 5. Screens
-     IF stories.json exists AND feature introduces new user flows
+     IF stories.yaml exists AND feature introduces new user flows
   - Add stories to appropriate stage, write EARS criteria, update downstream links
     IF stack.md exists AND feature needs new dependency/integration
   - Add to Additional Integrations section, update last_updated
@@ -268,7 +268,7 @@ Feature | mode | cascade step counts | feedback loop status
 EMIT [add-feature] checkpoint phase=quality cross_refs=valid|N_broken
 
 STEP 7: Optional implementation (if app already built)
-IF \_implementation/progress.json exists > "The app has an existing implementation. Do you want to implement this feature now, > or save it for the next implementation run?"
+IF \_implementation/progress.yaml exists > "The app has an existing implementation. Do you want to implement this feature now, > or save it for the next implementation run?"
 IF yes → hand off to `implement-feature` skill with the feature spec as context
 IF no → note the feature in PLANS.md as implementation backlog
 

@@ -113,8 +113,8 @@ REFERENCES
   contracts/skill_grammar.md                                  — DSL keywords
   contracts/asset_frontmatter.md                              — Skill SKILL.md schema
   impl-slice/refactor/references/anti-addition-rules.md       — long-form expansion + counter-examples
-  docs/superpowers/plans/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
-  docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned refactor.md Schema
+  docs/devlog/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
+  docs/devlog/2D-impl-slice-cluster.md             — § Pinned refactor.md Schema
 
 REQUIRES
   hard: _implementation/slices/{slice_id}/recap.md                       — predecessor handoff

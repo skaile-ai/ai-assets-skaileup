@@ -2,7 +2,7 @@
 title: forge-concept walkthrough investigation
 date: 2026-05-09
 status: complete
-related: docs/superpowers/plans/2026-05-07-skill-graph-migration.md (Task 3.0)
+related: docs/devlog/2026-05-07-skill-graph-migration.md (Task 3.0)
 ---
 
 # forge-concept walkthrough investigation
@@ -11,7 +11,7 @@ related: docs/superpowers/plans/2026-05-07-skill-graph-migration.md (Task 3.0)
 
 forge-concept does **not yet** have working overlay / annotation /
 walkthrough code. What it does have is one detailed draft proposal —
-`docs/superpowers/specs/2026-05-05-bidirectional-spec-visual-loop.md`
+`docs/devlog/2026-05-05-bidirectional-spec-visual-loop.md`
 — authored by the same team that owns this catalog. The proposal pre-dates
 this migration plan and defines exactly the conventions the
 `mockup-feedback` skills (Phase 3, Tasks 3A–3B) should adopt.
@@ -28,7 +28,7 @@ designed. What remains is execution against that spec.
 `*.ts` / `*.vue` / `*.html` under `forge-concept/app/`, `forge-concept/server/`, or
 `forge-concept/_concept/`.
 
-**Spec convention** (from `docs/superpowers/specs/2026-05-05-bidirectional-spec-visual-loop.md`
+**Spec convention** (from `docs/devlog/2026-05-05-bidirectional-spec-visual-loop.md`
 § Component 1):
 
 ```ts

@@ -95,8 +95,8 @@ REFERENCES
   contracts/skill_grammar.md                                  — DSL keywords
   contracts/asset_frontmatter.md                              — Skill SKILL.md schema
   impl-slice/test/references/usability-question-pillars.md    — sample usability prompts and tone guidance
-  docs/superpowers/plans/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
-  docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned test.md Schema
+  docs/devlog/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
+  docs/devlog/2D-impl-slice-cluster.md             — § Pinned test.md Schema
 
 REQUIRES
   hard: _implementation/slices/{slice_id}/plan.md                        — predecessor handoff

@@ -183,5 +183,5 @@ For forge-concept integration: see forge-concept/docs/superpowers/specs/
 
 - `contracts/elements_block.md` — `data-spec-element` id conventions
 - `mockup-walkthrough/static-html/SKILL.md` — `data-spec-*` attribute table
-- `docs/superpowers/notes/forge-concept-walkthrough.md` — postMessage protocol + storage layout
+- `docs/devlog/forge-concept-walkthrough.md` — postMessage protocol + storage layout
 - `docs/devlog/mockup-design.md` § 11 — resolved decisions (storage policy, overlay packaging)

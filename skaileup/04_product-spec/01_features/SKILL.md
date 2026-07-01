@@ -1,6 +1,6 @@
 ---
 name: product-spec-features
-description: 'Use after user journeys are approved to plan features. Derives features from stories.json candidate hints and the project brief. Writes feature files organized in numbered groups. Required before screens and datamodel skills.'
+description: 'Use after user journeys are approved to plan features. Derives features from stories.yaml candidate hints and the project brief. Writes feature files organized in numbered groups. Required before screens and datamodel skills.'
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -48,7 +48,7 @@ metadata:
       - path: '_concept/discovery/brief.md'
         gate: hard
         description: 'Project brief required for feature context and scope'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         gate: hard
         description: 'User journeys must exist — features are derived from story candidates'
     inputs_optional:
@@ -78,7 +78,7 @@ metadata:
 ## Overview
 
 The **features** skill is the Feature Planning agent. It derives features from
-approved user journeys (`stories.json`) and the project brief, producing individual
+approved user journeys (`stories.yaml`) and the project brief, producing individual
 feature files organized in numbered groups under `_concept/experience/features/`.
 
 Features are the source of truth for screens and the data model. It does NOT write
@@ -86,7 +86,7 @@ screen specs, data models, brand, or tech stack.
 
 ## When to Use
 
-- `_concept/experience/journeys/stories.json` exists and is approved
+- `_concept/experience/journeys/stories.yaml` exists and is approved
 - The user says "define features", "what should the app do", "plan functionality"
 - The orchestrator dispatches this after journeys are complete
 - The user wants to redo or expand an existing feature set
@@ -107,7 +107,7 @@ and `contracts/golden_principles.md` before proceeding.
 **Hard gates:**
 
 - `_concept/discovery/brief.md` must exist and be non-empty
-- `_concept/experience/journeys/stories.json` must exist and be non-empty
+- `_concept/experience/journeys/stories.yaml` must exist and be non-empty
 
 ## Context Budget
 
@@ -115,7 +115,7 @@ and `contracts/golden_principles.md` before proceeding.
 | ---------------- | ----------------------------------------------------- | -------- |
 | Must read        | `_concept/discovery/brief.md`                         | Yes      |
 | Must read        | `_concept/discovery/goals.md`                         | Yes      |
-| Must read        | `_concept/experience/journeys/stories.json`           | Yes      |
+| Must read        | `_concept/experience/journeys/stories.yaml`           | Yes      |
 | Must read        | `references/feature_template.md`                      | Yes      |
 | Check if present | `_concept/_grounding/research/competitors.md`          | No       |
 | Check if present | `_concept/_grounding/research/audiences.md`            | No       |
@@ -124,7 +124,7 @@ and `contracts/golden_principles.md` before proceeding.
 
 ## Standalone Mode
 
-**Gate check:** Both brief.md and stories.json must exist.
+**Gate check:** Both brief.md and stories.yaml must exist.
 **On completion:** Show summary table and present next steps (screens, datamodel, orchestrator).
 
 ---
@@ -135,7 +135,7 @@ project brief, producing feature files in numbered groups.
 READS
 \_concept/discovery/brief.md — app name, audience, scope
 \_concept/discovery/goals.md — success criteria, constraints
-\_concept/experience/journeys/stories.json — user journeys with candidate features
+\_concept/experience/journeys/stories.yaml — user journeys with candidate features
 ? \_concept/\_grounding/research/competitors.md — feature gaps from competitor analysis
 ? \_concept/\_grounding/research/audiences.md — user needs influencing priorities
 ? \_concept/\_grounding/features/user_input.json — pre-collected dialog answers
@@ -152,11 +152,11 @@ references/feature_template.md — file template, identification questions
 
 MUST organize features in numbered group folders (01_user_auth, 02_dashboard, etc.)
 MUST include frontmatter: priority, story_refs, roles, permissions, agent_notes, screens, data_entities, last_updated
-MUST include a story_refs field on every feature — traces back to stories.json stories
+MUST include a story_refs field on every feature — traces back to stories.yaml stories
 MUST leave screens[] and data_entities[] empty — populated by downstream skills via feedback loop
 NEVER write screen specs, data models, brand, or tech stack files
 NEVER populate screens[] or data_entities[] — those fields are filled by the screens and datamodel skills
-NEVER invent features with no traceability to the brief or stories.json
+NEVER invent features with no traceability to the brief or stories.yaml
 
 EMIT [features] started run_id=<uuid>
 
@@ -165,7 +165,7 @@ STEP 1: Read context
 - Read \_concept/discovery/brief.md
 - Stop if missing or empty:
   > "No approved project brief found. Run `overview` first."
-- Read \_concept/experience/journeys/stories.json
+- Read \_concept/experience/journeys/stories.yaml
 - Stop if missing or empty:
   > "No user journeys found. Run `journeys` first."
 - Check \_grounding/features/user_input.json for pre-collected answers (feature_priorities, etc.)
@@ -185,7 +185,7 @@ STEP 1: Read context
 
 STEP 2: Identify and group features
 
-- Start from the candidate_features extracted from stories.json
+- Start from the candidate_features extracted from stories.yaml
 - Group related candidates into feature groups (e.g. user authentication, task management)
 - For each feature, answer the identification questions (see references/feature_template.md)
 - Create numbered group folders using NN\_ prefix (no letter prefix):
@@ -276,7 +276,7 @@ EMIT [features] completed run_id=<uuid> feature_count=<N> groups=<N>
 CHECKLIST
 
 - [ ] \_concept/discovery/brief.md was read and exists
-- [ ] \_concept/experience/journeys/stories.json was read and exists
+- [ ] \_concept/experience/journeys/stories.yaml was read and exists
 - [ ] Every feature traces to at least one story via story_refs
 - [ ] Every feature has required frontmatter (priority, story_refs, roles, last_updated)
 - [ ] screens[] and data_entities[] are empty (not pre-populated)
@@ -303,7 +303,7 @@ CHECKLIST
 | Populating screens[] or data_entities[]            | Agent tries to be helpful and pre-fills downstream fields         | Leave these empty. They are populated by the screens and datamodel skills via the feedback loop.                 |
 | Letter-prefixed group folders (A*01*)              | Agent follows old CF naming convention                            | Use NN\_ prefix only (01_user_auth, not A_01_user_auth).                                                         |
 | Creating features not in the brief or stories      | Agent invents features from domain knowledge                      | Every feature must trace back to the brief's problem statement, audience, hero flow, or a story candidate.       |
-| Inventing features from scratch when stories exist | Agent ignores candidate_features hints                            | Start from stories.json downstream.candidate_features — these are the journeys team's intent.                    |
+| Inventing features from scratch when stories exist | Agent ignores candidate_features hints                            | Start from stories.yaml downstream.candidate_features — these are the journeys team's intent.                    |
 
 ## Research Mode
 
@@ -322,7 +322,7 @@ accessibility requirements for the target audience.
 ## Integration
 
 - **Called by:** `concept-orchestrator` or standalone (after journeys)
-- **Requires:** `_concept/discovery/brief.md` and `_concept/experience/journeys/stories.json`
+- **Requires:** `_concept/discovery/brief.md` and `_concept/experience/journeys/stories.yaml`
 - **Feedback from downstream:**
   - **datamodel** skill populates `data_entities[]` in feature frontmatter
   - **screens** skill populates `screens[]` in feature frontmatter

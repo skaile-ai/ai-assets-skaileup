@@ -93,8 +93,8 @@ REFERENCES
   contracts/skill_grammar.md                                  — DSL keywords
   contracts/asset_frontmatter.md                              — Skill SKILL.md schema
   impl-slice/recap/references/diagram-shapes.md               — 5 starter ASCII shapes
-  docs/superpowers/plans/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
-  docs/superpowers/plans/2D-impl-slice-cluster.md             — § Pinned recap.md Schema
+  docs/devlog/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
+  docs/devlog/2D-impl-slice-cluster.md             — § Pinned recap.md Schema
 
 REQUIRES
   hard: _implementation/slices/{slice_id}/test.md                        — predecessor handoff
@@ -136,7 +136,7 @@ STEP 0: Verify predecessors
   - Read plan.md `## Definition of done` items.
 
 STEP 1: Derive Files touched
-  - Determine the slice base commit (use `_implementation/git-state.json` if present;
+  - Determine the slice base commit (use `_implementation/git-state.yaml` if present;
     else use `git log --oneline -20` heuristic — the commit just before the slice
     started). If ambiguous, ask the user as a STANDALONE message.
   - $ git diff --name-status <base>..HEAD

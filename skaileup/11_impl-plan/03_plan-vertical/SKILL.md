@@ -160,9 +160,9 @@ REFERENCES
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
   impl-plan/plan-vertical/references/anti-horizontal-rules.md     — long-form expansion of the nudge with worked counter-examples
-  docs/superpowers/plans/2A-scope-project.md                      — § Pinned scope.yaml schema
-  docs/superpowers/plans/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
-  docs/superpowers/plans/2C-impl-plan-align-vertical.md           — § Pinned plan.md schema (this skill's output contract)
+  docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
+  docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
+  docs/devlog/2C-impl-plan-align-vertical.md           — § Pinned plan.md schema (this skill's output contract)
 
 REQUIRES
   hard: _concept/_meta/scope.yaml                                 — tier context

@@ -78,7 +78,7 @@ Mechanical rules enforced across all `_concept/` artifacts.
 - Every path in frontmatter MUST resolve to an existing file or folder
 - If a screen lists a feature in `implements:`, that feature MUST list the screen in `screens:`
 - If a feature has `data_entities:`, each entity MUST exist in `model.json`
-- If a feature has `story_refs:`, each referenced story ID MUST exist in `stories.json`
+- If a feature has `story_refs:`, each referenced story ID MUST exist in `stories.yaml`
 
 > `model.json` is the canonical stack-agnostic data model. Stack-specific files (`schema.prisma`,
 > `postxl-schema.json`) are derived — cross-references always target `model.json`.

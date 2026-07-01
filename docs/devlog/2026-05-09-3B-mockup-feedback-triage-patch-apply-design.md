@@ -3,9 +3,9 @@ title: 3B mockup-feedback-{triage, patch, apply} — design
 date: 2026-05-09
 status: draft
 related:
-  - docs/superpowers/plans/2026-05-07-skill-graph-migration.md (Task 3B)
-  - docs/superpowers/plans/3A-mockup-feedback-annotate.md (sibling skill, Task 3A)
-  - docs/superpowers/notes/forge-concept-walkthrough.md (Task 3.0 findings)
+  - docs/devlog/2026-05-07-skill-graph-migration.md (Task 3B)
+  - docs/devlog/3A-mockup-feedback-annotate.md (sibling skill, Task 3A)
+  - docs/devlog/forge-concept-walkthrough.md (Task 3.0 findings)
   - REFACTOR_MOCKUP.md §5, §11, §12
 ---
 
@@ -22,7 +22,7 @@ processes the per-session annotation JSONs produced by Task 3A
 - `mockup-feedback-apply` — git + file writes + audit trail
 
 This document is the agreed design. Implementation lives in a follow-up
-mini-plan at `docs/superpowers/plans/3B-mockup-feedback-triage-patch-apply.md`
+mini-plan at `docs/devlog/3B-mockup-feedback-triage-patch-apply.md`
 (written next, in the same pattern as `3A-mockup-feedback-annotate.md`).
 
 **Supersedes the migration plan's Task 3B description on two points:**

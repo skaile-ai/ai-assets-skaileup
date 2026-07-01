@@ -36,7 +36,7 @@ metadata:
         gate: hard
         description: 'Screen specs required for feature page implementation'
         min_entries: 1
-      - path: '_concept/eval-concept.json'
+      - path: '_concept/eval-concept.yaml'
         gate: hard
         description: 'Concept must pass eval-concept before implementation begins — run skaileup-conceptualization orchestrator first'
     inputs_optional:
@@ -50,12 +50,12 @@ metadata:
         default: standard
         hint: 'small = consolidated setup, standard = separate scaffold+foundation, complex = all checkpoints separate'
     reads:
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'Journey stages for feature implementation ordering (hero → vital → hygiene)'
     produces:
       - path: '_implementation/PLANS.md'
         description: 'Structured implementation plan with dependency-ordered task list'
-      - path: '_implementation/progress.json'
+      - path: '_implementation/progress.yaml'
         description: 'Feature implementation progress tracking'
       - path: '_implementation/decisions.md'
         description: 'Implementation decisions log'
@@ -72,7 +72,7 @@ verification. Creates a structured implementation plan (dependency-ordered task
 list), then executes it phase by phase with checkpoints at each milestone.
 
 **Journey-first strategy:** features are built in user-journey order (hero →
-vital → hygiene stages from `stories.json`), not feature-group-number order.
+vital → hygiene stages from `stories.yaml`), not feature-group-number order.
 This delivers a working end-to-end flow early and reduces integration surprises.
 
 **Complexity tiers** control checkpoint granularity:
@@ -106,7 +106,7 @@ This delivers a working end-to-end flow early and reduces integration surprises.
 - `_concept/blueprint/techstack.md`
 - `_concept/blueprint/datamodel/model.json`
 - `_concept/experience/screens/` (at least one screen)
-- `_concept/eval-concept.json` (concept must pass eval-concept — run skaileup-conceptualization orchestrator first)
+- `_concept/eval-concept.yaml` (concept must pass eval-concept — run skaileup-conceptualization orchestrator first)
 
 ## Context Budget
 
@@ -118,12 +118,12 @@ This delivers a working end-to-end flow early and reduces integration surprises.
 | Must read      | `_concept/blueprint/datamodel/model.json`   | Yes         |
 | Must read      | `_concept/blueprint/datamodel/model.dbml`   | Yes         |
 | Must read      | `_concept/experience/screens/**/*.md`       | Yes         |
-| Read if exists | `_concept/experience/journeys/stories.json` | Recommended |
+| Read if exists | `_concept/experience/journeys/stories.yaml` | Recommended |
 | Read if exists | `_concept/blueprint/architecture.md`        | Recommended |
 | Read if exists | `_concept/discovery/brand/tokens.json`      | Recommended |
 | Read if exists | `_concept/blueprint/datamodel/seed.json`    | Recommended |
 | Resume state   | `_implementation/PLANS.md`                  | If resuming |
-| Resume state   | `_implementation/progress.json`             | If resuming |
+| Resume state   | `_implementation/progress.yaml`             | If resuming |
 
 ---
 
@@ -135,18 +135,18 @@ READS
 \_concept/blueprint/datamodel/model.json — data model for dependency graph
 \_concept/blueprint/datamodel/model.dbml — human-readable data model
 \_concept/experience/screens/**/\*.md — screen specs for plan tasks
-? \_concept/experience/journeys/stories.json — journey order (hero/vital/hygiene)
+? \_concept/experience/journeys/stories.yaml — journey order (hero/vital/hygiene)
 ? \_concept/blueprint/architecture.md — custom modules, processes
 ? \_concept/discovery/brand/tokens.json — brand tokens (for foundation)
 ? \_concept/blueprint/datamodel/seed.json — seed scenarios
 ? \_concept/\_meta/scope.yaml — tier; gates linear vs. per-feature impl-slice loop
 ? \_implementation/slices/<id>/index.md — frozen per-feature slice dossiers (resume: which features are shipped)
 ? \_implementation/PLANS.md — resume state (if exists)
-? \_implementation/progress.json — feature status (if resuming)
+? \_implementation/progress.yaml — feature status (if resuming)
 
 WRITES
 \_implementation/PLANS.md — durable implementation plan (phases + feature checkboxes)
-\_implementation/progress.json — machine-readable feature status
+\_implementation/progress.yaml — machine-readable feature status
 \_implementation/decisions.md — dated implementation decisions
 LEARNINGS.md — learnings journal (append)
 
@@ -160,10 +160,10 @@ references/procedures.md — log_learnings, update_progress, eval_feature_gate
 
 MUST create or resume PLANS.md before any work
 MUST follow phase order — no skipping phases
-MUST update PLANS.md at every checkpoint
+MUST update progress.yaml at every checkpoint (completion source of truth; PLANS.md holds scope + phases only, no status)
 MUST use git branching (feature branches → squash-merge to implement/<slug>)
 MUST emit observability events at every transition
-MUST log significant decisions in \_implementation/decisions.md
+MUST log significant decisions as ADRs in \_implementation/decisions.md, subject to the 3-test gate (contracts/domain_model.md)
 MUST get user approval for: plan, foundation, each feature group, final verification
 MUST read \_concept/\_meta/scope.yaml and, for tier ∈ {appbuilder-standard, appbuilder-complex}, guide the user through the per-feature impl-slice loop (impl-plan → impl-slice) instead of batching features through implement-feature
 MUST treat each feature as a slice with a dossier at \_implementation/slices/<feature_slug>/ that is frozen (kept), not deleted, on impl-slice-commit
@@ -179,7 +179,7 @@ EMIT [implement] started run_id=<uuid> app=<app-name> features=<count>
 # ── Phase 0: Initialize or Resume ─────────────────────────────────
 
 STEP 1: Check for existing plan
-IF \_implementation/PLANS.md exists - Read PLANS.md and progress.json - Identify last incomplete phase - Report status to user (see references/output_templates.md resume template) - Resume from that phase
+IF \_implementation/PLANS.md exists - Read PLANS.md and progress.yaml - Identify last incomplete phase - Report status to user (see references/output_templates.md resume template) - Resume from that phase
 ELSE - Continue to STEP 2
 
 IF LEARNINGS.md does not exist - Create LEARNINGS.md with category headings: - **Skills & Subskills** — workflow gaps, confusing steps, missing procedures - **Tech Stack** — stack-specific surprises, profile gaps, ORM issues - **Generated Code** — quality issues, patterns that worked well - **Concept-to-Code** — spec gaps, translation issues - **Testing** — E2E patterns, seed data, TDD guard observations - **Other** — anything else noteworthy - Format: `- [YYYY-MM-DD] [<skill-name>] <learning>`
@@ -190,7 +190,7 @@ STEP 2: Read concept
 - Read features/ to enumerate all must-have features and their story_refs
 - Read model.json to build entity dependency graph
 - Read screens/ for screen specs
-  IF stories.json exists
+  IF stories.yaml exists
   - Read journey order: hero → vital → hygiene (skip backlog)
   - Map each journey to its pages and features (via candidate_screens → screen specs → features.screens[])
     ELSE
@@ -207,14 +207,14 @@ STEP 3: Search for expert skills
 STEP 4: Build implementation plan
 
 - Analyze model.json relationships → determine entity insert order (parents before children)
-- Determine feature implementation order (journey-first if stories.json exists, else numeric)
+- Determine feature implementation order (journey-first if stories.yaml exists, else numeric)
 - For each feature (in order): create task entry with file list, entities, screens, expert skills
 - Prepend infrastructure tasks: migrations, seed, auth, brand/theme, app shell layout
   IF architecture.md has custom_modules beyond standard
   - Add infrastructure sub-phase (between foundation and features)
-- Write \_implementation/PLANS.md (see contracts/plans.md format)
-- Write \_implementation/progress.json with all features in pending status
-- Write \_implementation/decisions.md with header
+- Write \_implementation/PLANS.md — lean scope + ordered phases (see contracts/plans.md; no checkboxes)
+- Write \_implementation/progress.yaml with all features in pending status (completion source of truth)
+- Write \_implementation/decisions.md with ADR-log header (append-only; contracts/domain_model.md)
 - Log decision: "Complexity tier: <tier> — controls checkpoint frequency and testing depth"
 
 CHECKPOINT plan_approval
@@ -249,8 +249,8 @@ Read the selected flow YAML, then execute its nodes in sequence:
 
 - For each node with type "skill": RUN that sub-skill as a sub-agent
 - For each node with optional=true: check the skip condition first; if condition is false,
-  record the phase as skipped in progress.json and proceed to the next node
-- After each node: verify the sub-skill output, update progress.json, emit checkpoint
+  record the phase as skipped in progress.yaml and proceed to the next node
+- After each node: verify the sub-skill output, update progress.yaml, emit checkpoint
 
 EMIT [implement] infrastructure_complete modules=<N> processes=<M>
 
@@ -276,13 +276,13 @@ writes its handoff into `_implementation/slices/<feature_slug>/`:
     2. `impl-plan-align`        (interviews the user; locks acceptance)   → align.md
     3. `impl-plan-plan-vertical` (vertical decomposition: UI+logic+data)  → plan.md
   Build (impl-slice):
-    4. `impl-slice-implement`   (codes the slice end-to-end vs. plan)     → progress.json
+    4. `impl-slice-implement`   (codes the slice end-to-end vs. plan)     → progress.yaml
     5. `impl-slice-test`        (per-slice usability gate)                → test.md
     6. `impl-slice-recap`       (MANDATORY — flow diagram, files touched) → recap.md
     7. `impl-slice-refactor`    (FORCED simplification pass)              → refactor.md
     8. `impl-slice-commit`      (atomic commits; then FREEZES the slice —
        writes `_implementation/slices/<feature_slug>/index.md`, keeps the
-       dossier as documentation, removes only the transient progress.json)
+       dossier as documentation, removes only the transient progress.yaml)
 
   - ASSIST: surface unstated assumptions at align, hold the line against horizontal
     layering at plan-vertical, insist on recap, and confirm the frozen index.md after commit.
@@ -298,8 +298,8 @@ Project-wide setup (scaffold, foundation, infrastructure) and quality gates are 
 
 STEP 6: Implement feature groups / journeys — LINEAR PATH ONLY (appbuilder-mvp / appbuilder-simple)
 
-- Process journeys in stage order: hero → vital → hygiene (if stories.json exists)
-- OR process feature groups in numeric order (if no stories.json)
+- Process journeys in stage order: hero → vital → hygiene (if stories.yaml exists)
+- OR process feature groups in numeric order (if no stories.yaml)
 - For each journey/group:
   - Announce: name, page/feature list in business terms
   - RUN implement-feature sub-skill with journey context
@@ -336,7 +336,7 @@ UNTIL all implemented
 
 STEP 8: UAT
 
-- Identify key user journeys from stories.json or feature hero flows
+- Identify key user journeys from stories.yaml or feature hero flows
 - For each journey, describe what to test in plain language:
   > "Try [action] and see if [expected result]."
 - Walk through journeys using browser skill (navigate, screenshot, show user)
@@ -357,7 +357,7 @@ EMIT [implement] uat_complete journeys=N passed=P failed=F
 
 STEP 9: Run eval-code (full scope) as a fresh sub-agent
 DISPATCH eval-code, scope=full
-READ \_implementation/eval-code.json after completion
+READ \_implementation/eval-code.yaml after completion
 
 IF eval-code verdict = "fail" - Show blocking_issues to user - Re-enter Phase 2 for affected features - Re-run eval-code after fixes
 
@@ -365,7 +365,7 @@ IF eval-code verdict = "warn" - Show medium findings to user - User decides whic
 
 STEP 10: Run eval-product as a fresh sub-agent
 DISPATCH eval-product, app_url=<dev-server-url>
-READ \_implementation/eval-product.json after completion
+READ \_implementation/eval-product.yaml after completion
 
 IF eval-product verdict = "approved" - Proceed to CHECKPOINT final_verification
 
@@ -400,7 +400,7 @@ CHECKLIST
 | Mistake                                             | What to do instead                                                               |
 | --------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Skipping the plan phase                             | Always create PLANS.md first — it defines the dependency order                   |
-| Feature-group-number order instead of journey order | Use stories.json hero→vital→hygiene order when available                         |
+| Feature-group-number order instead of journey order | Use stories.yaml hero→vital→hygiene order when available                         |
 | Batching all features through implement-feature on a appbuilder-standard/appbuilder-complex | Read scope.yaml; route each feature through the impl-slice loop (impl-plan → impl-slice), one slice at a time |
 | Treating slice dossiers as throwaway scratch | They are frozen (kept) on impl-slice-commit — `_implementation/slices/<id>/` is permanent per-feature documentation |
 | Running eval-code/eval-product before UAT           | UAT comes first — user confirms app works, then eval-code and eval-product gates |

@@ -61,7 +61,7 @@ Activated when user says "auto-review", "autonomous", or "run without stopping":
 
 - Run `lint_concept.py` on `_concept/`
 - Run concept-review in gardening mode
-- Read quality score from `_concept/quality.json`
+- Read quality score from `_concept/quality.yaml`
 - Score ≥ 70 and 0 blocking issues → auto-approve and continue
 - Else → pause and escalate to user
 

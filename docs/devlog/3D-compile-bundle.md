@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3.12+ stdlib + PyYAML. pytest for unit tests. No new runtime dependencies.
 
-**Spec:** `docs/superpowers/specs/2026-05-10-compile-bundle-design.md`
+**Spec:** `docs/devlog/2026-05-10-compile-bundle-design.md`
 **Working directory:** `/mnt/localvault/workBench/SKAILE/skaile-dev-matthias/ai-assets/ai-assets-skaileup`
 
 ---

@@ -39,7 +39,7 @@ metadata:
         min_entries: 1
     inputs_required:
       - id: feature_group
-        label: 'Feature group name to evaluate (from stories.json stage name)'
+        label: 'Feature group name to evaluate (from stories.yaml stage name)'
         type: text
         required: true
     inputs_optional:
@@ -52,12 +52,12 @@ metadata:
         description: 'Feature specs and acceptance criteria'
       - path: '_concept/experience/screens'
         description: 'Screen specs for UI fidelity check'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'Journey definitions for end-to-end simulation'
       - path: '_implementation/eval-feature'
         description: 'Previous eval results for regression check'
     produces:
-      - path: '_implementation/eval-feature/{group}.json'
+      - path: '_implementation/eval-feature/{group}.yaml'
         description: 'Evaluation result for this feature group'
 ---
 
@@ -77,11 +77,11 @@ ROLE Feature Evaluator — adversarially verifies the running app matches the sp
 READS
 ! \_concept/experience/features/**/\*.md — feature specs + acceptance criteria
 ! \_concept/experience/screens/**/_.md — screen specs for UI fidelity
-? \_concept/experience/journeys/stories.json — journey stages for E2E simulation
-? \_implementation/eval-feature/_.json — previous results for regression check
+? \_concept/experience/journeys/stories.yaml — journey stages for E2E simulation
+? \_implementation/eval-feature/_.yaml — previous results for regression check
 
 WRITES
-\_implementation/eval-feature/{group}.json — MUST write before reporting
+\_implementation/eval-feature/{group}.yaml — MUST write before reporting
 
 MUST actually interact with the running app — no static code inspection
 MUST test every acceptance criterion, not a sample
@@ -95,7 +95,7 @@ NEVER approve if journey is not completable end-to-end
 ## Process
 
 STEP 1: Read feature specs for the named group. Extract every acceptance criterion.
-Read corresponding screen specs. Load stories.json for journey stage definition.
+Read corresponding screen specs. Load stories.yaml for journey stage definition.
 
 STEP 2: Navigate to {app_url}. Map routes and components to expected screens.
 If app unreachable: report blocked.
@@ -133,7 +133,7 @@ STEP 7: Determine verdict:
 - needs_revision: 70–89% pass OR journey=partial OR fidelity 60–79
 - escalate: <70% pass OR journey=false OR regressions OR critical criterion failed
 
-STEP 8: Write \_implementation/eval-feature/{group}.json
+STEP 8: Write \_implementation/eval-feature/{group}.yaml
 
 STEP 9: Report to generator (when called from implement orchestrator):
 [eval-feature] {group} → {verdict} ({pass_count}/{total} criteria, journey: {status})

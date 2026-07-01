@@ -12,11 +12,11 @@ Translates approved user journeys into a structured feature set with acceptance 
 
 ## Skills
 
-- **product-spec-features** (`features/`) — Derives features from `_concept/experience/journeys/stories.json` and the project brief; writes one `.md` per feature under `_concept/experience/features/<NN_group>/`.
+- **product-spec-features** (`features/`) — Derives features from `_concept/experience/journeys/stories.yaml` and the project brief; writes one `.md` per feature under `_concept/experience/features/<NN_group>/`.
 
 ## When to Use
 
-- `_concept/experience/journeys/stories.json` exists and is approved
+- `_concept/experience/journeys/stories.yaml` exists and is approved
 - User says "define features", "what should the app do", or "plan functionality"
 - Orchestrator dispatches this step after the journeys phase
 - Expanding or reprioritizing an existing feature set
@@ -31,7 +31,7 @@ Translates approved user journeys into a structured feature set with acceptance 
 ## Sequence
 
 ```
-experience-journeys (stories.json approved)
+experience-journeys (stories.yaml approved)
         ↓
 product-spec-features   →  _concept/experience/features/<NN_group>/<feature>.md
         ↓                        ↓

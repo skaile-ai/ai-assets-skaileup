@@ -1,7 +1,7 @@
 # `lab/compile-bundle` Design Spec
 
 **Date:** 2026-05-10
-**Task:** 3D of `docs/superpowers/plans/2026-05-07-skill-graph-migration.md`
+**Task:** 3D of `docs/devlog/2026-05-07-skill-graph-migration.md`
 
 ---
 

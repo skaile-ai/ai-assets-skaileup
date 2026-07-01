@@ -1,6 +1,6 @@
 # Journey Stages
 
-Story maps in stories.json are organized into four stages that control scope, priority,
+Story maps in stories.yaml are organized into four stages that control scope, priority,
 and development order. Every story map is assigned exactly one stage.
 
 ## The Four Stages
@@ -138,5 +138,5 @@ The mapping is:
 - Hygiene stories produce standard operational features (often platform defaults).
 - Backlog stories are recorded but do not produce features in the current cycle.
 
-The features skill reads stories.json and uses these hints as a starting point,
+The features skill reads stories.yaml and uses these hints as a starting point,
 but may split, merge, or reframe features based on technical considerations.

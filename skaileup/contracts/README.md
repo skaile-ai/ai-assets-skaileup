@@ -20,6 +20,7 @@ skaileup-contracts/
 │   ├── skill_grammar.md
 │   ├── acceptance_criteria.md
 │   ├── plans.md
+│   ├── domain_model.md
 │   ├── flows.md
 │   ├── seed_data.md
 │   ├── MIGRATION.md              ← path/field changes from CF/Saxe originals
@@ -51,7 +52,8 @@ All skills reference contracts at the root of `contracts/` — not the `cf/` or 
 | `skill_testing.md` | Example fixtures + `_validation.json` format for skill self-testing |
 | `skill_grammar.md` | MUST/NEVER/CHECKLIST DSL for skill instructions |
 | `acceptance_criteria.md` | EARS format acceptance criteria (When/Then/So that) |
-| `plans.md` | PLANS.md format (concept plan + implementation plan + decisions log) |
+| `plans.md` | PLANS.md format — lean scope + phase plan (progress lives in `progress.yaml`/`concept.yaml`, decisions in the ADR logs) |
+| `domain_model.md` | Ubiquitous-language glossary + decision-record (ADR) format, the 3-test ADR gate, and the build-as-you-work discipline |
 | `flows.md` | Multi-step flow definition format |
 | `seed_data.md` | Scenario-based seed data conventions |
 | `MIGRATION.md` | Structural changes from legacy CF/Saxe paths — use when handling older projects |

@@ -6,19 +6,19 @@
   - Only log genuine observations, not status updates
 
 ## PROCEDURE update_progress
-  - Check off completed phase/feature in PLANS.md
-  - Update progress.json with new status and timestamp
+  - Update progress.yaml with new status and timestamp (the completion source of truth)
+  - PLANS.md is NOT updated here — it holds scope + phases only, no per-step status
   - Commit: "chore: update implementation progress"
 
 ## PROCEDURE eval_feature_gate(feature_group, app_url)
   DISPATCH eval-feature as a FRESH sub-agent (new context — not this agent)
     Inputs: feature_group=<group-name>, app_url=<app_url>
-  WAIT for eval-feature to write _implementation/eval-feature/{group}.json
+  WAIT for eval-feature to write _implementation/eval-feature/{group}.yaml
 
-  READ _implementation/eval-feature/{group}.json
+  READ _implementation/eval-feature/{group}.yaml
 
   IF verdict = "approved"
-    - Update progress.json: group approved
+    - Update progress.yaml: group approved
     - RETURN approved
 
   IF verdict = "needs_revision"

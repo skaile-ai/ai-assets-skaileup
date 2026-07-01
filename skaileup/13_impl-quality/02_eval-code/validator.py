@@ -12,15 +12,15 @@ def validate(cwd: str) -> dict:
 
     # File existence
     v.must(
-        "eval-code.json exists",
-        lambda: v.file_exists("_implementation/eval-code.json"),
+        "eval-code.yaml exists",
+        lambda: v.file_exists("_implementation/eval-code.yaml"),
     )
 
     # Required top-level fields
     v.must(
         "has required fields",
         lambda: v.json_field_exists(
-            "_implementation/eval-code.json",
+            "_implementation/eval-code.yaml",
             "schema_version",
             "scope",
             "build",
@@ -35,7 +35,7 @@ def validate(cwd: str) -> dict:
 
     # scope enum
     def check_scope():
-        data = v.read_json("_implementation/eval-code.json")
+        data = v.read_json("_implementation/eval-code.yaml")
         if data is None:
             return False, "file not readable"
         scope = data.get("scope")
@@ -48,7 +48,7 @@ def validate(cwd: str) -> dict:
 
     # verdict enum
     def check_verdict():
-        data = v.read_json("_implementation/eval-code.json")
+        data = v.read_json("_implementation/eval-code.yaml")
         if data is None:
             return False, "file not readable"
         verdict = data.get("verdict")
@@ -61,7 +61,7 @@ def validate(cwd: str) -> dict:
 
     # build object fields
     def check_build_fields():
-        data = v.read_json("_implementation/eval-code.json")
+        data = v.read_json("_implementation/eval-code.yaml")
         if data is None:
             return False, "file not readable"
         build = data.get("build")
@@ -77,7 +77,7 @@ def validate(cwd: str) -> dict:
     # build values enum
     def make_build_value_check(key):
         def check():
-            data = v.read_json("_implementation/eval-code.json")
+            data = v.read_json("_implementation/eval-code.yaml")
             if data is None:
                 return False, "file not readable"
             build = data.get("build", {})
@@ -95,7 +95,7 @@ def validate(cwd: str) -> dict:
 
     # logic object has field: score
     def check_logic_score():
-        data = v.read_json("_implementation/eval-code.json")
+        data = v.read_json("_implementation/eval-code.yaml")
         if data is None:
             return False, "file not readable"
         logic = data.get("logic")
@@ -109,7 +109,7 @@ def validate(cwd: str) -> dict:
 
     # security object has field: score
     def check_security_score():
-        data = v.read_json("_implementation/eval-code.json")
+        data = v.read_json("_implementation/eval-code.yaml")
         if data is None:
             return False, "file not readable"
         security = data.get("security")

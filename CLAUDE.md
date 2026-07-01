@@ -96,7 +96,7 @@ _concept/                 concept truth (durable)
 └── blueprint/            techstack · architecture · datamodel/
 
 _implementation/          impl truth (durable ledgers)
-├── PLANS.md · progress.json · decisions.md · git-state.json
+├── PLANS.md · progress.yaml · decisions.md · git-state.yaml
 └── slices/<id>/          per-feature impl dossier (frozen, kept): brainstorm · align · plan · test · recap · refactor · index
 ```
 
@@ -130,7 +130,7 @@ edits, and every flow/`artifacts.yaml` reference is unaffected by renumbering.
 | `skaileup/09_impl-architecture/templates/template-postxl/TEMPLATE.md` | `template-postxl` (template assets are **not** numbered — `tech_stack_skill` resolves them by directory name at runtime) |
 | `skaileup/06_mockup-component/01_b_storybook/SKILL.md` | `mockup-component-storybook` |
 
-**Exception — base orchestrator skills:** Skills inside `skaileup/00_skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`). The orchestrator's internal `scope/`, `skills/`, `agents/`, `flows/` subdirs are structural and are **not** numbered.
+**Exception — base orchestrator skills:** Skills inside `skaileup/00_skaileup-orchestrator/skills/` keep their short names (`skaileup`, `skaileup-build`, `skaileup-domain-model`). The orchestrator's internal `scope/`, `skills/`, `agents/`, `flows/` subdirs are structural and are **not** numbered.
 
 **Not numbered:** `contracts/` and `flows/` (reference/system layers, not pipeline steps) and `09_impl-architecture/templates/` + its `template-*` assets (resolved by directory name at runtime).
 
@@ -171,7 +171,7 @@ The collection is shaped by one observation: **the work of figuring out a produc
 
 Both slice loops follow the same five-phase shape with `/clear` between every phase: brainstorm → align → (scope-feature | plan-vertical) → (design-feature | implement → test → recap → refactor → commit). Phases read from the prior phase's handoff file in `_concept/slices/<id>/` or `_implementation/slices/<id>/`. **No phase carries the whole slice in context** — that's how big apps stay buildable past the dumb-zone (~100k tokens).
 
-The slice dossier is **frozen on commit, not deleted** (Suggestion-B organization): the terminator (`concept-slice-design-feature` / `impl-slice-commit`) writes an `index.md` and **keeps** the phase handoffs as permanent per-feature documentation under `_concept/slices/<id>/` and `_implementation/slices/<id>/`. Truth still lives in code (impl-slice) or in the canonical `_concept/experience/...` artifacts (concept-slice); the dossier is the decision record beside it. The **general (non-slice) part** — brief, goals, brand, journeys, datamodel, techstack, architecture — lives in its phase folders and is not per-slice. Only the impl side's transient `progress.json` is removed on freeze.
+The slice dossier is **frozen on commit, not deleted** (Suggestion-B organization): the terminator (`concept-slice-design-feature` / `impl-slice-commit`) writes an `index.md` and **keeps** the phase handoffs as permanent per-feature documentation under `_concept/slices/<id>/` and `_implementation/slices/<id>/`. Truth still lives in code (impl-slice) or in the canonical `_concept/experience/...` artifacts (concept-slice); the dossier is the decision record beside it. The **general (non-slice) part** — brief, goals, brand, journeys, datamodel, techstack, architecture — lives in its phase folders and is not per-slice. Only the impl side's transient `progress.yaml` is removed on freeze.
 
 ## Flows
 
@@ -288,5 +288,5 @@ Tracked in [`docs/devlog/SKILL_GRAPH.md`](./docs/devlog/SKILL_GRAPH.md). All 11 
 Slice artifacts moved under the side they belong to and are now **frozen, not deleted**:
 
 - `_slice/concept/<id>/` → `_concept/slices/<id>/`; `_slice/impl/<id>/` → `_implementation/slices/<id>/`.
-- The terminators (`concept-slice-design-feature`, `impl-slice-commit`) write an `index.md` and keep the phase handoffs as permanent per-feature documentation; `impl-slice-commit` removes only the transient `progress.json`. `impl-slice-git-finish` gates on "every slice frozen (has index.md)".
+- The terminators (`concept-slice-design-feature`, `impl-slice-commit`) write an `index.md` and keep the phase handoffs as permanent per-feature documentation; `impl-slice-commit` removes only the transient `progress.yaml`. `impl-slice-git-finish` gates on "every slice frozen (has index.md)".
 - Contracts updated (`artifacts.yaml` slice ids → `durable` + new `slice-{concept,impl}-index`; `concept_structure.md` documents `slices/`). The orchestrators now route standard/complex tiers into the per-feature slice loops and assist within them.

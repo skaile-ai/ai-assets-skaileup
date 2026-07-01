@@ -11,7 +11,7 @@ from validator_lib import Validator, main  # noqa: E402
 SKILL = "features"
 FEATURES_DIR = "_concept/experience/features"
 BRIEF = "_concept/discovery/brief.md"
-STORIES = "_concept/experience/journeys/stories.json"
+STORIES = "_concept/experience/journeys/stories.yaml"
 
 REQUIRED_FM = ("priority", "story_refs", "roles", "last_updated")
 
@@ -75,7 +75,7 @@ def validate(cwd: str) -> dict:
 
     v.checklist("brief.md was read and exists", lambda: v.file_exists(BRIEF))
 
-    v.checklist("stories.json was read and exists", lambda: v.file_exists(STORIES))
+    v.checklist("stories.yaml was read and exists", lambda: v.file_exists(STORIES))
 
     v.checklist("Every feature traces to at least one story", check_story_refs)
 

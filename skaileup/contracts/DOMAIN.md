@@ -24,7 +24,8 @@ Reference material consumed by every skill in the collection. Not invocable — 
 - **`skill_template.md`** — Template for new SKILL.md files.
 - **`skill_testing.md`** — Fixture format and `_validation.json` schema for skill self-tests.
 - **`flows.md`** — Multi-step flow definition format.
-- **`plans.md`** — PLANS.md format (concept plan + implementation plan + decisions log).
+- **`plans.md`** — PLANS.md format — lean scope + phase plan (status → `progress.yaml`/`concept.yaml`, decisions → ADR logs).
+- **`domain_model.md`** — Ubiquitous-language glossary + decision-record (ADR) format, the 3-test ADR gate, and the build-as-you-work discipline.
 - **`feedback_loop.md`** — Cross-reference protocol (features ↔ screens, model → features).
 - **`seed_data.md`** — Scenario-based seed data conventions.
 - **`elements_block.md`** — `elements:` block schema for screen/component artifacts.

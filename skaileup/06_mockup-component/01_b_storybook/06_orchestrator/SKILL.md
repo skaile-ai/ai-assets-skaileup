@@ -51,7 +51,7 @@ metadata:
         gate: hard
         description: 'Tech stack determines storybook addon, story format, and component library'
     reads:
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'User journeys for journey flow stories (4th storybook layer)'
       - path: '_concept/blueprint/datamodel/seed.json'
         description: 'Seed data for realistic story args'
@@ -112,7 +112,7 @@ It delegates to 4 sub-skills that run in sequence:
 | Must read        | `09_impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md` | Yes             |
 | Must read        | `_concept/discovery/brand/tokens.json`                    | Yes             |
 | Must read        | `_concept/experience/screens/**/*.md`                     | Yes             |
-| Check if present | `_concept/experience/journeys/stories.json`               | No (Layer 3)    |
+| Check if present | `_concept/experience/journeys/stories.yaml`               | No (Layer 3)    |
 | Check if present | `_concept/blueprint/datamodel/seed.json`                  | No (story data) |
 
 ## Standalone Mode
@@ -131,7 +131,7 @@ READS
 \_concept/experience/screens/00_layout/shell.md — app shell structure, navigation
 \_concept/discovery/brand/tokens.json — color palette, fonts, radius, spacing, shadows, mode
 \_concept/discovery/brand/identity.md — design philosophy, atmosphere
-? \_concept/experience/journeys/stories.json — user journeys (for Layer 3)
+? \_concept/experience/journeys/stories.yaml — user journeys (for Layer 3)
 ? \_concept/experience/features/**/\*.md — feature context for story organization
 ? \_concept/blueprint/datamodel/seed.json — seed data for realistic story content
 
@@ -190,10 +190,10 @@ STEP 4: Run storybook-pages
   EMIT [storybook] checkpoint phase=pages_complete pages=<N>
 
 STEP 5: Run storybook-journeys
-IF \_concept/experience/journeys/stories.json exists - Delegate to `storybook-journeys` sub-skill - Pass: stories.json, manifest.json, story_extension, package_manager
+IF \_concept/experience/journeys/stories.yaml exists - Delegate to `storybook-journeys` sub-skill - Pass: stories.yaml, manifest.json, story_extension, package_manager
 EMIT [storybook] checkpoint phase=journeys_complete journeys=<N>
-ELSE - Note in README.md: "Layer 3 (Journeys) skipped — stories.json not found. Run `journeys` then `storybook-journeys` to add."
-EMIT [storybook] checkpoint phase=journeys_skipped reason=stories.json_absent
+ELSE - Note in README.md: "Layer 3 (Journeys) skipped — stories.yaml not found. Run `journeys` then `storybook-journeys` to add."
+EMIT [storybook] checkpoint phase=journeys_skipped reason=stories.yaml_absent
 
 STEP 6: Final verification
 $ cd \_concept/prototype/storybook && <package_manager> run build
@@ -220,7 +220,7 @@ CHECKLIST
 - [ ] Setup complete — project scaffolds, brand tokens applied, build passes
 - [ ] Components complete — custom components built with stories
 - [ ] Pages complete — all screen specs as page stories
-- [ ] Journeys complete (or skipped if stories.json absent)
+- [ ] Journeys complete (or skipped if stories.yaml absent)
 - [ ] Final build passes
 - [ ] Story counts reported per layer
 

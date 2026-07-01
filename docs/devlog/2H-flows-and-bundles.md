@@ -1,6 +1,6 @@
 # Task 2H — Flows + Bundles Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This is a **mini-plan** — a sub-plan of `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` (Phase 2, terminal Task 2H).
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This is a **mini-plan** — a sub-plan of `docs/devlog/2026-05-07-skill-graph-migration.md` (Phase 2, terminal Task 2H).
 
 **Goal:** Author **12 files** — 6 flow YAMLs + 6 bundle YAMLs — that compose every Phase 2 skill into runnable tier pipelines (`mvp`, `simple-app`, `standard-app`, `complex-app`) by reusing two slice flows (`concept-slice`, `impl-slice`). Each tier flow `id` matches `^[a-z][a-z0-9-]*$` (no `flow:` prefix in the file's `id` field). Each bundle declares only the dependencies its flow's nodes reference (no extras), and each tier bundle inherits the previous tier via `bundle:<predecessor>` in its `requires:` list.
 
@@ -34,7 +34,7 @@ Before any authoring step, confirm baseline state.
   for f in 2.0-elements-block-contract 2A-scope-project 2B-concept-slice-cluster \
            2C-impl-plan-align-vertical 2D-impl-slice-cluster 2E-impl-quality-debug \
            2F-walkthrough-mockup-static-html 2G-component-mockup-isolated-html; do
-    test -r "docs/superpowers/plans/${f}.md" && echo "OK $f" || echo "MISSING $f"
+    test -r "docs/devlog/${f}.md" && echo "OK $f" || echo "MISSING $f"
   done
   ```
   Expected: 8 lines all starting `OK`. If any `MISSING`, **STOP** — Task 2H is the terminal task of Phase 2; it must not run before its predecessors' mini-plans exist.
@@ -60,20 +60,20 @@ Before any authoring step, confirm baseline state.
 
   The executing agent MUST read each of these once, in this order, before starting Task 1:
   1. **All 7 prior Phase 2 mini-plans** — these define the skills the flows compose:
-     - `docs/superpowers/plans/2.0-elements-block-contract.md`
-     - `docs/superpowers/plans/2A-scope-project.md`
-     - `docs/superpowers/plans/2B-concept-slice-cluster.md`
-     - `docs/superpowers/plans/2C-impl-plan-align-vertical.md`
-     - `docs/superpowers/plans/2D-impl-slice-cluster.md`
-     - `docs/superpowers/plans/2E-impl-quality-debug.md`
-     - `docs/superpowers/plans/2F-walkthrough-mockup-static-html.md`
-     - `docs/superpowers/plans/2G-component-mockup-isolated-html.md`
+     - `docs/devlog/2.0-elements-block-contract.md`
+     - `docs/devlog/2A-scope-project.md`
+     - `docs/devlog/2B-concept-slice-cluster.md`
+     - `docs/devlog/2C-impl-plan-align-vertical.md`
+     - `docs/devlog/2D-impl-slice-cluster.md`
+     - `docs/devlog/2E-impl-quality-debug.md`
+     - `docs/devlog/2F-walkthrough-mockup-static-html.md`
+     - `docs/devlog/2G-component-mockup-isolated-html.md`
   2. `SKILL_GRAPH.md` — § 6 (Flows × Bundles, especially the tier-composition table on lines 437-499 — the SOURCE OF TRUTH for what each tier runs).
   3. `contracts/flows.md` — flow YAML schema and authoring guidance.
   4. `contracts/flow.schema.json` — JSON schema for validation (note: `id` pattern `^[a-z][a-z0-9-]*$`).
   5. Any existing `flows/*.flow.yaml` files for example shape (e.g. `skaileup/flows/prototype.flow.yaml`).
   6. `CONTRIBUTING.md` — § "How the Installer Works" (bundle file format), § "Naming Conventions" (path-based skill names), § "Dependencies (`requires:`)" (bundle's `requires:` shape).
-  7. Parent plan stub at `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` lines 1690-1708 (Task 2H constraints).
+  7. Parent plan stub at `docs/devlog/2026-05-07-skill-graph-migration.md` lines 1690-1708 (Task 2H constraints).
 
 - [ ] **PF-7: Confirm path-based naming is the rule for ALL skill references in flow nodes.**
 
@@ -291,7 +291,7 @@ The verifier (Task 5) classifies every flow-referenced skill into one of three b
 # Bucket A: existing — must have a real SKILL.md with matching name:
 #   (the verifier greps SKILL.md frontmatter to confirm)
 # Bucket B: planned (Phase 2) — must appear in this plan's "Planned skills" table above,
-#   AND its mini-plan must exist under docs/superpowers/plans/ (verified by Task 5 step 1)
+#   AND its mini-plan must exist under docs/devlog/ (verified by Task 5 step 1)
 # Bucket C: deferred (Phase 3 / out-of-scope) — the plan acknowledges a gap; the
 #   verifier emits a WARNING (not error) listing them; the user must approve the
 #   warning list before this task can be considered "done".

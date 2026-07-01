@@ -95,4 +95,4 @@ For unresolved items, print the reason for each.
 
 - `mockup-feedback/schemas/session.schema.json` — input validation
 - `mockup-feedback/schemas/triage.schema.json` — output shape
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D1
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D1

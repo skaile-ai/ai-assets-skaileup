@@ -17,7 +17,7 @@ verbatim — the subagent never reads the plan file.
 You are implementing a single task. Your full context is below.
 
 ## Your Task
-<paste task text verbatim from superpowers-plan.md>
+<paste task text verbatim from supervised-plan.md>
 
 ## Relevant Specs
 <paste feature spec(s) for this task>
@@ -113,5 +113,5 @@ A clean, well-structured implementation of the wrong requirements fails both gat
 | Standard feature implementation | Sonnet |
 | Complex logic, architecture decisions, blocked tasks | Opus |
 
-The `implement-supervised` skill sets `model_tier` per task in `superpowers-plan.md`.
+The `implement-supervised` skill sets `model_tier` per task in `supervised-plan.md`.
 The orchestrator respects this when dispatching subagents.

@@ -48,7 +48,7 @@ metadata:
     produces:
       - path: '_implementation/PLANS.md'
         description: 'Implementation plan with feature queue'
-      - path: '_implementation/progress.json'
+      - path: '_implementation/progress.yaml'
         description: 'Feature implementation progress tracking'
       - path: '_implementation/decisions.md'
         description: 'Scaffold decisions log'
@@ -113,13 +113,14 @@ READS
 
 WRITES
 <app-slug>/ — project directory (stack-specific structure)
-\_implementation/PLANS.md — initialized from concept features
-\_implementation/progress.json — all features in pending status
-\_implementation/decisions.md — empty decision log with header
+\_implementation/PLANS.md — lean scope + ordered phases (NOT progress/decisions — those live below)
+\_implementation/progress.yaml — all features in pending status (the status source of truth)
+\_implementation/decisions.md — empty ADR log with header (append-only, 3-test gate)
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
-contracts/plans.md — PLANS.md format
+contracts/plans.md — PLANS.md format (lean scope + phases)
+contracts/domain_model.md — decisions.md ADR format + 3-test gate
 contracts/seed_data.md — seed scenario format
 
 MUST read tech stack profile before any scaffold commands
@@ -194,9 +195,9 @@ $ git checkout -b implement/<app-slug>
 ELSE
 $ git checkout -b implement/<app-slug>
 
-- Create \_implementation/PLANS.md (scope, source artifacts, phase checkboxes)
-- Create \_implementation/progress.json (all must-have features in pending status)
-- Create \_implementation/decisions.md (empty header)
+- Create \_implementation/PLANS.md (scope + source artifacts + ordered phases — NO checkboxes; status lives in progress.yaml)
+- Create \_implementation/progress.yaml (all must-have features in pending status — the completion source of truth)
+- Create \_implementation/decisions.md (empty ADR log header; append-only per contracts/domain_model.md)
   $ git add -A
   $ git commit -m "scaffold: initialize project from concept"
 
@@ -230,4 +231,4 @@ CHECKLIST
 | Hardcoding scaffold commands    | Read them from the tech stack profile                       |
 | Skipping user confirmation      | Always confirm at STEP 2 before creating the directory      |
 | Not running build verification  | Always verify build before committing                       |
-| Missing \_implementation/ setup | Create PLANS.md + progress.json in same session as scaffold |
+| Missing \_implementation/ setup | Create PLANS.md + progress.yaml in same session as scaffold |

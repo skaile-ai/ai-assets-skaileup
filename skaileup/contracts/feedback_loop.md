@@ -12,7 +12,7 @@ then feature Y must list screen X, and screen X must list feature Y.
 
 ### When the journeys skill creates stories:
 
-1. Write `stories.json` to `_concept/experience/journeys/`
+1. Write `stories.yaml` to `_concept/experience/journeys/`
 2. Each journey includes `candidate_features` (slugs) and `candidate_entities` (PascalCase names)
 3. These are consumed by the features skill to seed its feature list
 4. No frontmatter updates needed — features discover journeys by reading the JSON file directly
@@ -32,7 +32,7 @@ then feature Y must list screen X, and screen X must list feature Y.
 
 ### When the features skill reads journeys:
 
-1. Read `_concept/experience/journeys/stories.json`
+1. Read `_concept/experience/journeys/stories.yaml`
 2. Use `candidate_features` from each journey to seed the feature list
 3. For each created feature, set `story_refs` in frontmatter to the journey IDs that motivated it
 4. Features may be added, merged, or split beyond what journeys suggest — `story_refs` traces the origin
@@ -123,7 +123,7 @@ The quality review skill checks for broken cross-references:
 - Feature lists a screen that doesn't exist → ERROR
 - Model in `feature_map.json` references a feature that doesn't exist → WARNING
 - Feature has `screens: []` but matching screens exist → WARNING (missing link)
-- Feature has `story_refs` pointing to a journey ID not in `stories.json` → WARNING
+- Feature has `story_refs` pointing to a journey ID not in `stories.yaml` → WARNING
 
 ## Event Emission
 

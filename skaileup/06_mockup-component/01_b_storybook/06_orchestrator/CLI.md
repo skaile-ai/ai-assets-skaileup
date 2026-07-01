@@ -18,7 +18,7 @@ Invoke with: "storybook", "component library", "design system", "story", or afte
 1. `storybook-setup` — scaffold, install deps, apply brand tokens
 2. `storybook-components` — custom components + stories
 3. `storybook-pages` — AppShell + page compositions + stories
-4. `storybook-journeys` — clickable journey flows (if stories.json exists)
+4. `storybook-journeys` — clickable journey flows (if stories.yaml exists)
 
 ## Run the Storybook
 

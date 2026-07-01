@@ -16,12 +16,12 @@ def validate(cwd: str) -> dict:
         lambda: v.dir_exists("_implementation/eval-feature"),
     )
     v.must(
-        "at least one .json file in _implementation/eval-feature/",
-        lambda: v.dir_not_empty("_implementation/eval-feature", "*.json"),
+        "at least one .yaml file in _implementation/eval-feature/",
+        lambda: v.dir_not_empty("_implementation/eval-feature", "*.yaml"),
     )
 
     # Per-file checks — collected after the directory checks above
-    json_files = v.glob_files("_implementation/eval-feature/*.json")
+    json_files = v.glob_files("_implementation/eval-feature/*.yaml")
 
     for json_file in json_files:
         rel = str(json_file.relative_to(Path(cwd)))

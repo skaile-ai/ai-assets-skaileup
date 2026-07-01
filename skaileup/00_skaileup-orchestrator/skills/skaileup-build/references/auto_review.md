@@ -16,7 +16,7 @@ All checks must pass. Any failure escalates to human review.
 ## On Auto-Approve
 
 1. Log: `[implement] feature_auto_approved feature=<group>/<feature>`
-2. Record `approval_method: "auto"` in `progress.json`
+2. Record `approval_method: "auto"` in `progress.yaml`
 3. Squash-merge the feature branch
 4. Continue to the next feature without pausing
 

@@ -41,7 +41,7 @@ metadata:
     reads:
       - path: "_concept/discovery/brief.md"
         description: "Project-level context (audience, problem, hero flow)."
-      - path: "_concept/experience/journeys/stories.json"
+      - path: "_concept/experience/journeys/stories.yaml"
         description: "Existing user journeys — surfaces how this feature fits."
       - path: "_concept/slices/{slice_id}/brainstorm.md"
         description: "Re-entry mode — resume or refine an existing brainstorm."
@@ -76,7 +76,7 @@ ROLE Per-feature brainstorm partner — surfaces the user's mental model for ONE
 READS
   _concept/_meta/scope.yaml                  — required; tier + project description
   ? _concept/discovery/brief.md              — optional; project-level context
-  ? _concept/experience/journeys/stories.json — optional; existing journeys
+  ? _concept/experience/journeys/stories.yaml — optional; existing journeys
   ? _concept/slices/{slice_id}/brainstorm.md  — re-entry mode (resume / refine)
 
 WRITES

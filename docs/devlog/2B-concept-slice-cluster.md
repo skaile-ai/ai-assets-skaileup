@@ -37,12 +37,12 @@ Expected: contains only `skills/` (Phase 1 stub). The four target sub-dirs (`bra
 
 - [ ] **Pre-4: Confirm source documents are readable**
 
-Run: `wc -l SKILL_GRAPH.md REFACTOR_MOCKUP.md contracts/iron_laws.md contracts/skill_grammar.md contracts/asset_frontmatter.md contracts/frontmatter.md CONTRIBUTING.md docs/superpowers/plans/2A-scope-project.md`
+Run: `wc -l SKILL_GRAPH.md REFACTOR_MOCKUP.md contracts/iron_laws.md contracts/skill_grammar.md contracts/asset_frontmatter.md contracts/frontmatter.md CONTRIBUTING.md docs/devlog/2A-scope-project.md`
 Expected: all line counts non-zero.
 
 - [ ] **Pre-5: Confirm Task 2A's mini-plan exists and pins the `scope.yaml` schema**
 
-Run: `grep -n "schema_version" docs/superpowers/plans/2A-scope-project.md | head -3`
+Run: `grep -n "schema_version" docs/devlog/2A-scope-project.md | head -3`
 Expected: at least one match. (This cluster reads `_concept/_meta/scope.yaml` and treats 2A's pinned schema as the contract.)
 
 - [ ] **Pre-6: Confirm naming convention**
@@ -61,7 +61,7 @@ Each `name:` MUST equal the parent directory name exactly (no shortening).
 
 The executing agent MUST read each of these once, in this order, before starting Task 1:
 
-1. `docs/superpowers/plans/2A-scope-project.md` — § "Pinned Schema — `_concept/_meta/scope.yaml`" is the contract for every `tier` read in this cluster. **Do not redefine.**
+1. `docs/devlog/2A-scope-project.md` — § "Pinned Schema — `_concept/_meta/scope.yaml`" is the contract for every `tier` read in this cluster. **Do not redefine.**
 2. `SKILL_GRAPH.md` — § 4 (concept group artifact flow), specifically the concept-slice diagram on lines 222-249 and the per-screen card pattern on lines 256-268.
 3. `REFACTOR_MOCKUP.md` — § 4 (walkthrough tiers + input/output contract), § 9 (tier composition table), § 7 (workspace zones). Pins where `design-feature` writes its walkthrough portion: `_concept/walkthrough-mockup/<tier>/<feature>.*`.
 4. `contracts/iron_laws.md` — § 7 (no artifact without prerequisites), § 8 (no overwrite without approval), § 9 (questions are standalone messages).

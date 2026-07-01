@@ -39,7 +39,7 @@ metadata:
     reads:
       - path: '_concept/testing/test_plan.md'
         description: 'Test plan for structured test scenario coverage'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'EARS acceptance criteria — reference each test back to the criterion it covers'
     produces:
       - path: 'src'
@@ -96,7 +96,7 @@ Before starting, read:
 | Existing test files (pattern discovery) | Required |
 | Source code for features under test     | Required |
 | `_concept/testing/test_plan.md`         | Optional |
-| `_concept/experience/journeys/stories.json` | Optional |
+| `_concept/experience/journeys/stories.yaml` | Optional |
 
 ## Workflow
 
@@ -122,7 +122,7 @@ If no test framework is configured:
 For each feature in `_concept/experience/features/`:
 
 1. Read the feature spec — extract requirements and success criteria
-2. Look up the feature's `story_refs:` in `stories.json` (if present) and collect the EARS acceptance criteria for those stories
+2. Look up the feature's `story_refs:` in `stories.yaml` (if present) and collect the EARS acceptance criteria for those stories
 3. Find the corresponding source files (pages, components, composables, API routes)
 4. Identify testable units: exported functions, composables, utility methods, API handlers
 5. Map each requirement **and each unit-testable acceptance criterion** to one or more testable units (criteria that need a browser/DB belong to e2e/integration — note them, don't force a unit test)

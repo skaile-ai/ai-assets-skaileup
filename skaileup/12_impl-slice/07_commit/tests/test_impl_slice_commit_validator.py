@@ -91,7 +91,7 @@ def test_mode_a_summary_too_long_fails(tmp_path: Path):
 
 
 def test_mode_b_frozen_dir_passes(tmp_path: Path):
-    # Frozen slice: dir kept, index.md present, no progress.json.
+    # Frozen slice: dir kept, index.md present, no progress.yaml.
     slice_dir = tmp_path / "team-todo-comments"
     slice_dir.mkdir()
     (slice_dir / "index.md").write_text("---\nphase: frozen\n---\n")
@@ -118,9 +118,9 @@ def test_mode_b_lingering_progress_fails(tmp_path: Path):
     slice_dir = tmp_path / "team-todo-comments"
     slice_dir.mkdir()
     (slice_dir / "index.md").write_text("---\nphase: frozen\n---\n")
-    (slice_dir / "progress.json").write_text("{}")
+    (slice_dir / "progress.yaml").write_text("{}")
     errors = validator.validate_post_commit(slice_dir)
-    assert any("progress.json" in e for e in errors), errors
+    assert any("progress.yaml" in e for e in errors), errors
 
 
 # ── Mode C: pre-flight 4-handoff gate ───────────────────────────

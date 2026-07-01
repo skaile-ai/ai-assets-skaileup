@@ -1,6 +1,6 @@
 ---
 name: ops-review
-description: 'Use when _concept/ needs a quality check or housekeeping pass. In audit mode: scans completeness, cross-reference integrity, golden principle compliance, and entropy; produces quality.json with score. In gardening mode: auto-fixes safe issues and reports what changed.'
+description: 'Use when _concept/ needs a quality check or housekeeping pass. In audit mode: scans completeness, cross-reference integrity, golden principle compliance, and entropy; produces quality.yaml with score. In gardening mode: auto-fixes safe issues and reports what changed.'
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -47,7 +47,7 @@ metadata:
       - path: '_concept/blueprint/datamodel/feature_map.json'
         description: 'Feature map for entity-to-feature cross-reference validation'
     produces:
-      - path: '_concept/quality.json'
+      - path: '_concept/quality.yaml'
         description: 'Health report with quality score (0–100) and issue inventory'
 ---
 
@@ -96,7 +96,7 @@ and `contracts/golden_principles.md` before running any checks.
 | Must read        | `_concept/**/*.md`                              | Yes                   |
 | Must read        | `_concept/blueprint/datamodel/model.json`       | If exists             |
 | Must read        | `_concept/blueprint/datamodel/feature_map.json` | If exists             |
-| Check if present | `_concept/quality.json`                         | No (previous score)   |
+| Check if present | `_concept/quality.yaml`                         | No (previous score)   |
 | Check if present | `PLANS.md`                                      | No (plan drift check) |
 | Never load       | Source code                                     | —                     |
 
@@ -114,11 +114,11 @@ READS
 ? \_concept/blueprint/datamodel/model.json — data model (canonical cross-ref)
 ? \_concept/blueprint/datamodel/feature_map.json — model-to-feature mapping
 ? \_concept/blueprint/datamodel/seed.json — seed data (format checks)
-? \_concept/quality.json — previous quality score
+? \_concept/quality.yaml — previous quality score
 ? PLANS.md — concept progress plan
 
 WRITES
-\_concept/quality.json — quality score + issue breakdown
+\_concept/quality.yaml — quality score + issue breakdown
 
 REFERENCES
 contracts/concept_structure.md — expected phase-grouped paths and folders
@@ -132,7 +132,7 @@ references/report_templates.md — output templates for audit and gardening repo
 
 MUST read all contracts/ contracts before any checks
 MUST classify every issue by severity (CRITICAL, HIGH, MEDIUM, LOW)
-MUST write \_concept/quality.json after every run (audit or gardening)
+MUST write \_concept/quality.yaml after every run (audit or gardening)
 MUST emit started and completed events with run_id for correlation
 NEVER auto-fix unsafe issues in gardening mode (see references/gardening.md)
 NEVER delete files — only remove broken references from frontmatter arrays
@@ -217,7 +217,7 @@ STEP 6: Calculate quality score
 - Entropy: 100 - penalty per stale/orphan/mismatch
 - Overall = weighted average of six categories
 
-OUTPUT \_concept/quality.json
+OUTPUT \_concept/quality.yaml
 {
 "timestamp": "<ISO-8601>",
 "score": <0-100>,
@@ -268,7 +268,7 @@ EMIT [review] completed mode=gardening run_id=<uuid> auto_fixes=<N> remaining=<N
 CHECKLIST
 
 - [ ] All contracts/ read before checks
-- [ ] quality.json written with all 6 breakdown fields
+- [ ] quality.yaml written with all 6 breakdown fields
 - [ ] Every issue classified by severity (CRITICAL/HIGH/MEDIUM/LOW)
 - [ ] Audit: offer to fix; Gardening: report every change made
 - [ ] Score < 70 blocks new pipeline steps (flag to user)
@@ -301,7 +301,7 @@ CHECKLIST
 
 - **Called by:** `concept-orchestrator` or standalone (after each phase, before `e2e`)
 - **Reads:** `_concept/` (all), `contracts/` (all)
-- **Writes:** `_concept/quality.json`; auto-fixes in gardening mode
+- **Writes:** `_concept/quality.yaml`; auto-fixes in gardening mode
 - **Feeds into:** quality gate for proceeding to next pipeline step
 
 ## Recurring Usage

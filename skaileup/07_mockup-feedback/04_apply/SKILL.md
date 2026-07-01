@@ -141,4 +141,4 @@ If `patches/<sid>.review.md` contains a non-empty `## Test impact` section, add:
 
 - `mockup-feedback/schemas/patches.schema.json` — input validation
 - `docs/devlog/mockup-design.md` §5 — devlog format
-- `docs/superpowers/specs/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D3, D6, D7
+- `docs/devlog/2026-05-09-3B-mockup-feedback-triage-patch-apply-design.md` D3, D6, D7

@@ -75,7 +75,7 @@ def validate(cwd: str) -> dict:
             return False, f"Only {len(layers_found)} story layers found: {layers_found}. Expected Components + Pages (+ Journeys)"
         return True, f"Story layers: {layers_found}"
 
-    v.must("produce stories organized in Components/Pages layers (Journeys optional if stories.json absent)",
+    v.must("produce stories organized in Components/Pages layers (Journeys optional if stories.yaml absent)",
            check_three_layers)
 
     # ── NEVER rules ──
@@ -127,8 +127,8 @@ def validate(cwd: str) -> dict:
         journeys = list(v.glob_files(f"{STORYBOOK_DIR}/src/stories/Journeys/**/*.stories.*"))
         hero = list(v.glob_files(f"{STORYBOOK_DIR}/src/stories/Journeys/Hero/**"))
         if not journeys:
-            # Acceptable if stories.json was absent
-            return True, "No journey stories (skipped — stories.json may have been absent)"
+            # Acceptable if stories.yaml was absent
+            return True, "No journey stories (skipped — stories.yaml may have been absent)"
         if not hero:
             return False, "Journey stories found but no Hero/ sub-folder"
         return True, f"{len(journeys)} journey stories found"

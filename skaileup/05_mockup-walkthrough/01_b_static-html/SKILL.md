@@ -32,7 +32,7 @@ metadata:
         gate: hard
         description: "Screen specs are the primary input — one file rendered per screen"
         min_entries: 1
-      - path: "experience/journeys/stories.json"
+      - path: "experience/journeys/stories.yaml"
         gate: hard
         description: "Journey definitions drive the journey/<id>.html sequencing"
       - path: "design/tokens.json"
@@ -97,7 +97,7 @@ variant in Phase 3 (Lit, Astro, framework-tier) MUST emit the same set of
 | `<body>` of every `screen/<group>/<name>.html` | `data-spec-screen` | screen path stem (e.g. `01_user_auth/login`) | screen file path |
 | every annotatable child node (form fields, buttons, links, images, regions, list items, nav items) | `data-spec-element` | element id (kebab-case) | `elements:` entry, or auto-slug |
 | same node, when no explicit `elements:` entry exists for it | `data-spec-provisional` | literal string `"true"` | absent in YAML |
-| `<body>` of every `journey/<id>.html` | `data-spec-journey` | journey id from stories.json | stories.json |
+| `<body>` of every `journey/<id>.html` | `data-spec-journey` | journey id from stories.yaml | stories.yaml |
 | each step link inside `journey/<id>.html` | `data-spec-screen` | the screen-stem of that step's screen | journey step entry |
 | `<body>` of `index.html` | `data-spec-index` | literal string `"true"` | (none — site root marker) |
 
@@ -176,7 +176,7 @@ This skill consumes four input shapes, all under the project root:
 | Path | Shape | Reference |
 |---|---|---|
 | `experience/screens/<group>/<screen>.md` | Markdown + YAML frontmatter (per `contracts/frontmatter.md` § "experience/screens/<group>/<screen>.md") with optional `elements:` block (per `contracts/elements_block.md`). | `contracts/elements_block.md` |
-| `experience/journeys/stories.json` | JSON object containing a `journeys[]` array. Each journey has `id`, `title`, `description`, `screen_sequence: [<screen-path>, ...]`. | (pinned by this skill — see "Stories.json schema" below) |
+| `experience/journeys/stories.yaml` | JSON object containing a `journeys[]` array. Each journey has `id`, `title`, `description`, `screen_sequence: [<screen-path>, ...]`. | (pinned by this skill — see "Stories.json schema" below) |
 | `design/tokens.json` | Token tree (e.g. `{"color": {"primary": "#0ea5e9"}, "spacing": {"sm": "8px"}}`). Flattened to CSS custom properties (`--token-<dotted-path-with-hyphens>`). | (pinned by this skill — same flattening rule as `mockup-component-isolated-html`) |
 | `product-spec/features/<group>/<feature>.md` | Markdown + YAML frontmatter (per `contracts/frontmatter.md` § "experience/features/..."). Used **only** for `manifest.json#features`; not rendered as HTML. | `contracts/frontmatter.md` |
 
@@ -227,7 +227,7 @@ ROLE  Walkthrough Static-HTML renderer — converts screen specs + journey
 
 READS
   experience/screens/**/*.md            — screen specs (frontmatter + body)
-  experience/journeys/stories.json      — journey definitions
+  experience/journeys/stories.yaml      — journey definitions
   design/tokens.json                    — brand tokens
   ? product-spec/features/**/*.md       — feature traceability (soft)
   ? experience/screens/00_layout/shell.md — shared layout (soft)
@@ -268,7 +268,7 @@ REFERENCES
     `warnings[]` entries of `kind: "unknown_element_kind"` for any kind
     outside the v0.1 enum (`input, button, link, image, text, region, list,
     form, nav, media, custom`) but render the node anyway.
-  - Read `experience/journeys/stories.json`. Validate each `journeys[]`
+  - Read `experience/journeys/stories.yaml`. Validate each `journeys[]`
     entry has `id` AND `screen_sequence`. Missing `screen_sequence` →
     warning `kind: "missing_screen_sequence"`, skip that journey render.
   - Read `design/tokens.json`. Flatten the nested tree depth-first into a
@@ -344,7 +344,7 @@ REFERENCES
 
 ## STEP 4: Render journeys
 
-  For each journey in `stories.json`'s `journeys[]` array:
+  For each journey in `stories.yaml`'s `journeys[]` array:
 
   - Determine output path:
     `_concept/mockup-walkthrough/static-html/journey/<journey_id>.html`
@@ -394,7 +394,7 @@ REFERENCES
       screen page.
     - `<section id="journeys">` — flat list, each entry an
       `<a href="journey/<id>.html">` linking to the journey page.
-      If `stories.json` has zero journeys, render the literal text
+      If `stories.yaml` has zero journeys, render the literal text
       `"No journeys defined"` and add a `warnings[]` entry of
       `kind: "missing_screen_sequence"` (when caused by absent
       `screen_sequence`) or `kind: "no_journeys"` (when absent file).
@@ -455,7 +455,7 @@ mini-plan. Field names are pinned exactly:
     {
       "journey_id": "user-signs-in",
       "rendered_html": "journey/user-signs-in.html",
-      "source": "experience/journeys/stories.json#user-signs-in",
+      "source": "experience/journeys/stories.yaml#user-signs-in",
       "screen_sequence": [
         "experience/screens/01_user_auth/login.md",
         "experience/screens/02_dashboard/home.md"
@@ -533,7 +533,7 @@ MUST  escape every interpolated string via `html.escape(..., quote=True)`
 MUST  use only stdlib + PyYAML in the renderer (no Jinja, no Mako, no build tool)
 
 NEVER  include a JS framework, a bundler artefact, or any `<script src="...">` pointing at a non-relative URL — the site is openable as a static set of files
-NEVER  mutate source files (`experience/screens/**`, `experience/journeys/stories.json`, `design/tokens.json`, `product-spec/features/**`) — this skill is read-only on its inputs
+NEVER  mutate source files (`experience/screens/**`, `experience/journeys/stories.yaml`, `design/tokens.json`, `product-spec/features/**`) — this skill is read-only on its inputs
 NEVER  emit `data-spec-*` attributes outside the pinned table — Phase 3 ignores unknown ones, but lean attribute sets keep drift visible
 NEVER  inline absolute paths from the developer's filesystem into `manifest.json` — use repo-relative paths only
 NEVER  inject journey-step navigation into `screen/**/*.html` — cross-journey continuation lives only in `journey/<id>.html`
@@ -544,7 +544,7 @@ NEVER  inject journey-step navigation into `screen/**/*.html` — cross-journey 
   - [ ] `_concept/mockup-walkthrough/static-html/manifest.json` exists and parses as JSON
   - [ ] `manifest.schema_version == "1.0"`
   - [ ] One `screen/<group>/<name>.html` per screen file under `experience/screens/`
-  - [ ] One `journey/<id>.html` per journey in `stories.json`
+  - [ ] One `journey/<id>.html` per journey in `stories.yaml`
   - [ ] Every `<body>` in `screen/**/*.html` has `data-spec-screen`
   - [ ] Every annotatable node in `screen/**/*.html` has `data-spec-element`
   - [ ] Every auto-slugged element node also has `data-spec-provisional="true"`

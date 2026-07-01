@@ -8,7 +8,7 @@ Invoke with: "add a feature", "add X to the concept", "I want a new feature for 
 
 - New or updated `_concept/experience/features/<NN_group>/<feature>.md`
 - Cascades to any existing downstream artifacts:
-  - `_concept/experience/journeys/stories.json`
+  - `_concept/experience/journeys/stories.yaml`
   - `_concept/blueprint/techstack.md`
   - `_concept/blueprint/architecture.md`
   - `_concept/blueprint/datamodel/model.json` + `model.dbml` + `seed.json` + `feature_map.json`

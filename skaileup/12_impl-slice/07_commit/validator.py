@@ -4,7 +4,7 @@
 Three deterministic modes — does NOT actually run `git`; that is the skill
 body's job. The validator pins (A) the commit-plan JSON shape, (B) the
 post-commit FREEZE of `_implementation/slices/<id>/` (dir kept, index.md present,
-progress.json removed), and (C) the pre-flight gate that all four handoffs exist
+progress.yaml removed), and (C) the pre-flight gate that all four handoffs exist
 with correct decisions.
 
 Usage:
@@ -12,7 +12,7 @@ Usage:
     python3 validator.py --plan <path/to/commit-plan.json> [--expected-files <file>]
 
     # Mode B: assert the lifecycle terminator FROZE _implementation/slices/<id>/
-    #         (the dir still exists and contains index.md; progress.json is gone).
+    #         (the dir still exists and contains index.md; progress.yaml is gone).
     python3 validator.py --post-commit <path/to/_implementation/slices/<id>/>
 
     # Mode C: pre-flight — assert all 4 handoffs exist with correct values.
@@ -143,7 +143,7 @@ def validate_plan(plan_path: Path, expected_files_path: Path | None) -> list[str
 
 def validate_post_commit(slice_dir: Path) -> list[str]:
     """The lifecycle terminator FREEZES the slice: the dir is kept and gains an
-    index.md; only the transient progress.json is removed. (Suggestion-B: slices
+    index.md; only the transient progress.yaml is removed. (Suggestion-B: slices
     are durable per-feature documentation, not throwaway scratch.)"""
     errors: list[str] = []
     if not slice_dir.exists():
@@ -156,9 +156,9 @@ def validate_post_commit(slice_dir: Path) -> list[str]:
             f"lifecycle terminator failed: {slice_dir / 'index.md'} missing "
             "(expected a frozen dossier index)"
         )
-    if (slice_dir / "progress.json").exists():
+    if (slice_dir / "progress.yaml").exists():
         errors.append(
-            f"{slice_dir / 'progress.json'} still exists "
+            f"{slice_dir / 'progress.yaml'} still exists "
             "(transient resume state should be removed on freeze)"
         )
     return errors

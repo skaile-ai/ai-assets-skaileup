@@ -1,6 +1,6 @@
 ---
 name: impl-plan-supervised
-description: "Use when a superpowers plan exists and you want supervised subagent-driven implementation. Dispatches one subagent per task, enforces spec-compliance review before code-quality review, handles 4-status reports (DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED), and manages escalation. Primary orchestrator in the impl-plan domain."
+description: "Use when a supervised plan exists and you want supervised subagent-driven implementation. Dispatches one subagent per task, enforces spec-compliance review before code-quality review, handles 4-status reports (DONE / DONE_WITH_CONCERNS / NEEDS_CONTEXT / BLOCKED), and manages escalation. Primary orchestrator in the impl-plan domain."
 metadata:
   version: '1.0.0'
   tags:
@@ -26,13 +26,13 @@ metadata:
     produces:
       - id: impl-decisions
       - id: impl-progress
-      - id: superpowers-plan
+      - id: supervised-plan
   prerequisites:
     files:
-      - path: '_implementation/superpowers-plan.md'
+      - path: '_implementation/supervised-plan.md'
         gate: hard
-        description: 'Superpowers plan required — run write-plan first'
-      - path: '_implementation/git-state.json'
+        description: 'Supervised plan required — run write-plan first'
+      - path: '_implementation/git-state.yaml'
         gate: hard
         description: 'Git state required — run git-prepare first'
       - path: '_concept/experience/features'
@@ -44,20 +44,20 @@ metadata:
         label: 'Resume from a specific task ID? (leave blank to start from first pending)'
         type: 'text'
     reads:
-      - path: '_implementation/superpowers-plan.md'
+      - path: '_implementation/supervised-plan.md'
         description: 'Task list with status and task text'
-      - path: '_implementation/git-state.json'
+      - path: '_implementation/git-state.yaml'
         description: 'Branch and uncommitted-change state'
       - path: '_concept/experience/features/**/*.md'
         description: 'Feature specs for spec-compliance review'
       - path: '_concept/experience/screens/**/*.md'
         description: 'Screen specs for UI fidelity checks'
     produces:
-      - path: '_implementation/superpowers-plan.md'
+      - path: '_implementation/supervised-plan.md'
         description: 'Updated task statuses after each dispatch'
       - path: '_implementation/decisions.md'
         description: 'Design decisions captured during implementation'
-      - path: '_implementation/progress.json'
+      - path: '_implementation/progress.yaml'
         description: 'Machine-readable progress tracker'
 ---
 
@@ -65,7 +65,7 @@ metadata:
 
 ## Overview
 
-Executes the superpowers plan by dispatching one subagent per task. Each task gets a fresh
+Executes the supervised plan by dispatching one subagent per task. Each task gets a fresh
 agent context with the full task text pasted verbatim — no file reading required.
 
 After each task:
@@ -81,7 +81,7 @@ according to the escalation paths in `contracts/subagent_dispatch.md`.
 
 ## When to Use
 
-- `superpowers-plan.md` exists and has been approved
+- `supervised-plan.md` exists and has been approved
 - `git-prepare` has been run (implementation branch exists)
 - Ready to start or resume supervised implementation
 
@@ -90,25 +90,27 @@ according to the escalation paths in `contracts/subagent_dispatch.md`.
 ROLE Supervised implementation orchestrator — dispatches subagents per task, enforces two-stage review, handles 4-status reports.
 
 READS
-\_implementation/superpowers-plan.md — task list with verbatim specs
-\_implementation/git-state.json — branch, git_mode, worktree path
+\_implementation/supervised-plan.md — task list with verbatim specs
+\_implementation/git-state.yaml — branch, git_mode, worktree path
 \_concept/experience/features/**/\*.md — for spec compliance review reference
 \_concept/experience/screens/**/\*.md — for spec compliance review reference
 
 WRITES
-\_implementation/superpowers-plan.md — task status updates
+\_implementation/supervised-plan.md — task status updates
 \_implementation/decisions.md — DONE_WITH_CONCERNS, BLOCKED logs
-\_implementation/progress.json — feature status tracking
+\_implementation/progress.yaml — feature status tracking
 
 REFERENCES
 contracts/subagent_dispatch.md — implementer prompt template, status handling
 contracts/agent_patterns.md — Subagent Dispatch pattern
+contracts/domain_model.md — ADR format + 3-test gate for genuine design decisions
 
-MUST read superpowers-plan.md before dispatching any task
+MUST read supervised-plan.md before dispatching any task
 MUST paste full task text verbatim into subagent prompt — never refer to plan file
 MUST run spec-compliance review before code-quality review for every task
 MUST log DONE_WITH_CONCERNS and BLOCKED statuses in decisions.md
-MUST update task status in superpowers-plan.md after each task completes
+MUST record a genuine design decision surfaced during a task as an ADR in decisions.md (date + title + 1-3 sentences) ONLY when it passes the 3-test gate — hard-to-reverse AND surprising AND a real trade-off (contracts/domain_model.md); operational concern-logs above are exempt from the gate
+MUST update task status in supervised-plan.md after each task completes
 NEVER dispatch multiple tasks to the same subagent (one task = one subagent)
 NEVER skip spec-compliance review even if tests pass
 NEVER advance to the next task while the current task status is BLOCKED
@@ -118,9 +120,9 @@ NEVER modify \_concept/ files
 
 STEP 1: Read state
 
-- Read superpowers-plan.md
-- Read git-state.json (branch, git_mode, worktree_path)
-- Read progress.json if exists (resume state)
+- Read supervised-plan.md
+- Read git-state.yaml (branch, git_mode, worktree_path)
+- Read progress.yaml if exists (resume state)
 - Determine start task: `start_from_task` input OR first pending task
 
 STEP 2: Report start
@@ -132,7 +134,7 @@ STEP 2: Report start
 
 # ── Task Loop ──────────────────────────────────────────────────────
 
-FOR EACH task in superpowers-plan.md (in dependency order, starting from start task):
+FOR EACH task in supervised-plan.md (in dependency order, starting from start task):
 IF task.status = done OR skipped → continue to next task
 
 STEP 3: Prepare dispatch context - Create feature branch (branch mode): `feat/<task-slug>`
@@ -166,7 +168,7 @@ STEP 5: Receive status - Parse STATUS block from subagent response - Handle per 
     CASE BLOCKED, route=decompose
       - Ask write-plan to decompose task <id> into sub-tasks
       - Insert sub-tasks into plan after current position
-      - Update superpowers-plan.md
+      - Update supervised-plan.md
       - Resume loop from first sub-task
 
 STEP 6: Spec compliance review - Read the feature spec(s) for this task from \_concept/experience/features/ - Read the code produced by the subagent - Check each requirement in the spec against the code — line by line - Assume the implementer "finished suspiciously quickly" — do not trust tests alone - Verify: every acceptance criterion is present in the code - Record: COMPLIANT | NON_COMPLIANT (with list of gaps)
@@ -195,7 +197,7 @@ $ git commit -m "feat: implement <task-name>"
 $ git branch -d feat/<task-slug>
 IF worktree mode: - Merge from worktree back to implement/<app-slug>
 
-STEP 9: Update plan and progress - Set task.status = done in superpowers-plan.md - Update progress.json
+STEP 9: Update plan and progress - Set task.status = done in supervised-plan.md - Update progress.yaml
 $ git add \_implementation/
 $ git commit -m "chore: mark task <id> complete"
 EMIT [implement-supervised] task_complete task=<id> spec=COMPLIANT quality=PASS
@@ -233,8 +235,8 @@ CHECKLIST
 - [ ] Code quality review run for every task (after compliance)
 - [ ] DONE_WITH_CONCERNS and BLOCKED statuses logged in decisions.md
 - [ ] All regression tests passing after each task
-- [ ] superpowers-plan.md updated with final task statuses
-- [ ] progress.json updated
+- [ ] supervised-plan.md updated with final task statuses
+- [ ] progress.yaml updated
 
 ---
 

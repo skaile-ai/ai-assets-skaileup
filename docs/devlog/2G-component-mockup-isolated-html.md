@@ -1,6 +1,6 @@
 # Task 2G — `component-mockup-isolated-html` Skill Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This is a **mini-plan** — a sub-plan of `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` (Phase 2, Task 2G).
+> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This is a **mini-plan** — a sub-plan of `docs/devlog/2026-05-07-skill-graph-migration.md` (Phase 2, Task 2G).
 
 **Goal:** Author the `component-mockup-isolated-html` skill — a low-friction component visualizer that emits one standalone HTML file per component declared in `experience/components/*.md`, embeds tokens from `design/tokens.json` as inline CSS custom properties (no external CSS, no JS, no build), and renders every declared variant × state combination side-by-side in a labeled grid. Output target: `_concept/component-mockup/isolated-html/<component>.html`. Files must be openable directly via `file://`.
 

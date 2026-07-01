@@ -9,7 +9,7 @@ Check for each artifact before cascading:
 
 | Artifact | Existence check | What to update |
 |---|---|---|
-| Journeys | `_concept/experience/journeys/stories.json` exists | Add stories, update downstream links |
+| Journeys | `_concept/experience/journeys/stories.yaml` exists | Add stories, update downstream links |
 | Tech Stack | `_concept/blueprint/techstack.md` exists | Add integrations to Additional Integrations section |
 | Architecture | `_concept/blueprint/architecture.md` exists | Update modules, protocols, external_integrations, infrastructure |
 | Data Model | `_concept/blueprint/datamodel/model.json` exists | Add entities, fields, relations; sync model.dbml; update seed.json + feature_map.json |
@@ -29,7 +29,7 @@ Cascading out of order risks writing screens that don't match the data model, or
 
 ---
 
-## 1: Journeys (`experience/journeys/stories.json`)
+## 1: Journeys (`experience/journeys/stories.yaml`)
 
 Update when: new user flow is introduced that isn't covered by existing stories.
 

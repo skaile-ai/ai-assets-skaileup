@@ -116,8 +116,8 @@ REFERENCES
   contracts/iron_laws.md                                          — § 7 (no artifact without prerequisites), § 9 (standalone questions)
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
-  docs/superpowers/plans/2A-scope-project.md                      — § Pinned scope.yaml schema
-  docs/superpowers/plans/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
+  docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
+  docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 
 REQUIRES
   hard: _concept/_meta/scope.yaml                                 — tier context

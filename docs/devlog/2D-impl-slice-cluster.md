@@ -53,9 +53,9 @@ Expected: prints `impl-slice-finish`, `impl-slice-git-prepare`, `impl-slice-impl
 
 Run:
 ```bash
-ls -la docs/superpowers/plans/2B-concept-slice-cluster.md docs/superpowers/plans/2C-impl-plan-align-vertical.md
-grep -n "Pinned: \`plan.md\` Schema\|Pinned: \`align.md\` Schema\|Slice-ID Continuity" docs/superpowers/plans/2C-impl-plan-align-vertical.md | head -5
-grep -n "Pinned: Slice-ID Format\|Pinned: \`_slice/concept" docs/superpowers/plans/2B-concept-slice-cluster.md | head -5
+ls -la docs/devlog/2B-concept-slice-cluster.md docs/devlog/2C-impl-plan-align-vertical.md
+grep -n "Pinned: \`plan.md\` Schema\|Pinned: \`align.md\` Schema\|Slice-ID Continuity" docs/devlog/2C-impl-plan-align-vertical.md | head -5
+grep -n "Pinned: Slice-ID Format\|Pinned: \`_slice/concept" docs/devlog/2B-concept-slice-cluster.md | head -5
 ```
 Expected: both files exist; both `grep`s return matches. This cluster MUST NOT redefine `plan.md`, `align.md`, slice-id format, or the lifecycle invariant — they are pinned in 2B/2C.
 
@@ -71,7 +71,7 @@ Each `name:` MUST equal the parent directory name exactly (no shortening).
 
 - [ ] **Pre-7: Source documents readable**
 
-Run: `wc -l SKILL_GRAPH.md contracts/iron_laws.md contracts/skill_grammar.md contracts/asset_frontmatter.md CONTRIBUTING.md docs/superpowers/plans/2A-scope-project.md docs/superpowers/plans/2B-concept-slice-cluster.md docs/superpowers/plans/2C-impl-plan-align-vertical.md impl-slice/finish/SKILL.md impl-slice/git-prepare/SKILL.md impl-slice/implement/SKILL.md`
+Run: `wc -l SKILL_GRAPH.md contracts/iron_laws.md contracts/skill_grammar.md contracts/asset_frontmatter.md CONTRIBUTING.md docs/devlog/2A-scope-project.md docs/devlog/2B-concept-slice-cluster.md docs/devlog/2C-impl-plan-align-vertical.md impl-slice/finish/SKILL.md impl-slice/git-prepare/SKILL.md impl-slice/implement/SKILL.md`
 Expected: all line counts non-zero.
 
 ---
@@ -80,8 +80,8 @@ Expected: all line counts non-zero.
 
 The executing agent MUST read each of these once, in this order, before starting Task 1:
 
-1. `docs/superpowers/plans/2C-impl-plan-align-vertical.md` — § "Pinned: `_slice/impl/<id>/` Lifecycle", § "Pinned: `plan.md` Schema", § "Pinned: Slice-ID Continuity". This cluster is the LIFECYCLE TERMINATOR for the dir whose creation is owned by 2C. **Do not redefine.**
-2. `docs/superpowers/plans/2B-concept-slice-cluster.md` — § "Pinned: `_slice/concept/<slice_id>/` Lifecycle" and § "Pinned: Slice-ID Format". The parallel pattern: `concept-slice/design-feature` is the concept-side lifecycle terminator. This cluster's `impl-slice-commit` mirrors that role for the impl side.
+1. `docs/devlog/2C-impl-plan-align-vertical.md` — § "Pinned: `_slice/impl/<id>/` Lifecycle", § "Pinned: `plan.md` Schema", § "Pinned: Slice-ID Continuity". This cluster is the LIFECYCLE TERMINATOR for the dir whose creation is owned by 2C. **Do not redefine.**
+2. `docs/devlog/2B-concept-slice-cluster.md` — § "Pinned: `_slice/concept/<slice_id>/` Lifecycle" and § "Pinned: Slice-ID Format". The parallel pattern: `concept-slice/design-feature` is the concept-side lifecycle terminator. This cluster's `impl-slice-commit` mirrors that role for the impl side.
 3. `SKILL_GRAPH.md` — § 5.2 (per-slice impl loop, lines 304-360). Pins the loop order: `implement → test → recap → refactor → commit` (note: SKILL_GRAPH puts `test` BEFORE `recap`; see § "Cluster ordering" below for the conflict and resolution).
 4. `contracts/iron_laws.md` — § 7 (no artifact without prerequisites), § 8 (no overwrite without approval — relevant for `refactor` which proposes code edits), § 9 (questions are standalone messages — all four skills interview the user).
 5. `contracts/skill_grammar.md` — DSL keywords (ROLE, READS, WRITES, MUST, NEVER, STEP, CHECKPOINT, OUTPUT, IF/ELSE, EMIT, CHECKLIST, INPUT, REQUIRES). Especially § "Authoring tips" #4 (place constraints early).
@@ -538,7 +538,7 @@ Sections in order:
 - `## When to Use` and `## When NOT to Use`. The latter MUST explicitly list "running the whole project's test suite — use `impl-quality/test-*` instead."
 - `ROLE` — Per-slice usability gate; runs slice tests + asks usability questions; produces a Done/NeedsMoreWork/Blocked verdict.
 - `READS` / `WRITES` — copy from § "READS / WRITES (pinned)".
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/test/references/usability-question-pillars.md`, `docs/superpowers/plans/2C-impl-plan-align-vertical.md` (for plan.md schema).
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/test/references/usability-question-pillars.md`, `docs/devlog/2C-impl-plan-align-vertical.md` (for plan.md schema).
 - MUST/NEVER block (EARLY per `skill_grammar.md` § Authoring tip 4):
   - `MUST  ask each usability question as its own standalone message (iron_laws § 9)`
   - `MUST  refuse to run if _slice/impl/<slice_id>/plan.md is missing (iron_laws § 7)`
@@ -663,7 +663,7 @@ Sections in order:
 - `## When to Use` / `## When NOT to Use`.
 - `ROLE` — Per-slice recap; produces a flow diagram + comparison to plan.
 - `READS` / `WRITES`.
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/recap/references/diagram-shapes.md`, `docs/superpowers/plans/2C-impl-plan-align-vertical.md`.
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/recap/references/diagram-shapes.md`, `docs/devlog/2C-impl-plan-align-vertical.md`.
 - MUST/NEVER block (EARLY):
   - `MUST  produce an ASCII diagram in a fenced code block — diagram is MANDATORY (SKILL_GRAPH § 5.2)`
   - `MUST  describe what was built in user-visible terms (what the user sees / does), NOT in implementation terms (which file changed)`
@@ -794,7 +794,7 @@ Sections in order:
 - `## When to Use` / `## When NOT to Use`. The latter MUST list "if you are tempted to extract a new utility — that is OUT OF SCOPE for this skill."
 - `ROLE` — Per-slice force-simplify; resists additions; proposes 1-3 subtract/simplify/clarify candidates with user approval before any edit.
 - `READS` / `WRITES`.
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/refactor/references/anti-addition-rules.md`, `docs/superpowers/plans/2C-impl-plan-align-vertical.md`.
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/refactor/references/anti-addition-rules.md`, `docs/devlog/2C-impl-plan-align-vertical.md`.
 - MUST/NEVER block (EARLY — these are LOAD-BEARING):
   - `MUST  propose ONLY subtractions, simplifications, or clarifications (Type field restricted to {subtraction, simplification, clarification})`
   - `MUST  produce 1-3 candidates — exactly. Not 0, not 4. If you cannot find 1, the slice is already minimal AND you must explain why in "## What I considered but rejected"`
@@ -953,7 +953,7 @@ Sections in order:
   - "if you need to set up git for a new project — use `impl-slice-git-prepare`"
 - `ROLE` — Per-slice atomic commits + lifecycle terminator (deletes `_slice/impl/<id>/`).
 - `READS` / `WRITES`.
-- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/commit/references/commit-message-format.md`, `docs/superpowers/plans/2B-concept-slice-cluster.md` (parallel terminator pattern), `docs/superpowers/plans/2C-impl-plan-align-vertical.md` (lifecycle).
+- `REFERENCES`: `SKILL_GRAPH.md` § 5.2, `contracts/iron_laws.md`, `impl-slice/commit/references/commit-message-format.md`, `docs/devlog/2B-concept-slice-cluster.md` (parallel terminator pattern), `docs/devlog/2C-impl-plan-align-vertical.md` (lifecycle).
 - MUST/NEVER block (EARLY):
   - `MUST  refuse to run if any of test.md, recap.md, refactor.md is missing (iron_laws § 7)`
   - `MUST  refuse to run if test.md's Decision is not "Done"`

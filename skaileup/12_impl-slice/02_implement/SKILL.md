@@ -1,6 +1,6 @@
 ---
 name: impl-slice-implement
-description: 'Use when implementing a single slice planned by impl-plan/plan-vertical. Reads _implementation/slices/<slice_id>/plan.md, walks the vertical decomposition (UI + logic + data), writes failing tests first, implements with TDD Guard, persists per-slice progress to _implementation/slices/<slice_id>/progress.json. Resumes interrupted runs from progress.json.'
+description: 'Use when implementing a single slice planned by impl-plan/plan-vertical. Reads _implementation/slices/<slice_id>/plan.md, walks the vertical decomposition (UI + logic + data), writes failing tests first, implements with TDD Guard, persists per-slice progress to _implementation/slices/<slice_id>/progress.yaml. Resumes interrupted runs from progress.yaml.'
 metadata:
   version: '2.0.0'
   tags:
@@ -77,7 +77,7 @@ Implements features using outside-in TDD at three levels:
 3. **Feature level** — each page sub-skill implements individual features with TDD Guard
 
 **Journey-first strategy:** features are built in user-journey order (hero →
-vital → hygiene from `stories.json`). This delivers a working end-to-end flow
+vital → hygiene from `stories.yaml`). This delivers a working end-to-end flow
 early and surfaces integration issues before they compound.
 
 **TDD Guard** enforces the Red→Green cycle at the feature level:
@@ -95,7 +95,7 @@ without journey context (useful for `add-feature` follow-through).
 ## When to Use
 
 - Foundation is complete (app shell exists, auth configured)
-- `stories.json` exists (journey-first) OR a specific feature is requested
+- `stories.yaml` exists (journey-first) OR a specific feature is requested
 - User says "implement features", "build the app features", "implement next journey"
 - The `implement` orchestrator dispatches this as Phase 4
 
@@ -117,38 +117,38 @@ without journey context (useful for `add-feature` follow-through).
 
 **Recommended (journey mode):**
 
-- `_concept/experience/journeys/stories.json` exists
+- `_concept/experience/journeys/stories.yaml` exists
 - `_concept/prototype/storybook/src/pages/` exists (UI reference)
 
 ## Context Budget
 
 | Action         | Path                                         | Required                   |
 | -------------- | -------------------------------------------- | -------------------------- |
-| Must read      | `_concept/experience/journeys/stories.json`  | Journey mode               |
+| Must read      | `_concept/experience/journeys/stories.yaml`  | Journey mode               |
 | Must read      | `_concept/experience/features/**/*.md`       | Yes                        |
 | Must read      | `_concept/experience/screens/**/*.md`        | Yes                        |
 | Must read      | `_concept/blueprint/datamodel/model.json`    | Yes                        |
 | Must read      | `_concept/blueprint/techstack.md`            | Yes                        |
 | Read if exists | `_concept/prototype/storybook/src/pages/` | Recommended (UI reference) |
 | Read if exists | `_concept/blueprint/datamodel/seed.json`     | Recommended                |
-| Read if exists | `_implementation/slices/<slice_id>/progress.json`              | If resuming                |
+| Read if exists | `_implementation/slices/<slice_id>/progress.yaml`              | If resuming                |
 
 ---
 
 ROLE Journey-first feature orchestrator — implements features by walking user journeys outside-in with three-level TDD.
 
 READS
-\_concept/experience/journeys/stories.json — journey definitions, story maps
+\_concept/experience/journeys/stories.yaml — journey definitions, story maps
 \_concept/experience/features/**/\*.md — feature specs
 \_concept/experience/screens/**/\*.md — screen/page specs
 ? \_concept/prototype/storybook/src/pages/ — storybook page compositions (UI reference)
 \_concept/blueprint/datamodel/model.json — data model
 \_concept/blueprint/datamodel/seed.json — seed data scenarios
-? \_implementation/slices/<slice_id>/progress.json — resume state
+? \_implementation/slices/<slice_id>/progress.yaml — resume state
 
 WRITES
 e2e/specs/journeys/<stage>-<journey-slug>.spec.<ext> — journey-level e2e tests
-\_implementation/slices/<slice_id>/progress.json — journey/page/feature status (per-slice resume state)
+\_implementation/slices/<slice_id>/progress.yaml — journey/page/feature status (per-slice resume state)
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
@@ -161,7 +161,7 @@ MUST deduplicate pages across journeys — implement once, verify in each
 MUST verify page tests are GREEN (5c) before running regression tests
 MUST verify ALL tests pass (5d) before proceeding to the next page
 MUST commit after each completed page (5f)
-MUST resume from last completed page in progress.json on interrupted runs
+MUST resume from last completed page in progress.yaml on interrupted runs
 MUST run spec-compliance review before code-quality review after each journey
 MUST use populated scenario seed data by default
 MUST use test IDs (data-testid) for element addressing in tests
@@ -205,7 +205,7 @@ STEP 0: Preflight
 
 STEP 1: Build implementation map
 
-- Read stories.json
+- Read stories.yaml
 - Collect story_maps, ordered by stage: hero first, then vital, then hygiene
 - Skip backlog stage
 - For each story_map (journey):
@@ -213,7 +213,7 @@ STEP 1: Build implementation map
   - Resolve each to a screen spec file in \_concept/experience/screens/
   - For each screen spec, find features whose frontmatter screens[] includes it
   - Deduplicate: a page/feature appears only in the FIRST journey that references it
-- Track already-implemented pages/features from progress.json (if resuming)
+- Track already-implemented pages/features from progress.yaml (if resuming)
 
 STEP 2: Present plan
 
@@ -267,8 +267,8 @@ afterAll(async () => { /_ teardown _/ })
 
 STEP 5: Implement pages — vertical slice loop
 
-- Read progress.json to find last completed page (resume support)
-- For each page in this journey (skip if progress.json marks it complete):
+- Read progress.yaml to find last completed page (resume support)
+- For each page in this journey (skip if progress.yaml marks it complete):
 
   STEP 5a: Write failing tests for THIS page only
   - Write unit and/or integration tests targeting this page's features
@@ -296,11 +296,11 @@ STEP 5: Implement pages — vertical slice loop
   STEP 5e: Per-page checkpoint
   IF auto_approve_pages is false (default):
   CHECKPOINT page_complete > "Page '<page-name>' complete. > Page tests: N passing. All prior tests: N passing. > Approve to continue to the next page."
-  IF auto_approve_pages is true (flow context or dialog): - Skip human approval; log auto-approval in progress.json
+  IF auto_approve_pages is true (flow context or dialog): - Skip human approval; log auto-approval in progress.yaml
   NOTE: 5c and 5d gates still apply regardless of auto_approve_pages
 
   STEP 5f: Commit and update progress
-  - Update progress.json: mark page status = "complete"
+  - Update progress.yaml: mark page status = "complete"
     $ git commit -m "feat: implement page <page-name>"
     EMIT [implement-feature] page_complete journey=<id> page=<page-name> tests=<N>
 
@@ -343,7 +343,7 @@ $ git merge --squash feat/<journey-slug>
 $ git commit -m "feat: implement <stage> journey — <journey-label>"
 $ git branch -d feat/<journey-slug>
 
-- Update progress.json: journey → complete
+- Update progress.yaml: journey → complete
   EMIT [implement-feature] journey_complete journey=<id> stage=<stage>
 
 STEP 9: Repeat for remaining journeys
@@ -357,12 +357,12 @@ STEP 10: Final check
 
 CHECKLIST
 
-- [ ] Journey → page → feature map derived from stories.json
+- [ ] Journey → page → feature map derived from stories.yaml
 - [ ] All journeys processed in stage order (hero → vital → hygiene)
 - [ ] Journey e2e tests pass for each completed journey
 - [ ] All page and feature tests pass (no regressions)
 - [ ] Build passes (backend + frontend + lint)
-- [ ] _implementation/slices/<slice_id>/progress.json updated
+- [ ] _implementation/slices/<slice_id>/progress.yaml updated
 
 ---
 
@@ -371,7 +371,7 @@ CHECKLIST
 | Mistake                                                | What to do instead                                                  |
 | ------------------------------------------------------ | ------------------------------------------------------------------- |
 | Implementing pages before journey tests                | Always write failing journey tests first                            |
-| Numeric feature-group order instead of journey order   | Use stories.json stage order: hero → vital → hygiene                |
+| Numeric feature-group order instead of journey order   | Use stories.yaml stage order: hero → vital → hygiene                |
 | Not running regression tests after each page           | Run ALL tests after each page, not just the current journey         |
 | Skipping spec compliance and going straight to quality | Spec compliance must pass before quality review — both are required |
 | Running quality review on a misbuilt feature           | Fix spec gaps first; quality review on wrong code is wasted work    |
@@ -383,4 +383,4 @@ CHECKLIST
 - **Called by:** `implement` orchestrator or standalone
 - **Dispatches to:** `implement-feature-page` (per page)
 - **Reads:** `_concept/experience/` (journeys, features, screens, storybook)
-- **Writes:** E2E test files, `_implementation/slices/<slice_id>/progress.json`
+- **Writes:** E2E test files, `_implementation/slices/<slice_id>/progress.yaml`

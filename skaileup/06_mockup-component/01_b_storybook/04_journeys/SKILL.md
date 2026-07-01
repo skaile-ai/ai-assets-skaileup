@@ -1,6 +1,6 @@
 ---
 name: mockup-component-storybook-journeys
-description: 'Use when Storybook pages are built and clickable multi-screen journey stories are needed. Sub-skill 4/4: builds click-dummy journeys (hero, vital, hygiene) from stories.json, flowing through real page components inside AppShell. Called by mockup-component-storybook-orchestrator.'
+description: 'Use when Storybook pages are built and clickable multi-screen journey stories are needed. Sub-skill 4/4: builds click-dummy journeys (hero, vital, hygiene) from stories.yaml, flowing through real page components inside AppShell. Called by mockup-component-storybook-orchestrator.'
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -37,7 +37,7 @@ metadata:
         gate: hard
         description: 'Page manifest required for screen-to-story mapping'
     reads:
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'User journeys: story maps, personas, and journey stages for story titles'
       - path: '_concept/experience/screens'
         description: 'Screen specs as fallback for page mapping'
@@ -52,7 +52,7 @@ ROLE Journey Builder — creates clickable multi-screen user flow stories (click
 that let users walk through complete journeys using real UI elements.
 
 READS
-\_concept/experience/journeys/stories.json — user journeys: story maps, personas, stages
+\_concept/experience/journeys/stories.yaml — user journeys: story maps, personas, stages
 \_concept/prototype/storybook/src/pages/manifest.json — screen-to-page mapping (from pages sub-skill)
 \_concept/experience/screens/\*_/_.md — screen specs (fallback for mapping)
 [passed by orchestrator]: story_extension, package_manager
@@ -66,13 +66,13 @@ REQUIRES
 state: \_concept/prototype/storybook/src/pages/ has page components (sub-skill 3 completed)
 state: \_concept/prototype/storybook/src/components/AppShell exists (sub-skill 3 completed)
 state: \_concept/prototype/storybook/src/pages/manifest.json exists
-state: \_concept/experience/journeys/stories.json exists
+state: \_concept/experience/journeys/stories.yaml exists
 
 EMIT [storybook-journeys] started run_id=<uuid>
 
 STEP 1: Map journeys to pages
 
-- Read stories.json — collect ALL story maps where stage is hero, vital, OR hygiene
+- Read stories.yaml — collect ALL story maps where stage is hero, vital, OR hygiene
   (skip backlog stage)
 - Count: hero=<N> (must be exactly 1), vital=<N>, hygiene=<N>
 - Read src/pages/manifest.json for the screen-to-page mapping

@@ -22,7 +22,7 @@ last_updated: YYYY-MM-DD
 ```
 
 **Notes:**
-- `story_refs` — IDs from stories.json that this feature derives from. Required.
+- `story_refs` — IDs from stories.yaml that this feature derives from. Required.
 - `screens[]` — populated by the **screens** skill via the feedback loop. Leave empty.
 - `data_entities[]` — populated by the **datamodel** skill via the feedback loop. Leave empty.
 
@@ -67,7 +67,7 @@ For each feature, answer:
 | 2 | What happens when it works? When it fails? |
 | 3 | Who uses this — everyone, or a specific role? |
 | 4 | Must-have for launch, or nice-to-have? |
-| 5 | Which stories in stories.json does this trace to? |
+| 5 | Which stories in stories.yaml does this trace to? |
 
 ## Scope guidance
 

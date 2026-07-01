@@ -44,7 +44,7 @@ metadata:
     reads:
       - path: '_concept/discovery/brief.md'
         description: 'Project goals and success metrics'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'All user journeys for full product walkthrough'
       - path: '_concept/discovery/brand/tokens.json'
         description: 'Brand tokens for design fidelity check'
@@ -53,7 +53,7 @@ metadata:
       - path: 'ops/eval-product/references/design-rubrics.md'
         description: 'Design scoring rubrics — required before scoring any design dimension'
     produces:
-      - path: '_implementation/eval-product.json'
+      - path: '_implementation/eval-product.yaml'
         description: 'Graded product evaluation result'
 ---
 
@@ -72,12 +72,12 @@ ROLE Product Evaluator — grades the complete application against original brie
 
 READS
 ! \_concept/discovery/brief.md — goals and success metrics
-! \_concept/experience/journeys/stories.json — all journeys for full walkthrough
-! \_implementation/eval-feature/\*.json — confirm all groups approved
+! \_concept/experience/journeys/stories.yaml — all journeys for full walkthrough
+! \_implementation/eval-feature/\*.yaml — confirm all groups approved
 ? \_concept/discovery/brand/tokens.json — brand design fidelity
 
 WRITES
-\_implementation/eval-product.json — MUST write before reporting
+\_implementation/eval-product.yaml — MUST write before reporting
 
 REFERENCES
 ops/eval-product/references/design-rubrics.md
@@ -86,7 +86,7 @@ MUST read design-rubrics.md before scoring any design dimension
 MUST walk all journeys end-to-end, not spot-check
 MUST be specific in design scores — cite exact UI elements
 MUST rank improvement_priorities by impact
-MUST write eval-product.json before reporting
+MUST write eval-product.yaml before reporting
 NEVER give originality > 7 without identifying specific distinctive design choices
 NEVER accept "looks clean" as evidence of quality
 NEVER approve if design average < 7
@@ -100,7 +100,7 @@ Check \_implementation/eval-feature/. If any file has verdict != "approved":
 
 STEP 2: Read brief.md. Extract every goal and success metric.
 
-STEP 3: Walk all journeys end-to-end using stories.json.
+STEP 3: Walk all journeys end-to-end using stories.yaml.
 Follow the natural user path from app entry — do not jump to features directly.
 Note where the experience guides well, confuses, or breaks.
 
@@ -140,7 +140,7 @@ STEP 7: Determine verdict:
 
 STEP 8: Rank improvement_priorities — specific, actionable, ordered by impact.
 
-STEP 9: Write \_implementation/eval-product.json
+STEP 9: Write \_implementation/eval-product.yaml
 
 STEP 10: Report
 [eval-product] {verdict}

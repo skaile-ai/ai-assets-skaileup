@@ -34,7 +34,7 @@ metadata:
         gate: hard
         description: "Screen specs are the primary input — one page/route rendered per screen"
         min_entries: 1
-      - path: "experience/journeys/stories.json"
+      - path: "experience/journeys/stories.yaml"
         gate: hard
         description: "Journey definitions drive the journey/<id> route sequencing"
       - path: "design/tokens.json"
@@ -118,7 +118,7 @@ the built page resolves every attribute without running JavaScript.
 | `<body>` of every `screen/<group>/<name>` built page | `data-spec-screen` | screen path stem (e.g. `01_user_auth/login`) | screen file path |
 | every annotatable child node (form fields, buttons, links, images, regions, list items, nav items) | `data-spec-element` | element id (kebab-case) | `elements:` entry, or auto-slug |
 | same node, when no explicit `elements:` entry exists for it | `data-spec-provisional` | literal string `"true"` | absent in YAML |
-| `<body>` of every `journey/<id>` built page | `data-spec-journey` | journey id from stories.json | stories.json |
+| `<body>` of every `journey/<id>` built page | `data-spec-journey` | journey id from stories.yaml | stories.yaml |
 | each step link inside `journey/<id>` | `data-spec-screen` | the screen-stem of that step's screen | journey step entry |
 | `<body>` of the index page | `data-spec-index` | literal string `"true"` | (none — site root marker) |
 
@@ -130,7 +130,7 @@ Identical semantics to `mockup-walkthrough-static-html`. See that skill's
 "screen_id vs screen_path" section for the full definition. In brief:
 `screen_id` is the path stem used in `data-spec-screen` and the route slug;
 `screen_path` is the full repo-relative path with `.md` extension used in
-`manifest.json` and `stories.json` `screen_sequence` entries.
+`manifest.json` and `stories.yaml` `screen_sequence` entries.
 
 ### `kind → DOM tag mapping`
 
@@ -169,7 +169,7 @@ techstack gate:
 | Path | Shape |
 |---|---|
 | `experience/screens/<group>/<screen>.md` | Markdown + YAML frontmatter with optional `elements:` block per `contracts/elements_block.md` |
-| `experience/journeys/stories.json` | JSON `{ "journeys": [{ "id", "title", "description", "screen_sequence" }] }` |
+| `experience/journeys/stories.yaml` | JSON `{ "journeys": [{ "id", "title", "description", "screen_sequence" }] }` |
 | `design/tokens.json` | Token tree. Flattened to CSS custom properties (`--token-<dotted-path-with-hyphens>`). |
 | `product-spec/features/<group>/<feature>.md` | Used only for `manifest.json#features`; not rendered as HTML. |
 | `_concept/blueprint/techstack.md` | Frontmatter `tech_stack_skill` resolves the framework; the template's `TEMPLATE.md` supplies scaffold/build conventions. |
@@ -287,7 +287,7 @@ time. Identical shape to astro's `specs.json`.
       "title": "User signs in",
       "description": "First-time user authenticates.",
       "rendered_html": "journey/user-signs-in.html",
-      "source": "experience/journeys/stories.json#user-signs-in",
+      "source": "experience/journeys/stories.yaml#user-signs-in",
       "screen_sequence": ["01_user_auth/login", "02_dashboard/home"]
     }
   ],
@@ -323,7 +323,7 @@ READS
   _concept/blueprint/techstack.md       — frontmatter tech_stack_skill → framework
   09_impl-architecture/templates/<tech_stack_skill>/TEMPLATE.md — scaffold/build/routing
   experience/screens/**/*.md            — screen specs (frontmatter + body)
-  experience/journeys/stories.json      — journey definitions
+  experience/journeys/stories.yaml      — journey definitions
   design/tokens.json                    — brand tokens
   ? product-spec/features/**/*.md       — feature traceability (soft)
   ? experience/screens/00_layout/shell.md — shared layout reference (soft)
@@ -406,7 +406,7 @@ EMIT  [mockup-walkthrough-framework] checkpoint phase=framework_resolved tech_st
 - Validate `elements[]` against `contracts/elements_block.md`. Emit
   `warnings[]` entries of `kind: "unknown_element_kind"` for any kind outside
   the v0.1 enum but render anyway.
-- Read `experience/journeys/stories.json`. Validate each journey has `id` AND
+- Read `experience/journeys/stories.yaml`. Validate each journey has `id` AND
   `screen_sequence`. Missing `screen_sequence` → warning
   `kind: "missing_screen_sequence"`, skip that journey.
 - Read `design/tokens.json`. Flatten depth-first:
@@ -567,7 +567,7 @@ serialising `specs.json`. Template-only fields from `specs.json`
     {
       "journey_id": "user-signs-in",
       "rendered_html": "journey/user-signs-in.html",
-      "source": "experience/journeys/stories.json#user-signs-in",
+      "source": "experience/journeys/stories.yaml#user-signs-in",
       "screen_sequence": [
         "experience/screens/01_user_auth/login.md",
         "experience/screens/02_dashboard/home.md"
@@ -615,7 +615,7 @@ Exit 0 = ready. Exit 2 = violation report.
 | Malformed YAML in screen file | Fail loudly, exit non-zero, name the offending file |
 | Screen in journey but absent on disk | `manifest.warnings[]` `kind: "missing_screen"` + dead-end `<li class="journey-step-missing">` |
 | `screen_sequence` absent for a journey | `manifest.warnings[]` `kind: "missing_screen_sequence"`, skip that journey render |
-| Zero journeys in `stories.json` | Render "No journeys defined", `kind: "no_journeys"` |
+| Zero journeys in `stories.yaml` | Render "No journeys defined", `kind: "no_journeys"` |
 | Missing `product-spec/features/` | Soft gate, `kind: "missing_feature"`, continue; `manifest.features[]` → `[]` |
 | Unknown `elements:` kind | Render as `custom`, `kind: "unknown_element_kind"` |
 | `layout:` reference to non-existent file | `kind: "missing_layout"`, fall back to scaffolded root layout default |
@@ -663,7 +663,7 @@ MUST  regenerate the token stylesheet on every run (agent-managed)
 NEVER regenerate the framework config or route/page templates on update runs
 NEVER emit data-spec-* attributes outside the pinned table
 NEVER invent a target_framework not derived from a real template-* TEMPLATE.md
-NEVER mutate source files (experience/screens/**, stories.json, tokens.json, features/**, techstack.md)
+NEVER mutate source files (experience/screens/**, stories.yaml, tokens.json, features/**, techstack.md)
 NEVER inject journey-step navigation into screen routes
 NEVER inline absolute filesystem paths in manifest.json
 NEVER use a separate auto_slugged[] array — set provisional: true on the element object (the kind: "auto_slugged" warning entry in manifest.warnings[] is still required per the auto-slug step)
@@ -676,7 +676,7 @@ NEVER use a separate auto_slugged[] array — set provisional: true on the eleme
 - [ ] `_concept/mockup-walkthrough/framework/manifest.json` exists and parses as JSON
 - [ ] `manifest.schema_version == "1.0"` and `manifest.renderer == "mockup-walkthrough-framework"`
 - [ ] One built `screen/<group>/<name>` page per screen file under `experience/screens/`
-- [ ] One built `journey/<id>` page per journey in `stories.json`
+- [ ] One built `journey/<id>` page per journey in `stories.yaml`
 - [ ] Every screen page `<body>` has `data-spec-screen` in the built HTML (server-side)
 - [ ] Every annotatable node in screen pages has `data-spec-element`
 - [ ] Every auto-slugged element node also has `data-spec-provisional="true"`

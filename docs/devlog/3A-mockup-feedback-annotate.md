@@ -9,7 +9,7 @@
 **Tech Stack:** Python 3 (stdlib only) for `validator.py` + test runner; vanilla ESM for the overlay; no npm/bun/build tool; follows existing repo pattern from `walkthrough-mockup/static-html/`.
 
 **Prereqs read before starting:**
-- `docs/superpowers/notes/forge-concept-walkthrough.md` — postMessage protocol + storage conventions
+- `docs/devlog/forge-concept-walkthrough.md` — postMessage protocol + storage conventions
 - `walkthrough-mockup/static-html/SKILL.md` — `data-spec-*` attribute table + manifest.json shape
 - `walkthrough-mockup/static-html/validator.py` — validator pattern to copy
 - `walkthrough-mockup/static-html/tests/expected/minimal/` — the fixture site this overlay will be injected into
@@ -142,7 +142,7 @@ Create `mockup-feedback/annotate/overlay/annotation-overlay.js`:
  *   iframe      → postMessage to parent (forge-concept context)
  *   standalone  → floating toolbar with "Download annotations" button
  *
- * postMessage protocol (from docs/superpowers/notes/forge-concept-walkthrough.md):
+ * postMessage protocol (from docs/devlog/forge-concept-walkthrough.md):
  *   overlay→parent: { type: "overlay.ready",      route, manifest? }
  *   overlay→parent: { type: "overlay.annotation",  annotation }
  *   overlay→parent: { type: "overlay.navigate",    route }
@@ -898,7 +898,7 @@ For forge-concept integration: see forge-concept/docs/superpowers/specs/
 
 - `contracts/elements_block.md` — `data-spec-element` id conventions
 - `walkthrough-mockup/static-html/SKILL.md` — `data-spec-*` attribute table
-- `docs/superpowers/notes/forge-concept-walkthrough.md` — postMessage protocol + storage layout
+- `docs/devlog/forge-concept-walkthrough.md` — postMessage protocol + storage layout
 - `REFACTOR_MOCKUP.md` § 11 — resolved decisions (storage policy, overlay packaging)
 ```
 

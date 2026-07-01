@@ -4,7 +4,7 @@ description: "Start-in-the-middle flow — build features now while the concept 
 order: 12
 ---
 
-The **skaileup-implementation** flow is the "superpowers" shape: you don't write
+The **skaileup-implementation** flow is the "start-in-the-middle" shape: you don't write
 the whole concept up front, you **start in the middle and grow the concept as you
 build**. A thin foundation is laid once, then a single per-feature loop runs the
 unified [`skaileup-slice`](../skaileup-slice/) block at

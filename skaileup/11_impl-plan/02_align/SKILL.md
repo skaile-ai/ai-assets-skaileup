@@ -29,6 +29,8 @@ metadata:
         gate: soft
     produces:
       - id: slice-impl-align
+      - id: glossary
+      - id: impl-decisions
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"
@@ -63,6 +65,10 @@ metadata:
     produces:
       - path: "_implementation/slices/{slice_id}/align.md"
         description: "Per-slice impl align handoff for impl-plan-plan-vertical."
+      - path: "_concept/blueprint/glossary.md"
+        description: "Ubiquitous-language glossary — terms pinned during the grill (inline capture; see contracts/domain_model.md)."
+      - path: "_implementation/decisions.md"
+        description: "Build-time ADRs — appended when a grill decision passes the 3-test gate (see contracts/domain_model.md)."
 ---
 
 # Implementation Align — per-slice grill
@@ -115,15 +121,18 @@ READS
 
 WRITES
   _implementation/slices/{slice_id}/align.md                                 — handoff for impl-plan-plan-vertical
+  _concept/blueprint/glossary.md                                  — inline: terms pinned during the grill (per domain_model.md)
+  _implementation/decisions.md                                    — inline: ADRs when a grill decision passes the 3-test gate (per domain_model.md)
 
 REFERENCES
   SKILL_GRAPH.md                                                  — § 5.2 per-slice impl loop, § 6 tier composition
   contracts/iron_laws.md                                          — § 7 (no artifact without prerequisites), § 9 (standalone questions)
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
+  contracts/domain_model.md                                       — glossary format, ADR format, the 3-test gate
   impl-plan/align/references/grill-style.md                       — interview tone reference + 9 grill pillars
-  docs/superpowers/plans/2A-scope-project.md                      — § Pinned scope.yaml schema
-  docs/superpowers/plans/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
+  docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
+  docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 
 REQUIRES
   hard: _concept/_meta/scope.yaml                                 — tier context
@@ -140,8 +149,11 @@ MUST  surface every P1 question to the user as a standalone message before writi
 MUST  copy EARS acceptance criteria from feature.md verbatim into "## Acceptance handoff"
 MUST  set phase: align in the handoff frontmatter
 MUST  produce at least one P1 or P2 question OR resolve every prior P1 with a "## Decisions made" entry — empty grills are not acceptable
+MUST  capture domain vocabulary inline (STEP 13a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
+MUST  append an ADR to _implementation/decisions.md when a grill decision passes the 3-test gate (hard-to-reverse AND surprising AND a real trade-off); skip otherwise
 
 NEVER  invent edge cases the user did not confirm — every "## Edge cases to handle" bullet must trace to a Q/A in "## Decisions made" or to a feature.md/screen line
+NEVER  add implementation detail or general programming concepts to glossary.md (domain_model.md § Glossary format)
 NEVER  proceed past question N until the user has answered question N
 NEVER  silently overwrite an existing align.md (re-entry mode requires explicit user confirmation)
 NEVER  re-author EARS acceptance criteria — they live in feature.md and are copied verbatim
@@ -227,6 +239,17 @@ STEP 13: Surface P1 open questions
   - For each unanswered grill point that BLOCKS plan-vertical, send STANDALONE:
     > "P1 blocker: <question>. I need an answer before I can write align.md."
   - Wait for answer. Repeat until no P1 questions remain.
+
+STEP 13a: Capture the domain model (inline, per contracts/domain_model.md)
+  As the grill resolves vocabulary and decisions — the moment they crystallise,
+  not batched:
+  - TERM pinned or sharpened: write/update it in _concept/blueprint/glossary.md —
+    name, 1-2 sentence definition, `_Avoid_:` list of rejected synonyms. Create the
+    file lazily on the first term. Zero implementation detail.
+  - DECISION passing the 3-test gate (hard-to-reverse AND surprising AND a real
+    trade-off): append an ADR to _implementation/decisions.md — date + title +
+    1-3 sentences. If any test fails, leave it in align.md's "## Decisions made".
+  - Never invent a definition or decision the user did not confirm.
 
 STEP 14: Draft align.md in memory
   Frontmatter (cross-phase contract):

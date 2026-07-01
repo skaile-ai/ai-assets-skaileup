@@ -40,7 +40,7 @@ last_updated: YYYY-MM-DD
 ```
 
 Notes:
-- `story_refs` links to story IDs in stories.json (use IDs, not titles)
+- `story_refs` links to story IDs in stories.yaml (use IDs, not titles)
 - `permissions` is a role-action matrix (if no permissions needed, omit the section)
 - `agent_notes` is optional but recommended for cascade context
 - `screens: []` starts empty — populated during cascade Step 5
@@ -59,7 +59,7 @@ Notes:
 | 3 | Who uses this — all users, or a specific role? |
 | 4 | Must-have or nice-to-have? |
 | 5 | Does it belong in an existing feature group, or is it a new group? |
-| 6 | Are there any existing stories in stories.json that relate to this? |
+| 6 | Are there any existing stories in stories.yaml that relate to this? |
 
 ### For modifying an existing feature:
 
@@ -107,7 +107,7 @@ Cascade Summary: <Feature Name>
 Feature: <name> (new | modified)
 Group: <NN_group>/<feature>.md
 
-Journeys: <updated stories.json — N stories added> | no changes | not present
+Journeys: <updated stories.yaml — N stories added> | no changes | not present
 Tech stack: <added integration: X> | no changes | not present
 Architecture: <updated sections: X, Y> | no changes | not present
 Data model: <N new entities, M fields added> | no changes | not present

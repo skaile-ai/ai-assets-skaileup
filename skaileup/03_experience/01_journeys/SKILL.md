@@ -1,6 +1,6 @@
 ---
 name: experience-journeys
-description: 'Use after project brief is approved to map user journeys. Reads the approved brief, goals, and optional research to define personas and story maps organized by stage (hero, vital, hygiene, backlog). Writes stories.json with EARS acceptance criteria. Required before features skill.'
+description: 'Use after project brief is approved to map user journeys. Reads the approved brief, goals, and optional research to define personas and story maps organized by stage (hero, vital, hygiene, backlog). Writes stories.yaml with EARS acceptance criteria. Required before features skill.'
 metadata:
   version: '1.0.0'
   stage: alpha
@@ -42,7 +42,7 @@ metadata:
       - path: '_concept/_grounding/research/domain.md'
         description: 'Domain context for journey staging'
     produces:
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'Personas, story maps by stage, EARS acceptance criteria'
 ---
 
@@ -51,7 +51,7 @@ metadata:
 ## Overview
 
 The **journeys** skill is the Journey Mapping agent. It reads the approved project
-brief and goals, then produces `_concept/experience/journeys/stories.json` — a
+brief and goals, then produces `_concept/experience/journeys/stories.yaml` — a
 structured map of user personas, story maps organized by stage, and EARS acceptance
 criteria for each story.
 
@@ -66,7 +66,7 @@ are _derived_ from stories, not invented from scratch.
 
 ## When NOT to Use
 
-- `_concept/experience/journeys/stories.json` already exists and is approved
+- `_concept/experience/journeys/stories.yaml` already exists and is approved
 - No approved brief yet — run the **overview** skill first
 - You want to add a specific feature — use **features** or **add-feature** directly
 
@@ -99,7 +99,7 @@ before proceeding.
 ---
 
 ROLE Journey Mapping agent — reads the approved project brief and produces
-`_concept/experience/journeys/stories.json` only.
+`_concept/experience/journeys/stories.yaml` only.
 
 READS
 \_concept/discovery/brief.md — app name, audience, problem, hero_flow
@@ -109,20 +109,20 @@ READS
 ? \_concept/\_grounding/research/domain.md — domain terminology and workflows
 
 WRITES
-\_concept/experience/journeys/stories.json — personas, story maps, acceptance criteria
+\_concept/experience/journeys/stories.yaml — personas, story maps, acceptance criteria
 
 REFERENCES
 contracts/concept_structure.md — valid \_concept/ paths and naming rules
 contracts/frontmatter.md — required YAML fields
 contracts/acceptance_criteria.md — EARS patterns and AC rules
-contracts/stories_schema.json — JSON Schema for stories.json validation
+contracts/stories_schema.json — JSON Schema for stories.yaml validation
 references/ears_format.md — EARS syntax patterns and examples
 references/journey_stages.md — hero / vital / hygiene / backlog definitions
 
 MUST produce exactly one hero story map — the single most important user journey
 MUST write EARS acceptance criteria for every story (minimum 2 per hero story, 1 per other)
 MUST derive personas from brief audience and research (when available)
-MUST validate stories.json against contracts/stories_schema.json before writing
+MUST validate stories.yaml against contracts/stories_schema.json before writing
 MUST include downstream hints (candidate_features, candidate_entities, candidate_screens) for every story
 MUST set status: proposed on all new stories
 NEVER write feature files, screen specs, data models, or any artifact outside experience/journeys/
@@ -215,13 +215,13 @@ STEP 7: Write EARS acceptance criteria
 - Each criterion: kind: "ears", text: <EARS statement>
 - Optionally add gherkin_scenarios for complex stories that benefit from step-by-step spec
 
-STEP 8: Write stories.json
+STEP 8: Write stories.yaml
 
 - $ mkdir -p \_concept/experience/journeys
 - Populate concept section from brief.md (name, problem, success_metrics)
 - Set review.mode: human_review for hero and vital stories, auto_approve for hygiene and backlog
 
-OUTPUT \_concept/experience/journeys/stories.json
+OUTPUT \_concept/experience/journeys/stories.yaml
 {
 "version": "1.0",
 "concept": { "name": "<app>", "problem": "...", "success_metrics": [...] },
@@ -283,7 +283,7 @@ CHECKLIST
 - [ ] Hero journey approved by user before remaining journeys were mapped
 - [ ] Every story has at least one EARS acceptance criterion
 - [ ] Every story has downstream hints (candidate_features, candidate_entities, candidate_screens)
-- [ ] stories.json validates against contracts/stories_schema.json
+- [ ] stories.yaml validates against contracts/stories_schema.json
 - [ ] Priority distribution: hero stories are must, backlog stories are could or wont
 - [ ] Summary table shown and user has explicitly approved
 
@@ -306,12 +306,12 @@ CHECKLIST
 | Skipping EARS criteria                        | Agent writes vague "system should work" criteria  | Every story must have at least one properly-formed EARS criterion. See ears_format.md.         |
 | Hero journey not from brief.hero_flow         | Agent ignores the brief's hero_flow field         | Always start the hero journey from brief.md hero_flow. It is the approved core flow.           |
 | Inventing competitor flows                    | No research was run, agent fills gaps             | If no research exists, derive journeys from brief alone. Do not fabricate competitor patterns. |
-| Including downstream features in stories.json | Agent tries to be helpful and spec features early | Only include candidate hints (strings). Full feature specs are the features skill's job.       |
+| Including downstream features in stories.yaml | Agent tries to be helpful and spec features early | Only include candidate hints (strings). Full feature specs are the features skill's job.       |
 | Proceeding past hero CHECKPOINT               | Agent rushes to finish                            | Always wait for explicit user approval of the hero journey before mapping vital/hygiene.       |
 
 ## Integration
 
 - **Called by:** `concept-orchestrator` or standalone (step 2 in the concept pipeline)
 - **Requires:** `_concept/discovery/brief.md` to exist and be approved
-- **Feeds into:** `features` skill reads `stories.json` to derive feature specs
+- **Feeds into:** `features` skill reads `stories.yaml` to derive feature specs
 - **Feedback loops:** None inbound. Features skill uses `story_refs` to link back.

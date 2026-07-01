@@ -149,7 +149,7 @@ artifacts:
 
   # ── experience ──────────────────────────────────────────────────────────
   journeys:
-    path: _concept/experience/journeys/stories.json
+    path: _concept/experience/journeys/stories.yaml
     kind: durable
     side: concept
     produced_by: [experience-journeys, ops-add-feature]
@@ -231,6 +231,18 @@ artifacts:
     side: concept
     produced_by: [impl-architecture-datamodel, ops-reverse-engineer, ops-add-feature]
     description: Schema (stack-specific format) + seed.json + feature_map.json.
+  glossary:
+    path: _concept/blueprint/glossary.md
+    kind: durable
+    side: concept
+    produced_by: [skaileup-domain-model, concept-slice-align, impl-plan-align]
+    description: Ubiquitous-language glossary — canonical term → definition, read by ALL skills. Built lazily/inline; see contracts/domain_model.md.
+  concept-decisions:
+    path: _concept/decisions.md
+    kind: durable
+    side: concept
+    produced_by: [skaileup-domain-model, concept-slice-align]
+    description: Design-time decision records (ADRs) — append-only, 3-test gate; see contracts/domain_model.md.
 
   # ── implementation — durable ledgers (_implementation/) ─────────────────
   impl-plans:
@@ -238,9 +250,9 @@ artifacts:
     kind: durable
     side: impl
     produced_by: impl-build-scaffold
-    description: Implementation plan — scope, source artifacts, feature queue, phases.
+    description: Implementation plan — lean scope + ordered phases. Status lives in progress.yaml; decisions in decisions.md. See contracts/plans.md.
   impl-progress:
-    path: _implementation/progress.json
+    path: _implementation/progress.yaml
     kind: durable
     side: impl
     produced_by: [impl-build-scaffold, impl-build-foundation, impl-build-infrastructure, impl-plan-supervised]
@@ -249,16 +261,16 @@ artifacts:
     path: _implementation/decisions.md
     kind: durable
     side: impl
-    produced_by: [impl-build-scaffold, impl-plan-supervised]
-    description: Decision log — DONE_WITH_CONCERNS + BLOCKED entries.
+    produced_by: [impl-build-scaffold, impl-plan-supervised, impl-plan-align]
+    description: Build-time decision records (ADRs) — append-only, 3-test gate; also holds DONE_WITH_CONCERNS + BLOCKED entries. See contracts/domain_model.md.
   impl-git-state:
-    path: _implementation/git-state.json
+    path: _implementation/git-state.yaml
     kind: durable
     side: impl
     produced_by: impl-slice-git-prepare
     description: Branch name, git mode, working-tree snapshot.
   impl-readiness:
-    path: _implementation/readiness.json
+    path: _implementation/readiness.yaml
     kind: durable
     side: impl
     produced_by: impl-quality-ready
@@ -270,7 +282,7 @@ artifacts:
     produced_by: impl-quality-test-plan
     description: Test strategy — scenarios, test types, coverage goals.
   quality-report:
-    path: _concept/quality.json
+    path: _concept/quality.yaml
     kind: durable
     side: impl
     produced_by: ops-review
@@ -280,7 +292,7 @@ artifacts:
   # Carried between adjacent phases, then FROZEN (not deleted) by impl-slice-commit:
   # the folder is kept as permanent per-feature documentation alongside the shipped
   # code. impl-slice-commit writes slice-impl-index and removes only the transient
-  # progress.json. A slice with an index.md is frozen; one without is still in flight.
+  # progress.yaml. A slice with an index.md is frozen; one without is still in flight.
   slice-impl-brainstorm:
     path: _implementation/slices/{slice_id}/brainstorm.md
     kind: durable
@@ -356,13 +368,13 @@ artifacts:
 
   # ── implementation — per-slice progress + supervised ledger ─────────────
   slice-impl-progress:
-    path: _implementation/slices/{slice_id}/progress.json
+    path: _implementation/slices/{slice_id}/progress.yaml
     kind: scratch
     side: impl
     produced_by: [impl-slice-implement, impl-slice-implement-page]
     description: Per-slice resume state during implement; removed by impl-slice-commit on freeze.
-  superpowers-plan:
-    path: _implementation/superpowers-plan.md
+  supervised-plan:
+    path: _implementation/supervised-plan.md
     kind: durable
     side: impl
     produced_by: impl-plan-supervised
@@ -406,7 +418,7 @@ artifacts:
 
   # ── evaluation reports ──────────────────────────────────────────────────
   eval-code-report:
-    path: _implementation/eval-code.json
+    path: _implementation/eval-code.yaml
     kind: durable
     side: impl
     produced_by: impl-quality-eval-code
@@ -430,19 +442,19 @@ artifacts:
     produced_by: impl-quality-test-e2e
     description: E2E screenshot captures.
   eval-concept-result:
-    path: _concept/eval-concept.json
+    path: _concept/eval-concept.yaml
     kind: durable
     side: concept
     produced_by: ops-eval-concept
     description: Concept-level evaluation result.
   eval-feature-result:
-    path: _implementation/eval-feature/        # {group}.json
+    path: _implementation/eval-feature/        # {group}.yaml
     kind: durable
     side: impl
     produced_by: ops-eval-feature
     description: Per-feature-group evaluation result.
   eval-product-result:
-    path: _implementation/eval-product.json
+    path: _implementation/eval-product.yaml
     kind: durable
     side: impl
     produced_by: ops-eval-product
@@ -540,5 +552,5 @@ artifacts:
 
 # All backfill-era conflicts resolved: features path (design-feature →
 # experience/features), prototype split (storybook vs walkthrough), brand /
-# scope / testing / quality.json nodes added to concept_structure.md,
+# scope / testing / quality.yaml nodes added to concept_structure.md,
 # _standards path canonicalized, screens-technical folded into `screens`.

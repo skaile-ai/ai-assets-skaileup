@@ -26,6 +26,8 @@ metadata:
         gate: soft
     produces:
       - id: slice-concept-align
+      - id: glossary
+      - id: concept-decisions
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"
@@ -53,6 +55,10 @@ metadata:
     produces:
       - path: "_concept/slices/{slice_id}/align.md"
         description: "Per-feature align handoff for concept-slice-scope-feature."
+      - path: "_concept/blueprint/glossary.md"
+        description: "Ubiquitous-language glossary — terms pinned during the grill (inline capture; see contracts/domain_model.md)."
+      - path: "_concept/decisions.md"
+        description: "Design ADRs — appended when a grill decision passes the 3-test gate (see contracts/domain_model.md)."
 ---
 
 # Concept-Slice Align
@@ -90,11 +96,14 @@ READS
 
 WRITES
   _concept/slices/{slice_id}/align.md         — handoff for concept-slice-scope-feature
+  _concept/blueprint/glossary.md              — inline: terms pinned during the grill (per domain_model.md)
+  _concept/decisions.md                       — inline: ADRs when a grill decision passes the 3-test gate (per domain_model.md)
 
 REFERENCES
   SKILL_GRAPH.md                             — § 4 concept-slice loop diagram
   contracts/iron_laws.md                     — § 7, § 9
   contracts/skill_grammar.md                 — DSL keywords
+  contracts/domain_model.md                  — glossary format, ADR format, the 3-test gate
   concept-slice/align/references/align-prompt-style.md — interview tone reference
 
 REQUIRES
@@ -110,8 +119,11 @@ MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-standard, appbuilder-co
 MUST  copy slice_id and feature_title from brainstorm.md when present; never re-derive
 MUST  surface every P1 (blocking) open question to the user as a standalone message before writing align.md
 MUST  emit an EARS-formatted acceptance criterion for every IN-scope happy-path bullet in brainstorm.md
+MUST  capture domain vocabulary inline (STEP 10a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
+MUST  append an ADR to _concept/decisions.md when a grill decision passes the 3-test gate (hard-to-reverse AND surprising AND a real trade-off); skip otherwise
 
 NEVER  invent acceptance criteria the user did not confirm
+NEVER  add implementation detail or general programming concepts to glossary.md (domain_model.md § Glossary format)
 NEVER  proceed past question N until the user has answered question N
 NEVER  silently overwrite an existing align.md (re-entry mode requires explicit user confirmation)
 
@@ -180,6 +192,20 @@ STEP 10: Surface P1 open questions
     persistence rule"), send STANDALONE before drafting align.md:
     > "Blocker: <question>. I need an answer before I can write align.md."
   - Wait for answer. Repeat until no P1 questions remain.
+
+STEP 10a: Capture the domain model (inline, per contracts/domain_model.md)
+  As the grill resolves vocabulary and decisions — do this the moment they
+  crystallise, not batched at the end:
+  - TERM pinned or sharpened (e.g. the grill exposed that "account" meant the
+    Customer, not the login User): write/update it in _concept/blueprint/glossary.md
+    — name, 1-2 sentence definition, `_Avoid_:` list of rejected synonyms. Create the
+    file lazily on the first term. Zero implementation detail.
+  - DECISION made that passes the 3-test gate (hard-to-reverse AND surprising AND a
+    real trade-off): append an ADR to _concept/decisions.md — date + title +
+    1-3 sentences. If any test fails, do NOT record it (it lives in align.md's
+    "## Resolved questions" instead).
+  - Confirm each glossary/ADR write briefly; never invent a definition or decision
+    the user did not confirm.
 
 STEP 11: Draft align.md in memory
   Frontmatter (copy slice_id and feature_title from brainstorm.md, or fresh

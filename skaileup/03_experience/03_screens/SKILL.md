@@ -46,7 +46,7 @@ metadata:
     reads:
       - path: '_concept/discovery/brief.md'
         description: 'App name, purpose, hero flow for navigation design'
-      - path: '_concept/experience/journeys/stories.json'
+      - path: '_concept/experience/journeys/stories.yaml'
         description: 'User journeys to ensure screens cover all story flows'
       - path: '_concept/discovery/brand/tokens.json'
         description: 'Design tokens for brand-aware component suggestions'
@@ -104,7 +104,7 @@ before proceeding.
 | ---------------- | --------------------------------------------------- | -------- |
 | Must read        | `_concept/discovery/brief.md`                       | Yes      |
 | Must read        | `_concept/experience/features/**/*.md`              | Yes      |
-| Check if present | `_concept/experience/journeys/stories.json`         | No       |
+| Check if present | `_concept/experience/journeys/stories.yaml`         | No       |
 | Check if present | `_concept/discovery/brand/tokens.json`              | No       |
 | Check if present | `_concept/blueprint/techstack.md`                   | No       |
 | Check if present | `_concept/blueprint/datamodel/model.json`           | No       |
@@ -126,7 +126,7 @@ all upstream artifacts; updates feature frontmatter screens[] via feedback loop.
 READS
 \_concept/discovery/brief.md — app name, audience, hero flow
 \_concept/experience/features/\*_/_.md — requirements per feature
-? \_concept/experience/journeys/stories.json — journey context for screen flow design
+? \_concept/experience/journeys/stories.yaml — journey context for screen flow design
 ? \_concept/discovery/brand/tokens.json — brand color/typography references
 ? \_concept/blueprint/techstack.md — framework and component library
 ? \_concept/blueprint/datamodel/model.json — entities and fields
@@ -165,8 +165,8 @@ STEP 1: Read prerequisites
 - Read all \_concept/experience/features/\*_/_.md
 - Stop if features directory is empty or missing:
   > "No feature specs found. Run `features` first."
-  > IF \_concept/experience/journeys/stories.json exists
-  - Read stories.json for journey context (screen flow design, navigation order)
+  > IF \_concept/experience/journeys/stories.yaml exists
+  - Read stories.yaml for journey context (screen flow design, navigation order)
     IF \_concept/blueprint/datamodel/model.json exists
   - Read model.json for entity names and fields (enriches data requirements)
     ELSE
@@ -184,10 +184,10 @@ STEP 2: Derive screen list from features
 - For each feature, identify required screens
 - For each screen: name, route/URL, purpose in one sentence, data entities involved
 - Group screens by feature group (matching NN_group numbering from features/)
-  IF \_concept/experience/journeys/stories.json exists
+  IF \_concept/experience/journeys/stories.yaml exists
   - Use journey flows to inform screen navigation and sequence
   - Map story stages to screen priority: hero stories → primary nav, vital → secondary nav
-  - Validate derived screens against downstream.candidate_screens hints in stories.json
+  - Validate derived screens against downstream.candidate_screens hints in stories.yaml
 
 CHECKPOINT screen_list
 Present the screen list to the user: > "I've identified these screens: [list with one-line purpose each]. Add, remove, or rename?"

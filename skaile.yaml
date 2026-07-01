@@ -10,7 +10,7 @@ agent-config:
     driver: claude-sdk
     max_turns: 200
 assets:
-  # ── skills (84) ──
+  # ── skills (85) ──
   - kind: skill
     name: concept-brief
     root: skaileup/01_concept/01_brief
@@ -260,6 +260,9 @@ assets:
   - kind: skill
     name: skaileup-build
     root: skaileup/00_skaileup-orchestrator/skills/skaileup-build
+  - kind: skill
+    name: skaileup-domain-model
+    root: skaileup/00_skaileup-orchestrator/skills/skaileup-domain-model
   - kind: skill
     name: skaileup-scope-scope-project
     root: skaileup/00_skaileup-orchestrator/scope/scope-project

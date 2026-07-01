@@ -54,7 +54,7 @@ metadata:
       - path: '_concept/blueprint/datamodel/seed.json'
         description: 'Seed data for initial database population'
     produces:
-      - path: '_implementation/progress.json'
+      - path: '_implementation/progress.yaml'
         description: 'Foundation layer completion status'
 ---
 
@@ -130,7 +130,7 @@ WRITES
 <stack-specific layout file> — app shell component
 <stack-specific nav component> — navigation component
 <stack-specific seed file> — seed data configured from seed.json
-\_implementation/progress.json — foundation phase status
+\_implementation/progress.yaml — foundation phase status
 
 REFERENCES
 contracts/concept_structure.md — canonical \_concept/ paths
@@ -225,8 +225,7 @@ STEP 6: Verify and checkpoint
   - Navigate to app
   - Verify: login page loads, app shell renders, nav links work, theme applied
   - Take screenshots → \_implementation/verification/screenshots/foundation/
-- Update \_implementation/progress.json: foundation phase → approved
-- Update \_implementation/PLANS.md: check off foundation tasks
+- Update \_implementation/progress.yaml: foundation phase → approved (progress.yaml is the completion source of truth; PLANS.md carries no checkboxes)
   EMIT [foundation] completed run_id=<uuid> phases=[brand,auth,shell,seed,storybook]
 
 CHECKPOINT foundation_approval

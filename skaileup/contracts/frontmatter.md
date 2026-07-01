@@ -82,7 +82,7 @@ last_updated: YYYY-MM-DD
 
 ---
 
-## experience/journeys/stories.json
+## experience/journeys/stories.yaml
 
 JSON file — no frontmatter. Structure:
 
@@ -129,7 +129,7 @@ permissions:                    # role → allowed actions
   admin: [view, create, edit, delete]
   member: [view, create]
   guest: [view]
-story_refs: []                  # journey IDs from stories.json that motivated this feature
+story_refs: []                  # journey IDs from stories.yaml that motivated this feature
 agent_notes: |
   Free-form notes from the agent about this feature.
   Used for context across sessions.

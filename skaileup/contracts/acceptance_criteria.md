@@ -11,7 +11,7 @@ Each feature's ACs are derived from multiple concept sources:
 |---|---|
 | `experience/features/<group>/<feature>.md` | Requirements checklist, success criteria, error states |
 | `experience/screens/<group>/<screen>.md` | Component inventory, states (default/loading/error/empty/success), user actions |
-| `experience/journeys/stories.json` | EARS acceptance criteria, state transitions, guard conditions |
+| `experience/journeys/stories.yaml` | EARS acceptance criteria, state transitions, guard conditions |
 | `blueprint/datamodel/seed.json` | Test data for realistic assertions |
 | `discovery/brand/tokens.json` | Visual expectations (colors, spacing — for visual checks only) |
 
@@ -140,7 +140,7 @@ Backend ACs are required when the feature has:
 | Source | What to extract for backend ACs |
 |---|---|
 | `experience/features/<group>/<feature>.md` | Business rules, validation requirements, integration requirements |
-| `experience/journeys/stories.json` | EARS acceptance criteria, state transitions, guard conditions |
+| `experience/journeys/stories.yaml` | EARS acceptance criteria, state transitions, guard conditions |
 | `blueprint/datamodel/model.json` | Model relationships, enum constraints, auth rules |
 
 ### Backend AC Format

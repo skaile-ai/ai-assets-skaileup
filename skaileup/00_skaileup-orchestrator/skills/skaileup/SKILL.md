@@ -35,7 +35,7 @@ metadata:
         description: 'Structured concept plan tracking pipeline phases and checkpoints'
       - path: '_concept/decisions.md'
         description: 'Key decisions made during the pipeline session'
-      - path: '_concept/eval-concept.json'
+      - path: '_concept/eval-concept.yaml'
         description: 'Written by eval-concept sub-agent after Blueprint phase — verdict must be pass before implementation'
 ---
 
@@ -99,7 +99,7 @@ contracts/iron_laws.md — non-negotiable constraints
 WRITES
 \_concept/PLANS.md — durable concept plan (phases + skill checkboxes)
 \_concept/decisions.md — dated concept decisions
-\_concept/eval-concept.json — verdict written by eval-concept sub-agent
+\_concept/eval-concept.yaml — verdict written by eval-concept sub-agent
 LEARNINGS.md — learnings journal (append)
 
 REFERENCES
@@ -188,7 +188,7 @@ EMIT [orchestrator] phase_complete phase=discovery
 # -- Phase 2: Experience ----------------------------------------------------
 
 STEP 6: User Journeys (optional)
-IF stories/journeys are part of the flow - RUN journeys sub-skill → \_concept/experience/journeys/ - Produces: stories.json, journey maps - DO update_progress
+IF stories/journeys are part of the flow - RUN journeys sub-skill → \_concept/experience/journeys/ - Produces: stories.yaml, journey maps - DO update_progress
 
 STEP 7: Features
 
@@ -215,7 +215,7 @@ STEP 7b: Decide linear vs. per-feature slice loop
 STEP 7c: Run the concept-slice loop per feature (appbuilder-standard / appbuilder-complex only)
 
 For each high-level feature in `_concept/experience/features/` (drive in journey order
-hero → vital → hygiene when `stories.json` exists):
+hero → vital → hygiene when `stories.yaml` exists):
 
   - Announce the feature in plain language and tell the user this is one *slice*.
   - Guide the four phases, with `/clear` between each — each writes its handoff into the
@@ -291,10 +291,10 @@ STEP 12: Data Model
 STEP: Dispatch eval-concept as a fresh sub-agent (separate context — not this agent)
 
 - Sub-agent reads: \_concept/ artifacts
-- Sub-agent writes: \_concept/eval-concept.json
+- Sub-agent writes: \_concept/eval-concept.yaml
 - WAIT for eval-concept to complete
 
-READ \_concept/eval-concept.json after sub-agent finishes
+READ \_concept/eval-concept.yaml after sub-agent finishes
 
 IF verdict = "pass" - Update PLANS.md: mark eval-concept DONE - Report to user:
 ✓ Concept evaluation passed (overall: <score>/100)
@@ -341,7 +341,7 @@ PROCEDURE auto_review
 - Activated when user says "auto-review", "autonomous", or "run without stopping"
 - Run lint_concept.py on \_concept/
 - Run review skill in gardening mode
-- Read quality score from \_concept/quality.json
+- Read quality score from \_concept/quality.yaml
 - Score >= 70 and 0 blocking issues → auto-approve and continue
 - Else → pause and escalate to user
 

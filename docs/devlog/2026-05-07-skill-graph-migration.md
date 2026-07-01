@@ -379,7 +379,7 @@ metadata:
 
 # skaileup/scope
 
-Phase 2 will author `scope-project` here. See `docs/superpowers/plans/2026-05-07-skill-graph-migration.md` Task 2A.
+Phase 2 will author `scope-project` here. See `docs/devlog/2026-05-07-skill-graph-migration.md` Task 2A.
 EOF
 touch skaileup/scope/scope-project/.placeholder
 ```
@@ -1488,7 +1488,7 @@ Phase 1 of the SKILL_GRAPH refactor. Mechanical only — no new behavior.
 - forge-concept investigation
 
 These are Phase 2 and Phase 3 of the migration plan
-(see `docs/superpowers/plans/2026-05-07-skill-graph-migration.md`).
+(see `docs/devlog/2026-05-07-skill-graph-migration.md`).
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 EOF
@@ -1505,7 +1505,7 @@ Expected: PR URL printed.
 
 **Scope:** ~30 new skills, 6 flows, 6 bundles. Multi-week, multi-session.
 
-**Critical:** **each task below is a STUB.** Before executing a Phase 2 task, write a dedicated mini-plan in `docs/superpowers/plans/<task-id>-<skill-name>.md` using the writing-plans skill. The mini-plan will:
+**Critical:** **each task below is a STUB.** Before executing a Phase 2 task, write a dedicated mini-plan in `docs/devlog/<task-id>-<skill-name>.md` using the writing-plans skill. The mini-plan will:
 1. Read the relevant section of `SKILL_GRAPH.md` and `REFACTOR_MOCKUP.md`.
 2. Define the skill's I/O contract (READS, WRITES, REFERENCES).
 3. Draft acceptance criteria — what does "this skill works" look like?
@@ -1758,7 +1758,7 @@ cd /mnt/localvault/workBench/SKAILE/skaile-dev-matthias/forge/forge-concept 2>/d
 grep -rli "annotation\|walkthrough\|data-spec-\|overlay" --include="*.ts" --include="*.vue" --include="*.md" . 2>/dev/null | head -30
 ```
 
-- [ ] **Step 3.0.3: Read top hits and document findings in `docs/superpowers/notes/forge-concept-walkthrough.md`**
+- [ ] **Step 3.0.3: Read top hits and document findings in `docs/devlog/forge-concept-walkthrough.md`**
 
 What to capture:
 - Existing data attribute conventions (`data-spec-*`? Different?)
@@ -1775,7 +1775,7 @@ If forge-concept has no related code: document that and treat as greenfield.
 - [ ] **Step 3.0.5: Commit findings**
 
 ```bash
-git add docs/superpowers/notes/forge-concept-walkthrough.md REFACTOR_MOCKUP.md
+git add docs/devlog/forge-concept-walkthrough.md REFACTOR_MOCKUP.md
 git commit -m "research: forge-concept walkthrough investigation
 
 Documents existing annotation/overlay code in forge-concept (if any) and
@@ -1933,7 +1933,7 @@ git log --oneline | head -10
 1. `git log --oneline | head -20` shows committed task progress. The commit message header (`refactor: split skaileup-discovery → ...`) maps to a task ID by inspection.
 2. The plan's checkboxes (`- [ ]` → `- [x]`) are NOT updated by Phase 1 execution — too brittle. Trust git log.
 
-For Phase 2 and Phase 3, each task is its own mini-plan. Track sub-plan completion in `docs/superpowers/plans/<task-id>-<skill-name>.md`'s checkboxes per the writing-plans skill's checkbox convention.
+For Phase 2 and Phase 3, each task is its own mini-plan. Track sub-plan completion in `docs/devlog/<task-id>-<skill-name>.md`'s checkboxes per the writing-plans skill's checkbox convention.
 
 ---
 

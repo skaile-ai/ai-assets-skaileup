@@ -1,7 +1,7 @@
 # EARS — Easy Approach to Requirements Syntax
 
 EARS provides five sentence patterns for writing unambiguous, testable requirements.
-Every acceptance criterion in stories.json uses one of these patterns.
+Every acceptance criterion in stories.yaml uses one of these patterns.
 
 ## Why EARS
 

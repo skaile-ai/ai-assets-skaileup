@@ -31,7 +31,7 @@ READS
   _concept/discovery/brief.md          — app name, audience
   _concept/experience/features/**/*.md          — requirements per feature
   _concept/blueprint/techstack.md         — chosen stack (drives output format)
-  ? _concept/experience/journeys/stories.json   — user journeys and acceptance criteria
+  ? _concept/experience/journeys/stories.yaml   — user journeys and acceptance criteria
 ```
 
 ---
@@ -71,7 +71,7 @@ Path lines accept `_concept/` paths (files or directories) or tool names.
 ```
 REQUIRES
   hard: _concept/discovery/brief.md  — Project brief must exist
-  soft: _concept/experience/journeys/stories.json  — Enriches output but not required
+  soft: _concept/experience/journeys/stories.yaml  — Enriches output but not required
   hard: git
   soft: docker (database setup deferred without it)
   state: _concept/experience/features/ contains at least one .md file
@@ -182,7 +182,7 @@ CHECKPOINT data_model
 Conditional branch. Condition is a plain-language predicate.
 
 ```
-IF _concept/experience/journeys/stories.json exists
+IF _concept/experience/journeys/stories.yaml exists
   - Read journey acceptance criteria for state transitions
   - Use EARS criteria to derive enum values
 ELSE

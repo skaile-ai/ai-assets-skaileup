@@ -228,7 +228,7 @@ but the meta-concept never reads INTO a subsystem's `_concept/` for its own cont
 When a user journey spans multiple subsystems (e.g., "developer creates a skill in ai-assets,
 tests it in forge/L5-concept, deploys it to the platform"), document it in `PLANS.md` under a
 `### Cross-Product Journeys` section — not in a separate journeys folder. These are lightweight
-narrative descriptions, not the full stories.json format.
+narrative descriptions, not the full stories.yaml format.
 
 ---
 
@@ -294,7 +294,7 @@ narrative descriptions, not the full stories.json format.
 | Tech stack | `blueprint/techstack.md` | Per-subsystem in `2_subsystems/*.md` |
 | Architecture | Intra-app modules and services | Inter-repo connections and protocols |
 | Brand | `discovery/brand/` | Shared or referenced from a subsystem |
-| Journeys | `experience/journeys/stories.json` | Lightweight cross-product narratives in PLANS.md |
+| Journeys | `experience/journeys/stories.yaml` | Lightweight cross-product narratives in PLANS.md |
 | Permissions | Per-feature role matrix | Per-subsystem audience in subsystem files |
 | Progress | Pipeline step checkboxes in PLANS.md | Subsystem maturity + roadmap milestones |
 

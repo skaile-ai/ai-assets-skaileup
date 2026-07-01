@@ -52,7 +52,7 @@ files at startup and building a name→path registry.
 | `concept-grounding-research`             | concept-grounding-research     | Parallel research mode — domain, competitors, audiences |
 | `design-brand-visual`         | design    | Visual identity — colors, fonts, tokens                 |
 | `design-brand-voice`     | design    | Communication tone, micro-copy guidelines               |
-| `experience-journeys`             | experience   | User journey maps, stories.json, EARS criteria          |
+| `experience-journeys`             | experience   | User journey maps, stories.yaml, EARS criteria          |
 | `product-spec-features`             | experience   | Feature specs in numbered groups                        |
 | `experience-behaviors`            | experience   | Behavioral specs (.allium format)                       |
 | `experience-screens`              | experience   | Screen specs with component inventories                 |
