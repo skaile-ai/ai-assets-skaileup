@@ -7,7 +7,7 @@ description: >-
   implement-page -> test -> recap -> refactor -> commit -> git-finish. Supervised
   dispatch (two-stage review) runs inside every slice. The impl half of the
   unified skaileup-slice block; consumed by the skaileup-slice parent and by the
-  impl-only/linear tier flows (appbuilder-simple, appbuilder-cli, skaileup-impl)
+  impl-only/linear tier flows (appbuilder-simple, appbuilder-cli, skaileup-implementation)
   via a sub-flow node, and standalone-runnable for testability. Iteration
   semantics: run once per feature in the plan-vertical backlog.
 meta:

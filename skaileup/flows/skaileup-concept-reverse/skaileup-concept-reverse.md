@@ -8,7 +8,7 @@ The **skaileup-concept-reverse** flow starts from an existing repository instead
 of an idea. It reverses a concept out of the code (the `ops-reverse-engineer`
 skill), with optional project orientation and convention discovery, then lets you
 enrich the extracted concept with the standard concept steps. No build pass —
-hand off to `skaileup-impl` or a tier flow to build.
+hand off to `skaileup-implementation` or a tier flow to build.
 
 ## When to use
 
@@ -52,4 +52,4 @@ skaile run flow:skaileup-concept-reverse       # execute the extraction pipeline
 ## See also
 
 - [`skaileup-concept-only`](../skaileup-concept-only/) — the inverse: concept *from* an idea
-- [`skaileup-impl`](../skaileup-impl/) · [`appbuilder-standard`](../appbuilder-standard/) — hand off to build the reversed concept
+- [`skaileup-implementation`](../skaileup-implementation/) · [`appbuilder-standard`](../appbuilder-standard/) — hand off to build the reversed concept

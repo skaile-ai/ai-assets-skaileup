@@ -1,62 +1,56 @@
 ---
 title: "skaileup-implementation"
-description: "Start-in-the-middle flow — build features now while the concept is grown gradually, feature by feature, with the slice asking the user open questions just-in-time."
-order: 12
+description: "The code-build flow — no concept-design pass. Architecture is read-or-generate: reads an existing concept package if present, else generates the subset; then build + slice-impl loop + quality."
+order: 11
 ---
 
-The **skaileup-implementation** flow is the "start-in-the-middle" shape: you don't write
-the whole concept up front, you **start in the middle and grow the concept as you
-build**. A thin foundation is laid once, then a single per-feature loop runs the
-unified [`skaileup-slice`](../skaileup-slice/) block at
-`concept_depth: just-in-time`. The slice's concept half runs the **concept-needs
-check** — it detects what *this* feature is missing, asks the user the open
-questions, and seeds only the minimum into `_concept/` — then its impl half
-builds the feature, and the loop repeats.
+The **skaileup-implementation** flow builds code with **no concept-design pass**. Its
+architecture step is **read-or-generate**: if a concept package already exists —
+handed off, or produced by [`skaileup-concept-only`](../skaileup-concept-only/)
+or [`skaileup-concept-reverse`](../skaileup-concept-reverse/) — it reads
+`_concept/blueprint/` (techstack → system → datamodel); otherwise it generates
+that architecture subset from a one-line product description. Then it runs build
+setup, the per-feature `skaileup-slice-impl` loop, and quality. No
+UX/brand/journeys/screens/mockups — only the architecture required to write and
+run code.
 
-Concept is **never front-loaded**: it accretes as a by-product of building, only
-what each feature needs. Nothing is produced beyond the minimum required to run
-the feature's code.
+Each feature's spec is built **just-in-time** inside the slice loop: the
+impl-plan brainstorm/align phase elicits the feature before implementing it, so
+the concept accretes feature-by-feature instead of being front-loaded.
 
-## How it differs from the other impl flows
-
-| Flow | Concept it builds | Concept timing |
-|---|---|---|
-| [`skaileup-impl`](../skaileup-impl/) | none (read-or-generate architecture only) | pre-existing, or generated once |
-| [`appbuilder-standard`](../appbuilder-standard/) | full per-feature design (`skaileup-slice` at `concept_depth: full`) | per feature, designed before building |
-| **`skaileup-implementation`** | **only what each feature needs** (`skaileup-slice` at `concept_depth: just-in-time`) | **per feature, discovered + asked while building** |
+> Collapses the two former impl-only flows — a handoff gate and a standalone
+> variant — which differed only by whether the concept pre-existed.
+> Read-or-generate unifies them into one.
 
 ## When to use
 
-When you want to begin building immediately, don't have (and don't want to
-write) a full concept up front, but still want a real concept to accumulate as
-you go — with the slice asking you the open questions feature by feature.
+When you want to go straight to code: building from an existing concept package,
+or starting with none and not needing the UX-oriented concept pass.
+
+| Signal | skaileup-implementation |
+|---|---|
+| Concept pass | none (architecture is read-or-generate) |
+| Reads | `_concept/blueprint/` if present, else nothing |
+| Build | scaffold → foundation → infrastructure? → migrate → seed → docs |
+| Slice loop | `skaileup-slice-impl`, once per feature (spec elicited per slice) |
+| Tests | unit + integration + e2e? + ready |
 
 ## Pipeline
 
 ```
-scope-project            (asks shape/size open questions → scope.yaml)
-  → brief?               (one-paragraph seed, optional)
-  → techstack → datamodel-skeleton → scaffold → foundation → migrate?
-  → ┌─ per feature, repeat ───────────────────────────────────────────────┐
-    │  skaileup-slice  (concept_depth: just-in-time)                       │
-    │    concept half: concept-needs check → ask the user → seed minimum   │
-    │    impl half:    plan → implement → test → commit                    │
-    └──────────────────── loop back for the next feature ─────────────────┘
-  → impl-quality-ready   (when the backlog is exhausted)
+techstack → system → datamodel        (read _concept/blueprint/ if present, else generate)
+  → scaffold → foundation → infrastructure? → migrate → seed → docs
+  → [per feature]  skaileup-slice-impl loop  (brainstorm elicits the feature spec →
+       align → plan-vertical → implement → test → recap → refactor → commit)
+  → impl-quality-test-unit → -test-integration → -test-e2e? → -ready
 ```
-
-The loop is a `review-loop` self-edge on the slice node; it exits to `ready` when
-no unbuilt features remain.
 
 ## Install manifest
 
-Self-contained: `skaileup-implementation.flow.yaml` carries a top-level
-`requires:` block — `shared-contracts` + `conceptualization-contract` +
-`implementation-contract`, the thin-foundation skills (scope, brief, techstack,
-datamodel, scaffold, foundation, migrate), `impl-quality-ready`, and the unified
-sub-flow `flow:skaileup-slice`. **No new skills** — the per-feature work is
-delegated to `skaileup-slice`, whose manifest (and its two sub-flows') provides
-the skills.
+Self-contained: `skaileup-implementation.flow.yaml` carries a top-level `requires:` block —
+`shared-contracts` + `implementation-contract`, the 3 architecture skills, the 6
+build skills, the 4 quality skills, and `flow:skaileup-slice-impl`. No
+UX/experience concept skills, no inheritance, no extras.
 
 ## Run it
 
@@ -67,6 +61,7 @@ skaile run flow:skaileup-implementation
 
 ## See also
 
-- [`skaileup-slice`](../skaileup-slice/) — the unified per-feature block this flow delegates to
-- [`skaileup-impl`](../skaileup-impl/) — code-build with no concept-design pass
+- [`skaileup-concept-only`](../skaileup-concept-only/) · [`skaileup-concept-reverse`](../skaileup-concept-reverse/) — produce a concept package to build from
+- [`skaileup-slice-impl`](../skaileup-slice-impl/) — the per-feature loop this flow delegates to
+- [`skaileup-stepwise`](../skaileup-stepwise/) — start-in-the-middle: grows a real concept as it builds
 - [Slice loops](../../../intro/slice-loops/) — the shared five-phase shape

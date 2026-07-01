@@ -57,8 +57,8 @@ is self-contained with its own `requires:`.
 
 | Flow | Shape |
 |---|---|
-| [`skaileup-impl`](./skaileup-impl/) | Code-build, no concept-design pass. Architecture is read-or-generate (reads an existing concept package if present, else generates the subset) → build + `skaileup-slice-impl` loop + quality. |
-| [`skaileup-implementation`](./skaileup-implementation/) | Start-in-the-middle: thin foundation → per-feature loop of `skaileup-slice` at `concept_depth: just-in-time`. The slice's concept half builds only the concept each feature needs, on demand, as a by-product of building. |
+| [`skaileup-implementation`](./skaileup-implementation/) | Code-build, no concept-design pass. Architecture is read-or-generate (reads an existing concept package if present, else generates the subset) → build + `skaileup-slice-impl` loop + quality. |
+| [`skaileup-stepwise`](./skaileup-stepwise/) | Start-in-the-middle: thin foundation → per-feature loop of `skaileup-slice` at `concept_depth: just-in-time`. The slice's concept half builds only the concept each feature needs, on demand, as a by-product of building. |
 
 ## See also
 

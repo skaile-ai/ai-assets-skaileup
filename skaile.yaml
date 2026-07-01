@@ -319,13 +319,13 @@ assets:
     files:
       - skaileup/flows/appbuilder-standard/appbuilder-standard.flow.yaml
   - kind: flow
-    name: skaileup-impl
-    files:
-      - skaileup/flows/skaileup-impl/skaileup-impl.flow.yaml
-  - kind: flow
     name: skaileup-implementation
     files:
       - skaileup/flows/skaileup-implementation/skaileup-implementation.flow.yaml
+  - kind: flow
+    name: skaileup-stepwise
+    files:
+      - skaileup/flows/skaileup-stepwise/skaileup-stepwise.flow.yaml
   - kind: flow
     name: skaileup-concept-only
     files:

@@ -8,7 +8,7 @@ The **skaileup-slice-impl** flow is the **implementation half** of the unified
 [`skaileup-slice`](../skaileup-slice/) block: the per-feature implementation
 loop. The `skaileup-slice` parent runs it after `skaileup-slice-concept`; the
 linear/impl-only tier flows (`appbuilder-simple`, `appbuilder-cli`,
-`skaileup-impl`) delegate to it directly via a **sub-flow node**, once per
+`skaileup-implementation`) delegate to it directly via a **sub-flow node**, once per
 feature. It cuts a vertical slice (UI + logic + data) for one feature and is
 standalone-runnable.
 
@@ -42,9 +42,9 @@ The full loop runs the same way standalone and when delegated to from a tier:
 | `git-finish` | Close out the slice / branch, persist git preferences, and gate the loop's completion |
 
 Consumers delegate to this full loop via a sub-flow node — directly
-(`appbuilder-simple`, `appbuilder-cli`, `skaileup-impl`) or through the
+(`appbuilder-simple`, `appbuilder-cli`, `skaileup-implementation`) or through the
 `skaileup-slice` parent (`appbuilder-standard`, `appbuilder-complex`,
-`skaileup-implementation`) — so every phase runs the same way.
+`skaileup-stepwise`) — so every phase runs the same way.
 Only `appbuilder-mvp` keeps a trimmed inline pass (`plan-vertical → implement → commit`),
 since its defining trait is a single linear build with no loop.
 

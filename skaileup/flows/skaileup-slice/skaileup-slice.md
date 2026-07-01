@@ -19,7 +19,7 @@ concept half.
 | `concept_depth` | Concept half | Used by |
 |---|---|---|
 | `full` | Complete per-feature concept design (all four phases) | `appbuilder-standard`, `appbuilder-complex` |
-| `just-in-time` | Concept-needs check — detect what the feature is missing, ask the user, seed only the minimum | `skaileup-implementation` (start-in-the-middle) |
+| `just-in-time` | Concept-needs check — detect what the feature is missing, ask the user, seed only the minimum | `skaileup-stepwise` (start-in-the-middle) |
 | `skip` | No-op — concept already exists; run impl only | linear tiers (which usually delegate to `skaileup-slice-impl` directly instead) |
 
 ## When to use
@@ -52,5 +52,5 @@ skaile run flow:skaileup-slice
 ## See also
 
 - [`skaileup-slice-concept`](../skaileup-slice-concept/) · [`skaileup-slice-impl`](../skaileup-slice-impl/) — the two halves
-- [`appbuilder-standard`](../appbuilder-standard/) · [`skaileup-implementation`](../skaileup-implementation/) — the consumers that set `concept_depth`
+- [`appbuilder-standard`](../appbuilder-standard/) · [`skaileup-stepwise`](../skaileup-stepwise/) — the consumers that set `concept_depth`
 - [Slice loops](../../../intro/slice-loops/) — the shared five-phase shape

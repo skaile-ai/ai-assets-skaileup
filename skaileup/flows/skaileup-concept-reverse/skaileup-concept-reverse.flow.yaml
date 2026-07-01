@@ -7,7 +7,7 @@ description: >-
   project orientation (overview, subsystem-map) and convention discovery
   (standards-discover -> standards-inject). The extracted concept can then be
   enriched with journeys, architecture, datamodel, and screens. No build pass —
-  hand off to skaileup-impl or a tier flow (e.g. appbuilder-standard) to build.
+  hand off to skaileup-implementation or a tier flow (e.g. appbuilder-standard) to build.
 meta:
   category: maintenance
   tags:

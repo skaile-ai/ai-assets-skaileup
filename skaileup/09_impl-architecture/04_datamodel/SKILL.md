@@ -89,7 +89,7 @@ produces a stack-independent data model using semantic types. It outputs:
 The model uses **semantic types** (from `contracts/semantic_types.md`), not
 SQL types. Stack translation (Prisma, Directus schema, SQL DDL) is a separate on-request step.
 
-**Read-or-generate.** When run inside `skaileup-impl` (the code-build flow), this
+**Read-or-generate.** When run inside `skaileup-implementation` (the code-build flow), this
 skill is idempotent: if `_concept/blueprint/datamodel/` already exists (a
 handed-off or reverse-engineered concept package), READ and confirm it instead of
 regenerating; only produce the model from scratch when the folder is empty.

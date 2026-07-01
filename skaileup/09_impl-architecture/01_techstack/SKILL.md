@@ -86,7 +86,7 @@ the best match based on the user's answers.
 The `tech_stack_skill` field written to `stack.md` is the single reference all
 downstream skills use to find implementation recipes.
 
-**Read-or-generate.** When run inside `skaileup-impl` (the code-build flow), this
+**Read-or-generate.** When run inside `skaileup-implementation` (the code-build flow), this
 skill is idempotent on its artifact: if `_concept/blueprint/techstack.md` already
 exists (a handed-off or reverse-engineered concept package), READ and confirm it
 with the user instead of regenerating; only run the full selection when it is

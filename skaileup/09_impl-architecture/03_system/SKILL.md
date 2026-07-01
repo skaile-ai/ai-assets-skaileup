@@ -77,7 +77,7 @@ implementation) can rely on.
 The document starts from what the chosen stack provides by default, then extends
 only where features demand it.
 
-**Read-or-generate.** When run inside `skaileup-impl` (the code-build flow), this
+**Read-or-generate.** When run inside `skaileup-implementation` (the code-build flow), this
 skill is idempotent: if `_concept/blueprint/architecture.md` already exists (a
 handed-off or reverse-engineered concept package), READ and confirm it instead of
 regenerating; only produce it from scratch when it is absent.

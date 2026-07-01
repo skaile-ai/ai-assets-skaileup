@@ -53,14 +53,14 @@ TIER_FLOWS = ["appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "app
 # Slice building blocks: the unified skaileup-slice parent plus its two halves.
 SLICE_FLOWS = ["skaileup-slice", "skaileup-slice-concept", "skaileup-slice-impl"]
 # Variant flows: not tiers — alternate shapes the scope step routes to.
-# skaileup-impl is the code-build flow (read existing concept if present, else
+# skaileup-implementation is the code-build flow (read existing concept if present, else
 # generate the architecture subset — no concept-design pass).
 VARIANT_FLOWS = [
     "appbuilder-cli",
     "skaileup-concept-only",
     "skaileup-concept-reverse",
-    "skaileup-impl",
     "skaileup-implementation",
+    "skaileup-stepwise",
 ]
 ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS
 

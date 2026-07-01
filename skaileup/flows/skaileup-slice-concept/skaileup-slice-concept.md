@@ -17,7 +17,7 @@ forwards it via the sub-flow node's `parameters.concept_depth`):
 | `concept_depth` | Behaviour | Used by |
 |---|---|---|
 | `full` | Run all four phases — complete per-feature concept design | `appbuilder-standard` / `appbuilder-complex` |
-| `just-in-time` | Run the **concept-needs check**: detect which concept artifacts this feature is missing or under-specifies, ask the user the open questions, and write only the minimal versions needed to build it | `skaileup-implementation` (start-in-the-middle) |
+| `just-in-time` | Run the **concept-needs check**: detect which concept artifacts this feature is missing or under-specifies, ask the user the open questions, and write only the minimal versions needed to build it | `skaileup-stepwise` (start-in-the-middle) |
 | `skip` | No-op — concept already exists up-front | linear tiers that run impl only |
 
 ## When to use

@@ -2,102 +2,92 @@ id: skaileup-implementation
 version: '2.0.0'
 name: 'SkaileUp Implementation'
 description: >-
-  Start-in-the-middle flow — implement features immediately while the concept
-  is discovered gradually, feature by feature. A thin foundation is laid once
-  (scope -> one-line brief(opt) -> techstack -> datamodel skeleton -> scaffold
-  -> foundation -> migrate(opt)), then a single per-feature loop runs the unified
-  skaileup-slice block at concept_depth: just-in-time. The slice's concept half
-  runs the concept-needs check — it detects which concept information THIS feature
-  is missing, surfaces the open questions to the user, and seeds only the minimal
-  answers into the canonical _concept/ tree — then its impl half builds the
-  feature; the loop repeats for the next one. The concept is never front-loaded:
-  it accretes as a by-product of building, only what each feature needs. No new
-  skills — delegates the per-feature work to the skaileup-slice flow.
+  The code-build flow — no concept-design pass. The architecture step is
+  read-or-generate: if a concept package already exists (handed off, or produced
+  by skaileup-concept-only / skaileup-concept-reverse) it reads
+  _concept/blueprint/ (techstack -> system -> datamodel); otherwise it generates
+  that architecture subset from a one-line product description. Then build setup
+  (scaffold -> foundation -> infrastructure(opt) -> migrate -> seed -> docs),
+  per-feature work delegated to the skaileup-slice-impl sub-flow (each feature's
+  spec elicited just-in-time by the slice's impl-plan brainstorm/align phase),
+  and quality (unit + integration + e2e + ready). No UX/brand/journeys/screens/
+  mockups — only the architecture needed to write and run code. Use when you want
+  to build from an existing concept, or start building immediately without one.
+  (Collapses the two former impl-only flows — a handoff gate and a standalone
+  variant — that differed only by whether the concept pre-existed.)
 meta:
   category: incremental
   tags:
-    - spec-first
-    - start-in-the-middle
-    - gradual-concept
-    - interleaved
-    - per-feature
-  icon: i-heroicons-sparkles
-  onboarding:
-    input_style: freeform
-    placeholder: >-
-      Describe the first feature you want to build. The flow will ask open
-      questions to fill in the concept as it goes.
+    - impl-only
+    - no-concept-design
+    - read-or-generate
+    - build
+  icon: i-heroicons-bolt
 requires:
   # Self-contained install manifest: contracts its skills read + every skill its
-  # nodes run + the sub-flows it delegates to. Exact — no inheritance, no extras.
-  # The per-feature concept + impl loops are provided by the two slice sub-flows.
+  # nodes run + the sub-flow it delegates to. Exact — no inheritance, no extras.
+  # The architecture subset (techstack/system/datamodel) reads an existing
+  # concept package if present, else generates it; no UX/brand/experience skills.
   - contract:@skaile-ai/shared-contracts
-  - contract:@skaile-ai/conceptualization-contract
   - contract:@skaile-ai/implementation-contract
-  - skill:@skaile-ai/skaileup-scope-scope-project
-  - skill:@skaile-ai/concept-brief
   - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-system
   - skill:@skaile-ai/impl-architecture-datamodel
   - skill:@skaile-ai/impl-build-scaffold
   - skill:@skaile-ai/impl-build-foundation
+  - skill:@skaile-ai/impl-build-infrastructure
   - skill:@skaile-ai/impl-build-migrate
-  - flow:@skaile-ai/skaileup-slice
+  - skill:@skaile-ai/impl-build-seed
+  - skill:@skaile-ai/impl-build-docs
+  - flow:@skaile-ai/skaileup-slice-impl
+  - skill:@skaile-ai/impl-quality-test-unit
+  - skill:@skaile-ai/impl-quality-test-integration
+  - skill:@skaile-ai/impl-quality-test-e2e
   - skill:@skaile-ai/impl-quality-ready
 globals:
   research_depth: light
   approval_mode: checkpoint
-  subagent_mode: false
-  verbosity: detailed
-entry: scope
+  subagent_mode: true
+  verbosity: standard
+entry: techstack
 nodes:
-  # --- Thin foundation (laid once) ---
-  - id: scope
+  # --- Technical concept subset (generated here, not handed off) ---
+  - id: techstack
     type: skill
     position:
       x: 0
       y: 200
     data:
-      skill: skaileup-scope-scope-project
-      label: 'Scope Project'
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
       optional: false
       parameters:
-        note: 'Asks open questions about shape/size; writes _concept/_meta/scope.yaml'
-  - id: brief
+        note: 'Read-or-generate: read _concept/blueprint/ if present, else elicit the stack from a one-line product description'
+  - id: arch-system
     type: skill
     position:
       x: 200
       y: 200
     data:
-      skill: concept-brief
-      label: 'One-line Brief (opt)'
-      optional: true
-      parameters:
-        note: 'A one-paragraph seed only; the rest of the concept is discovered per feature'
-  - id: techstack
-    type: skill
-    position:
-      x: 400
-      y: 200
-    data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
+      skill: impl-architecture-system
+      label: 'System Architecture'
       optional: false
       parameters: {}
   - id: datamodel
     type: skill
     position:
-      x: 600
+      x: 400
       y: 200
     data:
       skill: impl-architecture-datamodel
-      label: 'Data Model (skeleton)'
+      label: 'Data Model'
       optional: false
-      parameters:
-        note: 'Skeleton only; each feature evolves it via impl-slice migrations'
+      parameters: {}
+  # --- Build setup ---
   - id: scaffold
     type: skill
     position:
-      x: 800
+      x: 600
       y: 200
     data:
       skill: impl-build-scaffold
@@ -107,12 +97,22 @@ nodes:
   - id: foundation
     type: skill
     position:
-      x: 1000
+      x: 800
       y: 200
     data:
       skill: impl-build-foundation
       label: 'Foundation'
       optional: false
+      parameters: {}
+  - id: infra-opt
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: impl-build-infrastructure
+      label: 'Infrastructure (opt)'
+      optional: true
       parameters: {}
   - id: migrate
     type: skill
@@ -121,47 +121,88 @@ nodes:
       y: 200
     data:
       skill: impl-build-migrate
-      label: 'Migrate (opt)'
-      optional: true
+      label: 'Migrate'
+      optional: false
       parameters: {}
-  # --- Per-feature loop: grow concept just-in-time, then build ---
-  # One unified slice node at concept_depth: just-in-time. Its concept half runs
-  # the concept-needs check (detect missing concept for THIS feature, ask the
-  # user, seed the minimum), then its impl half builds. Looped per feature below.
-  - id: slice-loop
-    type: sub-flow
+  - id: seed
+    type: skill
     position:
       x: 1400
       y: 200
     data:
-      flow: skaileup-slice
-      domain: slice
-      label: 'Feature slice (concept just-in-time, then build)'
-      pass_context: true
-      parameters:
-        concept_depth: just-in-time
-  # --- Close-out ---
-  - id: q-ready
+      skill: impl-build-seed
+      label: 'Seed'
+      optional: false
+      parameters: {}
+  - id: docs
     type: skill
+    position:
+      x: 1600
+      y: 200
+    data:
+      skill: impl-build-docs
+      label: 'Build Docs'
+      optional: false
+      parameters: {}
+  # --- Per-feature impl-slice loop (delegated to the impl-slice flow) ---
+  - id: impl-slice-loop
+    type: sub-flow
     position:
       x: 1800
       y: 200
     data:
-      skill: impl-quality-ready
-      label: 'Release Ready'
+      flow: skaileup-slice-impl
+      domain: slice
+      label: 'Per-feature impl loop (spec elicited per slice)'
+      pass_context: true
+  # --- Quality ---
+  - id: q-test-unit
+    type: skill
+    position:
+      x: 2000
+      y: 200
+    data:
+      skill: impl-quality-test-unit
+      label: 'Unit Tests'
+      optional: false
+      parameters: {}
+  - id: q-test-integration
+    type: skill
+    position:
+      x: 2200
+      y: 200
+    data:
+      skill: impl-quality-test-integration
+      label: 'Integration Tests'
+      optional: false
+      parameters: {}
+  - id: q-test-e2e
+    type: skill
+    position:
+      x: 2400
+      y: 200
+    data:
+      skill: impl-quality-test-e2e
+      label: 'E2E Tests'
       optional: true
       parameters: {}
+  - id: q-ready
+    type: skill
+    position:
+      x: 2600
+      y: 200
+    data:
+      skill: impl-quality-ready
+      label: 'Release Ready'
+      optional: false
+      parameters: {}
 edges:
-  - id: e-scope-brief
-    source: scope
-    target: brief
-    type: optional
-  - id: e-brief-techstack
-    source: brief
-    target: techstack
-    type: flow
-  - id: e-techstack-datamodel
+  - id: e-techstack-arch-system
     source: techstack
+    target: arch-system
+    type: flow
+  - id: e-arch-system-datamodel
+    source: arch-system
     target: datamodel
     type: flow
   - id: e-datamodel-scaffold
@@ -172,30 +213,39 @@ edges:
     source: scaffold
     target: foundation
     type: flow
-  - id: e-foundation-migrate
+  - id: e-foundation-infra-opt
     source: foundation
+    target: infra-opt
+    type: optional
+  - id: e-infra-opt-migrate
+    source: infra-opt
     target: migrate
-    type: optional
-  - id: e-foundation-slice-loop
-    source: foundation
-    target: slice-loop
     type: flow
-  - id: e-migrate-slice-loop
+  - id: e-migrate-seed
     source: migrate
-    target: slice-loop
-    type: optional
-  # Per-feature loop: after building a feature, run the slice again for the next
-  # one (its concept half discovers that feature's concept just-in-time). Exits
-  # to q-ready when the backlog is exhausted.
-  - id: e-slice-loop-slice-loop
-    source: slice-loop
-    target: slice-loop
-    type: review-loop
-    max_iterations: 50
-    exit_condition: >-
-      no unbuilt features remain — every feature the user still wants has a
-      frozen concept slice (index.md) and a committed impl slice
-  - id: e-slice-loop-q-ready
-    source: slice-loop
+    target: seed
+    type: flow
+  - id: e-seed-docs
+    source: seed
+    target: docs
+    type: flow
+  - id: e-docs-impl-slice-loop
+    source: docs
+    target: impl-slice-loop
+    type: flow
+  - id: e-impl-slice-loop-q-test-unit
+    source: impl-slice-loop
+    target: q-test-unit
+    type: flow
+  - id: e-q-test-unit-q-test-integration
+    source: q-test-unit
+    target: q-test-integration
+    type: flow
+  - id: e-q-test-integration-q-test-e2e
+    source: q-test-integration
+    target: q-test-e2e
+    type: flow
+  - id: e-q-test-e2e-q-ready
+    source: q-test-e2e
     target: q-ready
     type: flow

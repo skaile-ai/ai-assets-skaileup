@@ -241,7 +241,7 @@ skaileup/flows/
 │   ├── appbuilder-simple.flow.yaml
 │   └── appbuilder-simple.md
 ... (appbuilder-standard, appbuilder-complex, skaileup-slice{,-concept,-impl},
-    skaileup-impl, skaileup-implementation, skaileup-concept-only, skaileup-concept-reverse)
+    skaileup-implementation, skaileup-stepwise, skaileup-concept-only, skaileup-concept-reverse)
 └── _meta/
     ├── verify_flows.py
     ├── test_verify.py

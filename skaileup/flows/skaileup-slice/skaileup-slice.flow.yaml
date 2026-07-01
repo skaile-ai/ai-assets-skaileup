@@ -10,7 +10,7 @@ description: >-
   appbuilder-standard / appbuilder-complex tiers);
   `just-in-time` = the concept-needs check builds only the missing concept
   fragments this feature requires, with the user, as a by-product of building
-  (used by the start-in-the-middle skaileup-implementation flow);
+  (used by the start-in-the-middle skaileup-stepwise flow);
   `skip` = concept already exists up-front, run impl only.
   Iteration semantics: a consumer runs this once per feature in its backlog (or
   loops it via a review-loop edge). Standalone-runnable for testability.
