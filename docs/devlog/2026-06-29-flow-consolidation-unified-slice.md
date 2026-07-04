@@ -2,6 +2,14 @@
 
 **Status:** executed 2026-06-30 · **Date:** 2026-06-29
 
+> **Naming note (2026-07-04):** flow ids in this record use the **current** names.
+> The merged code-build flow, called `skaileup-impl` at the time, is now
+> **`skaileup-implementation`**; the start-in-the-middle flow, then
+> `skaileup-implementation`, is now **`skaileup-stepwise`**. `skaileup-impl-standalone`
+> was a pre-consolidation predecessor (never renamed) and is left verbatim — so
+> sentences like "delete the gate; rename standalone → `skaileup-implementation`"
+> describe the original `skaileup-impl` target under its present name.
+
 > Executed: flow YAMLs, `skaile.yaml`, `verify_flows.py` (+ tests), scope-project
 > routing (validator/SKILL/decision-rule/tests/example), all flow `.md` docs,
 > `contracts/flows.md`, `docs/` reference + domain pages, root `CLAUDE.md`, and
@@ -23,13 +31,13 @@ Concept-source axis today:
 | Built up-front + per-feature loop | `appbuilder-standard` / `complex` | — |
 | Concept only, no build | `skaileup-concept-only` | — |
 | From existing code | `skaileup-reverse-engineer` | — |
-| **Pre-existing / handed-off** | **`skaileup-impl`** (gate node) | ⬅ dup of standalone |
+| **Pre-existing / handed-off** | **`skaileup-implementation`** (gate node) | ⬅ dup of standalone |
 | **None → generate tech subset** | **`skaileup-impl-standalone`** | ⬅ dup of impl |
-| Grown just-in-time per feature | `skaileup-implementation` | interleaves full concept-slice by hand |
+| Grown just-in-time per feature | `skaileup-stepwise` | interleaves full concept-slice by hand |
 
 Three problems:
-1. `skaileup-impl` and `skaileup-impl-standalone` differ **only** by a precondition gate.
-2. `skaileup-implementation` reimplements "concept then build per feature" by wiring the
+1. `skaileup-implementation` and `skaileup-impl-standalone` differ **only** by a precondition gate.
+2. `skaileup-stepwise` reimplements "concept then build per feature" by wiring the
    two slice blocks together with a `review-loop` edge — duplicating what a single block
    should own.
 3. The two slice blocks (`concept-slice`, `impl-slice`) are always consumed as a pair;
@@ -65,7 +73,7 @@ files on demand with the user — not by a separate front-loaded pass.
 Both `skaileup-slice-concept` and `skaileup-slice-impl` stay standalone-runnable for
 testability; `skaileup-slice` is the normal entry for per-feature work.
 
-### 2. Delete `skaileup-impl`; rename `skaileup-impl-standalone` → `skaileup-impl`
+### 2. Delete `skaileup-implementation`; rename `skaileup-impl-standalone` → `skaileup-implementation`
 
 The gate is the only difference. Make the architecture skills idempotent —
 **read existing concept if present, else generate the minimal tech subset** — and one flow
@@ -85,7 +93,7 @@ unchanged; only the flow id / directory / `name` / `requires` self-ref change.
 | `appbuilder-standard` / `complex` | two nodes: `concept-slice-loop` + `impl-slice-loop` | one node: `skaileup-slice` (`concept_depth: full`) |
 | `appbuilder-simple` / `cli` | `impl-slice-loop` | `skaileup-slice-impl` (or `skaileup-slice` w/ `concept_depth: skip`) |
 | `appbuilder-mvp` | inline impl-slice steps | unchanged (too small to delegate) |
-| `skaileup-implementation` | thin foundation + interleaved concept-slice ⇄ impl-slice via `review-loop` | thin foundation + loop over `skaileup-slice` (`concept_depth: just-in-time`) |
+| `skaileup-stepwise` | thin foundation + interleaved concept-slice ⇄ impl-slice via `review-loop` | thin foundation + loop over `skaileup-slice` (`concept_depth: just-in-time`) |
 
 The result: the difference between the two incremental flows becomes crisp —
 `appbuilder-standard` = full per-feature concept design *then* build; `implementation` =
@@ -95,12 +103,12 @@ concept fragments grown *inside* the slice, only what each feature needs.
 
 - **Blocks:** `skaileup-slice` (parent), `skaileup-slice-concept`, `skaileup-slice-impl`
 - **Pipelines:** `appbuilder-{mvp,simple,standard,complex,cli}`, `skaileup-concept-only`,
-  `skaileup-concept-reverse`, `skaileup-impl` (merged), `skaileup-implementation` (lean)
-- **Removed:** `skaileup-impl` gate flow (folded into the renamed `impl`)
+  `skaileup-concept-reverse`, `skaileup-implementation` (merged), `skaileup-stepwise` (lean)
+- **Removed:** `skaileup-implementation` gate flow (folded into the renamed `impl`)
 
 Net: 12 flows → 12 (gate flow deleted −1; `skaileup-slice` parent added +1;
-`impl-standalone` renamed into `skaileup-impl`; slices + reverse renamed). The
-*impl-side* variants collapse 3 → 2 (`skaileup-impl`, `skaileup-implementation`),
+`impl-standalone` renamed into `skaileup-implementation`; slices + reverse renamed). The
+*impl-side* variants collapse 3 → 2 (`skaileup-implementation`, `skaileup-stepwise`),
 which was the redundancy this targeted; the flow count is flat because the unified
 parent is itself a new flow.
 
@@ -116,10 +124,10 @@ parent is itself a new flow.
 
 ## Touch list (when executed — NOT done here)
 
-**Rename `skaileup-impl-standalone` → `skaileup-impl`** (after deleting the gate flow):
-- `skaileup/flows/skaileup-impl-standalone/` → `skaileup/flows/skaileup-impl/` (dir + both files)
+**Rename `skaileup-impl-standalone` → `skaileup-implementation`** (after deleting the gate flow):
+- `skaileup/flows/skaileup-impl-standalone/` → `skaileup/flows/skaileup-implementation/` (dir + both files)
 - flow `id` / `name` / requires self-ref; `.md` doc
-- `skaile.yaml` (drop old `skaileup-impl` entry, repoint)
+- `skaile.yaml` (drop old `skaileup-implementation` entry, repoint)
 - `skaileup/flows/_meta/verify_flows.py` (impl-only allow-list)
 - `skaileup/flows/index.md` (merge the two rows)
 - make arch skills idempotent: `impl-architecture-{techstack,system,datamodel}` SKILL.md
@@ -137,7 +145,7 @@ parent is itself a new flow.
 - new `skaileup/flows/skaileup-slice/` (parent: two sub-flow nodes + `concept_depth` global)
 - `skaile.yaml`, `verify_flows.py` (+ `deferred_skills.yaml` if referenced), `flows/index.md`
 - every consumer flow's sub-flow nodes + `requires` flow-refs:
-  `appbuilder-{simple,standard,complex,cli}`, `skaileup-impl`, `skaileup-implementation`
+  `appbuilder-{simple,standard,complex,cli}`, `skaileup-implementation`, `skaileup-stepwise`
 - `concept_depth` handling in `concept-slice-brainstorm` / `concept-slice-scope-feature`
 - contracts: `artifacts.yaml` slice ids, `concept_structure.md`, `flows.md`
 - root `CLAUDE.md` (Flows + Two-Group sections), `docs/` Starlight pages
