@@ -128,6 +128,10 @@ Before starting, read:
 - `contracts/semantic_types.md` — stack-independent types (data model output uses these)
 - `contracts/iron_laws.md` — non-negotiable constraints
 - `contracts/agent_patterns.md` — communication style, standalone mode
+- `contracts/golden_principles.md` — mechanical rules the `review` skill audits against
+  (feature body structure, entity naming, cross-reference resolution). Reverse-engineered
+  output is graded by the same rules as hand-authored concepts — read this before Step 5,
+  not after a failed audit.
 
 ## Context Budget
 
@@ -334,10 +338,34 @@ extraction_confidence: extracted | inferred | needs_review
 source_files:
   - '<relative path to route/component that evidences this feature>'
 ---
+
+## Description
+
+<what the feature does, what the user can accomplish, notable behaviors observed in the source>
+
+## Key Capabilities
+
+- [ ] <at least one concrete requirement — golden_principles.md requires ≥1 checkbox per feature>
 ```
 
-Body: what the feature does, what the user can accomplish, notable behaviors observed
-in the source.
+> **`data_entities: []` MUST stay empty in this step, even if an entity name seems obvious.**
+> Step 6 (Data Model Extraction) is the only step that finalizes entity names — they get
+> renamed, merged, or dropped while the model is built. Populating `data_entities` here with
+> a guessed name (before the model exists) is the single most common cause of broken
+> cross-references at review time: the guessed name and the eventual model name silently
+> diverge, and nothing catches it until `ops-review` runs. Leave it `[]`; Step 6's feedback
+> loop fills it in against the *final* model, not a preliminary guess.
+>
+> **If dispatching parallel subagents (one per feature group) to write these files:** do not
+> paste any candidate entity names into their prompts, and do not ask them to fill in
+> `data_entities`. Each subagent should emit `data_entities: []` unconditionally. Reconcile
+> entity references centrally in Step 6, after the model is finalized — not per-subagent.
+>
+> **`source_files` entries MUST be literal, existing repository-relative file or directory
+> paths** — verify each with a file-existence check (e.g. `test -e`) before writing it.
+> Never cite an npm subpath export (e.g. `./transport/ws`, `./store/react`) as if it were a
+> filesystem path — resolve it to the real file first (e.g. `transport/src/ws`,
+> `store/src/react.ts`). A citation a reader can't navigate to defeats the purpose of the field.
 
 EMIT [reverse-engineer] checkpoint phase=features_extracted groups=<N> features=<N> needs_review=<N>
 
@@ -376,7 +404,20 @@ Write:
   use their data as the `populated` scenario.
 
 Update feature frontmatter `data_entities[]` via the feedback loop pattern for any
-features already written in Step 5.
+features already written in Step 5. This is not optional bookkeeping — it is the only
+place entity names get attached to features, per the "leave `data_entities: []` in
+Step 5" rule above.
+
+**Verification pass (required before emitting the checkpoint below):** for every entity
+name you are about to write into any feature's `data_entities[]`, confirm that exact name
+(case-sensitive) appears as a `Table`/model in the `model.dbml`/`model.json` you just wrote.
+Do not write a name you intend to add "later" — add the table first, then the reference.
+If a concept is real but doesn't fit as a persisted table (e.g. a transient view-state shape
+consumed by a UI store), still declare it as its own model with a `Note:` explaining it's
+non-persisted — that keeps the cross-reference resolvable — rather than citing a name that
+doesn't exist anywhere in the model. After updating all feature files, grep every
+`data_entities:` array across `experience/features/**/*.md` and confirm each name resolves
+to a table in the model; fix any mismatch before moving to Step 7.
 
 EMIT [reverse-engineer] checkpoint phase=datamodel_extracted entities=<N> relationships=<N> enums=<N> source=<orm_type>
 
@@ -496,6 +537,22 @@ After writing all screens, run the feedback loop:
 
 ### Step 9: Confidence Report
 
+**Self-audit (required before presenting the report):** run the equivalent of `ops-review`'s
+cross-reference and path-existence checks on your own output before declaring completion —
+don't rely on the user separately invoking `review` to catch these:
+
+- Every `data_entities:` entry across all feature files resolves to a table in
+  `model.dbml`/`model.json` (see Step 6's verification pass — re-run it here as a final gate).
+- Every `source_files:` entry across all feature/screen files is a literal path that exists
+  on disk (not an npm subpath export or a guessed path).
+- Every entity in `model.dbml`/`model.json` has a `feature_map.json` entry (no orphans).
+- Every feature file has a `## Description` heading and at least one `- [ ]` checkbox
+  (golden_principles.md Feature Rules).
+- Feature group folder numbers are sequential with no gaps.
+
+Fix anything broken before writing the report below — a report that says "0 needs_review"
+while cross-references are silently broken is worse than flagging it honestly.
+
 Present a summary table to the user:
 
 ```
@@ -563,3 +620,6 @@ EMIT [reverse-engineer] completed run_id=<uuid> artifacts_written=<N> needs_revi
 | "There are no comparables mentioned, I'll suggest some"                               | Never fabricate comparables. Write "No comparables documented in repository." and mark as `needs_review`.                                                                           |
 | "I found all these API routes so I'll list them in the feature requirements"          | Routes are evidence, not output. Feature requirements must describe user-facing behavior only.                                                                                      |
 | "I'll include the SSE event types / EventEmitter details since they were in the code" | Strip all backend implementation details from feature files. Document what the user experiences, not how it is implemented.                                                         |
+| "I already know the entity will be called `X`, I'll fill in `data_entities` now to save a step" | You don't know the final name until Step 6 finalizes the model — entities get renamed/merged/dropped. Leave `data_entities: []` in Step 5; this is the #1 cause of broken cross-references at review time. |
+| "This subpath export (`./store/react`) is close enough as a citation" | `source_files` must be a literal path that resolves on disk. Verify with a file-existence check before writing it, or the citation trail is broken. |
+| "I'll skip golden_principles.md, frontmatter.md already covers the required fields" | frontmatter.md covers YAML fields; golden_principles.md covers body structure (`## Description`, `- [ ]` requirements) that `review` also grades. Missing it fails the audit even with perfect frontmatter. |
