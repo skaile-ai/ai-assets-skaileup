@@ -83,41 +83,41 @@ metadata:
 
 ## Overview
 
-The **reverse-engineer** skill analyzes an existing project repository and
-produces a complete `_concept/` directory from it. It is an alternative entry
-point to the pipeline: instead of building a concept from user dialog, it reads
-source code, configuration, schemas, and documentation to infer what was built,
-why, and how.
+Analyzes existing repo → produces complete `_concept/`. Alternative pipeline
+entry: reads source, config, schemas, docs — infers what was built, why, how.
+No user dialog.
 
 **Writes to:** `_concept/` (all applicable folders)
 
-Every generated artifact is tagged with a confidence level:
+Every artifact tagged with confidence level:
 
-- `extracted` — read directly from code or config (high confidence)
-- `inferred` — reasoned from context or structure (medium confidence)
-- `needs_review` — could not be determined reliably (must be validated)
+| Tag | Meaning | Confidence |
+|---|---|---|
+| `extracted` | read directly from code or config | high |
+| `inferred` | reasoned from context or structure | medium |
+| `needs_review` | could not be determined reliably | must validate |
 
 ## When to Use
 
 - User says "I have an existing codebase", "reverse engineer this", "document this app"
-- User wants to bring an existing project into the pipeline
-- `_concept/` does not exist yet but source code does
-- User wants to use skills (design, testing, refactoring) on a pre-existing project
+- User wants existing project brought into pipeline
+- `_concept/` doesn't exist yet but source code does
+- User wants skills (design, testing, refactoring) on pre-existing project
 
 ## When NOT to Use
 
-- User is starting from scratch with no existing code — use `overview` instead
-- `_concept/` already exists and is fully populated — run `review` instead
-- User wants to update a specific artifact — run the individual skill instead
+- Starting from scratch, no existing code — use `overview` instead
+- `_concept/` exists and fully populated — run `review` instead
+- User wants to update one artifact — run individual skill instead
 
 ## Prerequisites
 
-No standard pipeline prerequisites. This skill is an entry point.
+No standard pipeline prerequisites. Entry point skill.
 
 Before starting:
 
-- `repo_path` must point to a readable directory
-- At minimum, the repository must have at least one of: source files, a README, or a package manifest
+- `repo_path` must point to readable directory
+- Repo must have at least one of: source files, README, package manifest
 
 ## Shared Contracts
 
@@ -137,28 +137,28 @@ Before starting, read:
 | `<repo_path>/README.md`, root package manifests, router files, schema/model files, config files | Required (from repo) |
 | Compiled output (`dist/`, `build/`, `.next/`, `node_modules/`), binary assets, lockfiles        | Never load           |
 
-Keep context targeted. Do not load entire source trees. Scan file lists first, then
-read selectively based on file purpose.
+Keep context targeted. Don't load entire source trees. Scan file lists first, then
+read selectively by file purpose.
 
 ## Workflow
 
 ### Step 1: Validate Input
 
-Confirm `repo_path` is readable. If not, stop immediately and report.
+Confirm `repo_path` readable. If not, stop immediately, report.
 
-If `concept_path` is not provided, default to `<repo_path>/_concept/`.
+If `concept_path` not provided, default to `<repo_path>/_concept/`.
 
-Check `overwrite_mode`. If `_concept/` already contains files and `overwrite_mode` is `skip`,
-note which output artifacts already exist — skip them at generation time. If `diff_and_confirm`,
-collect diffs at the end of each phase before writing.
+Check `overwrite_mode`. If `_concept/` already has files and `overwrite_mode` is `skip`,
+note which output artifacts exist — skip them at generation time. If `diff_and_confirm`,
+collect diffs at end of each phase before writing.
 
 EMIT [reverse-engineer] started run_id=<uuid> repo_path=<path> concept_path=<path> scope=[...]
 
 ### Step 2: Repository Discovery
 
-**Goal:** Build a map of the repository before reading any file deeply.
+**Goal:** Map repository before reading any file deeply.
 
-2a. **File tree scan** — List the top 2 levels of `repo_path`. Identify:
+2a. **File tree scan** — list top 2 levels of `repo_path`. Identify:
 
 - Root manifest files (package.json, pyproject.toml, Cargo.toml, go.mod, pom.xml, composer.json, Gemfile)
 - README, CHANGELOG, docs/
@@ -173,8 +173,8 @@ EMIT [reverse-engineer] started run_id=<uuid> repo_path=<path> concept_path=<pat
 - Language(s): TypeScript, JavaScript, Python, Rust, Go, Ruby, Java, PHP, other
 - App type: web app, API-only, CLI, library, monorepo, full-stack
 
-2c. **Depth check** — For monorepos, identify which sub-package is the primary app.
-Ask the user if ambiguous (more than one candidate app package).
+2c. **Depth check** — for monorepos, identify primary-app sub-package.
+Ask user if ambiguous (more than one candidate).
 
 EMIT [reverse-engineer] checkpoint phase=discovery project_type=<type> languages=[...]
 
@@ -199,11 +199,8 @@ Extract:
 - **Comparable products** — from README "Similar to", "Inspired by", "Alternatives" sections
 - **Success criteria / goals** — from README features list, roadmap, or milestone markers
 
-Confidence tagging rules:
-
-- `extracted` — text verbatim from README or manifest
-- `inferred` — synthesized from code structure or indirect clues
-- `needs_review` — field left empty because no signal found
+Confidence tagging: see table above (`extracted` = verbatim from README/manifest,
+`inferred` = synthesized from code structure, `needs_review` = no signal found).
 
 Write:
 
@@ -225,12 +222,12 @@ extraction_confidence:
 ---
 ```
 
-Body: narrative description synthesizing what was found.
+Body: narrative synthesizing what was found.
 
 **`_concept/discovery/goals.md`** — success criteria from README, milestones, known constraints.
 
-**`_concept/discovery/comparable.md`** — products mentioned in the README. If none found,
-note that comparables were not documented. Never fabricate comparables.
+**`_concept/discovery/comparable.md`** — products mentioned in README. If none found,
+note comparables not documented. Never fabricate comparables.
 
 ### Step 4: Tech Stack Detection (scope: techstack)
 
@@ -278,17 +275,17 @@ extraction_confidence:
 ---
 ```
 
-Body: notes on version constraints, known tradeoffs, or unusual combinations observed.
+Body: notes on version constraints, tradeoffs, unusual combinations observed.
 
 ### Step 5: Feature Extraction (scope: features)
 
 **Goal:** Produce `experience/features/<NN_group>/<feature>.md` files.
 
-Feature extraction is a two-pass process: route discovery → behavioral inference.
+Feature extraction is two-pass: route discovery → behavioral inference.
 
 **Pass 1: Route/Endpoint Discovery**
 
-Scan for route definitions in this order of priority:
+Scan for route definitions, in priority order:
 
 1. **Router files** — `src/router/`, `app/router.ts`, Next.js `app/` or `pages/`, Nuxt `pages/`, Rails `routes.rb`, Django `urls.py`, FastAPI router registrations
 2. **API route handlers** — `server/api/`, `api/`, `routes/`, `controllers/`, Express `app.get(...)` calls
@@ -296,7 +293,7 @@ Scan for route definitions in this order of priority:
 
 **Pass 2: Behavioral Inference**
 
-For each route/page component, read the file and infer:
+For each route/page component, read file, infer:
 
 - What the user can do on this screen / at this endpoint
 - What data it reads and writes
@@ -311,7 +308,7 @@ For each route/page component, read the file and infer:
 
 **Feature Grouping**
 
-Group routes into feature groups using URL prefix or domain:
+Group routes into feature groups by URL prefix or domain:
 
 - `/auth/*`, `/login`, `/signup` → `01_user_auth/`
 - `/dashboard`, `/home`, `/` → `02_dashboard/`
@@ -336,8 +333,7 @@ source_files:
 ---
 ```
 
-Body: what the feature does, what the user can accomplish, notable behaviors observed
-in the source.
+Body: what feature does, what user can accomplish, notable behaviors observed in source.
 
 EMIT [reverse-engineer] checkpoint phase=features_extracted groups=<N> features=<N> needs_review=<N>
 
@@ -369,13 +365,13 @@ For each entity/model found:
 
 Write:
 
-- **`_concept/blueprint/datamodel/model.dbml`** — using DBML syntax with semantic types
-- **`_concept/blueprint/datamodel/model.json`** — using the editor-native format
+- **`_concept/blueprint/datamodel/model.dbml`** — DBML syntax with semantic types
+- **`_concept/blueprint/datamodel/model.json`** — editor-native format
 - **`_concept/blueprint/datamodel/seed.json`** — four standard scenarios (`empty`,
-  `single_user`, `populated`, `edge_cases`). If the repo has fixture/seed/factory files,
-  use their data as the `populated` scenario.
+  `single_user`, `populated`, `edge_cases`). If repo has fixture/seed/factory files,
+  use their data as `populated` scenario.
 
-Update feature frontmatter `data_entities[]` via the feedback loop pattern for any
+Update feature frontmatter `data_entities[]` via feedback loop pattern for
 features already written in Step 5.
 
 EMIT [reverse-engineer] checkpoint phase=datamodel_extracted entities=<N> relationships=<N> enums=<N> source=<orm_type>
@@ -413,8 +409,7 @@ extraction_confidence: extracted | inferred | needs_review
 ---
 ```
 
-Body: describe the visual character inferred from the color palette, typography, and
-component style.
+Body: visual character inferred from color palette, typography, component style.
 
 **`_concept/discovery/brand/tokens.json`**
 
@@ -447,15 +442,15 @@ component style.
 }
 ```
 
-If no design tokens are found, write a `needs_review` skeleton with empty values.
+If no design tokens found, write `needs_review` skeleton with empty values.
 Never invent a color palette from scratch — mark it `needs_review`.
 
 ### Step 8: Screen Extraction (scope: screens)
 
 **Goal:** Produce `experience/screens/<NN_group>/<screen>.md` files.
 
-Use the same route groups established in Step 5. For each route, read the
-corresponding page/view component:
+Use route groups established in Step 5. For each route, read corresponding
+page/view component:
 
 - **Nuxt:** `pages/**/*.vue`, `layouts/`
 - **Next.js:** `app/**/page.tsx`, `pages/**/*.tsx`
@@ -488,15 +483,15 @@ source_files:
 ---
 ```
 
-Body: description of screen purpose, key UI sections, primary interactions, and visible states.
+Body: screen purpose, key UI sections, primary interactions, visible states.
 
-After writing all screens, run the feedback loop:
+After writing all screens, run feedback loop:
 
-- For each screen, add its path to the `screens[]` array in the matching feature files
+- For each screen, add its path to `screens[]` array in matching feature files
 
 ### Step 9: Confidence Report
 
-Present a summary table to the user:
+Present summary table to user:
 
 ```
 ## Reverse Engineering Report

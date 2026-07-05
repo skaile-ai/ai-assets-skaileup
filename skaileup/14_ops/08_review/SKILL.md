@@ -55,9 +55,9 @@ metadata:
 
 ## Overview
 
-The **review** skill is the Structure Auditor and Doc Gardener. It scans `_concept/`
-for completeness, consistency, and entropy. It produces a health report with a quality
-score (0–100) and can auto-fix safe issues in gardening mode.
+The **review** skill is Structure Auditor and Doc Gardener. Scans `_concept/`
+for completeness, consistency, entropy — produces health report with quality
+score (0–100), auto-fixes safe issues in gardening mode.
 
 **Two modes:**
 
@@ -66,28 +66,28 @@ score (0–100) and can auto-fix safe issues in gardening mode.
 
 ## When to Use
 
-- Check overall health of the concept
+- Check overall health of concept
 - Cross-references may be broken between features and screens
 - Files may be stale or orphaned
-- Want a quality score before proceeding to the next pipeline step
+- Want quality score before next pipeline step
 - User says "audit the concept", "check for issues", "cleanup", "gardening mode"
 - After each skill completes — quick pass to catch drift
-- Before `e2e` — ensure structure is clean before testing
+- Before `e2e` — structure clean before testing
 - Before merging concept changes — gate on quality score
 
 ## When NOT to Use
 
-- Auditing source code — use the `audit` quality skill instead
-- Checking readiness for E2E — use the `ready` quality skill
-- Running the full pipeline — use the `concept-orchestrator`
+- Auditing source code — use `audit` quality skill instead
+- Checking readiness for E2E — use `ready` quality skill
+- Running full pipeline — use `concept-orchestrator`
 
 ## Prerequisites
 
-**REQUIRED BACKGROUND:** Read `contracts/concept_structure.md`,
+**REQUIRED BACKGROUND:** read `contracts/concept_structure.md`,
 `contracts/frontmatter.md`, `contracts/feedback_loop.md`,
-and `contracts/golden_principles.md` before running any checks.
+`contracts/golden_principles.md` before any checks.
 
-**Hard gate:** None — review can run anytime `_concept/` exists.
+**Hard gate:** none — review runs anytime `_concept/` exists.
 
 ## Context Budget
 
@@ -102,8 +102,8 @@ and `contracts/golden_principles.md` before running any checks.
 
 ## Standalone Mode
 
-**Gate check:** None.
-**On completion:** Present report and suggest next steps (`sync` for cross-ref repair, `ready` for readiness gate, or proceed if score ≥ 70).
+**Gate check:** none.
+**On completion:** present report, suggest next steps (`sync` for cross-ref repair, `ready` for readiness gate, or proceed if score ≥ 70).
 
 ---
 
@@ -157,7 +157,7 @@ STEP 1: Scan pipeline structure
   - Folder exists in \_concept/
   - Has at least one expected output file
   - All .md files have valid frontmatter
-    See references/checks.md for the full check table
+    See references/checks.md for full check table
 
 STEP 2: Check frontmatter compliance
 
@@ -172,10 +172,10 @@ STEP 2: Check frontmatter compliance
 
 STEP 3: Check golden principles
 
-- For every applicable rule in contracts/golden_principles.md (entity, field,
-  enum, and relation naming; group numbering; requirement coverage;
-  frontmatter path resolution). Do not re-enumerate the rules here — the
-  contract owns them; references/checks.md has the complete check table.
+- Every applicable rule in contracts/golden_principles.md (entity, field, enum,
+  relation naming; group numbering; requirement coverage; frontmatter path
+  resolution). Contract owns the rules, not re-enumerated here; references/checks.md
+  has complete check table.
 
 STEP 4: Check cross-reference integrity
 

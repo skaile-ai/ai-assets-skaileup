@@ -54,18 +54,18 @@ metadata:
 
 ## Overview
 
-Astro-rendered variant of the walkthrough mockup cluster. Consumes the same
-four inputs as `mockup-walkthrough-static-html` (screen specs, journey
-definitions, brand tokens, feature files); produces a Tailwind-styled built
+Astro-rendered variant of walkthrough mockup cluster. Consumes same four
+inputs as `mockup-walkthrough-static-html` (screen specs, journey
+definitions, brand tokens, feature files); produces Tailwind-styled built
 Astro static site at `_concept/mockup-walkthrough/astro/`.
 
-Every rendered DOM node carries the same `data-spec-*` attributes as the
-static-html variant so the `mockup-feedback-*` cluster can resolve clicks
-identically across renderers. The `manifest.json` schema is identical —
-only `renderer: "mockup-walkthrough-astro"` differs.
+Every rendered DOM node carries same `data-spec-*` attributes as static-html
+variant so `mockup-feedback-*` cluster resolves clicks identically across
+renderers. `manifest.json` schema is identical — only
+`renderer: "mockup-walkthrough-astro"` differs.
 
-**Two-mode behaviour — decision recorded.** The agent detects whether an
-Astro project already exists by checking for
+**Two-mode behaviour — decision recorded.** Agent detects whether Astro
+project already exists by checking for
 `_concept/mockup-walkthrough/astro/astro.config.mjs`:
 
 - **Init** (absent): scaffold project skeleton → generate `specs.json` +
@@ -73,29 +73,27 @@ Astro project already exists by checking for
 - **Update** (present): regenerate `specs.json` + `global.css` only →
   `bun run build` → rewrite `manifest.json`
 
-On update runs the agent NEVER touches `astro.config.mjs`,
-`tailwind.config.mjs`, or `.astro` template files — those belong to the
-user.
+On update runs, agent NEVER touches `astro.config.mjs`,
+`tailwind.config.mjs`, or `.astro` template files — those belong to user.
 
-**Generation approach — decision recorded.** Agent-direct: the agent reads
-screen specs and derives `src/data/specs.json` inline (no persistent
-generator script). Same pattern as static-html's Python renderer.
+**Generation approach — decision recorded.** Agent-direct: agent reads
+screen specs, derives `src/data/specs.json` inline (no persistent generator
+script). Same pattern as static-html's Python renderer.
 
 ## Renderer Contract
 
-This renderer implements the shared walkthrough renderer contract —
-`contracts/walkthrough_renderer.md` (schema_version "1.0"): data-spec-*
-attribute table, screen_id vs screen_path, kind → DOM tag mapping, auto-slug
-fallback, manifest schema + field semantics, warnings[].kind enum, shared
-error handling, screen-in-multiple-journeys rule, shared MUST/NEVER. Read it
-before rendering; it is pinned and MUST NOT be restated here.
+Implements shared walkthrough renderer contract — `contracts/walkthrough_renderer.md`
+(schema_version "1.0"): data-spec-* attribute table, screen_id vs screen_path,
+kind → DOM tag mapping, auto-slug fallback, manifest schema + field semantics,
+warnings[].kind enum, shared error handling, screen-in-multiple-journeys rule,
+shared MUST/NEVER. Read before rendering; pinned, MUST NOT be restated here.
 
 Renderer-specific manifest values: `renderer: "mockup-walkthrough-astro"`,
 `renderer_version:` this SKILL.md's `metadata.version`.
 
-Astro-specific: the template emits `data-spec-provisional="true"` where
-`element.provisional === true`; there is NO separate top-level
-`auto_slugged[]` array — `provisional: true` lives on the element object.
+Astro-specific: template emits `data-spec-provisional="true"` where
+`element.provisional === true`; NO separate top-level `auto_slugged[]`
+array — `provisional: true` lives on element object.
 
 ## Inputs
 
@@ -302,7 +300,7 @@ Check `_concept/mockup-walkthrough/astro/astro.config.mjs`.
 
 ## STEP 4: Scaffold project (Init only)
 
-Write the following files. Do NOT write these on update runs.
+Write following files. Do NOT write on update runs.
 
 ### `_concept/mockup-walkthrough/astro/package.json`
 
@@ -536,8 +534,8 @@ function findScreen(screen_id: string) {
 
 ## STEP 5: Generate `specs.json` and `global.css` (both modes)
 
-Write `src/data/specs.json` derived from the in-memory model. Schema as shown
-in the `specs.json` shape section above. Overwrite unconditionally.
+Write `src/data/specs.json` derived from in-memory model. Schema as shown in
+`specs.json` shape section above. Overwrite unconditionally.
 
 Write `src/styles/global.css`:
 
@@ -552,12 +550,12 @@ Write `src/styles/global.css`:
 }
 ```
 
-Overwrite unconditionally. This file is agent-managed every run.
+Overwrite unconditionally. File is agent-managed every run.
 
-On update runs only: compare the count of `--token-*` keys in the freshly
-derived in-memory model vs. the CSS var declarations in the existing
-`global.css` before overwriting. If counts differ, append
-`kind: "stale_tailwind_config"` to `warnings[]`.
+On update runs only: compare count of `--token-*` keys in freshly derived
+in-memory model vs. CSS var declarations in existing `global.css` before
+overwriting. If counts differ, append `kind: "stale_tailwind_config"` to
+`warnings[]`.
 
 ## STEP 6: Build
 
@@ -567,28 +565,26 @@ Run from `_concept/mockup-walkthrough/astro/`:
 bun run build
 ```
 
-On non-zero exit: print full stderr and exit non-zero. Do not write
+On non-zero exit: print full stderr, exit non-zero. Do not write
 `manifest.json`.
 
-After build: verify `dist/` does NOT exist under the project root. If it
-does: fail with "astro.config.mjs outDir misconfigured — dist/ must not
-exist".
+After build: verify `dist/` does NOT exist under project root. If it does:
+fail with "astro.config.mjs outDir misconfigured — dist/ must not exist".
 
 ## STEP 7: Write `manifest.json`
 
-Emit the pinned schema. Build it from the in-memory model — NOT by
-serialising `specs.json`. Template-only fields from `specs.json`
-(`screens[].title`, `screens[].group`, `screens[].journeys[]`,
-`journeys[].title`, `journeys[].description`) MUST NOT appear in
-`manifest.json`.
+Emit pinned schema. Build from in-memory model — NOT by serialising
+`specs.json`. Template-only fields from `specs.json` (`screens[].title`,
+`screens[].group`, `screens[].journeys[]`, `journeys[].title`,
+`journeys[].description`) MUST NOT appear in `manifest.json`.
 
-Emit the pinned schema — `contracts/walkthrough_renderer.md` § Manifest
-schema — with `renderer: "mockup-walkthrough-astro"`. Sorting + atomic write
-per § Field semantics.
+Emit pinned schema — `contracts/walkthrough_renderer.md` § Manifest schema —
+with `renderer: "mockup-walkthrough-astro"`. Sorting + atomic write per §
+Field semantics.
 
 ## STEP 8: Validate
 
-Run from the repo root:
+Run from repo root:
 
 ```bash
 python mockup-walkthrough/astro/validator.py _concept/mockup-walkthrough/astro

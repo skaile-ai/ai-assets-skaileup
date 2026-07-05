@@ -68,36 +68,34 @@ metadata:
 
 ## Overview
 
-Implements features using outside-in TDD at three levels:
+Implements features via outside-in TDD, three levels:
 
-1. **Journey level** — write a failing capstone E2E test for the full multi-page flow
-   (written before pages start as a contract; verified after all pages are individually green)
-2. **Page level** — each page is a vertical slice: write failing tests → implement → green gate
-   → regression gate → checkpoint → commit. Never proceed to the next page until tests pass.
+1. **Journey level** — failing capstone E2E test for full multi-page flow, written before pages as contract, verified after all pages individually green
+2. **Page level** — each page a vertical slice: failing tests → implement → green gate → regression gate → checkpoint → commit. Never advance to next page until tests pass.
 3. **Feature level** — each page sub-skill implements individual features with TDD Guard
 
-**Journey-first strategy:** features are built in user-journey order (hero →
-vital → hygiene from `stories.yaml`). This delivers a working end-to-end flow
-early and surfaces integration issues before they compound.
+**Journey-first strategy:** features built in user-journey order (hero → vital →
+hygiene from `stories.yaml`) — working end-to-end flow early, integration issues
+surface before they compound.
 
-**TDD Guard** enforces the Red→Green cycle at the feature level:
+**TDD Guard** enforces Red→Green cycle at feature level:
 
 - `initial` → only Red declarations permitted
 - `writing_tests` → test files editable only
 - `red` → test failed; Green declarations permitted
 - `making_tests_pass` → only declared prod files editable
 
-See `references/tdd_guard.md` for the full TDD Guard state machine.
+See `references/tdd_guard.md` for full TDD Guard state machine.
 
-**Standalone mode:** call with `feature_id` to implement a single feature
-without journey context (useful for `add-feature` follow-through).
+**Standalone mode:** call with `feature_id` to implement single feature without
+journey context (useful for `add-feature` follow-through).
 
 ## When to Use
 
-- Foundation is complete (app shell exists, auth configured)
-- `stories.yaml` exists (journey-first) OR a specific feature is requested
+- Foundation complete (app shell exists, auth configured)
+- `stories.yaml` exists (journey-first) OR specific feature requested
 - User says "implement features", "build the app features", "implement next journey"
-- The `implement` orchestrator dispatches this as Phase 4
+- `implement` orchestrator dispatches this as Phase 4
 
 ## When NOT to Use
 
@@ -109,11 +107,11 @@ without journey context (useful for `add-feature` follow-through).
 
 **Hard gates:**
 
-- Project is scaffolded and `foundation` phase is complete
+- Project scaffolded, `foundation` phase complete
 - `_concept/experience/features/` has at least one feature group
 - `_concept/experience/screens/` has screen specs
 - `_concept/blueprint/datamodel/model.json` exists
-- Dev stack is running (frontend + backend accessible)
+- Dev stack running (frontend + backend accessible)
 
 **Recommended (journey mode):**
 

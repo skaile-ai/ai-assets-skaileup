@@ -61,75 +61,72 @@ metadata:
 
 ## Overview
 
-Highest-fidelity variant of the walkthrough mockup cluster, used by the
-**appbuilder-complex** tier. Consumes the same four inputs as
+Highest-fidelity variant of walkthrough mockup cluster, used by
+**appbuilder-complex** tier. Consumes same four inputs as
 `mockup-walkthrough-static-html` (screen specs, journey definitions, brand
 tokens, feature files) PLUS one more — `_concept/blueprint/techstack.md` —
-and produces a built site rendered in the **project's chosen framework**
+produces built site rendered in **project's chosen framework**
 (Next.js / Nuxt / SvelteKit) at `_concept/mockup-walkthrough/framework/`.
 
-The framework is not fixed: it is resolved from the `tech_stack_skill`
-field in `techstack.md`, which names exactly one concrete scaffold template
-under `09_impl-architecture/templates/template-*/`. That template's
-`TEMPLATE.md` is the authority for which framework to scaffold, its
-scaffold/dev/build commands, and its routing conventions. This makes the
-framework walkthrough a true preview of the production stack — it doubles
-as the seed of the real application shell.
+Framework is not fixed: resolved from `tech_stack_skill` field in
+`techstack.md`, which names exactly one concrete scaffold template under
+`09_impl-architecture/templates/template-*/`. That template's `TEMPLATE.md`
+is authority for which framework to scaffold, its scaffold/dev/build
+commands, its routing conventions. This makes framework walkthrough a true
+preview of production stack — it doubles as seed of real application shell.
 
-Every rendered DOM node carries the same `data-spec-*` attributes as the
-static-html and astro variants so the `mockup-feedback-*` cluster can
-resolve clicks identically across renderers. The `manifest.json` schema is
-identical — only `renderer: "mockup-walkthrough-framework"` and the added
-`target_framework` field differ.
+Every rendered DOM node carries same `data-spec-*` attributes as static-html
+and astro variants so `mockup-feedback-*` cluster resolves clicks
+identically across renderers. `manifest.json` schema is identical — only
+`renderer: "mockup-walkthrough-framework"` and added `target_framework`
+field differ.
 
-**Two-mode behaviour — decision recorded.** The agent detects whether a
-framework project already exists by checking for
+**Two-mode behaviour — decision recorded.** Agent detects whether framework
+project already exists by checking for
 `_concept/mockup-walkthrough/framework/package.json`:
 
-- **Init** (absent): resolve framework → scaffold a minimal app in the
-  resolved framework using the template's conventions → generate
-  `specs.json` + token styles → install → build → write `manifest.json`
+- **Init** (absent): resolve framework → scaffold minimal app in resolved
+  framework using template's conventions → generate `specs.json` + token
+  styles → install → build → write `manifest.json`
 - **Update** (present): regenerate `specs.json` + token styles only →
   rebuild → rewrite `manifest.json`
 
-On update runs the agent NEVER touches the framework's config files
+On update runs, agent NEVER touches framework's config files
 (`next.config.*`, `nuxt.config.*`, `svelte.config.*`, `package.json`) or
-the user-owned page/route templates — those belong to the user.
+user-owned page/route templates — those belong to user.
 
-**Generation approach — decision recorded.** Agent-direct: the agent reads
-screen specs and derives `specs.json` inline (no persistent generator
-script). Same pattern as static-html's Python renderer and astro's inline
-derivation.
+**Generation approach — decision recorded.** Agent-direct: agent reads
+screen specs, derives `specs.json` inline (no persistent generator script).
+Same pattern as static-html's Python renderer and astro's inline derivation.
 
 ## Renderer Contract
 
-**Public contract.** Every `data-spec-*` attribute MUST be emitted on the
-same DOM position as `mockup-walkthrough-static-html` so the
-`mockup-feedback-*` cluster resolves clicks identically across renderers —
-**regardless of the underlying framework.** If the resolved framework uses
-client components / islands / hydration, the built (SSR/SSG) HTML MUST
-still carry the `data-spec-*` attributes server-side, so a static fetch of
-the built page resolves every attribute without running JavaScript.
+**Public contract.** Every `data-spec-*` attribute MUST be emitted on same
+DOM position as `mockup-walkthrough-static-html` so `mockup-feedback-*`
+cluster resolves clicks identically across renderers — **regardless of
+underlying framework.** If resolved framework uses client components /
+islands / hydration, built (SSR/SSG) HTML MUST still carry `data-spec-*`
+attributes server-side, so static fetch of built page resolves every
+attribute without running JavaScript.
 
-This renderer implements the shared walkthrough renderer contract —
-`contracts/walkthrough_renderer.md` (schema_version "1.0"): data-spec-*
-attribute table, screen_id vs screen_path, kind → DOM tag mapping, auto-slug
-fallback, manifest schema + field semantics, warnings[].kind enum, shared
-error handling, screen-in-multiple-journeys rule, shared MUST/NEVER. Read it
-before rendering; it is pinned and MUST NOT be restated here.
+Implements shared walkthrough renderer contract — `contracts/walkthrough_renderer.md`
+(schema_version "1.0"): data-spec-* attribute table, screen_id vs screen_path,
+kind → DOM tag mapping, auto-slug fallback, manifest schema + field semantics,
+warnings[].kind enum, shared error handling, screen-in-multiple-journeys rule,
+shared MUST/NEVER. Read before rendering; pinned, MUST NOT be restated here.
 
 Renderer-specific manifest values: `renderer: "mockup-walkthrough-framework"`,
 `renderer_version:` this SKILL.md's `metadata.version`.
 
-Framework-specific: the resolved framework's templates emit
-`data-spec-provisional="true"` where `element.provisional === true`; there
-is NO separate top-level `auto_slugged[]` array — `provisional: true` lives
-on the element object.
+Framework-specific: resolved framework's templates emit
+`data-spec-provisional="true"` where `element.provisional === true`; NO
+separate top-level `auto_slugged[]` array — `provisional: true` lives on
+element object.
 
 ## Inputs
 
-Same four input shapes as `mockup-walkthrough-static-html`, plus the
-techstack gate:
+Same four input shapes as `mockup-walkthrough-static-html`, plus techstack
+gate:
 
 | Path | Shape |
 |---|---|
@@ -151,18 +148,17 @@ Generated under `_concept/mockup-walkthrough/framework/`:
 | `manifest.json` | Machine-readable index for `mockup-feedback-annotate`. |
 | `package.json` + `dev`/`build`/`preview` scripts | So any developer can run the walkthrough — the skill itself does not auto-serve. |
 
-> The exact built-output layout (e.g. `out/`, `.output/public/`, `build/`)
-> depends on the resolved framework's static build target. The validator is
-> pointed at the project root and discovers the built HTML; the
-> `rendered_html` paths in `manifest.json` are recorded relative to that
-> project root.
+> Exact built-output layout (e.g. `out/`, `.output/public/`, `build/`)
+> depends on resolved framework's static build target. Validator is pointed
+> at project root, discovers built HTML; `rendered_html` paths in
+> `manifest.json` recorded relative to that project root.
 
 ## Framework project layout (framework-agnostic)
 
-The project lays out one root layout/shell, one index page, one
-screen-collection route, and one journey-collection route, plus an
-agent-managed data file and stylesheet. Concrete file names follow the
-resolved template's routing convention.
+Project lays out one root layout/shell, one index page, one
+screen-collection route, one journey-collection route, plus agent-managed
+data file and stylesheet. Concrete file names follow resolved template's
+routing convention.
 
 ```
 _concept/mockup-walkthrough/framework/      ← project root (committed)
@@ -191,30 +187,30 @@ _concept/mockup-walkthrough/framework/
 └── package.json
 ```
 
-`src/app/page.tsx` sets `data-spec-index="true"` on the document body; the
-screen route's `generateStaticParams()` returns one entry per
-`specs.screens[]` with `slug = screen_id.split('/')`; the journey route's
+`src/app/page.tsx` sets `data-spec-index="true"` on document body; screen
+route's `generateStaticParams()` returns one entry per `specs.screens[]`
+with `slug = screen_id.split('/')`; journey route's
 `generateStaticParams()` returns one entry per `specs.journeys[]` keyed by
-`journey_id`. Each page's root element (or the layout's `<body>`) carries
-the `data-spec-*` marker, and `next.config.ts` sets `output: 'export'` so
-the build emits static HTML carrying the attributes server-side.
+`journey_id`. Each page's root element (or layout's `<body>`) carries
+`data-spec-*` marker, and `next.config.ts` sets `output: 'export'` so build
+emits static HTML carrying attributes server-side.
 
 ### Nuxt / SvelteKit equivalents
 
-Follow the resolved template's routing convention:
+Follow resolved template's routing convention:
 
 - **Nuxt** — `pages/index.vue`, `pages/screen/[...slug].vue`,
   `pages/journey/[id].vue`; `nuxt.config.ts` with `nitro.prerender` /
-  `ssr: true` so routes are prerendered to static HTML. `definePageMeta`
-  or a wrapping `<body>` attribute carries the `data-spec-*` markers.
+  `ssr: true` so routes prerendered to static HTML. `definePageMeta` or
+  wrapping `<body>` attribute carries `data-spec-*` markers.
 - **SvelteKit** — `src/routes/+page.svelte`,
   `src/routes/screen/[...slug]/+page.svelte`,
   `src/routes/journey/[id]/+page.svelte` with `+page.server.ts`
-  `entries()` for prerender; `@sveltejs/adapter-static` so the build emits
-  static HTML. `<svelte:body>` / element attributes carry the markers.
+  `entries()` for prerender; `@sveltejs/adapter-static` so build emits
+  static HTML. `<svelte:body>` / element attributes carry markers.
 
-In every case the **built HTML must carry `data-spec-*` server-side** — see
-the Renderer Contract.
+In every case, **built HTML must carry `data-spec-*` server-side** — see
+Renderer Contract.
 
 ## `specs.json` shape
 
@@ -333,12 +329,12 @@ REFERENCES
 
 ## STEP 2: Resolve framework
 
-This is the key differentiator from the astro/static-html renderers. The
-framework is not fixed — it is read from the project's stack decision.
+Key differentiator from astro/static-html renderers. Framework isn't fixed
+— read from project's stack decision.
 
 - Read `_concept/blueprint/techstack.md` frontmatter. Extract
   `tech_stack_skill`.
-- Resolve it against `09_impl-architecture/templates/<tech_stack_skill>/`:
+- Resolve against `09_impl-architecture/templates/<tech_stack_skill>/`:
   - **If `tech_stack_skill` is unset, abstract (e.g. `nextjs`, `nuxt`),
     or `custom`** — it is NOT a real `template-*` directory. HARD-FAIL with:
     > "tech_stack_skill is not resolved to a concrete scaffold template. Run
@@ -410,25 +406,25 @@ Check `_concept/mockup-walkthrough/framework/package.json`.
 
 ## STEP 5: Scaffold project (Init only)
 
-Scaffold a minimal app in the resolved framework using the template's
-conventions. Do NOT do this on update runs.
+Scaffold minimal app in resolved framework using template's conventions.
+Do NOT do this on update runs.
 
-- Run the template's **scaffold command** (from its Scaffold Recipe) into
-  the project root `_concept/mockup-walkthrough/framework/`, then prune the
-  scaffold down to the four routes this walkthrough needs. Configure the
-  framework for a **static export** target so the build emits plain HTML:
+- Run template's **scaffold command** (from its Scaffold Recipe) into
+  project root `_concept/mockup-walkthrough/framework/`, then prune scaffold
+  down to four routes this walkthrough needs. Configure framework for
+  **static export** target so build emits plain HTML:
   - **Next.js** — `next.config.ts` with `output: 'export'`
   - **Nuxt** — `nuxt.config.ts` with `nitro.prerender` (or
     `nuxi generate`)
   - **SvelteKit** — `@sveltejs/adapter-static` + per-route `prerender = true`
-- Author the four route/page files (root layout, index, screen collection,
-  journey collection) per the framework's routing convention — see the
-  layout examples above. Each must wire `data-spec-*` onto the built body
-  and read from `specs.json`.
-- Emit `package.json` with `dev`, `build`, and `preview` scripts so any
-  developer can run the walkthrough locally (mockup-design.md § 10
-  "Walkthrough deployability"). The skill itself never auto-serves; it only
-  builds. Example scripts (Next.js):
+- Author four route/page files (root layout, index, screen collection,
+  journey collection) per framework's routing convention — see layout
+  examples above. Each must wire `data-spec-*` onto built body, read from
+  `specs.json`.
+- Emit `package.json` with `dev`, `build`, `preview` scripts so any developer
+  can run walkthrough locally (mockup-design.md § 10 "Walkthrough
+  deployability"). Skill itself never auto-serves; only builds. Example
+  scripts (Next.js):
 
   ```json
   {
@@ -447,18 +443,18 @@ conventions. Do NOT do this on update runs.
   `build: vite build`, `preview: vite preview`.
 - Install dependencies using the template's package manager.
 
-On update runs the agent NEVER regenerates the framework config or the
-route/page templates — only `specs.json` and the token stylesheet.
+On update runs, agent NEVER regenerates framework config or route/page
+templates — only `specs.json` and token stylesheet.
 
 ## STEP 6: Generate `specs.json` and token styles (both modes)
 
-Write `specs.json` (under the framework's data dir, e.g.
-`src/data/specs.json`) derived from the in-memory model. Schema as shown in
-the `specs.json` shape section above. Overwrite unconditionally.
+Write `specs.json` (under framework's data dir, e.g. `src/data/specs.json`)
+derived from in-memory model. Schema as shown in `specs.json` shape section
+above. Overwrite unconditionally.
 
-Write the token stylesheet (e.g. `src/app/globals.css` or
-`assets/css/global.css` per the template) with one `:root` custom property
-per flattened `token_var`:
+Write token stylesheet (e.g. `src/app/globals.css` or
+`assets/css/global.css` per template) with one `:root` custom property per
+flattened `token_var`:
 
 ```css
 :root {
@@ -467,53 +463,52 @@ per flattened `token_var`:
 }
 ```
 
-Overwrite unconditionally. This file is agent-managed every run.
+Overwrite unconditionally. File is agent-managed every run.
 
-On update runs only: compare the count of `--token-*` keys in the freshly
-derived in-memory model vs. the CSS var declarations in the existing
-stylesheet before overwriting. If counts differ, append
-`kind: "stale_token_styles"` to `warnings[]`.
+On update runs only: compare count of `--token-*` keys in freshly derived
+in-memory model vs. CSS var declarations in existing stylesheet before
+overwriting. If counts differ, append `kind: "stale_token_styles"` to
+`warnings[]`.
 
 ## STEP 7: Build
 
-Run the template's **build command** from
+Run template's **build command** from
 `_concept/mockup-walkthrough/framework/`. Fall back to `bun run build` if
-the template does not name a build command:
+template doesn't name a build command:
 
 ```bash
 bun run build
 ```
 
-On non-zero exit: print full stderr and exit non-zero. Do not write
+On non-zero exit: print full stderr, exit non-zero. Do not write
 `manifest.json`.
 
-After build, the agent MUST verify the built HTML carries `data-spec-*`
-server-side: fetch one built `screen/<group>/<name>` page from disk and
-confirm `data-spec-screen` is present in the static HTML (not only injected
-at runtime). If absent → fail: "built HTML missing data-spec-* server-side —
-move the attributes out of client-only code into the SSR/SSG output".
+After build, agent MUST verify built HTML carries `data-spec-*`
+server-side: fetch one built `screen/<group>/<name>` page from disk,
+confirm `data-spec-screen` present in static HTML (not only injected at
+runtime). If absent → fail: "built HTML missing data-spec-* server-side —
+move attributes out of client-only code into SSR/SSG output".
 
 ## STEP 8: Write `manifest.json`
 
-Emit the pinned schema. Build it from the in-memory model — NOT by
-serialising `specs.json`. Template-only fields from `specs.json`
-(`screens[].title`, `screens[].group`, `screens[].journeys[]`,
-`journeys[].title`, `journeys[].description`) MUST NOT appear in
-`manifest.json`.
+Emit pinned schema. Build from in-memory model — NOT by serialising
+`specs.json`. Template-only fields from `specs.json` (`screens[].title`,
+`screens[].group`, `screens[].journeys[]`, `journeys[].title`,
+`journeys[].description`) MUST NOT appear in `manifest.json`.
 
-Emit the pinned schema — `contracts/walkthrough_renderer.md` § Manifest
-schema — with `renderer: "mockup-walkthrough-framework"`. Sorting + atomic
-write per § Field semantics.
+Emit pinned schema — `contracts/walkthrough_renderer.md` § Manifest schema —
+with `renderer: "mockup-walkthrough-framework"`. Sorting + atomic write per §
+Field semantics.
 
-`target_framework` is the one field added beyond the pinned schema. It
-records the framework resolved in STEP 2 (`nextjs` | `nuxt` | `sveltekit`)
-so `mockup-feedback-annotate` knows how the built HTML was produced.
-`rendered_html` paths are recorded relative to the project root (the
-framework's static-export output location).
+`target_framework` is one field added beyond pinned schema. Records
+framework resolved in STEP 2 (`nextjs` | `nuxt` | `sveltekit`) so
+`mockup-feedback-annotate` knows how built HTML was produced. `rendered_html`
+paths recorded relative to project root (framework's static-export output
+location).
 
 ## STEP 9: Validate
 
-Run from the repo root:
+Run from repo root:
 
 ```bash
 python mockup-walkthrough/framework/validator.py _concept/mockup-walkthrough/framework
@@ -541,10 +536,9 @@ See `contracts/walkthrough_renderer.md` § Shared error handling.
 ### `warnings[].kind` enum
 
 Shared enum per `contracts/walkthrough_renderer.md` § warnings[].kind enum;
-`unresolved_template` and `stale_token_styles` are the framework-specific
-additions. `unresolved_template` is emitted in the hard-fail diagnostic
-(STEP 2) — no `manifest.json` is written when the framework cannot be
-resolved.
+`unresolved_template` and `stale_token_styles` are framework-specific
+additions. `unresolved_template` emitted in hard-fail diagnostic (STEP 2) —
+no `manifest.json` written when framework can't be resolved.
 
 ## MUST / NEVER
 

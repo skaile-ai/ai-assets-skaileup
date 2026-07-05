@@ -81,31 +81,31 @@ metadata:
 
 ## Overview
 
-`concept-slice-design-feature` is the COMMIT phase of the concept-slice cluster.
-It is the only skill in the cluster that writes permanent `_concept/`
-artifacts and the only one that freezes the slice dossier.
+`concept-slice-design-feature` is the COMMIT phase of concept-slice cluster —
+only skill that writes permanent `_concept/` artifacts, only one that freezes
+the slice dossier.
 
 **Three permanent writes:**
 
-1. `_concept/experience/features/<group>/<feature_slug>.md` — the feature spec,
+1. `_concept/experience/features/<group>/<feature_slug>.md` — feature spec,
    conformant to `contracts/frontmatter.md` § "experience/features/...".
 2. `_concept/experience/screens/<feature_slug>/<screen_slug>.md` — one file per
-   entry in scope-feature.md's `## Required screens`. The first segment of
-   each path is `<feature_slug>` (this is the path-segment rule).
+   entry in scope-feature.md's `## Required screens`. First segment of each
+   path is `<feature_slug>` (the path-segment rule).
 3. `_concept/mockup-walkthrough/<tier>/<feature_slug>.<ext>` — one walkthrough
    source stub. Extension depends on tier:
    - `appbuilder-simple` → `.html`
    - `appbuilder-standard` → `.astro`
    - `appbuilder-complex` → `.html` (framework variant pending; flagged via EMIT)
 
-**One freeze:** after every write succeeds AND the user has approved, this skill
-writes `_concept/slices/<slice_id>/index.md` and **keeps** the slice folder. The
-phase handoffs (`brainstorm.md`, `align.md`, `scope-feature.md`) stay as the
-feature's permanent decision record; `index.md` links forward to the canonical
-artifacts above. Nothing is deleted. (This is the Suggestion-B convention: slices
-are durable per-feature documentation, not throwaway scratch.)
+**One freeze:** after every write succeeds AND user approved, writes
+`_concept/slices/<slice_id>/index.md` and **keeps** slice folder. Phase
+handoffs (`brainstorm.md`, `align.md`, `scope-feature.md`) stay as feature's
+permanent decision record; `index.md` links forward to canonical artifacts
+above. Nothing deleted. (Suggestion-B convention: slices are durable
+per-feature documentation, not throwaway scratch.)
 
-**The path-segment rule** is the cluster's hardest invariant. See
+**The path-segment rule** is cluster's hardest invariant. See
 `concept-slice/design-feature/references/feature-portion-rule.md`.
 
 ---

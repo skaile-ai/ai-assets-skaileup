@@ -75,36 +75,36 @@ metadata:
 
 ## Overview
 
-`impl-plan-align` is the implementation-readiness grill of the per-slice impl-loop.
-It runs after `impl-plan-brainstorm` (when tier ∈ {appbuilder-standard, appbuilder-complex}) or as
-the cluster entry point (when tier == appbuilder-simple). It does NOT run for tier == appbuilder-mvp.
+`impl-plan-align` is implementation-readiness grill of per-slice impl-loop.
+Runs after `impl-plan-brainstorm` (tier ∈ {appbuilder-standard, appbuilder-complex}) or as
+cluster entry point (tier == appbuilder-simple). Does NOT run for tier == appbuilder-mvp.
 
-The skill inverts brainstorm: now the AI asks pointed questions, the user defends.
-Pillars covered: state transitions, boundary inputs, concurrency, permissions,
+Skill inverts brainstorm: AI asks pointed questions, user defends. Pillars
+covered: state transitions, boundary inputs, concurrency, permissions,
 persistence/offline, error states, cross-feature data, performance, test seam.
 
-The output is `_implementation/slices/<slice_id>/align.md` — a structured handoff file consumed
-by `impl-plan-plan-vertical`. The `_implementation/slices/<slice_id>/` dossier is durable:
-`impl-slice-commit` freezes it after the slice's atomic commit lands — writes `index.md`, keeps
-the phase handoffs as permanent documentation, removes only the transient `progress.yaml`.
-No impl-plan skill deletes or freezes the dir itself.
+Output is `_implementation/slices/<slice_id>/align.md` — structured handoff
+consumed by `impl-plan-plan-vertical`. `_implementation/slices/<slice_id>/`
+dossier is durable: `impl-slice-commit` freezes it after atomic commit lands —
+writes `index.md`, keeps phase handoffs, removes only transient
+`progress.yaml`. No impl-plan skill deletes or freezes dir itself.
 
-**Per-slice scope** is enforced. Edge cases discovered in this grill belong to THIS
-feature; cross-feature touch points are documented but not grilled in depth (their
-features have their own slice align runs).
+**Per-slice scope** enforced. Edge cases discovered in this grill belong to
+THIS feature; cross-feature touch points documented but not grilled in depth
+(their features have their own slice align runs).
 
 ## When to Use
 
-- An implementation slice's concept artifacts (feature.md + screens) are frozen and
-  the user is ready to commit to acceptance criteria for the implementation.
+- Implementation slice's concept artifacts (feature.md + screens) frozen, user
+  ready to commit to acceptance criteria for implementation.
 - Tier is `appbuilder-simple`, `appbuilder-standard`, or `appbuilder-complex`.
 - For standard/complex: `_implementation/slices/<id>/brainstorm.md` exists.
 
 ## When NOT to Use
 
-- Tier is `appbuilder-mvp` — appbuilder-mvp skips align per SKILL_GRAPH § 6. Use `impl-plan-plan-vertical`.
-- Concept artifacts are missing — refer the caller to `concept-slice/design-feature`.
-- For standard/complex without brainstorm — refer the caller to `impl-plan-brainstorm`.
+- Tier `appbuilder-mvp` — skips align per SKILL_GRAPH § 6. Use `impl-plan-plan-vertical`.
+- Concept artifacts missing — refer caller to `concept-slice/design-feature`.
+- Standard/complex without brainstorm — refer caller to `impl-plan-brainstorm`.
 
 ---
 
@@ -185,9 +185,9 @@ STEP 1: Read scope and resolve tier-dependent gate
       >  _implementation/slices/<slice_id>/brainstorm.md. Run impl-plan-brainstorm first."
     - copy slice_id, feature_title, feature_path from brainstorm.md frontmatter (verify match).
   ELSE  # tier == appbuilder-simple
-    - brainstorm.md not required; this skill is the cluster entry.
+    - brainstorm.md not required; this skill is cluster entry.
     - $ mkdir -p _implementation/slices/<slice_id>/
-    - read feature_title from feature.md frontmatter (do not ask the user a redundant question).
+    - read feature_title from feature.md frontmatter (don't ask user redundant question).
 
 STEP 2: Read context
   - Read brainstorm.md (when present); cache risks + open questions.

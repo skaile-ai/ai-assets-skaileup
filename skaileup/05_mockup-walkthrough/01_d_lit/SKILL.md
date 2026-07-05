@@ -55,28 +55,27 @@ metadata:
 
 ## Overview
 
-Lit web-components variant of the walkthrough mockup cluster. Consumes the same
-four inputs as `mockup-walkthrough-static-html` (screen specs, journey
-definitions, brand tokens, feature files); produces a Vite-built site of Lit
+Lit web-components variant of walkthrough mockup cluster. Consumes same four
+inputs as `mockup-walkthrough-static-html` (screen specs, journey
+definitions, brand tokens, feature files); produces Vite-built site of Lit
 custom elements at `_concept/mockup-walkthrough/lit/`.
 
-Every rendered DOM node carries the same `data-spec-*` attributes as the
-static-html variant so the `mockup-feedback-*` cluster can resolve clicks
-identically across renderers. The `manifest.json` schema is identical — only
+Every rendered DOM node carries same `data-spec-*` attributes as static-html
+variant so `mockup-feedback-*` cluster resolves clicks identically across
+renderers. `manifest.json` schema is identical — only
 `renderer: "mockup-walkthrough-lit"` differs.
 
 **Embeddable angle — decision recorded.** `docs/devlog/mockup-design.md` § 1
-classes this renderer as "Lit web components, embeddable". The built custom
-elements (`<screen-view>`, `<journey-view>`, `<index-view>`) are self-contained
-and can be dropped into a host page (e.g. a forge-concept walkthrough shell)
-without an iframe: the host imports the bundled component JS and mounts the tag.
-This is the differentiator over astro (which emits a standalone static site
-only). For the embed path to work the components MUST render into **light DOM**
-(see Renderer Contract) so the host's `mockup-feedback-*` overlay can query the
-`data-spec-*` nodes.
+classes this renderer as "Lit web components, embeddable". Built custom
+elements (`<screen-view>`, `<journey-view>`, `<index-view>`) are self-contained,
+droppable into host page (e.g. forge-concept walkthrough shell) without
+iframe: host imports bundled component JS, mounts tag. This is differentiator
+over astro (which emits standalone static site only). For embed path to work,
+components MUST render into **light DOM** (see Renderer Contract) so host's
+`mockup-feedback-*` overlay can query `data-spec-*` nodes.
 
-**Two-mode behaviour — decision recorded.** The agent detects whether a Vite +
-Lit project already exists by checking for
+**Two-mode behaviour — decision recorded.** Agent detects whether Vite + Lit
+project already exists by checking for
 `_concept/mockup-walkthrough/lit/vite.config.js`:
 
 - **Init** (absent): scaffold project skeleton (vite.config.js, package.json,
@@ -85,30 +84,30 @@ Lit project already exists by checking for
 - **Update** (present): regenerate `specs.json` + `global.css` only →
   `bun run build` → rewrite `manifest.json`
 
-On update runs the agent NEVER touches `vite.config.js`, `package.json`, the
-Lit component source under `src/components/`, or the per-page HTML entry files —
-those belong to the user.
+On update runs, agent NEVER touches `vite.config.js`, `package.json`, Lit
+component source under `src/components/`, or per-page HTML entry files —
+those belong to user.
 
-**Generation approach — decision recorded.** Agent-direct: the agent reads
-screen specs and derives `src/data/specs.json` plus each per-page HTML entry
-inline (no persistent generator script). Each page HTML is generated directly
-from `specs.json` by the agent with the custom-element markup inlined, so a
-build step is not strictly required to produce queryable light-DOM HTML — the
-Vite build only bundles/optimises. Same agent-direct pattern as static-html's
-Python renderer and astro's inline derivation.
+**Generation approach — decision recorded.** Agent-direct: agent reads screen
+specs, derives `src/data/specs.json` plus each per-page HTML entry inline (no
+persistent generator script). Each page HTML generated directly from
+`specs.json` by agent with custom-element markup inlined, so build step isn't
+strictly required to produce queryable light-DOM HTML — Vite build only
+bundles/optimises. Same agent-direct pattern as static-html's Python renderer
+and astro's inline derivation.
 
 ## Renderer Contract
 
-**Public contract.** Every `data-spec-*` attribute MUST be emitted on the same
-DOM position as `mockup-walkthrough-static-html` so the `mockup-feedback-*`
+**Public contract.** Every `data-spec-*` attribute MUST be emitted on same
+DOM position as `mockup-walkthrough-static-html` so `mockup-feedback-*`
 cluster resolves clicks identically across renderers.
 
 ### Light DOM — the key Lit-specific risk
 
 LitElement defaults to **Shadow DOM**. Shadow DOM would encapsulate every
-rendered node so the `mockup-feedback-*` cluster's `document.querySelectorAll('[data-spec-element]')`
-returns nothing — the `data-spec-*` attributes would be hidden behind the shadow
-boundary. Therefore every Lit component in this renderer MUST override
+rendered node so `mockup-feedback-*` cluster's `document.querySelectorAll('[data-spec-element]')`
+returns nothing — `data-spec-*` attributes hidden behind shadow boundary.
+Therefore every Lit component in this renderer MUST override
 `createRenderRoot()` to render into **light DOM**:
 
 ```js
@@ -117,23 +116,22 @@ createRenderRoot() { return this; }
 
 With light-DOM rendering, every `data-spec-screen`, `data-spec-element`,
 `data-spec-provisional`, `data-spec-journey`, and `data-spec-index` attribute
-lands on a queryable light-DOM node exactly as in static-html / astro. This is
-the single most important Lit-specific invariant; the validator and CHECKLIST
-both assert it.
+lands on queryable light-DOM node exactly as in static-html / astro. This is
+single most important Lit-specific invariant; validator and CHECKLIST both
+assert it.
 
-This renderer implements the shared walkthrough renderer contract —
-`contracts/walkthrough_renderer.md` (schema_version "1.0"): data-spec-*
-attribute table, screen_id vs screen_path, kind → DOM tag mapping, auto-slug
-fallback, manifest schema + field semantics, warnings[].kind enum, shared
-error handling, screen-in-multiple-journeys rule, shared MUST/NEVER. Read it
-before rendering; it is pinned and MUST NOT be restated here.
+Implements shared walkthrough renderer contract — `contracts/walkthrough_renderer.md`
+(schema_version "1.0"): data-spec-* attribute table, screen_id vs screen_path,
+kind → DOM tag mapping, auto-slug fallback, manifest schema + field semantics,
+warnings[].kind enum, shared error handling, screen-in-multiple-journeys rule,
+shared MUST/NEVER. Read before rendering; pinned, MUST NOT be restated here.
 
 Renderer-specific manifest values: `renderer: "mockup-walkthrough-lit"`,
 `renderer_version:` this SKILL.md's `metadata.version`.
 
-Lit-specific: the `<screen-view>` component emits `data-spec-provisional="true"`
-where `element.provisional === true`; there is NO separate top-level
-`auto_slugged[]` array — `provisional: true` lives on the element object.
+Lit-specific: `<screen-view>` component emits `data-spec-provisional="true"`
+where `element.provisional === true`; NO separate top-level `auto_slugged[]`
+array — `provisional: true` lives on element object.
 
 ## Inputs
 
@@ -183,10 +181,10 @@ _concept/mockup-walkthrough/lit/             ← project root (committed)
 └── manifest.json                           ← written after build, not by Vite
 ```
 
-Per-page HTML entry files mount the matching custom element and set the body
-`data-spec-*` marker. Because the components render into light DOM, the built
-HTML carries every `data-spec-*` attribute on queryable nodes regardless of
-whether the page is opened standalone or embedded into a host shell.
+Per-page HTML entry files mount matching custom element, set body
+`data-spec-*` marker. Because components render into light DOM, built HTML
+carries every `data-spec-*` attribute on queryable nodes regardless of
+whether page opened standalone or embedded into host shell.
 
 ## `specs.json` shape
 
@@ -572,12 +570,12 @@ customElements.define('index-view', IndexView);
 
 ### Per-page HTML entries
 
-The agent generates one HTML entry per page directly from `specs.json` (STEP 5).
-Each sets the body `data-spec-*` marker and mounts the matching custom element.
-Because the components render light DOM, the mounted markup carries the
-`data-spec-*` attributes on queryable nodes. `src/pages/index.html` is scaffolded
-once on init; the per-screen and per-journey entries are regenerated every run
-(agent-direct — they enumerate the current screen/journey set).
+Agent generates one HTML entry per page directly from `specs.json` (STEP 5).
+Each sets body `data-spec-*` marker, mounts matching custom element. Because
+components render light DOM, mounted markup carries `data-spec-*` attributes
+on queryable nodes. `src/pages/index.html` scaffolded once on init; per-screen
+and per-journey entries regenerated every run (agent-direct — they enumerate
+current screen/journey set).
 
 Example `src/pages/screen/01_user_auth/login.html`:
 
@@ -604,14 +602,14 @@ Example `src/pages/screen/01_user_auth/login.html`:
 
 ## STEP 5: Generate `specs.json`, `global.css`, and per-page HTML (both modes)
 
-Write `src/data/specs.json` derived from the in-memory model. Schema as shown in
-the `specs.json` shape section above. Overwrite unconditionally.
+Write `src/data/specs.json` derived from in-memory model. Schema as shown in
+`specs.json` shape section above. Overwrite unconditionally.
 
 Regenerate every per-page HTML entry under `src/pages/screen/**` and
-`src/pages/journey/**` from the current screen/journey set (agent-direct). Each
-sets the correct body `data-spec-*` marker and mounts the matching custom
-element. This is what makes the built HTML carry queryable `data-spec-*` nodes
-without depending on client-side hydration.
+`src/pages/journey/**` from current screen/journey set (agent-direct). Each
+sets correct body `data-spec-*` marker, mounts matching custom element. This
+is what makes built HTML carry queryable `data-spec-*` nodes without
+depending on client-side hydration.
 
 Write `src/styles/global.css`:
 
@@ -625,12 +623,12 @@ Write `src/styles/global.css`:
 .btn-primary { background: var(--token-color-primary); color: #fff; }
 ```
 
-Overwrite unconditionally. This file is agent-managed every run.
+Overwrite unconditionally. File is agent-managed every run.
 
-On update runs only: compare the count of `--token-*` keys in the freshly
-derived in-memory model vs. the CSS var declarations in the existing
-`global.css` before overwriting. If counts differ, append
-`kind: "stale_token_css"` to `warnings[]`.
+On update runs only: compare count of `--token-*` keys in freshly derived
+in-memory model vs. CSS var declarations in existing `global.css` before
+overwriting. If counts differ, append `kind: "stale_token_css"` to
+`warnings[]`.
 
 ## STEP 6: Build
 
@@ -640,30 +638,30 @@ Run from `_concept/mockup-walkthrough/lit/`:
 bun run build
 ```
 
-On non-zero exit: print full stderr and exit non-zero. Do not write
+On non-zero exit: print full stderr, exit non-zero. Do not write
 `manifest.json`.
 
-After build: verify `dist/` does NOT exist under the project root. If it does:
+After build: verify `dist/` does NOT exist under project root. If it does:
 fail with "vite.config.js outDir misconfigured — dist/ must not exist".
 
-The agent-direct per-page HTML already carries the `data-spec-*` attributes in
-light DOM, so the built output is queryable whether or not the Vite-bundled
-component JS hydrates.
+Agent-direct per-page HTML already carries `data-spec-*` attributes in light
+DOM, so built output is queryable whether or not Vite-bundled component JS
+hydrates.
 
 ## STEP 7: Write `manifest.json`
 
-Emit the pinned schema. Build it from the in-memory model — NOT by serialising
+Emit pinned schema. Build from in-memory model — NOT by serialising
 `specs.json`. Template-only fields from `specs.json` (`screens[].title`,
 `screens[].group`, `screens[].journeys[]`, `journeys[].title`,
 `journeys[].description`) MUST NOT appear in `manifest.json`.
 
-Emit the pinned schema — `contracts/walkthrough_renderer.md` § Manifest
-schema — with `renderer: "mockup-walkthrough-lit"`. Sorting + atomic write
-per § Field semantics.
+Emit pinned schema — `contracts/walkthrough_renderer.md` § Manifest schema —
+with `renderer: "mockup-walkthrough-lit"`. Sorting + atomic write per §
+Field semantics.
 
 ## STEP 8: Validate
 
-Run from the repo root:
+Run from repo root:
 
 ```bash
 python mockup-walkthrough/lit/validator.py _concept/mockup-walkthrough/lit

@@ -80,35 +80,34 @@ metadata:
 
 ## Overview
 
-`impl-plan-plan-vertical` is the final phase of the per-slice impl-loop before
-`impl-slice/implement` takes over. It decomposes ONE feature into a small set of
-**vertical rows** — each row crosses UI + Logic + Data and represents an
-end-to-end user-facing slice that can be built, tested, and shipped before the
-next row begins.
+`impl-plan-plan-vertical` is final phase of per-slice impl-loop before
+`impl-slice/implement` takes over. Decomposes ONE feature into small set of
+**vertical rows** — each row crosses UI + Logic + Data, an end-to-end
+user-facing slice buildable, testable, shippable before next row begins.
 
 > **DO NOT build all UI first, then all logic, then all data.** This skill
 > actively resists that pattern. The default LLM failure mode is horizontal
 > layering ("scaffold every screen, wire every handler, run every migration"),
 > which produces N half-finished slices and zero working ones.
 
-The output is `_implementation/slices/<slice_id>/plan.md` — a structured handoff file
-consumed by `impl-slice/implement`, `impl-slice/test`, and `impl-slice/recap`.
-The `_implementation/slices/<slice_id>/` dossier is durable: `impl-slice-commit` freezes it
-after the slice's atomic commit lands — writes `index.md`, keeps the phase handoffs,
-removes only the transient `progress.yaml`.
+Output is `_implementation/slices/<slice_id>/plan.md` — structured handoff
+consumed by `impl-slice/implement`, `impl-slice/test`, `impl-slice/recap`. The
+`_implementation/slices/<slice_id>/` dossier is durable: `impl-slice-commit`
+freezes it after slice's atomic commit lands — writes `index.md`, keeps phase
+handoffs, removes only transient `progress.yaml`.
 
 ## When to Use
 
-- An implementation slice's `align.md` is approved (tier ∈ {simple, standard, complex}).
-- OR tier == appbuilder-mvp and the feature.md is ready (appbuilder-mvp's plan-vertical is the cluster entry).
-- The user wants to convert the slice into an actionable, vertically-decomposed plan.
+- Implementation slice's `align.md` approved (tier ∈ {simple, standard, complex}).
+- OR tier == appbuilder-mvp and feature.md ready (appbuilder-mvp's plan-vertical is cluster entry).
+- User wants slice converted into actionable, vertically-decomposed plan.
 
 ## When NOT to Use
 
-- Concept artifacts (feature.md + screens) are missing — refer to `concept-slice/design-feature`.
-- For tier ∈ {simple, standard, complex} without an align.md — refer to `impl-plan-align`.
-- For tier == standard/complex without brainstorm.md — refer to `impl-plan-brainstorm`.
-- For project-wide implementation plans — out of scope. This skill is per-slice.
+- Concept artifacts (feature.md + screens) missing — refer to `concept-slice/design-feature`.
+- Tier ∈ {simple, standard, complex} without align.md — refer to `impl-plan-align`.
+- Tier == standard/complex without brainstorm.md — refer to `impl-plan-brainstorm`.
+- Project-wide implementation plans — out of scope. Skill is per-slice.
 
 ---
 
@@ -202,7 +201,7 @@ INPUT
 STEP 1: Read scope and resolve tier-dependent gate
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
   - Read scope.tier.
-  - Resolve feature_slug → feature_path and set slice_id := feature_slug
+  - Resolve feature_slug → feature_path, set slice_id := feature_slug
     (or slice_id_override) per contracts/slice_loop.md § Slug rule.
   IF tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
     - require _implementation/slices/<slice_id>/align.md to exist
@@ -211,42 +210,42 @@ STEP 1: Read scope and resolve tier-dependent gate
       >  _implementation/slices/<slice_id>/align.md. Run impl-plan-align first."
     - copy slice_id, feature_title, feature_path from align.md frontmatter (verify match).
   ELSE  # tier == appbuilder-mvp
-    - align.md not required; this skill is the cluster entry.
+    - align.md not required; this skill is cluster entry.
     - $ mkdir -p _implementation/slices/<slice_id>/
     - read feature_title from feature.md frontmatter.
 
 STEP 2: Read context
   - Read align.md (when present); cache "## Acceptance handoff" EARS lines, "## Edge cases to handle", "## Constraints".
-  - Read feature.md (always); cache "## Acceptance Criteria" EARS lines (used as fallback if align.md absent).
+  - Read feature.md (always); cache "## Acceptance Criteria" EARS lines (fallback if align.md absent).
   - $ ls _concept/experience/screens/<feature_slug>/*.md  → read each.
-  - Read brainstorm.md, model.json, techstack.md if present (for "why this row" context and Logic-column stack notes).
+  - Read brainstorm.md, model.json, techstack.md if present ("why this row" context, Logic-column stack notes).
 
 STEP 3: Identify user-facing slices (the rows)
   Inline MUST (anti-horizontal): each row crosses UI + Logic + Data. If you can't
-  fill all three for a row, the row is not vertical and must be merged or split.
+  fill all three for a row, row isn't vertical — merge or split it.
 
   Heuristics by `task_granularity`:
     - feature (default): walk align.md "## Acceptance handoff" EARS lines AND
-      screen files; group user-facing interactions that share a single
+      screen files; group user-facing interactions sharing a single
       end-to-end seam into ONE row.
     - screen: one row per screen file.
 
-  Resist the temptation to make rows = layers. If a candidate row is "all UI
-  for the feature" or "all migrations", you have not decomposed — STOP and
-  re-decompose by user-facing seam.
+  Resist making rows = layers. If a candidate row is "all UI for the
+  feature" or "all migrations", it isn't decomposed — STOP, re-decompose
+  by user-facing seam.
 
 STEP 4: Fill UI / Logic / Data per row
   Inline MUST (anti-horizontal): each row crosses UI + Logic + Data; rows
-  with empty cells require an explicit user-confirmed reason in the row's
-  notes column (validator emits a warning).
+  with empty cells require explicit user-confirmed reason in row's notes
+  column (validator emits a warning).
 
   For each row:
-    - UI: which screen(s)/component(s) render the slice. Cite by file path
+    - UI: which screen(s)/component(s) render slice. Cite by file path
       (`screens/<feature_slug>/<file>.md` or component path).
-    - Logic: which handler/middleware/service backs the slice. Cite by
+    - Logic: which handler/middleware/service backs slice. Cite by
       symbol (`auth.signIn(email, pw)`, `comments.create()`, etc.).
-    - Data: which entity/table/field the row reads or writes. Cite by name.
-    - Notes (optional column): justification for cells that are intentionally
+    - Data: which entity/table/field row reads or writes. Cite by name.
+    - Notes (optional column): justification for cells intentionally
       `-` (e.g. pure-UI polish row).
 
   Reference model.json for entity dependency hints — parents before children
@@ -259,13 +258,13 @@ STEP 5: Derive testing strategy
   at least one test in `### Automated tests`.
 
   Test tags: each automated-test bullet starts with `[unit]`, `[integration]`,
-  or `[e2e]`. Tag based on the smallest reliable seam.
+  or `[e2e]`. Tag by smallest reliable seam.
 
-  Manual checks: bullet list of click-paths the user runs before approving
-  the slice (smoke-test focus, not thorough QA).
+  Manual checks: bullet list of click-paths user runs before approving
+  slice (smoke-test focus, not thorough QA).
 
-  Exit criteria: bullets that, when ALL true, mean the slice is "done" and
-  ready for `impl-slice/recap`. MUST include the literal line:
+  Exit criteria: bullets that, when ALL true, mean slice is "done" and
+  ready for `impl-slice/recap`. MUST include literal line:
     "all rows in `## Vertical decomposition` complete end-to-end"
 
 STEP 6: Finalize
@@ -273,8 +272,7 @@ STEP 6: Finalize
     artifact_path: _implementation/slices/<slice_id>/plan.md
     checkpoint_id: plan_draft
   Frontmatter: impl-side keys (slice_loop.md § Handoff frontmatter — slice_id,
-  feature_title, feature_path, phase, tier, created_at, last_updated),
-  phase: plan.
+  feature_title, feature_path, phase, tier, created_at, last_updated), phase: plan.
   Body sections (exact headers, in order):
     ## Slice scope
     ## Vertical decomposition
@@ -287,8 +285,7 @@ STEP 6: Finalize
     ## Open carry-overs
 
   - `## Slice scope`: exactly one line, ≤ 200 chars.
-  - `## Vertical decomposition`: markdown table with header
-    `| # | UI | Logic | Data |`, ≥ 1 data row.
+  - `## Vertical decomposition`: markdown table, header `| # | UI | Logic | Data |`, ≥ 1 data row.
   - `## Anti-horizontal nudge`: VERBATIM template (see "Anti-horizontal nudge"
     block at top of this SKILL.md). Validator pins exact-string match.
   - `## Definition of done`: 5 verbatim checkbox items:
@@ -297,10 +294,10 @@ STEP 6: Finalize
     - [ ] All manual checks in § "Manual checks" verified by user
     - [ ] No row left half-implemented (no "UI built but data not wired", etc.)
     - [ ] `_concept/experience/features/<group>/<feature_slug>.md` § Acceptance Criteria all green
-  - `## Open carry-overs`: P3 or DEFERRED items pulled from align.md
-    "## Open questions surfaced by the grill". `_(none)_` is allowed.
-  - Validator note: empty UI/Logic/Data cells produce a WARNING (stderr), not
-    a failure; surface it to the user.
+  - `## Open carry-overs`: P3/DEFERRED items pulled from align.md "## Open
+    questions surfaced by the grill". `_(none)_` allowed.
+  - Validator note: empty UI/Logic/Data cells produce WARNING (stderr), not
+    failure; surface to user.
 
 EMIT  [impl-plan-plan-vertical] completed slice_id=<id> tier=<tier> rows=<n> tests=<n>
 

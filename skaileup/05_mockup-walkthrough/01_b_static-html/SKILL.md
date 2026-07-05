@@ -54,53 +54,49 @@ metadata:
 
 ## Overview
 
-The contract anchor among walkthrough renderers. Consumes screen specs
-(plus their `elements:` frontmatter blocks per `contracts/elements_block.md`),
-journey definitions, brand tokens, and feature files; produces a zero-build,
-openable static HTML walkthrough at `_concept/mockup-walkthrough/static-html/`.
+Contract anchor among walkthrough renderers. Consumes screen specs (plus
+`elements:` frontmatter blocks per `contracts/elements_block.md`), journey
+definitions, brand tokens, feature files — produces zero-build, openable
+static HTML walkthrough at `_concept/mockup-walkthrough/static-html/`.
 
 Every rendered DOM node carries `data-spec-screen` + `data-spec-element`
-attributes (and `data-spec-provisional="true"` when the id was auto-slugged)
-so the Phase 3 `mockup-feedback-*` cluster can resolve clicks back to source
-artefacts. Output also includes a `manifest.json` index that
-`mockup-feedback-annotate` reads.
+attributes (and `data-spec-provisional="true"` when id was auto-slugged) so
+Phase 3 `mockup-feedback-*` cluster resolves clicks back to source artefacts.
+Output also includes `manifest.json` index that `mockup-feedback-annotate` reads.
 
 **Rendering technology — decision recorded.** Stdlib-only Python string
-templating using `html.escape`, `pathlib`, `json`, and `PyYAML` for
-frontmatter. **No** Jinja, **no** Mako, **no** build tool, **no** JS
-framework in the produced site. Rationale:
+templating using `html.escape`, `pathlib`, `json`, `PyYAML` for frontmatter.
+**No** Jinja, **no** Mako, **no** build tool, **no** JS framework in produced
+site. Rationale:
 
-1. The produced site is zero-build by acceptance criterion. The renderer
-   that *generates* the site runs at skill-execution time and never ships
-   in the output, so its dependencies do not bleed through.
+1. Produced site is zero-build by acceptance criterion — the renderer that
+   *generates* it runs at skill-execution time, never ships in output, so
+   its dependencies don't bleed through.
 2. Every other validator/generator script in this repo uses stdlib + PyYAML
-   (see `contracts/scripts/validator_lib.py`, `experience/screens/`).
-   Consistency wins.
-3. The templates are small (one shell, one screen, one journey, one index).
-   `str.format`-style substitution is cheaper than a templating-engine
-   dependency.
+   (see `contracts/scripts/validator_lib.py`, `experience/screens/`) — consistency wins.
+3. Templates are small (one shell, one screen, one journey, one index).
+   `str.format`-style substitution cheaper than templating-engine dependency.
 
-The next walkthrough variant author (Lit, Astro, framework-tier) should keep
-this rationale in mind.
+Next walkthrough variant author (Lit, Astro, framework-tier) should keep this
+rationale in mind.
 
 ## Renderer Contract
 
-This renderer implements the shared walkthrough renderer contract —
-`contracts/walkthrough_renderer.md` (schema_version "1.0"): data-spec-*
-attribute table, screen_id vs screen_path, kind → DOM tag mapping, auto-slug
-fallback, manifest schema + field semantics, warnings[].kind enum, shared
-error handling, screen-in-multiple-journeys rule, shared MUST/NEVER. Read it
-before rendering; it is pinned and MUST NOT be restated here.
+Implements shared walkthrough renderer contract — `contracts/walkthrough_renderer.md`
+(schema_version "1.0"): data-spec-* attribute table, screen_id vs screen_path,
+kind → DOM tag mapping, auto-slug fallback, manifest schema + field semantics,
+warnings[].kind enum, shared error handling, screen-in-multiple-journeys rule,
+shared MUST/NEVER. Read before rendering; pinned, MUST NOT be restated here.
 
 Renderer-specific manifest values: `renderer: "mockup-walkthrough-static-html"`,
 `renderer_version:` this SKILL.md's `metadata.version`.
 
-static-html is the contract's reference implementation: when a behaviour is
-ambiguous, this renderer's output is the tie-breaker.
+static-html is contract's reference implementation: when behaviour is
+ambiguous, this renderer's output is tie-breaker.
 
 ## Inputs
 
-This skill consumes four input shapes, all under the project root:
+Skill consumes four input shapes, all under project root:
 
 | Path | Shape | Reference |
 |---|---|---|
@@ -109,10 +105,10 @@ This skill consumes four input shapes, all under the project root:
 | `design/tokens.json` | Token tree (e.g. `{"color": {"primary": "#0ea5e9"}, "spacing": {"sm": "8px"}}`). Flattened to CSS custom properties (`--token-<dotted-path-with-hyphens>`). | (pinned by this skill — same flattening rule as `mockup-component-isolated-html`) |
 | `experience/features/<group>/<feature>.md` | Markdown + YAML frontmatter (per `contracts/frontmatter.md` § "experience/features/..."). Used **only** for `manifest.json#features`; not rendered as HTML. | `contracts/frontmatter.md` |
 
-**Body markdown rule.** The screen markdown body is rendered as descriptive
-text/headings inside the screen page, but DOES NOT receive `data-spec-element`
-attributes. Only the explicit `elements:` block (or auto-slug fallback)
-produces annotatable nodes.
+**Body markdown rule.** Screen markdown body renders as descriptive
+text/headings inside screen page, but DOES NOT receive `data-spec-element`
+attributes. Only explicit `elements:` block (or auto-slug fallback) produces
+annotatable nodes.
 
 **Stories.json schema (pinned by this skill).**
 
@@ -191,41 +187,40 @@ REFERENCES
 
   - Glob `experience/screens/**/*.md` (excluding `00_layout/`); sort lexicographically by path.
   - For each screen: parse YAML frontmatter (PyYAML); extract `implements[]`,
-    `data_entities[]`, `layout`, `elements[]` (default to `[]`). Capture the
-    screen body markdown for descriptive rendering.
+    `data_entities[]`, `layout`, `elements[]` (default `[]`). Capture screen
+    body markdown for descriptive rendering.
   - Validate `elements[]` against `contracts/elements_block.md`. If
-    `lab/validate-elements-block/` is available, delegate; otherwise emit
+    `lab/validate-elements-block/` available, delegate; otherwise emit
     `warnings[]` entries of `kind: "unknown_element_kind"` for any kind
-    outside the v0.1 enum (`input, button, link, image, text, region, list,
-    form, nav, media, custom`) but render the node anyway.
-  - Read `experience/journeys/stories.yaml`. Validate each `journeys[]`
-    entry has `id` AND `screen_sequence`. Missing `screen_sequence` →
-    warning `kind: "missing_screen_sequence"`, skip that journey render.
-  - Read `design/tokens.json`. Flatten the nested tree depth-first into a
-    flat dict keyed `--token-<dotted-path-with-hyphens>`. Example:
-    `{"color": {"primary": "#0ea5e9"}}` → `--token-color-primary: #0ea5e9`.
-    (Same rule as `mockup-component-isolated-html/scripts/inline_tokens.py`.)
-  - Glob `experience/features/**/*.md`; sort lexicographically. Build a
+    outside v0.1 enum (`input, button, link, image, text, region, list,
+    form, nav, media, custom`) but render node anyway.
+  - Read `experience/journeys/stories.yaml`. Validate each `journeys[]` entry
+    has `id` AND `screen_sequence`. Missing `screen_sequence` → warning
+    `kind: "missing_screen_sequence"`, skip that journey render.
+  - Read `design/tokens.json`. Flatten nested tree depth-first into flat dict
+    keyed `--token-<dotted-path-with-hyphens>`. Example:
+    `{"color": {"primary": "#0ea5e9"}}` → `--token-color-primary: #0ea5e9`
+    (same rule as `mockup-component-isolated-html/scripts/inline_tokens.py`).
+  - Glob `experience/features/**/*.md`; sort lexicographically. Build
     `feature -> screens[]` map by inverting `screens[].implements[]`.
-  - Build a normalised in-memory model:
+  - Build normalised in-memory model:
     `{ screens: [...], journeys: [...], tokens: {...}, features: [...], warnings: [...] }`.
 
 ### Edge cases
 
   - **Malformed YAML in a screen file** → fail loudly, exit non-zero. No
-    partial render. The error message names the offending file.
+    partial render; error message names offending file.
   - **Screen referenced from a journey but absent on disk** → record
-    `manifest.warnings[]` with `kind: "missing_screen"` AND skip that
-    journey step (the link in `journey/<id>.html` becomes a dead-end
-    placeholder, NOT a 404).
-  - **`elements:` entry with a `kind` outside the v0.1 enum** → render
-    with `data-spec-element` set, kind treated as `custom`, record
-    warning `kind: "unknown_element_kind"`.
-  - **`layout:` reference pointing to a non-existent file** → warning
-    `kind: "missing_layout"`, fall back to a built-in default shell.
+    `manifest.warnings[]` with `kind: "missing_screen"` AND skip that journey
+    step (link in `journey/<id>.html` becomes dead-end placeholder, NOT a 404).
+  - **`elements:` entry with a `kind` outside v0.1 enum** → render with
+    `data-spec-element` set, kind treated as `custom`, record warning
+    `kind: "unknown_element_kind"`.
+  - **`layout:` reference pointing to non-existent file** → warning
+    `kind: "missing_layout"`, fall back to built-in default shell.
   - **`experience/features/` empty or missing** → soft gate, warning
-    `kind: "missing_feature"`, continue rendering. `manifest.features[]`
-    is emitted as `[]`.
+    `kind: "missing_feature"`, continue rendering; `manifest.features[]`
+    emitted as `[]`.
 
 ## STEP 3: Render screens
 
