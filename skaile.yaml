@@ -285,7 +285,7 @@ assets:
   - kind: contract
     name: standards-contract
     root: skaileup/13_impl-quality/contracts/standards-contract
-  # ── flows (16) ──
+  # ── flows (17) ──
   - kind: flow
     name: appbuilder-complex
     files:
@@ -350,3 +350,7 @@ assets:
     name: quality-gate
     files:
       - skaileup/flows/quality-gate/quality-gate.flow.yaml
+  - kind: flow
+    name: concept-discovery
+    files:
+      - skaileup/flows/concept-discovery/concept-discovery.flow.yaml

@@ -357,6 +357,7 @@ SHARED_SUBFLOWS = [
     "architecture",
     "mockup-feedback",
     "quality-gate",
+    "concept-discovery",
 ]
 
 

@@ -1,0 +1,72 @@
+id: concept-discovery
+version: '2.0.0'
+name: 'Concept Discovery'
+description: >-
+  Shared discovery block: brief -> goals(opt) -> comparable(opt). The opening
+  concept pass of the discovery-bearing flows; consumed via a sub-flow node by
+  appbuilder-standard, appbuilder-complex and skaileup-concept-only;
+  standalone-runnable for testability. A goals global (optional | required)
+  controls whether the goals step may be skipped — concept-only requires it.
+meta:
+  category: concept
+  tags:
+    - shared-block
+    - discovery
+  icon: i-heroicons-document-text
+requires:
+  # Self-contained install manifest: the shared contract every skill reads +
+  # every skill its nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/concept-goals
+  - skill:@skaile-ai/concept-comparable
+globals:
+  research_depth: light
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+  # optional | required — consumers override via the sub-flow node's
+  # parameters.goals; threaded to the goals node.
+  goals: optional
+entry: brief
+nodes:
+  - id: brief
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: concept-brief
+      label: 'Concept Brief'
+      optional: false
+      parameters: {}
+  - id: goals
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: concept-goals
+      label: 'Concept Goals (per parent: optional | required)'
+      optional: true
+      parameters:
+        mode: '${goals}'
+  - id: comparable
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: concept-comparable
+      label: 'Comparable'
+      optional: true
+      parameters: {}
+edges:
+  - id: e-brief-goals
+    source: brief
+    target: goals
+    type: optional
+  - id: e-goals-comparable
+    source: goals
+    target: comparable
+    type: optional

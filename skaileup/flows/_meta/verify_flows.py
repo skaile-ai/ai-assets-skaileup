@@ -69,6 +69,7 @@ SHARED_FLOWS = [
     "architecture",
     "mockup-feedback",
     "quality-gate",
+    "concept-discovery",
 ]
 ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS + SHARED_FLOWS
 
