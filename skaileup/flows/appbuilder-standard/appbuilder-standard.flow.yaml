@@ -23,9 +23,7 @@ requires:
   # inheritance, no extras.
   - contract:@skaile-ai/shared-contracts
   - skill:@skaile-ai/skaileup-scope-scope-project
-  - skill:@skaile-ai/concept-brief
-  - skill:@skaile-ai/concept-goals
-  - skill:@skaile-ai/concept-comparable
+  - flow:@skaile-ai/concept-discovery
   - skill:@skaile-ai/design-brand-visual
   - skill:@skaile-ai/design-inspiration
   - skill:@skaile-ai/experience-journeys
@@ -61,36 +59,17 @@ nodes:
       label: 'Scope Project'
       optional: false
       parameters: {}
-  # --- High-level concept ---
-  - id: brief
-    type: skill
+  # --- Discovery (delegated to the shared concept-discovery flow) ---
+  - id: discovery
+    type: sub-flow
     position:
       x: 200
       y: 200
     data:
-      skill: concept-brief
-      label: 'Concept Brief'
-      optional: false
-      parameters: {}
-  - id: goals
-    type: skill
-    position:
-      x: 400
-      y: 200
-    data:
-      skill: concept-goals
-      label: 'Concept Goals'
-      optional: true
-      parameters: {}
-  - id: comparable
-    type: skill
-    position:
-      x: 600
-      y: 200
-    data:
-      skill: concept-comparable
-      label: 'Comparable'
-      optional: true
+      flow: concept-discovery
+      domain: discovery
+      label: 'Concept discovery (brief, goals, comparable)'
+      pass_context: true
       parameters: {}
   - id: brand-visual
     type: skill
@@ -258,20 +237,12 @@ nodes:
       pass_context: true
       parameters: {}
 edges:
-  - id: e-scope-brief
+  - id: e-scope-discovery
     source: scope
-    target: brief
+    target: discovery
     type: flow
-  - id: e-brief-goals
-    source: brief
-    target: goals
-    type: optional
-  - id: e-goals-comparable
-    source: goals
-    target: comparable
-    type: optional
-  - id: e-comparable-brand-visual
-    source: comparable
+  - id: e-discovery-brand-visual
+    source: discovery
     target: brand-visual
     type: flow
   - id: e-brand-visual-inspiration

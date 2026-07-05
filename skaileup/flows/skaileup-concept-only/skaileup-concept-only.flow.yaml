@@ -37,9 +37,7 @@ requires:
   - skill:@skaile-ai/concept-grounding-onboard
   - skill:@skaile-ai/concept-grounding-seeds
   - skill:@skaile-ai/concept-grounding-research
-  - skill:@skaile-ai/concept-brief
-  - skill:@skaile-ai/concept-goals
-  - skill:@skaile-ai/concept-comparable
+  - flow:@skaile-ai/concept-discovery
   - skill:@skaile-ai/design-brand-visual
   - skill:@skaile-ai/design-brand-voice
   - skill:@skaile-ai/design-inspiration
@@ -101,37 +99,19 @@ nodes:
       label: 'Domain Research'
       optional: true
       parameters: {}
-  # --- Discovery ---
-  - id: brief
-    type: skill
+  # --- Discovery (delegated to the shared concept-discovery flow) ---
+  - id: discovery
+    type: sub-flow
     position:
       x: 600
       y: 200
     data:
-      skill: concept-brief
-      label: 'Project Brief'
-      optional: false
-      parameters: {}
-  - id: goals
-    type: skill
-    position:
-      x: 800
-      y: 120
-    data:
-      skill: concept-goals
-      label: 'Goals'
-      optional: false
-      parameters: {}
-  - id: comparable
-    type: skill
-    position:
-      x: 800
-      y: 280
-    data:
-      skill: concept-comparable
-      label: 'Comparables'
-      optional: true
-      parameters: {}
+      flow: concept-discovery
+      domain: discovery
+      label: 'Concept discovery (goals required)'
+      pass_context: true
+      parameters:
+        goals: required
   # --- Design ---
   - id: brand-visual
     type: skill
@@ -272,20 +252,12 @@ edges:
     source: onboard
     target: research
     type: optional
-  - id: e-onboard-brief
+  - id: e-onboard-discovery
     source: onboard
-    target: brief
+    target: discovery
     type: flow
-  - id: e-brief-goals
-    source: brief
-    target: goals
-    type: flow
-  - id: e-brief-comparable
-    source: brief
-    target: comparable
-    type: optional
-  - id: e-goals-brand-visual
-    source: goals
+  - id: e-discovery-brand-visual
+    source: discovery
     target: brand-visual
     type: flow
   - id: e-brand-visual-brand-voice
