@@ -21,6 +21,8 @@ metadata:
     requires:
       - id: brief
         gate: hard
+      - id: trace
+        gate: hard
     consumes:
       - id: journeys
         gate: soft
@@ -36,6 +38,9 @@ metadata:
       - path: '_implementation/eval-feature'
         gate: hard
         description: 'All feature groups must be evaluated before product evaluation'
+      - path: '_implementation/trace.yaml'
+        gate: hard
+        description: 'Two-way traceability matrix required — run ops-trace first; release refuses on any red feature row'
     inputs_optional:
       - id: app_url
         label: 'Running app URL'
@@ -50,6 +55,8 @@ metadata:
         description: 'Brand tokens for design fidelity check'
       - path: '_implementation/eval-feature'
         description: 'Feature eval results to confirm all groups approved'
+      - path: '_implementation/trace.yaml'
+        description: 'Traceability matrix — overall must be green (zero red rows)'
       - path: 'ops/eval-product/references/design-rubrics.md'
         description: 'Design scoring rubrics — required before scoring any design dimension'
     produces:
@@ -73,6 +80,7 @@ READS
 ! \_concept/discovery/brief.md — goals and success metrics
 ! \_concept/experience/journeys/stories.yaml — all journeys for full walkthrough
 ! \_implementation/eval-feature/\*.yaml — confirm all groups approved
+! \_implementation/trace.yaml — traceability matrix; overall must be green
 ? \_concept/discovery/brand/tokens.json — brand design fidelity
 
 WRITES
@@ -85,15 +93,26 @@ MUST read design-rubrics.md before scoring any design dimension
 MUST walk all journeys end-to-end, not spot-check
 MUST be specific in design scores — cite exact UI elements
 MUST rank improvement_priorities by impact
+MUST refuse to grade unless \_implementation/trace.yaml exists with overall: green (zero red feature rows) — report each red row's feature_slug + which check failed
+MUST surface trace.yaml amber rows (docs missing / eval run missing) in the final report even when proceeding
 Generic evaluator laws: contracts/evaluator.md § Laws.
 NEVER give originality > 7 without identifying specific distinctive design choices
 NEVER accept "looks clean" as evidence of quality
 NEVER approve if design average < 7
 NEVER re-check individual acceptance criteria (eval-feature did that)
+NEVER approve a release while trace.yaml is missing, stale (older than the newest slice index.md), or overall: red
 
 ## Process
 
-STEP 1: Verify all feature groups approved.
+STEP 1: Verify traceability + all feature groups approved.
+Read \_implementation/trace.yaml. If missing:
+"eval-product blocked: no trace matrix. Run ops-trace first."
+If overall != "green": list every features[] row with status "red" (slug +
+failed check) and report:
+"eval-product blocked: trace matrix has <n> red feature rows. Repair via the
+skill named per row (impl-slice-commit / impl-plan-plan-vertical /
+impl-slice-test / ops-eval-feature), re-run ops-trace, then retry."
+Note amber rows for the final report.
 Check \_implementation/eval-feature/. If any file has verdict != "approved":
 "eval-product blocked: not all feature groups approved. Run eval-feature for: <list>"
 

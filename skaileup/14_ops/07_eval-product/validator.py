@@ -139,6 +139,30 @@ def validate(cwd: str) -> dict:
         reason="semantic — whether design average justifies verdict requires human review",
     )
 
+    # Release gate: an approved product verdict requires a green trace matrix.
+    def check_trace_gate():
+        import yaml as _yaml
+        report = v.read_json("_implementation/eval-product.yaml")
+        if report is None:
+            return True, ""  # absence of the report is caught by earlier checks
+        if report.get("verdict") != "approved":
+            return True, ""
+        trace_path = Path(cwd) / "_implementation" / "trace.yaml"
+        if not trace_path.exists():
+            return False, "verdict=approved but _implementation/trace.yaml is missing"
+        try:
+            trace = _yaml.safe_load(trace_path.read_text(encoding="utf-8")) or {}
+        except _yaml.YAMLError as exc:
+            return False, f"trace.yaml unreadable: {exc}"
+        if trace.get("overall") != "green":
+            return False, f"verdict=approved but trace.yaml overall={trace.get('overall')!r}"
+        return True, ""
+
+    v.must(
+        "approved verdict requires _implementation/trace.yaml with overall: green",
+        check_trace_gate,
+    )
+
     return v.result()
 
 
