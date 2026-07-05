@@ -296,12 +296,12 @@ CHECKLIST
 - **Called by:** `concept-orchestrator` or standalone (after each phase, before `e2e`)
 - **Reads:** `_concept/` (all), `contracts/` (all)
 - **Writes:** `_concept/quality.yaml`; auto-fixes in gardening mode
-- **Feeds into:** quality gate for proceeding to next pipeline step
+- **Feeds into:** quality gate for next pipeline step
 
 ## Recurring Usage
 
-Gardening mode is designed to run frequently:
+Gardening mode runs frequently:
 
 - **After each skill completes** — quick pass to catch drift
-- **Before `e2e`** — ensure structure is clean before testing
+- **Before `e2e`** — structure clean before testing
 - **Before merging concept changes** — gate on quality score ≥ 70
