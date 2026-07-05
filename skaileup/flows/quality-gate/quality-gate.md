@@ -14,8 +14,11 @@ their inline quality nodes.
 ## Pipeline
 
 ```
-test-unit → test-integration → test-e2e → ready → ops-review? → ops-sync?
+test-unit → test-integration → test-e2e → ready → review-feature? → trace → ops-review? → ops-sync?
 ```
+
+- **Feature Code Review (optional, per feature)** — `impl-quality-review-feature` re-runs per feature over its back-linked commits/source files; `needs_changes` verdicts route fixes through `impl-quality-debug-self-verify`.
+- **Ops Trace** — `ops-trace` builds `_implementation/trace.yaml` (every feature: frozen slice, commits, source files, AC statuses, eval verdict, docs + orphan code list). `ops-eval-product` refuses release unless the matrix is green.
 
 ## Variance knobs
 
@@ -27,5 +30,6 @@ test-unit → test-integration → test-e2e → ready → ops-review? → ops-sy
 ## Install manifest
 
 `quality-gate.flow.yaml` carries a top-level `requires:` listing
-`shared-contracts`, the four `impl-quality-*` gate skills and the
-`ops-review` / `ops-sync` tail.
+`shared-contracts`, the four `impl-quality-*` gate skills,
+`impl-quality-review-feature`, `ops-trace` and the `ops-review` / `ops-sync`
+tail.

@@ -3,12 +3,11 @@ version: '2.0.0'
 name: 'Quality Gate'
 description: >-
   Shared post-loop quality gate: test-unit -> test-integration -> test-e2e ->
-  ready, plus the optional ops tail review -> sync. Consumed via a sub-flow
-  node by appbuilder-standard, appbuilder-complex and skaileup-implementation;
-  standalone-runnable for testability. Two globals handle consumer variance:
-  e2e (required | optional) and ops_tail (include | skip — implementation
-  skips the review/sync tail). NOTE: the review-spine plan wires its new
-  review skills into this flow — land this plan first.
+  ready -> per-feature code review (opt) -> ops-trace, plus the optional ops
+  tail review -> sync. Consumed via a sub-flow node by appbuilder-standard,
+  appbuilder-complex and skaileup-implementation; standalone-runnable for
+  testability. Two globals handle consumer variance: e2e (required | optional)
+  and ops_tail (include | skip — implementation skips the review/sync tail).
 meta:
   category: maintenance
   tags:
@@ -23,6 +22,8 @@ requires:
   - skill:@skaile-ai/impl-quality-test-integration
   - skill:@skaile-ai/impl-quality-test-e2e
   - skill:@skaile-ai/impl-quality-ready
+  - skill:@skaile-ai/impl-quality-review-feature
+  - skill:@skaile-ai/ops-trace
   - skill:@skaile-ai/ops-review
   - skill:@skaile-ai/ops-sync
 globals:
@@ -79,6 +80,27 @@ nodes:
       label: 'Release Ready'
       optional: false
       parameters: {}
+  - id: q-review-feature
+    type: skill
+    position:
+      x: 650
+      y: 200
+    data:
+      skill: impl-quality-review-feature
+      label: 'Feature Code Review (per feature, opt)'
+      optional: true
+      subagent: true
+      parameters: {}
+  - id: q-trace
+    type: skill
+    position:
+      x: 700
+      y: 200
+    data:
+      skill: ops-trace
+      label: 'Ops Trace (two-way traceability)'
+      optional: false
+      parameters: {}
   - id: ops-review
     type: skill
     position:
@@ -114,10 +136,18 @@ edges:
     source: q-test-e2e
     target: q-ready
     type: flow
-  - id: e-q-ready-ops-review
+  - id: e-q-ready-q-review-feature
     source: q-ready
-    target: ops-review
+    target: q-review-feature
     type: optional
+  - id: e-q-review-feature-q-trace
+    source: q-review-feature
+    target: q-trace
+    type: flow
+  - id: e-q-trace-ops-review
+    source: q-trace
+    target: ops-review
+    type: flow
   - id: e-ops-review-ops-sync
     source: ops-review
     target: ops-sync
