@@ -66,8 +66,9 @@ the user has voiced what the feature even is.
 
 The handoff file is consumed by `concept-slice-align`. After the full slice
 chain (brainstorm → align → scope-feature → design-feature) commits the
-permanent artifacts, `concept-slice-design-feature` deletes the entire
-`_concept/slices/<slice_id>/` directory.
+permanent artifacts, `concept-slice-design-feature` freezes the dossier: it
+writes `_concept/slices/<slice_id>/index.md` and keeps the phase handoffs as
+permanent per-feature documentation. Nothing is deleted.
 
 ---
 

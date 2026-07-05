@@ -71,9 +71,10 @@ Its job is to surface implementation risks, unknowns, and dependencies — and t
 P1 questions that would otherwise block `impl-plan-align` from running a useful grill.
 
 The output is `_implementation/slices/<slice_id>/brainstorm.md` — a structured handoff file consumed
-by `impl-plan-align`. The `_implementation/slices/<slice_id>/` directory is scratch and is deleted by
-`impl-slice/commit` after the slice's atomic commit lands. None of the impl-plan skills
-delete the dir themselves.
+by `impl-plan-align`. The `_implementation/slices/<slice_id>/` dossier is durable: `impl-slice-commit`
+freezes it after the slice's atomic commit lands — writes `index.md`, keeps the phase handoffs as
+permanent documentation, removes only the transient `progress.yaml`. No impl-plan skill deletes
+or freezes the dir itself.
 
 **Per-slice scope** is the key behaviour change from the legacy project-wide brainstorm:
 risks are listed for THIS feature only. Project-wide audits live in `ops/audit` or

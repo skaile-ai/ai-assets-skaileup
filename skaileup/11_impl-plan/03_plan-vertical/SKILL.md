@@ -92,9 +92,10 @@ next row begins.
 > which produces N half-finished slices and zero working ones.
 
 The output is `_implementation/slices/<slice_id>/plan.md` — a structured handoff file
-consumed by `impl-slice/implement`, `impl-slice/test`, and `impl-slice/recap`
-in Task 2D. The `_implementation/slices/<slice_id>/` directory is scratch and is deleted
-by `impl-slice/commit` after the slice's atomic commit lands.
+consumed by `impl-slice/implement`, `impl-slice/test`, and `impl-slice/recap`.
+The `_implementation/slices/<slice_id>/` dossier is durable: `impl-slice-commit` freezes it
+after the slice's atomic commit lands — writes `index.md`, keeps the phase handoffs,
+removes only the transient `progress.yaml`.
 
 ## When to Use
 

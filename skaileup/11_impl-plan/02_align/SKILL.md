@@ -84,9 +84,10 @@ Pillars covered: state transitions, boundary inputs, concurrency, permissions,
 persistence/offline, error states, cross-feature data, performance, test seam.
 
 The output is `_implementation/slices/<slice_id>/align.md` — a structured handoff file consumed
-by `impl-plan-plan-vertical`. The `_implementation/slices/<slice_id>/` directory is scratch and
-is deleted by `impl-slice/commit` after the slice's atomic commit lands. None of the
-impl-plan skills delete the dir themselves.
+by `impl-plan-plan-vertical`. The `_implementation/slices/<slice_id>/` dossier is durable:
+`impl-slice-commit` freezes it after the slice's atomic commit lands — writes `index.md`, keeps
+the phase handoffs as permanent documentation, removes only the transient `progress.yaml`.
+No impl-plan skill deletes or freezes the dir itself.
 
 **Per-slice scope** is enforced. Edge cases discovered in this grill belong to THIS
 feature; cross-feature touch points are documented but not grilled in depth (their
