@@ -300,6 +300,23 @@ elements:
       - label: "Fälle"
 ```
 
+### `kind: list` with `items`
+
+`{label, target?}`, or a bare string shorthand for `{label: <string>}`
+with no target:
+
+```yaml
+elements:
+  - id: quick-links
+    kind: list
+    label: "Schnellzugriff"
+    states: [default]
+    items:
+      - label: "Fälle"
+        target: 11_intake/case_list
+      - "Berichte"           # bare string shorthand — {label: "Berichte"}, no target
+```
+
 ### `kind: table` with `sample_rows`
 
 ```yaml
@@ -353,7 +370,9 @@ frontmatter and subsequent renders drop `data-spec-provisional`.
 The schema is enforced by `lab/validate-elements-block/` (a Python
 validator that uses `contracts/scripts/validator_lib.py`, shipped in the
 sister repo `ai-assets-skill-development`). Reference fixtures live at
-`skaileup/contracts/tests/elements_block_examples.md` (3 valid, 3 invalid).
+`skaileup/contracts/tests/elements_block_examples.md` (9 valid, 11 invalid —
+the original 3 valid/3 invalid set plus 6 new valid/8 new invalid v0.3
+examples covering `target`/`items`/`table`/`tabs`/`options`).
 
 Run:
 
@@ -377,6 +396,8 @@ otherwise `1` with a `<path>:<line>: <message>` violation report.
 - **`columns` on a non-`table` kind.**
 - **`sample_rows` length mismatch** — any row whose length differs from
   `len(columns)`.
+- **`sample_rows`/`row_target` on a non-`table` kind** — either field
+  declared on anything other than `kind: table`.
 - **`options` on a non-`input` kind.**
 - **`items` entry shape mismatch for its `kind`** — e.g. a `nav` entry
   missing `target`, or any `items` entry missing `label`.
