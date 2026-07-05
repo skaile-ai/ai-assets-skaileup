@@ -213,6 +213,35 @@ nodes:
       label: 'Experience Components'
       optional: false
       parameters: {}
+  # --- Mockup renderer routers (first match wins; routes are authoritative) ---
+  - id: route-walkthrough
+    type: router
+    position:
+      x: 2300
+      y: 100
+    parentNode: g-conceptualization
+    data:
+      label: 'Walkthrough Renderer Router (astro -> framework -> static-html)'
+      routes:
+        - condition: 'stack.astro_available'
+          target: mock-walkthrough-astro
+        - condition: 'stack.framework_available'
+          target: mock-framework
+        - condition: 'default'
+          target: mock-static-fallback
+  - id: route-component
+    type: router
+    position:
+      x: 2300
+      y: 400
+    parentNode: g-conceptualization
+    data:
+      label: 'Component Renderer Router (storybook or skip)'
+      routes:
+        - condition: 'stack.storybook_available'
+          target: comp-storybook
+        - condition: 'default'
+          target: null
   - id: mock-walkthrough-astro
     type: skill
     position:
@@ -221,9 +250,8 @@ nodes:
     parentNode: g-conceptualization
     data:
       skill: mockup-walkthrough-astro
-      label: 'Astro Walkthrough Mockup'
+      label: 'Astro Walkthrough Mockup (via router)'
       optional: true
-      parallel_group: mockups
       parameters: {}
   - id: mock-framework
     type: skill
@@ -233,9 +261,8 @@ nodes:
     parentNode: g-conceptualization
     data:
       skill: mockup-walkthrough-framework
-      label: 'Framework Walkthrough Mockup'
+      label: 'Framework Walkthrough Mockup (via router)'
       optional: true
-      parallel_group: mockups
       parameters: {}
   - id: mock-static-fallback
     type: skill
@@ -245,9 +272,8 @@ nodes:
     parentNode: g-conceptualization
     data:
       skill: mockup-walkthrough-static-html
-      label: 'Static HTML Walkthrough (Phase 2 fallback)'
-      optional: false
-      parallel_group: mockups
+      label: 'Static HTML Walkthrough (router default)'
+      optional: true
       parameters: {}
   - id: comp-storybook
     type: skill
@@ -257,9 +283,8 @@ nodes:
     parentNode: g-conceptualization
     data:
       skill: mockup-component-storybook
-      label: 'Storybook Components'
-      optional: false
-      parallel_group: mockups
+      label: 'Storybook Components (via router)'
+      optional: true
       parameters: {}
   # --- Mockup feedback (delegated to the shared mockup-feedback flow) ---
   - id: feedback
@@ -438,22 +463,30 @@ edges:
     source: screens
     target: components
     type: flow
-  - id: e-components-mock-walkthrough-astro
+  - id: e-components-route-walkthrough
     source: components
+    target: route-walkthrough
+    type: parallel
+  - id: e-components-route-component
+    source: components
+    target: route-component
+    type: parallel
+  - id: e-route-walkthrough-mock-walkthrough-astro
+    source: route-walkthrough
     target: mock-walkthrough-astro
-    type: parallel
-  - id: e-components-mock-framework
-    source: components
+    type: optional
+  - id: e-route-walkthrough-mock-framework
+    source: route-walkthrough
     target: mock-framework
-    type: parallel
-  - id: e-components-mock-static-fallback
-    source: components
+    type: optional
+  - id: e-route-walkthrough-mock-static-fallback
+    source: route-walkthrough
     target: mock-static-fallback
-    type: parallel
-  - id: e-components-comp-storybook
-    source: components
+    type: optional
+  - id: e-route-component-comp-storybook
+    source: route-component
     target: comp-storybook
-    type: parallel
+    type: optional
   - id: e-mock-walkthrough-astro-feedback
     source: mock-walkthrough-astro
     target: feedback
