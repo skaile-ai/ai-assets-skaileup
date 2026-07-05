@@ -1,0 +1,19 @@
+schema_version: 1
+feature_slug: login
+feature_path: _concept/experience/features/01_user_auth/login.md
+slice_ref: _implementation/slices/login/
+commits_reviewed: [abc1234]
+files_reviewed:
+  - src/routes/login.ts
+findings:
+  - id: F-1
+    severity: low
+    category: ui_ux
+    file: src/routes/login.ts
+    line: 88
+    ac_ref: ""
+    summary: "Submit button lacks aria-busy during pending state"
+    recommendation: "Set aria-busy=true while the mutation is in flight"
+counts: {critical: 0, high: 0, medium: 0, low: 1}
+verdict: approve
+last_updated: "2026-07-05"

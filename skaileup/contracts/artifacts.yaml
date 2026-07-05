@@ -473,6 +473,12 @@ artifacts:
     side: impl
     produced_by: ops-trace
     description: Two-way traceability matrix — per-feature roll-up (frozen/commits/ACs/eval/docs) + orphan code list.
+  feature-review-result:
+    path: _implementation/review/        # {feature_slug}.yaml
+    kind: durable
+    side: impl
+    produced_by: impl-quality-review-feature
+    description: Per-feature code-review verdict (approve|needs_changes) + file:line findings.
 
   # ── mockup feedback loop (_concept/_feedback/) ──────────────────────────
   feedback-overlay-bundle:

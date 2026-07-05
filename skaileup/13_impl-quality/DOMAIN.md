@@ -24,6 +24,7 @@ Produces test artifacts, code evaluations, and debug outputs that gate each impl
 - **impl-quality-standards-sync** (`standards-sync/`) — Pushes proven project standards back to shared profiles, or pulls profile standards into `_concept/_standards/`.
 - **impl-quality-debug-self-verify** (`debug-self-verify/`) — Writes `_debug/<id>/protocol.md`: test commands + expected outputs + success criteria the AI runs autonomously.
 - **impl-quality-debug-handoff** (`debug-handoff/`) — Writes `_debug/<id>/handoff.md`: bug description, attempts, hypothesis, and next steps pasteable into a fresh chat.
+- **impl-quality-review-feature** (`review-feature/`) — Adversarial per-feature code review scoped to the feature's back-linked `commits[]`/`source_files[]`; writes `_implementation/review/<feature_slug>.yaml` with approve/needs_changes + file:line findings.
 
 ## When to Use
 
