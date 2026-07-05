@@ -36,7 +36,7 @@ brainstorm → align → scope-feature → design-feature
 Each phase writes a handoff file under `_concept/slices/<id>/` and `/clear`s
 before the next, so no phase holds the whole slice in context. On
 `design-feature` the result is appended to the permanent concept artifacts
-(`product-spec/features/`, `experience/screens/`, mockups, this feature's
+(`experience/features/`, `experience/screens/`, mockups, this feature's
 datamodel entities). In `just-in-time` mode only the artifacts the feature
 actually needs are produced.
 

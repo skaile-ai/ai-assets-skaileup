@@ -40,7 +40,7 @@ chore(team-todo-comments): migrate comments table
 
 Slice: team-todo-comments
 Feature: Comments on team todo items
-Feature spec: _concept/product-spec/features/team-todo/team-todo-comments.md
+Feature spec: _concept/experience/features/team-todo/team-todo-comments.md
 ```
 
 ### feat — handler/route/data logic
@@ -50,7 +50,7 @@ feat(team-todo-comments): comments handler + route
 
 Slice: team-todo-comments
 Feature: Comments on team todo items
-Feature spec: _concept/product-spec/features/team-todo/team-todo-comments.md
+Feature spec: _concept/experience/features/team-todo/team-todo-comments.md
 ```
 
 ### feat — UI
@@ -60,7 +60,7 @@ feat(team-todo-comments): wire UI for comments
 
 Slice: team-todo-comments
 Feature: Comments on team todo items
-Feature spec: _concept/product-spec/features/team-todo/team-todo-comments.md
+Feature spec: _concept/experience/features/team-todo/team-todo-comments.md
 ```
 
 ### test — coverage
@@ -70,7 +70,7 @@ test(team-todo-comments): cover comments flow
 
 Slice: team-todo-comments
 Feature: Comments on team todo items
-Feature spec: _concept/product-spec/features/team-todo/team-todo-comments.md
+Feature spec: _concept/experience/features/team-todo/team-todo-comments.md
 ```
 
 ## Audit-trail note

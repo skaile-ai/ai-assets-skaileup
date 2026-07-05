@@ -1,7 +1,7 @@
 {
   "slice_id": "team-todo-comments",
   "feature_title": "Comments on team todo items",
-  "feature_path": "_concept/product-spec/features/team-todo/team-todo-comments.md",
+  "feature_path": "_concept/experience/features/team-todo/team-todo-comments.md",
   "commits": [
     {
       "type": "chore",
@@ -10,7 +10,7 @@
         "migrations/20260508_add_comments.sql",
         "src/server/db/schema/comments.ts"
       ],
-      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/product-spec/features/team-todo/team-todo-comments.md"
+      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/experience/features/team-todo/team-todo-comments.md"
     },
     {
       "type": "feat",
@@ -18,7 +18,7 @@
       "files": [
         "src/server/api/routers/comments.ts"
       ],
-      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/product-spec/features/team-todo/team-todo-comments.md"
+      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/experience/features/team-todo/team-todo-comments.md"
     },
     {
       "type": "feat",
@@ -28,7 +28,7 @@
         "src/components/CommentComposer.tsx",
         "src/components/TodoDetailPanel.tsx"
       ],
-      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/product-spec/features/team-todo/team-todo-comments.md"
+      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/experience/features/team-todo/team-todo-comments.md"
     },
     {
       "type": "test",
@@ -37,7 +37,7 @@
         "src/server/api/routers/comments.test.ts",
         "e2e/comments.spec.ts"
       ],
-      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/product-spec/features/team-todo/team-todo-comments.md"
+      "body": "Slice: team-todo-comments\nFeature: Comments on team todo items\nFeature spec: _concept/experience/features/team-todo/team-todo-comments.md"
     }
   ]
 }
