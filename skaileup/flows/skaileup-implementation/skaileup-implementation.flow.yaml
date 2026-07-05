@@ -40,17 +40,53 @@ globals:
   verbosity: standard
 entry: architecture
 nodes:
+  # --- Phase containers (visual; must precede their children) ---
+  - id: g-conceptualization
+    type: group
+    position:
+      x: -40
+      y: 0
+    style:
+      width: 480
+      height: 480
+    data:
+      label: 'Conceptualization'
+      phase: conceptualization
+  - id: g-implementation
+    type: group
+    position:
+      x: 560
+      y: 0
+    style:
+      width: 1380
+      height: 480
+    data:
+      label: 'Implementation'
+      phase: implementation
+  - id: g-review
+    type: group
+    position:
+      x: 1960
+      y: 0
+    style:
+      width: 280
+      height: 480
+    data:
+      label: 'Review'
+      phase: review
   # --- Architecture (read-or-generate; delegated to the shared architecture flow) ---
   - id: architecture
     type: sub-flow
     position:
       x: 0
       y: 200
+    parentNode: g-conceptualization
     data:
       flow: architecture
       domain: blueprint
       label: 'Architecture blueprint (read-or-generate, no templates step)'
       pass_context: true
+      phase: conceptualization
       parameters:
         templates: skip
         note: 'Read _concept/blueprint/ if present, else generate from a one-line product description'
@@ -60,11 +96,13 @@ nodes:
     position:
       x: 600
       y: 200
+    parentNode: g-implementation
     data:
       flow: impl-build-setup
       domain: build
       label: 'One-time build setup'
       pass_context: true
+      phase: implementation
       parameters:
         infrastructure: optional
   # --- Per-feature impl-slice loop (delegated to the impl-slice flow) ---
@@ -73,22 +111,26 @@ nodes:
     position:
       x: 1800
       y: 200
+    parentNode: g-implementation
     data:
       flow: skaileup-slice-impl
       domain: slice
       label: 'Per-feature impl loop (spec elicited per slice)'
       pass_context: true
+      phase: implementation
   # --- Quality gate (delegated to the shared quality-gate flow; no ops tail) ---
   - id: quality
     type: sub-flow
     position:
       x: 2000
       y: 200
+    parentNode: g-review
     data:
       flow: quality-gate
       domain: quality
       label: 'Quality gate (e2e optional, no ops tail)'
       pass_context: true
+      phase: review
       parameters:
         e2e: optional
         ops_tail: skip

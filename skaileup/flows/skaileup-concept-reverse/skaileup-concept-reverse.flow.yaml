@@ -45,12 +45,25 @@ globals:
   verbosity: detailed
 entry: reverse-engineer
 nodes:
+  # --- Phase container (visual; must precede its children) ---
+  - id: g-conceptualization
+    type: group
+    position:
+      x: -40
+      y: 0
+    style:
+      width: 1280
+      height: 480
+    data:
+      label: 'Conceptualization'
+      phase: conceptualization
   # --- Extraction ---
   - id: reverse-engineer
     type: skill
     position:
       x: 0
       y: 200
+    parentNode: g-conceptualization
     data:
       skill: ops-reverse-engineer
       label: 'Reverse Engineer'
@@ -61,6 +74,7 @@ nodes:
     position:
       x: 200
       y: 120
+    parentNode: g-conceptualization
     data:
       skill: ops-project-overview
       label: 'Project Overview'
@@ -71,6 +85,7 @@ nodes:
     position:
       x: 200
       y: 280
+    parentNode: g-conceptualization
     data:
       skill: ops-project-subsystem-map
       label: 'Subsystem Map'
@@ -82,6 +97,7 @@ nodes:
     position:
       x: 400
       y: 120
+    parentNode: g-conceptualization
     data:
       skill: impl-quality-standards-discover
       label: 'Discover Standards'
@@ -92,6 +108,7 @@ nodes:
     position:
       x: 600
       y: 120
+    parentNode: g-conceptualization
     data:
       skill: impl-quality-standards-inject
       label: 'Inject Standards'
@@ -103,6 +120,7 @@ nodes:
     position:
       x: 400
       y: 280
+    parentNode: g-conceptualization
     data:
       skill: experience-journeys
       label: 'User Journeys'
@@ -113,6 +131,7 @@ nodes:
     position:
       x: 600
       y: 280
+    parentNode: g-conceptualization
     data:
       skill: impl-architecture-system
       label: 'Architecture'
@@ -123,6 +142,7 @@ nodes:
     position:
       x: 800
       y: 280
+    parentNode: g-conceptualization
     data:
       skill: impl-architecture-datamodel
       label: 'Data Model'
@@ -133,6 +153,7 @@ nodes:
     position:
       x: 1000
       y: 280
+    parentNode: g-conceptualization
     data:
       skill: experience-screens
       label: 'Screens'
