@@ -355,6 +355,7 @@ def test_schema_rejects_bad_new_types(mutation, reason):
 SHARED_SUBFLOWS = [
     "impl-build-setup",
     "architecture",
+    "mockup-feedback",
 ]
 
 
