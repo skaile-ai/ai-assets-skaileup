@@ -203,6 +203,20 @@ def check_parent_nodes(fid: str, data: dict, errors: list[str]) -> None:
             )
 
 
+def check_routers(fid: str, data: dict, errors: list[str]) -> None:
+    """Every router route target must be null (skip) or an existing node id."""
+    node_ids = {n["id"] for n in data.get("nodes", [])}
+    for n in data.get("nodes", []):
+        if n.get("type") != "router":
+            continue
+        for route in n.get("data", {}).get("routes", []):
+            target = route.get("target")
+            if target is not None and target not in node_ids:
+                errors.append(
+                    f"{fid}: router {n['id']!r} route targets unknown node {target!r}"
+                )
+
+
 def main() -> int:
     schema = load_schema()
     deferred = load_deferred()
@@ -331,6 +345,7 @@ def main() -> int:
     # ------------------------------------------------------------------
     for fid, data in flow_data_by_id.items():
         check_parent_nodes(fid, data, errors)
+        check_routers(fid, data, errors)
 
     # ------------------------------------------------------------------
     # Print summary

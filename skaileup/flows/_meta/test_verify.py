@@ -418,3 +418,29 @@ def test_dangling_parent_node_fails(tmp_path):
     assert proc.returncode == 2
     assert "parentNode" in proc.stderr
     assert "g-does-not-exist" in proc.stderr
+
+
+# ---------------------------------------------------------------------------
+# Case 13: router route target must be an existing node id (or null) → exit 2
+# ---------------------------------------------------------------------------
+def test_router_bad_target_fails(tmp_path):
+    verifier = _build_scratch_repo(tmp_path)
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
+    data = yaml.safe_load(flow_path.read_text())
+    data["nodes"].append({
+        "id": "route-bad",
+        "type": "router",
+        "position": {"x": 0, "y": 0},
+        "data": {
+            "label": "Bad Router",
+            "routes": [
+                {"condition": "stack.astro_available", "target": "no-such-node"},
+                {"condition": "default", "target": None},
+            ],
+        },
+    })
+    flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    proc = _run(verifier)
+    assert proc.returncode == 2
+    assert "route targets unknown node" in proc.stderr
+    assert "no-such-node" in proc.stderr
