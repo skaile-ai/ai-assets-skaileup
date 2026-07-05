@@ -66,6 +66,7 @@ VARIANT_FLOWS = [
 # extracted into standalone sub-flows, consumed via sub-flow nodes.
 SHARED_FLOWS = [
     "impl-build-setup",
+    "architecture",
 ]
 ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS + SHARED_FLOWS
 

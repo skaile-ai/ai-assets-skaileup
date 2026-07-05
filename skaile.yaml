@@ -285,7 +285,7 @@ assets:
   - kind: contract
     name: standards-contract
     root: skaileup/13_impl-quality/contracts/standards-contract
-  # ── flows (13) ──
+  # ── flows (14) ──
   - kind: flow
     name: appbuilder-complex
     files:
@@ -338,3 +338,7 @@ assets:
     name: impl-build-setup
     files:
       - skaileup/flows/impl-build-setup/impl-build-setup.flow.yaml
+  - kind: flow
+    name: architecture
+    files:
+      - skaileup/flows/architecture/architecture.flow.yaml

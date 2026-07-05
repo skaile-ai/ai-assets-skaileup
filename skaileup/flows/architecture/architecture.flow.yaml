@@ -1,0 +1,91 @@
+id: architecture
+version: '2.0.0'
+name: 'Architecture'
+description: >-
+  Shared architecture block: techstack -> templates-select(opt) -> system(opt)
+  -> datamodel. Writes _concept/blueprint/. Consumed via a sub-flow node by
+  appbuilder-simple/-standard/-complex/-cli, skaileup-implementation and
+  skaileup-concept-only; standalone-runnable for testability. Two globals
+  handle consumer variance: templates (include | skip) gates templates-select,
+  system (include | skip) gates the system-architecture step.
+meta:
+  category: concept
+  tags:
+    - shared-block
+    - architecture
+    - blueprint
+  icon: i-heroicons-cpu-chip
+requires:
+  # Self-contained install manifest: the shared contract every skill reads +
+  # every skill its nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/impl-architecture-techstack
+  - skill:@skaile-ai/impl-architecture-templates-select
+  - skill:@skaile-ai/impl-architecture-system
+  - skill:@skaile-ai/impl-architecture-datamodel
+globals:
+  research_depth: light
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+  # include | skip — consumers override via the sub-flow node's parameters;
+  # threaded to the templates / arch-system nodes.
+  templates: include
+  system: include
+entry: techstack
+nodes:
+  - id: techstack
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: impl-architecture-techstack
+      label: 'Tech Stack'
+      optional: false
+      parameters: {}
+  - id: templates
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: impl-architecture-templates-select
+      label: 'Architecture Templates (per parent: include | skip)'
+      optional: true
+      parameters:
+        mode: '${templates}'
+  - id: arch-system
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: impl-architecture-system
+      label: 'System Architecture (per parent: include | skip)'
+      optional: true
+      parameters:
+        mode: '${system}'
+  - id: datamodel
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: impl-architecture-datamodel
+      label: 'Data Model'
+      optional: false
+      parameters: {}
+edges:
+  - id: e-techstack-templates
+    source: techstack
+    target: templates
+    type: optional
+  - id: e-templates-arch-system
+    source: templates
+    target: arch-system
+    type: optional
+  - id: e-arch-system-datamodel
+    source: arch-system
+    target: datamodel
+    type: flow
