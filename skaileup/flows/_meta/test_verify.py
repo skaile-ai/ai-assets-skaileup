@@ -369,3 +369,46 @@ def test_shared_subflow_registered(flow_id):
     assert flow_id in verify_flows.ALL_FLOWS
     assert (FLOWS / flow_id / f"{flow_id}.flow.yaml").exists()
     assert (FLOWS / flow_id / f"{flow_id}.md").exists()
+
+
+# ---------------------------------------------------------------------------
+# Case 11: schema accepts node-level phase; group phase is enum-constrained
+# ---------------------------------------------------------------------------
+def test_schema_accepts_phase_fields():
+    import jsonschema
+
+    schema = json.loads(SCHEMA.read_text())
+    flow = {
+        "id": "smoke",
+        "name": "Smoke",
+        "nodes": [
+            {"id": "g1", "type": "group", "position": {"x": 0, "y": 0},
+             "data": {"label": "Conceptualization", "phase": "conceptualization"}},
+            {"id": "s1", "type": "skill", "position": {"x": 0, "y": 0},
+             "parentNode": "g1",
+             "data": {"skill": "impl-slice-implement", "phase": "implementation"}},
+            {"id": "sf1", "type": "sub-flow", "position": {"x": 100, "y": 0},
+             "data": {"flow": "quality-gate", "phase": "review"}},
+        ],
+        "edges": [],
+    }
+    jsonschema.validate(flow, schema)
+    # a bogus phase value must be rejected
+    flow["nodes"][0]["data"]["phase"] = "not-a-phase"
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(flow, schema)
+
+
+# ---------------------------------------------------------------------------
+# Case 12: dangling parentNode → exit 2
+# ---------------------------------------------------------------------------
+def test_dangling_parent_node_fails(tmp_path):
+    verifier = _build_scratch_repo(tmp_path)
+    flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
+    data = yaml.safe_load(flow_path.read_text())
+    data["nodes"][0]["parentNode"] = "g-does-not-exist"
+    flow_path.write_text(yaml.safe_dump(data, sort_keys=False))
+    proc = _run(verifier)
+    assert proc.returncode == 2
+    assert "parentNode" in proc.stderr
+    assert "g-does-not-exist" in proc.stderr

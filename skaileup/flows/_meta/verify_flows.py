@@ -191,6 +191,18 @@ def parse_requires(flow_data: dict) -> tuple[set[str], set[str], set[str], list[
     return skills, contracts, flows, bad
 
 
+def check_parent_nodes(fid: str, data: dict, errors: list[str]) -> None:
+    """Every parentNode must reference an existing group node in the same flow."""
+    group_ids = {n["id"] for n in data.get("nodes", []) if n.get("type") == "group"}
+    for n in data.get("nodes", []):
+        parent = n.get("parentNode")
+        if parent is not None and parent not in group_ids:
+            errors.append(
+                f"{fid}: node {n['id']!r} has parentNode {parent!r} "
+                f"which is not a group node in this flow"
+            )
+
+
 def main() -> int:
     schema = load_schema()
     deferred = load_deferred()
@@ -313,6 +325,12 @@ def main() -> int:
                 )
         if not req_contracts:
             warnings.append(f"{fid}: requires lists no contract (expected shared-contracts)")
+
+    # ------------------------------------------------------------------
+    # 7. Structural node checks (groups, routers)
+    # ------------------------------------------------------------------
+    for fid, data in flow_data_by_id.items():
+        check_parent_nodes(fid, data, errors)
 
     # ------------------------------------------------------------------
     # Print summary

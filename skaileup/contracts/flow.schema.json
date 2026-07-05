@@ -228,7 +228,12 @@
                 }
               }
             },
-            "parameters": { "type": "object", "additionalProperties": true }
+            "parameters": { "type": "object", "additionalProperties": true },
+            "phase": {
+              "type": "string",
+              "enum": ["conceptualization", "implementation", "review"],
+              "description": "Top-level phase tag for nodes not inside a group (e.g. skaileup-stepwise, whose phases are non-contiguous). Group membership via parentNode takes precedence."
+            }
           }
         }
       }
@@ -251,7 +256,13 @@
         "data": {
           "type": "object",
           "additionalProperties": false,
-          "properties": { "label": { "type": "string" }, "phase": { "type": "string" } }
+          "properties": {
+            "label": { "type": "string" },
+            "phase": {
+              "type": "string",
+              "enum": ["conceptualization", "implementation", "review"]
+            }
+          }
         }
       }
     },
@@ -409,7 +420,12 @@
               "default": true,
               "description": "When true, the parent flow's runtime context is passed to the sub-flow."
             },
-            "parameters": { "type": "object", "additionalProperties": true }
+            "parameters": { "type": "object", "additionalProperties": true },
+            "phase": {
+              "type": "string",
+              "enum": ["conceptualization", "implementation", "review"],
+              "description": "Top-level phase this delegated block belongs to."
+            }
           }
         }
       }
