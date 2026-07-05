@@ -62,7 +62,12 @@ VARIANT_FLOWS = [
     "skaileup-implementation",
     "skaileup-stepwise",
 ]
-ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS
+# Shared building blocks (2026-07 flow restructure): repeated tier segments
+# extracted into standalone sub-flows, consumed via sub-flow nodes.
+SHARED_FLOWS = [
+    "impl-build-setup",
+]
+ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS + SHARED_FLOWS
 
 # Skills authored by Phase-2 mini-plans 2A/2B/2C/2D/2F/2G — these are added
 # to the "knowable" set for resolution checks even if SKILL.md gathering misses

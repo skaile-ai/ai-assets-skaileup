@@ -1,0 +1,126 @@
+id: impl-build-setup
+version: '2.0.0'
+name: 'Impl Build Setup'
+description: >-
+  Shared one-time build-setup block: scaffold -> foundation ->
+  infrastructure(opt) -> migrate -> seed -> docs. Consumed via a sub-flow node
+  by appbuilder-simple/-standard/-complex/-cli and skaileup-implementation;
+  standalone-runnable for testability. Two globals handle consumer variance
+  (threaded to nodes like concept_depth in skaileup-slice-concept):
+  infrastructure (skip | optional | required) and data_setup
+  (required | optional — cli treats migrate/seed as optional data steps).
+meta:
+  category: incremental
+  tags:
+    - shared-block
+    - build-setup
+  icon: i-heroicons-wrench-screwdriver
+requires:
+  # Self-contained install manifest: the contracts its skills read + every
+  # skill its nodes run (flow node order). Exact — no inheritance, no extras.
+  # implementation-contract is cited by impl-build-docs.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/implementation-contract
+  - skill:@skaile-ai/impl-build-scaffold
+  - skill:@skaile-ai/impl-build-foundation
+  - skill:@skaile-ai/impl-build-infrastructure
+  - skill:@skaile-ai/impl-build-migrate
+  - skill:@skaile-ai/impl-build-seed
+  - skill:@skaile-ai/impl-build-docs
+globals:
+  research_depth: skip
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+  # skip | optional | required — consumers override via the sub-flow node's
+  # parameters.infrastructure; threaded to the infra-opt node.
+  infrastructure: optional
+  # required | optional — consumers override via the sub-flow node's
+  # parameters.data_setup; threaded to migrate + seed.
+  data_setup: required
+entry: scaffold
+nodes:
+  - id: scaffold
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: impl-build-scaffold
+      label: 'Scaffold'
+      optional: false
+      parameters: {}
+  - id: foundation
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: impl-build-foundation
+      label: 'Foundation'
+      optional: false
+      parameters: {}
+  - id: infra-opt
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: impl-build-infrastructure
+      label: 'Infrastructure (per parent: skip | optional | required)'
+      optional: true
+      parameters:
+        mode: '${infrastructure}'
+  - id: migrate
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: impl-build-migrate
+      label: 'Migrate'
+      optional: false
+      parameters:
+        mode: '${data_setup}'
+  - id: seed
+    type: skill
+    position:
+      x: 800
+      y: 200
+    data:
+      skill: impl-build-seed
+      label: 'Seed'
+      optional: false
+      parameters:
+        mode: '${data_setup}'
+  - id: docs
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: impl-build-docs
+      label: 'Build Docs'
+      optional: false
+      parameters: {}
+edges:
+  - id: e-scaffold-foundation
+    source: scaffold
+    target: foundation
+    type: flow
+  - id: e-foundation-infra-opt
+    source: foundation
+    target: infra-opt
+    type: optional
+  - id: e-infra-opt-migrate
+    source: infra-opt
+    target: migrate
+    type: flow
+  - id: e-migrate-seed
+    source: migrate
+    target: seed
+    type: flow
+  - id: e-seed-docs
+    source: seed
+    target: docs
+    type: flow

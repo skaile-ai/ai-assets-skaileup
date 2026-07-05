@@ -347,3 +347,21 @@ def test_schema_rejects_bad_new_types(mutation, reason):
     mutation(flow)
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(flow, schema)
+
+
+# ---------------------------------------------------------------------------
+# Case 10: shared sub-flows are registered and their flow files exist
+# ---------------------------------------------------------------------------
+SHARED_SUBFLOWS = [
+    "impl-build-setup",
+]
+
+
+@pytest.mark.parametrize("flow_id", SHARED_SUBFLOWS)
+def test_shared_subflow_registered(flow_id):
+    sys.path.insert(0, str(FLOWS / "_meta"))
+    import verify_flows
+
+    assert flow_id in verify_flows.ALL_FLOWS
+    assert (FLOWS / flow_id / f"{flow_id}.flow.yaml").exists()
+    assert (FLOWS / flow_id / f"{flow_id}.md").exists()
