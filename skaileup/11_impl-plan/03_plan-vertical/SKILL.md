@@ -161,6 +161,7 @@ REFERENCES
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
   contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
+  contracts/phase_procedures.md                                   — shared handoff procedures (DO shared:*)
   impl-plan/plan-vertical/references/anti-horizontal-rules.md     — long-form expansion of the nudge with worked counter-examples
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
@@ -253,7 +254,8 @@ STEP 4: Fill UI / Logic / Data per row
 
 STEP 5: Derive testing strategy
   For each EARS line in align.md "## Acceptance handoff" (or feature.md
-  "## Acceptance Criteria" for appbuilder-mvp), assign at least one row to cover it AND
+  "## Acceptance Criteria" for appbuilder-mvp) (format: contracts/acceptance_criteria.md
+  § EARS template), assign at least one row to cover it AND
   at least one test in `### Automated tests`.
 
   Test tags: each automated-test bullet starts with `[unit]`, `[integration]`,
@@ -266,21 +268,14 @@ STEP 5: Derive testing strategy
   ready for `impl-slice/recap`. MUST include the literal line:
     "all rows in `## Vertical decomposition` complete end-to-end"
 
-STEP 6: Draft plan.md in memory
-  Frontmatter (cross-phase contract):
-    ```
-    ---
-    slice_id: <feature_slug>
-    feature_title: <copied from align.md or feature.md, verbatim>
-    feature_path: _concept/experience/features/<group>/<feature_slug>.md
-    phase: plan
-    tier: <scope.tier>
-    created_at: <ISO-8601 UTC; copy from align.md if present, else now()>
-    last_updated: <ISO-8601 UTC; now()>
-    ---
-    ```
-
-  Body sections (use these exact headers, in order):
+STEP 6: Finalize
+  DO shared:draft_checkpoint_write     (contracts/phase_procedures.md)
+    artifact_path: _implementation/slices/<slice_id>/plan.md
+    checkpoint_id: plan_draft
+  Frontmatter: impl-side keys (slice_loop.md § Handoff frontmatter — slice_id,
+  feature_title, feature_path, phase, tier, created_at, last_updated),
+  phase: plan.
+  Body sections (exact headers, in order):
     ## Slice scope
     ## Vertical decomposition
     ## Testing strategy
@@ -304,25 +299,8 @@ STEP 6: Draft plan.md in memory
     - [ ] `_concept/experience/features/<group>/<feature_slug>.md` § Acceptance Criteria all green
   - `## Open carry-overs`: P3 or DEFERRED items pulled from align.md
     "## Open questions surfaced by the grill". `_(none)_` is allowed.
-
-  Show the full draft to the user.
-
-STEP 7: Approval
-  CHECKPOINT plan_draft
-    > "Here's the per-slice plan for `<slice_id>`. Does any row have empty
-    >  UI / Logic / Data cells without a justification? If so we should
-    >  split or merge it. Approve to write to _implementation/slices/<slice_id>/plan.md,
-    >  or tell me what to change."
-
-STEP 8: Write the handoff
-  - Write _implementation/slices/<slice_id>/plan.md
-  - Verify file exists and frontmatter parses
-
-STEP 9: Validate
-  - $ python3 impl-plan/plan-vertical/validator.py _implementation/slices/<slice_id>/plan.md
-  - On failure: report the validator errors and STOP. Do not commit.
-  - Empty UI/Logic/Data cells produce a WARNING (stderr), not a failure;
-    surface the warning to the user.
+  - Validator note: empty UI/Logic/Data cells produce a WARNING (stderr), not
+    a failure; surface it to the user.
 
 EMIT  [impl-plan-plan-vertical] completed slice_id=<id> tier=<tier> rows=<n> tests=<n>
 

@@ -172,16 +172,10 @@ STEP 2: Check frontmatter compliance
 
 STEP 3: Check golden principles
 
-- For every applicable rule in contracts/golden_principles.md:
-  - Entity IDs: `snake_case`
-  - Field names: `snake_case`
-  - Enum values: `PascalCase`
-  - Relation fields: `_id` suffix
-  - Feature groups: sequential, no gaps
-  - Screen groups mirror feature group numbers
-  - Every feature has at least one requirement
-  - All paths in frontmatter resolve to existing files
-    See references/checks.md for the complete check table
+- For every applicable rule in contracts/golden_principles.md (entity, field,
+  enum, and relation naming; group numbering; requirement coverage;
+  frontmatter path resolution). Do not re-enumerate the rules here — the
+  contract owns them; references/checks.md has the complete check table.
 
 STEP 4: Check cross-reference integrity
 

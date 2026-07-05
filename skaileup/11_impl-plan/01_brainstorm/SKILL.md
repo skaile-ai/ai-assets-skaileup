@@ -118,6 +118,7 @@ REFERENCES
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
   contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
+  contracts/phase_procedures.md                                   — shared handoff procedures (DO shared:*)
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 
@@ -203,21 +204,14 @@ STEP 5: Surface P1 questions (each STANDALONE)
   - P2 questions go in the handoff but do not block.
   - P3 questions are nice-to-know — also in the handoff.
 
-STEP 6: Draft handoff in memory
-  Frontmatter (cross-phase contract):
-    ```
-    ---
-    slice_id: <feature_slug>
-    feature_title: <title from feature.md frontmatter, verbatim>
-    feature_path: _concept/experience/features/<group>/<feature_slug>.md
-    phase: brainstorm
-    tier: <scope.tier>
-    created_at: <ISO-8601 UTC, e.g. 2026-05-08T12:34:56Z>
-    last_updated: <same as created_at on first write>
-    ---
-    ```
-
-  Body sections (use these exact headers, in order):
+STEP 6: Finalize
+  DO shared:draft_checkpoint_write     (contracts/phase_procedures.md)
+    artifact_path: _implementation/slices/<slice_id>/brainstorm.md
+    checkpoint_id: brainstorm_draft
+  Frontmatter: impl-side keys (slice_loop.md § Handoff frontmatter — slice_id,
+  feature_title, feature_path, phase, tier, created_at, last_updated),
+  phase: brainstorm.
+  Body sections (exact headers, in order):
     ## App-level summary (1 paragraph)
     ## Feature summary (1 paragraph)
     ## Risks and unknowns
@@ -235,18 +229,6 @@ STEP 6: Draft handoff in memory
   - `## Risks and unknowns` MUST contain all six sub-headings; an empty sub-heading must contain the literal `_(no risks identified for this feature)_`.
   - `## Open questions` MUST contain a markdown table with the header `| Priority | Question | Blocks |` and at least the table delimiter row.
   - `## Recommended mitigations` is a bullet list, one per significant risk (≥ one per non-empty risk sub-heading).
-
-  Show the full draft to the user.
-
-STEP 7: Approval
-  CHECKPOINT brainstorm_draft
-    > "Here's the impl-plan brainstorm draft for slice `<slice_id>`.
-    >  Approve to write to _implementation/slices/<slice_id>/brainstorm.md, or tell me what to change."
-
-STEP 8: Write the handoff
-  - Write _implementation/slices/<slice_id>/brainstorm.md
-  - Verify file exists and frontmatter parses
-  - $ python3 impl-plan/brainstorm/validator.py _implementation/slices/<slice_id>/brainstorm.md
 
 EMIT  [impl-plan-brainstorm] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 

@@ -268,6 +268,11 @@ STEP 5: Finalize
   DO validate_cross_refs
 ```
 
+Shared procedures reused across many skills are defined once in
+`contracts/phase_procedures.md` and invoked as `DO shared:<name>` with
+indented `key: value` parameter lines. A skill using one MUST list
+`contracts/phase_procedures.md` in REFERENCES.
+
 ---
 
 ### PATTERNS

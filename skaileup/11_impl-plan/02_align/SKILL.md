@@ -133,6 +133,7 @@ REFERENCES
   contracts/domain_model.md                                       — glossary format, ADR format, the 3-test gate
   contracts/grill_bank.md                                         — grill question bank: tone + 9 pillars + EARS provenance
   contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
+  contracts/phase_procedures.md                                   — shared handoff procedures (DO shared:*)
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 
@@ -227,21 +228,14 @@ STEP 5a: Capture the domain model (inline, per contracts/domain_model.md)
     align.md's "## Decisions made".
   - Never invent a definition or decision the user did not confirm.
 
-STEP 6: Draft align.md in memory
-  Frontmatter (cross-phase contract):
-    ```
-    ---
-    slice_id: <feature_slug>
-    feature_title: <copied from brainstorm.md or feature.md, verbatim>
-    feature_path: _concept/experience/features/<group>/<feature_slug>.md
-    phase: align
-    tier: <scope.tier>
-    created_at: <ISO-8601 UTC; copy from brainstorm.md if present, else now()>
-    last_updated: <ISO-8601 UTC; now()>
-    ---
-    ```
-
-  Body sections (use these exact headers, in order):
+STEP 6: Finalize
+  DO shared:draft_checkpoint_write     (contracts/phase_procedures.md)
+    artifact_path: _implementation/slices/<slice_id>/align.md
+    checkpoint_id: align_draft
+  Frontmatter: impl-side keys (slice_loop.md § Handoff frontmatter — slice_id,
+  feature_title, feature_path, phase, tier, created_at, last_updated),
+  phase: align.
+  Body sections (exact headers, in order):
     ## Feature recap (1-2 lines)
     ## Concept summary
     ## Open questions surfaced by the grill
@@ -268,20 +262,8 @@ STEP 6: Draft align.md in memory
   - `## Decisions made` is Q/A pairs. Empty list ONLY if `## Open questions` has zero
     P1 items.
   - `## Acceptance handoff` is the EARS criteria from feature.md "## Acceptance
-    Criteria" copied VERBATIM. At least one line in "WHEN ..., THE SYSTEM SHALL ..."
-    form.
-
-  Show the full draft to the user.
-
-STEP 7: Approval
-  CHECKPOINT align_draft
-    > "Here's the impl-plan align draft for slice `<slice_id>`.
-    >  Approve to write to _implementation/slices/<slice_id>/align.md, or tell me what to change."
-
-STEP 8: Write the handoff
-  - Write _implementation/slices/<slice_id>/align.md
-  - Verify file exists and frontmatter parses
-  - $ python3 impl-plan/align/validator.py _implementation/slices/<slice_id>/align.md
+    Criteria" copied VERBATIM (contracts/acceptance_criteria.md § EARS template;
+    grill_bank.md § EARS provenance). ≥ 1 EARS line required.
 
 EMIT  [impl-plan-align] completed slice_id=<id> tier=<tier> p1_count=<n> p2_count=<n>
 

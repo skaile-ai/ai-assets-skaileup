@@ -106,6 +106,7 @@ REFERENCES
   contracts/domain_model.md                  — glossary format, ADR format, the 3-test gate
   contracts/slice_loop.md                    — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   contracts/grill_bank.md                    — grill question bank: tone + pillars + EARS provenance
+  contracts/phase_procedures.md              — shared handoff procedures (DO shared:*)
   concept-slice/align/references/align-prompt-style.md — interview tone reference
 
 REQUIRES
@@ -190,21 +191,14 @@ STEP 4a: Capture the domain model (inline, per contracts/domain_model.md)
     "## Resolved questions".
   - Never invent a definition or decision the user did not confirm.
 
-STEP 5: Draft align.md in memory
-  Frontmatter (copy slice_id and feature_title from brainstorm.md, or fresh
-  for appbuilder-simple):
-    ```
-    ---
-    slice_id: <slug>
-    feature_title: <verbatim>
-    phase: align
-    tier: <scope.tier>
-    created_at: <ISO-8601 UTC; copy from brainstorm.md if present, else now()>
-    last_updated: <ISO-8601 UTC; now()>
-    ---
-    ```
-
-  Body sections (use these exact headers, in order):
+STEP 5: Finalize
+  DO shared:draft_checkpoint_write     (contracts/phase_procedures.md)
+    artifact_path: _concept/slices/<slice_id>/align.md
+    checkpoint_id: align_draft
+  Frontmatter: concept-side keys (slice_loop.md § Handoff frontmatter),
+  phase: align; copy slice_id/feature_title from brainstorm.md (or fresh for
+  appbuilder-simple).
+  Body sections (exact headers, in order):
     ## Feature recap (one sentence)
     ## Acceptance criteria (EARS)
     ## Edge cases
@@ -213,21 +207,10 @@ STEP 5: Draft align.md in memory
     ## Unstated assumptions exposed
     ## Resolved questions
     ## Open questions blocking scope-feature
-
-  - `## Acceptance criteria (EARS)` MUST contain at least one line in
-    "WHEN ..., THE SYSTEM SHALL ..." form.
+  - `## Acceptance criteria (EARS)` MUST contain ≥ 1 line per
+    contracts/acceptance_criteria.md § EARS template.
   - `## Permissions / roles` MUST contain a markdown table with at least
     one role row + an actions header row.
-
-STEP 6: Approval
-  CHECKPOINT align_draft
-    > "Here's the align draft with EARS criteria and permissions table.
-    >  Approve to write to _concept/slices/<slice_id>/align.md, or tell me
-    >  what to change."
-
-STEP 7: Write the handoff
-  - Write _concept/slices/<slice_id>/align.md
-  - Verify file exists and frontmatter parses
 
 EMIT  [concept-slice-align] completed slice_id=<id> tier=<tier> ears_count=<n> roles=<n>
 

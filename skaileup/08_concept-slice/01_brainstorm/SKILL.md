@@ -88,6 +88,7 @@ REFERENCES
   contracts/iron_laws.md                     — § 7 (prerequisites), § 9 (standalone questions)
   contracts/skill_grammar.md                 — DSL keywords
   contracts/slice_loop.md                    — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
+  contracts/phase_procedures.md              — shared handoff procedures (DO shared:*)
   concept-slice/brainstorm/references/brainstorm-prompt-style.md — interview tone reference
 
 REQUIRES
@@ -150,37 +151,19 @@ STEP 3: Open-ended interview (each question STANDALONE)
   Q5 — "What's clearly OUT of scope? Anything you'd push back on if it came
        up later?"
 
-STEP 4: Draft handoff in memory
-  Compose the brainstorm.md content. Frontmatter:
-    ```
-    ---
-    slice_id: <slug>
-    feature_title: <user's title, verbatim>
-    phase: brainstorm
-    tier: <scope.tier>
-    created_at: <ISO-8601 UTC, e.g. 2026-05-08T12:34:56Z>
-    last_updated: <same as created_at on first write>
-    ---
-    ```
-
-  Body sections (use these exact headers):
+STEP 4: Finalize
+  DO shared:draft_checkpoint_write     (contracts/phase_procedures.md)
+    artifact_path: _concept/slices/<slice_id>/brainstorm.md
+    checkpoint_id: brainstorm_draft
+  Frontmatter: concept-side keys (slice_loop.md § Handoff frontmatter),
+  phase: brainstorm.
+  Body sections (exact headers):
     ## Feature in one sentence
     ## Who uses it
     ## Trigger
     ## Happy path (3-7 bullets)
     ## Clearly out of scope
     ## Open questions for align
-
-  Show the full draft to the user.
-
-STEP 5: Approval
-  CHECKPOINT brainstorm_draft
-    > "Here's the brainstorm draft. Approve to write to
-    >  _concept/slices/<slice_id>/brainstorm.md, or tell me what to change."
-
-STEP 6: Write the handoff
-  - Write _concept/slices/<slice_id>/brainstorm.md
-  - Verify file exists and frontmatter parses
 
 EMIT  [concept-slice-brainstorm] completed slice_id=<id> tier=<tier>
 

@@ -204,3 +204,17 @@ Append backend ACs to the same AC file, after the frontend ACs:
 - Custom enum transitions → AC-B per valid transition, AC-B for invalid
   transition attempt
 - Unique constraints with business meaning → AC-B for duplicate rejection
+
+---
+
+## EARS template
+
+Canonical EARS acceptance-criterion form — cite this section instead of
+restating it:
+
+    WHEN <trigger>, THE SYSTEM SHALL <response>
+
+Variants: `WHILE <state>, THE SYSTEM SHALL <response>` (state-driven);
+`IF <unwanted condition>, THEN THE SYSTEM SHALL <response>` (unwanted
+behaviour). One observable response per line; every criterion independently
+verifiable.

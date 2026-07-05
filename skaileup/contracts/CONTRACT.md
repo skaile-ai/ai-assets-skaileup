@@ -30,3 +30,4 @@ pulls it in because the flow's skills depend on it.
 - **`slice_loop.md`** — Shared slice-loop lifecycle: tier gates, slug rule, resume-or-fresh, handoff frontmatter keys, /clear isolation, freeze semantics.
 - **`grill_bank.md`** — Shared align-grill question bank (9 pillars, tone, anti-patterns, EARS provenance) for concept-slice-align and impl-plan-align.
 - **`evaluator.md`** — Shared evaluator skeleton: independent adversarial stance, evidence-before-scoring laws, verdict grammar, flag shape, report-line format.
+- **`phase_procedures.md`** — Shared handoff procedures (`read_predecessor`, `draft_checkpoint_write`, `emit_lifecycle`) invoked via `DO shared:<name>`.
