@@ -68,6 +68,7 @@ SHARED_FLOWS = [
     "impl-build-setup",
     "architecture",
     "mockup-feedback",
+    "quality-gate",
 ]
 ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS + SHARED_FLOWS
 

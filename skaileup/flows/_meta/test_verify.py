@@ -356,6 +356,7 @@ SHARED_SUBFLOWS = [
     "impl-build-setup",
     "architecture",
     "mockup-feedback",
+    "quality-gate",
 ]
 
 

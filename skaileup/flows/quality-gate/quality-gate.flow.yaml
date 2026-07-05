@@ -1,0 +1,124 @@
+id: quality-gate
+version: '2.0.0'
+name: 'Quality Gate'
+description: >-
+  Shared post-loop quality gate: test-unit -> test-integration -> test-e2e ->
+  ready, plus the optional ops tail review -> sync. Consumed via a sub-flow
+  node by appbuilder-standard, appbuilder-complex and skaileup-implementation;
+  standalone-runnable for testability. Two globals handle consumer variance:
+  e2e (required | optional) and ops_tail (include | skip — implementation
+  skips the review/sync tail). NOTE: the review-spine plan wires its new
+  review skills into this flow — land this plan first.
+meta:
+  category: maintenance
+  tags:
+    - shared-block
+    - quality
+  icon: i-heroicons-shield-check
+requires:
+  # Self-contained install manifest: the shared contract every skill reads +
+  # every skill its nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/impl-quality-test-unit
+  - skill:@skaile-ai/impl-quality-test-integration
+  - skill:@skaile-ai/impl-quality-test-e2e
+  - skill:@skaile-ai/impl-quality-ready
+  - skill:@skaile-ai/ops-review
+  - skill:@skaile-ai/ops-sync
+globals:
+  research_depth: skip
+  approval_mode: checkpoint
+  subagent_mode: false
+  verbosity: standard
+  # required | optional — consumers override via the sub-flow node's
+  # parameters.e2e; threaded to the q-test-e2e node.
+  e2e: required
+  # include | skip — consumers override via the sub-flow node's
+  # parameters.ops_tail; threaded to ops-review + ops-sync.
+  ops_tail: include
+entry: q-test-unit
+nodes:
+  - id: q-test-unit
+    type: skill
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: impl-quality-test-unit
+      label: 'Unit Tests'
+      optional: false
+      parameters: {}
+  - id: q-test-integration
+    type: skill
+    position:
+      x: 200
+      y: 200
+    data:
+      skill: impl-quality-test-integration
+      label: 'Integration Tests'
+      optional: false
+      parameters: {}
+  - id: q-test-e2e
+    type: skill
+    position:
+      x: 400
+      y: 200
+    data:
+      skill: impl-quality-test-e2e
+      label: 'E2E Tests (per parent: required | optional)'
+      optional: false
+      parameters:
+        mode: '${e2e}'
+  - id: q-ready
+    type: skill
+    position:
+      x: 600
+      y: 200
+    data:
+      skill: impl-quality-ready
+      label: 'Release Ready'
+      optional: false
+      parameters: {}
+  - id: ops-review
+    type: skill
+    position:
+      x: 800
+      y: 200
+    data:
+      skill: ops-review
+      label: 'Ops Review (per parent: include | skip)'
+      optional: true
+      parameters:
+        mode: '${ops_tail}'
+  - id: ops-sync
+    type: skill
+    position:
+      x: 1000
+      y: 200
+    data:
+      skill: ops-sync
+      label: 'Ops Sync (per parent: include | skip)'
+      optional: true
+      parameters:
+        mode: '${ops_tail}'
+edges:
+  - id: e-q-test-unit-q-test-integration
+    source: q-test-unit
+    target: q-test-integration
+    type: flow
+  - id: e-q-test-integration-q-test-e2e
+    source: q-test-integration
+    target: q-test-e2e
+    type: flow
+  - id: e-q-test-e2e-q-ready
+    source: q-test-e2e
+    target: q-ready
+    type: flow
+  - id: e-q-ready-ops-review
+    source: q-ready
+    target: ops-review
+    type: optional
+  - id: e-ops-review-ops-sync
+    source: ops-review
+    target: ops-sync
+    type: optional
