@@ -4,7 +4,7 @@ name: 'SkaileUp Slice — Impl'
 description: >-
   Per-feature implementation loop: impl-plan brainstorm -> align -> plan-vertical,
   then the full impl-slice loop git-prepare -> supervised -> implement ->
-  implement-page -> test -> recap -> refactor -> commit -> git-finish. Supervised
+  implement-page -> test -> recap -> review-feature(opt) -> refactor -> commit -> git-finish. Supervised
   dispatch (two-stage review) runs inside every slice. The impl half of the
   unified skaileup-slice block; consumed by the skaileup-slice parent and by the
   impl-only/linear tier flows (appbuilder-simple, appbuilder-cli, skaileup-implementation)
@@ -30,6 +30,7 @@ requires:
   - skill:@skaile-ai/impl-slice-implement-page
   - skill:@skaile-ai/impl-slice-test
   - skill:@skaile-ai/impl-slice-recap
+  - skill:@skaile-ai/impl-quality-review-feature
   - skill:@skaile-ai/impl-slice-refactor
   - skill:@skaile-ai/impl-slice-commit
   - skill:@skaile-ai/impl-slice-git-finish
@@ -139,6 +140,17 @@ nodes:
       optional: false
       subagent: false
       parameters: {}
+  - id: i-review-feature
+    type: skill
+    position:
+      x: 1500
+      y: 100
+    data:
+      skill: impl-quality-review-feature
+      label: 'Slice: Feature Code Review (opt)'
+      optional: true
+      subagent: true
+      parameters: {}
   - id: i-refactor
     type: skill
     position:
@@ -205,8 +217,12 @@ edges:
     source: i-test
     target: i-recap
     type: flow
-  - id: e-i-recap-i-refactor
+  - id: e-i-recap-i-review-feature
     source: i-recap
+    target: i-review-feature
+    type: optional
+  - id: e-i-review-feature-i-refactor
+    source: i-review-feature
     target: i-refactor
     type: flow
   - id: e-i-refactor-i-commit

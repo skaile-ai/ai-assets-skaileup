@@ -22,7 +22,7 @@ standalone-runnable.
 
 ```
 Plan:   impl-plan-brainstorm → impl-plan-align → impl-plan-plan-vertical
-Build:  git-prepare → supervised → implement → implement-page? → test → recap → refactor → commit → git-finish
+Build:  git-prepare → supervised → implement → implement-page? → test → recap → review-feature? → refactor → commit → git-finish
           /clear between phases, scratch in _implementation/slices/<id>/
 ```
 
@@ -37,6 +37,7 @@ The full loop runs the same way standalone and when delegated to from a tier:
 | `implement-page` | Build the page(s) for the slice — optional, skipped for non-UI slices |
 | `test` | Cover it |
 | `recap` | Capture what changed / learned |
+| `review-feature` (optional) | `impl-quality-review-feature` reviews the slice's feature scoped to its back-linked commits/source files (post-recap the dossier is complete enough to review; the back-link lands at commit, so pre-freeze runs review the recap's Files-touched set). Verdict `needs_changes` routes back to implement/debug-self-verify before refactor+commit. |
 | `refactor` | Forced simplification pass — subtractions only |
 | `commit` | Land it; scratch deleted |
 | `git-finish` | Close out the slice / branch, persist git preferences, and gate the loop's completion |
