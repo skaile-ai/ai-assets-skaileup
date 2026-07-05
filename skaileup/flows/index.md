@@ -14,6 +14,12 @@ skaile add flow:<name>      # install the flow + its skills + contracts
 skaile run flow:<name>      # execute the pipeline
 ```
 
+Every flow tags its nodes with a top-level **phase** — `conceptualization`,
+`implementation`, `review` — via `group` container nodes (or node-level
+`data.phase` where phases are non-contiguous, as in `skaileup-stepwise`).
+Pick-one mockup renderers are selected by **router** nodes (first matching
+condition wins; `default` is the catch-all; `target: null` skips).
+
 ## Tier flows
 
 Four sizes, chosen by `scope-project`. Each flow's `requires:` is the **exact**
@@ -38,6 +44,20 @@ runs its two halves in sequence; consumers usually delegate to it.
 | [`skaileup-slice`](./skaileup-slice/) | slice-concept → slice-impl (parent; `concept_depth`: full \| just-in-time \| skip) |
 | [`skaileup-slice-concept`](./skaileup-slice-concept/) | brainstorm → align → scope-feature → design-feature (concept-needs check in just-in-time mode) |
 | [`skaileup-slice-impl`](./skaileup-slice-impl/) | plan → implement → test → recap → refactor → commit |
+
+## Shared building blocks
+
+Repeated tier segments extracted into standalone sub-flows (2026-07). Parents
+delegate via a **sub-flow node**; variance is threaded through the node's
+`parameters:` (the `concept_depth` pattern). All standalone-runnable.
+
+| Flow | Block | Knobs |
+|---|---|---|
+| [`concept-discovery`](./concept-discovery/) | brief → goals? → comparable? | `goals: optional \| required` |
+| [`architecture`](./architecture/) | techstack → templates? → system? → datamodel | `templates`, `system: include \| skip` |
+| [`mockup-feedback`](./mockup-feedback/) | annotate? → triage? → patch? → apply? | — |
+| [`impl-build-setup`](./impl-build-setup/) | scaffold → foundation → infra? → migrate → seed → docs | `infrastructure: skip \| optional \| required`, `data_setup` |
+| [`quality-gate`](./quality-gate/) | unit → integration → e2e → ready → ops-review? → ops-sync? | `e2e: required \| optional`, `ops_tail: include \| skip` |
 
 ## Variant flows
 

@@ -24,21 +24,27 @@ not running code.
 ## Pipeline
 
 ```
-scope-project
-  → grounding:   concept-grounding-onboard → seeds? → research?
-  → discovery:   concept-brief → concept-goals → concept-comparable?
-  → design:      design-brand-visual → brand-voice? → inspiration?
-  → experience:  experience-journeys → product-spec-features → behaviors?
-                   → experience-screens → screens-technical? → components?
-  → architecture: techstack → system → datamodel
-  → mockup-walkthrough-text?   → ops-review?
+Conceptualization: scope → onboard → seeds? ∥ research? → [concept-discovery goals=required] →
+                   brand-visual → brand-voice? → inspiration? → journeys → features →
+                   behaviors? → screens → screens-technical? → components? →
+                   [architecture templates=skip] → text-walkthrough?
+Review:            concept review
 ```
+
+`[concept-discovery]` runs with `goals: required` (goals is optional in most
+tiers, but concept-only always produces it) and delegates brief → goals →
+comparable?; `[architecture]` runs with `templates: skip` and delegates
+techstack → system → datamodel (no template resolution — there's no build to
+scaffold against yet).
 
 ## Install manifest
 
 Self-contained: `concept-only.flow.yaml` carries a top-level `requires:` block —
-`shared-contracts` + `conceptualization-contract` + `meta-concept-contract` plus
-exactly the concept skills its nodes run. No inheritance, no extras.
+`shared-contracts` + `conceptualization-contract` + `meta-concept-contract`
+plus its own direct concept skills (scope, grounding onboard/seeds/research,
+design, experience, optional text walkthrough, ops-review) plus two `flow:`
+refs for the sub-flows it delegates to (`concept-discovery`, `architecture`).
+No inheritance, no extras.
 
 ## Run it
 

@@ -38,19 +38,31 @@ or starting with none and not needing the UX-oriented concept pass.
 ## Pipeline
 
 ```
-techstack → system → datamodel        (read _concept/blueprint/ if present, else generate)
-  → scaffold → foundation → infrastructure? → migrate → seed → docs
-  → [per feature]  skaileup-slice-impl loop  (brainstorm elicits the feature spec →
-       align → plan-vertical → implement → test → recap → refactor → commit)
-  → impl-quality-test-unit → -test-integration → -test-e2e? → -ready
+Conceptualization: [architecture templates=skip]  (read-or-generate blueprint)
+Implementation:    [impl-build-setup] → [skaileup-slice-impl] ↻ per feature
+Review:            [quality-gate e2e=optional ops_tail=skip]
 ```
+
+This flow is now pure composition: every node is a sub-flow node and its
+`requires:` is `shared-contracts` plus four `flow:` refs.
+
+`[architecture]` runs with `templates: skip` and delegates techstack → system →
+datamodel, reading `_concept/blueprint/` if present, else generating that
+subset; `[impl-build-setup]` delegates scaffold → foundation → infrastructure? →
+migrate → seed → docs; `[skaileup-slice-impl]` runs once per feature
+(brainstorm elicits the feature spec just-in-time → align → plan-vertical →
+git-prepare → implement → implement-page → test → recap → refactor → commit →
+git-finish); `[quality-gate]` runs with `e2e: optional` and `ops_tail: skip`,
+delegating unit → integration → e2e? → ready (no ops review/sync tail).
 
 ## Install manifest
 
-Self-contained: `skaileup-implementation.flow.yaml` carries a top-level `requires:` block —
-`shared-contracts` + `implementation-contract`, the 3 architecture skills, the 6
-build skills, the 4 quality skills, and `flow:skaileup-slice-impl`. No
-UX/experience concept skills, no inheritance, no extras.
+Self-contained: `skaileup-implementation.flow.yaml` carries a top-level
+`requires:` block — `shared-contracts` plus four `flow:` refs
+(`architecture`, `impl-build-setup`, `skaileup-slice-impl`, `quality-gate`).
+No direct skills of its own, no UX/experience concept skills, no inheritance,
+no extras — each sub-flow's own manifest transitively provides its skills and
+contracts (e.g. `implementation-contract` comes in via `impl-build-setup`).
 
 ## Run it
 

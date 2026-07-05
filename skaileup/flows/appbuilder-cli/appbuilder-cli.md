@@ -25,19 +25,30 @@ script, or daemon — rather than an app with a UI.
 ## Pipeline
 
 ```
-scope-project → concept-brief → product-spec-features   (features as commands)
-  → techstack → templates-select → datamodel
-  → scaffold → foundation (headless) → migrate?/seed? → docs
-  → [per feature]  impl-plan-align → impl-plan-plan-vertical
-       → impl-slice-implement → impl-slice-test → impl-slice-recap → impl-slice-commit
-  → impl-quality-test-unit + impl-quality-test-integration
+Conceptualization: scope → brief → features(commands) → [architecture system=skip]
+Implementation:    [impl-build-setup infrastructure=skip data_setup=optional] →
+                   [skaileup-slice-impl] ↻
+Review:            unit → integration (inline — cli runs a quality subset, not the gate)
 ```
+
+`[architecture]` delegates techstack → templates → datamodel (`system: skip` —
+no system-architecture step); `[impl-build-setup]` delegates scaffold →
+foundation (headless) → migrate → seed → docs (`infrastructure: skip`,
+`data_setup: optional`); `[skaileup-slice-impl]` runs the full impl-only loop
+once per feature: brainstorm → align → plan-vertical → git-prepare → implement
+→ implement-page → test → recap → refactor → commit → git-finish. Like
+appbuilder-simple, appbuilder-cli doesn't delegate to `[quality-gate]` — review
+is two inline skill nodes (`test-unit`, `test-integration`), no E2E.
 
 ## Install manifest
 
 Self-contained: `appbuilder-cli.flow.yaml` carries a top-level `requires:` block —
-`shared-contracts` + `implementation-contract` plus exactly the 19 skills its
-nodes run. No inheritance, no extras.
+`shared-contracts` plus its own 5 direct skills (scope, brief,
+features-as-commands, unit tests, integration tests) plus three `flow:` refs
+for the sub-flows it delegates to (`architecture`, `impl-build-setup`,
+`skaileup-slice-impl`). `implementation-contract` is no longer listed
+directly — `impl-build-setup`'s own manifest provides it. No inheritance, no
+extras.
 
 ## Run it
 
@@ -50,4 +61,4 @@ skaile run flow:appbuilder-cli       # execute the pipeline
 
 - [Tiers](../../../intro/tiers/) — how `scope-project` chooses a flow
 - [`appbuilder-mvp`](../appbuilder-mvp/) — the smallest UI-oriented tier
-- [`impl-slice`](../impl-slice/) — the per-feature loop this flow inlines
+- [`skaileup-slice-impl`](../skaileup-slice-impl/) — the per-feature loop this flow delegates to

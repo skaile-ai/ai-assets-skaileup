@@ -26,31 +26,33 @@ Inherits the appbuilder-mvp shape and adds design, experience, component mockups
 `impl-build` setup, and the impl-slice loop:
 
 ```
-Concept (linear):
-  scope-project → concept-brief → design-brand-visual
-    → experience-journeys → product-spec-features → experience-screens
-    → mockup-walkthrough-static-html → mockup-component-isolated-html
-
-Setup (once):
-  techstack → templates-select → datamodel
-    → scaffold → foundation → migrate → seed → docs
-
-Per-feature loop (impl-slice):
-  impl-plan-align → impl-plan-plan-vertical
-    → implement → test → recap → commit
-
-Quality:
-  test-unit + test-e2e
+Conceptualization: scope → brief → brand-visual → journeys → features → screens →
+                   static-html ∥ isolated-html → [architecture system=skip]
+Implementation:    [impl-build-setup infrastructure=skip] → [skaileup-slice-impl] ↻
+Review:            unit → e2e (inline — simple runs a quality subset, not the gate)
 ```
+
+`[architecture]` delegates techstack → templates → datamodel (no system-architecture
+step — `system: skip`); `[impl-build-setup]` delegates scaffold → foundation →
+migrate → seed → docs (no infrastructure step — `infrastructure: skip`);
+`[skaileup-slice-impl]` runs the impl-only loop once per feature: brainstorm →
+align → plan-vertical → git-prepare → implement → implement-page → test → recap
+→ refactor → commit → git-finish. Unlike the tier flows above it, appbuilder-simple
+doesn't delegate to `[quality-gate]` — review is two inline skill nodes
+(`test-unit`, `test-e2e`), not the shared gate's unit/integration/e2e/ready/ops chain.
 
 ## Install manifest
 
 The flow is self-contained: `appbuilder-simple.flow.yaml` carries a top-level
-`requires:` block listing exactly what it installs — `shared-contracts` +
-`implementation-contract` plus the 24 skills its nodes run, no more. No
-inheritance and no extras: unlike the old inherited bundle it carries only the
-skills this tier actually renders with (e.g. `mockup-walkthrough-static-html`,
-never appbuilder-mvp's `mockup-walkthrough-text`).
+`requires:` block listing exactly what it installs — `shared-contracts` plus
+its own 10 direct skills (scope, brief, brand-visual, journeys, features,
+screens, static-html walkthrough, isolated-html components, unit tests, e2e
+tests) plus three `flow:` refs for the sub-flows it delegates to (`architecture`,
+`impl-build-setup`, `skaileup-slice-impl`). No inheritance and no extras:
+unlike the old inherited bundle it carries only the skills this tier actually
+renders with (e.g. `mockup-walkthrough-static-html`, never appbuilder-mvp's
+`mockup-walkthrough-text`), and `implementation-contract` is no longer listed
+directly — it comes in transitively via `impl-build-setup`'s own manifest.
 
 ## Run it
 
@@ -62,5 +64,5 @@ skaile run flow:appbuilder-simple
 ## See also
 
 - [`appbuilder-mvp`](../appbuilder-mvp/) — the tier below · [`appbuilder-standard`](../appbuilder-standard/) — the tier above
-- [`impl-slice`](../impl-slice/) — the per-feature loop reused here
+- [`skaileup-slice-impl`](../skaileup-slice-impl/) — the per-feature loop reused here
 - [Tiers](../../../intro/tiers/) · [Flows](../../../intro/flows-and-bundles/)
