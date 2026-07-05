@@ -118,6 +118,26 @@
             "User"
           ],
           "source_anchor": "experience/screens/00_auth/login.md#elements/filter-role"
+        },
+        {
+          "element_id": "forgot-password",
+          "kind": "button",
+          "label": "Forgot password?",
+          "states": [
+            "default"
+          ],
+          "provisional": true,
+          "source_anchor": "experience/screens/00_auth/login.md#auto/forgot-password"
+        },
+        {
+          "element_id": "theme",
+          "kind": "input",
+          "label": "theme",
+          "states": [
+            "default"
+          ],
+          "provisional": true,
+          "source_anchor": "experience/screens/00_auth/login.md#auto/theme"
         }
       ]
     },
@@ -143,6 +163,45 @@
           "provisional": false,
           "target": "00_auth/login",
           "source_anchor": "experience/screens/00_auth/register.md#elements/go-login"
+        },
+        {
+          "element_id": "account-type-tabs",
+          "kind": "tabs",
+          "label": "Account type",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "items": [
+            {"label": "Personal"},
+            {"label": "Business"}
+          ],
+          "source_anchor": "experience/screens/00_auth/register.md#elements/account-type-tabs"
+        },
+        {
+          "element_id": "signup-benefits",
+          "kind": "list",
+          "label": "Why join",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "items": [
+            {"label": "See your login screen", "target": "00_auth/login"},
+            "Get onboarding tips"
+          ],
+          "source_anchor": "experience/screens/00_auth/register.md#elements/signup-benefits"
+        },
+        {
+          "element_id": "learn-more",
+          "kind": "link",
+          "label": "Learn more about business accounts",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "target": "00_auth/business_account_info",
+          "source_anchor": "experience/screens/00_auth/register.md#elements/learn-more"
         },
         {
           "element_id": "email",
@@ -211,6 +270,24 @@
     }
   ],
   "warnings": [
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/login.md",
+      "element_id": "forgot-password",
+      "message": "No elements: entry for this widget in screen frontmatter; auto-slugged from an ## Actions bullet."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/login.md",
+      "element_id": "theme",
+      "message": "No elements: entry for this widget in screen frontmatter; auto-slugged from an ## Actions bullet."
+    },
+    {
+      "kind": "unresolved_target",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "learn-more",
+      "message": "target \"00_auth/business_account_info\" does not resolve to any rendered screen; rendered as href=\"#\"."
+    },
     {
       "kind": "auto_slugged",
       "screen_path": "experience/screens/00_auth/register.md",

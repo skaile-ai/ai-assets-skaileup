@@ -48,3 +48,12 @@ last_updated: 2026-07-06
 # Login
 
 The user signs in with email and password. When they submit valid credentials, they land on the dashboard (see AC-1 in the login feature spec).
+
+## Purpose
+
+Authenticate a returning user and route them into the app.
+
+## Actions
+
+- Click "Forgot password?" → opens the password reset screen
+- Change theme → toggles dark mode

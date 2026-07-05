@@ -216,6 +216,18 @@ REFERENCES
       verbatim as declared (§ Content fidelity); this renderer does not
       re-validate `sample_rows` row length against `columns` length —
       authoring-time validation owns that.
+
+  > **Design note:** this renderer does NOT re-validate `elements:` block
+  > schema shape — `sample_rows` row-length vs. `columns`, per-kind `items`
+  > shape, or `target`/`screen_id` grammar. That's `lab/validate-elements-block`'s
+  > job at authoring time (`contracts/elements_block.md` § Validation is
+  > explicit that the schema validator, not the renderer, owns those
+  > checks). This renderer assumes schema-valid input and handles only
+  > render-time semantics — target resolution success/failure, reflected
+  > via `unresolved_target` warnings (see § Navigation targets below).
+  > Consistent with `contracts/walkthrough_renderer.md`'s `warnings[].kind`
+  > enum, which has no length-mismatch or shape-mismatch kind at all.
+
   - **Navigation targets — resolution rule** (`contracts/elements_block.md`
     § Navigation targets, `contracts/walkthrough_renderer.md` § Target
     resolution): a `target`/`row_target` value is `screen_id[#fragment]`.
