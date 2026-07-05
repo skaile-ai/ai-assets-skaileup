@@ -26,6 +26,7 @@ Save to `_implementation/acceptance_criteria/<group>/<feature>.ac.md`:
 feature_ref: _concept/experience/features/<group>/<feature>.md
 screen_refs:
   - _concept/experience/screens/<group>/<screen>.md
+story_refs: []        # journey ids copied from the feature frontmatter
 derived_from:
   - requirements: 5     # count from feature spec
   - screen_states: 4    # count from screen spec
@@ -218,3 +219,35 @@ Variants: `WHILE <state>, THE SYSTEM SHALL <response>` (state-driven);
 `IF <unwanted condition>, THEN THE SYSTEM SHALL <response>` (unwanted
 behaviour). One observable response per line; every criterion independently
 verifiable.
+
+---
+
+## Criteria Status Table (tracking spine)
+
+Every `.ac.md` ends with a `## Criteria Status` section containing one row per
+criterion (frontend `AC-n` and backend `AC-Bn` alike):
+
+```markdown
+## Criteria Status
+
+| ID | Source | Status | Updated by | Date |
+|---|---|---|---|---|
+| AC-1 | <story-id>: <EARS line copied verbatim> | untested | - | - |
+| AC-B1 | <story-id or feature §>: <EARS line / rule> | untested | - | - |
+```
+
+- `Status` ∈ `untested | pass | fail`. Rows are created `untested`.
+- `Source` cites the EARS line + story-id the criterion was derived from —
+  this is the story → AC traceability edge.
+- Non-`untested` rows must fill `Updated by` (skill name) and `Date` (ISO).
+
+### Ownership
+
+| Skill | Responsibility |
+|---|---|
+| `impl-plan-plan-vertical` | Creates the file at `_implementation/acceptance_criteria/<group>/<feature>.ac.md`; every row `untested` |
+| `impl-slice-test` | Flips rows exercised by the slice gate to `pass`/`fail` (only rows backed by a `[PASS]`/`[FAIL]`-tagged check) |
+| `impl-quality-test-e2e` | Flips journey/snapshot rows on end-to-end journey pass/fail |
+| `ops-trace` | Reads the table; any `fail`/`untested` row makes the feature's trace row red |
+
+Validation: `skaileup/contracts/scripts/ac_lib.py` (`validate_ac_file`).

@@ -31,6 +31,7 @@ metadata:
         gate: soft
     produces:
       - id: slice-impl-plan
+      - id: acceptance-criteria
   prerequisites:
     files:
       - path: "_concept/_meta/scope.yaml"
@@ -74,6 +75,8 @@ metadata:
     produces:
       - path: "_implementation/slices/{slice_id}/plan.md"
         description: "Per-slice impl plan handoff for impl-slice/implement (Task 2D)."
+      - path: "_implementation/acceptance_criteria/{group}/{feature_slug}.ac.md"
+        description: "Acceptance-criteria ledger — one row per EARS-derived criterion, status untested."
 ---
 
 # Plan-Vertical — per-slice vertical decomposition
@@ -152,6 +155,7 @@ READS
 
 WRITES
   _implementation/slices/{slice_id}/plan.md                                  — handoff for impl-slice/implement (Task 2D)
+  _implementation/acceptance_criteria/{group}/{feature_slug}.ac.md           — AC ledger (contracts/acceptance_criteria.md); all rows untested
 
 REFERENCES
   SKILL_GRAPH.md                                                  — § 5.2 per-slice impl loop, § 6 tier composition
@@ -162,6 +166,7 @@ REFERENCES
   contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   contracts/phase_procedures.md                                   — shared handoff procedures (DO shared:*)
   impl-plan/plan-vertical/references/anti-horizontal-rules.md     — long-form expansion of the nudge with worked counter-examples
+  contracts/acceptance_criteria.md                                — .ac.md format + Criteria Status table (this skill creates it)
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
   docs/devlog/2C-impl-plan-align-vertical.md           — § Pinned plan.md schema (this skill's output contract)
@@ -182,12 +187,16 @@ MUST  copy EARS acceptance criteria from feature.md (or align.md "## Acceptance 
 MUST  include the 5 required Definition of Done items verbatim (see schema below)
 MUST  set phase: plan in the handoff frontmatter
 MUST  write to _implementation/slices/<slice_id>/plan.md (per-slice scratch); never write to a project-wide path — the project-level PLANS.md is owned by a different skill
+MUST  write _implementation/acceptance_criteria/<group>/<feature_slug>.ac.md per contracts/acceptance_criteria.md — one criterion row per EARS line (with its story-id in the Source cell), every Status cell `untested`
+MUST  derive <group> from the resolved feature_path's parent directory name (e.g. 01_user_auth)
 
 NEVER  produce a plan that batches all UI as one row, then all logic as another row, then all data as a third
 NEVER  decompose by technical layer (frontend / backend / db) instead of by user-facing vertical
 NEVER  defer testing strategy to a later phase — it goes in plan.md, this skill
 NEVER  write more than one plan.md per slice (re-entry: load existing, show diff, ask before any change)
 NEVER  invent rows the user did not confirm — every row should trace to an align.md edge case, an EARS line, or a screen file
+NEVER  create an .ac.md row whose Source does not cite an EARS line or story-id
+NEVER  overwrite an existing .ac.md that has non-untested rows — re-entry shows a diff and asks before touching it
 
 INPUT
   Read from: _concept/_grounding/impl-plan-plan-vertical/input.json
@@ -299,7 +308,31 @@ STEP 6: Finalize
   - Validator note: empty UI/Logic/Data cells produce WARNING (stderr), not
     failure; surface to user.
 
-EMIT  [impl-plan-plan-vertical] completed slice_id=<id> tier=<tier> rows=<n> tests=<n>
+STEP 7: Write the acceptance-criteria ledger
+  - group := parent directory name of the resolved feature file (e.g. 01_user_auth).
+  - $ mkdir -p _implementation/acceptance_criteria/<group>/
+  - IF _implementation/acceptance_criteria/<group>/<feature_slug>.ac.md exists
+      with any non-untested Status row: show a diff of proposed changes and
+      ask before writing (re-entry; never silently reset pass/fail history).
+  - Compose per contracts/acceptance_criteria.md:
+    - frontmatter: feature_ref (resolved feature path), screen_refs (the screen
+      files read in STEP 2), story_refs (copied from feature frontmatter),
+      derived_from counts, last_updated (today).
+    - one `## AC-n:` section per EARS line used in STEP 5 (Given/When/Then +
+      asserts + Test type + Seed scenario); backend rules become `### AC-Bn:`
+      sections under `## Backend Acceptance Criteria` when present.
+    - trailing `## Criteria Status` table: one row per AC-n/AC-Bn with
+      `| <ID> | <story-id>: <EARS line verbatim> | untested | - | - |`.
+  - Write the file.
+
+STEP 8: Validate
+  - $ python3 impl-plan/plan-vertical/validator.py _implementation/slices/<slice_id>/plan.md \
+        --ac _implementation/acceptance_criteria/<group>/<feature_slug>.ac.md --ac-initial
+  - On failure: report the validator errors and STOP. Do not commit.
+  - Empty UI/Logic/Data cells produce a WARNING (stderr), not a failure;
+    surface the warning to the user.
+
+EMIT  [impl-plan-plan-vertical] completed slice_id=<id> tier=<tier> rows=<n> tests=<n> ac_criteria=<n>
 
 CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated
@@ -313,3 +346,4 @@ CHECKLIST
   - [ ] 5 Definition of Done items present verbatim
   - [ ] User approved the draft via CHECKPOINT before write
   - [ ] _implementation/slices/<slice_id>/plan.md exists on disk and validator.py exits 0
+  - [ ] _implementation/acceptance_criteria/<group>/<feature_slug>.ac.md written; every Status row `untested`; validator --ac --ac-initial exits 0

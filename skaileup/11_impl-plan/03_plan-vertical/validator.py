@@ -17,6 +17,10 @@ from pathlib import Path
 
 import yaml
 
+_SCRIPTS = Path(__file__).resolve().parent.parent.parent / "contracts" / "scripts"
+sys.path.insert(0, str(_SCRIPTS))
+import ac_lib  # noqa: E402
+
 REQUIRED_FRONTMATTER_KEYS = {
     "slice_id",
     "feature_title",
@@ -284,10 +288,26 @@ def validate(path: Path) -> tuple[list[str], list[str]]:
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 2:
-        print("Usage: validator.py <path/to/plan.md>", file=sys.stderr)
-        return 2
-    errors, warnings = validate(Path(argv[1]))
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", help="path to _implementation/slices/<id>/plan.md")
+    parser.add_argument(
+        "--ac", default=None,
+        help="also validate the acceptance-criteria ledger (.ac.md) at this path",
+    )
+    parser.add_argument(
+        "--ac-initial", action="store_true",
+        help="(with --ac) require every Criteria Status row to be 'untested'",
+    )
+    args = parser.parse_args(argv[1:])
+
+    errors, warnings = validate(Path(args.path))
+    if args.ac:
+        errors.extend(
+            f"[ac] {e}"
+            for e in ac_lib.validate_ac_file(Path(args.ac), require_untested=args.ac_initial)
+        )
     for w in warnings:
         print(f"WARNING: {w}", file=sys.stderr)
     if errors:

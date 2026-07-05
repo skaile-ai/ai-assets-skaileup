@@ -283,6 +283,12 @@ artifacts:
     side: impl
     produced_by: impl-quality-test-plan
     description: Test strategy — scenarios, test types, coverage goals.
+  acceptance-criteria:
+    path: _implementation/acceptance_criteria/        # <NN_group>/<feature_slug>.ac.md
+    kind: durable
+    side: impl
+    produced_by: [impl-plan-plan-vertical, impl-slice-test, impl-quality-test-e2e]
+    description: Per-feature acceptance-criteria ledger — EARS-derived ACs + per-criterion status (untested|pass|fail).
   quality-report:
     path: _concept/quality.yaml
     kind: durable
