@@ -283,6 +283,30 @@
       "message": "No elements: entry for this widget in screen frontmatter; auto-slugged from an ## Actions bullet."
     },
     {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "personal",
+      "message": "No id: for this tabs items[] entry in screen frontmatter; auto-slugged from its label (scoped to account-type-tabs)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "business",
+      "message": "No id: for this tabs items[] entry in screen frontmatter; auto-slugged from its label (scoped to account-type-tabs)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "see-your-login-screen",
+      "message": "No id: for this list items[] entry in screen frontmatter; auto-slugged from its label (scoped to signup-benefits)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "get-onboarding-tips",
+      "message": "No id: for this list items[] entry in screen frontmatter; auto-slugged from its label (scoped to signup-benefits)."
+    },
+    {
       "kind": "unresolved_target",
       "screen_path": "experience/screens/00_auth/register.md",
       "element_id": "learn-more",

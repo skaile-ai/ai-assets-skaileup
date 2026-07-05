@@ -309,6 +309,33 @@ REFERENCES
 
 ## STEP 3: Render screens
 
+  > **`items[]` id derivation (`nav` / `tabs` / `list`, referenced below and
+  > by the shell-authoritative app nav above).** `elements_block.md` leaves
+  > `id` optional on `nav`/`tabs` items and doesn't define an `id` field on
+  > `list` items at all — an id-less `items[]` entry is the normal case,
+  > not an edge case. When an entry declares `id:`, use it verbatim (no
+  > `data-spec-provisional`, no warning). When it does **not**:
+  > 1. Derive an id via the same kebab-slug algorithm as top-level
+  >    auto-slug (STEP 2 § Auto-slug source set: lowercase, non-alphanumeric
+  >    runs → `-`, trim/collapse dashes; `<kind>-<n>` fallback when the
+  >    label slugs to empty), **scoped to that element's own `items[]`** —
+  >    a collision suffix (`-2`/`-3`…) disambiguates only within the same
+  >    element's items, never across the whole screen.
+  > 2. Render the item's node (the `<li>` for `list`, the `<a>`/`<span
+  >    class="tab">` for `tabs`, the `<a>` for `nav`) with
+  >    `data-spec-element="<derived-id>"` **and** `data-spec-provisional="true"`.
+  > 3. Append a `warnings[]` entry of `kind: "auto_slugged"` to
+  >    `manifest.json` (`element_id` = the derived item id, `screen_path` =
+  >    this screen's path) — one entry per id-less item, same shape as any
+  >    other `auto_slugged` warning.
+  >
+  > This follows directly from `contracts/walkthrough_renderer.md`'s
+  > `data-spec-*` attribute table, which names "list items, nav items"
+  > explicitly as `data-spec-provisional`-eligible whenever "no explicit
+  > `elements:` entry exists for it" — an id-less `items[]` entry has no
+  > explicit entry establishing its own identity (it's derived from
+  > `label`), exactly like a top-level auto-slugged widget.
+
   For each parsed screen (in lexicographic order):
 
   - Determine output path:
@@ -329,10 +356,15 @@ REFERENCES
     screen-specific main content — identically on every screen page:
     - **Shell-authoritative case** (STEP 2 found a `kind: nav` element
       with `items:` on `00_layout/shell.md`): `data-spec-element="<the
-      shell element's id>"`, no `data-spec-provisional`. One `<li>` per
-      `items[]` entry, each `<a data-spec-element="<item.id>"
-      href="<resolved>">` (resolved per § Target resolution). No group
-      subdivision — the authored order is used verbatim.
+      shell element's id>"` on the `<nav>` container, no
+      `data-spec-provisional` on the container itself (it's
+      shell-authoritative, not derived). One `<li>` per `items[]` entry,
+      each `<a data-spec-element="<item-id>" href="<resolved>">` (resolved
+      per § Target resolution) — `<item-id>` per the **`items[]` id
+      derivation** rule above: verbatim when the item declares `id:`;
+      otherwise a derived kebab-slug id, plus `data-spec-provisional="true"`
+      on that `<a>` and an `auto_slugged` warning, scoped to this nav's own
+      items. No group subdivision — the authored order is used verbatim.
     - **Derived-default case** (no authoritative shell nav): one link per
       *rendered* screen (this walkthrough's screens, in the same
       lexicographic-by-`screen_path` order as `manifest.screens[]` —
@@ -375,6 +407,10 @@ REFERENCES
         list's own `target:` (if declared) additionally wraps the whole
         `<ul>` in an outer `<a>` — the two wrap independently, both can be
         present at once. Empty/absent `items` → single placeholder `<li>`.
+        Each `<li>` gets `data-spec-element="<item-id>"` per the **`items[]`
+        id derivation** rule above — `list` items have no `id` field in the
+        schema at all, so the derived (provisional + `auto_slugged`) path
+        is the normal one, not an edge case.
       - `table` → `<table data-spec-element="<id>">` with `<thead>` built
         from `columns[]` and one `<tbody><tr>` per `sample_rows[]` entry,
         cells verbatim/escaped in column order; `row_target:` (when
@@ -383,9 +419,13 @@ REFERENCES
         (empty `<td>`s, one per column) — never fabricated content.
       - `tabs` → `<nav class="tabs" data-spec-element="<id>">`, one entry
         per `items[]`: first entry gets class `active`; an entry with
-        `target:` renders `<a class="tab" data-spec-element="<item.id>"
+        `target:` renders `<a class="tab" data-spec-element="<item-id>"
         href="...">`, without renders `<span class="tab"
-        data-spec-element="<item.id>">` (inert); no JS tab-switching.
+        data-spec-element="<item-id>">` (inert); no JS tab-switching.
+        `<item-id>` per the **`items[]` id derivation** rule above —
+        `elements_block.md`'s own pinned `tabs` example never gives an item
+        an `id` either, so expect the derived (provisional + `auto_slugged`)
+        path on nearly every `tabs` element in practice.
       - `input` with `options:` → `<select data-spec-element="<id>"
         name="<id>" aria-label="<label>">`, one `<option value="<v>">`
         per value; without `options:` → unchanged `<input>`.
