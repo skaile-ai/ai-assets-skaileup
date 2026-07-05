@@ -42,12 +42,7 @@ requires:
   # Per-feature work is delegated to the unified slice sub-flow; its manifest
   # (and its two sub-flows') transitively provide the slice-concept / impl skills.
   - flow:@skaile-ai/skaileup-slice
-  - skill:@skaile-ai/impl-quality-test-unit
-  - skill:@skaile-ai/impl-quality-test-integration
-  - skill:@skaile-ai/impl-quality-test-e2e
-  - skill:@skaile-ai/impl-quality-ready
-  - skill:@skaile-ai/ops-review
-  - skill:@skaile-ai/ops-sync
+  - flow:@skaile-ai/quality-gate
 globals:
   research_depth: moderate
   approval_mode: checkpoint
@@ -250,67 +245,17 @@ nodes:
       pass_context: true
       parameters:
         concept_depth: full
-  # --- Quality ---
-  - id: q-test-unit
-    type: skill
+  # --- Quality gate (delegated to the shared quality-gate flow) ---
+  - id: quality
+    type: sub-flow
     position:
       x: 7400
       y: 200
     data:
-      skill: impl-quality-test-unit
-      label: 'Unit Tests'
-      optional: false
-      parameters: {}
-  - id: q-test-integration
-    type: skill
-    position:
-      x: 7600
-      y: 200
-    data:
-      skill: impl-quality-test-integration
-      label: 'Integration Tests'
-      optional: false
-      parameters: {}
-  - id: q-test-e2e
-    type: skill
-    position:
-      x: 7800
-      y: 200
-    data:
-      skill: impl-quality-test-e2e
-      label: 'E2E Tests'
-      optional: false
-      parameters: {}
-  - id: q-ready
-    type: skill
-    position:
-      x: 8000
-      y: 200
-    data:
-      skill: impl-quality-ready
-      label: 'Release Ready'
-      optional: false
-      parameters: {}
-  # --- Ops ---
-  - id: ops-review
-    type: skill
-    position:
-      x: 8200
-      y: 200
-    data:
-      skill: ops-review
-      label: 'Ops Review'
-      optional: false
-      parameters: {}
-  - id: ops-sync
-    type: skill
-    position:
-      x: 8400
-      y: 200
-    data:
-      skill: ops-sync
-      label: 'Ops Sync'
-      optional: false
+      flow: quality-gate
+      domain: quality
+      label: 'Quality gate + ops tail'
+      pass_context: true
       parameters: {}
 edges:
   - id: e-scope-brief
@@ -389,27 +334,7 @@ edges:
     source: build-setup
     target: slice-loop
     type: flow
-  - id: e-slice-loop-q-test-unit
+  - id: e-slice-loop-quality
     source: slice-loop
-    target: q-test-unit
-    type: flow
-  - id: e-q-test-unit-q-test-integration
-    source: q-test-unit
-    target: q-test-integration
-    type: flow
-  - id: e-q-test-integration-q-test-e2e
-    source: q-test-integration
-    target: q-test-e2e
-    type: flow
-  - id: e-q-test-e2e-q-ready
-    source: q-test-e2e
-    target: q-ready
-    type: flow
-  - id: e-q-ready-ops-review
-    source: q-ready
-    target: ops-review
-    type: flow
-  - id: e-ops-review-ops-sync
-    source: ops-review
-    target: ops-sync
+    target: quality
     type: flow

@@ -59,12 +59,7 @@ requires:
   - flow:@skaile-ai/skaileup-slice
   - skill:@skaile-ai/impl-quality-eval-code
   - skill:@skaile-ai/impl-quality-audit
-  - skill:@skaile-ai/impl-quality-test-unit
-  - skill:@skaile-ai/impl-quality-test-integration
-  - skill:@skaile-ai/impl-quality-test-e2e
-  - skill:@skaile-ai/impl-quality-ready
-  - skill:@skaile-ai/ops-review
-  - skill:@skaile-ai/ops-sync
+  - flow:@skaile-ai/quality-gate
 globals:
   research_depth: deep
   approval_mode: checkpoint
@@ -350,67 +345,17 @@ nodes:
       label: 'Audit (every slice)'
       optional: false
       parameters: {}
-  # --- Final quality (post-loop) ---
-  - id: q-test-unit
-    type: skill
+  # --- Quality gate (delegated to the shared quality-gate flow) ---
+  - id: quality
+    type: sub-flow
     position:
       x: 9200
       y: 200
     data:
-      skill: impl-quality-test-unit
-      label: 'Unit Tests'
-      optional: false
-      parameters: {}
-  - id: q-test-integration
-    type: skill
-    position:
-      x: 9400
-      y: 200
-    data:
-      skill: impl-quality-test-integration
-      label: 'Integration Tests'
-      optional: false
-      parameters: {}
-  - id: q-test-e2e
-    type: skill
-    position:
-      x: 9600
-      y: 200
-    data:
-      skill: impl-quality-test-e2e
-      label: 'E2E Tests'
-      optional: false
-      parameters: {}
-  - id: q-ready
-    type: skill
-    position:
-      x: 9800
-      y: 200
-    data:
-      skill: impl-quality-ready
-      label: 'Release Ready'
-      optional: false
-      parameters: {}
-  # --- Ops ---
-  - id: ops-review
-    type: skill
-    position:
-      x: 10000
-      y: 200
-    data:
-      skill: ops-review
-      label: 'Ops Review'
-      optional: false
-      parameters: {}
-  - id: ops-sync
-    type: skill
-    position:
-      x: 10200
-      y: 200
-    data:
-      skill: ops-sync
-      label: 'Ops Sync'
-      optional: false
+      flow: quality-gate
+      domain: quality
+      label: 'Quality gate + ops tail'
+      pass_context: true
       parameters: {}
 edges:
   - id: e-scope-brief
@@ -525,27 +470,7 @@ edges:
     source: q-eval-code
     target: q-audit
     type: flow
-  - id: e-q-audit-q-test-unit
+  - id: e-q-audit-quality
     source: q-audit
-    target: q-test-unit
-    type: flow
-  - id: e-q-test-unit-q-test-integration
-    source: q-test-unit
-    target: q-test-integration
-    type: flow
-  - id: e-q-test-integration-q-test-e2e
-    source: q-test-integration
-    target: q-test-e2e
-    type: flow
-  - id: e-q-test-e2e-q-ready
-    source: q-test-e2e
-    target: q-ready
-    type: flow
-  - id: e-q-ready-ops-review
-    source: q-ready
-    target: ops-review
-    type: flow
-  - id: e-ops-review-ops-sync
-    source: ops-review
-    target: ops-sync
+    target: quality
     type: flow

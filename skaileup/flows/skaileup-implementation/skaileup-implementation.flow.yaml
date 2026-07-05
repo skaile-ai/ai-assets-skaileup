@@ -32,10 +32,7 @@ requires:
   - flow:@skaile-ai/architecture
   - flow:@skaile-ai/impl-build-setup
   - flow:@skaile-ai/skaileup-slice-impl
-  - skill:@skaile-ai/impl-quality-test-unit
-  - skill:@skaile-ai/impl-quality-test-integration
-  - skill:@skaile-ai/impl-quality-test-e2e
-  - skill:@skaile-ai/impl-quality-ready
+  - flow:@skaile-ai/quality-gate
 globals:
   research_depth: light
   approval_mode: checkpoint
@@ -81,47 +78,20 @@ nodes:
       domain: slice
       label: 'Per-feature impl loop (spec elicited per slice)'
       pass_context: true
-  # --- Quality ---
-  - id: q-test-unit
-    type: skill
+  # --- Quality gate (delegated to the shared quality-gate flow; no ops tail) ---
+  - id: quality
+    type: sub-flow
     position:
       x: 2000
       y: 200
     data:
-      skill: impl-quality-test-unit
-      label: 'Unit Tests'
-      optional: false
-      parameters: {}
-  - id: q-test-integration
-    type: skill
-    position:
-      x: 2200
-      y: 200
-    data:
-      skill: impl-quality-test-integration
-      label: 'Integration Tests'
-      optional: false
-      parameters: {}
-  - id: q-test-e2e
-    type: skill
-    position:
-      x: 2400
-      y: 200
-    data:
-      skill: impl-quality-test-e2e
-      label: 'E2E Tests'
-      optional: true
-      parameters: {}
-  - id: q-ready
-    type: skill
-    position:
-      x: 2600
-      y: 200
-    data:
-      skill: impl-quality-ready
-      label: 'Release Ready'
-      optional: false
-      parameters: {}
+      flow: quality-gate
+      domain: quality
+      label: 'Quality gate (e2e optional, no ops tail)'
+      pass_context: true
+      parameters:
+        e2e: optional
+        ops_tail: skip
 edges:
   - id: e-architecture-build-setup
     source: architecture
@@ -131,19 +101,7 @@ edges:
     source: build-setup
     target: impl-slice-loop
     type: flow
-  - id: e-impl-slice-loop-q-test-unit
+  - id: e-impl-slice-loop-quality
     source: impl-slice-loop
-    target: q-test-unit
-    type: flow
-  - id: e-q-test-unit-q-test-integration
-    source: q-test-unit
-    target: q-test-integration
-    type: flow
-  - id: e-q-test-integration-q-test-e2e
-    source: q-test-integration
-    target: q-test-e2e
-    type: flow
-  - id: e-q-test-e2e-q-ready
-    source: q-test-e2e
-    target: q-ready
+    target: quality
     type: flow
