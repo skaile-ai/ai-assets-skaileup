@@ -280,6 +280,9 @@ When `_standards/` exists, skills check for applicable standards before making d
 
 The implementation side mirrors this exactly under `_implementation/slices/<slice_id>/`
 (`brainstorm · align · plan · test · recap · refactor · index`), frozen by `impl-slice-commit`.
+On freeze, `impl-slice-commit` also back-links the feature spec: it writes `slice_ref`,
+`commits`, and `source_files` into the feature file's frontmatter (diff-first, never
+clobbering other keys) so `ops-trace` can walk feature → slice → commits → code.
 
 ## blueprint/datamodel/ — Schema Format
 

@@ -102,6 +102,16 @@ data_entities: [User, Session]
    - Surface `provides` → screen user actions
    - Surface `when` guards → state-dependent UI elements
 
+### When impl-slice-commit freezes a slice:
+
+1. Read `_implementation/slices/<slice_id>/recap.md` `## Files touched`
+2. Resolve the feature file from the dossier's `feature_path` (retry
+   `product-spec/features` → `experience/features` if the verbatim path is absent)
+3. Set `slice_ref: _implementation/slices/<slice_id>/`, `commits:` (landed SHAs),
+   `source_files:` (code paths from Files touched, excluding `_concept/`,
+   `_implementation/`, and dossier files) in the feature frontmatter
+4. Show the frontmatter diff before writing; update `last_updated` on the feature file
+
 ### When a screen is deleted or renamed:
 
 1. Find all features that reference the old screen path

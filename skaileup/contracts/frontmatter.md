@@ -135,6 +135,9 @@ agent_notes: |
   Used for context across sessions.
 screens: []                     # populated by screens skill
 data_entities: []               # populated by datamodel skill
+slice_ref: ""                   # populated by impl-slice-commit: _implementation/slices/<slice_id>/
+commits: []                     # populated by impl-slice-commit: git SHAs that shipped this feature
+source_files: []                # populated by impl-slice-commit: code files from recap.md "## Files touched"
 last_updated: YYYY-MM-DD
 ---
 ```
@@ -151,6 +154,22 @@ screens:
 ```yaml
 data_entities: [User, Session]
 ```
+
+### back-link format (populated by impl-slice-commit on freeze)
+
+Forward-built features get code back-links when their slice is frozen —
+same shape `ops-reverse-engineer` writes for imported repos:
+
+```yaml
+slice_ref: _implementation/slices/login/
+commits: [abc1234, deadbeef1234567]      # 7-40 hex chars each
+source_files:
+  - src/routes/login.ts
+  - src/components/LoginForm.tsx
+```
+
+`ops-trace` (Direction 1) treats an empty `commits`/`source_files` on a
+frozen slice's feature as a red trace row.
 
 ---
 

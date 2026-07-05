@@ -160,7 +160,9 @@ artifacts:
     side: concept
     # experience-screens + datamodel are feedback-loop writers: they back-populate
     # screens[]/data_entities[] frontmatter into existing feature files.
-    produced_by: [product-spec-features, concept-slice-design-feature, ops-sync, ops-reverse-engineer, ops-add-feature, experience-screens, impl-architecture-datamodel]
+    # impl-slice-commit is a feedback-loop writer: it back-populates
+    # slice_ref/commits/source_files frontmatter on freeze.
+    produced_by: [product-spec-features, concept-slice-design-feature, ops-sync, ops-reverse-engineer, ops-add-feature, experience-screens, impl-architecture-datamodel, impl-slice-commit]
     description: One file per feature, grouped + numbered. Includes Permissions.
   screens:
     path: _concept/experience/screens/         # NN_group/<screen>.md

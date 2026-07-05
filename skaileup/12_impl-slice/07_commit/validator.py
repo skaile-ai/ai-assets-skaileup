@@ -18,6 +18,9 @@ Usage:
     # Mode C: pre-flight — assert all 4 handoffs exist with correct values.
     python3 validator.py --pre-flight <slice_id> [--root <repo-root>]
 
+    # Mode D: assert the feature spec carries the back-link (slice_ref/commits/source_files).
+    python3 validator.py --back-link <path/to/feature.md> --slice-dir <path/to/_implementation/slices/<id>/>
+
 Exit codes:
     0 — valid
     2 — validation failure
@@ -45,6 +48,8 @@ DECISION_DONE_RE = re.compile(r"^Decision: Done$", re.MULTILINE)
 APPROVAL_RESOLVED_RE = re.compile(
     r"^Approval status: (approved|rejected|modified)$", re.MULTILINE
 )
+
+SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 
 # ── Mode A: commit-plan JSON ──────────────────────────────────────
@@ -216,6 +221,47 @@ def validate_pre_flight(slice_id: str, root: Path) -> list[str]:
     return errors
 
 
+# ── Mode D: feature back-link ─────────────────────────────────────
+
+
+def validate_back_link(feature_file: Path, slice_dir: Path) -> list[str]:
+    """Assert impl-slice-commit STEP 6 wrote slice_ref/commits/source_files
+    into the feature spec's frontmatter, and only after the freeze."""
+    errors: list[str] = []
+    if not feature_file.exists():
+        return [f"feature file not found: {feature_file}"]
+    try:
+        fm, _ = split_frontmatter(feature_file.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        return [f"{feature_file}: {exc}"]
+
+    slice_id = slice_dir.name
+    expected_ref = f"_implementation/slices/{slice_id}/"
+    if fm.get("slice_ref") != expected_ref:
+        errors.append(
+            f"slice_ref is {fm.get('slice_ref')!r}; expected {expected_ref!r}"
+        )
+
+    commits = fm.get("commits")
+    if not isinstance(commits, list) or not commits:
+        errors.append("'commits' must be a non-empty list of git SHAs")
+    else:
+        for sha in commits:
+            if not isinstance(sha, str) or not SHA_RE.match(sha):
+                errors.append(f"commits entry {sha!r} is not a git SHA (7-40 hex chars)")
+
+    source_files = fm.get("source_files")
+    if not isinstance(source_files, list) or not source_files:
+        errors.append("'source_files' must be a non-empty list of repo-relative paths")
+
+    if not (slice_dir / "index.md").exists():
+        errors.append(
+            f"{slice_dir / 'index.md'} missing — back-link must be written "
+            "AFTER the STEP 5 freeze (index.md is the freeze marker)"
+        )
+    return errors
+
+
 # ── CLI ───────────────────────────────────────────────────────────
 
 
@@ -227,6 +273,10 @@ def main(argv: list[str]) -> int:
         "--post-commit", help="Mode B: path to _implementation/slices/<id>/ that should be frozen (kept, with index.md)"
     )
     group.add_argument("--pre-flight", help="Mode C: slice_id to verify gates for")
+    group.add_argument(
+        "--back-link",
+        help="Mode D: path to the feature .md whose frontmatter should carry the back-link",
+    )
     parser.add_argument(
         "--expected-files",
         default=None,
@@ -236,6 +286,11 @@ def main(argv: list[str]) -> int:
         "--root",
         default=".",
         help="(Mode C) repo root containing _implementation/slices/<id>/ (default: CWD)",
+    )
+    parser.add_argument(
+        "--slice-dir",
+        default=None,
+        help="(Mode D) path to the frozen _implementation/slices/<id>/ directory",
     )
     args = parser.parse_args(argv[1:])
 
@@ -247,6 +302,11 @@ def main(argv: list[str]) -> int:
         errors = validate_post_commit(Path(args.post_commit))
     elif args.pre_flight:
         errors = validate_pre_flight(args.pre_flight, Path(args.root))
+    elif args.back_link:
+        if not args.slice_dir:
+            print("ERROR: --back-link requires --slice-dir", file=sys.stderr)
+            return 2
+        errors = validate_back_link(Path(args.back_link), Path(args.slice_dir))
 
     if errors:
         for e in errors:

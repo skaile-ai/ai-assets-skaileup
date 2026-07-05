@@ -24,6 +24,7 @@ metadata:
         gate: hard
     produces:
       - id: slice-impl-index
+      - id: features
   prerequisites:
     files:
       - path: "_implementation/slices/{slice_id}/test.md"
@@ -53,6 +54,8 @@ metadata:
         description: "1-N atomic commits per logical unit; each commit body embeds slice_id, feature_title, feature_path."
       - path: "_implementation/slices/{slice_id}/index.md"
         description: "Frozen slice dossier written on successful completion (lifecycle terminator). Folder kept as documentation; only progress.yaml is removed."
+      - path: "_concept/experience/features/{group}/{feature_slug}.md"
+        description: "Back-link write-back on freeze: slice_ref, commits, source_files frontmatter keys (diff-first)."
 ---
 
 # impl-slice-commit — atomic commits + lifecycle terminator
@@ -108,6 +111,7 @@ WRITES
   <git commits>                                               — atomic; per logical unit; user-approved file list
   _implementation/slices/{slice_id}/index.md                  — frozen dossier; ONLY on success
   (FREEZES) _implementation/slices/{slice_id}/                — kept as documentation; handoffs retained, only progress.yaml removed
+  <feature file at feature_path>                              — back-link frontmatter ONLY (slice_ref, commits, source_files, last_updated); diff-first
 
 REFERENCES
   SKILL_GRAPH.md                                              — § 5.2 per-slice impl loop
@@ -139,6 +143,9 @@ MUST  ask the commit-plan question as its own standalone message (iron_laws § 9
 MUST  write _implementation/slices/<slice_id>/index.md ONLY after every commit lands successfully
 MUST  keep _implementation/slices/<slice_id>/ and its phase handoffs — they are permanent documentation
 MUST  remove ONLY the transient _implementation/slices/<slice_id>/progress.yaml at STEP 5 (never the handoffs)
+MUST  back-link the feature spec after a successful freeze: write slice_ref, commits (landed SHAs), source_files (from recap.md "## Files touched") into its frontmatter
+MUST  show the feature-file frontmatter diff before writing the back-link (never-clobber; ops-sync style)
+MUST  exclude _concept/, _implementation/, and dossier paths from source_files — it lists CODE files only
 
 NEVER  force-push or rewrite history
 NEVER  use "git add ." or "git add -A" — always stage explicit file lists from the approved plan
@@ -146,6 +153,8 @@ NEVER  delete the slice dossier or its phase handoffs (freeze, never delete)
 NEVER  write index.md if any planned commit was skipped, refused, or failed
 NEVER  attempt to roll back successful prior commits if a later commit fails — they are valid work
 NEVER  bypass pre-commit hooks with --no-verify
+NEVER  modify any feature-file frontmatter key other than slice_ref, commits, source_files, last_updated
+NEVER  fail the already-landed commits because the back-link target cannot be resolved — warn and skip instead
 
 INPUT
   Read from: _concept/_grounding/impl-slice-commit/input.json
@@ -262,7 +271,30 @@ STEP 5: Lifecycle-terminator freeze
   3. Verify index.md exists and its frontmatter parses; verify the handoffs are
      still present. If index.md is missing, surface the failure and exit non-zero.
 
-EMIT  [impl-slice-commit] completed slice_id=<id> commits=<n> frozen=_implementation/slices/<id>/
+STEP 6: Back-link the feature spec (feedback loop)
+  Only after STEP 5 succeeded (index.md exists).
+  1. Resolve the feature file: use feature_path verbatim if it exists on disk;
+     else retry with `product-spec/features` replaced by `experience/features`.
+     If neither exists: WARN
+     > "[impl-slice-commit] back-link skipped — feature file not found at <feature_path>."
+     and continue to EMIT (do NOT fail; commits already landed).
+  2. Collect the landed SHAs from STEP 4 ($ git log -N --pretty=%h for the N
+     commits just created — same list written into index.md `commits:`).
+  3. Parse recap.md "## Files touched"; keep code paths only (drop any path
+     under _concept/, _implementation/, _debug/, and deleted files).
+  4. Build the frontmatter patch (ONLY these keys):
+     slice_ref: _implementation/slices/<slice_id>/
+     commits: [<sha>, ...]
+     source_files: [<path>, ...]
+     last_updated: <today YYYY-MM-DD>
+  5. Show the diff of the feature file's frontmatter (before/after) to the user,
+     then write. Leave the change in the working tree (it lands with the next
+     commit, same convention as index.md).
+  6. Verify:
+     $ python3 impl-slice/commit/validator.py --back-link <feature file> --slice-dir _implementation/slices/<slice_id>/
+     On failure: report errors; do NOT roll back commits.
+
+EMIT  [impl-slice-commit] completed slice_id=<id> commits=<n> frozen=_implementation/slices/<id>/ back_linked=<feature file|skipped>
 
 CHECKLIST
   - [ ] All 4 handoffs (test.md, recap.md, refactor.md, plan.md) read
@@ -272,6 +304,7 @@ CHECKLIST
   - [ ] commit-plan approved by user (CHECKPOINT commit_plan)
   - [ ] Every commit landed with `Slice:`/`Feature:`/`Feature spec:` audit trail
   - [ ] _implementation/slices/<slice_id>/index.md written; handoffs kept; progress.yaml removed (lifecycle freeze)
+  - [ ] Feature spec back-linked (slice_ref, commits, source_files) or skip warned; validator --back-link exits 0
   - [ ] No force-push, no --amend across already-pushed commits
 
 ---
@@ -287,3 +320,4 @@ CHECKLIST
 | Rolling back successful commits when a later one fails | Leave them — they are valid work; STOP and surface the partial state |
 | Committing files from another slice (interleaved working tree) | Separate the slices first; this skill commits ONE slice's work |
 | Re-running after the slice was frozen | A frozen slice has an `index.md` and is already shipped — re-running is a no-op; start a new slice instead |
+| Skipping the back-link because the feature file lives at a different root | Retry product-spec/features → experience/features before warning; the back-link is what ops-trace walks |
