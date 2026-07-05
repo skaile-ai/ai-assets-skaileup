@@ -38,7 +38,7 @@ metadata:
       - path: "design/tokens.json"
         gate: hard
         description: "Brand tokens injected as CSS variables in the rendered shell"
-      - path: "product-spec/features"
+      - path: "experience/features"
         gate: soft
         description: "Feature files are linked from manifest.json for traceability; absence is recorded as a warning, not a failure"
         min_entries: 1
@@ -85,89 +85,18 @@ this rationale in mind.
 
 ## Renderer Contract
 
-This is the **public contract** of this skill. Every other walkthrough
-variant in Phase 3 (Lit, Astro, framework-tier) MUST emit the same set of
-`data-spec-*` attributes on the same DOM positions so the
-`mockup-feedback-*` cluster can resolve clicks identically across renderers.
+This renderer implements the shared walkthrough renderer contract —
+`contracts/walkthrough_renderer.md` (schema_version "1.0"): data-spec-*
+attribute table, screen_id vs screen_path, kind → DOM tag mapping, auto-slug
+fallback, manifest schema + field semantics, warnings[].kind enum, shared
+error handling, screen-in-multiple-journeys rule, shared MUST/NEVER. Read it
+before rendering; it is pinned and MUST NOT be restated here.
 
-### `data-spec-*` attribute table
+Renderer-specific manifest values: `renderer: "mockup-walkthrough-static-html"`,
+`renderer_version:` this SKILL.md's `metadata.version`.
 
-| DOM location | Attribute | Value | Source |
-|---|---|---|---|
-| `<body>` of every `screen/<group>/<name>.html` | `data-spec-screen` | screen path stem (e.g. `01_user_auth/login`) | screen file path |
-| every annotatable child node (form fields, buttons, links, images, regions, list items, nav items) | `data-spec-element` | element id (kebab-case) | `elements:` entry, or auto-slug |
-| same node, when no explicit `elements:` entry exists for it | `data-spec-provisional` | literal string `"true"` | absent in YAML |
-| `<body>` of every `journey/<id>.html` | `data-spec-journey` | journey id from stories.yaml | stories.yaml |
-| each step link inside `journey/<id>.html` | `data-spec-screen` | the screen-stem of that step's screen | journey step entry |
-| `<body>` of `index.html` | `data-spec-index` | literal string `"true"` | (none — site root marker) |
-
-**The renderer MUST NOT add `data-spec-*` attributes outside this table.**
-Phase 3's annotate skill ignores unknown ones, but a lean attribute set
-keeps drift visible.
-
-### `screen_id` vs `screen_path`
-
-Both forms are kept in `manifest.json` so Phase 3 consumers can pick:
-
-- `screen_path`: full repo-relative path with extension, e.g.
-  `experience/screens/01_user_auth/login.md`. Used in journey
-  `screen_sequence`, in `screens[].screen_path`, and in `source_anchor`s.
-- `screen_id`: path stem under `experience/screens/` without `.md`, e.g.
-  `01_user_auth/login`. Used in `data-spec-screen`, in the rendered HTML
-  filename, and in `screens[].screen_id`.
-
-### kind → DOM tag mapping
-
-| kind | rendered tag | notes |
-|---|---|---|
-| `input` | `<input>` | with `name="<id>"` and `aria-label="<label>"` |
-| `button` | `<button>` | label as inner text |
-| `link` | `<a>` | `href="#"` placeholder |
-| `image` | `<img>` | `src="#"` placeholder, `alt="<label>"` |
-| `text` | `<span>` | label as inner text |
-| `region` | `<section>` | label as inner `<h3>` |
-| `list` | `<ul>` | empty list with placeholder `<li>` |
-| `form` | `<form>` | placeholder; nested inputs not auto-derived |
-| `nav` | `<nav>` | placeholder list of links |
-| `media` | `<figure>` | `<figcaption>` carries label |
-| `custom` | `<div>` | label as inner text; renderable but unstyled |
-
-States beyond `default` are rendered as adjacent `<span class="state-<n>">`
-children of the element so visual reviewers can see state coverage.
-
-### Auto-slug fallback (this skill's portion of the hybrid ID strategy)
-
-When a screen file has no `elements:` block, OR has a partial one, this
-skill MUST:
-
-  1. Walk the screen body and identify renderable widgets by source order.
-     **Source set:** (a) markdown headings (`##`, `###`), (b) form-field
-     lines matching `[label]: input|button|...` pattern, (c) acceptance-
-     criteria mentions in body text. (Auto-slug net is intentionally wide;
-     explicit ids always win on collision.)
-  2. For each widget not present in `elements:` (matched by label-equality,
-     case-insensitive), generate an id by:
-     - Lowercase the label
-     - Replace any non `[a-z0-9]` run with a single `-`
-     - Trim leading/trailing `-`
-     - If empty (label was e.g. `"…"`), fall back to `<kind>-<n>` where
-       `n` is a 1-based counter scoped per-screen-per-kind
-       (`button-1`, `button-2`, `input-1`, ...).
-     - On collision with another auto-slugged id within the same screen,
-       append `-2`, `-3`, ... until unique.
-     - Collision with an explicit id: warning `kind: "auto_slug_collision"`
-       and the auto-slugged element gets the suffixed id.
-  3. Render the node with `data-spec-element="<auto-slugged-id>"` AND
-     `data-spec-provisional="true"`.
-  4. Append a `warnings[]` entry of `kind: "auto_slugged"` to
-     `manifest.json` for each auto-slugged element.
-  5. **Never** mutate the source `experience/screens/<group>/<name>.md`
-     file. Promotion of provisional ids is `mockup-feedback-triage`'s job
-     in Phase 3.
-
-This procedure mirrors step 1 of the hybrid ID strategy from
-`docs/devlog/mockup-design.md` § 6 / `contracts/elements_block.md` § "Hybrid ID
-strategy".
+static-html is the contract's reference implementation: when a behaviour is
+ambiguous, this renderer's output is the tie-breaker.
 
 ## Inputs
 
@@ -178,7 +107,7 @@ This skill consumes four input shapes, all under the project root:
 | `experience/screens/<group>/<screen>.md` | Markdown + YAML frontmatter (per `contracts/frontmatter.md` § "experience/screens/<group>/<screen>.md") with optional `elements:` block (per `contracts/elements_block.md`). | `contracts/elements_block.md` |
 | `experience/journeys/stories.yaml` | JSON object containing a `journeys[]` array. Each journey has `id`, `title`, `description`, `screen_sequence: [<screen-path>, ...]`. | (pinned by this skill — see "Stories.json schema" below) |
 | `design/tokens.json` | Token tree (e.g. `{"color": {"primary": "#0ea5e9"}, "spacing": {"sm": "8px"}}`). Flattened to CSS custom properties (`--token-<dotted-path-with-hyphens>`). | (pinned by this skill — same flattening rule as `mockup-component-isolated-html`) |
-| `product-spec/features/<group>/<feature>.md` | Markdown + YAML frontmatter (per `contracts/frontmatter.md` § "experience/features/..."). Used **only** for `manifest.json#features`; not rendered as HTML. | `contracts/frontmatter.md` |
+| `experience/features/<group>/<feature>.md` | Markdown + YAML frontmatter (per `contracts/frontmatter.md` § "experience/features/..."). Used **only** for `manifest.json#features`; not rendered as HTML. | `contracts/frontmatter.md` |
 
 **Body markdown rule.** The screen markdown body is rendered as descriptive
 text/headings inside the screen page, but DOES NOT receive `data-spec-element`
@@ -229,7 +158,7 @@ READS
   experience/screens/**/*.md            — screen specs (frontmatter + body)
   experience/journeys/stories.yaml      — journey definitions
   design/tokens.json                    — brand tokens
-  ? product-spec/features/**/*.md       — feature traceability (soft)
+  ? experience/features/**/*.md       — feature traceability (soft)
   ? experience/screens/00_layout/shell.md — shared layout (soft)
 
 WRITES
@@ -239,6 +168,7 @@ WRITES
   _concept/mockup-walkthrough/static-html/manifest.json
 
 REFERENCES
+  contracts/walkthrough_renderer.md     — shared renderer contract (pinned)
   contracts/elements_block.md           — `elements:` schema + renderer contract
   contracts/frontmatter.md              — screen + feature + stories shapes
   contracts/asset_frontmatter.md        — this SKILL.md's own frontmatter shape
@@ -275,7 +205,7 @@ REFERENCES
     flat dict keyed `--token-<dotted-path-with-hyphens>`. Example:
     `{"color": {"primary": "#0ea5e9"}}` → `--token-color-primary: #0ea5e9`.
     (Same rule as `mockup-component-isolated-html/scripts/inline_tokens.py`.)
-  - Glob `product-spec/features/**/*.md`; sort lexicographically. Build a
+  - Glob `experience/features/**/*.md`; sort lexicographically. Build a
     `feature -> screens[]` map by inverting `screens[].implements[]`.
   - Build a normalised in-memory model:
     `{ screens: [...], journeys: [...], tokens: {...}, features: [...], warnings: [...] }`.
@@ -293,7 +223,7 @@ REFERENCES
     warning `kind: "unknown_element_kind"`.
   - **`layout:` reference pointing to a non-existent file** → warning
     `kind: "missing_layout"`, fall back to a built-in default shell.
-  - **`product-spec/features/` empty or missing** → soft gate, warning
+  - **`experience/features/` empty or missing** → soft gate, warning
     `kind: "missing_feature"`, continue rendering. `manifest.features[]`
     is emitted as `[]`.
 
@@ -314,7 +244,7 @@ REFERENCES
     on `:root` inside the shell's `<style>` block.
   - Set `<body data-spec-screen="<screen_id>">`.
   - Render the explicit `elements[]` first (in declaration order):
-    - Choose the HTML tag per the `kind → DOM tag mapping` table.
+    - Choose the HTML tag per `contracts/walkthrough_renderer.md` § kind → DOM tag mapping.
     - Emit `data-spec-element="<element.id>"`.
     - If the element entry has `provisional: true`, also emit
       `data-spec-provisional="true"`.
@@ -370,18 +300,7 @@ REFERENCES
     same screen can appear in multiple journeys cleanly).
   - Write the file UTF-8, LF.
 
-### Screen-in-multiple-journeys rule
-
-  When a screen appears in two or more journeys, each `journey/<id>.html`
-  retains its own "Next →" link only inside the journey HTML. The screen
-  HTML itself does NOT embed journey-specific navigation (else screen
-  renders couple to journey state). Cross-journey continuation is solely
-  owned by `journey/<id>.html`.
-
-  NEVER inject journey-step "Next →" links into `screen/**/*.html`.
-  The screen's footer lists the journeys it participates in (with links
-  to the journey pages) but does not advance to any specific journey's
-  next screen.
+  Screen-in-multiple-journeys rule: see `contracts/walkthrough_renderer.md` § Screen-in-multiple-journeys rule.
 
 ## STEP 5: Emit index.html and manifest.json
 
@@ -420,95 +339,9 @@ REFERENCES
 
 ## Manifest Schema
 
-This schema is the **contract handed to `mockup-feedback-annotate`** in
-Phase 3. It MUST NOT change without coordinated updates to that
-mini-plan. Field names are pinned exactly:
-
-```json
-{
-  "schema_version": "1.0",
-  "renderer": "mockup-walkthrough-static-html",
-  "renderer_version": "0.1.0",
-  "generated_at": "2026-05-07T12:34:56Z",
-  "source_root": "experience/screens",
-  "screens": [
-    {
-      "screen_path": "experience/screens/01_user_auth/login.md",
-      "screen_id": "01_user_auth/login",
-      "rendered_html": "screen/01_user_auth/login.html",
-      "implements": ["experience/features/01_user_auth/login.md"],
-      "data_entities": ["User"],
-      "layout": "experience/screens/00_layout/shell.md",
-      "elements": [
-        {
-          "element_id": "submit-button",
-          "kind": "button",
-          "label": "Sign in",
-          "states": ["default", "loading", "disabled", "error"],
-          "provisional": false,
-          "source_anchor": "experience/screens/01_user_auth/login.md#elements/submit-button"
-        }
-      ]
-    }
-  ],
-  "journeys": [
-    {
-      "journey_id": "user-signs-in",
-      "rendered_html": "journey/user-signs-in.html",
-      "source": "experience/journeys/stories.yaml#user-signs-in",
-      "screen_sequence": [
-        "experience/screens/01_user_auth/login.md",
-        "experience/screens/02_dashboard/home.md"
-      ]
-    }
-  ],
-  "features": [
-    {
-      "feature_path": "product-spec/features/01_user_auth/login.md",
-      "rendered_screens": ["experience/screens/01_user_auth/login.md"]
-    }
-  ],
-  "warnings": [
-    {
-      "kind": "auto_slugged",
-      "screen_path": "experience/screens/02_dashboard/home.md",
-      "element_id": "kpi-card-1",
-      "message": "No elements: block in screen frontmatter; auto-slugged 1 element."
-    }
-  ]
-}
-```
-
-### Field semantics
-
-- `schema_version`: bump on breaking change. Phase 3 pins `^1.0`.
-- `renderer` / `renderer_version`: identifies which walkthrough variant
-  produced the site. Future Lit/Astro variants emit the same shape with
-  their own `renderer` value.
-- `generated_at`: ISO-8601 UTC; lets feedback-annotate detect stale
-  renders.
-- `source_root`: relative path the screen paths are anchored to (always
-  `experience/screens` for this skill).
-- `screens[].screen_path`: full path with `.md`. Used by feedback-annotate
-  when it needs to read the source file.
-- `screens[].screen_id`: the path stem `<group>/<name>` (no `.md`); this
-  is the value emitted in `data-spec-screen`.
-- `screens[].rendered_html`: site-relative path to the rendered HTML.
-- `screens[].elements[].element_id`: the value emitted in
-  `data-spec-element`.
-- `screens[].elements[].provisional`: `true` when auto-slugged
-  (mirrors `data-spec-provisional`).
-- `screens[].elements[].source_anchor`: a fragment-style pointer back to
-  the source file. Explicit ids: `#elements/<element_id>`. Provisional:
-  `#auto/<element_id>` (no entry yet in the YAML).
-- `journeys[].screen_sequence`: ordered list of screen source paths.
-  Same order is used by the rendered "Next →" links inside
-  `journey/<id>.html`.
-- `warnings[].kind`: machine-readable, one of `auto_slugged`,
-  `missing_layout`, `missing_feature`, `unknown_element_kind`,
-  `missing_screen`, `missing_screen_sequence`, `no_journeys`,
-  `auto_slug_collision`. Extend cautiously — Phase 3 will switch on
-  this field.
+Pinned in `contracts/walkthrough_renderer.md` § Manifest schema (+ § Field
+semantics, § warnings[].kind enum). This renderer emits
+`renderer: "mockup-walkthrough-static-html"`.
 
 ## STEP 6: Validate
 
@@ -524,19 +357,14 @@ mini-plan. Field names are pinned exactly:
 
 ## MUST / NEVER
 
-MUST  emit `data-spec-screen` on every screen `<body>`
-MUST  emit `data-spec-element` on every annotatable child node
-MUST  emit `data-spec-provisional="true"` on auto-slugged element nodes
-MUST  write `manifest.json` that conforms to the pinned schema (`schema_version: "1.0"`)
-MUST  sort all manifest arrays lexicographically (`screens` by `screen_path`, `journeys` by `journey_id`, `features` by `feature_path`) for deterministic diffs
-MUST  escape every interpolated string via `html.escape(..., quote=True)`
+Shared MUST/NEVER: `contracts/walkthrough_renderer.md` § Shared MUST / NEVER
+(data-spec emission, manifest schema + sorting, escaping, no source mutation,
+no journey-nav injection, no absolute paths).
+
+MUST  escape via `html.escape(..., quote=True)` specifically (the contract's escape rule, pinned to the stdlib call)
 MUST  use only stdlib + PyYAML in the renderer (no Jinja, no Mako, no build tool)
 
 NEVER  include a JS framework, a bundler artefact, or any `<script src="...">` pointing at a non-relative URL — the site is openable as a static set of files
-NEVER  mutate source files (`experience/screens/**`, `experience/journeys/stories.yaml`, `design/tokens.json`, `product-spec/features/**`) — this skill is read-only on its inputs
-NEVER  emit `data-spec-*` attributes outside the pinned table — Phase 3 ignores unknown ones, but lean attribute sets keep drift visible
-NEVER  inline absolute paths from the developer's filesystem into `manifest.json` — use repo-relative paths only
-NEVER  inject journey-step navigation into `screen/**/*.html` — cross-journey continuation lives only in `journey/<id>.html`
 
 ## CHECKLIST
 

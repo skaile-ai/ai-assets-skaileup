@@ -38,7 +38,7 @@ metadata:
       - path: "design/tokens.json"
         gate: hard
         description: "Brand tokens injected as Tailwind CSS vars in the built shell"
-      - path: "product-spec/features"
+      - path: "experience/features"
         gate: soft
         description: "Feature files linked from manifest.json for traceability; absence is a warning"
         min_entries: 1
@@ -83,58 +83,19 @@ generator script). Same pattern as static-html's Python renderer.
 
 ## Renderer Contract
 
-**Public contract.** Every `data-spec-*` attribute MUST be emitted on the
-same DOM position as `mockup-walkthrough-static-html` so the
-`mockup-feedback-*` cluster resolves clicks identically across renderers.
+This renderer implements the shared walkthrough renderer contract —
+`contracts/walkthrough_renderer.md` (schema_version "1.0"): data-spec-*
+attribute table, screen_id vs screen_path, kind → DOM tag mapping, auto-slug
+fallback, manifest schema + field semantics, warnings[].kind enum, shared
+error handling, screen-in-multiple-journeys rule, shared MUST/NEVER. Read it
+before rendering; it is pinned and MUST NOT be restated here.
 
-### `data-spec-*` attribute table
+Renderer-specific manifest values: `renderer: "mockup-walkthrough-astro"`,
+`renderer_version:` this SKILL.md's `metadata.version`.
 
-| DOM location | Attribute | Value | Source |
-|---|---|---|---|
-| `<body>` of every `screen/<group>/<name>.html` | `data-spec-screen` | screen path stem (e.g. `01_user_auth/login`) | screen file path |
-| every annotatable child node (form fields, buttons, links, images, regions, list items, nav items) | `data-spec-element` | element id (kebab-case) | `elements:` entry, or auto-slug |
-| same node, when no explicit `elements:` entry exists for it | `data-spec-provisional` | literal string `"true"` | absent in YAML |
-| `<body>` of every `journey/<id>.html` | `data-spec-journey` | journey id from stories.yaml | stories.yaml |
-| each step link inside `journey/<id>.html` | `data-spec-screen` | the screen-stem of that step's screen | journey step entry |
-| `<body>` of `index.html` | `data-spec-index` | literal string `"true"` | (none — site root marker) |
-
-**The renderer MUST NOT add `data-spec-*` attributes outside this table.**
-
-### `screen_id` vs `screen_path`
-
-Identical semantics to `mockup-walkthrough-static-html`. See that skill's
-"screen_id vs screen_path" section for the full definition. In brief:
-`screen_id` is the path stem used in `data-spec-screen` and HTML filenames;
-`screen_path` is the full repo-relative path with `.md` extension used in
-`manifest.json` and `stories.yaml` `screen_sequence` entries.
-
-### `kind → DOM tag mapping`
-
-| kind | rendered tag | notes |
-|---|---|---|
-| `input` | `<input>` | with `name="<id>"` and `aria-label="<label>"` |
-| `button` | `<button>` | label as inner text |
-| `link` | `<a>` | `href="#"` placeholder |
-| `image` | `<img>` | `src="#"` placeholder, `alt="<label>"` |
-| `text` | `<span>` | label as inner text |
-| `region` | `<section>` | label as inner `<h3>` |
-| `list` | `<ul>` | empty list with placeholder `<li>` |
-| `form` | `<form>` | placeholder; nested inputs not auto-derived |
-| `nav` | `<nav>` | placeholder list of links |
-| `media` | `<figure>` | `<figcaption>` carries label |
-| `custom` | `<div>` | label as inner text; rendered but unstyled |
-
-States beyond `default` are rendered as adjacent `<span class="state-<n>">`
-children of the element.
-
-### Auto-slug fallback
-
-Identical to `mockup-walkthrough-static-html`. See that skill's "Auto-slug
-fallback" section. The Astro template emits `data-spec-provisional="true"`
-on any element where `element.provisional === true`. There is NO separate
-top-level `auto_slugged[]` array — `provisional: true` lives on the element
-object itself. The `kind: "auto_slugged"` warning entry in
-`manifest.warnings[]` is still required per the auto-slug step.
+Astro-specific: the template emits `data-spec-provisional="true"` where
+`element.provisional === true`; there is NO separate top-level
+`auto_slugged[]` array — `provisional: true` lives on the element object.
 
 ## Inputs
 
@@ -145,7 +106,7 @@ Same four input shapes as `mockup-walkthrough-static-html`:
 | `experience/screens/<group>/<screen>.md` | Markdown + YAML frontmatter with optional `elements:` block per `contracts/elements_block.md` |
 | `experience/journeys/stories.yaml` | JSON `{ "journeys": [{ "id", "title", "description", "screen_sequence" }] }` |
 | `design/tokens.json` | Token tree. Flattened to CSS custom properties (`--token-<dotted-path-with-hyphens>`). |
-| `product-spec/features/<group>/<feature>.md` | Used only for `manifest.json#features`; not rendered as HTML. |
+| `experience/features/<group>/<feature>.md` | Used only for `manifest.json#features`; not rendered as HTML. |
 
 ## Outputs
 
@@ -198,7 +159,7 @@ _concept/mockup-walkthrough/astro/          ← project root (committed)
       "rendered_html": "screen/01_user_auth/login.html",
       "group": "01_user_auth",
       "title": "Login",
-      "implements": ["product-spec/features/01_user_auth/login.md"],
+      "implements": ["experience/features/01_user_auth/login.md"],
       "data_entities": ["User"],
       "layout": "experience/screens/00_layout/shell.md",
       "elements": [
@@ -230,7 +191,7 @@ _concept/mockup-walkthrough/astro/          ← project root (committed)
   },
   "features": [
     {
-      "feature_path": "product-spec/features/01_user_auth/login.md",
+      "feature_path": "experience/features/01_user_auth/login.md",
       "rendered_screens": ["experience/screens/01_user_auth/login.md"]
     }
   ]
@@ -255,7 +216,7 @@ READS
   experience/screens/**/*.md            — screen specs (frontmatter + body)
   experience/journeys/stories.yaml      — journey definitions
   design/tokens.json                    — brand tokens
-  ? product-spec/features/**/*.md       — feature traceability (soft)
+  ? experience/features/**/*.md       — feature traceability (soft)
   ? experience/screens/00_layout/shell.md — shared layout reference (soft)
   ? _concept/mockup-walkthrough/astro/astro.config.mjs — mode detection
 
@@ -275,6 +236,7 @@ WRITES
   _concept/mockup-walkthrough/astro/manifest.json              (every run)
 
 REFERENCES
+  contracts/walkthrough_renderer.md     — shared renderer contract (pinned)
   contracts/elements_block.md           — elements: schema + renderer contract
   contracts/frontmatter.md              — screen + feature + stories shapes
   contracts/asset_frontmatter.md        — this SKILL.md's own frontmatter shape
@@ -307,7 +269,7 @@ REFERENCES
   `kind: "missing_screen_sequence"`, skip that journey.
 - Read `design/tokens.json`. Flatten depth-first:
   `{"color": {"primary": "#0ea5e9"}}` → `--token-color-primary: #0ea5e9`.
-- Glob `product-spec/features/**/*.md`. Build feature→screens map by inverting
+- Glob `experience/features/**/*.md`. Build feature→screens map by inverting
   `screens[].implements[]`.
 - Apply auto-slug fallback: for each widget in screen body absent from
   `elements[]`, generate kebab-case id, set `provisional: true`, set
@@ -327,7 +289,7 @@ REFERENCES
   `kind: "unknown_element_kind"`.
 - **`layout:` reference to non-existent file** → `kind: "missing_layout"`,
   fall back to `Shell.astro` default.
-- **`product-spec/features/` empty or missing** → soft gate,
+- **`experience/features/` empty or missing** → soft gate,
   `kind: "missing_feature"`, continue. `manifest.features[]` → `[]`.
 - **Zero journeys** → render "No journeys defined",
   `kind: "no_journeys"`.
@@ -620,59 +582,9 @@ serialising `specs.json`. Template-only fields from `specs.json`
 `journeys[].title`, `journeys[].description`) MUST NOT appear in
 `manifest.json`.
 
-```json
-{
-  "schema_version": "1.0",
-  "renderer": "mockup-walkthrough-astro",
-  "renderer_version": "0.1.0",
-  "generated_at": "<ISO-8601 UTC>",
-  "source_root": "experience/screens",
-  "screens": [
-    {
-      "screen_path": "experience/screens/01_user_auth/login.md",
-      "screen_id": "01_user_auth/login",
-      "rendered_html": "screen/01_user_auth/login.html",
-      "implements": ["product-spec/features/01_user_auth/login.md"],
-      "data_entities": ["User"],
-      "layout": "experience/screens/00_layout/shell.md",
-      "elements": [
-        {
-          "element_id": "submit-button",
-          "kind": "button",
-          "label": "Sign in",
-          "states": ["default", "loading"],
-          "provisional": false,
-          "source_anchor": "experience/screens/01_user_auth/login.md#elements/submit-button"
-        }
-      ]
-    }
-  ],
-  "journeys": [
-    {
-      "journey_id": "user-signs-in",
-      "rendered_html": "journey/user-signs-in.html",
-      "source": "experience/journeys/stories.yaml#user-signs-in",
-      "screen_sequence": [
-        "experience/screens/01_user_auth/login.md",
-        "experience/screens/02_dashboard/home.md"
-      ]
-    }
-  ],
-  "features": [
-    {
-      "feature_path": "product-spec/features/01_user_auth/login.md",
-      "rendered_screens": ["experience/screens/01_user_auth/login.md"]
-    }
-  ],
-  "warnings": []
-}
-```
-
-Sort: `screens[]` by `screen_path`, `journeys[]` by `journey_id`,
-`features[]` by `feature_path`. Write atomically (tmp → rename).
-
-`renderer_version` matches the `metadata.version` in this SKILL.md's
-frontmatter (`"0.1.0"`).
+Emit the pinned schema — `contracts/walkthrough_renderer.md` § Manifest
+schema — with `renderer: "mockup-walkthrough-astro"`. Sorting + atomic write
+per § Field semantics.
 
 ## STEP 8: Validate
 
@@ -686,18 +598,9 @@ Exit 0 = ready. Exit 2 = violation report.
 
 ## Error handling
 
-### Inherited from static-html (identical behaviour)
+### Shared conditions
 
-| Condition | Behaviour |
-|---|---|
-| Malformed YAML in screen file | Fail loudly, exit non-zero, name the offending file |
-| Screen in journey but absent on disk | `manifest.warnings[]` `kind: "missing_screen"` + dead-end `<li class="journey-step-missing">` |
-| `screen_sequence` absent for a journey | `manifest.warnings[]` `kind: "missing_screen_sequence"`, skip that journey render |
-| Zero journeys in `stories.yaml` | Render "No journeys defined", `kind: "no_journeys"` |
-| Missing `product-spec/features/` | Soft gate, `kind: "missing_feature"`, continue; `manifest.features[]` → `[]` |
-| Unknown `elements:` kind | Render as `custom`, `kind: "unknown_element_kind"` |
-| `layout:` reference to non-existent file | `kind: "missing_layout"`, fall back to `Shell.astro` default |
-| Auto-slug collision | `kind: "auto_slug_collision"`, suffix auto id with `-2`, `-3`, … |
+See `contracts/walkthrough_renderer.md` § Shared error handling.
 
 ### Astro-specific
 
@@ -710,21 +613,13 @@ Exit 0 = ready. Exit 2 = violation report.
 
 ### `warnings[].kind` enum
 
-`auto_slugged`, `auto_slug_collision`, `missing_layout`, `missing_feature`,
-`unknown_element_kind`, `missing_screen`, `missing_screen_sequence`,
-`no_journeys`, `stale_tailwind_config`
-
+Shared enum per `contracts/walkthrough_renderer.md` § warnings[].kind enum;
 `stale_tailwind_config` is the only Astro-specific addition.
 
 ## MUST / NEVER
 
-MUST  emit data-spec-screen on every screen `<body>`
-MUST  emit data-spec-element on every annotatable child node
-MUST  emit data-spec-provisional="true" on auto-slugged element nodes
-MUST  emit data-spec-journey="<id>" on every journey `<body>`
-MUST  emit data-spec-index="true" on index.html `<body>`
-MUST  write manifest.json conforming to pinned schema (schema_version: "1.0")
-MUST  sort manifest arrays lexicographically
+Shared MUST/NEVER: `contracts/walkthrough_renderer.md` § Shared MUST / NEVER.
+
 MUST  set emptyOutDir: false in astro.config.mjs
 MUST  set build.format: 'file' in astro.config.mjs
 MUST  set outDir: '.' in astro.config.mjs
@@ -734,10 +629,6 @@ MUST  return getStaticPaths() slugs without trailing slashes
 
 NEVER regenerate astro.config.mjs, tailwind.config.mjs, or .astro templates on update runs
 NEVER create a dist/ subdirectory — outDir must be '.'
-NEVER emit data-spec-* attributes outside the pinned table
-NEVER mutate source files (experience/screens/**, stories.yaml, tokens.json, features/**)
-NEVER inject journey-step navigation into screen/**/*.html
-NEVER inline absolute filesystem paths in manifest.json
 NEVER use a separate auto_slugged[] array — set provisional: true on the element object (the kind: "auto_slugged" warning entry in manifest.warnings[] is still required per the auto-slug step)
 
 ## CHECKLIST

@@ -10,7 +10,7 @@
       "screen_id": "00_auth/login",
       "rendered_html": "screen/00_auth/login.html",
       "implements": [
-        "product-spec/features/00_auth/login.md"
+        "experience/features/00_auth/login.md"
       ],
       "data_entities": [
         "User"
@@ -61,7 +61,7 @@
       "screen_id": "00_auth/register",
       "rendered_html": "screen/00_auth/register.html",
       "implements": [
-        "product-spec/features/00_auth/login.md"
+        "experience/features/00_auth/login.md"
       ],
       "data_entities": [
         "User"
@@ -113,7 +113,7 @@
   ],
   "features": [
     {
-      "feature_path": "product-spec/features/00_auth/login.md",
+      "feature_path": "experience/features/00_auth/login.md",
       "rendered_screens": [
         "experience/screens/00_auth/login.md",
         "experience/screens/00_auth/register.md"
