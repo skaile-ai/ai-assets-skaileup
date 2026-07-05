@@ -26,7 +26,7 @@ metadata:
       - id: slice_id
         label: "Slice id (== feature_slug); resolves to _implementation/slices/<slice_id>/plan.md"
         type: text
-        hint: "Inherited verbatim from upstream phases. Regex ^[a-z][a-z0-9-]{1,47}$."
+        hint: "Inherited verbatim from upstream phases (slug rule: contracts/slice_loop.md)."
     reads:
       - path: "_implementation/slices/{slice_id}/test.md"
         description: "Re-entry mode — refine an existing test handoff."

@@ -76,6 +76,7 @@ WRITES
 REFERENCES
   SKILL_GRAPH.md                             — § 4 concept-slice loop
   contracts/iron_laws.md                     — § 7, § 9
+  contracts/slice_loop.md                    — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   concept-slice/scope-feature/references/scope-prompt-style.md — interview tone
 
 REQUIRES

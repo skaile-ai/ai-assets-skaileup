@@ -104,6 +104,8 @@ REFERENCES
   contracts/iron_laws.md                     — § 7, § 9
   contracts/skill_grammar.md                 — DSL keywords
   contracts/domain_model.md                  — glossary format, ADR format, the 3-test gate
+  contracts/slice_loop.md                    — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
+  contracts/grill_bank.md                    — grill question bank: tone + pillars + EARS provenance
   concept-slice/align/references/align-prompt-style.md — interview tone reference
 
 REQUIRES
@@ -113,13 +115,13 @@ REQUIRES
 # Constraints
 
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
-MUST  produce acceptance criteria in EARS format ("WHEN <trigger>, THE <system> SHALL <response>")
+MUST  produce acceptance criteria in EARS format (contracts/acceptance_criteria.md § EARS template); this side GENERATES them (grill_bank.md § EARS provenance)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
 MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-standard, appbuilder-complex} AND _concept/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id and feature_title from brainstorm.md when present; never re-derive
 MUST  surface every P1 (blocking) open question to the user as a standalone message before writing align.md
 MUST  emit an EARS-formatted acceptance criterion for every IN-scope happy-path bullet in brainstorm.md
-MUST  capture domain vocabulary inline (STEP 10a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
+MUST  capture domain vocabulary inline (STEP 4a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
 MUST  append an ADR to _concept/decisions.md when a grill decision passes the 3-test gate (hard-to-reverse AND surprising AND a real trade-off); skip otherwise
 
 NEVER  invent acceptance criteria the user did not confirm
@@ -159,55 +161,36 @@ STEP 2: Read brainstorm context (when present)
     >  see it, or has anything shifted?"
   - Wait for confirmation/refinement.
 
-STEP 3: Grill — state transitions (STANDALONE)
-  > "What happens if the user starts the flow but doesn't complete it?
-  >  Where does state go — saved? discarded? half-saved?"
+STEP 3: Run the grill (one pillar per STANDALONE message)
+  Pillars for the concept side (contracts/grill_bank.md § The 9 Pillars —
+  use the "Good question" phrasing, adapt nouns to this feature):
+    1. State transitions
+    2. Boundary inputs
+    3. Concurrency
+    4. Permissions matrix (build a role × action table; mark unknowns TBD)
+    5. Persistence + recovery
+    6. Errors
+    7. Cross-feature touch points
+  Send ONE question per message; wait for each answer (iron_laws § 9). If an
+  answer is vague, re-ask the same pillar from a different angle before
+  moving on (grill_bank.md § Tone).
 
-STEP 4: Grill — boundary inputs (STANDALONE)
-  > "What are the limits? Maximum length, minimum, zero, empty, very large?
-  >  What's the system's behavior at each edge?"
-
-STEP 5: Grill — concurrency (STANDALONE)
-  > "Two users hit this at the same time. What's the rule — first-write-wins,
-  >  last-write-wins, conflict shown to both, lock?"
-
-STEP 6: Grill — permissions matrix (STANDALONE)
-  > "Walk me through who can do what here. Guest? Member? Admin? Owner?
-  >  I'll build a table — fill in the rows you have, I'll mark the rest TBD."
-
-STEP 7: Grill — persistence + recovery (STANDALONE)
-  > "If the user closes the tab mid-action, what's saved? When they
-  >  re-open, what state do they land in?"
-
-STEP 8: Grill — errors (STANDALONE)
-  > "When this fails — network drop, validation error, server 500 —
-  >  what does the user see? What can they do next?"
-
-STEP 9: Grill — cross-feature touch points (STANDALONE)
-  > "Does this feature read or write data owned by another feature?
-  >  Which one? What's the contract?"
-
-STEP 10: Surface P1 open questions
+STEP 4: Surface P1 open questions
   - For each open question that BLOCKS scope-feature (e.g. "what's the
     persistence rule"), send STANDALONE before drafting align.md:
     > "Blocker: <question>. I need an answer before I can write align.md."
   - Wait for answer. Repeat until no P1 questions remain.
 
-STEP 10a: Capture the domain model (inline, per contracts/domain_model.md)
-  As the grill resolves vocabulary and decisions — do this the moment they
-  crystallise, not batched at the end:
-  - TERM pinned or sharpened (e.g. the grill exposed that "account" meant the
-    Customer, not the login User): write/update it in _concept/blueprint/glossary.md
-    — name, 1-2 sentence definition, `_Avoid_:` list of rejected synonyms. Create the
-    file lazily on the first term. Zero implementation detail.
-  - DECISION made that passes the 3-test gate (hard-to-reverse AND surprising AND a
-    real trade-off): append an ADR to _concept/decisions.md — date + title +
-    1-3 sentences. If any test fails, do NOT record it (it lives in align.md's
-    "## Resolved questions" instead).
-  - Confirm each glossary/ADR write briefly; never invent a definition or decision
-    the user did not confirm.
+STEP 4a: Capture the domain model (inline, per contracts/domain_model.md)
+  Apply contracts/domain_model.md the moment vocabulary/decisions crystallise:
+  - TERM pinned → write/update _concept/blueprint/glossary.md (term, 1-2
+    sentence definition, `_Avoid_:` list; lazy-create; zero implementation detail).
+  - DECISION passing the 3-test gate → append ADR to _concept/decisions.md
+    (date + title + 1-3 sentences); failing the gate it stays in
+    "## Resolved questions".
+  - Never invent a definition or decision the user did not confirm.
 
-STEP 11: Draft align.md in memory
+STEP 5: Draft align.md in memory
   Frontmatter (copy slice_id and feature_title from brainstorm.md, or fresh
   for appbuilder-simple):
     ```
@@ -236,13 +219,13 @@ STEP 11: Draft align.md in memory
   - `## Permissions / roles` MUST contain a markdown table with at least
     one role row + an actions header row.
 
-STEP 12: Approval
+STEP 6: Approval
   CHECKPOINT align_draft
     > "Here's the align draft with EARS criteria and permissions table.
     >  Approve to write to _concept/slices/<slice_id>/align.md, or tell me
     >  what to change."
 
-STEP 13: Write the handoff
+STEP 7: Write the handoff
   - Write _concept/slices/<slice_id>/align.md
   - Verify file exists and frontmatter parses
 
@@ -251,7 +234,7 @@ EMIT  [concept-slice-align] completed slice_id=<id> tier=<tier> ears_count=<n> r
 CHECKLIST
   - [ ] scope.yaml read and tier validated
   - [ ] tier-dependent prerequisite check passed (brainstorm.md required for standard/complex)
-  - [ ] All grill questions sent STANDALONE; each answered before next
+  - [ ] All 7 pillars grilled STANDALONE; each answered before next
   - [ ] P1 blockers surfaced and answered before draft
   - [ ] All 8 body sections present in draft
   - [ ] At least one EARS criterion present

@@ -117,6 +117,7 @@ REFERENCES
   contracts/iron_laws.md                                          — § 7 (no artifact without prerequisites), § 9 (standalone questions)
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
+  contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 
@@ -134,8 +135,8 @@ MUST  scope brainstorm to THIS ONE feature; do NOT enumerate risks for other fea
 MUST  surface every P1 question to the user as a standalone message before writing brainstorm.md
 MUST  write the handoff frontmatter exactly per the cross-phase contract (slice_id, feature_title, feature_path, phase, tier, created_at, last_updated)
 MUST  set phase: brainstorm in the handoff frontmatter
-MUST  set slice_id := feature_slug (raw kebab-case slug, regex ^[a-z][a-z0-9-]{1,47}$) — same rule as concept-slice
-MUST  derive the {group} segment of feature_path by globbing _concept/experience/features/*/<feature_slug>.md and refusing if zero or >1 matches
+MUST  set slice_id := feature_slug per contracts/slice_loop.md § Slug rule (verbatim, never re-derived)
+MUST  resolve feature_path per contracts/slice_loop.md § Slug rule (glob _concept/experience/features/*/<feature_slug>.md; refuse on zero or >1 matches)
 
 NEVER  expand the scope to project-wide risks (that's a different skill — ops/audit or impl-quality/audit)
 NEVER  write brainstorm.md before unresolved P1 blockers are surfaced and answered
@@ -166,7 +167,7 @@ STEP 2: Resolve feature_slug → feature_path
   - If feature_slug was pre-supplied, use it. Else ask STANDALONE:
     > "Which feature are we brainstorming? Give me the kebab-case slug
     >  (the filename of _concept/experience/features/<group>/<feature_slug>.md)."
-  - Validate slug against ^[a-z][a-z0-9-]{1,47}$.
+  - Validate feature_slug per contracts/slice_loop.md § Slug rule.
   - $ ls _concept/experience/features/*/<feature_slug>.md
     IF zero matches
       - refuse: "[impl-plan-brainstorm] feature.md not found for slug <slug>. Run concept-slice/design-feature first."
@@ -175,15 +176,8 @@ STEP 2: Resolve feature_slug → feature_path
     ELSE
       - feature_path := the single match; group := dirname.basename
   - slice_id := feature_slug.
-  - Check whether _implementation/slices/<slice_id>/ already exists.
-    IF _implementation/slices/<slice_id>/brainstorm.md exists
-      - Ask STANDALONE:
-        > "A brainstorm at _implementation/slices/<slice_id>/brainstorm.md already exists.
-        >  Do you want to (a) resume — refine the existing brainstorm,
-        >  or (b) abandon and start fresh (overwrites)?"
-      - Wait for answer. On (b), require explicit confirmation before any write.
-    ELSE
-      - $ mkdir -p _implementation/slices/<slice_id>/
+  - Apply contracts/slice_loop.md § Resume-or-fresh to
+    _implementation/slices/<slice_id>/brainstorm.md.
 
 STEP 3: Read concept artifacts
   - Read feature.md (required). Note: title (frontmatter), first paragraph of body, data_entities[] if present, journey_stage if present.

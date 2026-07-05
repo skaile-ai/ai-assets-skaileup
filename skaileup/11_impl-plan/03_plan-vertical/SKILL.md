@@ -160,6 +160,7 @@ REFERENCES
   contracts/plans.md                                              — note: this is a per-slice plan, sibling of project-level PLANS.md
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
+  contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   impl-plan/plan-vertical/references/anti-horizontal-rules.md     — long-form expansion of the nudge with worked counter-examples
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
@@ -200,10 +201,8 @@ INPUT
 STEP 1: Read scope and resolve tier-dependent gate
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
   - Read scope.tier.
-  - Resolve feature_slug → feature_path:
-    $ ls _concept/experience/features/*/<feature_slug>.md
-    Refuse if zero or >1 matches.
-  - slice_id := feature_slug (or slice_id_override).
+  - Resolve feature_slug → feature_path and set slice_id := feature_slug
+    (or slice_id_override) per contracts/slice_loop.md § Slug rule.
   IF tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
     - require _implementation/slices/<slice_id>/align.md to exist
     - if missing, refuse with:

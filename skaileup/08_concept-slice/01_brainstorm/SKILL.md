@@ -87,6 +87,7 @@ REFERENCES
   SKILL_GRAPH.md                             — § 4 concept-slice loop diagram
   contracts/iron_laws.md                     — § 7 (prerequisites), § 9 (standalone questions)
   contracts/skill_grammar.md                 — DSL keywords
+  contracts/slice_loop.md                    — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   concept-slice/brainstorm/references/brainstorm-prompt-style.md — interview tone reference
 
 REQUIRES
@@ -98,8 +99,8 @@ REQUIRES
 MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
 MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp, appbuilder-simple} — those tiers do not run concept-slice-brainstorm (per SKILL_GRAPH § 6 tier-composition table)
-MUST  derive slice_id from feature_title via the kebab-case rule (lower → non-alnum→hyphen → strip-trim → max 48 chars) UNLESS slice_id_override is supplied
-MUST  refuse to overwrite an existing _concept/slices/<slice_id>/ — ask the user to (a) resume the existing slice, or (b) suffix -2 to the slug
+MUST  derive slice_id per contracts/slice_loop.md § Slug rule UNLESS slice_id_override is supplied
+MUST  apply contracts/slice_loop.md § Resume-or-fresh when _concept/slices/<slice_id>/ already exists
 MUST  write the handoff frontmatter exactly as specified (slice_id, feature_title, phase, tier, created_at, last_updated)
 MUST  wait for the user to answer each question before sending the next
 
@@ -126,17 +127,10 @@ STEP 1: Read scope and validate tier
 STEP 2: Collect feature_title and derive slice_id
   - If feature_title was pre-supplied, use it. Else ask STANDALONE:
     > "What feature are we designing right now? Give me a one-sentence title."
-  - Derive slice_id from feature_title using the kebab-case rule, OR use
-    slice_id_override if provided. Validate against ^[a-z][a-z0-9-]{1,47}$.
-  - Check whether _concept/slices/<slice_id>/ already exists.
-    IF it exists
-      - Ask STANDALONE:
-        > "A slice with id `<slice_id>` already exists. Do you want to
-        >  (a) resume that slice (read its existing brainstorm.md), or
-        >  (b) start a fresh slice with the suffix `-2`?"
-      - Wait for answer. Branch accordingly.
-    ELSE
-      - $ mkdir -p _concept/slices/<slice_id>/
+  - Derive slice_id per contracts/slice_loop.md § Slug rule (or slice_id_override;
+    validate against the regex there).
+  - Apply contracts/slice_loop.md § Resume-or-fresh to _concept/slices/<slice_id>/brainstorm.md
+    (offer (a) resume, (b) fresh slice with -2-suffixed slug).
 
 STEP 3: Open-ended interview (each question STANDALONE)
   Send these questions one at a time. Wait for the answer before sending the next.

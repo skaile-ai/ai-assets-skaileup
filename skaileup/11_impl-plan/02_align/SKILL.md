@@ -132,6 +132,7 @@ REFERENCES
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
   contracts/domain_model.md                                       — glossary format, ADR format, the 3-test gate
   contracts/grill_bank.md                                         — grill question bank: tone + 9 pillars + EARS provenance
+  contracts/slice_loop.md                                         — tier gates, slug rule, resume-or-fresh, handoff keys, freeze lifecycle
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 
@@ -150,7 +151,7 @@ MUST  surface every P1 question to the user as a standalone message before writi
 MUST  copy EARS acceptance criteria from feature.md verbatim into "## Acceptance handoff"
 MUST  set phase: align in the handoff frontmatter
 MUST  produce at least one P1 or P2 question OR resolve every prior P1 with a "## Decisions made" entry — empty grills are not acceptable
-MUST  capture domain vocabulary inline (STEP 13a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
+MUST  capture domain vocabulary inline (STEP 5a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
 MUST  append an ADR to _implementation/decisions.md when a grill decision passes the 3-test gate (hard-to-reverse AND surprising AND a real trade-off); skip otherwise
 
 NEVER  invent edge cases the user did not confirm — every "## Edge cases to handle" bullet must trace to a Q/A in "## Decisions made" or to a feature.md/screen line
@@ -200,59 +201,33 @@ STEP 3: Recap and confirm scope (STANDALONE)
   CHECKPOINT recap_confirmed
   Wait for confirmation/refinement.
 
-STEP 4: Grill — state transitions (STANDALONE)
-  > "What happens if the user starts the flow but doesn't complete it? Is the partial
-  >  state persisted, discarded, or shown as 'in progress'?"
+STEP 4: Run the grill (one pillar per STANDALONE message)
+  All 9 pillars (contracts/grill_bank.md § The 9 Pillars — use the "Good
+  question" phrasing, adapt nouns to this feature):
+    1. State transitions          6. Errors
+    2. Boundary inputs            7. Cross-feature data
+    3. Concurrency                8. Performance
+    4. Permissions (role × action matrix, every cell)
+    5. Persistence and offline    9. Test seam
+  Send ONE question per message; wait for each answer (iron_laws § 9). Skip a
+  pillar only when brainstorm.md already answered it — cite that answer in
+  "## Decisions made" (grill_bank.md § Anti-patterns).
 
-STEP 5: Grill — boundary inputs (STANDALONE)
-  > "What's the max/min/zero case for each user-supplied input? What does the system
-  >  do at each boundary — reject, truncate, allow?"
-
-STEP 6: Grill — concurrency (STANDALONE)
-  > "Two users hit this at the same time on the same row. What's the rule —
-  >  last-write-wins, optimistic locking, conflict UI?"
-
-STEP 7: Grill — permissions (STANDALONE)
-  > "Walk me through who can do what here. Guest? Member? Admin? Owner?
-  >  I need a complete role × action matrix."
-
-STEP 8: Grill — persistence and offline (STANDALONE)
-  > "If the user closes the tab mid-action, what's saved? What happens on reload —
-  >  resume, restart, or discard?"
-
-STEP 9: Grill — errors (STANDALONE)
-  > "What does the user see when this fails — toast, inline error, modal, retry button?
-  >  What recovery actions are available?"
-
-STEP 10: Grill — cross-feature data (STANDALONE)
-  > "Does this feature touch any other feature's entities? Any FKs that span features?
-  >  Who owns the contract?"
-
-STEP 11: Grill — performance (STANDALONE)
-  > "What's the worst-case data size — 10 rows, 1000 rows, 100k rows? What's the
-  >  pagination/virtualization strategy?"
-
-STEP 12: Grill — test seam (STANDALONE)
-  > "How will we know this is working without manually clicking through? What's the
-  >  smallest automated test we can write — unit, integration, or e2e?"
-
-STEP 13: Surface P1 open questions
+STEP 5: Surface P1 open questions
   - For each unanswered grill point that BLOCKS plan-vertical, send STANDALONE:
     > "P1 blocker: <question>. I need an answer before I can write align.md."
   - Wait for answer. Repeat until no P1 questions remain.
 
-STEP 13a: Capture the domain model (inline, per contracts/domain_model.md)
-  As the grill resolves vocabulary and decisions — the moment they crystallise,
-  not batched:
-  - TERM pinned or sharpened: write/update it in _concept/blueprint/glossary.md —
-    name, 1-2 sentence definition, `_Avoid_:` list of rejected synonyms. Create the
-    file lazily on the first term. Zero implementation detail.
-  - DECISION passing the 3-test gate (hard-to-reverse AND surprising AND a real
-    trade-off): append an ADR to _implementation/decisions.md — date + title +
-    1-3 sentences. If any test fails, leave it in align.md's "## Decisions made".
+STEP 5a: Capture the domain model (inline, per contracts/domain_model.md)
+  Apply contracts/domain_model.md the moment vocabulary/decisions crystallise:
+  - TERM pinned → write/update _concept/blueprint/glossary.md (term, 1-2
+    sentence definition, `_Avoid_:` list; lazy-create; zero implementation detail).
+  - DECISION passing the 3-test gate → append ADR to _implementation/decisions.md
+    (date + title + 1-3 sentences); failing the gate it stays in
+    align.md's "## Decisions made".
   - Never invent a definition or decision the user did not confirm.
 
-STEP 14: Draft align.md in memory
+STEP 6: Draft align.md in memory
   Frontmatter (cross-phase contract):
     ```
     ---
@@ -298,12 +273,12 @@ STEP 14: Draft align.md in memory
 
   Show the full draft to the user.
 
-STEP 15: Approval
+STEP 7: Approval
   CHECKPOINT align_draft
     > "Here's the impl-plan align draft for slice `<slice_id>`.
     >  Approve to write to _implementation/slices/<slice_id>/align.md, or tell me what to change."
 
-STEP 16: Write the handoff
+STEP 8: Write the handoff
   - Write _implementation/slices/<slice_id>/align.md
   - Verify file exists and frontmatter parses
   - $ python3 impl-plan/align/validator.py _implementation/slices/<slice_id>/align.md
@@ -315,7 +290,7 @@ CHECKLIST
   - [ ] feature_slug resolved to a single _concept/experience/features/<group>/<feature_slug>.md
   - [ ] tier-dependent prerequisite check passed (brainstorm.md required for standard/complex)
   - [ ] _implementation/slices/<slice_id>/ directory exists
-  - [ ] All grill questions sent as STANDALONE messages; each answered before next
+  - [ ] All 9 pillars grilled STANDALONE; each answered before next
   - [ ] All P1 blockers surfaced and answered before draft
   - [ ] All 7 body sections present; `## Constraints` has all 3 sub-sections
   - [ ] At least one P1/P2 question in `## Open questions` OR every prior P1 resolved in `## Decisions made`
