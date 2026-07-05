@@ -210,6 +210,19 @@ delegated loop's skills are provided transitively by the sub-flow's own manifest
 so the parent does not re-list them. (This replaced the old inheriting
 `*.bundle.yaml` files, which dragged in "tier-shape extra" skills a flow never ran.)
 
+**Shared building blocks (2026-07 restructure).** Five repeated tier segments
+are extracted into shared sub-flows — `concept-discovery`, `architecture`,
+`mockup-feedback`, `impl-build-setup`, `quality-gate` — consumed via sub-flow
+nodes exactly like `skaileup-slice`; consumer variance is threaded through the
+sub-flow node's `parameters:` (the `concept_depth` pattern). Flows also tag
+every node with a top-level phase (`conceptualization` / `implementation` /
+`review`) via `group` container nodes (node-level `data.phase` where phases
+are non-contiguous, e.g. `skaileup-stepwise`), and pick-one mockup renderers
+are dispatched by `router` nodes (ordered first-match routes, `default`
+catch-all, `target: null` = skip) instead of parallel-optional fallback pairs.
+The verifier additionally checks that every `parentNode` resolves to a group
+node and every router target resolves to a node id.
+
 **Contracts.** Two layers, listed directly in each flow's `requires:`:
 the shared `skaileup/contracts/` reference layer (registered as
 `shared-contracts`, read by every skill — so every flow lists it), plus the
@@ -241,7 +254,9 @@ skaileup/flows/
 │   ├── appbuilder-simple.flow.yaml
 │   └── appbuilder-simple.md
 ... (appbuilder-standard, appbuilder-complex, skaileup-slice{,-concept,-impl},
-    skaileup-implementation, skaileup-stepwise, skaileup-concept-only, skaileup-concept-reverse)
+    skaileup-implementation, skaileup-stepwise, skaileup-concept-only, skaileup-concept-reverse,
+    plus the shared blocks concept-discovery, architecture, mockup-feedback,
+    impl-build-setup, quality-gate)
 └── _meta/
     ├── verify_flows.py
     ├── test_verify.py
