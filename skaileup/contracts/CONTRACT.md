@@ -26,3 +26,4 @@ pulls it in because the flow's skills depend on it.
 - **`agent_patterns.md`** — Standalone mode, subagent dispatch, communication style rules.
 - **`skill_template.md`** — Template for new SKILL.md files.
 - **`skill_testing.md`** — Fixture format and `_validation.json` schema for skill self-tests.
+- **`walkthrough_renderer.md`** — Shared renderer contract for all `mockup-walkthrough-*` variants: data-spec attribute table, manifest schema v1.0, auto-slug rule, shared error handling and MUST/NEVER.
