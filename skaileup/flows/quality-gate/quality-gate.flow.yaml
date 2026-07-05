@@ -3,11 +3,11 @@ version: '2.0.0'
 name: 'Quality Gate'
 description: >-
   Shared post-loop quality gate: test-unit -> test-integration -> test-e2e ->
-  ready -> per-feature code review (opt) -> ops-trace, plus the optional ops
-  tail review -> sync. Consumed via a sub-flow node by appbuilder-standard,
+  ready -> per-feature code review (opt), plus the optional ops tail trace ->
+  review -> sync. Consumed via a sub-flow node by appbuilder-standard,
   appbuilder-complex and skaileup-implementation; standalone-runnable for
   testability. Two globals handle consumer variance: e2e (required | optional)
-  and ops_tail (include | skip — implementation skips the review/sync tail).
+  and ops_tail (include | skip — implementation skips the trace/review/sync tail).
 meta:
   category: maintenance
   tags:
@@ -35,7 +35,7 @@ globals:
   # parameters.e2e; threaded to the q-test-e2e node.
   e2e: required
   # include | skip — consumers override via the sub-flow node's
-  # parameters.ops_tail; threaded to ops-review + ops-sync.
+  # parameters.ops_tail; threaded to ops-trace + ops-review + ops-sync.
   ops_tail: include
 entry: q-test-unit
 nodes:
@@ -98,9 +98,10 @@ nodes:
       y: 200
     data:
       skill: ops-trace
-      label: 'Ops Trace (two-way traceability)'
-      optional: false
-      parameters: {}
+      label: 'Ops Trace (per parent: include | skip)'
+      optional: true
+      parameters:
+        mode: '${ops_tail}'
   - id: ops-review
     type: skill
     position:
@@ -143,11 +144,11 @@ edges:
   - id: e-q-review-feature-q-trace
     source: q-review-feature
     target: q-trace
-    type: flow
+    type: optional
   - id: e-q-trace-ops-review
     source: q-trace
     target: ops-review
-    type: flow
+    type: optional
   - id: e-ops-review-ops-sync
     source: ops-review
     target: ops-sync

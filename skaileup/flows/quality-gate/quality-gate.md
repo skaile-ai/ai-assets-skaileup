@@ -1,6 +1,6 @@
 ---
 title: "quality-gate"
-description: "Shared post-loop quality gate: unit → integration → e2e → ready, plus the optional ops review → sync tail."
+description: "Shared post-loop quality gate: unit → integration → e2e → ready, plus the optional trace → ops review → sync tail."
 order: 16
 ---
 
@@ -14,7 +14,7 @@ their inline quality nodes.
 ## Pipeline
 
 ```
-test-unit → test-integration → test-e2e → ready → review-feature? → trace → ops-review? → ops-sync?
+test-unit → test-integration → test-e2e → ready → review-feature? → trace? → ops-review? → ops-sync?
 ```
 
 - **Feature Code Review (optional, per feature)** — `impl-quality-review-feature` re-runs per feature over its back-linked commits/source files; `needs_changes` verdicts route fixes through `impl-quality-debug-self-verify`.
@@ -25,7 +25,7 @@ test-unit → test-integration → test-e2e → ready → review-feature? → tr
 | Global | Values | Default | Who overrides |
 |---|---|---|---|
 | `e2e` | `required` \| `optional` | `required` | skaileup-implementation: `optional` |
-| `ops_tail` | `include` \| `skip` | `include` | skaileup-implementation: `skip` |
+| `ops_tail` | `include` \| `skip` | `include` | skaileup-implementation: `skip` (gates trace + ops-review + ops-sync) |
 
 ## Install manifest
 
