@@ -23,7 +23,6 @@ requires:
   # read + every skill its nodes run (flow node order). Self-contained — no
   # inheritance, no extras.
   - contract:@skaile-ai/shared-contracts
-  - contract:@skaile-ai/implementation-contract
   - skill:@skaile-ai/skaileup-scope-scope-project
   - skill:@skaile-ai/concept-brief
   - skill:@skaile-ai/design-brand-visual
@@ -35,11 +34,7 @@ requires:
   - skill:@skaile-ai/impl-architecture-techstack
   - skill:@skaile-ai/impl-architecture-templates-select
   - skill:@skaile-ai/impl-architecture-datamodel
-  - skill:@skaile-ai/impl-build-scaffold
-  - skill:@skaile-ai/impl-build-foundation
-  - skill:@skaile-ai/impl-build-migrate
-  - skill:@skaile-ai/impl-build-seed
-  - skill:@skaile-ai/impl-build-docs
+  - flow:@skaile-ai/impl-build-setup
   - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
   - skill:@skaile-ai/impl-quality-test-e2e
@@ -165,57 +160,19 @@ nodes:
       label: 'Data Model'
       optional: false
       parameters: {}
-  # --- Build ---
-  - id: scaffold
-    type: skill
+  # --- Build setup (delegated to the shared impl-build-setup flow) ---
+  - id: build-setup
+    type: sub-flow
     position:
       x: 2000
       y: 200
     data:
-      skill: impl-build-scaffold
-      label: 'Scaffold'
-      optional: false
-      parameters: {}
-  - id: foundation
-    type: skill
-    position:
-      x: 2200
-      y: 200
-    data:
-      skill: impl-build-foundation
-      label: 'Foundation'
-      optional: false
-      parameters: {}
-  - id: migrate
-    type: skill
-    position:
-      x: 2400
-      y: 200
-    data:
-      skill: impl-build-migrate
-      label: 'Migrate'
-      optional: false
-      parameters: {}
-  - id: seed
-    type: skill
-    position:
-      x: 2600
-      y: 200
-    data:
-      skill: impl-build-seed
-      label: 'Seed'
-      optional: false
-      parameters: {}
-  - id: docs
-    type: skill
-    position:
-      x: 2800
-      y: 200
-    data:
-      skill: impl-build-docs
-      label: 'Build Docs'
-      optional: false
-      parameters: {}
+      flow: impl-build-setup
+      domain: build
+      label: 'One-time build setup (no infrastructure)'
+      pass_context: true
+      parameters:
+        infrastructure: skip
   # --- Per-feature impl loop (delegated to the slice-impl flow) ---
   - id: impl-slice-loop
     type: sub-flow
@@ -293,28 +250,12 @@ edges:
     source: templates
     target: datamodel
     type: flow
-  - id: e-datamodel-scaffold
+  - id: e-datamodel-build-setup
     source: datamodel
-    target: scaffold
+    target: build-setup
     type: flow
-  - id: e-scaffold-foundation
-    source: scaffold
-    target: foundation
-    type: flow
-  - id: e-foundation-migrate
-    source: foundation
-    target: migrate
-    type: flow
-  - id: e-migrate-seed
-    source: migrate
-    target: seed
-    type: flow
-  - id: e-seed-docs
-    source: seed
-    target: docs
-    type: flow
-  - id: e-docs-impl-slice-loop
-    source: docs
+  - id: e-build-setup-impl-slice-loop
+    source: build-setup
     target: impl-slice-loop
     type: flow
   - id: e-impl-slice-loop-q-test-unit
