@@ -36,7 +36,7 @@ metadata:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
         description: "Tier context required — produced by skaileup-scope-scope-project."
-      - path: "_concept/product-spec/features/{feature_slug}.md"
+      - path: "_concept/experience/features/{feature_slug}.md"
         gate: hard
         description: "Permanent feature artifact written by concept-slice-design-feature."
       - path: "_concept/experience/screens/{feature_slug}/"
@@ -48,7 +48,7 @@ metadata:
         description: "Required when tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}; STEP 1 enforces hard. For appbuilder-mvp this skill is the cluster entry point and align.md is not expected."
     inputs_required:
       - id: feature_slug
-        label: "Kebab-case feature slug; resolves to _concept/product-spec/features/<group>/<feature_slug>.md"
+        label: "Kebab-case feature slug; resolves to _concept/experience/features/<group>/<feature_slug>.md"
         type: text
         hint: "Same slug used by concept-slice and impl-plan-align. Regex ^[a-z][a-z0-9-]{1,47}$."
     inputs_optional:
@@ -142,7 +142,7 @@ ROLE Per-slice plan writer that resists horizontal decomposition — produces a 
 
 READS
   _concept/_meta/scope.yaml                                       — required; tier
-  _concept/product-spec/features/{group}/{feature_slug}.md        — required; permanent feature artifact
+  _concept/experience/features/{group}/{feature_slug}.md        — required; permanent feature artifact
   _concept/experience/screens/{feature_slug}/*.md                 — required; permanent screen specs (≥ 1)
   _implementation/slices/{slice_id}/align.md                                 — required IF tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex};
                                                                     ENTRY POINT IF tier == appbuilder-mvp
@@ -201,7 +201,7 @@ STEP 1: Read scope and resolve tier-dependent gate
   - Open _concept/_meta/scope.yaml; abort with explicit error if missing.
   - Read scope.tier.
   - Resolve feature_slug → feature_path:
-    $ ls _concept/product-spec/features/*/<feature_slug>.md
+    $ ls _concept/experience/features/*/<feature_slug>.md
     Refuse if zero or >1 matches.
   - slice_id := feature_slug (or slice_id_override).
   IF tier ∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex}
@@ -273,7 +273,7 @@ STEP 6: Draft plan.md in memory
     ---
     slice_id: <feature_slug>
     feature_title: <copied from align.md or feature.md, verbatim>
-    feature_path: _concept/product-spec/features/<group>/<feature_slug>.md
+    feature_path: _concept/experience/features/<group>/<feature_slug>.md
     phase: plan
     tier: <scope.tier>
     created_at: <ISO-8601 UTC; copy from align.md if present, else now()>
@@ -302,7 +302,7 @@ STEP 6: Draft plan.md in memory
     - [ ] All tests in § "Automated tests" pass
     - [ ] All manual checks in § "Manual checks" verified by user
     - [ ] No row left half-implemented (no "UI built but data not wired", etc.)
-    - [ ] `_concept/product-spec/features/<group>/<feature_slug>.md` § Acceptance Criteria all green
+    - [ ] `_concept/experience/features/<group>/<feature_slug>.md` § Acceptance Criteria all green
   - `## Open carry-overs`: P3 or DEFERRED items pulled from align.md
     "## Open questions surfaced by the grill". `_(none)_` is allowed.
 
@@ -329,7 +329,7 @@ EMIT  [impl-plan-plan-vertical] completed slice_id=<id> tier=<tier> rows=<n> tes
 
 CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated
-  - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
+  - [ ] feature_slug resolved to a single _concept/experience/features/<group>/<feature_slug>.md
   - [ ] tier-dependent prerequisite check passed (align.md required for non-appbuilder-mvp tiers)
   - [ ] _implementation/slices/<slice_id>/ directory exists
   - [ ] All 6 top-level body sections present (Slice scope, Vertical decomposition, Testing strategy, Anti-horizontal nudge, Definition of done, Open carry-overs)

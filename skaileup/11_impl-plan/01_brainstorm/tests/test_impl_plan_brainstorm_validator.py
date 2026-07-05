@@ -20,7 +20,7 @@ _spec.loader.exec_module(validator)
 GOOD_FRONTMATTER = """---
 slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
-feature_path: _concept/product-spec/features/team-todo/team-todo-comments.md
+feature_path: _concept/experience/features/team-todo/team-todo-comments.md
 phase: brainstorm
 tier: appbuilder-standard
 created_at: 2026-05-08T12:34:56Z

@@ -1,7 +1,7 @@
 ---
 slice_id: team-todo-comments
 feature_title: "Comments on team todo items"
-feature_path: _concept/product-spec/features/team-todo/team-todo-comments.md
+feature_path: _concept/experience/features/team-todo/team-todo-comments.md
 phase: plan
 tier: appbuilder-standard
 created_at: 2026-05-08T14:00:00Z
@@ -40,7 +40,7 @@ Team members can list, create, edit-own, and delete-own short comments on a team
 - all rows in `## Vertical decomposition` complete end-to-end
 - all 5 automated tests above pass
 - all manual checks above verified by user
-- `_concept/product-spec/features/team-todo/team-todo-comments.md` § Acceptance Criteria all green
+- `_concept/experience/features/team-todo/team-todo-comments.md` § Acceptance Criteria all green
 
 ## Anti-horizontal nudge
 
@@ -63,7 +63,7 @@ Team members can list, create, edit-own, and delete-own short comments on a team
 - [ ] All tests in § "Automated tests" pass
 - [ ] All manual checks in § "Manual checks" verified by user
 - [ ] No row left half-implemented (no "UI built but data not wired", etc.)
-- [ ] `_concept/product-spec/features/<group>/<feature_slug>.md` § Acceptance Criteria all green
+- [ ] `_concept/experience/features/<group>/<feature_slug>.md` § Acceptance Criteria all green
 
 ## Open carry-overs
 - [P3] Emoji reactions deferred to a later slice.

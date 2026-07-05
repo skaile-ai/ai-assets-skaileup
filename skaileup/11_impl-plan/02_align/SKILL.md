@@ -1,6 +1,6 @@
 ---
 name: impl-plan-align
-description: "Use when an implementation slice has its concept artifacts (feature.md + screens) frozen and needs a grill-me interview to surface unstated assumptions, technical constraints, and edge cases before plan-vertical writes the slice plan. Reads _concept/product-spec/features/<group>/<feature_slug>.md + _implementation/slices/<id>/brainstorm.md (if standard/complex tier). Writes _implementation/slices/<id>/align.md. Triggers on: 'align this slice', 'grill me on the implementation', 'lock down impl assumptions', 'pre-plan grill'."
+description: "Use when an implementation slice has its concept artifacts (feature.md + screens) frozen and needs a grill-me interview to surface unstated assumptions, technical constraints, and edge cases before plan-vertical writes the slice plan. Reads _concept/experience/features/<group>/<feature_slug>.md + _implementation/slices/<id>/brainstorm.md (if standard/complex tier). Writes _implementation/slices/<id>/align.md. Triggers on: 'align this slice', 'grill me on the implementation', 'lock down impl assumptions', 'pre-plan grill'."
 metadata:
   version: "1.0.0"
   tags:
@@ -36,7 +36,7 @@ metadata:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
         description: "Tier context required — produced by skaileup-scope-scope-project."
-      - path: "_concept/product-spec/features/{feature_slug}.md"
+      - path: "_concept/experience/features/{feature_slug}.md"
         gate: hard
         description: "Permanent feature artifact written by concept-slice-design-feature."
       - path: "_concept/experience/screens/{feature_slug}/"
@@ -48,7 +48,7 @@ metadata:
         description: "Required when tier is appbuilder-standard or appbuilder-complex (the strict gate is enforced in STEP 1 because for appbuilder-simple this skill is the cluster entry point and brainstorm.md does not exist)."
     inputs_required:
       - id: feature_slug
-        label: "Kebab-case feature slug; resolves to _concept/product-spec/features/<group>/<feature_slug>.md"
+        label: "Kebab-case feature slug; resolves to _concept/experience/features/<group>/<feature_slug>.md"
         type: text
         hint: "Must match the slug used by concept-slice. Regex ^[a-z][a-z0-9-]{1,47}$."
     inputs_optional:
@@ -112,7 +112,7 @@ ROLE Per-slice implementation-readiness grill — adversarial interviewer that s
 
 READS
   _concept/_meta/scope.yaml                                       — required; tier
-  _concept/product-spec/features/{group}/{feature_slug}.md        — required; permanent feature artifact
+  _concept/experience/features/{group}/{feature_slug}.md        — required; permanent feature artifact
   _concept/experience/screens/{feature_slug}/*.md                 — required; permanent screen specs (≥ 1 file)
   _implementation/slices/{slice_id}/brainstorm.md                            — required IF tier ∈ {appbuilder-standard, appbuilder-complex};
                                                                     ENTRY POINT IF tier == appbuilder-simple
@@ -143,7 +143,7 @@ REQUIRES
 
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing or tier == appbuilder-mvp (appbuilder-mvp skips align per SKILL_GRAPH § 6)
-MUST  refuse to run if the feature.md at _concept/product-spec/features/<group>/<feature_slug>.md is missing (iron_laws § 7)
+MUST  refuse to run if the feature.md at _concept/experience/features/<group>/<feature_slug>.md is missing (iron_laws § 7)
 MUST  refuse to run if tier ∈ {appbuilder-standard, appbuilder-complex} and _implementation/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id, feature_title, feature_path from brainstorm.md frontmatter when present; never re-derive
 MUST  surface every P1 question to the user as a standalone message before writing align.md
@@ -173,7 +173,7 @@ STEP 1: Read scope and resolve tier-dependent gate
   IF tier == appbuilder-mvp
     - refuse: "[impl-plan-align] tier=appbuilder-mvp does not run align. Use impl-plan-plan-vertical."
   - Resolve feature_slug → feature_path:
-    $ ls _concept/product-spec/features/*/<feature_slug>.md
+    $ ls _concept/experience/features/*/<feature_slug>.md
     Refuse if zero or >1 matches.
   - slice_id := feature_slug (or slice_id_override if set).
   IF tier ∈ {appbuilder-standard, appbuilder-complex}
@@ -258,7 +258,7 @@ STEP 14: Draft align.md in memory
     ---
     slice_id: <feature_slug>
     feature_title: <copied from brainstorm.md or feature.md, verbatim>
-    feature_path: _concept/product-spec/features/<group>/<feature_slug>.md
+    feature_path: _concept/experience/features/<group>/<feature_slug>.md
     phase: align
     tier: <scope.tier>
     created_at: <ISO-8601 UTC; copy from brainstorm.md if present, else now()>
@@ -312,7 +312,7 @@ EMIT  [impl-plan-align] completed slice_id=<id> tier=<tier> p1_count=<n> p2_coun
 
 CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {appbuilder-simple, appbuilder-standard, appbuilder-complex})
-  - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
+  - [ ] feature_slug resolved to a single _concept/experience/features/<group>/<feature_slug>.md
   - [ ] tier-dependent prerequisite check passed (brainstorm.md required for standard/complex)
   - [ ] _implementation/slices/<slice_id>/ directory exists
   - [ ] All grill questions sent as STANDALONE messages; each answered before next

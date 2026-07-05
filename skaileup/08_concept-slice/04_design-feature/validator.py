@@ -134,7 +134,7 @@ def validate_screen_md(path: Path, feature_slug: str | None = None) -> list[str]
 def _classify(path: Path) -> str:
     """Return 'feature', 'screen', 'walkthrough', or 'unknown'."""
     parts = path.parts
-    if "product-spec" in parts and "features" in parts and path.suffix == ".md":
+    if "features" in parts and path.suffix == ".md" and ("product-spec" in parts or "experience" in parts):
         return "feature"
     if "experience" in parts and "screens" in parts and path.suffix == ".md":
         return "screen"

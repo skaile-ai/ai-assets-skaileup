@@ -74,7 +74,7 @@ REQUIRED_DOD_ITEMS = [
     "- [ ] All tests in § \"Automated tests\" pass",
     "- [ ] All manual checks in § \"Manual checks\" verified by user",
     "- [ ] No row left half-implemented (no \"UI built but data not wired\", etc.)",
-    "- [ ] `_concept/product-spec/features/<group>/<feature_slug>.md` § Acceptance Criteria all green",
+    "- [ ] `_concept/experience/features/<group>/<feature_slug>.md` § Acceptance Criteria all green",
 ]
 
 # Header row for the vertical-decomposition table.

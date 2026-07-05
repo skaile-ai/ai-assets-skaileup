@@ -19,7 +19,7 @@ Turns a frozen feature spec into a vertical-slice implementation plan, then opti
 
 ## When to Use
 
-- Feature spec (`_concept/product-spec/features/<group>/<feature_slug>.md`) and screen specs are frozen and implementation is about to start.
+- Feature spec (`_concept/experience/features/<group>/<feature_slug>.md`) and screen specs are frozen and implementation is about to start.
 - Any tier: appbuilder-mvp enters at plan-vertical; appbuilder-simple skips brainstorm; appbuilder-standard/appbuilder-complex run the full chain.
 - Agent needs a decomposition that resists horizontal layering (all-API-first or all-DB-first patterns).
 - Supervised subagent dispatch is wanted for parallelism or spec-compliance enforcement.

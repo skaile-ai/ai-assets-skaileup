@@ -24,7 +24,7 @@ MANIFEST = EXAMPLE_DIR / "manifest.json"
 
 
 def test_example_feature_md_passes():
-    path = EXPECTED_OUTPUT / "product-spec/features/team-todo/team-todo-comments.md"
+    path = EXPECTED_OUTPUT / "experience/features/team-todo/team-todo-comments.md"
     errors = validator.validate_feature_md(path)
     assert errors == [], errors
 
@@ -47,7 +47,7 @@ def test_example_manifest_passes():
 
 
 def test_feature_md_with_empty_screens_fails(tmp_path: Path):
-    src = EXPECTED_OUTPUT / "product-spec/features/team-todo/team-todo-comments.md"
+    src = EXPECTED_OUTPUT / "experience/features/team-todo/team-todo-comments.md"
     text = src.read_text()
     text = text.replace(
         "screens:\n  - path: experience/screens/team-todo-comments/list.md\n  - path: experience/screens/team-todo-comments/detail.md",
@@ -76,7 +76,7 @@ def test_manifest_missing_walkthrough_fails(tmp_path: Path):
     base.mkdir()
     # Copy expected_output structure minus walkthrough
     for rel in [
-        "expected_output/product-spec/features/team-todo/team-todo-comments.md",
+        "expected_output/experience/features/team-todo/team-todo-comments.md",
         "expected_output/experience/screens/team-todo-comments/list.md",
         "expected_output/experience/screens/team-todo-comments/detail.md",
     ]:
@@ -88,7 +88,7 @@ def test_manifest_missing_walkthrough_fails(tmp_path: Path):
         "feature_group": "team-todo",
         "tier": "appbuilder-standard",
         "files": [
-            "expected_output/product-spec/features/team-todo/team-todo-comments.md",
+            "expected_output/experience/features/team-todo/team-todo-comments.md",
             "expected_output/experience/screens/team-todo-comments/list.md",
             "expected_output/experience/screens/team-todo-comments/detail.md",
         ],
@@ -100,7 +100,7 @@ def test_manifest_missing_walkthrough_fails(tmp_path: Path):
 
 
 def test_feature_md_missing_acceptance_section_fails(tmp_path: Path):
-    src = EXPECTED_OUTPUT / "product-spec/features/team-todo/team-todo-comments.md"
+    src = EXPECTED_OUTPUT / "experience/features/team-todo/team-todo-comments.md"
     text = src.read_text().replace("## Acceptance Criteria", "## Criteria")
     bad = tmp_path / "team-todo-comments.md"
     bad.write_text(text)
@@ -114,7 +114,7 @@ def test_manifest_wrong_tier_walkthrough_ext_fails(tmp_path: Path):
     base.mkdir()
     # Copy expected files into base
     for rel in [
-        "expected_output/product-spec/features/team-todo/team-todo-comments.md",
+        "expected_output/experience/features/team-todo/team-todo-comments.md",
         "expected_output/experience/screens/team-todo-comments/list.md",
         "expected_output/experience/screens/team-todo-comments/detail.md",
         "expected_output/mockup-walkthrough/appbuilder-standard/team-todo-comments.astro",
@@ -132,7 +132,7 @@ def test_manifest_wrong_tier_walkthrough_ext_fails(tmp_path: Path):
         "feature_group": "team-todo",
         "tier": "appbuilder-simple",
         "files": [
-            "expected_output/product-spec/features/team-todo/team-todo-comments.md",
+            "expected_output/experience/features/team-todo/team-todo-comments.md",
             "expected_output/experience/screens/team-todo-comments/list.md",
             "expected_output/experience/screens/team-todo-comments/detail.md",
             "expected_output/mockup-walkthrough/appbuilder-simple/team-todo-comments.astro",

@@ -1,6 +1,6 @@
 ---
 implements:
-  - _concept/product-spec/features/team-todo/team-todo-comments.md
+  - _concept/experience/features/team-todo/team-todo-comments.md
 data_entities: [Comment, Todo, User]
 last_updated: 2026-05-08
 ---

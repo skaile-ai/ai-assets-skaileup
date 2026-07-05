@@ -1,6 +1,6 @@
 ---
 name: impl-plan-brainstorm
-description: "Use when starting per-slice implementation work for a feature in a appbuilder-standard or appbuilder-complex tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/product-spec/features/<group>/<feature_slug>.md and writes _implementation/slices/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
+description: "Use when starting per-slice implementation work for a feature in a appbuilder-standard or appbuilder-complex tier project. Sparring partner on risks, unknowns, dependencies for THIS feature only. Reads _concept/_meta/scope.yaml + _concept/experience/features/<group>/<feature_slug>.md and writes _implementation/slices/<slice_id>/brainstorm.md for impl-plan-align to consume. Triggers on: 'brainstorm the implementation of <feature>', 'risks before we plan this feature', 'pre-plan brainstorm for the slice'."
 metadata:
   version: "2.0.0"
   tags:
@@ -34,12 +34,12 @@ metadata:
       - path: "_concept/_meta/scope.yaml"
         gate: hard
         description: "Tier context required — produced by skaileup-scope-scope-project. Determines whether this skill runs (appbuilder-standard/appbuilder-complex) or is skipped (appbuilder-mvp/appbuilder-simple)."
-      - path: "_concept/product-spec/features/{feature_slug}.md"
+      - path: "_concept/experience/features/{feature_slug}.md"
         gate: hard
         description: "Permanent feature artifact written by concept-slice-design-feature; THIS feature is the brainstorm scope."
     inputs_required:
       - id: feature_slug
-        label: "Kebab-case feature slug; resolves to _concept/product-spec/features/<group>/<feature_slug>.md"
+        label: "Kebab-case feature slug; resolves to _concept/experience/features/<group>/<feature_slug>.md"
         type: text
         hint: "Same slug used by concept-slice for this feature. Regex ^[a-z][a-z0-9-]{1,47}$."
     inputs_optional:
@@ -94,7 +94,7 @@ them to those skills.
   composition. Their entry point is `impl-plan-plan-vertical` (appbuilder-mvp) or `impl-plan-align`
   (appbuilder-simple). Refuse and point the caller at the right skill.
 - Project-wide brainstorming — out of scope. Use `ops/audit` or `impl-quality/audit`.
-- Concept artifacts are missing (`_concept/product-spec/features/<group>/<feature_slug>.md`
+- Concept artifacts are missing (`_concept/experience/features/<group>/<feature_slug>.md`
   not present). Refuse and refer the caller to `concept-slice/design-feature`.
 
 ---
@@ -103,7 +103,7 @@ ROLE Per-slice implementation brainstorm partner — surfaces risks, unknowns, a
 
 READS
   _concept/_meta/scope.yaml                                       — required; tier + project description
-  _concept/product-spec/features/{group}/{feature_slug}.md        — required; the feature being planned
+  _concept/experience/features/{group}/{feature_slug}.md        — required; the feature being planned
   ? _concept/experience/screens/{feature_slug}/*.md               — optional; screen specs for this feature
   ? _concept/blueprint/datamodel/model.json                       — optional; data model (entity-touching risks)
   ? _concept/blueprint/techstack.md                               — optional; stack-specific risks
@@ -129,13 +129,13 @@ REQUIRES
 MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
 MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
 MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp, appbuilder-simple} — those tiers do not run impl-plan-brainstorm (per SKILL_GRAPH § 6 tier-composition table); the base orchestrator is responsible for not invoking this skill at those tiers
-MUST  resolve feature_slug to _concept/product-spec/features/<group>/<feature_slug>.md before any other step; refuse if file missing (iron_laws § 7)
+MUST  resolve feature_slug to _concept/experience/features/<group>/<feature_slug>.md before any other step; refuse if file missing (iron_laws § 7)
 MUST  scope brainstorm to THIS ONE feature; do NOT enumerate risks for other features
 MUST  surface every P1 question to the user as a standalone message before writing brainstorm.md
 MUST  write the handoff frontmatter exactly per the cross-phase contract (slice_id, feature_title, feature_path, phase, tier, created_at, last_updated)
 MUST  set phase: brainstorm in the handoff frontmatter
 MUST  set slice_id := feature_slug (raw kebab-case slug, regex ^[a-z][a-z0-9-]{1,47}$) — same rule as concept-slice
-MUST  derive the {group} segment of feature_path by globbing _concept/product-spec/features/*/<feature_slug>.md and refusing if zero or >1 matches
+MUST  derive the {group} segment of feature_path by globbing _concept/experience/features/*/<feature_slug>.md and refusing if zero or >1 matches
 
 NEVER  expand the scope to project-wide risks (that's a different skill — ops/audit or impl-quality/audit)
 NEVER  write brainstorm.md before unresolved P1 blockers are surfaced and answered
@@ -165,9 +165,9 @@ STEP 1: Read scope and validate tier
 STEP 2: Resolve feature_slug → feature_path
   - If feature_slug was pre-supplied, use it. Else ask STANDALONE:
     > "Which feature are we brainstorming? Give me the kebab-case slug
-    >  (the filename of _concept/product-spec/features/<group>/<feature_slug>.md)."
+    >  (the filename of _concept/experience/features/<group>/<feature_slug>.md)."
   - Validate slug against ^[a-z][a-z0-9-]{1,47}$.
-  - $ ls _concept/product-spec/features/*/<feature_slug>.md
+  - $ ls _concept/experience/features/*/<feature_slug>.md
     IF zero matches
       - refuse: "[impl-plan-brainstorm] feature.md not found for slug <slug>. Run concept-slice/design-feature first."
     ELIF >1 match (slug collision across groups)
@@ -215,7 +215,7 @@ STEP 6: Draft handoff in memory
     ---
     slice_id: <feature_slug>
     feature_title: <title from feature.md frontmatter, verbatim>
-    feature_path: _concept/product-spec/features/<group>/<feature_slug>.md
+    feature_path: _concept/experience/features/<group>/<feature_slug>.md
     phase: brainstorm
     tier: <scope.tier>
     created_at: <ISO-8601 UTC, e.g. 2026-05-08T12:34:56Z>
@@ -258,7 +258,7 @@ EMIT  [impl-plan-brainstorm] completed slice_id=<id> tier=<tier> p1_count=<n> p2
 
 CHECKLIST
   - [ ] _concept/_meta/scope.yaml read and tier validated (∈ {appbuilder-standard, appbuilder-complex})
-  - [ ] feature_slug resolved to a single _concept/product-spec/features/<group>/<feature_slug>.md
+  - [ ] feature_slug resolved to a single _concept/experience/features/<group>/<feature_slug>.md
   - [ ] _implementation/slices/<slice_id>/ directory exists (created or pre-existing)
   - [ ] All concept artifacts (feature.md required; screens/model/techstack optional) read
   - [ ] Risk areas assessed across all six dimensions, scoped to THIS feature

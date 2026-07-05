@@ -8,7 +8,7 @@ position. This document spells out the rule with examples.
 
 | Target dir                                  | Path-segment match required                         |
 |---------------------------------------------|-----------------------------------------------------|
-| `_concept/product-spec/features/<group>/`   | filename stem MUST equal `<feature_slug>`           |
+| `_concept/experience/features/<group>/`   | filename stem MUST equal `<feature_slug>`           |
 | `_concept/experience/screens/`              | first dir under `screens/` MUST equal `<feature_slug>` |
 | `_concept/mockup-walkthrough/<tier>/`       | filename stem MUST equal `<feature_slug>`           |
 
@@ -25,13 +25,13 @@ the same screen, the order of execution becomes load-bearing.
 
 Allowed:
 ```
-_concept/product-spec/features/team-todo/team-todo-comments.md
+_concept/experience/features/team-todo/team-todo-comments.md
                                           ^^^^^^^^^^^^^^^^^^ matches
 ```
 
 Rejected:
 ```
-_concept/product-spec/features/team-todo/team-todo-list.md
+_concept/experience/features/team-todo/team-todo-list.md
                                           ^^^^^^^^^^^^^ does not match
 ```
 
