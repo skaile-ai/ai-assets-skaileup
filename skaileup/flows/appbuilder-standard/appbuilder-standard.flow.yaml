@@ -40,10 +40,7 @@ requires:
   - skill:@skaile-ai/mockup-feedback-triage
   - skill:@skaile-ai/mockup-feedback-patch
   - skill:@skaile-ai/mockup-feedback-apply
-  - skill:@skaile-ai/impl-architecture-techstack
-  - skill:@skaile-ai/impl-architecture-templates-select
-  - skill:@skaile-ai/impl-architecture-system
-  - skill:@skaile-ai/impl-architecture-datamodel
+  - flow:@skaile-ai/architecture
   - flow:@skaile-ai/impl-build-setup
   # Per-feature work is delegated to the unified slice sub-flow; its manifest
   # (and its two sub-flows') transitively provide the slice-concept / impl skills.
@@ -247,46 +244,17 @@ nodes:
       label: 'Mockup Feedback: Apply'
       optional: true
       parameters: {}
-  # --- Architecture ---
-  - id: techstack
-    type: skill
+  # --- Architecture (delegated to the shared architecture flow) ---
+  - id: architecture
+    type: sub-flow
     position:
       x: 3200
       y: 200
     data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
-      optional: false
-      parameters: {}
-  - id: templates
-    type: skill
-    position:
-      x: 3400
-      y: 200
-    data:
-      skill: impl-architecture-templates-select
-      label: 'Architecture Templates'
-      optional: true
-      parameters: {}
-  - id: arch-system
-    type: skill
-    position:
-      x: 3600
-      y: 200
-    data:
-      skill: impl-architecture-system
-      label: 'System Architecture'
-      optional: false
-      parameters: {}
-  - id: datamodel
-    type: skill
-    position:
-      x: 3800
-      y: 200
-    data:
-      skill: impl-architecture-datamodel
-      label: 'Data Model'
-      optional: false
+      flow: architecture
+      domain: blueprint
+      label: 'Architecture blueprint'
+      pass_context: true
       parameters: {}
   # --- Build setup (delegated to the shared impl-build-setup flow) ---
   - id: build-setup
@@ -453,24 +421,12 @@ edges:
     source: feedback-patch
     target: feedback-apply
     type: optional
-  - id: e-feedback-apply-techstack
+  - id: e-feedback-apply-architecture
     source: feedback-apply
-    target: techstack
+    target: architecture
     type: flow
-  - id: e-techstack-templates
-    source: techstack
-    target: templates
-    type: optional
-  - id: e-templates-arch-system
-    source: templates
-    target: arch-system
-    type: flow
-  - id: e-arch-system-datamodel
-    source: arch-system
-    target: datamodel
-    type: flow
-  - id: e-datamodel-build-setup
-    source: datamodel
+  - id: e-architecture-build-setup
+    source: architecture
     target: build-setup
     type: flow
   - id: e-build-setup-slice-loop

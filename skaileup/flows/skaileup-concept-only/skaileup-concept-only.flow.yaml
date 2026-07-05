@@ -49,9 +49,7 @@ requires:
   - skill:@skaile-ai/experience-screens
   - skill:@skaile-ai/experience-screens-technical
   - skill:@skaile-ai/experience-components
-  - skill:@skaile-ai/impl-architecture-techstack
-  - skill:@skaile-ai/impl-architecture-system
-  - skill:@skaile-ai/impl-architecture-datamodel
+  - flow:@skaile-ai/architecture
   - skill:@skaile-ai/mockup-walkthrough-text
   - skill:@skaile-ai/ops-review
 globals:
@@ -226,37 +224,19 @@ nodes:
       label: 'Components'
       optional: true
       parameters: {}
-  # --- Architecture ---
-  - id: techstack
-    type: skill
+  # --- Architecture (delegated to the shared architecture flow) ---
+  - id: architecture
+    type: sub-flow
     position:
       x: 2200
       y: 200
     data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
-      optional: false
-      parameters: {}
-  - id: system
-    type: skill
-    position:
-      x: 2400
-      y: 120
-    data:
-      skill: impl-architecture-system
-      label: 'Architecture'
-      optional: false
-      parameters: {}
-  - id: datamodel
-    type: skill
-    position:
-      x: 2400
-      y: 280
-    data:
-      skill: impl-architecture-datamodel
-      label: 'Data Model'
-      optional: false
-      parameters: {}
+      flow: architecture
+      domain: blueprint
+      label: 'Architecture blueprint (no templates step)'
+      pass_context: true
+      parameters:
+        templates: skip
   # --- Mockup (optional) ---
   - id: mock
     type: skill
@@ -340,28 +320,16 @@ edges:
     source: screens
     target: components
     type: optional
-  - id: e-screens-techstack
+  - id: e-screens-architecture
     source: screens
-    target: techstack
+    target: architecture
     type: flow
-  - id: e-techstack-system
-    source: techstack
-    target: system
-    type: flow
-  - id: e-techstack-datamodel
-    source: techstack
-    target: datamodel
-    type: flow
-  - id: e-system-mock
-    source: system
+  - id: e-architecture-mock
+    source: architecture
     target: mock
     type: optional
-  - id: e-datamodel-mock
-    source: datamodel
-    target: mock
-    type: optional
-  - id: e-datamodel-review
-    source: datamodel
+  - id: e-architecture-review
+    source: architecture
     target: review
     type: flow
   - id: e-mock-review

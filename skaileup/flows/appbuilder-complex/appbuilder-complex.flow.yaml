@@ -53,10 +53,7 @@ requires:
   - skill:@skaile-ai/ops-project-subsystem-map
   - skill:@skaile-ai/ops-project-integration
   - skill:@skaile-ai/ops-project-review
-  - skill:@skaile-ai/impl-architecture-techstack
-  - skill:@skaile-ai/impl-architecture-templates-select
-  - skill:@skaile-ai/impl-architecture-system
-  - skill:@skaile-ai/impl-architecture-datamodel
+  - flow:@skaile-ai/architecture
   - flow:@skaile-ai/impl-build-setup
   # Per-feature work delegated to the unified slice sub-flow (its manifest and
   # its two sub-flows' manifests provide the loop skills, including
@@ -326,46 +323,17 @@ nodes:
       label: 'Project Review'
       optional: false
       parameters: {}
-  # --- Architecture ---
-  - id: techstack
-    type: skill
+  # --- Architecture (delegated to the shared architecture flow) ---
+  - id: architecture
+    type: sub-flow
     position:
       x: 4200
       y: 200
     data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
-      optional: false
-      parameters: {}
-  - id: templates
-    type: skill
-    position:
-      x: 4400
-      y: 200
-    data:
-      skill: impl-architecture-templates-select
-      label: 'Architecture Templates'
-      optional: true
-      parameters: {}
-  - id: arch-system
-    type: skill
-    position:
-      x: 4600
-      y: 200
-    data:
-      skill: impl-architecture-system
-      label: 'System Architecture'
-      optional: false
-      parameters: {}
-  - id: datamodel
-    type: skill
-    position:
-      x: 4800
-      y: 200
-    data:
-      skill: impl-architecture-datamodel
-      label: 'Data Model'
-      optional: false
+      flow: architecture
+      domain: blueprint
+      label: 'Architecture blueprint'
+      pass_context: true
       parameters: {}
   # --- Build setup (delegated to the shared impl-build-setup flow) ---
   - id: build-setup
@@ -581,24 +549,12 @@ edges:
     source: ops-project-integration
     target: ops-project-review
     type: flow
-  - id: e-ops-project-review-techstack
+  - id: e-ops-project-review-architecture
     source: ops-project-review
-    target: techstack
+    target: architecture
     type: flow
-  - id: e-techstack-templates
-    source: techstack
-    target: templates
-    type: optional
-  - id: e-templates-arch-system
-    source: templates
-    target: arch-system
-    type: flow
-  - id: e-arch-system-datamodel
-    source: arch-system
-    target: datamodel
-    type: flow
-  - id: e-datamodel-build-setup
-    source: datamodel
+  - id: e-architecture-build-setup
+    source: architecture
     target: build-setup
     type: flow
   - id: e-build-setup-slice-loop

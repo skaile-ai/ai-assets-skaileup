@@ -26,9 +26,7 @@ requires:
   - skill:@skaile-ai/skaileup-scope-scope-project
   - skill:@skaile-ai/concept-brief
   - skill:@skaile-ai/product-spec-features
-  - skill:@skaile-ai/impl-architecture-techstack
-  - skill:@skaile-ai/impl-architecture-templates-select
-  - skill:@skaile-ai/impl-architecture-datamodel
+  - flow:@skaile-ai/architecture
   - flow:@skaile-ai/impl-build-setup
   - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
@@ -75,37 +73,20 @@ nodes:
       parameters:
         cli_mode: true
         describe_as_commands: true
-  - id: techstack
-    type: skill
+  # --- Architecture (delegated to the shared architecture flow) ---
+  - id: architecture
+    type: sub-flow
     position:
       x: 600
       y: 200
     data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
-      optional: false
-      parameters: {}
-  - id: templates
-    type: skill
-    position:
-      x: 800
-      y: 200
-    data:
-      skill: impl-architecture-templates-select
-      label: 'Architecture Templates'
-      optional: true
-      parameters: {}
-  - id: datamodel
-    type: skill
-    position:
-      x: 1000
-      y: 200
-    data:
-      skill: impl-architecture-datamodel
-      label: 'Data Model'
-      optional: false
+      flow: architecture
+      domain: blueprint
+      label: 'Architecture blueprint (no system step)'
+      pass_context: true
       parameters:
-        note: 'Config files, storage schemas, output formats'
+        system: skip
+        note: 'Datamodel covers config files, storage schemas, output formats'
   # --- Build setup (delegated to the shared impl-build-setup flow) ---
   - id: build-setup
     type: sub-flow
@@ -163,20 +144,12 @@ edges:
     source: brief
     target: features
     type: flow
-  - id: e-features-techstack
+  - id: e-features-architecture
     source: features
-    target: techstack
+    target: architecture
     type: flow
-  - id: e-techstack-templates
-    source: techstack
-    target: templates
-    type: optional
-  - id: e-templates-datamodel
-    source: templates
-    target: datamodel
-    type: flow
-  - id: e-datamodel-build-setup
-    source: datamodel
+  - id: e-architecture-build-setup
+    source: architecture
     target: build-setup
     type: flow
   - id: e-build-setup-impl-slice-loop

@@ -29,9 +29,7 @@ requires:
   # The architecture subset (techstack/system/datamodel) reads an existing
   # concept package if present, else generates it; no UX/brand/experience skills.
   - contract:@skaile-ai/shared-contracts
-  - skill:@skaile-ai/impl-architecture-techstack
-  - skill:@skaile-ai/impl-architecture-system
-  - skill:@skaile-ai/impl-architecture-datamodel
+  - flow:@skaile-ai/architecture
   - flow:@skaile-ai/impl-build-setup
   - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
@@ -43,40 +41,22 @@ globals:
   approval_mode: checkpoint
   subagent_mode: true
   verbosity: standard
-entry: techstack
+entry: architecture
 nodes:
-  # --- Technical concept subset (generated here, not handed off) ---
-  - id: techstack
-    type: skill
+  # --- Architecture (read-or-generate; delegated to the shared architecture flow) ---
+  - id: architecture
+    type: sub-flow
     position:
       x: 0
       y: 200
     data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
-      optional: false
+      flow: architecture
+      domain: blueprint
+      label: 'Architecture blueprint (read-or-generate, no templates step)'
+      pass_context: true
       parameters:
-        note: 'Read-or-generate: read _concept/blueprint/ if present, else elicit the stack from a one-line product description'
-  - id: arch-system
-    type: skill
-    position:
-      x: 200
-      y: 200
-    data:
-      skill: impl-architecture-system
-      label: 'System Architecture'
-      optional: false
-      parameters: {}
-  - id: datamodel
-    type: skill
-    position:
-      x: 400
-      y: 200
-    data:
-      skill: impl-architecture-datamodel
-      label: 'Data Model'
-      optional: false
-      parameters: {}
+        templates: skip
+        note: 'Read _concept/blueprint/ if present, else generate from a one-line product description'
   # --- Build setup (delegated to the shared impl-build-setup flow) ---
   - id: build-setup
     type: sub-flow
@@ -143,16 +123,8 @@ nodes:
       optional: false
       parameters: {}
 edges:
-  - id: e-techstack-arch-system
-    source: techstack
-    target: arch-system
-    type: flow
-  - id: e-arch-system-datamodel
-    source: arch-system
-    target: datamodel
-    type: flow
-  - id: e-datamodel-build-setup
-    source: datamodel
+  - id: e-architecture-build-setup
+    source: architecture
     target: build-setup
     type: flow
   - id: e-build-setup-impl-slice-loop

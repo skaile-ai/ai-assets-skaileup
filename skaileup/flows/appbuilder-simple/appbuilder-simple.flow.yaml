@@ -31,9 +31,7 @@ requires:
   - skill:@skaile-ai/experience-screens
   - skill:@skaile-ai/mockup-walkthrough-static-html
   - skill:@skaile-ai/mockup-component-isolated-html
-  - skill:@skaile-ai/impl-architecture-techstack
-  - skill:@skaile-ai/impl-architecture-templates-select
-  - skill:@skaile-ai/impl-architecture-datamodel
+  - flow:@skaile-ai/architecture
   - flow:@skaile-ai/impl-build-setup
   - flow:@skaile-ai/skaileup-slice-impl
   - skill:@skaile-ai/impl-quality-test-unit
@@ -129,37 +127,19 @@ nodes:
       optional: false
       parallel_group: mockups
       parameters: {}
-  # --- Architecture ---
-  - id: techstack
-    type: skill
+  # --- Architecture (delegated to the shared architecture flow) ---
+  - id: architecture
+    type: sub-flow
     position:
       x: 1400
       y: 200
     data:
-      skill: impl-architecture-techstack
-      label: 'Tech Stack'
-      optional: false
-      parameters: {}
-  - id: templates
-    type: skill
-    position:
-      x: 1600
-      y: 200
-    data:
-      skill: impl-architecture-templates-select
-      label: 'Architecture Templates'
-      optional: true
-      parameters: {}
-  - id: datamodel
-    type: skill
-    position:
-      x: 1800
-      y: 200
-    data:
-      skill: impl-architecture-datamodel
-      label: 'Data Model'
-      optional: false
-      parameters: {}
+      flow: architecture
+      domain: blueprint
+      label: 'Architecture blueprint (no system step)'
+      pass_context: true
+      parameters:
+        system: skip
   # --- Build setup (delegated to the shared impl-build-setup flow) ---
   - id: build-setup
     type: sub-flow
@@ -234,24 +214,16 @@ edges:
     source: screens
     target: comp-isolated
     type: parallel
-  - id: e-mock-static-techstack
+  - id: e-mock-static-architecture
     source: mock-static
-    target: techstack
+    target: architecture
     type: flow
-  - id: e-comp-isolated-techstack
+  - id: e-comp-isolated-architecture
     source: comp-isolated
-    target: techstack
+    target: architecture
     type: flow
-  - id: e-techstack-templates
-    source: techstack
-    target: templates
-    type: optional
-  - id: e-templates-datamodel
-    source: templates
-    target: datamodel
-    type: flow
-  - id: e-datamodel-build-setup
-    source: datamodel
+  - id: e-architecture-build-setup
+    source: architecture
     target: build-setup
     type: flow
   - id: e-build-setup-impl-slice-loop
