@@ -29,6 +29,7 @@ metadata:
     produces:
       - id: e2e-report
       - id: e2e-screenshots
+      - id: acceptance-criteria
   prerequisites:
     files:
       - path: 'package.json'
@@ -133,6 +134,7 @@ READS
 WRITES
 e2e-screenshots/\*_/_.png — per-journey step screenshots
 ? e2e-test-report.md — optional full markdown report
+? \_implementation/acceptance_criteria/\*\*/\*.ac.md — journey/snapshot Status rows flipped pass/fail per journey outcome
 
 REFERENCES
 contracts/seed_data.md — seed scenario format and data quality rules
@@ -152,6 +154,7 @@ MUST use seed.json scenario data for all form inputs (never invent test data)
 MUST screenshot every step to e2e-screenshots/<journey>/
 MUST validate database records after data-modifying interactions
 MUST update last_updated on feature files for every passing journey
+MUST update the AC ledgers for journeys run: for each feature covered by a journey, flip its .ac.md snapshot/journey rows (and any AC row whose Source EARS line was evaluated) to pass/fail; stamp `impl-quality-test-e2e` + today's date
 NEVER skip responsive testing on key pages
 NEVER leave dev server running after completion
 
@@ -224,6 +227,14 @@ STEP 7: Update feature tracking (feedback loop)
 - For every successfully tested journey:
   - Find corresponding feature in \_concept/experience/features/
   - Update last_updated in frontmatter to today's date
+- For every journey run (pass or fail):
+  - Resolve \_implementation/acceptance_criteria/<group>/<feature_slug>.ac.md
+    for each feature the journey covers (group/slug from the feature path;
+    skip with a warning if the ledger does not exist)
+  - Flip the Criteria Status rows whose Source EARS line the journey
+    evaluated: pass if all its criteria held, fail on the failing criterion
+  - Stamp `Updated by: impl-quality-test-e2e`, `Date: <today>`; never touch
+    rows the journey did not evaluate
 
 EMIT [e2e] feedback_loop updated experience/features/<group>/<feature>.md updated last_updated
 
@@ -243,5 +254,6 @@ CHECKLIST
 - [ ] Database records validated after data-modifying actions
 - [ ] Responsive testing completed at all three breakpoints
 - [ ] Feature last_updated updated via feedback loop for passing journeys
+- [ ] AC ledgers updated for every journey run (pass/fail rows stamped impl-quality-test-e2e)
 - [ ] Dev server stopped and browser session closed
 - [ ] Summary report presented to user

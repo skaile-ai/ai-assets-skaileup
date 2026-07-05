@@ -17,6 +17,7 @@ metadata:
         gate: hard
     produces:
       - id: slice-impl-test
+      - id: acceptance-criteria
   prerequisites:
     files:
       - path: "_implementation/slices/{slice_id}/plan.md"
@@ -85,9 +86,11 @@ READS
   ? _implementation/slices/{slice_id}/test.md                            — re-entry mode
   ? package.json                                              — optional; test runner detection
   ? pyproject.toml                                            — optional; test runner detection
+  ? _implementation/acceptance_criteria/{group}/{slice_id}.ac.md — AC ledger; statuses updated in STEP 7
 
 WRITES
   _implementation/slices/{slice_id}/test.md                              — handoff for impl-slice-recap
+  _implementation/acceptance_criteria/{group}/{slice_id}.ac.md           — Status rows flipped pass/fail for criteria this gate exercised
 
 REFERENCES
   SKILL_GRAPH.md                                              — § 5.2 per-slice impl loop
@@ -97,6 +100,7 @@ REFERENCES
   impl-slice/test/references/usability-question-pillars.md    — sample usability prompts and tone guidance
   docs/devlog/2C-impl-plan-align-vertical.md       — § Pinned plan.md Schema
   docs/devlog/2D-impl-slice-cluster.md             — § Pinned test.md Schema
+  contracts/acceptance_criteria.md                            — Criteria Status table + ownership rules
 
 REQUIRES
   hard: _implementation/slices/{slice_id}/plan.md                        — predecessor handoff
@@ -113,11 +117,14 @@ MUST  refuse to emit "Decision: Done" if "## Outstanding issues" contains any [B
 MUST  set phase: test in the handoff frontmatter
 MUST  source every Manual-checks-done bullet from plan.md "### Manual checks"
 MUST  source every Automated-tests-run bullet from plan.md "### Automated tests"
+MUST  update the AC ledger after writing test.md: flip a Criteria Status row to pass/fail ONLY when a [PASS]/[FAIL]-tagged check in this test.md covers that criterion's Source EARS line; stamp `impl-slice-test` + today's date
+MUST  leave rows this slice did not exercise as-is (untested rows stay untested)
 
 NEVER  run the project's full regression suite — that is impl-quality/test-{unit,integration,e2e}
 NEVER  invent manual checks or automated tests not in plan.md "## Testing strategy"
 NEVER  proceed past a usability question until the user has answered it
 NEVER  bundle multiple interview questions in a single message
+NEVER  flip an AC row to pass without a matching [PASS]-tagged manual check or automated test in this test.md
 
 INPUT
   Read from: _concept/_grounding/impl-slice-test/input.json
@@ -214,12 +221,29 @@ STEP 6: Write the handoff
 
   Write to _implementation/slices/<slice_id>/test.md.
 
-STEP 7: Validate
+STEP 7: Update the acceptance-criteria ledger
+  - Derive the ledger path: <group> and <feature_slug> from the plan.md
+    frontmatter feature_path's last two segments →
+    _implementation/acceptance_criteria/<group>/<feature_slug>.ac.md.
+  - IF the ledger is missing: WARN
+    > "[impl-slice-test] AC ledger missing — run impl-plan-plan-vertical
+    >  (it creates the .ac.md) before relying on trace."
+    and skip to STEP 8.
+  - For each row in `## Criteria Status`: if a [PASS]-tagged bullet in this
+    test.md covers the row's Source EARS line (the plan.md automated tests
+    were copied from the same EARS lines — match on the EARS text), set
+    Status=pass; if a [FAIL]-tagged bullet covers it, set Status=fail.
+    In both cases set `Updated by` = impl-slice-test and `Date` = today.
+  - Do not touch rows with no matching bullet. Update frontmatter last_updated.
+
+STEP 8: Validate
   - $ python3 impl-slice/test/validator.py _implementation/slices/<slice_id>/test.md \
-        --plan _implementation/slices/<slice_id>/plan.md
+        --plan _implementation/slices/<slice_id>/plan.md \
+        --ac _implementation/acceptance_criteria/<group>/<feature_slug>.ac.md
+  - (Omit --ac if the ledger was missing in STEP 7.)
   - On failure: report errors and STOP. Do not advance.
 
-EMIT  [impl-slice-test] completed slice_id=<id> decision=<value> blockers=<n>
+EMIT  [impl-slice-test] completed slice_id=<id> decision=<value> blockers=<n> ac_updated=<n>
 
 CHECKLIST
   - [ ] _implementation/slices/<slice_id>/plan.md read; frontmatter cached
@@ -228,6 +252,7 @@ CHECKLIST
   - [ ] 4 usability questions asked as standalone messages and answered
   - [ ] "## Decision" line emitted; if Done, zero [BLOCKER] in Outstanding issues
   - [ ] _implementation/slices/<slice_id>/test.md exists on disk and validator.py exits 0
+  - [ ] AC ledger rows flipped for exercised criteria (or missing-ledger warning surfaced); validator --ac exits 0
 
 ---
 

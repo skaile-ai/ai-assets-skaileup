@@ -22,6 +22,10 @@ from pathlib import Path
 
 import yaml
 
+_SCRIPTS = Path(__file__).resolve().parent.parent.parent / "contracts" / "scripts"
+sys.path.insert(0, str(_SCRIPTS))
+import ac_lib  # noqa: E402
+
 REQUIRED_FRONTMATTER_KEYS = {
     "slice_id",
     "feature_title",
@@ -266,14 +270,38 @@ def validate(
     return (errors, warnings)
 
 
+AC_UPDATERS = {"impl-slice-test", "impl-quality-test-e2e"}
+
+
+def validate_ac_updates(ac_path: Path) -> list[str]:
+    """Structural ac_lib checks + updated rows must name a known updater skill."""
+    errors = [f"[ac] {e}" for e in ac_lib.validate_ac_file(ac_path)]
+    if errors:
+        return errors
+    _, body = ac_lib.split_frontmatter(ac_path.read_text(encoding="utf-8"))
+    for row in ac_lib.parse_status_rows(body):
+        if len(row) < 5:
+            continue
+        rid, status, updated_by = row[0], row[2], row[3]
+        if status != "untested" and updated_by not in AC_UPDATERS:
+            errors.append(
+                f"[ac] {rid}: 'Updated by' is {updated_by!r}; must be one of "
+                f"{sorted(AC_UPDATERS)}"
+            )
+    return errors
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("path")
     parser.add_argument("--plan", default=None)
+    parser.add_argument("--ac", default=None)
     args = parser.parse_args(argv[1:])
 
     plan_path = Path(args.plan) if args.plan else None
     errors, warnings = validate(Path(args.path), plan_path)
+    if args.ac:
+        errors = errors + validate_ac_updates(Path(args.ac))
     for w in warnings:
         print(f"WARNING: {w}", file=sys.stderr)
     if errors:
