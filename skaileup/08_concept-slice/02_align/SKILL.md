@@ -117,7 +117,7 @@ REQUIRES
 
 MUST  ask each grill question as its own standalone assistant message (iron_laws § 9)
 MUST  produce acceptance criteria in EARS format (contracts/acceptance_criteria.md § EARS template); this side GENERATES them (grill_bank.md § EARS provenance)
-MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
+MUST  refuse to run without scope.yaml (contracts/slice_loop.md § Tier gate)
 MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-standard, appbuilder-complex} AND _concept/slices/<slice_id>/brainstorm.md is missing
 MUST  copy slice_id and feature_title from brainstorm.md when present; never re-derive
 MUST  surface every P1 (blocking) open question to the user as a standalone message before writing align.md

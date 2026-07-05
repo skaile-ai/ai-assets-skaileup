@@ -98,11 +98,11 @@ REQUIRES
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
-MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
+MUST  refuse to run without scope.yaml (contracts/slice_loop.md § Tier gate)
 MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp, appbuilder-simple} — those tiers do not run concept-slice-brainstorm (per SKILL_GRAPH § 6 tier-composition table)
 MUST  derive slice_id per contracts/slice_loop.md § Slug rule UNLESS slice_id_override is supplied
 MUST  apply contracts/slice_loop.md § Resume-or-fresh when _concept/slices/<slice_id>/ already exists
-MUST  write the handoff frontmatter exactly as specified (slice_id, feature_title, phase, tier, created_at, last_updated)
+MUST  write handoff frontmatter per spec (contracts/slice_loop.md § Handoff frontmatter)
 MUST  wait for the user to answer each question before sending the next
 
 NEVER  enumerate edge cases — that is concept-slice-align's job

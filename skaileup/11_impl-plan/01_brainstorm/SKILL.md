@@ -129,15 +129,15 @@ REQUIRES
 # Constraints (placed early per skill_grammar.md § Authoring tip 4)
 
 MUST  ask each interview question as its own standalone assistant message (iron_laws § 9)
-MUST  refuse to run if _concept/_meta/scope.yaml is missing (iron_laws § 7)
+MUST  refuse to run without scope.yaml (contracts/slice_loop.md § Tier gate)
 MUST  refuse to run if scope.yaml `tier` ∈ {appbuilder-mvp, appbuilder-simple} — those tiers do not run impl-plan-brainstorm (per SKILL_GRAPH § 6 tier-composition table); the base orchestrator is responsible for not invoking this skill at those tiers
 MUST  resolve feature_slug to _concept/experience/features/<group>/<feature_slug>.md before any other step; refuse if file missing (iron_laws § 7)
 MUST  scope brainstorm to THIS ONE feature; do NOT enumerate risks for other features
 MUST  surface every P1 question to the user as a standalone message before writing brainstorm.md
-MUST  write the handoff frontmatter exactly per the cross-phase contract (slice_id, feature_title, feature_path, phase, tier, created_at, last_updated)
+MUST  write handoff frontmatter per spec (contracts/slice_loop.md § Handoff frontmatter)
 MUST  set phase: brainstorm in the handoff frontmatter
 MUST  set slice_id := feature_slug per contracts/slice_loop.md § Slug rule (verbatim, never re-derived)
-MUST  resolve feature_path per contracts/slice_loop.md § Slug rule (glob _concept/experience/features/*/<feature_slug>.md; refuse on zero or >1 matches)
+MUST  resolve feature_path per slug rule (contracts/slice_loop.md § Slug rule)
 
 NEVER  expand the scope to project-wide risks (that's a different skill — ops/audit or impl-quality/audit)
 NEVER  write brainstorm.md before unresolved P1 blockers are surfaced and answered

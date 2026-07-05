@@ -155,7 +155,7 @@ MUST  produce at least one P1 or P2 question OR resolve every prior P1 with a "#
 MUST  capture domain vocabulary inline (STEP 5a): when the grill pins or sharpens a term, write it to _concept/blueprint/glossary.md per contracts/domain_model.md — term → definition + `_Avoid_` list, zero implementation detail
 MUST  append an ADR to _implementation/decisions.md when a grill decision passes the 3-test gate (hard-to-reverse AND surprising AND a real trade-off); skip otherwise
 
-NEVER  invent edge cases the user did not confirm — every "## Edge cases to handle" bullet must trace to a Q/A in "## Decisions made" or to a feature.md/screen line
+NEVER  invent unconfirmed edge cases (contracts/grill_bank.md § Anti-patterns)
 NEVER  add implementation detail or general programming concepts to glossary.md (domain_model.md § Glossary format)
 NEVER  proceed past question N until the user has answered question N
 NEVER  silently overwrite an existing align.md (re-entry mode requires explicit user confirmation)

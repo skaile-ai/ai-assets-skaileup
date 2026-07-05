@@ -41,7 +41,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install PyYAML
-        run: pip install pyyaml
+      - name: Install deps
+        run: pip install pyyaml pytest
       - name: Verify artifact registry vs skills
         run: python3 skaileup/contracts/scripts/verify_artifacts.py
+      - name: Run contracts-script tests
+        run: python3 -m pytest skaileup/contracts/tests/ -q

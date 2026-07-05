@@ -106,6 +106,75 @@ def writes_paths(path: Path) -> list[str]:
     return out
 
 
+# ── Dedup guards ─────────────────────────────────────────────────────────
+import re as _re
+
+CONTRACTS_DIR = REPO / "skaileup" / "contracts"
+NGRAM_N = 8
+LINE_BUDGET = 400
+# Contract files whose text is MEANT to appear in skills (templates, grammar
+# examples, fixtures) — exempt from the restatement index.
+RESTATE_EXEMPT = {"skill_template.md", "skill_grammar.md", "skill_testing.md"}
+
+
+def _rel(p: Path) -> str:
+    try:
+        return str(p.relative_to(REPO))
+    except ValueError:
+        return p.name
+
+
+def _normalize(text: str) -> list[str]:
+    """Lowercase; keep [a-z0-9] token runs only."""
+    return _re.findall(r"[a-z0-9]+", text.lower())
+
+
+def _ngrams(tokens: list[str], n: int = NGRAM_N) -> set[tuple[str, ...]]:
+    return {tuple(tokens[i:i + n]) for i in range(len(tokens) - n + 1)}
+
+
+def _strip_code_blocks(text: str) -> str:
+    """Drop fenced ``` blocks — pinned templates are legitimately embedded."""
+    out, fenced = [], False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+            continue
+        if not fenced:
+            out.append(line)
+    return "\n".join(out)
+
+
+def _contract_ngram_index() -> set[tuple[str, ...]]:
+    grams: set[tuple[str, ...]] = set()
+    for md in sorted(CONTRACTS_DIR.glob("*.md")):
+        if md.name in RESTATE_EXEMPT:
+            continue
+        grams |= _ngrams(_normalize(_strip_code_blocks(md.read_text())))
+    return grams
+
+
+def check_restatements(skill_files, errors) -> None:
+    """ERROR on any MUST/NEVER line that shares an 8-gram with a contract."""
+    grams = _contract_ngram_index()
+    for sf in skill_files:
+        for lineno, line in enumerate(sf.read_text().splitlines(), 1):
+            if not line.startswith(("MUST", "NEVER")):
+                continue
+            if any(g in grams for g in _ngrams(_normalize(line))):
+                errors.append(
+                    f"[restate] {_rel(sf)}:{lineno}: MUST/NEVER line duplicates "
+                    f"contract text (≥{NGRAM_N}-gram match) — cite the contract "
+                    f"section instead")
+
+
+def check_line_budget(skill_files, warns) -> None:
+    for sf in skill_files:
+        n = len(sf.read_text().splitlines())
+        if n > LINE_BUDGET:
+            warns.append(f"[budget] {_rel(sf)}: {n} lines > {LINE_BUDGET} — split or compress")
+
+
 def main() -> int:
     registry = load_registry()
     errors: list[str] = []
@@ -122,6 +191,10 @@ def main() -> int:
             name_of[sf] = name
             skills[name] = fm
     known_names = set(skills)
+
+    # dedup guards
+    check_restatements(skill_files, errors)
+    check_line_budget(skill_files, warns)
 
     # 1. registry well-formed
     for aid, entry in registry.items():
