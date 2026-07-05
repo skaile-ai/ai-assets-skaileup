@@ -131,7 +131,7 @@ REFERENCES
   contracts/skill_grammar.md                                      — DSL keywords
   contracts/asset_frontmatter.md                                  — § Skill SKILL.md frontmatter schema
   contracts/domain_model.md                                       — glossary format, ADR format, the 3-test gate
-  impl-plan/align/references/grill-style.md                       — interview tone reference + 9 grill pillars
+  contracts/grill_bank.md                                         — grill question bank: tone + 9 pillars + EARS provenance
   docs/devlog/2A-scope-project.md                      — § Pinned scope.yaml schema
   docs/devlog/2B-concept-slice-cluster.md              — § Pinned permanent artifact paths
 

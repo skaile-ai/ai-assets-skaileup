@@ -1,6 +1,6 @@
-# impl-plan-align — Grill Style Reference
+# Grill Bank — shared align-interview reference
 
-The implementation-readiness grill is adversarial but constructive. The user
+The align grill (concept and impl side) is adversarial but constructive. The user
 voiced their dream in `concept-slice/brainstorm`; surfaced edges in
 `concept-slice/align`; locked screens in `concept-slice/scope-feature`. By
 the time `impl-plan-align` runs, the user thinks the feature is well-defined.
@@ -56,3 +56,21 @@ This grill checks that assumption.
   originally wanted in v1 but agreed to push back.
 - At least one EARS line in `## Acceptance handoff` got tightened during the
   grill (the validator can't catch this — it's a quality signal).
+
+## Which pillars run on which side
+
+Both aligns run the same seven core pillars — state transitions, boundary
+inputs, concurrency, permissions, persistence/recovery, errors,
+cross-feature data. `impl-plan-align` adds performance and test seam
+(9 total). Use the "Good question" phrasing from the pillar table; adapt the
+nouns to the feature. One question per message, wait for the answer
+(iron_laws § 9).
+
+## EARS provenance — the one real difference
+
+- `concept-slice-align` GENERATES EARS acceptance criteria from the grill:
+  one per in-scope happy-path bullet from brainstorm.md, plus confirmed edge
+  cases. This is where EARS lines are born.
+- `impl-plan-align` COPIES EARS criteria VERBATIM from the frozen
+  `feature.md` into `## Acceptance handoff` — it never re-authors, rewrites,
+  or "improves" them.

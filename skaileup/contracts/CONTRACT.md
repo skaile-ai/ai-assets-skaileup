@@ -27,3 +27,5 @@ pulls it in because the flow's skills depend on it.
 - **`skill_template.md`** — Template for new SKILL.md files.
 - **`skill_testing.md`** — Fixture format and `_validation.json` schema for skill self-tests.
 - **`walkthrough_renderer.md`** — Shared renderer contract for all `mockup-walkthrough-*` variants: data-spec attribute table, manifest schema v1.0, auto-slug rule, shared error handling and MUST/NEVER.
+- **`slice_loop.md`** — Shared slice-loop lifecycle: tier gates, slug rule, resume-or-fresh, handoff frontmatter keys, /clear isolation, freeze semantics.
+- **`grill_bank.md`** — Shared align-grill question bank (9 pillars, tone, anti-patterns, EARS provenance) for concept-slice-align and impl-plan-align.
