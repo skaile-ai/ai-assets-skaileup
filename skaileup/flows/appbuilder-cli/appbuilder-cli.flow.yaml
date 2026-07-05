@@ -38,12 +38,47 @@ globals:
   verbosity: standard
 entry: scope
 nodes:
+  # --- Phase containers (visual; must precede their children) ---
+  - id: g-conceptualization
+    type: group
+    position:
+      x: -40
+      y: 0
+    style:
+      width: 880
+      height: 480
+    data:
+      label: 'Conceptualization'
+      phase: conceptualization
+  - id: g-implementation
+    type: group
+    position:
+      x: 1160
+      y: 0
+    style:
+      width: 1080
+      height: 480
+    data:
+      label: 'Implementation'
+      phase: implementation
+  - id: g-review
+    type: group
+    position:
+      x: 3160
+      y: 0
+    style:
+      width: 280
+      height: 480
+    data:
+      label: 'Review'
+      phase: review
   # --- Scope ---
   - id: scope
     type: skill
     position:
       x: 0
       y: 200
+    parentNode: g-conceptualization
     data:
       skill: skaileup-scope-scope-project
       label: 'Scope Project'
@@ -55,6 +90,7 @@ nodes:
     position:
       x: 200
       y: 200
+    parentNode: g-conceptualization
     data:
       skill: concept-brief
       label: 'Concept Brief'
@@ -66,6 +102,7 @@ nodes:
     position:
       x: 400
       y: 200
+    parentNode: g-conceptualization
     data:
       skill: product-spec-features
       label: 'Features (commands)'
@@ -79,11 +116,13 @@ nodes:
     position:
       x: 600
       y: 200
+    parentNode: g-conceptualization
     data:
       flow: architecture
       domain: blueprint
       label: 'Architecture blueprint (no system step)'
       pass_context: true
+      phase: conceptualization
       parameters:
         system: skip
         note: 'Datamodel covers config files, storage schemas, output formats'
@@ -93,11 +132,13 @@ nodes:
     position:
       x: 1200
       y: 200
+    parentNode: g-implementation
     data:
       flow: impl-build-setup
       domain: build
       label: 'One-time build setup (headless, data steps optional)'
       pass_context: true
+      phase: implementation
       parameters:
         infrastructure: skip
         data_setup: optional
@@ -109,17 +150,20 @@ nodes:
     position:
       x: 2000
       y: 200
+    parentNode: g-implementation
     data:
       flow: skaileup-slice-impl
       domain: slice
       label: 'Per-feature impl loop'
       pass_context: true
+      phase: implementation
   # --- Quality (unit + integration, no E2E) ---
   - id: q-test-unit
     type: skill
     position:
       x: 3200
       y: 120
+    parentNode: g-review
     data:
       skill: impl-quality-test-unit
       label: 'Unit Tests'
@@ -130,6 +174,7 @@ nodes:
     position:
       x: 3200
       y: 280
+    parentNode: g-review
     data:
       skill: impl-quality-test-integration
       label: 'Integration Tests'

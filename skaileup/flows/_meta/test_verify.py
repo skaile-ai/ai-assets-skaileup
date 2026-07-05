@@ -104,7 +104,10 @@ def test_unresolved_skill_fails(tmp_path):
     data = yaml.safe_load(flow_path.read_text())
     # Repoint a node + its requires entry at an unresolvable skill so the only
     # failing signal is name-resolution (not a requires-coverage mismatch).
-    data["nodes"][1]["data"]["skill"] = "this-does-not-exist-anywhere"
+    # Look up by id rather than a fixed index — group nodes now precede the
+    # skill nodes in nodes:, so index 1 no longer reliably means "brief".
+    brief_node = next(n for n in data["nodes"] if n["id"] == "brief")
+    brief_node["data"]["skill"] = "this-does-not-exist-anywhere"
     data["requires"] = [
         "skill:@skaile-ai/this-does-not-exist-anywhere" if r == "skill:@skaile-ai/concept-brief" else r
         for r in data["requires"]
@@ -131,7 +134,10 @@ def test_deferred_skill_warns_only(tmp_path):
     )
     flow_path = tmp_path / "skaileup" / "flows" / "appbuilder-mvp" / "appbuilder-mvp.flow.yaml"
     data = yaml.safe_load(flow_path.read_text())
-    data["nodes"][1]["data"]["skill"] = "zz-deferred-demo"
+    # Look up by id rather than a fixed index — group nodes now precede the
+    # skill nodes in nodes:, so index 1 no longer reliably means "brief".
+    brief_node = next(n for n in data["nodes"] if n["id"] == "brief")
+    brief_node["data"]["skill"] = "zz-deferred-demo"
     # Keep requires in sync so the only signal is the deferred WARN, not a
     # requires-coverage ERROR.
     data["requires"] = [
