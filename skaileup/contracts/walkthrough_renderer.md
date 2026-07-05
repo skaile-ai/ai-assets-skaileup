@@ -12,8 +12,8 @@ kind without a coordinated update to `mockup-feedback-annotate` and a
 `schema_version` bump. `"1.0"` → `"1.2"` (this revision) is a direct,
 additive-only bump — no table, field, or warning kind was renamed or
 removed, only added (target resolution, app-shell nav, content synthesis,
-narrowed auto-slug, spec panel); the intermediate `"1.1"` was intentionally
-never cut. `mockup-feedback-annotate` pins `^1.0` and was verified
+narrowed auto-slug, spec panel); no intermediate minor revision was ever
+published. `mockup-feedback-annotate` pins `^1.0` and was verified
 compatible with this revision (see Task 9,
 `docs/devlog/2026-07-05-mockup-merged-execution-plan.md`).
 
@@ -50,13 +50,13 @@ Both forms are kept in `manifest.json` so feedback consumers can pick:
 | `input` | `<input>` or `<select>` | `options[]` present → `<select>` with one `<option>` per value; else unchanged (`name`, `aria-label`) |
 | `button` | `<button>`, or `<a class="button">` when `target:` present | label as inner text; with `target:`, resolved relative href per § Target resolution |
 | `link` | `<a>` | `href` = resolved `target:`; `href="#"` only as the unresolved/absent fallback (+ `unresolved_target` warning when declared-but-unresolved) |
-| `image` | `<img>` | unchanged (`src="#"` placeholder, `alt="<label>"`) |
+| `image` | `<img>` | unchanged (`src="#"` placeholder, `alt="<label>"`), gains: `target:` present wraps the `<img>` in an `<a href="...">` (resolved per § Target resolution); absent, unchanged |
 | `text` | `<span>` | unchanged |
 | `region` | `<section>` | unchanged (label as inner `<h3>`) |
-| `list` | `<ul>` | one `<li>` per `items[]` entry (label verbatim, `target:` wraps in `<a>`); absent/empty `items` → single placeholder `<li>` (degenerate case) |
+| `list` | `<ul>` | one `<li>` per `items[]` entry (label verbatim, `items[].target` wraps that `<li>`'s content in `<a>`); absent/empty `items` → single placeholder `<li>` (degenerate case); independently, the list element's own `target:` (distinct from `items[].target`) wraps the whole `<ul>` in an `<a href="...">`; the two are compatible and apply independently |
 | `form` | `<form>` | unchanged |
 | `nav` | `<nav>` | list of real links from `items[]` (or the generated app nav, § App-shell navigation); each item its own `data-spec-element` |
-| `tabs` | `<nav class="tabs">` | one entry per `items[]`, first item active; entries with `target:` render as resolved `<a>`, without as inert `<span class="tab">`; no JS switching (static fidelity boundary) |
+| `tabs` | `<nav class="tabs">` | one entry per `items[]`, first item active; entries with `target:` render as resolved `<a>`, without as inert `<span class="tab">`; each item its own `data-spec-element` (distinct from the tabs container's own); no JS switching (static fidelity boundary) |
 | `table` | `<table>` | `<thead>` from `columns[]`; one `<tbody>` row per `sample_rows[]` (verbatim, escaped); no `sample_rows` → header + one skeleton row; `row_target:` wraps each row's first cell in `<a>` |
 | `media` | `<figure>` | unchanged |
 | `custom` | `<div>` | unchanged, gains: `target:` present wraps content in `<a>` |
