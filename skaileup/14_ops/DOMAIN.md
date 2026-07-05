@@ -19,6 +19,7 @@ Cross-cutting skills that operate on an existing concept or implementation: heal
 - **ops-eval-concept** (`eval-concept/`) — Adversarial completeness gate; produces `_concept/eval-concept.yaml`. Run before implementation begins.
 - **ops-eval-feature** (`eval-feature/`) — Browser-based feature verifier after each feature group; produces `_implementation/eval-feature/{group}.yaml`.
 - **ops-eval-product** (`eval-product/`) — Whole-product final gate; grades quality, craft, accessibility, and mobile; produces `_implementation/eval-product.yaml`.
+- **ops-trace** (`trace/`) — Two-way traceability reconciler; asserts every feature is shipped/tested/evaluated/documented and lists orphan code; produces `_implementation/trace.yaml`.
 - **ops-project-overview** (`project-overview/`) — Generates `discovery/` in a meta-concept: ecosystem brief, goals, competitive positioning.
 - **ops-project-subsystem-map** (`project-subsystem-map/`) — Generates `2_subsystems/` in a meta-concept: subsystem index with maturity, audience, and tech stack.
 - **ops-project-integration** (`project-integration/`) — Generates `3_integration/` in a meta-concept: inter-repo architecture, deployment topology, shared contracts.
@@ -43,7 +44,7 @@ Cross-cutting skills that operate on an existing concept or implementation: heal
 Eval skills have a hard order:
 
 ```
-ops-eval-concept  →  (implementation runs)  →  ops-eval-feature (per group)  →  ops-eval-product
+ops-eval-concept  →  (implementation runs)  →  ops-eval-feature (per group)  →  ops-trace  →  ops-eval-product
 ```
 
 `ops-review` and `ops-sync` are independent and can run at any time.

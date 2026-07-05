@@ -1,0 +1,25 @@
+schema_version: 1
+generated: "2026-07-05"            # ISO date
+features:                          # one row per file under _concept/experience/features/**/
+  - feature_path: _concept/experience/features/01_user_auth/login.md
+    feature_slug: login
+    group: 01_user_auth
+    slice_ref: _implementation/slices/login/   # "" when missing
+    frozen: true                   # slice_ref dir exists AND contains index.md
+    commits: [abc1234]             # copied from feature frontmatter; [] when missing
+    source_files_count: 7          # len(feature frontmatter source_files)
+    ac_file: _implementation/acceptance_criteria/01_user_auth/login.ac.md  # "" when missing
+    ac_counts: {pass: 6, fail: 0, untested: 0}
+    eval_group_file: _implementation/eval-feature/01_user_auth.yaml        # "" when missing
+    eval_verdict: approved         # approved | needs_revision | escalate | missing
+    docs: true                     # true | false | null (null = no docs site to check)
+    status: green                  # green | amber | red
+orphans:                           # Direction 2 — advisory only
+  - src/utils/legacy.ts
+summary:
+  features_total: 1
+  green: 1
+  amber: 0
+  red: 0
+  orphans_count: 1
+overall: green                     # green | red — green iff summary.red == 0
