@@ -106,17 +106,15 @@ STOP.
 
 STEP 4: Dispatch three parallel sub-agents (scope=full only).
 
-Sub-agent A — Logic Auditor:
-Read all source files. Look for: - Null/undefined dereference without guards - Off-by-one errors in loops and array access - async/await misuse (missing await, swallowed rejections) - Missing error handling at system boundaries (API calls, file I/O, DB) - Data loss paths (update without existence check) - Race conditions in concurrent operations
+Same auditor trio as impl-quality-audit — checklists owned there:
 
-Sub-agent B — Security Auditor:
-Read all source files and dependencies. Look for: - SQL/NoSQL injection vectors - XSS vectors (unsanitized user input in HTML/DOM) - Auth bypass paths (missing auth middleware, broken RBAC) - Insecure direct object references (no ownership check) - Sensitive data in logs, responses, or localStorage - CSRF on state-changing endpoints
-Run: `bun audit` or `npm audit` or `pip-audit`
-
-Sub-agent C — UI/UX Code Auditor:
-Read frontend source files. Look for: - Interactive elements without accessible labels - Custom interactive elements missing keyboard handlers - Loading states that block UI with no feedback - Error states with no user recovery path - Unguarded form submissions (double-submit possible) - Hardcoded colors/sizes overriding design tokens
+- Sub-agent A — Logic Auditor: 13_impl-quality/03_audit/references/analysis_checklists.md § Logic & Runtime
+- Sub-agent B — Security Auditor: … § Security & Data Integrity. Also run `bun audit` or `npm audit` or `pip-audit`.
+- Sub-agent C — UI/UX Code Auditor: … § UI/UX & Accessibility
 
 All findings use severity: critical | high | medium | low
+
+Stance + generic laws for each sub-agent: contracts/evaluator.md (§ Stance, § Laws).
 
 STEP 5: Synthesize. blocking_issues = all critical and high findings.
 
