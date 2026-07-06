@@ -1240,7 +1240,7 @@ NEVER let a scaffolded component re-derive target resolution or auto-slug ids at
 - [ ] Spec body appears only inside `<details class="spec-panel">`
 - [ ] No auto-slugged label exceeds 40 chars or contains an action sentence
 - [ ] Every screen page's `<screen-view>` renders the app nav (`renderAppNav()`, `.app-nav`) with one resolvable href per entry
-- [ ] No node rendered by `screen-view.js` has `href="#"` when its underlying element/item declares a resolved `target`
+- [ ] Every node rendered by `screen-view.js` whose underlying element/item declares a resolved `target` renders a real `<a>` whose `href` resolves to an existing rendered screen file — no `href="#"` on such a node
 - [ ] `specs.json#app_nav` (and its manifest.json#app_nav[] projection) is present and every entry resolves to an existing rendered screen
 - [ ] Validator (`mockup-walkthrough/lit/validator.py`) exits 0
 
