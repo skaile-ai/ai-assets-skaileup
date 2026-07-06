@@ -39,7 +39,7 @@ from pathlib import Path
 
 # ── Pinned constants ─────────────────────────────────────────────────
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.2"
 RENDERER = "mockup-walkthrough-static-html"
 TOP_LEVEL_KEYS = {
     "schema_version",
@@ -47,6 +47,7 @@ TOP_LEVEL_KEYS = {
     "renderer_version",
     "generated_at",
     "source_root",
+    "app_nav",
     "screens",
     "journeys",
     "features",
@@ -58,6 +59,26 @@ ALLOWED_DATA_SPEC_ATTRS = {
     "data-spec-provisional",
     "data-spec-journey",
     "data-spec-index",
+}
+
+# Canonical spec-template headings (contracts/walkthrough_renderer.md §
+# Auto-slug fallback exclusion list / § Spec reference panel) — these become
+# the spec panel's own `<h2>`/`<h3>` skeleton and MUST NEVER be rendered as
+# an annotatable `el-region` widget, i.e. their slug MUST NEVER appear as a
+# `data-spec-element` value anywhere on the site.
+CANONICAL_HEADING_SLUGS = {
+    "purpose",
+    "route",
+    "what-the-user-sees",
+    "wireframe",
+    "information-displayed",
+    "actions",
+    "situations",
+    "ui-elements",
+    "template-data",
+    "navigation",
+    "layout-areas",
+    "responsive-behaviour",
 }
 
 JS_FRAMEWORK_PATTERNS = [
@@ -132,6 +153,121 @@ def collect_attr_values(
     tags: list[tuple[str, dict[str, str]]], attr: str
 ) -> list[str]:
     return [a[attr] for _, a in tags if attr in a]
+
+
+# ── Minimal DOM tree (for checks that need containment/wrapping) ─────
+#
+# The flat AttrCollector above is enough for attribute-presence checks, but
+# `check_targets` / `check_content_fidelity` need parent/child relationships
+# (e.g. "is this node wrapped by an <a>", "how many <tr> inside this
+# <table>'s <tbody>"). Stdlib-only, same spirit as AttrCollector above.
+
+VOID_TAGS = {
+    "area", "base", "br", "col", "embed", "hr", "img", "input",
+    "link", "meta", "param", "source", "track", "wbr",
+}
+
+
+class DomNode:
+    __slots__ = ("tag", "attrs", "parent", "children")
+
+    def __init__(
+        self,
+        tag: str,
+        attrs: dict[str, str],
+        parent: "DomNode | None",
+    ) -> None:
+        self.tag = tag
+        self.attrs = attrs
+        self.parent = parent
+        self.children: list["DomNode"] = []
+
+
+class DomTreeParser(HTMLParser):
+    """Builds a minimal parent/child tree of tag/attrs nodes."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.root = DomNode("#root", {}, None)
+        self._stack: list[DomNode] = [self.root]
+
+    def _open(self, tag: str, attrs: list, self_closing: bool) -> None:
+        node = DomNode(tag, dict(attrs), self._stack[-1])
+        self._stack[-1].children.append(node)
+        if not self_closing and tag not in VOID_TAGS:
+            self._stack.append(node)
+
+    def handle_starttag(self, tag: str, attrs: list) -> None:
+        self._open(tag, attrs, self_closing=False)
+
+    def handle_startendtag(self, tag: str, attrs: list) -> None:
+        self._open(tag, attrs, self_closing=True)
+
+    def handle_endtag(self, tag: str) -> None:
+        for i in range(len(self._stack) - 1, 0, -1):
+            if self._stack[i].tag == tag:
+                del self._stack[i:]
+                return
+
+
+def parse_dom(path: Path) -> DomNode:
+    parser = DomTreeParser()
+    parser.feed(path.read_text(encoding="utf-8"))
+    return parser.root
+
+
+def iter_nodes(node: DomNode):
+    yield node
+    for child in node.children:
+        yield from iter_nodes(child)
+
+
+def find_all(node: DomNode, predicate) -> list[DomNode]:
+    return [n for n in iter_nodes(node) if predicate(n)]
+
+
+def find_first(node: DomNode, predicate) -> DomNode | None:
+    for n in iter_nodes(node):
+        if predicate(n):
+            return n
+    return None
+
+
+def nearest_anchor(node: DomNode) -> DomNode | None:
+    """`node` itself if it's an `<a>`, else the nearest `<a>` ancestor."""
+    cur: DomNode | None = node
+    while cur is not None:
+        if cur.tag == "a":
+            return cur
+        cur = cur.parent
+    return None
+
+
+def has_ancestor(node: DomNode, stop_at: DomNode, predicate) -> bool:
+    """True if any ancestor strictly between `node` and `stop_at` matches."""
+    cur = node.parent
+    while cur is not None and cur is not stop_at:
+        if predicate(cur):
+            return True
+        cur = cur.parent
+    return False
+
+
+def resolve_href(page_path: Path, href: str) -> Path:
+    """Resolve `href` (as rendered on `page_path`) to a filesystem path."""
+    href = href.split("#", 1)[0]
+    return (page_path.parent / href).resolve()
+
+
+def has_relative_anchor(nav: DomNode) -> bool:
+    for a in find_all(nav, lambda n: n.tag == "a" and "href" in n.attrs):
+        href = a.attrs["href"]
+        if not href or href == "#":
+            continue
+        if re.match(r"^([a-zA-Z][a-zA-Z0-9+.-]*:)?//", href) or href.startswith("/"):
+            continue
+        return True
+    return False
 
 
 # ── Structural checks ────────────────────────────────────────────────
@@ -306,6 +442,390 @@ def check_zero_build(html_path: Path, report: Report) -> None:
             return
 
 
+# ── Target resolution (contracts/walkthrough_renderer.md § Target
+# resolution, § App-shell navigation) ─────────────────────────────────
+
+
+def _check_single_target(
+    *,
+    where: str,
+    target: str,
+    screen_path: str,
+    elem_id: str,
+    screen_id_set: set[str],
+    unresolved_warnings: set[tuple[str | None, str | None]],
+    node: DomNode | None,
+    rendered_path: Path,
+    report: Report,
+) -> None:
+    target_stem = target.split("#", 1)[0]
+    resolves = target_stem in screen_id_set
+
+    if node is None:
+        report.add(
+            where,
+            f'data-spec-element="{elem_id}" not found in rendered HTML '
+            f"(target={target!r})",
+        )
+        return
+
+    anchor = nearest_anchor(node)
+
+    if resolves:
+        if anchor is None:
+            report.add(
+                where,
+                f"target {target!r} resolves but no <a> found on/wrapping "
+                f'data-spec-element="{elem_id}"',
+            )
+            return
+        href = anchor.attrs.get("href", "")
+        if href == "#":
+            report.add(
+                where,
+                f'target {target!r} resolves but rendered href="#"',
+            )
+            return
+        resolved_path = resolve_href(rendered_path, href)
+        if not resolved_path.exists():
+            report.add(
+                where,
+                f"resolved href {href!r} does not point to an existing "
+                f"file ({resolved_path})",
+            )
+    else:
+        if (screen_path, elem_id) not in unresolved_warnings:
+            report.add(
+                where,
+                f"target {target!r} does not resolve against the rendered "
+                "screen_id set, and no matching unresolved_target warning "
+                "was found",
+            )
+        if anchor is not None and anchor.attrs.get("href", "") != "#":
+            report.add(
+                where,
+                f"target {target!r} is unresolved but rendered "
+                f"href={anchor.attrs.get('href')!r} (expected \"#\")",
+            )
+
+
+def _check_row_target(
+    *,
+    rendered_path: Path,
+    dom: DomNode,
+    elem_id: str,
+    row_target: str,
+    screen_path: str,
+    screen_id_set: set[str],
+    unresolved_warnings: set[tuple[str | None, str | None]],
+    report: Report,
+) -> None:
+    where = f"{rendered_path} element={elem_id!r}"
+    target_stem = row_target.split("#", 1)[0]
+    resolves = target_stem in screen_id_set
+
+    table = find_first(
+        dom,
+        lambda n, eid=elem_id: n.tag == "table"
+        and n.attrs.get("data-spec-element") == eid,
+    )
+    if table is None:
+        report.add(
+            where, f'row_target check: <table data-spec-element="{elem_id}"> not found'
+        )
+        return
+
+    rows = find_all(table, lambda n: n.tag == "tr")
+    body_rows = [
+        r for r in rows if not has_ancestor(r, table, lambda n: n.tag == "thead")
+    ]
+    if not body_rows:
+        return  # no data rows to check (e.g. skeleton-row edge case)
+
+    for row in body_rows:
+        first_cell = next((c for c in row.children if c.tag == "td"), None)
+        if first_cell is None:
+            continue
+        anchor = find_first(first_cell, lambda n: n.tag == "a")
+
+        if resolves:
+            if anchor is None:
+                report.add(
+                    where,
+                    f"row_target {row_target!r} resolves but no <a> in "
+                    "row's first cell",
+                )
+                continue
+            href = anchor.attrs.get("href", "")
+            if href == "#":
+                report.add(
+                    where,
+                    f'row_target {row_target!r} resolves but rendered href="#"',
+                )
+                continue
+            resolved_path = resolve_href(rendered_path, href)
+            if not resolved_path.exists():
+                report.add(
+                    where,
+                    f"row_target resolved href {href!r} does not point to "
+                    f"an existing file ({resolved_path})",
+                )
+        else:
+            if (screen_path, elem_id) not in unresolved_warnings:
+                report.add(
+                    where,
+                    f"row_target {row_target!r} does not resolve, and no "
+                    "matching unresolved_target warning was found",
+                )
+            if anchor is not None and anchor.attrs.get("href", "") != "#":
+                report.add(
+                    where,
+                    f"row_target unresolved but rendered "
+                    f"href={anchor.attrs.get('href')!r} (expected \"#\")",
+                )
+
+
+def check_targets(site: Path, manifest: dict, report: Report) -> None:
+    screens = manifest.get("screens", [])
+    screen_id_set = {s.get("screen_id", "") for s in screens}
+
+    unresolved_warnings = {
+        (w.get("screen_path"), w.get("element_id"))
+        for w in manifest.get("warnings", [])
+        if w.get("kind") == "unresolved_target"
+    }
+
+    dom_cache: dict[str, DomNode | None] = {}
+
+    def get_dom(rendered_rel: str) -> DomNode | None:
+        if rendered_rel not in dom_cache:
+            p = site / rendered_rel
+            dom_cache[rendered_rel] = parse_dom(p) if p.exists() else None
+        return dom_cache[rendered_rel]
+
+    for screen in screens:
+        screen_path = screen.get("screen_path", "")
+        rendered_rel = screen.get("rendered_html", "")
+        rendered_path = site / rendered_rel
+        dom = get_dom(rendered_rel)
+        if dom is None:
+            continue  # already reported missing by check_screens
+
+        for elem in screen.get("elements", []):
+            elem_id = elem.get("element_id", "")
+
+            target = elem.get("target")
+            if target is not None:
+                node = find_first(
+                    dom,
+                    lambda n, eid=elem_id: n.attrs.get("data-spec-element") == eid,
+                )
+                _check_single_target(
+                    where=f"{rendered_path} element={elem_id!r}",
+                    target=target,
+                    screen_path=screen_path,
+                    elem_id=elem_id,
+                    screen_id_set=screen_id_set,
+                    unresolved_warnings=unresolved_warnings,
+                    node=node,
+                    rendered_path=rendered_path,
+                    report=report,
+                )
+
+            row_target = elem.get("row_target")
+            if row_target is not None:
+                _check_row_target(
+                    rendered_path=rendered_path,
+                    dom=dom,
+                    elem_id=elem_id,
+                    row_target=row_target,
+                    screen_path=screen_path,
+                    screen_id_set=screen_id_set,
+                    unresolved_warnings=unresolved_warnings,
+                    report=report,
+                )
+
+        # Every screen page MUST carry the app-shell nav: a <nav
+        # class="app-nav"> with at least one relative-href <a>.
+        app_navs = find_all(
+            dom,
+            lambda n: n.tag == "nav" and "app-nav" in n.attrs.get("class", "").split(),
+        )
+        if not app_navs or not any(has_relative_anchor(n) for n in app_navs):
+            report.add(
+                str(rendered_path),
+                'expected >= 1 <nav class="app-nav"> containing a '
+                "relative-href <a> (§ App-shell navigation)",
+            )
+
+    # app_nav[] entries must each resolve to an existing rendered file.
+    # (§ App-shell navigation: the resolved href is identical from any
+    # screen/<group>/<name>.html page, since they all sit at the same depth
+    # — use the first rendered screen as the reference page.)
+    if screens:
+        ref_rendered = site / screens[0].get("rendered_html", "")
+        for i, entry in enumerate(manifest.get("app_nav", [])):
+            target = entry.get("target", "")
+            label = entry.get("label", "")
+            resolved_path = resolve_href(ref_rendered, target)
+            if not resolved_path.exists():
+                report.add(
+                    "manifest.json app_nav",
+                    f"app_nav[{i}] label={label!r} target={target!r} does "
+                    f"not resolve to an existing file ({resolved_path})",
+                )
+
+
+# ── Content fidelity (contracts/walkthrough_renderer.md § kind → DOM tag
+# mapping, § Spec reference panel, § Auto-slug fallback exclusion list) ──
+
+
+def check_content_fidelity(site: Path, manifest: dict, report: Report) -> None:
+    all_data_spec_element_values: set[str] = set()
+
+    for screen in manifest.get("screens", []):
+        screen_path = screen.get("screen_path", "")
+        rendered_rel = screen.get("rendered_html", "")
+        rendered_path = site / rendered_rel
+        if not rendered_path.exists():
+            continue  # already reported missing by check_screens
+
+        dom = parse_dom(rendered_path)
+        tags = parse_html(rendered_path)
+        elements = screen.get("elements", [])
+        non_provisional = [e for e in elements if not e.get("provisional")]
+
+        for elem in elements:
+            elem_id = elem.get("element_id", "")
+            where = f"{rendered_path} element={elem_id!r}"
+
+            sample_rows = elem.get("sample_rows")
+            if sample_rows is not None:
+                table = find_first(
+                    dom,
+                    lambda n, eid=elem_id: n.tag == "table"
+                    and n.attrs.get("data-spec-element") == eid,
+                )
+                if table is None:
+                    report.add(where, "sample_rows declared but <table> not found")
+                else:
+                    tbody = find_first(table, lambda n: n.tag == "tbody")
+                    if tbody is None:
+                        report.add(where, "sample_rows declared but <tbody> not found")
+                    else:
+                        tr_count = len(find_all(tbody, lambda n: n.tag == "tr"))
+                        if tr_count != len(sample_rows):
+                            report.add(
+                                where,
+                                f"<tbody> has {tr_count} <tr> but manifest "
+                                f"declares {len(sample_rows)} sample_rows",
+                            )
+
+            items = elem.get("items")
+            if items is not None:
+                kind = elem.get("kind", "")
+                container = find_first(
+                    dom,
+                    lambda n, eid=elem_id: n.attrs.get("data-spec-element") == eid
+                    and n.tag in ("ul", "nav"),
+                )
+                if container is None:
+                    report.add(
+                        where,
+                        f"items declared (kind={kind!r}) but container node not found",
+                    )
+                else:
+                    if kind == "list":
+                        entries = [c for c in container.children if c.tag == "li"]
+                    elif kind == "tabs":
+                        entries = [
+                            c
+                            for c in container.children
+                            if c.tag in ("a", "span")
+                            and "tab" in c.attrs.get("class", "").split()
+                        ]
+                    else:
+                        # `nav` (shell-authoritative or explicit) — one
+                        # <li>/<a> per item, same shape as the generated
+                        # default app nav.
+                        entries = [
+                            c for c in container.children if c.tag in ("li", "a")
+                        ]
+                    if len(entries) != len(items):
+                        report.add(
+                            where,
+                            f"rendered {len(entries)} item entries but "
+                            f"manifest declares {len(items)} items "
+                            f"(kind={kind!r})",
+                        )
+
+            options = elem.get("options")
+            if options is not None:
+                select = find_first(
+                    dom,
+                    lambda n, eid=elem_id: n.tag == "select"
+                    and n.attrs.get("data-spec-element") == eid,
+                )
+                if select is None:
+                    report.add(where, "options declared but <select> not found")
+                else:
+                    opt_count = len(find_all(select, lambda n: n.tag == "option"))
+                    if opt_count != len(options):
+                        report.add(
+                            where,
+                            f"<select> has {opt_count} <option> but manifest "
+                            f"declares {len(options)} options",
+                        )
+
+        all_data_spec_element_values.update(
+            collect_attr_values(tags, "data-spec-element")
+        )
+
+        spec_panels = [
+            (t, a) for t, a in tags if t == "details" and a.get("class") == "spec-panel"
+        ]
+        if len(spec_panels) != 1:
+            report.add(
+                str(rendered_path),
+                f'expected exactly one <details class="spec-panel">, '
+                f"found {len(spec_panels)}",
+            )
+
+        prose_sections = [
+            (t, a)
+            for t, a in tags
+            if t == "section"
+            and "screen-body-prose" in a.get("class", "").split()
+        ]
+        if prose_sections:
+            report.add(
+                str(rendered_path),
+                'found disallowed <section class="screen-body-prose"> '
+                "(spec body MUST render only inside the spec panel)",
+            )
+
+        if not non_provisional:
+            has_warning = any(
+                w.get("kind") == "no_explicit_elements"
+                and w.get("screen_path") == screen_path
+                for w in manifest.get("warnings", [])
+            )
+            if not has_warning:
+                report.add(
+                    str(rendered_path),
+                    f"screen {screen_path!r} has zero non-provisional "
+                    "elements but no matching no_explicit_elements warning",
+                )
+
+    leaked = all_data_spec_element_values & CANONICAL_HEADING_SLUGS
+    if leaked:
+        report.add(
+            str(site),
+            "canonical spec-template heading slug(s) rendered as "
+            f"data-spec-element somewhere in the site: {sorted(leaked)}",
+        )
+
+
 # ── Fixture mode (snapshot diff) ─────────────────────────────────────
 
 
@@ -417,6 +937,8 @@ def main() -> None:
             for s in manifest.get("screens", [])
         }
         check_journeys(site, manifest, screen_id_set, report)
+        check_targets(site, manifest, report)
+        check_content_fidelity(site, manifest, report)
 
     if args.fixture:
         # Expected snapshot lives at
