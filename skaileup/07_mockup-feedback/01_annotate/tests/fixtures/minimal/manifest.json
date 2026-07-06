@@ -1,9 +1,21 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.2",
   "renderer": "mockup-walkthrough-static-html",
-  "renderer_version": "0.1.0",
+  "renderer_version": "0.2.0",
   "generated_at": "<pinned>",
   "source_root": "experience/screens",
+  "app_nav": [
+    {
+      "label": "login",
+      "target": "screen/00_auth/login.html",
+      "source": "derived"
+    },
+    {
+      "label": "register",
+      "target": "screen/00_auth/register.html",
+      "source": "derived"
+    }
+  ],
   "screens": [
     {
       "screen_path": "experience/screens/00_auth/login.md",
@@ -53,6 +65,54 @@
           ],
           "provisional": false,
           "source_anchor": "experience/screens/00_auth/login.md#elements/submit-button"
+        },
+        {
+          "element_id": "go-register",
+          "kind": "link",
+          "label": "Create an account",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "target": "00_auth/register",
+          "source_anchor": "experience/screens/00_auth/login.md#elements/go-register"
+        },
+        {
+          "element_id": "recent-signins",
+          "kind": "table",
+          "label": "Recent sign-ins",
+          "states": [
+            "default",
+            "loading",
+            "empty"
+          ],
+          "provisional": false,
+          "columns": [
+            "Name",
+            "Email",
+            "Last sign-in"
+          ],
+          "sample_rows": [
+            ["Lena M.", "lena@example.com", "2026-07-05"],
+            ["Tom B.", "tom@example.com", "2026-07-04"]
+          ],
+          "row_target": "00_auth/register",
+          "source_anchor": "experience/screens/00_auth/login.md#elements/recent-signins"
+        },
+        {
+          "element_id": "filter-role",
+          "kind": "input",
+          "label": "Role",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "options": [
+            "All",
+            "Admin",
+            "User"
+          ],
+          "source_anchor": "experience/screens/00_auth/login.md#elements/filter-role"
         }
       ]
     },
@@ -68,6 +128,45 @@
       ],
       "layout": "experience/screens/00_layout/shell.md",
       "elements": [
+        {
+          "element_id": "go-login",
+          "kind": "link",
+          "label": "Sign in instead",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "target": "00_auth/login",
+          "source_anchor": "experience/screens/00_auth/register.md#elements/go-login"
+        },
+        {
+          "element_id": "account-type-tabs",
+          "kind": "tabs",
+          "label": "Account type",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "items": [
+            {"label": "Personal"},
+            {"label": "Business"}
+          ],
+          "source_anchor": "experience/screens/00_auth/register.md#elements/account-type-tabs"
+        },
+        {
+          "element_id": "signup-benefits",
+          "kind": "list",
+          "label": "Why join",
+          "states": [
+            "default"
+          ],
+          "provisional": false,
+          "items": [
+            {"label": "See your login screen", "target": "00_auth/login"},
+            "Get onboarding tips"
+          ],
+          "source_anchor": "experience/screens/00_auth/register.md#elements/signup-benefits"
+        },
         {
           "element_id": "email",
           "kind": "text",
@@ -124,20 +223,49 @@
     {
       "kind": "auto_slugged",
       "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "personal",
+      "message": "No id: for this tabs items[] entry in screen frontmatter; auto-slugged from its label (scoped to account-type-tabs)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "business",
+      "message": "No id: for this tabs items[] entry in screen frontmatter; auto-slugged from its label (scoped to account-type-tabs)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "see-your-login-screen",
+      "message": "No id: for this list items[] entry in screen frontmatter; auto-slugged from its label (scoped to signup-benefits)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
+      "element_id": "get-onboarding-tips",
+      "message": "No id: for this list items[] entry in screen frontmatter; auto-slugged from its label (scoped to signup-benefits)."
+    },
+    {
+      "kind": "auto_slugged",
+      "screen_path": "experience/screens/00_auth/register.md",
       "element_id": "email",
-      "message": "No elements: block in screen frontmatter; auto-slugged from heading."
+      "message": "No elements: entry for this widget in screen frontmatter; auto-slugged from heading."
     },
     {
       "kind": "auto_slugged",
       "screen_path": "experience/screens/00_auth/register.md",
       "element_id": "password",
-      "message": "No elements: block in screen frontmatter; auto-slugged from heading."
+      "message": "No elements: entry for this widget in screen frontmatter; auto-slugged from heading."
     },
     {
       "kind": "auto_slugged",
       "screen_path": "experience/screens/00_auth/register.md",
       "element_id": "create-account",
-      "message": "No elements: block in screen frontmatter; auto-slugged from heading."
+      "message": "No elements: entry for this widget in screen frontmatter; auto-slugged from heading."
+    },
+    {
+      "kind": "auto_slugged",
+      "element_id": "app-nav",
+      "message": "No shell nav declared in 00_layout/shell.md (file absent); derived a default app nav from 2 rendered screens grouped by directory."
     }
   ]
 }
