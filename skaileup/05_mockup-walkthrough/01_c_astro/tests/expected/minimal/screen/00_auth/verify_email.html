@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Screen: Verify Email</title>
+<link rel="stylesheet" href="/_astro/style.css">
+</head>
+<body data-spec-screen="00_auth/verify_email" class="bg-white text-gray-900 font-sans p-4">
+<nav class="app-nav" data-spec-element="app-nav" data-spec-provisional="true">
+<div class="nav-group">
+<span class="nav-group-label">auth</span>
+<ul class="flex gap-4 list-none p-0">
+<li><a href="/screen/00_auth/login" data-spec-element="app-nav-1" data-spec-provisional="true">login</a></li>
+<li><a href="/screen/00_auth/register" data-spec-element="app-nav-2" data-spec-provisional="true">register</a></li>
+<li><a href="/screen/00_auth/verify_email" data-spec-element="app-nav-3" data-spec-provisional="true">verify email</a></li>
+</ul>
+</div>
+</nav>
+<h1 class="text-2xl font-bold mb-4">Screen: Verify Email</h1>
+<main class="space-y-4">
+</main>
+<details class="spec-panel mt-4 border rounded p-2" open>
+<summary class="cursor-pointer font-semibold">View spec</summary>
+<h3>Purpose</h3>
+<p>The user understands their account is not yet active until they confirm the email address it was created with.</p>
+<h3>Route</h3>
+<p><code>/verify-email</code></p>
+<h3>What the User Sees</h3>
+<p>A short confirmation message stating that a verification email was sent, plus the address it was sent to. There is no form to fill in on this screen.</p>
+<h3>Wireframe</h3>
+<pre><code>┌─────────────────────────────────────────────┐
+│ [=] App Name              [search] [avatar] │
+├────────────┬────────────────────────────────┤
+│ Nav Item 1 │  Verify your email             │
+│ Nav Item 2 │ ┌────────────────────────────┐ │
+│ Nav Item 3 │ │  Confirmation message      │ │
+│            │ │                            │ │
+│            │ └────────────────────────────┘ │
+└────────────┴────────────────────────────────┘
+</code></pre>
+<h3>Information Displayed</h3>
+<p>The address the verification email was sent to, and the time it was sent.</p>
+<h3>Actions</h3>
+<p>This screen is not yet interactive. No elements: block has been authored for it, so it has no declared actions.</p>
+<h3>Situations</h3>
+<ul>
+<li><strong>Default</strong> — the confirmation message is shown</li>
+<li><strong>Loading</strong> — while the resend request is in flight</li>
+</ul>
+<h3>UI Elements</h3>
+<p>This screen has not yet had its functional elements catalogued.</p>
+<h3>Template Data</h3>
+<p>Not applicable — no seed.json scenario exists for this screen yet.</p>
+</details>
+<section class="mt-8 text-sm text-gray-500">
+<p>Journeys: none</p>
+</section>
+<footer class="mt-8 text-sm text-gray-500"><a href="/">← Back to index</a></footer>
+</body>
+</html>

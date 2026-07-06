@@ -6,8 +6,45 @@
 <link rel="stylesheet" href="/_astro/style.css">
 </head>
 <body data-spec-screen="00_auth/register" class="bg-white text-gray-900 font-sans p-4">
-<h1>Register</h1>
-<main></main>
-<footer><a href="/">← Back to index</a></footer>
+<nav class="app-nav" data-spec-element="app-nav" data-spec-provisional="true">
+<div class="nav-group">
+<span class="nav-group-label">auth</span>
+<ul class="flex gap-4 list-none p-0">
+<li><a href="/screen/00_auth/login" data-spec-element="app-nav-1" data-spec-provisional="true">login</a></li>
+<li><a href="/screen/00_auth/register" data-spec-element="app-nav-2" data-spec-provisional="true">register</a></li>
+<li><a href="/screen/00_auth/verify_email" data-spec-element="app-nav-3" data-spec-provisional="true">verify email</a></li>
+</ul>
+</div>
+</nav>
+<h1 class="text-2xl font-bold mb-4">Register</h1>
+<main class="space-y-4">
+<div><a href="/screen/00_auth/login" data-spec-element="go-login" class="text-blue-600 underline">Sign in instead</a></div>
+<div>
+<nav class="tabs flex gap-2 border-b" data-spec-element="account-type-tabs">
+<span class="tab active" data-spec-element="personal" data-spec-provisional="true">Personal</span>
+<span class="tab" data-spec-element="business" data-spec-provisional="true">Business</span>
+</nav>
+</div>
+<div>
+<ul data-spec-element="signup-benefits" class="list-disc pl-6">
+<li data-spec-element="see-your-login-screen" data-spec-provisional="true"><a href="/screen/00_auth/login">See your login screen</a></li>
+<li data-spec-element="get-onboarding-tips" data-spec-provisional="true">Get onboarding tips</li>
+</ul>
+</div>
+<div><a href="#" data-spec-element="learn-more" class="text-blue-600 underline">Learn more about business accounts</a></div>
+</main>
+<section class="mt-4 space-y-2">
+<div><span data-spec-element="email" data-spec-provisional="true">Email</span></div>
+<div><span data-spec-element="password" data-spec-provisional="true">Password</span></div>
+<div><span data-spec-element="create-account" data-spec-provisional="true">Create account</span></div>
+</section>
+<details class="spec-panel mt-4 border rounded p-2">
+<summary class="cursor-pointer font-semibold">View spec</summary>
+<p>A new user creates an account.</p>
+</details>
+<section class="mt-8 text-sm text-gray-500">
+<p>Journeys: none</p>
+</section>
+<footer class="mt-8 text-sm text-gray-500"><a href="/">← Back to index</a></footer>
 </body>
 </html>
