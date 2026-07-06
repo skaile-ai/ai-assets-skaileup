@@ -414,6 +414,7 @@ READS
   ? experience/features/**/*.md       — feature traceability (soft)
   ? experience/screens/00_layout/shell.md — shared layout reference (soft)
   ? _concept/mockup-walkthrough/framework/package.json — mode detection
+  ? _concept/mockup-walkthrough/framework/<screen route> — stale_scaffold check (update mode only); resolved from target_framework: src/app/screen/[...slug]/page.tsx (Next.js) | pages/screen/[...slug].vue (Nuxt) | src/routes/screen/[...slug]/+page.svelte (SvelteKit)
 
 WRITES
   _concept/mockup-walkthrough/framework/<data>/specs.json        (every run)
