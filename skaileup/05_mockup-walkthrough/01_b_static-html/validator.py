@@ -243,6 +243,20 @@ def nearest_anchor(node: DomNode) -> DomNode | None:
     return None
 
 
+def find_descendant_or_self_anchor(node: DomNode) -> DomNode | None:
+    """`node` itself if it's an `<a>`, else the first `<a>` among its
+    descendants (self-inclusive top-down search via `find_first`).
+
+    Mirror-image of `nearest_anchor` (which walks *up* to find a wrapping
+    `<a>`). `items[]` entries need the opposite direction: per
+    `contracts/walkthrough_renderer.md` § kind → DOM tag mapping, a list
+    `<li>` (or nav/tabs entry) carries its own `data-spec-element`, and
+    `items[].target` "wraps that `<li>`'s content in `<a>`" — i.e. the link
+    is a *child* of the entry node, not an ancestor of it.
+    """
+    return find_first(node, lambda n: n.tag == "a")
+
+
 def has_ancestor(node: DomNode, stop_at: DomNode, predicate) -> bool:
     """True if any ancestor strictly between `node` and `stop_at` matches."""
     cur = node.parent
@@ -457,6 +471,7 @@ def _check_single_target(
     node: DomNode | None,
     rendered_path: Path,
     report: Report,
+    anchor_finder=nearest_anchor,
 ) -> None:
     target_stem = target.split("#", 1)[0]
     resolves = target_stem in screen_id_set
@@ -469,7 +484,7 @@ def _check_single_target(
         )
         return
 
-    anchor = nearest_anchor(node)
+    anchor = anchor_finder(node)
 
     if resolves:
         if anchor is None:
@@ -585,6 +600,91 @@ def _check_row_target(
                 )
 
 
+def _item_entries(container: DomNode, kind: str) -> list[DomNode]:
+    """Per-`items[]`-entry DOM nodes for a `nav`/`tabs`/`list` container, in
+    `items[]` order — shared by `check_content_fidelity` (entry-count check)
+    and `_check_item_targets` (per-entry `items[].target` resolution).
+    """
+    if kind == "list":
+        return [c for c in container.children if c.tag == "li"]
+    if kind == "tabs":
+        return [
+            c
+            for c in container.children
+            if c.tag in ("a", "span") and "tab" in c.attrs.get("class", "").split()
+        ]
+    # `nav` (shell-authoritative or explicit) — one <li>/<a> per item, same
+    # shape as the generated default app nav.
+    return [c for c in container.children if c.tag in ("li", "a")]
+
+
+def _check_item_targets(
+    *,
+    rendered_path: Path,
+    dom: DomNode,
+    elem: dict,
+    screen_path: str,
+    screen_id_set: set[str],
+    unresolved_warnings: set[tuple[str | None, str | None]],
+    report: Report,
+) -> None:
+    """Validate `items[].target` on a `nav`/`tabs`/`list` element — the
+    per-entry destination distinct from the element's own `target`/
+    `row_target` (contracts/elements_block.md § Navigation targets;
+    contracts/walkthrough_renderer.md § Target resolution names `items[]`
+    entries alongside `target`/`row_target` as needing the identical
+    resolution treatment).
+    """
+    items = elem.get("items")
+    if not items:
+        return
+
+    elem_id = elem.get("element_id", "")
+    kind = elem.get("kind", "")
+    container = find_first(
+        dom,
+        lambda n, eid=elem_id: n.attrs.get("data-spec-element") == eid
+        and n.tag in ("ul", "nav"),
+    )
+    if container is None:
+        return  # missing container already reported by check_content_fidelity
+
+    entries = _item_entries(container, kind)
+
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            continue  # bare-string list item — no target field possible
+        target = item.get("target")
+        if target is None:
+            continue  # legal + inert, same as an untargeted button
+
+        entry = entries[i] if i < len(entries) else None
+        if entry is None:
+            report.add(
+                f"{rendered_path} element={elem_id!r}",
+                f"items[{i}] target={target!r} declared but no matching "
+                f"rendered entry (kind={kind!r})",
+            )
+            continue
+
+        # The entry's own `data-spec-element` IS the item's resolved
+        # element id (explicit `id` or auto-slugged-from-label) — read it
+        # off the DOM rather than re-deriving the auto-slug algorithm.
+        item_elem_id = entry.attrs.get("data-spec-element", "")
+        _check_single_target(
+            where=f"{rendered_path} element={elem_id!r} items[{i}]={item_elem_id!r}",
+            target=target,
+            screen_path=screen_path,
+            elem_id=item_elem_id,
+            screen_id_set=screen_id_set,
+            unresolved_warnings=unresolved_warnings,
+            node=entry,
+            rendered_path=rendered_path,
+            report=report,
+            anchor_finder=find_descendant_or_self_anchor,
+        )
+
+
 def check_targets(site: Path, manifest: dict, report: Report) -> None:
     screens = manifest.get("screens", [])
     screen_id_set = {s.get("screen_id", "") for s in screens}
@@ -644,6 +744,16 @@ def check_targets(site: Path, manifest: dict, report: Report) -> None:
                     unresolved_warnings=unresolved_warnings,
                     report=report,
                 )
+
+            _check_item_targets(
+                rendered_path=rendered_path,
+                dom=dom,
+                elem=elem,
+                screen_path=screen_path,
+                screen_id_set=screen_id_set,
+                unresolved_warnings=unresolved_warnings,
+                report=report,
+            )
 
         # Every screen page MUST carry the app-shell nav: a <nav
         # class="app-nav"> with at least one relative-href <a>.
@@ -735,22 +845,7 @@ def check_content_fidelity(site: Path, manifest: dict, report: Report) -> None:
                         f"items declared (kind={kind!r}) but container node not found",
                     )
                 else:
-                    if kind == "list":
-                        entries = [c for c in container.children if c.tag == "li"]
-                    elif kind == "tabs":
-                        entries = [
-                            c
-                            for c in container.children
-                            if c.tag in ("a", "span")
-                            and "tab" in c.attrs.get("class", "").split()
-                        ]
-                    else:
-                        # `nav` (shell-authoritative or explicit) — one
-                        # <li>/<a> per item, same shape as the generated
-                        # default app nav.
-                        entries = [
-                            c for c in container.children if c.tag in ("li", "a")
-                        ]
+                    entries = _item_entries(container, kind)
                     if len(entries) != len(items):
                         report.add(
                             where,
