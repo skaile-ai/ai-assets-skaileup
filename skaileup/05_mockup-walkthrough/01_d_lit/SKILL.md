@@ -239,7 +239,7 @@ interpolates.
         "items": [
           {
             "label": "login",
-            "href": "screen/01_user_auth/login.html",
+            "href": "../01_user_auth/login.html",
             "element_id": "app-nav-1",
             "provisional": true
           }
@@ -267,7 +267,7 @@ interpolates.
             "items": [
               {
                 "label": "login",
-                "href": "screen/01_user_auth/login.html",
+                "href": "../01_user_auth/login.html",
                 "element_id": "app-nav-1",
                 "provisional": true
               }
@@ -1239,6 +1239,9 @@ NEVER let a scaffolded component re-derive target resolution or auto-slug ids at
 - [ ] Every declared table renders `sample_rows` verbatim as `<tbody>` rows
 - [ ] Spec body appears only inside `<details class="spec-panel">`
 - [ ] No auto-slugged label exceeds 40 chars or contains an action sentence
+- [ ] Every screen page's `<screen-view>` renders the app nav (`renderAppNav()`, `.app-nav`) with one resolvable href per entry
+- [ ] No node rendered by `screen-view.js` has `href="#"` when its underlying element/item declares a resolved `target`
+- [ ] `specs.json#app_nav` (and its manifest.json#app_nav[] projection) is present and every entry resolves to an existing rendered screen
 - [ ] Validator (`mockup-walkthrough/lit/validator.py`) exits 0
 
 EMIT  [mockup-walkthrough-lit] started run_id=<uuid>
