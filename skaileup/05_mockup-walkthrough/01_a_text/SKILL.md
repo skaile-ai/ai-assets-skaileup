@@ -61,6 +61,16 @@ metadata:
 
 # Concept Mock — Linked Multi-Page Prototype
 
+> **DIVERGENCE NOTE (2026-07-05):** This skill predates the
+> `contracts/walkthrough_renderer.md` contract and does not implement it — it
+> does not parse a screen's `elements:` block, emit `data-spec-*` attributes,
+> or produce a `warnings[]`/manifest surface like the other four
+> `05_mockup-walkthrough` renderers. Per `docs/devlog/mockup-design.md` § 4,
+> this tier's intended shape is `none` build / **read-only** interactivity —
+> a lighter-weight prototype than the contract-following siblings, not a
+> non-compliant one. Full realignment onto the walkthrough-renderer contract
+> is a separate backlog item, not in scope here.
+
 ## Overview
 
 The **mock** skill generates a **linked, navigable prototype** — not isolated
@@ -246,6 +256,11 @@ For each screen in `experience/screens/`, generate an HTML file. Each screen pag
 
 - **Includes the shared shell** (sidebar, header) with current page highlighted
 - **Links to other screens** via real `<a href>` tags (working navigation!)
+- **If the screen's `elements:` block declares a `target:` (v0.3 field,
+  `contracts/elements_block.md`):** render the label `→ opens: <screen_id>`
+  next to that element's link, using the declared `target` as the label
+  source — not a guess from prose. This link already exists as a real
+  `<a href>` per the constraint above; the label is additive annotation only.
 - **Renders seed data** with stack-appropriate binding
 - **Handles states**: empty, populated, edge_cases (toggle via scenario switcher)
 - **Interactive elements**: modals, tabs, dropdowns using stack components
