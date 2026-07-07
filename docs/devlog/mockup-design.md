@@ -124,6 +124,25 @@ output = a routed site at _concept/mockup-walkthrough/<tier>/
 | `mockup-walkthrough-astro` | yes | islands, full nav | **standard-app default** |
 | `mockup-walkthrough-framework` | yes | stack-native | complex-app |
 
+> **2026-07-05 note (mockup content-fidelity + navigation merge).**
+> `static-html`'s "clickable, no state" cell above used to be aspirational
+> prose; it's now a concrete mechanism shared by every tier —
+> `target:`/`items:` resolution (`skaileup/contracts/elements_block.md` §
+> Navigation targets) plus the generated app-shell nav
+> (`skaileup/contracts/walkthrough_renderer.md` § App-shell navigation) make
+> every declared link/button/nav/tabs/list entry a real, resolvable `<a>`
+> across all five renderers. Likewise, **content presence** — a `table`
+> rendering its `columns`/`sample_rows`, a `tabs`/`nav`/`list` rendering its
+> `items` — is now uniform across every tier that follows the `elements:`
+> contract (`elements_block.md` § Content fidelity): a `static-html` table
+> and an `astro` table render the identical declared rows. What the
+> **Interactivity** column above still differentiates is *state simulation
+> depth* — JS-driven tab switching, sortable/filterable tables, live
+> selects, the `lit`/`astro`/`framework` tiers' fidelity job — not whether
+> real tables/tabs/lists/nav show up at all. See the Non-goals list in
+> `docs/devlog/2026-07-05-mockup-merged-execution-plan.md` for the exact
+> boundary (no client-side state simulation, no conditional/role-based nav).
+
 Swapping fidelity = swap the renderer skill. The contract is identical, so
 no other artifacts need to change.
 
@@ -291,9 +310,22 @@ elements:                                  # NEW — optional
     kind: button
     label: "Sign in"
     states: [default, loading, disabled, error]
+    target: 02_dashboard/home                # NEW (v0.3) — resolves to a real href
+  - id: recent-logins
+    kind: table
+    label: "Recent sign-ins"
+    states: [default]
+    columns: ["Device", "Location", "Time"]    # NEW (v0.3) — required for kind: table
+    sample_rows:                               # authored fixture — never renderer-invented
+      - ["Chrome / Mac", "Berlin, DE", "2026-05-06 09:14"]
 last_updated: 2026-05-06
 ---
 ```
+
+`target:` and `kind: table` (with `columns`/`sample_rows`) are v0.3 additions
+— see `skaileup/contracts/elements_block.md` for the full schema, the
+navigation-target resolution rule, and the content-fidelity rules for
+`table`/`tabs`/`nav`/`list`.
 
 Walkthrough renderers MUST emit:
 - `data-spec-screen="<screen-path>"` on screen root

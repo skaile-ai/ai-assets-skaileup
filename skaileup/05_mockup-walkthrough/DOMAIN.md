@@ -43,6 +43,8 @@ appbuilder-complex tier   → mockup-walkthrough-framework  (stack-native; stati
 
 All renderers share the same output contract; `manifest.json` is consumed by `mockup-feedback-annotate` in the next cluster phase.
 
+Screens are synthesized from the `elements:` block as one pass, not two — interaction fields (`target`, `items`) and content fields (`columns`/`sample_rows`, `tabs`/`nav`/`list` `items`) render together, so a screen's nav, tables, and tabs come from the same source as its buttons and links (`../contracts/elements_block.md` § Content fidelity). Journeys stay guided tours through those rendered screens — an ordered `journey/<id>.html` walk stitched from `stories.yaml` — not the transport/routing layer the screens themselves depend on; a screen never embeds journey-specific navigation. Each screen's full spec prose (`Purpose`, `Wireframe`, `Actions`, etc.) still renders on the page, but inside a collapsed `<details class="spec-panel">`, never dumped inline as primary content. Sample data shown in that synthesized UI — a table's `sample_rows`, a nav/tabs/list's `items` — is always an authored fixture read verbatim from the screen's own frontmatter; renderers never invent plausible-looking rows or entries to fill a gap.
+
 ## Cross-references
 
 - `../mockup-feedback/DOMAIN.md` — reads `manifest.json` produced here
