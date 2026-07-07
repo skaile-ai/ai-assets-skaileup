@@ -204,6 +204,7 @@ CHECKLIST
 | Reconstructing sample_rows from ASCII wireframe art and ticking the item | Flag as low-confidence, leave unticked, prefer seed.json when available |
 | Replacing an already-promoted (provisional: false) entry | Merge — carry every existing entry over verbatim, only add what's missing |
 | Editing the screen .md file directly | Emit a patch; the human runs mockup-feedback-apply |
+| Force-applying a `kind: nav` item whose target didn't resolve | `elements_block.md` requires `target` on every `kind: nav` item — an unresolved nav item MUST stay unticked for human review, not be applied as-is |
 
 ## Integration
 

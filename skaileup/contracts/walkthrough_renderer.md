@@ -204,7 +204,7 @@ The contract handed to `mockup-feedback-annotate`. Field names pinned exactly.
   "app_nav": [
     {
       "label": "Aufgaben",
-      "target": "20_tasks/task_list",
+      "target": "../20_tasks/task_list.html",
       "source": "experience/screens/00_layout/shell.md"
     }
   ],
@@ -311,8 +311,16 @@ The contract handed to `mockup-feedback-annotate`. Field names pinned exactly.
 - `app_nav[]`: the generated app-shell nav actually rendered into every
   screen's shell wrapper (§ App-shell navigation). One entry per rendered
   link.
-  - `app_nav[].label` / `app_nav[].target`: as rendered (resolved target,
-    not the raw `screen_id` — same resolution as `screens[].elements[].target`).
+  - `app_nav[].label` / `app_nav[].target`: as rendered — `target` is the
+    renderer's own resolved/rendered href (per § Target resolution), not the
+    raw `screen_id`. This is NOT the same form as `screens[].elements[].target`,
+    which is the declared/verbatim value (see below) — the two fields look
+    similar but carry opposite kinds of value. The resolved href is also
+    renderer-scheme-specific: static-html and lit emit a relative `.html`
+    path (e.g. `"../20_tasks/task_list.html"`), astro and framework emit a
+    root-relative extension-less path (e.g. `"/screen/20_tasks/task_list"`);
+    a consumer reading only the manifest should not assume one portable
+    scheme across renderers.
   - `app_nav[].source`: `"derived"` when the renderer generated the
     default nav itself, or the shell source path (e.g.
     `"experience/screens/00_layout/shell.md"`) when a shell `kind: nav`
