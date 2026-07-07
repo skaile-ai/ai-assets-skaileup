@@ -131,7 +131,10 @@ output = a routed site at _concept/mockup-walkthrough/<tier>/
 > Navigation targets) plus the generated app-shell nav
 > (`skaileup/contracts/walkthrough_renderer.md` § App-shell navigation) make
 > every declared link/button/nav/tabs/list entry a real, resolvable `<a>`
-> across all five renderers. Likewise, **content presence** — a `table`
+> across the four renderers that follow the `elements:` contract
+> (`static-html`, `lit`, `astro`, `framework`) — `text` predates the contract
+> and is unaffected, per its own divergence note in
+> `01_a_text/SKILL.md`. Likewise, **content presence** — a `table`
 > rendering its `columns`/`sample_rows`, a `tabs`/`nav`/`list` rendering its
 > `items` — is now uniform across every tier that follows the `elements:`
 > contract (`elements_block.md` § Content fidelity): a `static-html` table
