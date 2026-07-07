@@ -11,6 +11,30 @@ implements:
   - experience/features/<NN_group>/<feature>.md
 data_entities: [<Model>, ...]
 layout: experience/screens/00_layout/shell.md
+elements:
+  - id: open-admission-form
+    kind: button
+    label: "Aufnehmen"                        # on-screen UI copy, never the action sentence
+    states: [default]
+    target: 11_intake/case_admission_form     # destination screen_id — see contracts/elements_block.md
+    describes: "Click \"Aufnehmen\" on an Anmeldung row → opens the admission form"
+  - id: faelle-table
+    kind: table
+    label: "Fälle"
+    states: [default, loading, empty]
+    data_entity: Case
+    columns: ["Patient", "Falltyp", "Status"]
+    sample_rows:                               # authored fixtures, sourced from seed.json or the wireframe
+      - ["Lena M.", "Teilstationär", "Aktiv"]
+      - ["Tom B.", "Ambulant", "Aktiv"]
+    row_target: 11_intake/case_detail
+  - id: case-tabs
+    kind: tabs
+    label: "Fälle & Aufnahmen Tabs"
+    states: [default]
+    items:
+      - label: "Aufzunehmen"                   # first item renders active; target optional (tabs may be in-page)
+      - label: "Fälle"
 last_updated: YYYY-MM-DD
 ---
 ```
@@ -19,6 +43,11 @@ last_updated: YYYY-MM-DD
 - `implements[]` — paths to feature files this screen covers. At least one required.
 - `data_entities[]` — entity names from model.json that appear on this screen.
 - `layout` — always points to `00_layout/shell.md`.
+- `elements[]` — structured mirror of `### UI Elements`/`## Actions`/`## Information
+  Displayed` below; REQUIRED (non-empty) at depth `medium`/`max`, per
+  `contracts/elements_block.md`. See that contract for the full `kind` enum,
+  `target`/`row_target` resolution, and the `items`/`columns`/`sample_rows`/`options`
+  content-fidelity fields.
 
 ## Required Sections
 
@@ -94,6 +123,10 @@ implementation skill will map these to actual components.
 - "Forgot password?" link
 - "Create account" link
 ```
+
+Each entry here MUST be mirrored as a structured `elements:` frontmatter entry
+(see `contracts/elements_block.md`) — the prose list above is the
+human-readable view, the frontmatter is the machine-readable one.
 
 ### Template Data *(optional — include when seed.json exists)*
 Reference scenarios from `_concept/blueprint/datamodel/seed.json`:

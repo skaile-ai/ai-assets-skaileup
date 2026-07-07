@@ -145,6 +145,8 @@ contracts/frontmatter.md — required YAML fields
 contracts/feedback_loop.md — cross-reference protocol (screens ↔ features)
 references/screen_spec_template.md — screen spec structure with all sections
 contracts/wireframe_conventions.md — ASCII wireframe symbol vocabulary and layout rules
+contracts/elements_block.md — elements: frontmatter schema (kinds, target resolution, content fidelity)
+contracts/walkthrough_renderer.md — § App-shell navigation (shell kind: nav, authoritative case)
 
 MUST write 00_layout/shell.md before any individual screen specs
 MUST register every screen back into its parent feature's screens[] frontmatter (feedback loop)
@@ -156,6 +158,8 @@ NEVER invent brand colors or fonts — reference tokens.json if it exists; omit 
 MUST include a ### Wireframe section in every screen spec at depth medium or max
 MUST read wireframe_conventions.md before generating any wireframe
 MUST annotate wireframe zones with feat:<feature-name> at depth max when screen implements multiple features
+MUST declare an explicit elements: block on every screen spec at depth medium or max, covering every interactive or structural thing named in ### UI Elements, ## Actions, and ## Information Displayed, including target: for every action that names a destination screen (per contracts/elements_block.md § Navigation targets and § Content fidelity)
+NEVER use an action sentence as an element label — labels are on-screen UI copy
 
 EMIT [screens] started run_id=<uuid>
 
@@ -203,9 +207,22 @@ OUTPUT \_concept/experience/screens/00_layout/shell.md
 implements: []
 data_entities: []
 layout: ""
+elements:
+  - id: <kebab-id>
+    kind: nav
+    label: <on-screen nav label, e.g. "Hauptnavigation">
+    states: [default]
+    items:
+      - label: <destination screen title>
+        target: <NN_group>/<screen>
 last_updated: <YYYY-MM-DD>
 --- # Shell: App Layout ## Purpose ## Navigation ## Layout Areas ## Responsive Behaviour
 (Reference brand tokens if available — do not invent values)
+
+- The `## Navigation` destination list MUST be mirrored as a `kind: nav`
+  element with `items[].target` in shell.md's own frontmatter — one
+  `items[]` entry per destination, in the same order as `## Navigation`
+  (contracts/walkthrough_renderer.md § App-shell navigation, authoritative case).
 
 STEP 3b: Write shell wireframe
 
@@ -229,10 +246,28 @@ OUTPUT \_concept/experience/screens/<NN_group>/<screen>.md
 implements: - experience/features/<NN_group>/<feature>.md
 data_entities: [<Model>, ...]
 layout: experience/screens/00_layout/shell.md
+elements: [] # derived in STEP 4b, at depth medium/max
 last_updated: <YYYY-MM-DD>
 --- # Screen: <Name> ## Purpose ## Route ## What the User Sees ## Wireframe
 (ASCII wireframe of this screen's layout within the shell — see wireframe_conventions.md)
 IF depth is max AND screen implements[] has 2+ features - Annotate zones with feat:<feature-name> labels ## Information Displayed ## Actions ## Situations ## UI Elements ## Template Data (if seed.json exists)
+
+STEP 4b: Derive the elements: block
+
+IF depth is light or none
+
+- Skip this step entirely — leave elements: absent or empty
+
+For each screen just written (at depth medium or max):
+
+- Read contracts/elements_block.md before deriving the block (kind enum, target grammar, content-fidelity rules)
+- Walk the screen's own ### UI Elements, ## Actions, and ## Information Displayed sections — every interactive or structural thing named there becomes one elements[] entry. Nothing in the block should be invented beyond what those sections (plus the wireframe and seed.json) already say.
+- `label:` — the short on-screen UI copy: the quoted token from an Actions bullet (e.g. "Aufnehmen"), or the UI Elements bullet's own name. NEVER the action sentence itself — that goes in `describes:`.
+- `kind:` — pick from the elements_block.md kind enum by shape: a row of tab labels → `tabs`; a repeating row of records → `table` (with `columns:`) when it has named fields, else `list` (with `items:`); a named-option filter or dropdown → `input` + `options:`; a single clickable thing → `link`/`button`/`image`/`custom` as fits; free text → `text`; a bounded area → `region`.
+- `data_entity:` — the entity from the screen's own `data_entities[]` that this element renders or edits, when one clearly applies.
+- `target:` — set whenever an Actions bullet names a destination screen (e.g. "→ navigate to dashboard", "→ opens the admission form"). Resolve the named destination against sibling screens already written in this run, trying in this precedence order: (1) exact or close match against the candidate screen's title (its `# Screen: <Name>` heading or ## Purpose), (2) match against its ## Route, (3) match against its filename/group stem. Use the first that resolves; if none resolve, leave target: unset rather than guessing — the renderer's soft-fail contract (unresolved_target) covers unresolved cases, but an authored screen should resolve every destination it can actually see. Only valid on kind: link | button | list | image | custom (or as row_target on kind: table, or per-entry items[].target on nav | tabs | list) — never a bare target: on input/text/region/form/nav/tabs/media/table.
+- `sample_rows:` / `items:` — source from `_concept/blueprint/datamodel/seed.json` scenarios when present; otherwise from the wireframe's own example rows/labels for this screen. Never fabricate rows or items beyond what a source actually shows — a table with no real example content gets `columns:` only (renderer emits a skeleton row).
+- `states:` — at least `[default]`; add `loading`/`empty`/`error` when ## Situations describes them for that element.
 
 STEP 5: Register screens in features (feedback loop)
 
@@ -272,6 +307,9 @@ CHECKLIST
 - [ ] Wireframes follow contracts/wireframe_conventions.md
 - [ ] Shell wireframe shows desktop and mobile variants (at depth max)
 - [ ] Multi-feature screens have feat: annotations (at depth max)
+- [ ] Every screen spec (depth medium+) has an elements: block whose labels are short UI copy
+- [ ] Every action naming a destination screen has a matching target:
+- [ ] Every table/list element with visible sample content in the wireframe carries sample_rows/items
 
 ---
 
