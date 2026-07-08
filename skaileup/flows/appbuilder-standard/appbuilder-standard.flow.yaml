@@ -48,30 +48,69 @@ globals:
   verbosity: standard
 entry: scope
 nodes:
-  # --- Phase containers (visual; must precede their children) ---
-  - id: g-conceptualization
+  # --- Phase/cluster groups (visual only — bucket the skill/sub-flow nodes
+  # below for UI display; ignored by the flow engine). Six clusters for sidebar
+  # granularity, each still carrying the collection's canonical top-level
+  # `phase` value (conceptualization/implementation/review — see
+  # skaileup-stepwise for the non-contiguous case). slice-loop deliberately
+  # has no parentNode: it iterates per-feature and doesn't belong to a single
+  # UI section, spanning build and quality. ---
+  - id: g-scope-concept
     type: group
     position:
       x: -40
       y: 0
     style:
-      width: 3480
+      width: 800
       height: 480
     data:
-      label: 'Conceptualization'
+      label: 'Scope & Concept'
       phase: conceptualization
-  - id: g-implementation
+  - id: g-design-experience
+    type: group
+    position:
+      x: 760
+      y: 0
+    style:
+      width: 1300
+      height: 480
+    data:
+      label: 'Design & Experience'
+      phase: conceptualization
+  - id: g-mockups-feedback
+    type: group
+    position:
+      x: 2060
+      y: 0
+    style:
+      width: 1100
+      height: 480
+    data:
+      label: 'Mockups & Feedback'
+      phase: conceptualization
+  - id: g-architecture
+    type: group
+    position:
+      x: 3160
+      y: 0
+    style:
+      width: 800
+      height: 480
+    data:
+      label: 'Architecture'
+      phase: implementation
+  - id: g-build
     type: group
     position:
       x: 3960
       y: 0
     style:
-      width: 1480
+      width: 800
       height: 480
     data:
-      label: 'Implementation'
+      label: 'Build'
       phase: implementation
-  - id: g-review
+  - id: g-quality-ops
     type: group
     position:
       x: 7360
@@ -80,7 +119,7 @@ nodes:
       width: 280
       height: 480
     data:
-      label: 'Review'
+      label: 'Quality & Ops'
       phase: review
   # --- Scope ---
   - id: scope
@@ -88,7 +127,7 @@ nodes:
     position:
       x: 0
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-scope-concept
     data:
       skill: skaileup-scope-scope-project
       label: 'Scope Project'
@@ -100,7 +139,7 @@ nodes:
     position:
       x: 200
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-scope-concept
     data:
       flow: concept-discovery
       domain: discovery
@@ -114,7 +153,7 @@ nodes:
     position:
       x: 800
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: design-brand-visual
       label: 'Brand Visual'
@@ -125,7 +164,7 @@ nodes:
     position:
       x: 1000
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: design-inspiration
       label: 'Design Inspiration'
@@ -136,7 +175,7 @@ nodes:
     position:
       x: 1200
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: experience-journeys
       label: 'Experience Journeys'
@@ -147,7 +186,7 @@ nodes:
     position:
       x: 1400
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: experience-behaviors
       label: 'Experience Behaviors (opt)'
@@ -158,7 +197,7 @@ nodes:
     position:
       x: 1600
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: product-spec-features
       label: 'Product Features'
@@ -169,7 +208,7 @@ nodes:
     position:
       x: 1800
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: experience-screens
       label: 'Experience Screens'
@@ -180,7 +219,7 @@ nodes:
     position:
       x: 2000
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-design-experience
     data:
       skill: experience-components
       label: 'Experience Components'
@@ -192,7 +231,7 @@ nodes:
     position:
       x: 2100
       y: 100
-    parentNode: g-conceptualization
+    parentNode: g-mockups-feedback
     data:
       label: 'Walkthrough Renderer Router (astro -> static-html)'
       routes:
@@ -205,7 +244,7 @@ nodes:
     position:
       x: 2100
       y: 300
-    parentNode: g-conceptualization
+    parentNode: g-mockups-feedback
     data:
       label: 'Component Renderer Router (storybook or skip)'
       routes:
@@ -218,7 +257,7 @@ nodes:
     position:
       x: 2200
       y: 100
-    parentNode: g-conceptualization
+    parentNode: g-mockups-feedback
     data:
       skill: mockup-walkthrough-astro
       label: 'Astro Walkthrough Mockup (via router)'
@@ -229,7 +268,7 @@ nodes:
     position:
       x: 2200
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-mockups-feedback
     data:
       skill: mockup-walkthrough-static-html
       label: 'Static HTML Walkthrough (router default)'
@@ -240,7 +279,7 @@ nodes:
     position:
       x: 2200
       y: 300
-    parentNode: g-conceptualization
+    parentNode: g-mockups-feedback
     data:
       skill: mockup-component-storybook
       label: 'Storybook Components (via router)'
@@ -252,7 +291,7 @@ nodes:
     position:
       x: 2400
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-mockups-feedback
     data:
       flow: mockup-feedback
       domain: mockup
@@ -266,7 +305,7 @@ nodes:
     position:
       x: 3200
       y: 200
-    parentNode: g-conceptualization
+    parentNode: g-architecture
     data:
       flow: architecture
       domain: blueprint
@@ -280,7 +319,7 @@ nodes:
     position:
       x: 4000
       y: 200
-    parentNode: g-implementation
+    parentNode: g-build
     data:
       flow: impl-build-setup
       domain: build
@@ -295,7 +334,6 @@ nodes:
     position:
       x: 5200
       y: 200
-    parentNode: g-implementation
     data:
       flow: skaileup-slice
       domain: slice
@@ -310,7 +348,7 @@ nodes:
     position:
       x: 7400
       y: 200
-    parentNode: g-review
+    parentNode: g-quality-ops
     data:
       flow: quality-gate
       domain: quality
