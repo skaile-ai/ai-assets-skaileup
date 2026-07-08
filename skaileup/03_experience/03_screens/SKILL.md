@@ -158,7 +158,7 @@ NEVER invent brand colors or fonts — reference tokens.json if it exists; omit 
 MUST include a ### Wireframe section in every screen spec at depth medium or max
 MUST read wireframe_conventions.md before generating any wireframe
 MUST annotate wireframe zones with feat:<feature-name> at depth max when screen implements multiple features
-MUST declare an explicit elements: block on every screen spec at depth medium or max, covering every interactive or structural thing named in ### UI Elements, ## Actions, and ## Information Displayed, including target: for every action that names a destination screen (per contracts/elements_block.md § Navigation targets and § Content fidelity)
+MUST declare an explicit elements: block on every screen spec at depth medium or max — field coverage and target-resolution requirements per contracts/elements_block.md § Navigation targets and § Content fidelity
 NEVER use an action sentence as an element label — labels are on-screen UI copy
 
 EMIT [screens] started run_id=<uuid>

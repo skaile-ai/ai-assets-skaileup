@@ -934,8 +934,7 @@ MUST  write specs.json and token styles before running the build
 MUST  regenerate the token stylesheet on every run (agent-managed)
 MUST  pre-resolve every `target`/`row_target`/`items[].target` into an `href` (or `null`) in `specs.json` at STEP 3/6 — route templates only interpolate `el.href ?? '#'` (or the framework-native link component reading the same pre-resolved field), they never resolve a target themselves
 MUST  ensure any framework-native link component (`next/link`, `NuxtLink`, ...) used in a route template resolves to a plain, resolvable `href` in the built (SSR/SSG) HTML — never a client-only-wired href
-MUST  render declared `columns`/`sample_rows`/`items`/`options` as real DOM content in the scaffolded route templates — no placeholder when content is declared
-MUST  render the spec body only inside the collapsed (or, when zero explicit elements, open) `<details class="spec-panel">`, sourced from `body_html`
+MUST  keep the shared content-fidelity and spec-panel MUSTs (`walkthrough_renderer.md` § Shared MUST/NEVER) true specifically in the scaffolded route templates, sourced from `specs.json`'s `body_html`
 MUST  render the generated app-shell nav (`specs.app_nav`) inside the root layout on screen pages
 MUST  run the `stale_scaffold` check on every update run and record a `warnings[]` entry when the scaffold predates this revision
 

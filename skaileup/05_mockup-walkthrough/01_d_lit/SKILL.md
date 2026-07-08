@@ -1210,8 +1210,7 @@ MUST  write specs.json, global.css, and per-page HTML before running bun run bui
 MUST  regenerate global.css and per-page screen/journey HTML on every run (agent-managed)
 MUST  reference components/styles with relative URLs so built pages are openable and embeddable
 MUST  pre-resolve every `target`/`row_target`/`items[].target` into an `href` (or `null`) in `specs.json` at STEP 2/5 — `screen-view.js` only interpolates `el.href ?? '#'`, it never resolves a target itself
-MUST  render declared `columns`/`sample_rows`/`items`/`options` as real DOM content in `screen-view.js` — no placeholder when content is declared
-MUST  render the spec body only inside the collapsed (or, when zero explicit elements, open) `<details class="spec-panel">`, sourced from `body_html`
+MUST  keep the shared content-fidelity and spec-panel MUSTs (`walkthrough_renderer.md` § Shared MUST/NEVER) true specifically in `screen-view.js`, sourced from `specs.json`'s `body_html`
 MUST  run the `stale_scaffold` check on every update run and record a `warnings[]` entry when the scaffold predates this revision
 
 NEVER use Shadow DOM in any walkthrough component — it hides data-spec-* from the feedback overlay

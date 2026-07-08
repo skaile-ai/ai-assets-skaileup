@@ -1098,8 +1098,7 @@ MUST  write specs.json and global.css before running bun run build
 MUST  regenerate global.css on every run (agent-managed)
 MUST  return getStaticPaths() slugs without trailing slashes
 MUST  pre-resolve every `target`/`row_target`/`items[].target` into an `href` (or `null`) in `specs.json` at STEP 2/5 — the `.astro` templates only interpolate `el.href ?? '#'`, they never resolve a target themselves
-MUST  render declared `columns`/`sample_rows`/`items`/`options` as real DOM content in the scaffolded templates — no placeholder when content is declared
-MUST  render the spec body only inside the collapsed (or, when zero explicit elements, open) `<details class="spec-panel">`, sourced from `body_html`
+MUST  keep the shared content-fidelity and spec-panel MUSTs (`walkthrough_renderer.md` § Shared MUST/NEVER) true specifically in the scaffolded `.astro` templates, sourced from `specs.json`'s `body_html`
 MUST  run the `stale_scaffold` check on every update run and record a `warnings[]` entry when the scaffold predates this revision
 
 NEVER regenerate astro.config.mjs, tailwind.config.mjs, or .astro templates on update runs
