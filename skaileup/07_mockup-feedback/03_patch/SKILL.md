@@ -35,9 +35,12 @@ For each `(file, annotations)` group in `triage/<sid>.json`:
    target file's prose voice.
 3. For annotations on provisional elements, also emit a
    `kind: "provisional-promotion"` diff.
-4. For annotations that change **testable behavior** (see *Test impact* below),
+4. For annotations that express **navigation intent** on an element whose
+   `elements:` entry has no `target:` yet, also emit a
+   `kind: "target-promotion"` diff (see *Target promotion* below).
+5. For annotations that change **testable behavior** (see *Test impact* below),
    author a one-line suggested test scenario.
-5. Write `patches/<sid>.json` (machine-readable) and
+6. Write `patches/<sid>.json` (machine-readable) and
    `patches/<sid>.review.md` (human checklist, all auto-items pre-checked).
 
 Each patch entry in `patches/<sid>.json` must include a `body` field copied
@@ -142,6 +145,31 @@ a warning — do not abort.
 
 ---
 
+## Target promotion
+
+When an annotation's body clearly asks for an element to become a navigation
+target ("this should link to…", "clicking this should open…", "make this go
+to the X screen") and the element's `elements:` frontmatter entry has no
+`target:` field, resolve the intended destination to a `screen_id` (using the
+manifest's screen list / rendered_html mapping) and emit a second patch with
+`kind: "target-promotion"` adding the field. If the destination cannot be
+resolved with confidence, skip the promotion patch and emit a `needs_manual`
+entry instead (reason: "navigation intent unresolved — no matching screen").
+
+```json
+{
+  "id": "p-<annotationId>-target",
+  "annotationId": "<annotationId>",
+  "file": "<same file>",
+  "section": "frontmatter:elements",
+  "kind": "target-promotion",
+  "category": null,
+  "diff": "@@ frontmatter:elements @@\n-  - id: <element-id>\n+  - id: <element-id>\n+    target: <resolved-screen-id>\n"
+}
+```
+
+---
+
 ## Test impact
 
 A patch changes **testable behavior** when:
@@ -162,8 +190,8 @@ the feedback→test loop: after `mockup-feedback-apply` lands the spec edits,
 re-running `impl-quality-test-plan` regenerates scenarios from the updated
 features/screens, and these suggestions flag what to confirm got covered.
 
-Purely cosmetic patches (copy, tokens, layout, provisional-promotion) have no
-test impact — omit them.
+Purely cosmetic patches (copy, tokens, layout, provisional-promotion,
+target-promotion) have no test impact — omit them.
 
 ---
 

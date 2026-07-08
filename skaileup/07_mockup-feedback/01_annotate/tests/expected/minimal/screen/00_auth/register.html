@@ -10,14 +10,50 @@
 }
 body { font-family: system-ui, sans-serif; margin: 2rem; }
 .state { font-size: 0.75rem; color: #555; margin-left: 0.5rem; }
+[data-spec-provisional="true"] { outline: 1px dashed #999; outline-offset: 2px; }
+.app-nav { margin: 0.5rem 0 1rem; }
+.app-nav .nav-group-label { font-size: 0.85rem; text-transform: uppercase; color: #666; margin: 0.5rem 0 0.25rem; display: block; }
+.app-nav ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem; flex-wrap: wrap; }
+.element table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
+.element table th, .element table td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; }
+.element table thead { background: #f5f5f5; }
+.element select { padding: 0.3rem 0.5rem; }
+nav.tabs { display: flex; gap: 0.5rem; border-bottom: 1px solid #ddd; margin: 0.5rem 0; }
+nav.tabs .tab { padding: 0.25rem 0.75rem; color: #555; }
+nav.tabs a.tab.active, nav.tabs span.tab.active { font-weight: 600; border-bottom: 2px solid var(--token-color-primary); color: #111; }
+details.spec-panel { margin-top: 1.5rem; border: 1px solid #ddd; border-radius: 4px; padding: 0.5rem 1rem; }
+details.spec-panel summary { cursor: pointer; font-weight: 600; }
 </style>
 </head>
 <body data-spec-screen="00_auth/register">
 <header><a href="../../index.html">&larr; Index</a></header>
+<nav class="app-nav" data-spec-element="app-nav" data-spec-provisional="true">
+<div class="nav-group">
+<span class="nav-group-label">auth</span>
+<ul>
+<li><a href="../00_auth/login.html" data-spec-element="app-nav-1" data-spec-provisional="true">login</a></li>
+<li><a href="../00_auth/register.html" data-spec-element="app-nav-2" data-spec-provisional="true">register</a></li>
+</ul>
+</div>
+</nav>
 <main>
 <h1>Register</h1>
-<section class="screen-body-prose">
-<p>A new user creates an account.</p>
+<section class="elements">
+<div class="element">
+<a data-spec-element="go-login" href="../00_auth/login.html">Sign in instead</a>
+</div>
+<div class="element">
+<nav class="tabs" data-spec-element="account-type-tabs">
+<span class="tab active" data-spec-element="personal" data-spec-provisional="true">Personal</span>
+<span class="tab" data-spec-element="business" data-spec-provisional="true">Business</span>
+</nav>
+</div>
+<div class="element">
+<ul data-spec-element="signup-benefits">
+<li data-spec-element="see-your-login-screen" data-spec-provisional="true"><a href="../00_auth/login.html">See your login screen</a></li>
+<li data-spec-element="get-onboarding-tips" data-spec-provisional="true">Get onboarding tips</li>
+</ul>
+</div>
 </section>
 <!-- auto-slugged -->
 <section class="elements auto-slugged">
@@ -32,6 +68,10 @@ body { font-family: system-ui, sans-serif; margin: 2rem; }
 </div>
 </section>
 <!-- /auto-slugged -->
+<details class="spec-panel">
+<summary>View spec</summary>
+<p>A new user creates an account.</p>
+</details>
 </main>
 <footer>
 </footer>

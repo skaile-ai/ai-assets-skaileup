@@ -213,6 +213,9 @@ assets:
     name: mockup-walkthrough-lit
     root: skaileup/05_mockup-walkthrough/01_d_lit
   - kind: skill
+    name: mockup-walkthrough-migrate-elements
+    root: skaileup/05_mockup-walkthrough/00_migrate-elements
+  - kind: skill
     name: mockup-walkthrough-static-html
     root: skaileup/05_mockup-walkthrough/01_b_static-html
   - kind: skill
