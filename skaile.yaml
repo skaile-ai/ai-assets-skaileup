@@ -272,25 +272,25 @@ assets:
   # ── demo skills (7) — Getec August workshop, demo-grade ──
   - kind: skill
     name: contract-migration-extract
-    root: skaileup/flows/contract-migration/skills/contract-migration-extract
+    root: skaileup/15_demo/01_contract-migration-extract
   - kind: skill
     name: contract-migration-price
-    root: skaileup/flows/contract-migration/skills/contract-migration-price
+    root: skaileup/15_demo/02_contract-migration-price
   - kind: skill
     name: contract-migration-emit
-    root: skaileup/flows/contract-migration/skills/contract-migration-emit
+    root: skaileup/15_demo/03_contract-migration-emit
   - kind: skill
     name: p2p-intake-classify
-    root: skaileup/flows/p2p-intake/skills/p2p-intake-classify
+    root: skaileup/15_demo/04_p2p-intake-classify
   - kind: skill
     name: p2p-intake-enrich
-    root: skaileup/flows/p2p-intake/skills/p2p-intake-enrich
+    root: skaileup/15_demo/05_p2p-intake-enrich
   - kind: skill
     name: p2p-intake-po-draft
-    root: skaileup/flows/p2p-intake/skills/p2p-intake-po-draft
+    root: skaileup/15_demo/06_p2p-intake-po-draft
   - kind: skill
     name: p2p-intake-post
-    root: skaileup/flows/p2p-intake/skills/p2p-intake-post
+    root: skaileup/15_demo/07_p2p-intake-post
   # ── contracts (6) ──
   - kind: contract
     name: shared-contracts
