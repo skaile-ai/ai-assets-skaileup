@@ -10,7 +10,7 @@ agent-config:
     driver: claude-sdk
     max_turns: 200
 assets:
-  # ── skills (85) ──
+  # ── skills (85) + demo skills (7) ──
   - kind: skill
     name: concept-brief
     root: skaileup/01_concept/01_brief
@@ -269,6 +269,28 @@ assets:
   - kind: skill
     name: skaileup-scope-scope-project
     root: skaileup/00_skaileup-orchestrator/scope/scope-project
+  # ── demo skills (7) — Getec August workshop, demo-grade ──
+  - kind: skill
+    name: contract-migration-extract
+    root: skaileup/15_demo/01_contract-migration-extract
+  - kind: skill
+    name: contract-migration-price
+    root: skaileup/15_demo/02_contract-migration-price
+  - kind: skill
+    name: contract-migration-emit
+    root: skaileup/15_demo/03_contract-migration-emit
+  - kind: skill
+    name: p2p-intake-classify
+    root: skaileup/15_demo/04_p2p-intake-classify
+  - kind: skill
+    name: p2p-intake-enrich
+    root: skaileup/15_demo/05_p2p-intake-enrich
+  - kind: skill
+    name: p2p-intake-po-draft
+    root: skaileup/15_demo/06_p2p-intake-po-draft
+  - kind: skill
+    name: p2p-intake-post
+    root: skaileup/15_demo/07_p2p-intake-post
   # ── contracts (6) ──
   - kind: contract
     name: shared-contracts
@@ -288,7 +310,7 @@ assets:
   - kind: contract
     name: standards-contract
     root: skaileup/13_impl-quality/contracts/standards-contract
-  # ── flows (17) ──
+  # ── flows (17) + demo flows (2) ──
   - kind: flow
     name: appbuilder-complex
     files:
@@ -357,3 +379,12 @@ assets:
     name: concept-discovery
     files:
       - skaileup/flows/concept-discovery/concept-discovery.flow.yaml
+  # ── demo flows (2) — Getec August workshop ──
+  - kind: flow
+    name: contract-migration
+    files:
+      - skaileup/flows/contract-migration/contract-migration.flow.yaml
+  - kind: flow
+    name: p2p-intake
+    files:
+      - skaileup/flows/p2p-intake/p2p-intake.flow.yaml

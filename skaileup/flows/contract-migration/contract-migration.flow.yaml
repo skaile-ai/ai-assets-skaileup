@@ -1,0 +1,111 @@
+id: contract-migration
+version: '2.0.0'
+name: 'Contract Migration'
+description: >-
+  Getec demo flow (August workshop). Migrates a legacy energy-supply contract
+  into a pricing-engine input artifact: extract -> price/validate against the
+  pricing-engine MCP -> confidence gate -> emit engine-input. The confidence
+  gate pauses for human approval when the priced result's confidence is low and
+  runs autonomously otherwise. Demo-grade; standalone-runnable via
+  `skaile run flow:contract-migration`. Target content: the anonymized pricing
+  PoC contracts.
+meta:
+  category: incremental
+  tags:
+    - demo
+    - getec
+    - contract-migration
+    - hitl
+  icon: i-heroicons-document-arrow-up
+requires:
+  # Self-contained install manifest: the shared contract every skill reads +
+  # every skill its nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/contract-migration-extract
+  - skill:@skaile-ai/contract-migration-price
+  - skill:@skaile-ai/contract-migration-emit
+globals:
+  research_depth: skip
+  # Autonomous by default: only the confidence gate pauses for a human.
+  approval_mode: auto_approve
+  subagent_mode: false
+  verbosity: standard
+  # Confidence threshold below which the gate escalates to human approval.
+  confidence_threshold: 0.8
+entry: extract
+nodes:
+  - id: g-migration
+    type: group
+    position:
+      x: 0
+      y: 0
+    data:
+      label: 'Contract Migration'
+      phase: implementation
+  - id: extract
+    type: skill
+    parentNode: g-migration
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: contract-migration-extract
+      label: 'Extract Contract Terms'
+      optional: false
+      writes: 'contract-migration/extraction/'
+      parameters: {}
+  - id: price
+    type: skill
+    parentNode: g-migration
+    position:
+      x: 240
+      y: 200
+    data:
+      skill: contract-migration-price
+      label: 'Price & Validate (pricing-engine MCP)'
+      optional: false
+      writes: 'contract-migration/pricing/'
+      requires:
+        - 'contract-migration/extraction/terms.json'
+      parameters: {}
+  - id: confidence-gate
+    type: gate
+    parentNode: g-migration
+    position:
+      x: 480
+      y: 200
+    data:
+      label: 'Confidence Gate'
+      check: 'artifact.pricing-result.confidence >= confidence_threshold'
+      on_fail: pause-for-human
+      message: >-
+        Priced result confidence is below the threshold. Review the extracted
+        terms and the priced line items, then approve to emit the engine-input
+        artifact or send back for correction.
+  - id: emit
+    type: skill
+    parentNode: g-migration
+    position:
+      x: 720
+      y: 200
+    data:
+      skill: contract-migration-emit
+      label: 'Emit Engine-Input Artifact'
+      optional: false
+      writes: 'contract-migration/engine-input/'
+      requires:
+        - 'contract-migration/pricing/pricing-result.json'
+      parameters: {}
+edges:
+  - id: e-extract-price
+    source: extract
+    target: price
+    type: flow
+  - id: e-price-confidence-gate
+    source: price
+    target: confidence-gate
+    type: flow
+  - id: e-confidence-gate-emit
+    source: confidence-gate
+    target: emit
+    type: flow

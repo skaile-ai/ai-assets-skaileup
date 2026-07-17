@@ -71,7 +71,13 @@ SHARED_FLOWS = [
     "quality-gate",
     "concept-discovery",
 ]
-ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS + SHARED_FLOWS
+# Demo flows (2026-07, Getec August workshop): self-contained process flows that
+# run standalone via `skaile run flow:<name>` — not tiers, not delegated to.
+DEMO_FLOWS = [
+    "contract-migration",
+    "p2p-intake",
+]
+ALL_FLOWS = TIER_FLOWS + SLICE_FLOWS + VARIANT_FLOWS + SHARED_FLOWS + DEMO_FLOWS
 
 # Skills authored by Phase-2 mini-plans 2A/2B/2C/2D/2F/2G — these are added
 # to the "knowable" set for resolution checks even if SKILL.md gathering misses

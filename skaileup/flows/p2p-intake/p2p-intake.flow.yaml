@@ -1,0 +1,129 @@
+id: p2p-intake
+version: '2.0.0'
+name: 'P2P Intake'
+description: >-
+  Getec demo flow (August workshop). Procure-to-pay intake: classify an inbound
+  purchase request -> enrich it with supplier master data -> create a PO draft
+  -> approval gate -> post the PO. Business Central is mocked by the colocated
+  business-central-mock MCP server (get_supplier / create_po_draft / post_po
+  over an in-memory store); in production Getec's SAP BTP MCP layer plays this
+  role. The approval gate pauses for a human before posting. Demo-grade;
+  standalone-runnable via `skaile run flow:p2p-intake`.
+meta:
+  category: incremental
+  tags:
+    - demo
+    - getec
+    - p2p
+    - procure-to-pay
+    - hitl
+  icon: i-heroicons-shopping-cart
+requires:
+  # Self-contained install manifest: the shared contract every skill reads +
+  # every skill its nodes run (flow node order). Exact — no inheritance, no extras.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/p2p-intake-classify
+  - skill:@skaile-ai/p2p-intake-enrich
+  - skill:@skaile-ai/p2p-intake-po-draft
+  - skill:@skaile-ai/p2p-intake-post
+globals:
+  research_depth: skip
+  # Autonomous by default: only the approval gate pauses for a human.
+  approval_mode: auto_approve
+  subagent_mode: false
+  verbosity: standard
+entry: classify
+nodes:
+  - id: g-intake
+    type: group
+    position:
+      x: 0
+      y: 0
+    data:
+      label: 'P2P Intake'
+      phase: implementation
+  - id: classify
+    type: skill
+    parentNode: g-intake
+    position:
+      x: 0
+      y: 200
+    data:
+      skill: p2p-intake-classify
+      label: 'Classify Request'
+      optional: false
+      writes: 'p2p-intake/classification/'
+      parameters: {}
+  - id: enrich
+    type: skill
+    parentNode: g-intake
+    position:
+      x: 240
+      y: 200
+    data:
+      skill: p2p-intake-enrich
+      label: 'Enrich (Business Central get_supplier)'
+      optional: false
+      writes: 'p2p-intake/enrichment/'
+      requires:
+        - 'p2p-intake/classification/request.json'
+      parameters: {}
+  - id: po-draft
+    type: skill
+    parentNode: g-intake
+    position:
+      x: 480
+      y: 200
+    data:
+      skill: p2p-intake-po-draft
+      label: 'Create PO Draft (Business Central create_po_draft)'
+      optional: false
+      writes: 'p2p-intake/po-draft/'
+      requires:
+        - 'p2p-intake/enrichment/supplier.json'
+      parameters: {}
+  - id: approval-gate
+    type: gate
+    parentNode: g-intake
+    position:
+      x: 720
+      y: 200
+    data:
+      label: 'Approval Gate'
+      check: "artifact.po-draft.status == 'approved'"
+      on_fail: pause-for-human
+      message: >-
+        A PO draft has been created and is awaiting approval. Review the draft
+        (supplier, line items, total) and approve to post it to Business
+        Central, or send it back for revision.
+  - id: post
+    type: skill
+    parentNode: g-intake
+    position:
+      x: 960
+      y: 200
+    data:
+      skill: p2p-intake-post
+      label: 'Post PO (Business Central post_po)'
+      optional: false
+      writes: 'p2p-intake/posted/'
+      requires:
+        - 'p2p-intake/po-draft/po-draft.json'
+      parameters: {}
+edges:
+  - id: e-classify-enrich
+    source: classify
+    target: enrich
+    type: flow
+  - id: e-enrich-po-draft
+    source: enrich
+    target: po-draft
+    type: flow
+  - id: e-po-draft-approval-gate
+    source: po-draft
+    target: approval-gate
+    type: flow
+  - id: e-approval-gate-post
+    source: approval-gate
+    target: post
+    type: flow

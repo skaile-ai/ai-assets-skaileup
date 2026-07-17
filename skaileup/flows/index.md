@@ -80,6 +80,20 @@ is self-contained with its own `requires:`.
 | [`skaileup-implementation`](./skaileup-implementation/) | Code-build, no concept-design pass. Architecture is read-or-generate (reads an existing concept package if present, else generates the subset) → build + `skaileup-slice-impl` loop + quality. |
 | [`skaileup-stepwise`](./skaileup-stepwise/) | Start-in-the-middle: thin foundation → per-feature loop of `skaileup-slice` at `concept_depth: just-in-time`. The slice's concept half builds only the concept each feature needs, on demand, as a by-product of building. |
 
+## Demo flows
+
+Self-contained process flows for the Getec August workshop (demo-grade, not
+product tiers). Each runs standalone and demonstrates a human-in-the-loop gate.
+
+| Flow | Shape | Gate |
+|---|---|---|
+| [`contract-migration`](./contract-migration/) | extract → price/validate (pricing-engine MCP) → confidence gate → emit engine-input | confidence gate: low confidence pauses for approval, else autonomous |
+| [`p2p-intake`](./p2p-intake/) | classify → enrich → create PO draft → approval gate → post | approval gate: pauses for a human before posting to Business Central |
+
+`p2p-intake` mocks Business Central with the colocated **business-central-mock**
+MCP server (`p2p-intake/business-central-mock/`: `get_supplier` /
+`create_po_draft` / `post_po` over an in-memory store).
+
 ## See also
 
 - [Tiers](../intro/tiers/) — the `scope-project` decision rule
