@@ -31,3 +31,19 @@ Decide:
 ## Answer
 
 _(pending)_
+
+## Note from ticket 06
+
+Two pieces of the mockup domain were handed to the build side; this ticket has to catch them.
+
+- **Storybook configuration lands in `build-foundation`**, which already "configures Storybook
+  with brand theme if present". `mockup-component-storybook-setup` (171 lines) is not ported —
+  it duplicates work the build domain does anyway. Confirm `build-foundation` genuinely covers
+  it, or the setup step is lost rather than moved.
+- **`mockup-component-storybook-types` (183 lines) dies as a mockup skill** — replacing
+  placeholder types with `model.json`-generated interfaces is schema-driven codegen against the
+  real data model, and it is PostXL-only. Decide here whether that is a step inside a build
+  skill or nothing at all.
+- The **line drawn was artifact, not tool**: Storybook is named in 9 `SKILL.md` outside the
+  mockup domain, so "it mentions Storybook" never decided placement. Story *authoring* stayed
+  in `mockup-`; anything that configures the real project moved to `build-`.

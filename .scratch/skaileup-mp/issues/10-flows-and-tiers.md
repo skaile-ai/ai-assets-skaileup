@@ -41,3 +41,23 @@ Decide:
 ## Answer
 
 _(pending)_
+
+## Note from ticket 06
+
+**One of the two blockers on this ticket is now resolved, and it changed the flow shape.**
+
+- **The pick-one sibling-node pattern disappears.** `appbuilder-standard.flow.yaml` today
+  carries two optional nodes for one decision — `mock-astro` ("Astro Walkthrough Mockup (via
+  router)") and `mock-static-fallback` ("Static HTML Walkthrough (router default)"). With one
+  `mockup-walkthrough` skill there is **one node**. Check whether any other pick-one in the
+  flows has the same shape and can collapse the same way.
+- **The renderer choice becomes tier data, which is this ticket's subject.** Default by tier
+  (`appbuilder-mvp`/`simple` → `static-html`, `standard`/`complex` → `astro`), override in
+  `onboarding.yaml`. If ticket 10 collapses 5 tiers → 3, the defaults table has to move with it.
+- **Flow references that die with their skills:** `mockup-walkthrough-text` (7 refs),
+  `mockup-walkthrough-framework` (7), `mockup-walkthrough-lit` (1),
+  `mockup-component-isolated-html` (2+3), `mockup-walkthrough-migrate-elements`. The
+  `skaileup-concept-only` flow's only renderer is `mockup-walkthrough-text` — it needs
+  repointing at `mockup-walkthrough`, and that flow is also the one real argument for keeping a
+  no-Node component view (see ticket 06's `isolated-html` note).
+- **`mockup-feedback.flow.yaml` shrinks from 4 nodes to 2** (annotate | feedback).

@@ -66,3 +66,18 @@ vocabulary job off the contracts layer. Consequences for this ticket:
 - New: `onboarding.yaml` replaces `profile.yaml` + `decisions.yaml` as one artifact —
   fewer ids in whatever registry survives, and `onboarding-decisions-v1.yaml` in
   `contracts/schemas/` needs merging or dropping with them.
+
+## Note from ticket 06
+
+The mockup domain's three contracts are decided; ticket 09 only has to accept them.
+
+- **`walkthrough_renderer.md` survives and grows.** Read by both surviving renderers
+  (`static-html`, `astro`), and it *gains* the `items[]` id-derivation rule that each renderer
+  currently re-derives (~30 lines each). Clears the multi-reader bar with room to spare.
+- **`elements_block.md` survives** — `elements:` is read by 9 skills today; even after the
+  domain collapses it is read by `experience-screens`, `mockup-walkthrough` and
+  `mockup-feedback`. The clearest multi-reader contract in the collection.
+- **`preview_compatibility.md` (292) folds into `walkthrough_renderer.md`.** With `lit` and
+  `framework` dropped, host-page embedding is a concern of only the two survivors.
+- No mockup skill carries an input-dialog frontmatter block, so this domain does not weigh in
+  on the `prerequisites.inputs_optional` question either way.

@@ -118,11 +118,32 @@ the ticket type says so.
   onboarding *answers*; it merges with `profile.yaml` into one **`onboarding.yaml`**.
   `_concept/` tree renaming: principle only, folder list waits on tickets 08/09.
 
+- [06: Mockup domain — 17 skills to ~6](issues/06-mockup-domain.md):
+  **17 → 4** — `mockup-walkthrough` · `mockup-storybook` · `mockup-annotate` · `mockup-feedback`
+  (~6,597 lines → ~450 + `references/`). **Two renderers survive, `static-html` + `astro`** —
+  the only two with `validator.py` + fixtures, and astro is ticket 03's port. `framework` dies
+  because rendering in the chosen stack *is* building the app (`build-scaffold` does it better,
+  and a mockup that is the app drifts); `lit` dies on 1 flow ref and no tests; `text` dies as a
+  fourth renderer axis nested inside a renderer. **The difference is `references/<renderer>/`,
+  not a parameter** — and the `items[]` id-derivation rule moves into
+  `contracts/walkthrough_renderer.md`. **The renderer choice moves to data**: tier default
+  (mvp/simple → static-html, standard/complex → astro) overridden in `onboarding.yaml`, so the
+  flow's two optional sibling nodes (`mock-astro` "via router" / `mock-static-fallback`
+  "router default") collapse to one node — ticket 10 inherits that. **Feedback 4 → 2, split at
+  the multi-day human wait**: `annotate` | `triage→patch→apply`; `triage` was never a skill
+  (98 lines wrapping a deterministic `triage.py`). **Storybook splits by artifact, not tool** —
+  config to `build-foundation` (which already does it), story authoring to one `mockup-storybook`
+  composing components→pages→journeys; `types` dies as datamodel codegen (PostXL-only).
+  `isolated-html` dropped (returns as a `references/` renderer if the no-Node view is missed);
+  **`migrate-elements` does not port** (backfill for pre-`elements:` specs; `-mp` writes the
+  block from the start). **`elements:` stays — 9 readers.** To ticket 09: keep
+  `walkthrough_renderer.md` (grown) + `elements_block.md`, fold `preview_compatibility.md` in.
+
 ## Not yet specified
 
-- **The port itself, per domain.** Can't be sized until the inventory tickets (Mockup domain
-  consolidation / Concept-side consolidation / Implementation-side consolidation) land. Likely
-  several tickets, one per domain group, each a rewrite-from-the-model pass.
+- **The port itself, per domain.** The mockup domain has graduated (ticket 14); the
+  concept-side and implementation-side ports still can't be sized until tickets 07 and 08
+  land. Each is a rewrite-from-the-model pass, one ticket per domain group.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
   Blocked on knowing which skills they replace. Ticket 04 fixed their *names*
