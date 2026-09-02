@@ -42,3 +42,13 @@ had to differ from the plan.
 ## Answer
 
 _(pending)_
+
+## Note from ticket 05
+
+- **`CONTEXT.md` is ready** — `.scratch/skaileup-mp/CONTEXT.md`, 139 lines. Drop it into
+  the skeleton verbatim; ticket 05 is no longer a dependency.
+- **No `DOMAIN.md` files** in the skeleton — all 16 are ruled out.
+- **Add `docs/adr/`**, seeded from tickets 01–04, which all clear the 3-test gate. This
+  is where the map's decisions live once the map itself ends.
+- The onboarding artifacts to lay down are **one `onboarding.yaml`**, not
+  `profile.yaml` + `decisions.yaml`.

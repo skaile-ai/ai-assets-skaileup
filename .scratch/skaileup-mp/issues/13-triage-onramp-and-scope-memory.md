@@ -40,3 +40,16 @@ Decide:
 ## Answer
 
 _(pending)_
+
+## Note from ticket 05
+
+**Half this ticket is already answered.** A rejected scope decision **is** a decision
+record marked rejected — append-only, records a refusal and why, exists so nobody
+re-litigates. That is the ADR machine exactly, so `-mp` does **not** gain a second
+`.out-of-scope/` store beside it. `scope-feature.md`'s IN/OUT/DEFER stays the working
+record for one feature; anything clearing the 3-test gate graduates to the decision
+record at the level it binds.
+
+What is left for this ticket is the **triage on-ramp** question alone: does `-mp` gain a
+general entry point for work the collection did not create, and does
+`mockup-feedback-triage` collapse into it?

@@ -98,6 +98,26 @@ the ticket type says so.
   recorded. Also dead: the renderer-name-must-end-with-its-subfolder rule
   (`flow-manager.ts:412-422`) is reached only through the unreachable `artifacts.yaml`.
 
+- [05: The shared domain vocabulary (CONTEXT.md)](issues/05-domain-glossary.md):
+  **Two vocabularies, never one** — `CONTEXT.md` is the *collection's* language
+  (hand-written, 139 lines, glossary-only, zero paths, drafted at
+  `.scratch/skaileup-mp/CONTEXT.md`); the *project's* language keeps the word
+  **glossary** and stays a generated artifact. **All 16 `DOMAIN.md` files die** — every
+  job they do is duplicated by something machine-read, and ticket 04's flat tree removed
+  their folders. **asset** (shipped by this repo) vs **artifact** (written into a
+  project); **`output` retires as a noun**. **slice = vertical slice, impl-side only** —
+  the concept-side thing is a **feature dossier**, with `dossier` the noun for both.
+  **featureset replaces feature group** as a straight rename (the word appears **0 times**
+  today). **profile = project type only** — "tech stack profile" becomes **template**,
+  which makes ticket 10's `cli` tier→profile demotion consistent. **`phase` is a machine
+  contract**, so ticket 12's concept is a **session boundary**. **seed scenario**, not the
+  phantom "seed mode". From mp: **`vertical slice` only** — `tracer bullet` is a second
+  word for one concept, `deep module`/`seam` stay `codebase-design`'s. **Decision records
+  at three levels, one 3-test gate** (collection · design-time · build-time), `-mp` gains
+  its own seeded from tickets 01–04. **`decisions.yaml` was never decisions** — it held
+  onboarding *answers*; it merges with `profile.yaml` into one **`onboarding.yaml`**.
+  `_concept/` tree renaming: principle only, folder list waits on tickets 08/09.
+
 ## Not yet specified
 
 - **The port itself, per domain.** Can't be sized until the inventory tickets (Mockup domain

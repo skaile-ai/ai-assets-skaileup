@@ -34,3 +34,10 @@ both design loops whose steps sit on these boundaries.
 ## Answer
 
 _(pending)_
+
+## Note from ticket 05
+
+**Rename this ticket's concept: `session boundary`, not `phase boundary`.** `phase` is a
+machine contract with forge-concept (`data.phase` ∈ conceptualization | implementation |
+review) and `CONTEXT.md` reserves it for that. mp's file is `PHASE-BOUNDARIES.md`, so the
+collision is inherited, not invented — rename on the way in.

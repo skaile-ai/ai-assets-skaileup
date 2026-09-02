@@ -1,8 +1,8 @@
 # 09: Prune the contracts layer
 
 **Type:** grilling
-**Blocked by:** 05 (01 resolved)
-**Status:** blocked
+**Blocked by:** None (01, 05 resolved)
+**Status:** ready
 
 ## Question
 
@@ -50,3 +50,19 @@ or delete. A contract only earns its place if **more than one** skill reads it, 
 ## Answer
 
 _(pending)_
+
+## Note from ticket 05
+
+`CONTEXT.md` is drafted (139 lines, `.scratch/skaileup-mp/CONTEXT.md`) and takes the
+vocabulary job off the contracts layer. Consequences for this ticket:
+
+- **All 16 `DOMAIN.md` files are already ruled out**, including `contracts/DOMAIN.md`.
+- `contracts/domain_model.md` **survives** — it is now the format spec for decision
+  records at all three levels (collection, design-time, build-time), not just the
+  project's.
+- `contracts/concept_structure.md` **survives** — `CONTEXT.md` is barred from carrying
+  paths, so the path map has to live somewhere and this is it.
+- `semantic_types.md` is untouched by ticket 05 (it is a type table, not vocabulary).
+- New: `onboarding.yaml` replaces `profile.yaml` + `decisions.yaml` as one artifact —
+  fewer ids in whatever registry survives, and `onboarding-decisions-v1.yaml` in
+  `contracts/schemas/` needs merging or dropping with them.
