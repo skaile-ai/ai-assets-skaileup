@@ -47,3 +47,21 @@ Two pieces of the mockup domain were handed to the build side; this ticket has t
 - The **line drawn was artifact, not tool**: Storybook is named in 9 `SKILL.md` outside the
   mockup domain, so "it mentions Storybook" never decided placement. Story *authoring* stayed
   in `mockup-`; anything that configures the real project moved to `build-`.
+
+## Handed over by ticket 09
+
+Ticket 09 pruned the contracts layer but deliberately left two impl-side files to this
+ticket rather than pre-empt the slice consolidation on stale counts:
+
+- **`contracts/slice_loop.md`** (73 lines) — 1 in-body reader.
+- **`contracts/plans.md`** (86 lines) — 1 in-body reader.
+
+Ticket 09's bar: a contract earns its place only if **more than one skill reads it in-body**,
+or a machine does. Both currently fail it. **Default is deletion** — fold each into the one
+skill that reads it. They survive only if this ticket's consolidation gives one a second
+reader, in which case it is promoted back into `contracts/`.
+
+Also settled by 09, so do not re-litigate: `iron_laws.md` and `golden_principles.md` survive
+as machine-enforced gates, and this is *not* in tension with ticket 03's removal of
+`MUST`/`NEVER` blocks — those were skill-body prose; these have `requires` and `ops-review`
+as the check behind them.

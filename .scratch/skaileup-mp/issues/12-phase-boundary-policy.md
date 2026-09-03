@@ -41,3 +41,17 @@ _(pending)_
 machine contract with forge-concept (`data.phase` ∈ conceptualization | implementation |
 review) and `CONTEXT.md` reserves it for that. mp's file is `PHASE-BOUNDARIES.md`, so the
 collision is inherited, not invented — rename on the way in.
+
+## Handed over by ticket 09
+
+Ticket 09 left **`contracts/phase_procedures.md`** (34 lines, **0 in-body readers**, 5
+citations) to this ticket rather than rule on it, since the session-boundary policy decides
+whether anything still needs it.
+
+Ticket 09's bar: a contract earns its place only if **more than one skill reads it in-body**,
+or a machine does. It fails on both counts today, so **the default is deletion**. If this
+ticket's boundary policy needs a written procedure shared by more than one skill, it comes
+back as that — otherwise the seven hardcoded `/clear` sites are replaced without it.
+
+Note the name: ticket 05 fixed **`phase` as a forge-concept machine contract**, so whatever
+replaces this file is a **session boundary** procedure and must not be called `phase_*`.

@@ -139,6 +139,36 @@ the ticket type says so.
   block from the start). **`elements:` stays — 9 readers.** To ticket 09: keep
   `walkthrough_renderer.md` (grown) + `elements_block.md`, fold `preview_compatibility.md` in.
 
+- [09: Prune the contracts layer](issues/09-contracts-prune.md):
+  **28 contracts / 5,663 lines → 14 files**; `artifacts.yaml` (~1,000), `flows.md` (588) and
+  `asset_frontmatter.md` (530) deleted before any rewriting. **One rule settled the registry
+  question: machine-read data lives where forge-concept already reliably looks** — `SKILL.md`
+  frontmatter resolved via `name:`. That drops **`artifacts.yaml`** (reviving it costs an
+  out-of-scope forge-concept edit) and **keeps `inputs_optional` in frontmatter** (moving it
+  to a sibling `inputs.yaml` costs the same out-of-scope edit) — the map's own boundary cutting
+  both ways; concept-side frontmatter stays ~15 lines vs mp's 4–6, accepted. **The bar: a
+  reader consults the contract at a step in its body**; naming it in `REQUIRED BACKGROUND` or
+  `REFERENCES` is a citation, and ticket 03 deletes both blocks. Raw counts were inflated ~2.5×
+  — `frontmatter.md` shows 86 refs, 13 real readers — so **deciding on raw counts would have
+  kept three of the largest dead files**. Two of the ticket's own premises were wrong:
+  **`agent_patterns.md` does not die with the DSL** (9 in-body readers, 4th highest; re-scoped
+  to agent dispatch, absorbs `subagent_dispatch.md`), and **`iron_laws` + `golden_principles`
+  are not in tension with ticket 03** — its amendment killed `MUST`/`NEVER` *skill-body prose*,
+  while these document machine-enforced gates, and **`requires` is exactly the "check behind a
+  named failure" ticket 03 demanded**. **`flows.md` had zero readers** — the largest contract in
+  the layer, mentioned only by `contracts/README.md` and `DOMAIN.md`; `flow.schema.json` survives
+  as the flow contract's machine form, **pending ticket 15**. **Two frontmatter contracts become
+  one:** `frontmatter.md` → **`artifact_frontmatter.md`** (ticket 05's asset/artifact split made
+  explicit in the filename), `asset_frontmatter.md` deleted (0 in-body readers; its whole
+  read-set is ticket 01's five fields, a 20-line table for the skill template). DSL trio dies;
+  **ticket 03's replacement template goes to `docs/`, not `contracts/`** — no runtime reader.
+  **`profiles/` survives but leaves `contracts/`** for the repo root (project-type data, not a
+  contract). `CONTRACT.md`+`README.md` merge; `preview_compatibility`→`walkthrough_renderer`;
+  `doc_tracking`→`build-docs`; `wireframe_conventions`→`mockup-walkthrough/references/`;
+  `acceptance_criteria` shrinks to the EARS grammar. **Four files handed off rather than ruled**
+  — `slice_loop`+`plans`→07, `phase_procedures`→12, `grill_bank`→absorbed-skills fog,
+  `scripts/`→**ticket 16** — each defaulting to deletion unless that ticket gives it a reader.
+
 ## Not yet specified
 
 - **The port itself, per domain.** The mockup domain has graduated (ticket 14); the
@@ -147,9 +177,9 @@ the ticket type says so.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
   Blocked on knowing which skills they replace. Ticket 04 fixed their *names*
-  (`spec-*` / `build-*` / `skaileup` / `concept-*`), not their contents.
-- **CI and validation.** `verify_flows.py`, `verify_artifacts.py`, the pre-commit hook and
-  `validate_skill_rules.py` all validate DSL that's going away. What replaces them, if anything.
+  (`spec-*` / `build-*` / `skaileup` / `concept-*`), not their contents. **Ticket 09 handed
+  `contracts/grill_bank.md` here** (0 in-body readers) — it survives only if the absorbed
+  `grilling` skill claims it, otherwise it is deleted.
 - **The docs site.** `docs/` is a Starlight site that renders every SKILL.md. Port, regenerate,
   or drop — depends on how much frontmatter survives.
 - **Opt-in mechanics and the acceptance test.** How a project points at `-mp`
@@ -165,3 +195,13 @@ the ticket type says so.
   The map still maps what `forge-concept` reads (see the machine-layer research ticket) so
   `-mp` doesn't break it blindly, but switching it is a later, separate effort.
 - **Archiving or renaming the old repo.** Same reason.
+- **The multi-product umbrella feature** — `14_ops/contracts/CONTRACT.md` (314 lines,
+  `stage: alpha`, `do_not_invoke: true`) and the `ops-project-overview` /
+  `ops-project-subsystem-map` skills that read it. Ruled out by ticket 09 on the same argument
+  as `15_demo`: a meta-concept spanning several products is a different product from the
+  app-building collection. Stays in the old repo.
+- **Making `artifacts.yaml` reachable, and moving input-dialog specs to a sibling
+  `inputs.yaml`.** Both are forge-concept edits (`artifact-contract.ts:138` and a new frontmatter
+  reader), which this map already rules out. Ticket 09 accepted the consequences of *not* doing
+  either — the registry dies, the dialog spec stays in frontmatter. If forge-concept is ever
+  touched, the `inputs.yaml` move returns as its own effort.

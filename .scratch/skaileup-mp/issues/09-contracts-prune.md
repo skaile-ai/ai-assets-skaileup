@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None (01, 05 resolved)
-**Status:** ready
+**Status:** resolved
 
 ## Question
 
@@ -49,7 +49,120 @@ or delete. A contract only earns its place if **more than one** skill reads it, 
 
 ## Answer
 
-_(pending)_
+**28 contract `.md` files / 5,663 lines → 14 surviving files.** Deleted outright before any
+rewriting: `artifacts.yaml` (~1,000), `flows.md` (588), `asset_frontmatter.md` (530).
+
+### The rule that decided the registry question (Q1)
+
+`artifacts.yaml` and `prerequisites.inputs_optional` were posed as one question, and one rule
+answers both — in opposite directions: **machine-read data lives where forge-concept already
+reliably looks**, which is `SKILL.md` frontmatter resolved via `name:`, and nowhere else.
+
+- **`artifacts.yaml` is dropped.** Reviving it costs a forge-concept edit
+  (`artifact-contract.ts:138`), which the map rules out of scope. A 1,000-line registry
+  serving a code path that never runs does not survive on potential.
+- **`inputs_optional` stays in frontmatter.** It is *live* — forge-concept reads
+  `prerequisites.*` and renders the dialog. Moving it to a sibling `inputs.yaml` costs an
+  equally out-of-scope forge-concept edit. The map's own boundary cuts both ways.
+- **Accepted cost:** concept-side frontmatter stays ~15 lines against mp's 4–6. The
+  `inputs.yaml` move is recorded as a follow-on gated on the forge-concept fix (see Out of scope).
+- The id↔path map survives as **prose in `concept_structure.md`**, not as a registry.
+
+### The bar (Q2)
+
+**A reader is a skill that consults the contract at a step in its body.** Naming it in
+`REQUIRED BACKGROUND` or the DSL `REFERENCES` block is a *citation*, not a read — and ticket 03
+is deleting both blocks. Measured post-boilerplate across all 95 skills, citations excluded:
+
+```
+iron_laws 16 · concept_structure 15 · frontmatter 13 · agent_patterns 9 · elements_block 8
+walkthrough_renderer 5 · semantic_types 4 · evaluator 4 · feedback_loop 4 · CONTRACT 4
+seed_data 3 · domain_model 3 · README 3 · golden_principles 2
+plans 1 · slice_loop 1 · wireframe_conventions 1 · skill_grammar 1 · acceptance_criteria 1
+doc_tracking 0 · phase_procedures 0 · grill_bank 0 · asset_frontmatter 0 (11 cited, 530 lines)
+flows 0 · skill_testing 0 · skill_template 0 · preview_compatibility 0
+```
+
+Raw reference counts were inflated ~2.5× by boilerplate — `frontmatter.md` shows 86 refs but
+13 real readers. **Deciding on raw counts would have kept three of the largest dead files.**
+
+### Two corrections to the ticket's own premises
+
+- **`agent_patterns.md` does not die with the DSL (Q5).** The ticket filed it under "dying",
+  but it has **9 in-body readers, 4th highest in the layer**. It survives, re-scoped to agent
+  dispatch / subagent patterns (the DSL-flavoured parts go with `skill_grammar`), and absorbs
+  `10_impl-build/contracts/subagent_dispatch.md`, the only other place this lives.
+- **`iron_laws` and `golden_principles` are not in tension with ticket 03 (Q10).** Ticket 03's
+  amendment killed `MUST`/`NEVER` **blocks in skill bodies**; these two document
+  *machine-enforced* gates — `iron_laws` explains the `requires`/`prerequisites.*` gates ticket
+  01 confirmed the machine reads, `golden_principles` is what `ops-review` checks
+  automatically. Ticket 03 demanded a hard guardrail survive "as a named failure with a check
+  behind it" — **`requires` is that check**. Both clear the bar on its machine clause.
+  Recorded so 07/08 do not re-litigate it.
+
+### Deletions and merges
+
+- **`flows.md` deleted (Q3)** — 588 lines, the largest contract in the layer, **zero readers**
+  (only `contracts/README.md` and `contracts/DOMAIN.md` mention it). `flow.schema.json` is kept
+  as the flow contract's machine form; `flows/_meta/verify_flows.py` validates against it.
+  **Subject to ticket 15** — platform's newer flow-execution implementation may make it stale.
+- **Two frontmatter contracts become one (Q6).** `frontmatter.md` survives, **renamed
+  `artifact_frontmatter.md`** so ticket 05's asset/artifact split is explicit in the filename.
+  `asset_frontmatter.md` is deleted: 530 lines, **0 in-body readers**, and after Q1 its entire
+  read-set is ticket 01's five fields — a 20-line table that belongs in the skill template
+  where an author actually looks.
+- **`skill_grammar` · `skill_template` · `skill_testing` die with the DSL (Q11).** Ticket 03's
+  replacement template goes to **`docs/skill-template.md`, not `contracts/`** — by this
+  ticket's own bar a template has no runtime reader, and putting it in `contracts/` would
+  reintroduce the docs-in-the-contracts-folder problem this ticket exists to remove.
+- **`CONTRACT.md` + `README.md` merge into one `contracts/README.md`; `DOMAIN.md` deleted (Q9).**
+- **`preview_compatibility.md` folds into `walkthrough_renderer.md`** (ticket 06, accepted here).
+- **`doc_tracking` folds into `build-docs`; `wireframe_conventions` folds into
+  `mockup-walkthrough`'s `references/` (Q13).** Promote back only if 07/08 give either a
+  second reader.
+- **`acceptance_criteria` survives, shrunk to the EARS grammar (Q13)** — machine clause
+  (`scripts/ac_lib.py`), and EARS is the format ticket 05 kept across spec and experience.
+
+### Registries (Q8)
+
+Q1 killed `artifacts.yaml`, their only machine reader.
+
+- **Deleted:** `tests/` (tests the thing Q1 deleted) · `schemas/onboarding-profile-v1.yaml` +
+  `onboarding-decisions-v1.yaml` (superseded by ticket 05's merged `onboarding.yaml`) ·
+  `schemas/audiences-v1.yaml` + `competitors-v1.yaml` (0 readers).
+- `schemas/design-inspiration-v1.yaml` follows its skill.
+- **`profiles/` survives but leaves `contracts/`** — project-type profiles are *data the skills
+  consume*, not a contract, and ticket 05 fixed `profile = project type only`. They land at
+  **`profiles/` in the repo root**, next to `flows/`.
+
+### Nested per-domain contracts (Q12)
+
+Ticket 04's flat tree deletes their folders. `subagent_dispatch.md` → `agent_patterns.md`.
+The three domain `CONTRACT.md` files (`implementation-contract`, `evaluate-contract`,
+`standards-contract`) **fold into the single skill that reads each** — domain-local by
+construction, so they fail the multi-reader bar; promoted back only if 07/08 give one a second
+reader. `14_ops/contracts/CONTRACT.md` is **ruled out of scope** (see below).
+
+### The surviving set — 14 files
+
+`iron_laws` · `golden_principles` · `concept_structure` · `artifact_frontmatter` ·
+`agent_patterns` (+`subagent_dispatch`) · `elements_block` · `walkthrough_renderer`
+(+`preview_compatibility`) · `semantic_types` · `evaluator` · `feedback_loop` · `seed_data` ·
+`domain_model` · `acceptance_criteria` · `README` (merged from `CONTRACT.md`).
+
+Plus `flow.schema.json` (machine, pending ticket 15) and `profiles/` (moved to repo root).
+
+### What this ticket deliberately did not decide
+
+Four files whose fate belongs to tickets still blocked — ruling on them here would pre-empt
+three tickets on stale information (Q7):
+
+- **`slice_loop` (1 reader) + `plans` (1)** → **ticket 07**
+- **`phase_procedures` (0)** → **ticket 12**
+- **`grill_bank` (0)** → the absorbed-skills fog patch
+- **`scripts/` + the CI validators** → **ticket 16**, graduated from the map's CI fog patch (Q4)
+
+In each case the default is deletion unless that ticket's consolidation gives the file a reader.
 
 ## Note from ticket 05
 
