@@ -169,6 +169,22 @@ the ticket type says so.
   — `slice_loop`+`plans`→07, `phase_procedures`→12, `grill_bank`→absorbed-skills fog,
   `scripts/`→**ticket 16** — each defaulting to deletion unless that ticket gives it a reader.
 
+- [11: Create the repo and its skeleton](issues/11-create-repo-skeleton.md):
+  **`github.com/skaile-ai/ai-assets-skaileup-mp` exists** (skeleton `93e9d0e`), added as a
+  submodule at `ai-assets/ai-assets-skaileup-mp` (super-repo `cb629fb`, straight to `main`).
+  **Public, not private** — the ticket's "matching the existing repo" was wrong about the
+  existing repo. Skeleton is `skills/` + `flows/` (both empty, each with the rule stated in
+  its README) · `contracts/` at ticket 09's 14 survivors · `profiles/` hoisted to the root ·
+  `CONTEXT.md` verbatim · `docs/skill-template.md` + both ports in `docs/examples/` ·
+  `docs/adr/0001-0004`. **The spine did not come across unchanged** — the ticket predates
+  ticket 09, so the skeleton starts at 09's answer rather than re-doing its deletions: no
+  `artifacts.yaml`, no `schemas/`, no `scripts/`. **`flows/` is deliberately empty** (ticket
+  10 owns the set; 19 stale flows in a repo whose test is "flows load green" is worse than
+  none) and **`.github/` waits for ticket 16**. `skaile.yaml` ships no `assets:` block and no
+  manifest — glob discovery. Three contract fold-ins
+  (`preview_compatibility`→`walkthrough_renderer`, `subagent_dispatch`→`agent_patterns`,
+  `CONTRACT`→`README`) are content work left to the rewrite tickets; sources stay in the old repo.
+
 ## Not yet specified
 
 - **The port itself, per domain.** The mockup domain has graduated (ticket 14); the

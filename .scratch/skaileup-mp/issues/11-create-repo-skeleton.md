@@ -2,7 +2,7 @@
 
 **Type:** task
 **Blocked by:** None (03, 04 resolved)
-**Status:** ready
+**Status:** resolved
 
 ## Question
 
@@ -41,7 +41,77 @@ had to differ from the plan.
 
 ## Answer
 
-_(pending)_
+**The repo exists and the super-repo points at it.**
+
+- **Repo:** https://github.com/skaile-ai/ai-assets-skaileup-mp — **public, not private.**
+  The ticket said "private, matching the existing repo's visibility"; the existing repo is
+  in fact public, so matching reality won over matching the ticket text. Consumers install
+  without auth, exactly as they do today.
+- **Submodule path:** `ai-assets/ai-assets-skaileup-mp` in `SKAILEdev`.
+- **Skeleton commit:** `93e9d0e` on `main`. **Super-repo commit:** `cb629fb`, pushed
+  straight to `main` per the super-repo workflow (submodule pushed first).
+
+### What landed
+
+```
+skills/README.md           empty; dir name == name:, the rule stated in place
+flows/README.md            empty on purpose (see below)
+contracts/                 the 14 survivors + flow.schema.json
+profiles/                  6 project-type files, hoisted out of contracts/
+docs/skill-template.md     ticket 03's TEMPLATE.md
+docs/examples/             both worked ports + WHY.md (ticket 03's FINDINGS.md)
+docs/adr/                  0001-0004 + index
+CONTEXT.md                 ticket 05's file, verbatim, 139 lines
+README.md · CLAUDE.md · skaile.yaml · .gitignore
+```
+
+### Differences from the plan, and why
+
+1. **The spine did not come across unchanged.** The ticket predates ticket 09, which has
+   since pruned contracts 28 → 14 and killed `artifacts.yaml`. Laying down the old spine
+   would have meant re-doing 09's deletions as a cleanup pass, so the skeleton starts at
+   09's answer: 13 surviving contracts, `frontmatter.md` renamed **`artifact_frontmatter.md`**,
+   `README.md` in place as the merge target for `CONTRACT.md`, `profiles/` moved to the root.
+   **No `artifacts.yaml`**, no `schemas/`, no `tests/`, no `scripts/`.
+2. **The three fold-ins are content work, not skeleton work, and are still pending.**
+   `preview_compatibility.md` → `walkthrough_renderer.md`, `subagent_dispatch.md`
+   (`10_impl-build/contracts/`) → `agent_patterns.md`, `CONTRACT.md` → `contracts/README.md`.
+   The survivors were copied verbatim; the sources stay in the old repo, which is the
+   retrieval point until the rewrite tickets grow them.
+3. **`flows/` is empty.** Ticket 10 owns the flow set and is still blocked. The 19 old flow
+   YAMLs reference old skill names, so porting them verbatim would have put 19 stale,
+   non-loading files in a repo whose acceptance test is "flows load green". `flows/README.md`
+   states the contract (`<id>/<id>.flow.yaml`, `id`+`nodes`+`edges`, `requires:`, `data.phase`
+   on every node) so the shape is fixed before the first flow is written.
+4. **`.github/` did not come across — deferred to ticket 16**, which owns what validation
+   survives the DSL validators. There is nothing to gate yet: no skills, no flows.
+5. **Nothing was laid down for `onboarding.yaml`.** Ticket 05's merged file is a *project*
+   artifact (`_concept/_grounding/`), not a collection file, and ticket 09 deleted both
+   schemas that described it. Nothing belongs in the skeleton for it.
+6. **The two worked ports live in `docs/examples/`, not `skills/`.** Their final names and
+   boundaries belong to tickets 08 and 14 — `mockup-walkthrough-astro` in particular is not
+   a final skill name under ticket 06's one-skill-plus-`references/<renderer>/` shape. Nothing
+   installs from `docs/`.
+7. **`skaile.yaml` ships no `assets:` block and no `skaile.manifest.yaml`** — glob discovery,
+   with the reasoning recorded as a comment in the file itself.
+8. **No `DOMAIN.md` anywhere**, per ticket 05.
+
+### The frontmatter question the ticket raised
+
+Ticket 09 answered it: **`inputs_optional` stays in frontmatter.** Moving the input-dialog
+specs to a sibling `inputs.yaml` costs a forge-concept edit, which the map rules out. So the
+skeleton needs nowhere to put them and concept-side frontmatter stays ~15 lines.
+
+### ADRs seeded
+
+`0001` name-is-identity · `0002` flat tree + nine domains · `0003` skill body shape ·
+`0004` contracts earn their place — from tickets 01/04, 04, 03 and 09 respectively. Tickets
+05 and 06 have not been turned into ADRs yet; they are glossary and domain-shape decisions
+that the port tickets will exercise first.
+
+### Unblocked
+
+**14: Port the mockup domain** — the only ticket that was waiting on this one.
 
 ## Note from ticket 05
 
