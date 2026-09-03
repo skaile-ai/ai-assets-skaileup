@@ -185,6 +185,30 @@ the ticket type says so.
   (`preview_compatibility`→`walkthrough_renderer`, `subagent_dispatch`→`agent_patterns`,
   `CONTRACT`→`README`) are content work left to the rewrite tickets; sources stay in the old repo.
 
+- [15: Flow format vs platform's flow-execution](issues/15-flow-format-vs-platform.md):
+  **Platform did not fork the format — one schema, in `@skaile/workspaces`, and both hosts call
+  it.** Platform's `validateFlow` is the same export forge-concept's loader ships;
+  `flowExecution.model.json` is the per-node *execution record*, orthogonal to authoring.
+  **All 17 skaileup flows validate green** against it, and 0.48.1 vs 2.0.0 declare identical
+  fields — no skew. **Platform is not a file host**: `loadAllFlows`/`loadFlowsFromDir` have zero
+  call sites there, flows live in the DB as `filesJson['flow.json']`, imported by hand, org
+  seeding removed — so **the acceptance target does not move**, forge-concept's
+  `skaileup-flows.test.ts` stays the test and platform importability is free. The contract is
+  therefore not an intersection, but the two required-sets differ (loader: `id`+`nodes`+`edges`;
+  validator: `id`+`name`) → **ship all four**. **The stale artefact is ours:**
+  `contracts/flow.schema.json` invents a `gate` node kind and a `review-loop` edge type no engine
+  implements (0 and 1 uses), requires `position` nothing reads (dagre computes it), and is
+  `additionalProperties: false` against a `looseObject` runtime — ticket 09's "keep a machine
+  form" stands, but this file **ports narrowed or not at all**. **The sharpest rule is not
+  platform's:** the engine takes dependencies from `edges.filter(e => e.type === "flow")`, so an
+  edge with any other type — or **no `type`** — orders nothing (verified; `skaileup-stepwise`'s
+  one `review-loop` edge is already a no-op). Platform adds exactly three checks: unique node
+  ids, no dangling endpoints, no self-loops. **`data.phase` is a closed three-value enum**
+  (`conceptualization|implementation|review`) — ticket 04 had the precedence right, not the
+  vocabulary; the nine domains name skills, not phases. `assetSearchDirs` already covers a flat
+  `<root>/flows/`. Ticket 16 gains four cheap checks; `modes`/`tier_presets`/`artifact_handoff`
+  have no reader anywhere. Findings: `research/15-flow-format-vs-platform.md`.
+
 ## Not yet specified
 
 - **The port itself, per domain.** The mockup domain has graduated (ticket 14); the
