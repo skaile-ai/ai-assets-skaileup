@@ -1,8 +1,8 @@
 # 08: Concept-side consolidation
 
 **Type:** grilling
-**Blocked by:** 12 (04 resolved)
-**Status:** blocked
+**Blocked by:** None (04, 12 resolved)
+**Status:** ready
 
 ## Question
 

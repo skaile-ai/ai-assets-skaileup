@@ -1,8 +1,8 @@
 # 07: Implementation-side consolidation — 16 slice skills to ~6
 
 **Type:** grilling
-**Blocked by:** 12 (02, 04 resolved)
-**Status:** blocked
+**Blocked by:** None (02, 04, 12 resolved)
+**Status:** ready
 
 ## Question
 

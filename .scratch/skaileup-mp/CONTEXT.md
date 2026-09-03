@@ -32,8 +32,20 @@ machine-read contract with forge-concept; never used loosely for "stage of work"
 _Avoid_: stage, step, lane
 
 **Session boundary**:
-The point where an agent hands work on — continue, clear, hand off, or dispatch a
-subagent. Deliberately *not* called a phase boundary, because `phase` is taken.
+The point where one skill's work ends and the next begins. Every boundary is warm or
+cold. Deliberately *not* called a phase boundary, because `phase` is taken. Never
+described with a harness's slash commands — those exist in one host and not the other.
+_Avoid_: /clear, /compact, context switch
+
+**Warm boundary**:
+A session boundary the next skill may cross without starting over: the reasoning behind
+the last step is still worth having verbatim. Continuing is the default, subject to a
+soft gate on how full the context already is.
+
+**Cold resume**:
+A session boundary where nothing carries — a later day, another person, another host.
+The durable artifact is the whole input, so it has to stand alone.
+_Avoid_: handoff, restart
 
 **Gate**:
 A precondition on running a skill. **Hard** refuses to proceed; **soft** warns and

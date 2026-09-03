@@ -209,6 +209,34 @@ the ticket type says so.
   `<root>/flows/`. Ticket 16 gains four cheap checks; `modes`/`tier_presets`/`artifact_handoff`
   have no reader anywhere. Findings: `research/15-flow-format-vs-platform.md`.
 
+- [12: Phase-boundary policy — replace the hardcoded `/clear`](issues/12-phase-boundary-policy.md):
+  **The tree does not port as a tree — two of its five options do not exist in the host that
+  matters.** forge-concept keeps **one long-lived agent process per concept**
+  (`concept-agent.ts:174`) and a node run is just another prompt into it
+  (`flows/nodes/[nodeId]/run.post.ts:83`): no `/clear`, **no `/compact` at all**, only a manual
+  "Clear conversation" button. So the old rule was Claude-Code vocabulary describing a click the
+  primary host may never make, and **`-mp` names no slash command anywhere** — ticket 05's
+  discipline on `phase`, same reason. Five options become **two named cases**: **warm boundary**
+  (continue is the default) and **cold resume** (the artifact is the whole input; days later,
+  possibly another person). **Answers are fixed per site, not derived at runtime** —
+  brainstorm→align **warm** (mp's own worked example), align→scope/plan **warm**,
+  scope→design-feature **cold**, implement→test→recap **warm**, commit→next-slice **cold**; the
+  tree survives as reasoning in **ADR 0005**. **The dumb-zone guard had to survive as a soft
+  gate** — the fixed answers contradict the old "no phase carries the whole slice" claim, so
+  warm is a default, not a promise, and it carries **no number** (two hosts, two windows).
+  **The seven sites were mostly a deletion problem**: 2 are `DOMAIN.md`, 2 are `SOUL.md` (no
+  `agents/` in `-mp`), 1 is the old `CLAUDE.md` — the ~3 survivors point at **one section in
+  ticket 07's loop contract** rather than restate it, which is how one answer got copied seven
+  times. **The engine writes a handoff of its own** (`run.post.ts:59-75` builds
+  `## Context from Prior Nodes` from flow-type edges) — a second channel beside the dossier, so:
+  a node's summary names the dossier file it wrote and never restates its content. **`handoff`
+  does not become a skill** (portability only, map premise 6) — its two rules do.
+  **`phase_procedures.md` dies by name**: `emit_lifecycle` dead, `read_predecessor` → the
+  boundary section (it *is* cold resume), `draft_checkpoint_write` → `agent_patterns.md`.
+  **Rejected: `boundary:` as edge data** — ticket 15 showed the engine reads `type` alone and the
+  schema is loose, so the key would validate and be read by nobody. `debug-handoff` → ticket 07,
+  flagged lean-delete.
+
 ## Not yet specified
 
 - **The port itself, per domain.** The mockup domain has graduated (ticket 14); the
