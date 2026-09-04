@@ -1,7 +1,7 @@
 # 10: Flows and tiers
 
 **Type:** grilling
-**Blocked by:** 06, 07, 08 (01 resolved)
+**Blocked by:** 08 (01, 06, 07 resolved)
 **Status:** blocked
 
 ## Question
@@ -61,3 +61,18 @@ _(pending)_
   repointing at `mockup-walkthrough`, and that flow is also the one real argument for keeping a
   no-Node component view (see ticket 06's `isolated-html` note).
 - **`mockup-feedback.flow.yaml` shrinks from 4 nodes to 2** (annotate | feedback).
+
+## Note from ticket 07
+
+Two consequences land here.
+
+- **Tier stops branching the flows at the slice loop.** `slice_loop.md`'s table routed each
+  tier to a different *entry skill* (mvp → `plan-vertical`, simple → `align`,
+  standard/complex → `brainstorm`); ticket 07 collapsed each side to one entry skill, so
+  tier becomes **depth inside the skill**, not a different node. Together with ticket 06's
+  renderer-choice-becomes-data ruling, two of the reasons the flows fan out are gone.
+- **The node set shrinks.** 16 slice skills became four — `spec-feature` · `build-plan` ·
+  `build-implement` · `build-branch` — and `impl-plan-supervised`, `impl-slice-implement-page`
+  and `impl-quality-debug-handoff` have no successor node at all. The test pyramid
+  (`quality-test-{unit,integration,e2e}`) stays **flow nodes after the slice** rather than
+  calls from inside `build-implement`, so those nodes are load-bearing.

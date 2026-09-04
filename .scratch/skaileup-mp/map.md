@@ -237,11 +237,40 @@ the ticket type says so.
   schema is loose, so the key would validate and be read by nobody. `debug-handoff` → ticket 07,
   flagged lean-delete.
 
+- [07: Implementation-side consolidation — 16 slice skills to ~6](issues/07-implementation-side-consolidation.md):
+  **16 skills / 4,166 lines → 4** — `spec-feature` · `build-plan` · `build-implement` ·
+  `build-branch`. The mechanism is ticket 02's find applied literally: mp's `implement` is
+  **15 lines that name `tdd` and `code-review`** instead of restating them, so every survivor
+  survives as a *step inside* one of the four. **The two absorbed mp skills are not new
+  skills** — `to-spec` *is* `spec-feature`, `to-tickets` *is* `build-plan`; the one split mp
+  makes (interview, then synthesise without interviewing) is the only split the concept side
+  needs, and with `grilling` a global install called by name, **four grill-shaped skills
+  collapse to zero**. **`impl-plan-supervised` dies** with its 4-status protocol (ceremony
+  over a subagent return value; ticket 09 already kept `agent_patterns.md` for dispatch), and
+  **`implement-page` dies outright** — it was an alternative *unit of work*, a page being a
+  horizontal grouping in a map whose discipline is the vertical slice. **`build-implement`
+  names exactly `tdd` + `code-review`**; the test pyramid stays **flow nodes after the slice**
+  so ticket 17 keeps the freedom to reshape it. **Tier stops gating entry and becomes depth**
+  inside the skill — with one entry skill per side there is nothing left to route to, which
+  deletes `slice_loop`'s tier table, its pinned refuse message, and a fan-out reason from
+  ticket 10. **Dossiers stay two but shrink to one file each**, and the concept one is renamed
+  **`_concept/dossiers/<feature_slug>/`** (ticket 05 made `slice` impl-only); the per-phase
+  handoff files existed to cross a `/clear` ADR 0005 no longer makes. **`spec-feature` writes
+  screens**, which hands ticket 08 a boundary: `experience-screens` covers the whole-app pass
+  or collapses into it. Contracts: **`slice_loop.md` survives shrunk** (slug + freeze; 3 of 4
+  new skills read it), **`plans.md` deleted** — but `PLANS.md`-the-artifact has **9 in-body
+  readers**, only 2 in this cluster, so it goes to ticket 18. **Ticket 06's Storybook premise
+  was wrong**: `build-foundation` only *themes* an existing Storybook, so **scaffolding goes
+  to `mockup-storybook`** (ticket 14), and `debug-handoff` is deleted per ticket 12.
+  Graduated **17** (quality), **18** (architecture + build — eleven skills no ticket owned)
+  and **19** (write the four).
+
 ## Not yet specified
 
-- **The port itself, per domain.** The mockup domain has graduated (ticket 14); the
-  concept-side and implementation-side ports still can't be sized until tickets 07 and 08
-  land. Each is a rewrite-from-the-model pass, one ticket per domain group.
+- **The port itself, per domain.** Mockup graduated as ticket 14, the slice loop as ticket
+  19; the concept-side port still can't be sized until ticket 08 lands, and the quality and
+  architecture/build ports wait on their own decision tickets (17, 18). Each is a
+  rewrite-from-the-model pass, one ticket per domain group.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
   Blocked on knowing which skills they replace. Ticket 04 fixed their *names*

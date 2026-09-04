@@ -41,3 +41,16 @@ and anything that had to differ from ticket 06's shape.
 ## Answer
 
 _(pending)_
+
+## Note from ticket 07
+
+**Ticket 06's premise about Storybook setup was wrong, and ticket 07 sent the step back
+here.** `impl-build-foundation` only *themes a Storybook that already exists* ("only if
+`prototype/storybook/` exists AND Storybook is installed",
+`10_impl-build/02_foundation/SKILL.md:74-75`), while `mockup-component-storybook-setup`
+(171 lines) **scaffolds a standalone Storybook project**. Different artifacts — so the step
+is not covered by the build domain and would have been lost.
+
+**Scaffolding the standalone Storybook is a step inside `mockup-storybook`.** The real app's
+Storybook config stays with `build-foundation`; ticket 18 confirms that split from the build
+side. `mockup-component-storybook-types` still dies, as ticket 06 ruled.
