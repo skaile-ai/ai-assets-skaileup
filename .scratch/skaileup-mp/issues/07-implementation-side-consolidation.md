@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None (02, 04, 12 resolved)
-**Status:** ready
+**Status:** claimed
 
 ## Question
 
