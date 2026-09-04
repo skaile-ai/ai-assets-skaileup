@@ -41,3 +41,23 @@ Decide:
   a skill, or the last step of `techstack`?
 - How much of `seed` / `migrate` is stack-specific enough to belong in `profiles/` (hoisted
   to the repo root by ticket 09) rather than in a skill body.
+
+## Note from ticket 14
+
+The mockup port handed two things to this ticket:
+
+- **`contracts/preview_compatibility.md` (292 lines) is yours or it is lost.** Ticket 06
+  assumed it belonged to the mockup domain and ruled it folded into
+  `walkthrough_renderer.md`; ticket 14 found that wrong. It is per-framework base-path
+  recipes for a **scaffolded app** behind the workspace preview proxy, and its seven readers
+  are all `09_impl-architecture/templates/template-*/TEMPLATE.md` — zero in the mockup
+  domain, and neither surviving renderer nor the renderer contract mentions preview or
+  iframe. It was **not** folded in and did **not** port.
+- **Storybook stack resolution asks for six values the templates carry four of.**
+  `story_extension`, `component_library` and `icon_library` appear in no `TEMPLATE.md`, so
+  the old "ask if missing" branch fired on every run; ticket 14's port derives them instead.
+  Decide whether the templates grow the keys — this is the same broken skill↔template
+  contract as `scaffold_command` / `css_vars_mapping` / `seed_format`.
+
+Also confirmed from the mockup side: `build-foundation` keeps only the **real app's**
+Storybook theming; scaffolding the standalone Storybook landed in `mockup-storybook`.

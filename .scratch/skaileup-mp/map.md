@@ -265,11 +265,40 @@ the ticket type says so.
   Graduated **17** (quality), **18** (architecture + build — eleven skills no ticket owned)
   and **19** (write the four).
 
+- [14: Port the mockup domain — write the 4 skills](issues/14-port-mockup-domain.md):
+  **17 skills / 6,597 lines → 4 skills / 344 lines of `SKILL.md` + 469 of `references/`** —
+  `mockup-walkthrough` (91) · `mockup-storybook` (89) · `mockup-annotate` (78) ·
+  `mockup-feedback` (86), all under ticket 03's 140 ceiling, dir == `name:`, no MUST/NEVER.
+  Committed `ce0e118`..`f5ea080` on `-mp` `main`, not pushed. **Ticket 06 was wrong about
+  `preview_compatibility.md`** — it is 292 lines of per-framework base-path recipes for a
+  *scaffolded app* behind the workspace preview proxy, seven readers, all
+  `09_impl-architecture/templates/template-*/TEMPLATE.md` and **none in the mockup domain**,
+  so it is *not* folded into `walkthrough_renderer.md`: **ticket 18 must claim it or it is
+  lost**. `walkthrough_renderer.md` 414 → 446 (absorbs `items[]` id derivation as a
+  first-class section, per-renderer copies gone); `elements_block.md` across unchanged.
+  **`validator.py` is a *step* of the skill, not test infrastructure**, so it and its fixtures
+  ship inside `references/<renderer>/tests/` rather than a top-level `tests/` that would
+  pre-empt ticket 16; all five harnesses re-pointed and green. But **the walkthrough harnesses
+  do not test the renderers** — they `cp expected/ → rendered/` and validate that, by their own
+  headers; only `mockup-feedback`'s apply tests are real integration tests. Four latent bugs
+  fixed in the port: the **annotation overlay 404'd on every page but `index.html`** (bare
+  `src=` resolved against the nested page's own directory — that is the entire annotatable
+  surface); every renderer **hard-gated on `design/tokens.json`, which nothing writes** (brand
+  tokens land in `discovery/brand/tokens.json` — a gate that could never pass);
+  `patches.schema.json` was **missing `target-promotion`** while `03_patch` emits it and apply
+  validates against it; and the "preserved intent" step **cited devlog fields that do not
+  exist** (`target_paths`, `patch_summary`) — including in ticket 03's landed astro port, so
+  anything else in `-mp` inheriting those names is wrong the same way. Storybook stack
+  resolution **asks for six values the templates carry four of**
+  (`story_extension`/`component_library`/`icon_library` are in no `TEMPLATE.md`) → ticket 18.
+  `05_types` did not port, as ticket 06 ruled; nor did the storybook validator's
+  `_concept/experience/4_storybook` target, which nothing writes.
+
 ## Not yet specified
 
-- **The port itself, per domain.** Mockup graduated as ticket 14, the slice loop as ticket
-  19; the concept-side port still can't be sized until ticket 08 lands, and the quality and
-  architecture/build ports wait on their own decision tickets (17, 18). Each is a
+- **The port itself, per domain.** **Mockup is done** (ticket 14); the slice loop graduated
+  as ticket 19; the concept-side port still can't be sized until ticket 08 lands, and the
+  quality and architecture/build ports wait on their own decision tickets (17, 18). Each is a
   rewrite-from-the-model pass, one ticket per domain group.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
