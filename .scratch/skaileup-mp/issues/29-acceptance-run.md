@@ -1,8 +1,8 @@
 # 29: The acceptance run — install `-mp` and get the flows loading green
 
 **Type:** task
-**Blocked by:** 28
-**Status:** blocked
+**Blocked by:** None — 28 resolved 2026-09-05
+**Status:** ready (needs `-mp` `main` pushed first — see 28)
 
 ## Question
 

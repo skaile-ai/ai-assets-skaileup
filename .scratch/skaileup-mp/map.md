@@ -895,6 +895,36 @@ grounds that the host might change later.
   still becomes the writer ADR 0007 left that file without. Nothing for the forge-concept
   register: no constraint here traced to how the host reads anything.
 
+- [28: Write the four flow YAMLs](issues/28-write-the-flows.md):
+  Four files, node and edge counts exactly ticket 10's — `appbuilder-mvp` 9 · `-standard` 27 ·
+  `skaileup-concept-only` 14 · `-concept-reverse` 9, three group nodes each, `type: flow` edges
+  only, no `sub-flow` and no `router`. **The cover is exact both ways**: the flows name 29
+  distinct skills, the repo holds 29, no orphan and no phantom — the first end-to-end proof the
+  domain set closes. `requires:` `contract:` sets are the **computed union of what each flow's
+  node skills actually cite**, grepped rather than asserted (mvp drops five, `concept-only`
+  drops two — it has no data layer). **One shape decision ticket 10 left implicit turned out
+  load-bearing: skill nodes carry no `position`.** `flow-layout.ts:53-65` pulls positioned nodes
+  out of the lane computation and returns early with `lanes: []` when none remain, so an
+  all-positioned flow makes the group-phase override at `:87-93` — ticket 10's whole reason for
+  keeping group nodes — **unreachable**. Authoring geometry would have deleted the mechanism the
+  rule exists to protect. Flagged not deviated: the two concept flows carry an **empty
+  `implementation` group** because the rule says three per flow; it is inert (`phasesPresent`
+  filters on nodes) and one line to drop. `quality-standards` is phased `conceptualization` in
+  `concept-reverse` — ticket 10 never assigned it, and `phaseForSkill` would have guessed
+  `review` off the substring `quality`, which is exactly why every node declares `phase`.
+  **The bigger finding is what `check.py` does not check.** Every flow shape rule ticket 10
+  fixed was verified *by hand* here, because the script enforces almost none of them: no
+  deleted-key check at all (`meta.category`, the four dead `globals`, `${...}`,
+  `data.parameters` — which still has a live host read — and `data.writes` all pass); working
+  `sub-flow` and `router` branches, so "skill+group only" is unenforced; three-groups-per-flow
+  unenforced; **and the group-phase-vs-node-phase agreement, the "one table so they cannot
+  disagree" property, is precisely what is not checked** — both validate against the enum
+  independently and the group silently wins. `contract:` refs are checked for existence, not
+  exactness. Graduated **32** to close these. Harness edits made and left uncommitted in
+  `forge-concept` (the test's `REPO`/`FLOWS`/`SKILLS` and `templates/dev/skaile.yaml`);
+  **ticket 29 must push `-mp` `main` first** — the suite installs over SSH from GitHub and
+  **self-skips when the repo is unreachable, so a missing push reads as a skip, not a failure.**
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -1017,3 +1047,21 @@ grounds that the host might change later.
     `phaseForNode` prefers the explicit value — but it is a name-level coupling that binds again
     if the phase-per-node rule is ever dropped. **Narrowed by ticket 21:** of the four names,
     only `ops-review` still exists, and its lane (`review`) is still right.
+
+  - **Authored node geometry disables the swimlanes.** `app/utils/flow-layout.ts:53-65` — a
+    flow whose nodes all carry `position` returns `lanes: []`, so the group-phase override at
+    `:87-93` never runs. The collection has to *withhold* geometry to get the feature, which is
+    the opposite of what authoring a layout implies. Found by ticket 28, which withheld it.
+  - **Group rects always render at the origin.** `app/components/FlowGraph.vue:214-232` looks
+    group positions up in `layout.positions`, which is filled only for `renderable` nodes — and
+    a group is never renderable. With the entry above, the group `style:` geometry ticket 28
+    writes has **no live reader on either path**.
+  - **Repo-onboarding extras are gated on a hardcoded profile id.**
+    `OnboardingWizard.vue:525` tests `selectedProfile === "reverse_engineer"`, but the profile
+    key *is* the flow id (`profiles.get.ts`), so for `skaileup-concept-reverse` the `branch` and
+    `context` fields are collected from the user and then dropped. Found by ticket 28.
+  - **`meta:` vs `metadata:` on a flow.** forge-concept reads `flow.meta.{icon,onboarding}`;
+    platform's `validateFlow` declares them under `metadata`. `-mp` writes `meta:` because the
+    acceptance target is forge-concept; platform validates looseObject and reads no icon, so
+    nothing breaks — but the two hosts disagree about where a flow's presentation lives, and
+    ticket 15's question about the two flow implementations is where that belongs.
