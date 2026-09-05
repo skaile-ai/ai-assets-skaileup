@@ -1066,34 +1066,16 @@ grounds that the host might change later.
 
 ## Not yet specified
 
-- **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
-  `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
-  Blocked on knowing which skills they replace. Ticket 04 fixed their *names*
-  (`spec-*` / `build-*` / `skaileup` / `concept-*`), not their contents. **Ticket 08 placed
-  three of them**: `research` and `to-questionnaire` are steps inside `concept-research` and
-  `concept-onboard`, and `to-spec` is `spec-feature` (ticket 07) — so what is left here is the
-  router and `grilling`. **Ticket 13 added a requirement to the router**: it must carry the
-  intake rule for work the collection did not create — call the global `/triage`, then enter at
-  `spec-feature` (a new or changed feature) or `build-plan` (a defect against built code).
-  Ticket 13 refused a triage *skill*; the sentence still has to live somewhere, and `CONTEXT.md`
-  is glossary-only so it cannot be there. ~~Ticket 09 handed `contracts/grill_bank.md` here — it
-  survives only if the absorbed `grilling` skill claims it.~~ **Closed by ticket 26: dead.** Its
-  nine pillars are already inlined at `spec-feature:42-54` where they bind, and the "absorbed
-  `grilling` skill" it was waiting on turned out to be a **global install, not a `-mp` asset** —
-  which is also the answer to half of what is left in this patch.
-- **The docs site.** `docs/` is a Starlight site that renders every SKILL.md. Port, regenerate,
-  or drop. **Narrowed by ticket 18 to `docs/scripts/generate-skill-pages.mjs` alone** — two
-  Starlight sites were inside this patch, and the other one (`impl-build-docs`, which maintains a
-  *target project's* docs) turned out to be this repo's own tooling misfiled under `impl-build`
-  and does not port. What breaks the collection's site is **not** frontmatter pruning (it reads
-  `name`, `description`, `metadata.stage|version|tags`, all surviving) but that it renders a page
-  per `DOMAIN.md` — **ticket 05 deletes all 16** — and hard-links `contracts/asset_frontmatter.md`,
-  which ticket 09 deleted. **Ticket 33 added a reason to decide rather than defer this:
-  `check.py` globs `skills/` and `contracts/` and never looks at `docs/`, so anything
-  skill-shaped living there has no CI behind it — which is how two worked examples drifted onto
-  a dead tree and three dead skill names unnoticed.
-- **What carries over from the old repo besides skills** — `docs/devlog/`, git history,
-  the improvement backlog.
+<!-- Empty as of 2026-09-06: all three remaining patches graduated into tickets 35, 36 and 37.
+     The destination was reached at ticket 29, so nothing new gathers here — fog only forms
+     toward a destination, and this one is behind us. A patch reappears only if a ticket's
+     resolution opens ground none of them covers. -->
+
+_Nothing. The three patches that stood here — the docs site, the absorbed skills' bodies, and
+the old repo's carry-over — are now
+[35: The docs site is generated from a tree that no longer exists](issues/35-docs-site-disposition.md),
+[36: The router — the last absorbed skill with no body](issues/36-the-router.md), and
+[37: What carries over from the old repo besides skills](issues/37-old-repo-carry-over.md)._
 
 ## Out of scope
 
