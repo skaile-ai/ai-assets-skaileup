@@ -818,6 +818,31 @@ grounds that the host might change later.
   not here" entry recording the fold that never happened. Full atom matrix lives in
   `templates/README.md`, the one place tickets 25 and 16 both read. Unblocks 25.
 
+- [23: Port the `quality` domain — write the 5 skills](issues/23-port-quality-domain.md):
+  Five skills at 61–89 lines — `quality-{review,test,e2e,standards,release}` — plus the three
+  out-of-domain edits ticket 17 authorised but did not make: `build-plan` writes the `.ac.md`
+  ledger, `build-implement` flips its rows, `contracts/acceptance_criteria.md` drops 253 → 91
+  and down to the join. **The port found two defects in the ledger the decision tickets could
+  not see**, both at the seam with the host: the markdown table shape 17 inherited **parses as
+  zero criteria** (`review-coverage.ts:83-92` matches `- [PASS|FAIL|x|X| ] <text>` line by
+  line, so the coverage page silently reports every feature untested) — it is checkbox lines
+  now, with `feature:` required in frontmatter or the id falls back to the *featureset*
+  directory; and the verdict tokens are **`approved` / `changes-requested`**, the only two
+  `review-coverage.ts:158-162` accepts. 17 pinned the rule, not the token. **The severity clash
+  resolved toward the contract, not away from it**: `evaluator.md` now carries four levels
+  (`critical|high|medium|low`) and *defines* blocking as critical-or-high, because severity does
+  two jobs — the boundary picks the verdict, the ordering ranks the fix list, and two values
+  cannot do the second. The contract had already contradicted itself (its bottom band cited
+  "any critical finding", a value its flag shape lacked); law 6 survives word for word, so
+  ticket 22's territory is untouched, and the host reads `severity` as a free string. Three
+  notes forward: **`check.py` is stricter than the reader it protects** — it rejects any
+  prerequisite path outside `_concept/`, so no skill can declare a `package.json` gate even
+  though `validator.ts:81` resolves it, and every source-exists gate lives at its step instead;
+  `contracts/{artifact_frontmatter,feedback_loop}.md` are **still on pre-0007 paths**, missed by
+  ticket 16's sweep; and `CONTEXT.md` has no words for *finding*, *verdict* or *severity*, now
+  used by three skills. Register: `11_build/reviews/` is a **second** host change beyond the
+  ADR 0007 prefix — the host walks `_implementation/review/`, singular.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
