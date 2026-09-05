@@ -49,6 +49,10 @@ grounds that the host might change later.
    forge-concept silently falls back to session completion). Keep the flow contract and the
    `name:` contract; whether `artifacts.yaml` survives is now an open question in ticket 09.
    The DSL grammar still goes — nothing outside the collection reads it.
+   **Amended by ticket 29:** the flow contract holds, but "top-level `requires:` drives
+   transitive install" does **not** — `@skaile/workspaces` 0.48.1 resolves a manifest's
+   transitive deps for `bundle` only, so a flow installs its own YAML and nothing else. A
+   workspace lists every skill it wants; the `requires:` block is exact and unread.
 4. **Skill bodies are rewritten, not copied.** Prose + `references/` for the long tail; the
    machine layer is *ported*, not rewritten. ~~A short `MUST`/`NEVER` block.~~ **Amended by
    ticket 03:** no `MUST`/`NEVER` block — constraints are stated positively at the step they
@@ -1002,6 +1006,29 @@ grounds that the host might change later.
   contract → **`artifacts.yaml`, unreachable as deployed**. Ticket 10's deletion and ticket 01's
   finding compose into a dead node-folder surface for the whole collection.
 
+- [29: The acceptance run — install `-mp` and get the flows loading green](issues/29-acceptance-run.md):
+  **The destination is reached: `forge-concept` installs `-mp` from GitHub and loads all four
+  flows, every node skill deployed** — the integration suite is 4/4 with no skip, `check.py`
+  29 skills · 4 flows · 0 errors, `test_check.py` 61/61. Opt-in is one `sources:` URL plus one
+  explicit dependency line per asset (`skill:*` throws inside `skaile.yaml` — CLI-only sugar).
+  **Two of four flows resolved on the first run**, and the cause is a rule nothing had written
+  down: **a flow's asset identity is its `name:`, slugified — never its `id:`**
+  (`core/manifest.ts` `fromFlowYamlContent` → `scanDirectory`'s `slugifyAssetName`).
+  `Appbuilder MVP` resolved by accident of title case; `Concept Only` and `Reverse Engineer a
+  Codebase` resolved as `concept-only` / `reverse-engineer-a-codebase` and silently never
+  installed. The old collection satisfied the rule by a convention it never stated (every flow
+  titled the Title Case of its id). Both flows retitled and **`check.py` now mirrors
+  `slugifyAssetName`** so it cannot regress (`-mp` `dc8dfea`). Second finding, bigger:
+  **a flow's `requires:` provisions nothing** in the version the host runs — `bundleDeps`
+  returns `undefined` for `kind !== "bundle"` in `@skaile/workspaces` 0.48.1, so installing a
+  flow deploys the `.flow.yaml` alone with `missing: []`. Measured on both collections, so it
+  is a version fact, not an `-mp` defect (the monorepo's `main` has widened it, unreleased).
+  The map's premise 3 and ticket 01's "`requires:` drives transitive install" are therefore
+  **wrong as deployed**; the test workspace and `templates/dev/skaile.yaml` now list all 29
+  skills explicitly, and the suite asserts the cover the host cannot report. Register: an
+  already-cloned source is **not refetched on install**, so a fresh workspace resolved against
+  a stale checkout even after the fix was pushed.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -1147,6 +1174,24 @@ grounds that the host might change later.
     acceptance target is forge-concept; platform validates looseObject and reads no icon, so
     nothing breaks — but the two hosts disagree about where a flow's presentation lives, and
     ticket 15's question about the two flow implementations is where that belongs.
+
+  - **A flow's asset identity is its `name:`, slugified — `id:` is never consulted.**
+    `core/manifest.ts` `fromFlowYamlContent` takes `meta.name ?? meta.id ?? stem`, and
+    `scanDirectory`'s `add()` slugifies it. So the human title of a flow is load-bearing
+    machine data, while `id:` — the thing the loader, the profiles endpoint and every
+    document call the flow — is not. `-mp` conforms (ticket 29 retitled two flows and gated
+    the rule in `check.py`); the question of whether the installer should key on `id:` is the
+    successor effort's.
+  - **A flow's `requires:` provisions nothing.** `bundleDeps` in `@skaile/workspaces` 0.48.1
+    opens `if (kind !== "bundle") return undefined`, so a flow candidate carries no deps and
+    installing one deploys the `.flow.yaml` alone — silently, with `missing: []`. The
+    monorepo's `main` has already widened this to flows (`manifestDeps`); until that version
+    reaches forge-concept, every workspace duplicates the flow's skill list by hand. Found by
+    ticket 29 on both collections.
+  - **An already-cloned source is not refetched on install.** `~/.skaile/cache/sources/<host>/
+    <org>/<repo>` is cloned once; a later `install()` in a *fresh* workspace reuses whatever
+    commit is there, so a just-pushed fix reads as still-broken until the cache is fetched by
+    hand. Ticket 29 hit it between pushing `dc8dfea` and re-running the suite.
 
   - **Banning `data.writes` leaves node folders with no source.** `flow-manager.ts:361` reads
     `data.writes`, else falls through at `:368` to `getArtifactsProducibleBySkill`, which resolves
