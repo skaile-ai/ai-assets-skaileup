@@ -93,3 +93,25 @@ minting `_implementation/eval-product.yaml`, which resolves to nothing under ADR
 
 Ticket 21's own note to ticket 22 covers a third issue this port should not try to settle: the
 contract's six laws are uppercase `MUST`/`NEVER` with nothing enforcing them.
+
+## Note from ticket 10
+
+**One of ticket 17's rulings is overturned, on a fact 17 did not have.**
+
+- **`quality-test` takes no `parameters:` block.** 17 specified
+  `parameters: {levels: [unit]}` per tier. `data.parameters` has **exactly one live read in
+  the whole host** — `parameters.flow`, a sub-flow child-id fallback
+  (`flow-manager.ts:475`, `shared/flow-extended.ts:52`) — and ticket 08 ruled no `parameters:`
+  blocks. So the levels would have been silently dropped. **`quality-test` reads `flow` from
+  `01_meta/scope.yaml`** and picks its own levels: `appbuilder-mvp` → unit;
+  `appbuilder-standard` → unit + integration.
+- **`tier` is gone from `scope.yaml`; the field is `flow`.** Ticket 10 unified the two terms.
+  Any skill in this cluster reading `scope.tier` reads `scope.flow`, whose values are flow ids
+  (`appbuilder-mvp`, `appbuilder-standard`, `skaileup-concept-only`,
+  `skaileup-concept-reverse`).
+- **`quality-release` is the last node of `appbuilder-standard`**, phase `review`, after
+  `ops-review`. It does not appear in `appbuilder-mvp`.
+- **`quality-standards` appears in `skaileup-concept-reverse` only** — discover, never inject
+  (17's ruling), and no other flow nodes it.
+- `quality-test` → `quality-e2e` → `quality-review` → `ops-review` → `quality-release` is the
+  review lane, inlined directly into the flow: **`quality-gate` no longer exists as a flow.**

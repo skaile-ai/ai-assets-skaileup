@@ -73,3 +73,40 @@ the 140 ceiling holds for a merge this size.
 ## Answer
 
 _(pending)_
+
+## Note from ticket 10
+
+**This ticket gains a twelfth skill, and it is the most-used one in the collection.**
+
+- **`concept-scope`** (renamed from `skaileup-scope-scope-project`) was owned by no ticket
+  despite being the entry node of 7 flows and the sole writer of `_concept/01_meta/scope.yaml`.
+  Ruled by ticket 10, ported here. It **no longer chooses the flow** — on the forge-concept
+  path the wizard's profile *is* the flow (`profiles.get.ts` keys profiles by flow id) — so it
+  narrows to writing scope plus resolving `project_type`. It cannot die: the orchestrator path
+  has no wizard and eleven skills read what it writes.
+  New schema: **`flow` · `project_type` · `reasoning` · `signals` · `chosen_at`**.
+  Dropped: `flow_to_run` (a file naming the flow that wrote it is a cycle), `shape` (folded
+  into `project_type`), `override`, `chosen_by`. `project_type` resolves against root-level
+  `profiles/<project_type>.yaml`, which is where `cli` landed when ticket 10 deleted the
+  `appbuilder-cli` flow.
+- **`tier` is gone from the vocabulary.** Ticket 10 unified `tier` and `flow` into one word;
+  `CONTEXT.md` loses its **Tier** entry and **Flow** absorbs the sizing sense. Every skill that
+  read `scope.tier` reads `scope.flow`. **`CONTEXT.md` needs this edit** — flag it if this
+  ticket is not the right place.
+- **`concept-reverse` nodes its writers, it does not call them.** Ticket 21 described it as a
+  thin orchestrator calling five writers, but the flow also nodes them, so doing both runs each
+  twice. It keeps repo discovery, stack detection (`references/detection/`) and confidence
+  grading, and writes **only detection output plus grounding**; `experience-journeys`,
+  `spec-featuresets`, `experience-shell`, `spec-feature`, `architecture-{system,datamodel}` and
+  `quality-standards` run as visible flow nodes after it.
+- **`spec-feature` carries the per-feature loop statement in its body.** The graph shows one
+  iteration; the host honours only `type: flow` edges and has never expressed iteration
+  (`appbuilder-standard:11-12` is a comment). Same for `build-implement` on the build side.
+- **`spec-feature` is the sole screen writer, and the mockup now runs after it.** In today's
+  order the mockup would render one shell and nothing else. `experience-shell` writes
+  `07_screens/00_layout/shell.md` and shared patterns only.
+- **`concept-onboard` is a node in all four flows, including `appbuilder-mvp`** (which has no
+  onboarding node today): `architecture-techstack` and `build-scaffold` both need
+  `project_type`, and without the node mvp silently defaults to web-app.
+- **`experience-behaviors` runs after `spec-featuresets`**, matching its own gate. Two flows
+  had the inversion, not the one ticket 08 named.

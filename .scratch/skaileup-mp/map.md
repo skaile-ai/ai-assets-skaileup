@@ -748,6 +748,54 @@ grounds that the host might change later.
   and ADR 0008's missing index row restored. To **23-26**: write the nesting and the prefix from
   the start; `check.py` fails the build otherwise.
 
+- [10: Flows and tiers](issues/10-flows-and-tiers.md):
+  **17 flows → 4, and `tier` retires: a flow *is* the tier.** They were 1:1 all along
+  (`scope.yaml.flow_to_run` was the mapping), so they collapse into one word — `scope.yaml`
+  records **`flow:`**, the eleven `tier` readers read `flow`, `CONTEXT.md` loses **Tier** and
+  **Flow** absorbs the sizing sense. Forced by measurement: **`appbuilder-standard` and
+  `appbuilder-complex` reference the identical six sub-flows and differ by exactly eight skill
+  names**, every one of which tickets 08/17/06 delete or the map rules out of scope — after the
+  port `complex` has no content, so keeping it meant a byte-identical copy or inventing scope
+  to defend a name. Survivors: **`appbuilder-mvp` (9 nodes) · `appbuilder-standard` (27) ·
+  `skaileup-concept-only` (14) · `skaileup-concept-reverse` (9)**. **The flow list is an
+  unfiltered user menu** — `profiles.get.ts:10` turns *every* loaded flow into an onboarding
+  profile and `OnboardingWizard.vue:41` renders them with no filter, so the six "shared
+  building blocks" were 6 project-start cards; they **inline**, deleting the `sub-flow` kind
+  (27 of 175 nodes), and `skaileup-slice-{concept,impl}` go with them (after ticket 07
+  slice-concept is **one node**). Asked to check the smaller size, **two mvp steps turned out
+  unrunnable, not merely unneeded**: its mockup node hard-gates on screens
+  (`SKILL.md:132,162-163`) in a flow with **no screen writer** — dropped; and `build-scaffold`
+  would inherit `foundation`'s hard gate on `tokens.json` in a flow with no brand node — the
+  brand step **becomes conditional** (→ 25). mvp keeps **no data layer** by choice. **One
+  forced reordering: the mockup moves after the `spec-feature` loop** — W1 made `spec-feature`
+  the sole screen writer, so in today's order the mockup renders one shell; plus `features`
+  before `behaviors` in **two** flows, not the one 08 named. **Three host corrections:**
+  routers are **live and interactive** (`route-choice.post.ts` persists the pick,
+  `computeUnchosenSkips` prunes branches — manual routing, not conditional; `-mp` still ships
+  zero), **group nodes are load-bearing** (`flow-layout.ts:87-93` draws swimlanes and **group
+  phase overrides node phase**), and a flow's **`requires:` is confirmed live**
+  (`workspaces/core/src/manifest.ts:428-431`). **17's `parameters:` ruling is overturned** —
+  `data.parameters` has **one** live read host-wide (`parameters.flow`), so `quality-test`
+  reads `flow` from `scope.yaml` instead (→ 23). Deleted as decoration: `meta.category` (all
+  six values fall through), `globals.{approval_mode,subagent_mode,verbosity,concept_depth}`
+  (0 readers), every `${...}` (**no resolver exists**). **The loop stays out of the graph** —
+  the host honours **only `type: flow`** edges and iteration has never been machine-expressed
+  (`appbuilder-standard:11-12` is a comment), so it lives in the skill bodies; ticket 12's
+  rejection of `boundary:` is the precedent. **`skaileup-scope-scope-project` was owned by no
+  ticket** despite being the 7× entry node — ruled here, renamed **`concept-scope`**, stripped
+  of flow choice, schema `flow · project_type · reasoning · signals · chosen_at` (→ 26).
+  **`cli` demotes to `project_type`, not to a tier** — `contracts/profiles/*.yaml` had **zero**
+  in-body readers while `project_type: cli-tool` was already live, so the tier was the
+  duplicate; this also gives ticket 18's relocated `profiles/` its first reader. Variants:
+  `concept-only` + `concept-reverse` survive (both **gain the `spec-feature` loop**, without
+  which neither writes a screen); **`skaileup-implementation` dies** (100% sub-flow + group)
+  and **`stepwise` dies** (pacing is what ticket 12 moved into warm/cold boundaries), costing
+  `input_style: freeform` its only user. **The map's destination line was already false** —
+  the acceptance test asserts on `concept-goals`, which 08 deleted, so it needs more than a
+  repo URL change; editing its arrays is an **acceptance-harness** edit, inside this map,
+  unlike the host *behaviour* changes in the register. Graduated **28** (write the four flow
+  YAMLs) and **29** (the acceptance run).
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -771,8 +819,6 @@ grounds that the host might change later.
   `name`, `description`, `metadata.stage|version|tags`, all surviving) but that it renders a page
   per `DOMAIN.md` — **ticket 05 deletes all 16** — and hard-links `contracts/asset_frontmatter.md`,
   which ticket 09 deleted.
-- **Opt-in mechanics and the acceptance test.** How a project points at `-mp`
-  (`skaile.yaml` deps, lockfiles), and which project plays the "flows load green" role.
 - **What carries over from the old repo besides skills** — `docs/devlog/`, git history,
   the improvement backlog.
 

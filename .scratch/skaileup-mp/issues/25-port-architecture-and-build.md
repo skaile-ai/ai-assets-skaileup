@@ -91,3 +91,27 @@ run because all eleven keys were 0/7.
 
 `infrastructure` cites `references/layer_patterns.md` and `references/dependency_mapping.md`,
 **neither of which exists on disk** — nothing to carry across even if it had survived.
+
+## Note from ticket 10
+
+Three constraints from the flow graphs, one of them a defect this ticket must fix rather than
+port.
+
+- **`build-scaffold`'s brand gate becomes conditional.** `impl-build-foundation:95-98` lists
+  `03_brand/tokens.json` under *"Hard gates (all must exist)"*, and this ticket merges
+  `foundation` into `build-scaffold`. **`appbuilder-mvp` has no `design-brand` node**, so the
+  merged skill would hard-refuse in that flow on every run. Apply tokens if
+  `03_brand/tokens.json` exists, else stack defaults — ticket 03's rule (constraint stated at
+  the step, check behind it) rather than frontmatter that blocks a whole flow. This is the same
+  class of defect as the template branch this ticket already found firing on every run.
+- **`appbuilder-mvp` has no data layer** — no `architecture-datamodel`, no `build-database`.
+  Deliberate: `build-scaffold`'s template supplies the ORM default and the schema grows inside
+  `build-implement`. So **`build-database` must not be a precondition of anything in `mvp`**,
+  and `build-implement` cannot hard-gate on a migration having run.
+- **`architecture-techstack` reads `project_type` from `onboarding.yaml`**, and
+  `concept-scope` resolves it against root-level `profiles/<project_type>.yaml` — which is how
+  ticket 18's relocated `profiles/` finally gets a reader, and where `cli` landed after ticket
+  10 deleted the `appbuilder-cli` flow. `templates-select` stays folded in, as this ticket ruled.
+- **Node placement**: `architecture-{techstack,system,datamodel}` are phase
+  `conceptualization`; `build-{scaffold,database,plan,implement,branch}` are `implementation`.
+  `mvp` runs `architecture-techstack` and `build-{scaffold,plan,implement}` only.

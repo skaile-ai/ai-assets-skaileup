@@ -18,13 +18,10 @@ One unit of agent work with a `name:` that is its whole identity — install pat
 node reference, and grounding key all at once.
 
 **Flow**:
-A graph over skills. Nodes name skills; edges order them. The flow, not the filesystem,
-carries sequence.
-_Avoid_: pipeline, workflow, chain
-
-**Tier**:
-How much of the pipeline a project runs. A sizing decision made once, at the start.
-_Avoid_: level, mode, depth
+A graph over skills, and the unit a project is sized by. Nodes name skills; edges order them;
+the flow, not the filesystem, carries sequence. Choosing a flow and sizing the project are one
+act — `01_meta/scope.yaml` records the flow id, and a skill that varies its depth reads that.
+_Avoid_: pipeline, workflow, chain, tier
 
 **Phase**:
 The lane a flow node belongs to — conceptualization, implementation, or review. A

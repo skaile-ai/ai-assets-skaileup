@@ -186,3 +186,71 @@ Nothing in `forge-concept` reads it. The landing site exists — `contracts/prof
 6. **The behaviors inversion is in two flows, not one (F8).** Reorder both, or is
    `standard`'s `optional`-edge version already a no-op the engine ignores?
 7. **`meta.onboarding` is live and only 3 flows declare it (F5).** Both non-default `input_style` values (`concept-reverse` = `repo`, `stepwise` = `freeform`) sit on variant flows. If variants go, the wizard is structured-only — acceptable, or does `input_style` move onto a tier?
+
+## Post-resolution delta (2026-09-05)
+
+Everything above predates the resolution. Where the halves disagree, this is later. Facts
+measured while resolving, none of which the recon had.
+
+### D1 — The flow list is an unfiltered user menu
+
+`profiles.get.ts:10` turns **every** loaded flow into an onboarding profile keyed by flow id;
+`OnboardingWizard.vue:41` renders `v-for="(prof, id) in profilesData.profiles"` with **no
+filter**. F5 recorded `meta.icon`/`onboarding` as live but not the consequence: today's 17
+flows are 17 project-start cards, including the six "shared building blocks" and the three
+slice flows. This is what settled the sub-flow question.
+
+### D2 — `standard` and `complex` are the same flow after the port
+
+Identical six sub-flow refs. Skill sets differ by exactly eight names — `design-brand-voice`,
+`impl-quality-audit`, `impl-quality-eval-code`, `mockup-walkthrough-framework`, and the four
+`ops-project-*` — **all** deleted by 08/17/06 or out of scope. The recon's F2 table counted
+nodes but never diffed the sets.
+
+### D3 — Two mvp steps are unrunnable, not merely unneeded
+
+- `mockup-walkthrough-text` gates on `_concept/experience/screens/` holding ≥1 screen with
+  `00_layout/shell.md` **Required** (`SKILL.md:132,162-163`), stated failure at `:124`.
+  `appbuilder-mvp` has **no skill that writes a screen**. Node `mock-text` has never run.
+- `impl-build-foundation:95-98` lists `03_brand/tokens.json` under *"Hard gates (all must
+  exist)"*; ticket 18 merges it into `build-scaffold`; mvp has no brand node.
+
+F10 mapped `mockup-walkthrough-text` → DEAD without noticing its consumer flow had no producer.
+
+### D4 — Routers are live and interactive
+
+Correcting the recon's inherited "not actually routing anything". `condition` strings are
+never evaluated, but `route-choice.post.ts` persists the user's pick, `computeUnchosenSkips`
+(`flow-route-choice.ts`) prunes unchosen branches so the join unblocks, and
+`useFlowState.ts:165` exposes it. Manual routing, not conditional.
+
+### D5 — Group nodes are load-bearing, and group phase wins
+
+`flow-layout.ts:87-93` draws swimlanes from group geometry;
+`(n.parentNode && groupPhase.get(n.parentNode)) || phaseForNode(n)` means the **group's** phase
+overrides the node's own; `FlowGraph.vue:218` positions lanes. F3 measured where `data.phase`
+sits but not that deleting groups costs the lane rendering.
+
+### D6 — `data.parameters` has exactly one live read host-wide
+
+`parameters.flow`, the sub-flow child-id fallback (`flow-manager.ts:475`,
+`shared/flow-extended.ts:52`). Nothing else. This is what decided the 17-vs-08 contradiction.
+
+### D7 — The host honours exactly one edge type
+
+`run.post.ts:62` and `flow-extended-state.ts:48` both filter `e.type === "flow"`. `optional`,
+`parallel`, `review-loop` are inert — so `stepwise`'s self-edge with `max_iterations: 50` and
+an `exit_condition` is decoration, and iteration has **never** been machine-expressed:
+`appbuilder-standard:11-12` carries it as a comment.
+
+### D8 — A flow's `requires:` is confirmed live
+
+`workspaces/core/src/manifest.ts:428-431` reads `.flow.yaml` as a whole-doc manifest
+(`wholeDoc` regex) and turns the block into the catalog entry's deps.
+
+### D9 — The acceptance test was already broken
+
+`skaileup-flows.test.ts:38` asserts on skills `["concept-brief", "concept-goals"]`;
+ticket 08 deleted `concept-goals`. F4 recorded the line; the consequence is that the map's
+destination sentence ("that test with one repo URL changed") is false independently of
+anything ticket 10 decided.
