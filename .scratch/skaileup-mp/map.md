@@ -357,10 +357,60 @@ the ticket type says so.
   outputs land under `11_build/`), **19** (writes `spec-feature`). Graduated **21** — `14_ops/`
   is 12 skills and **no ticket owned 8 of them** (2,207 lines, four on zero flows).
 
+- [19: Port the slice loop — write the 4 skills](issues/19-port-slice-loop.md):
+  **16 skills / 4,166 lines → 4 skills / 284 lines of `SKILL.md`** — `spec-feature` (83) ·
+  `build-plan` (78) · `build-implement` (65) · `build-branch` (58), commit `3b21cfe` on `-mp`
+  `main`, not pushed. No `references/` at all: the four spend their lines calling `grilling`,
+  `tdd`, `code-review` and `resolving-merge-conflicts` and citing five contracts, which is
+  ticket 02's mechanism carried the whole way. Written against **ADR 0007's tree, not this
+  ticket's body** — the ticket predates 08. Two things the renumbering forced beyond
+  find-and-replace: **`_concept/` is no longer read-only to the build side** (`11_build/` *is*
+  `_concept/`, so the five old "NEVER modify `_concept/`" lines were describing a boundary that
+  moved — `build-implement` states the real one, the slice dossier plus the back-link), and the
+  **acceptance-criteria ledger has no home and does not port** (`_implementation/acceptance_criteria/`
+  is not a top-level entry in 0007, and minting a twelfth here would decide 0007 again) →
+  **ticket 17**. Three deviations from ticket 07's shape. **`slice_id` is no longer
+  `feature_slug`:** 07 kept a slug rule whose impl clause says `slice_id := feature_slug`
+  (one dossier per feature) while also making `build-plan` *be* `to-tickets` and
+  `concept_structure.md` calling the dossier "one vertical slice's" — so the slug now derives
+  from the slice's own title, one dossier per slice, with `feature` and `blocked_by` in
+  `plan.md` frontmatter and **dependency order in the edges, not an `NN_` prefix** (which is
+  also what 0007 requires below level one). **The anti-horizontal nudge is not embedded
+  verbatim** in every `plan.md` behind a pinned exact-string validator: ticket 03 puts a
+  constraint at the step it binds, so the cutting rule sits in `build-plan` and the
+  finish-one-row-first rule in `build-implement` — two rules at their two readers, not one
+  block copied into each artifact. **`git-state.yaml` does not port** — `git branch` and
+  `git worktree list` already hold branch and worktree, and what is genuinely lost is
+  `git-finish`'s remembered merge-vs-PR preference, judged not worth a file. `spec-feature`
+  writes its dossier **once, at the end** — warm boundaries (ADR 0005) left the concept side
+  with no intermediate file at all, so writing it *is* freezing it. **`build-implement` is 65
+  against mp's 15**, and the port names which lines are `_concept/`-awareness and which three
+  (the `plan.md` gate, the recap, the forced simplification pass) are discipline this ticket
+  required as steps — flagged as the least defensible lines in the four. `contracts/slice_loop.md`
+  **73 → 49** (slug + freeze + a four-line pointer at ADR 0005, which asked the contract to
+  host that section); tier table, pinned refuse message, `/clear` section and handoff-frontmatter
+  table gone. `contracts/plans.md` was never in `-mp` — "delete" was a no-port. ADR 0006's two
+  dossier paths marked **superseded by 0007** rather than edited. Found while writing: **the four
+  mockup skills are stale against ADR 0007** — `mockup-walkthrough` writes
+  `_concept/mockup-walkthrough/<renderer>/` and reads `experience/screens/`,
+  `discovery/brand/tokens.json`, `_meta/scope.yaml`; ticket 14 landed before 08 and 08's handoff
+  list does not name it, so `-mp` today has four skills on the old tree and four on the new →
+  **ticket 16**, as a scheduled repair, not a validator finding. Same for the pre-0007 paths still
+  in `artifact_frontmatter.md`, `feedback_loop.md`, `acceptance_criteria.md` and
+  `agent_patterns.md`, which is why the four new skills cite those for *shape* and
+  `concept_structure.md` for *paths*. **`iron_laws.md` §§ 3, 4, 6 now describe a pipeline that
+  does not run** — 3 and 4 gate screens on brand tokens and the data model, but `spec-feature`
+  writes screens inside the feature loop before `10_blueprint/` exists; 6 names the `ready`
+  skill. Ticket 09 kept the file for its machine-enforced gates; at least two of them no longer
+  gate anything. **Worth a ticket.** `contracts/README.md` is stale wholesale (it still describes
+  the *old* repo — `cf/`+`saxe/`, `scripts/`, `DOMAIN.md`); only the two rows this change touched
+  were fixed, since ticket 09 gave the `CONTRACT`+`README` merge to the rewrite tickets and none
+  of them has claimed it by name.
+
 ## Not yet specified
 
-- **The port itself, per domain.** **Mockup is done** (ticket 14); the slice loop graduated
-  as ticket 19. **The concept side is now sized — 9 skills, ticket 08** — and needs its own
+- **The port itself, per domain.** **Mockup is done** (ticket 14) and **the slice loop is
+  done** (ticket 19). **The concept side is now sized — 9 skills, ticket 08** — and needs its own
   port ticket; the quality and architecture/build ports wait on their own decision tickets
   (17, 18), and the `ops` domain on ticket 21. Each is a rewrite-from-the-model pass, one
   ticket per domain group.
