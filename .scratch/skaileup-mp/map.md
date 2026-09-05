@@ -21,6 +21,16 @@ tickets that decide it. Decision tickets still come first — don't port ahead o
 `writing-for-agents` for anything that edits a SKILL.md; `prototype` and `research` where
 the ticket type says so.
 
+**forge-concept is deferred, not immutable.** Every ticket here treats the host as fixed,
+because changing it mid-migration would make the migration untestable — but that is a
+*sequencing* decision, not a permanent boundary. When a ticket hits a constraint that exists
+only because forge-concept reads something a particular way, **record it in the forge-concept
+register under Out of scope**, with the source site, rather than recording only the workaround.
+Once `-mp` loads green that register is the input to a **successor effort with its own map and
+tickets**, asking the opposite question: what should the host read, given the collection we now
+have. Do not open that effort from inside this one, and do not soften a ruling here on the
+grounds that the host might change later.
+
 **Settled at charting** (premises, not ticket resolutions — every ticket below assumes these):
 
 1. **New sibling repo**, not a branch or in-place rewrite. Old collection keeps running untouched.
@@ -443,8 +453,32 @@ the ticket type says so.
   `ops-project-subsystem-map` skills that read it. Ruled out by ticket 09 on the same argument
   as `15_demo`: a meta-concept spanning several products is a different product from the
   app-building collection. Stays in the old repo.
-- **Making `artifacts.yaml` reachable, and moving input-dialog specs to a sibling
-  `inputs.yaml`.** Both are forge-concept edits (`artifact-contract.ts:138` and a new frontmatter
-  reader), which this map already rules out. Ticket 09 accepted the consequences of *not* doing
-  either — the registry dies, the dialog spec stays in frontmatter. If forge-concept is ever
-  touched, the `inputs.yaml` move returns as its own effort.
+- **Every forge-concept change — deferred to a successor effort, with a register.** This map
+  rules host edits out for sequencing (see Notes), so each ticket below accepted a workaround
+  instead. Each entry names the site that forced it, so a later map starts from the list rather
+  than rediscovering it:
+  - **`artifacts.yaml` is unreachable as deployed** — read only under `--link`
+    (`artifact-contract.ts:138`); the default copy install leaves the recursive search finding
+    nothing and forge-concept silently falls back to session completion. Ticket 01 found it;
+    ticket 09 killed the registry rather than fix the reader.
+  - **Input-dialog specs stay in skill frontmatter** — moving them to a sibling `inputs.yaml`
+    needs a new frontmatter reader. Ticket 09 accepted the consequence.
+  - **The artifact root must be the literal `_concept/`** — resolved in four source sites
+    (`project.ts:112`, `artifact-contract.ts:187-188`/`:208-209`,
+    `api/concepts/[...name].post.ts:43`), so ticket 08 could not choose a neutral name.
+  - **Ordering lives in `NN_` filename prefixes** because `AppSidebar.vue:332-338` sorts
+    `localeCompare` on the raw name. ADR 0007 numbers the first level to satisfy a sort, not a
+    semantics.
+  - **Nothing writes a feedback session** — forge-concept has **zero**
+    `addEventListener("message")` repo-wide, so the iframe writer ticket 20 is weighing is a new
+    host feature, not a wiring change.
+  - **The review surface reads pre-0007 paths** — `server/utils/review-coverage.ts:98` locates
+    feature docs under `experience/features/<NN_group>/`, both the old root *and* the
+    `<NN_group>` shape ticket 08 removed; `app/pages/review.vue:22` names
+    `_implementation/trace.yaml`, a root 0007 absorbed into `11_build/`. **A project on the
+    `-mp` tree loses the review surface until the host is updated** — the sharpest entry here,
+    because it degrades a feature rather than merely constraining a choice.
+  - **`phaseForSkill` hardcodes `ops-eval*`, `ops-review`, `ops-sync`**
+    (`shared/flow-phases.ts:23-24`). Inert while `-mp` declares `data.phase` per node, since
+    `phaseForNode` prefers the explicit value — but it is a name-level coupling that binds again
+    if the phase-per-node rule is ever dropped.
