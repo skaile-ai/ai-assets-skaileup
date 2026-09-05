@@ -231,7 +231,10 @@ and every Seed Data Rule except the four scenario names.
 
 **There is no EARS grammar check in `ac_lib.py`.** The file (125 lines) validates the *ledger*:
 frontmatter keys, section↔row bijection, the status table's header shape, the status enum, and
-that `Source` is non-empty. The word EARS appears in it **zero times**.
+that `Source` is non-empty. ~~The word EARS appears in it **zero times**.~~
+**[Corrected 2026-09-05, re-verified: it appears once — `ac_lib.py:108`, inside an error
+string ("Source cell must cite the EARS line / story-id"), not a check. The finding
+stands; only the "zero times" phrasing was wrong.]**
 
 The only EARS regex in the whole collection is in a per-skill validator:
 

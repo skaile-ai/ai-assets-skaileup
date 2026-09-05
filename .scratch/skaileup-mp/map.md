@@ -165,7 +165,17 @@ the ticket type says so.
   **`profiles/` survives but leaves `contracts/`** for the repo root (project-type data, not a
   contract). `CONTRACT.md`+`README.md` merge; `preview_compatibility`→`walkthrough_renderer`;
   `doc_tracking`→`build-docs`; `wireframe_conventions`→`mockup-walkthrough/references/`;
-  `acceptance_criteria` shrinks to the EARS grammar. **Four files handed off rather than ruled**
+  `acceptance_criteria` shrinks to the EARS grammar — **but corrected 2026-09-05 (brief 16,
+  re-verified): `ac_lib.py` does not validate EARS.** It validates ledger structure and names
+  EARS once, in an error string (`ac_lib.py:108`). The actual EARS regex exists in **two copied
+  `validator.py` files** (`11_impl-plan/02_align`, `08_concept-slice/02_align`), both in skills
+  ticket 07 collapsed, and matches only the `WHEN…SHALL` form. So this contract was kept for a
+  reader that does not read it — **re-ruling handed to ticket 16**. Same pass:
+  **`lint_concept.py` contradicts `golden_principles.md`**, the contract ticket 09 kept it for —
+  the contract mandates snake_case semantic entities and calls `model.json` canonical
+  (`golden_principles.md:13,23,83`), while the linter opens **`postxl-schema.json`** and errors
+  unless models are **PascalCase** (`lint_concept.py:346,365`); `model.json` appears nowhere in
+  it. Ticket 09's machine-reader argument holds only if one of the two is rewritten → ticket 16. **Four files handed off rather than ruled**
   — `slice_loop`+`plans`→07, `phase_procedures`→12, `grill_bank`→absorbed-skills fog,
   `scripts/`→**ticket 16** — each defaulting to deletion unless that ticket gives it a reader.
 
@@ -186,8 +196,19 @@ the ticket type says so.
   `CONTRACT`→`README`) are content work left to the rewrite tickets; sources stay in the old repo.
 
 - [15: Flow format vs platform's flow-execution](issues/15-flow-format-vs-platform.md):
-  **Platform did not fork the format — one schema, in `@skaile/workspaces`, and both hosts call
-  it.** Platform's `validateFlow` is the same export forge-concept's loader ships;
+  **Platform did not fork the format — one schema, in `@skaile/workspaces`, but only *one* host
+  calls it. Corrected 2026-09-05 (brief 16, re-verified):** the three `validateFlow` call sites
+  are **all platform's** (`flow-start.service.ts:87`, `run-group.route.ts:558`,
+  `run-group.handler.ts:109`); **forge-concept has zero** — its only gate is `loadFlowsFromDir`'s
+  truthy `id`/`nodes`/`edges`. (A naive grep for `validateFlow` matches `invalidateFlowCache`,
+  which forge-concept *does* call ten times; that is how this got attributed.) The zod schema
+  (`workspaces/.../types/src/manifests/index.ts`) also declares **no edge `type` and the word
+  `phase` zero times** — so ticket 15's "the engine takes dependencies from
+  `edges.filter(e => e.type === "flow")`" is a *runtime* behaviour with **no schema behind it**,
+  and `flow.schema.json`'s `phase` enum (4 sites) is **the only machine check anywhere** of
+  ticket 04's every-node-declares-phase rule. That is an argument for porting the phase enum,
+  against this ticket's "narrowed or not at all" — **ruling handed to ticket 16**, which owns the
+  validators. Unchanged by the correction:
   `flowExecution.model.json` is the per-node *execution record*, orthogonal to authoring.
   **All 17 skaileup flows validate green** against it, and 0.48.1 vs 2.0.0 declare identical
   fields — no skew. **Platform is not a file host**: `loadAllFlows`/`loadFlowsFromDir` have zero

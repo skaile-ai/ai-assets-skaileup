@@ -42,6 +42,18 @@ skill **writes screen specs** — `_concept/experience/features/<group>/<slug>.m
   ruling is that it covers screens *not* reached by a feature loop — the whole-app pass. If
   that pass has no real user, `experience-screens` collapses into `spec-feature` here rather
   than surviving as a second writer into the same tree.
+  **Corrected 2026-09-05 (brief 08, re-verified) — that test is already passed, so do not
+  re-run it here.** `experience-screens` is the **sole writer of `00_layout/shell.md`**
+  (`03_screens/SKILL.md:151` *"MUST write 00_layout/shell.md before any individual screen
+  specs"*, `:205` `OUTPUT …/shell.md`) and the **sole concept-side writer of the `elements:`
+  block** — the only `elements:` writer across `01_`–`04_` and `08_`. `design-feature` is a
+  **reader**: its single mention omits `layout` when shell.md is absent
+  (`04_design-feature/SKILL.md:255`). Eleven skills read `shell.md`, including both surviving
+  renderers and `build-foundation`. A cross-feature app shell is **structurally unproducible by
+  a per-feature loop**, so the whole-app pass has a real user and `experience-screens` does not
+  collapse. What is still open is therefore the *boundary*, not the survival:
+  **absorb-with-a-shell-mode vs survive-with-one-directory-shape** — and whichever shape wins
+  also settles `<NN_group>/` vs flat featuresets, since `screens/` mirrors `features/`.
 - `screens-technical` and `components` write into the same tree and inherit the same test.
 
 Also settled by ticket 07 and not open here: the concept-side working directory is
