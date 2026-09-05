@@ -515,6 +515,82 @@ grounds that the host might change later.
   `analysis_checklists.md` becomes one skill's `references/`. Graduated **23** (write the four,
   plus three authorised edits to landed skills).
 
+- [20: Who writes a feedback session — the annotate → triage seam](issues/20-feedback-session-writer.md):
+  **Neither of the ticket's two writers — the standalone path simply did not work, and all
+  three faults were inside files `-mp` owns.** `type="module"` on the injected tag **blocks
+  the overlay entirely over `file://`** (module scripts are CORS-fetched, a `file://` origin is
+  opaque, and the overlay has zero `import`/`export`) — against a renderer whose stated promise
+  is *"a stakeholder can open `index.html` from a shared folder"*, so **the Download branch was
+  never reachable the documented way**. Sharper than the brief: `annotations` was in-memory
+  while `SESSION_ID` persisted, and a walkthrough is many pages with iframe-only navigation
+  interception, so **the array emptied on every link click** — five annotated screens yielded
+  one. And the documented rename guaranteed stem ≠ `sessionId`, so **every round read as
+  unapplied forever**. Rulings: **the browser path is supported and the iframe branch is kept
+  correct but unused** (forge-concept has no listener, no route, no store; "iframe only" would
+  hang `-mp`'s feedback half on an unbuilt feature in a fenced repo, and the stakeholder who
+  annotates is the one who cannot be given a login). **The overlay owns the id and the
+  filename** — zero code ever read the stem, five call sites read the field — and the
+  human-readable name becomes a **`label` inside the file**, asked for by `mockup-feedback`'s
+  new **adopt** step, which takes the download from any path and files it itself (gate
+  **hard → soft**: a hard gate refused the skill in exactly the case adoption handles).
+  **`index.json` deleted** — no reader, no writer, no schema; a registry of gitignored files a
+  skill must remember to append to is stale by construction, which is why it was already empty.
+  Both riders ruled: **`specRef.feature` routing deleted** (no producer — `resolveTarget` and
+  `walkthrough_renderer.md` both lack it; a router key with no producer reads as coverage),
+  **journey re-pointed at `stories.yaml`** — and, found while doing it, `apply.py` anchors on
+  literal markdown headings and its **no-removes path appends to end-of-file** (`:58-61`), so
+  aimed at YAML that is silent corruption: journey annotations resolve but are **`needs_manual`,
+  never patched**. Annotations on `index.html` are **unresolved by design** (`data-spec-index`
+  only). Landed **uncommitted** in `-mp` — a ticket-16 session is live in the same tree, and the
+  two changesets are interleaved in `mockup-{annotate,feedback}/SKILL.md`. All harnesses green;
+  the 0007 path sweep stays **16**'s, with `triage.py`'s paths now named constants for it.
+
+- [16: CI and validation — what replaces the DSL validators](issues/16-ci-and-validation.md):
+  **Nothing ports; one script replaces all seven, and its first run found six defects no ticket
+  had counted.** `scripts/check.py` + `scripts/test_check.py` (28 cases) + one Actions job,
+  commit `e1fbfb4` on `-mp` `main`, not pushed. Three of the seven validated things tickets 03/09
+  deleted, one gates frontmatter fields ticket 01 showed nothing reads, one validates a *target
+  project* so nothing here can run it, and the pre-commit hook **was never installed in any
+  checkout** — no repo in the eight-repo ecosystem has an active hook, so **Actions only, one job,
+  landing now** rather than when the collection is populated. `verify_flows.py`'s rules survive
+  rewritten: its three hard deps (`skaile.yaml`'s `assets:` block, a hardcoded flow registry, the
+  two-level layout) are all things `-mp` removed on purpose. **The bar is that the failure mode is
+  silent** — a loud failure needs no validator. **`flow.schema.json` is deleted, not narrowed**
+  (ticket 15's ruling executed): it invented `gate` and `review-loop`, required `position` nothing
+  reads, and was `additionalProperties: false` at 27 sites against a `looseObject` runtime. Its one
+  live rule, the `data.phase` enum, is four lines of Python — but the decisive argument is
+  **expressiveness, not size**: the sharpest flow rule (an edge without `type: flow` orders
+  nothing) is a property of the *graph*, so the check is **reachability from `entry` along
+  flow-typed edges**, one assertion subsuming ticket 15's untyped edge, the `review-loop` no-op and
+  a disconnected subgraph. **The legal top-level path set is parsed out of
+  `concept_structure.md`'s fenced tree, never restated** — contract and check cannot drift.
+  **`requires:` exactness earns its keep despite no runtime reader for exactness**: a *missing*
+  entry means the skill is never installed and forge-concept runs the node with a generic prompt
+  while reporting `satisfied: true` — a live silent failure, not a house rule. Refusals with
+  consequences: **`lint_concept.py`** dies twice over (it validates someone else's repo; and its
+  model half judges the *derived* `postxl-schema.json` by PostXL conventions that invert
+  `golden_principles.md:13,23` — the ticket-06 category error, now sharper since
+  `concept_structure.md:183-187` makes PostXL one of **four** formats) → its live half is prose in
+  an `ops-` skill, **21**'s to place, and **ticket 09 kept `golden_principles.md` because a machine
+  read it, which was this linter** → **22**. **`ac_lib.py`** follows the ledger ticket 19 found has
+  no home in 0007 → **17**, with 09's shrink aimed at the wrong half (it kept the EARS section no
+  code reads; `ac_lib` validates ledger *structure*). **`validator_lib.py` does not port and
+  per-skill validators are not a standing cost** — `-mp` had already converged, all three shipped
+  validators are self-contained, so `audit.py`'s `stage: stable ⇒ validator.py` rule dies with its
+  premise. Swept: the 10/10 stale prerequisite paths + their body prose, `domain_model.md`'s
+  glossary paths and its phantom `skaileup-domain-model` (now the global `domain-modeling`), and
+  **`contracts/README.md` rewritten wholesale** — it still described the old repo's `cf/`+`saxe/`.
+  **The citation check was the one addition beyond the ticket's four questions and paid for itself
+  on the first run**: three of its six finds appear in no brief. Found while indexing:
+  **`evaluator.md` has zero readers in `-mp`** — not ruled, it is 17/21's. Ticket 13's journey
+  branch was **ruled by the concurrent ticket-20 session on better evidence** (journey → whole
+  `stories.yaml`; **`feature`** is the dead branch — no renderer emits `data-spec-feature`); this
+  ticket did only the path half. **Residue:** four files are interleaved with that live session and
+  **left uncommitted** for it to land; `mockup-annotate/validator.py` stays at the skill root
+  (approved for the move, then not done — that session has the file open); and the flow half has
+  **no live subject**, so ticket **10** should expect to adjust the reachability model when real
+  flows land.
+
 ## Not yet specified
 
 - **The port itself, per domain.** **Mockup is done** (ticket 14) and **the slice loop is
@@ -580,8 +656,12 @@ grounds that the host might change later.
     `localeCompare` on the raw name. ADR 0007 numbers the first level to satisfy a sort, not a
     semantics.
   - **Nothing writes a feedback session** — forge-concept has **zero**
-    `addEventListener("message")` repo-wide, so the iframe writer ticket 20 is weighing is a new
-    host feature, not a wiring change.
+    `addEventListener("message")` repo-wide, so the iframe writer ticket 20 weighed is a new host
+    feature (listener + accumulator + session boundary + write path), not a wiring change.
+    **Ticket 20 ruled the browser path supported instead**, so this constrains nothing today; it
+    returns if a host ever wants the walkthrough embedded. The overlay's postMessage branch is
+    kept correct and unused against that day, and **the host must invent the session boundary**:
+    the overlay posts one message per annotation and never signals the end of a round.
   - **The review surface reads pre-0007 paths** — `server/utils/review-coverage.ts:98` locates
     feature docs under `experience/features/<NN_group>/`, both the old root *and* the
     `<NN_group>` shape ticket 08 removed; `app/pages/review.vue:22` names
@@ -595,6 +675,16 @@ grounds that the host might change later.
     The inverse shape of every other entry here — not a constraint that forced a workaround,
     but a capability nothing takes — and the fact ticket 13's refusal turned on, since it was
     the one channel where a skaileup-specific triage could have beaten mp's.
+
+  - **The host validates no flow and cannot report a missing skill.** `validateFlow` /
+    `FlowManifestSchema` have **zero call sites** in forge-concept — its only gate is
+    `loadFlowsFromDir`'s truthy `id`/`nodes`/`edges`, so a flow file faces no schema
+    enforcement from the acceptance target at all. Worse, a `data.skill` that resolves to
+    nothing does not raise: `run.post.ts:78-80` falls back to a generic
+    `Run skill ${skillId}` prompt and the node runs with no body, while
+    `requirements.get.ts:37-48` returns a **fabricated `satisfied: true`** with zero unmet
+    requirements. Ticket 16 responded by making the collection self-validating, which is the
+    right answer for this map but leaves the host silently green on a broken install.
 
   - **`phaseForSkill` hardcodes `ops-eval*`, `ops-review`, `ops-sync`**
     (`shared/flow-phases.ts:23-24`). Inert while `-mp` declares `data.phase` per node, since
