@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None — surfaced by 29 on 2026-09-05
-**Status:** ready
+**Status:** claimed
 
 ## Question
 
