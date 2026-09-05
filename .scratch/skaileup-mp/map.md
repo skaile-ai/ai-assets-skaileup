@@ -1045,6 +1045,25 @@ grounds that the host might change later.
   hyphenated — so the register entry grows from one path edit to three rather than importing
   two names this ticket exists to call wrong.
 
+- [34: The contracts layer is not installable](issues/34-contracts-are-not-assets.md):
+  **a contract is one asset, and `contract` is now the word for that asset.**
+  `contracts/CONTRACT.md` returns as a thin manifest (`name: shared-contracts`); the thirteen
+  documents are **contract files**; every flow's 8-13 refs collapse to one. Measured
+  `scanDirectory` over the repo: **contract 0 → 1**. Per-file assets were not merely expensive
+  but **impossible** — `_` is not a legal asset-name character, so `contract:@skaile-ai/
+  acceptance_criteria` could never resolve however it were packaged; and one `CONTRACT.md`
+  names its whole directory, so options 1 and 2 could not have coexisted. Folding contracts into
+  `references/` was refused on readership: **no contract file has fewer than three readers** and
+  `concept_structure.md` has sixteen, the one file `check.py` parses as the single source of the
+  tree. The per-flow exactness that one asset destroys moved **down** to where the reading is:
+  a skill declares the dependency iff it cites a contract file (24 of 29 do) — and a skill's
+  `requires` is read today by `AssetManager.doctor()`, while a flow's is read by nothing.
+  **The 90 repo-relative citations stay**: `check.py` is the only program that reads them and it
+  reads the repo; rewriting them to `.claude/contracts/shared-contracts/` would hardcode a driver
+  target into skill prose and break the existence gate — register entry instead. Four gates, each
+  verified firing: citation existence, skill cite⟺declare, flow ref iff needed, and the manifest's
+  `name:` slugifying to `shared-contracts`. Green at 29 skills · 4 flows · 0 errors.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -1215,6 +1234,16 @@ grounds that the host might change later.
     <org>/<repo>` is cloned once; a later `install()` in a *fresh* workspace reuses whatever
     commit is there, so a just-pushed fix reads as still-broken until the cache is fetched by
     hand. Ticket 29 hit it between pushing `dc8dfea` and re-running the suite.
+
+  - **Nothing rewrites a citation path at install, so the collection cites paths that exist
+    only pre-install.** A skill deploys to `.claude/skills/<name>/` and the reference layer to
+    `.claude/contracts/shared-contracts/`, while all 90 citations in 24 skills say
+    `contracts/<file>.md` repo-relatively. Grepped: no path rewriting anywhere in
+    `workspaces/packages/workspaces/*/src`. Ticket 34 left the paths alone deliberately — they
+    are correct for `check.py`, the only *program* that reads them, and an agent can glob — but
+    the asymmetry is the host's to close: either the installer rewrites, or the driver
+    co-locates a skill's contracts. **The old collection has the identical defect**, so this is
+    not something `-mp` introduced.
 
   - **Banning `data.writes` leaves node folders with no source.** `flow-manager.ts:361` reads
     `data.writes`, else falls through at `:368` to `getArtifactsProducibleBySkill`, which resolves

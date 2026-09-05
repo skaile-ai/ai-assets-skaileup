@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None — surfaced by 29 on 2026-09-05
-**Status:** claimed
+**Status:** resolved
 
 ## Question
 
@@ -55,4 +55,85 @@ Whatever the answer, `check.py` should gate it: today the script checks that a f
 
 ## Answer
 
-_(pending)_
+**A contract is one asset, and the word `contract` now means that asset.** `contracts/CONTRACT.md`
+returns as a thin manifest (`name: shared-contracts`), the thirteen documents beside it are
+**contract files**, and every flow's 8-13 `contract:` refs collapse to one. Measured before and
+after with `scanDirectory` over the repo: **contract 0 → 1 `["shared-contracts"]`**, skills 29 and
+flows 4 unchanged.
+
+### What killed option 2 was not its price
+
+`ASSET_NAME_RE` is `/^[a-z0-9]+(?:-[a-z0-9]+)*$/` and `canonicalAssetName` slugifies anything else
+(`walker.ts:270`, `models.ts:288-341`). An underscore is not a legal asset-name character, so
+`contract:@skaile-ai/acceptance_criteria` could **never** resolve: an asset built from
+`acceptance_criteria.md` indexes as `acceptance-criteria`. Option 2's headline claim — "the
+existing per-file refs resolve as written" — was false before the cost was even counted. Two more
+corrections to the ticket's framing, both from `walker.ts`:
+
+- **Option 2 was never 14 files.** `CONTRACT.md` names its *whole containing directory*
+  (`DIR_SCOPED_KINDS`, `:33-40`), so one asset per document means one *directory* per document.
+- **Options 1 and 2 do not compose.** A top-level `contracts/CONTRACT.md` dir-scopes `contracts/`
+  recursively, swallowing any per-contract subdirectory into the same asset.
+
+Option 3 (fold into `references/`) was refused on measurement: **no contract file has fewer than
+three readers**, `concept_structure.md` has **sixteen**, and it is the file `check.py` parses as
+the single source of the artifact tree — sixteen copies is sixteen things for the gate to
+disagree with.
+
+A fourth option, not shipping contracts at all, is ruled out by the citation decision below: an
+agent can glob for a mis-pathed file, but only one that reached the workspace.
+
+### The exactness that was lost, and where it went instead
+
+One asset means a flow can no longer say *which* contract files it needs — `appbuilder-mvp` ships
+all thirteen while its skills read eight, and `check.py`'s set-equality check had to go. It was
+replaced by a stricter gate one level down: **a skill declares
+`contract:@skaile-ai/shared-contracts` in `metadata.requires` iff it cites a contract file**
+(24 of 29 skills do). That is the better home for it, because the skill is the reader — and
+because a skill's `requires` has **a live reader in the shipped installer** while a flow's has
+none: `fromSkillMd` parses it into the catalog entry (`manifest.ts:205`) and
+`AssetManager.doctor()` walks it to report a dependency that reached no workspace
+(`asset-manager/src/index.ts:2575`), whereas `bundleDeps` drops a flow's list entirely
+(ticket 29).
+
+### The citation path stays repo-relative — deliberately
+
+90 citations across 24 skills say `contracts/x.md`, which resolves in the repo and in no installed
+workspace (skills deploy to `.claude/skills/<name>/`, the contract to
+`.claude/contracts/shared-contracts/`). **Left alone.** The only *program* that reads these paths
+is `check.py`, and it reads the repo, where they are correct; the other reader is an agent, for
+which a wrong path costs a glob, not a crash. Rewriting all 90 to the deployed path would hardcode
+a driver target into skill prose **and** break the existence gate — coupling bought with friction.
+Recorded in the forge-concept register instead: the collection cites paths that exist only
+pre-install, and no installer rewrites them.
+
+The old collection has the same defect. It is not a `-mp` regression.
+
+### Vocabulary
+
+`CONTEXT.md` gains **Contract** (the asset) and **Contract file** (the document), and its `Asset`
+entry drops "reference file" — a fourth kind that was never defined and does not exist. The
+`Phase` entry's "machine-read contract with forge-concept" became "machine-read **interface**":
+once `contract` names an asset kind, that sentence read as though `phase` were one.
+
+Contract filenames stay underscored (`acceptance_criteria.md`). Ticket 31's hyphenation rule
+governs the `_concept/` tree the collection *writes*, not this repo's own source filenames, and
+under one asset nothing machine-readable depends on them — a 90-citation rename buys nothing a
+reader or a program can detect.
+
+### The gate
+
+Four checks, each verified by breaking it and watching it fail:
+
+1. every cited `contracts/<file>` exists (kept unchanged);
+2. a skill cites contract files ⟺ it declares the contract asset — and declaring any name other
+   than `shared-contracts` is an error;
+3. a flow lists the ref iff one of its node skills reads a contract file, and a per-file
+   `contract:` ref is rejected outright with the reason;
+4. `contracts/CONTRACT.md` exists and its `name:` **slugifies** to `shared-contracts` — the rule
+   ticket 29 gated for flows, applied from the other side.
+
+`CONTRACT_REF_RE` also gained a lookbehind, so a *deployed* path (`.claude/contracts/...`) is no
+longer mistaken for a citation of a repo file.
+
+Collection green: **29 skills · 4 flows · 0 errors.**
