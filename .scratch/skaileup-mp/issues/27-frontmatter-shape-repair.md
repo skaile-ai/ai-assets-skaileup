@@ -1,8 +1,8 @@
 # 27: Every skill's gates are invisible to the only reader
 
 **Type:** task
-**Blocked by:** ticket 16's ADR-0007 path sweep committing (done in-tree, not yet committed)
-**Status:** ready once that commit lands
+**Blocked by:** None — ticket 16's path sweep landed as `-mp` `e63316c` (2026-09-05)
+**Status:** resolved
 
 ## Question
 
@@ -94,3 +94,84 @@ hazard is discharged the moment that commit lands — but not before. This ticke
 Eight `SKILL.md` files, `docs/skill-template.md`, and a `scripts/check.py` rule so it cannot
 regress — the failure mode is silent (`satisfied: true` on an unmet gate), which is exactly
 ticket 16's stated bar for what earns a check.
+
+---
+
+## Resolution
+
+**Both breaks repaired at the source, and the template that taught them fixed with them.
+Recorded as ADR 0011 — "The machine layer sits under `metadata:`, and its paths carry
+`_concept/`."** Landed as `-mp` `5360697`, on top of `e63316c` (ticket 16's sweep, committed
+by this session — it was the blocker).
+
+### Proof, against the deployed bundle rather than the source
+
+`parseSkillRequirements` + `validateRequirements` from
+`forge-concept/node_modules/@skaile/workspaces@0.48.1`, run over `mockup-walkthrough`:
+
+| | gates parsed | `satisfied` on an empty project |
+|---|---|---|
+| before | 0 | **`true`** |
+| after | 4 (3 hard, 1 soft) | `false` |
+
+That is the whole ticket in one line: the report used to come back green with every gate
+unmet, and no error anywhere on the way.
+
+### The four decisions
+
+1. **Nest, don't fix the reader.** One line in `parser.ts` would fix every skill forever, and
+   root-level is the Claude-skill shape ADR 0001 chose deliberately — but it means a
+   `@skaile/workspaces` release and a forge-concept bump mid-migration, which the map's Notes
+   rule out for sequencing. **Register entry added** naming `parser.ts:45-46` as the successor
+   effort's cheapest item. `name`/`description`/`version` stay at the root: `discover.ts:705-719`
+   normalises root and nested both, so only `prerequisites` and `artifacts` move.
+2. **Every path prefixed `_concept/`**, and `check.py` enforces it. Rule 4 could not simply be
+   kept — it read the root block and matched the first segment against the tree, so both halves
+   of the fix broke it. It now requires the prefix and matches the segment *after* it.
+3. **`artifacts.requires[]` keeps `id`, drops `gate:`.** No code has ever read that key, and its
+   one reader (`requires-graph.ts:236-249`) takes `id` only, for cycle detection over edges whose
+   targets are artifact ids — which are never asset refs, so no cycle can involve them. The
+   decisive evidence was not deadness but **divergence**: `build-implement`, `mockup-storybook`
+   and `spec-feature` each declared a soft artifact with no matching entry in
+   `prerequisites.files[]`, the block that actually gates. Two declarations of one dependency had
+   already drifted apart in three of eight skills.
+4. **Soft gates keep their declaration and gain a sentence at their step.** A soft gate renders
+   nowhere — excluded from `satisfied` (`validator.ts:149`), never warned on, and the one route
+   that would report it has no callers. Three needed the prose (`build-plan` on techstack and
+   datamodel, `mockup-walkthrough` on features, `spec-feature` on journeys and datamodel); two
+   already had it (`mockup-storybook:78`, `mockup-feedback` step 1).
+
+### Also landed
+
+- **`docs/skill-template.md`** — the origin. Its fence showed both blocks at the root and it
+  stated *"`artifacts.requires[].id + gate` — hard gates the flow engine enforces"*, the opposite
+  of the truth on both counts. The fence now shows the nesting and the prefix; three rules behind
+  it cite the reader line for each.
+- **`docs/examples/` (both worked examples)** — same repair, plus the pre-0007 paths ticket 16's
+  sweep did not reach (`experience/screens`, `design/tokens.json`, `experience/journeys/`). An
+  example that models the broken shape is worse than no example. `concept-brief`'s sizing write
+  also moved off `_grounding/overview/user_input.json` — a path that is wrong three ways — onto
+  `01_meta/scope.yaml`, where the tree puts tier and profile.
+- **`CLAUDE.md`** and **ADR 0001**'s frontmatter clause narrowed to point at ADR 0011.
+- **ADR 0008's index row was missing from `docs/adr/README.md`** — restored while adding 0011's.
+- `check.py` green (8 skills, 0 errors); `test_check.py` 31 passed, up from 28 — one test per new
+  rule plus the prefix case.
+
+### Handed to the four remaining port tickets (23, 24, 25, 26)
+
+Write the nesting and the prefix from the start; `check.py` fails the build otherwise. The
+template is now correct, so following it is enough. **`inputs_optional` is the one declaration
+this ticket could not verify** — no `-mp` skill declares inputs yet, and the first one that does
+inherits the clash below.
+
+### Questions this surfaced for other tickets
+
+- **The input dialog's path is hardcoded to a directory ADR 0007 abolished.**
+  `validator.ts:107` reads `_concept/_grounding/<skillId>/input.json`; the tree says
+  `02_grounding/`. Nothing declares this path — the host owns both ends — so it constrains no
+  skill today, and the first skill with `inputs_optional` hits it. Register entry added.
+- **`artifacts.produces` is decoration too** (`docs/examples/mockup-walkthrough-astro` carries
+  one). `producesIndex` is an optional argument to `validateRequirements` that
+  `requirements.get.ts` never passes, so `producedBy` in the report is always `undefined`. Left
+  alone here — it is one line in an example — but ticket 26 should not copy it into a live skill
+  expecting it to do anything.

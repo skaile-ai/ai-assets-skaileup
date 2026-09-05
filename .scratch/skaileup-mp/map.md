@@ -726,6 +726,28 @@ grounds that the host might change later.
   **26** (`agent_patterns` on notice with five stale sites; `golden_principles`' second reader,
   since 21 put `ops-review` in that port).
 
+- [27: Every skill's gates are invisible to the only reader](issues/27-frontmatter-shape-repair.md):
+  **The machine layer moves under `metadata:` and every declared path gains the `_concept/`
+  prefix — ADR 0011.** Proven against the deployed `@skaile/workspaces@0.48.1` bundle, not the
+  source: `mockup-walkthrough` parsed **0 gates and reported `satisfied: true`** on an empty
+  project before, **4 gates and `false`** after. Three readers, three silent failures —
+  `parser.ts:45-46` (no root fallback), `requires-graph.ts:236-238` (early return), and
+  `validator.ts:81` (joins the *project* root, so an unprefixed path resolves one level too
+  high). **Fixing the reader instead was rejected on sequencing, not merit** — one line in
+  `parser.ts` beats a nesting nobody wants, but it means a `@skaile/workspaces` release and a
+  forge-concept bump mid-migration → register entry, the successor effort's cheapest item.
+  `name`/`description`/`version` stay at the root, which `discover.ts:705-719` normalises both
+  ways. **`artifacts.requires[]` drops `gate:`** — decided not by deadness but by **divergence**:
+  three of eight skills declared a soft artifact with no matching entry in the block that
+  actually gates. **Soft gates keep the declaration and gain a sentence at their step**, since
+  soft renders nowhere for a human. **`docs/skill-template.md` was the origin** — it showed the
+  root shape and stated the opposite of the truth about `gate:`; every skill written since
+  inherited it, so it is fixed with them, as are both worked examples (plus the pre-0007 paths
+  16's sweep missed). `check.py` gains a rule per break, each with a test (31, up from 28).
+  Also: ticket 16's stranded path sweep committed as `e63316c` (it was this ticket's blocker),
+  and ADR 0008's missing index row restored. To **23-26**: write the nesting and the prefix from
+  the start; `check.py` fails the build otherwise.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -820,6 +842,20 @@ grounds that the host might change later.
     The inverse shape of every other entry here — not a constraint that forced a workaround,
     but a capability nothing takes — and the fact ticket 13's refusal turned on, since it was
     the one channel where a skaileup-specific triage could have beaten mp's.
+
+  - **`parseSkillRequirements` reads `metadata` with no root-level fallback**
+    (`resolver/src/parser.ts:45-46`; `discovery/src/requires-graph.ts:236-238` is the same
+    shape). `version` is already normalised both ways one file over
+    (`discovery/src/discover.ts:705-719`), so the asymmetry is an oversight, not a design.
+    **The cheapest entry in this register**: one line makes root-level frontmatter work for
+    every skill forever and retires the `metadata:` nesting ADR 0011 imposed. Ticket 27 nested
+    instead, because a `@skaile/workspaces` release plus a forge-concept bump mid-migration is
+    exactly what this map defers.
+  - **The input dialog's path is hardcoded to a directory ADR 0007 abolished** —
+    `resolver/src/validator.ts:107` reads `_concept/_grounding/<skillId>/input.json`, where the
+    tree now says `02_grounding/`. Both ends are the host's, so no skill declares it and nothing
+    breaks today; the first `-mp` skill with `inputs_optional` inherits the clash. Found by
+    ticket 27, which could not verify that declaration for want of a skill that makes one.
 
   - **The host validates no flow and cannot report a missing skill.** `validateFlow` /
     `FlowManifestSchema` have **zero call sites** in forge-concept — its only gate is
