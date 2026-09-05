@@ -424,6 +424,46 @@ grounds that the host might change later.
   were fixed, since ticket 09 gave the `CONTRACT`+`README` merge to the rewrite tickets and none
   of them has claimed it by name.
 
+- [13: A triage on-ramp and a durable record of rejected scope](issues/13-triage-onramp-and-scope-memory.md):
+  **Both halves resolve to "no new skill", for opposite reasons.** **The triage on-ramp is
+  refused — the inbox is upstream.** `ai-assets-skaileup` has 1 issue (closed), `-mp` has 0;
+  the 500-issue / 43-`user-feedback` queue is on `platform` + `workspaces`, repos that *have*
+  `_concept/` but are not skaileup-driven and are **already triaged with mp's globally-installed
+  `/triage`** and its own five labels. The one skaileup-shaped channel — forge-concept's
+  per-document comment API (`concept-comment-store.ts`, threads anchored to a `documentId` on a
+  `_concept/` file) — **is read by nothing**, so it is a *register* entry, not a missing skill.
+  `-mp` instead holds an **intake rule** (`/triage` globally, then enter at `spec-feature` or
+  `build-plan`) with **no home today** — recorded as a requirement on the router, in the fog
+  patch that owns it. **`mockup-feedback-triage` collapses into nothing** because there is
+  nothing to collapse into; ticket 06's fold stands and the two-things-named-triage collision
+  never arises. **Two ticket premises were wrong:** "every flow starts from a project brief" is
+  false — **no** flow starts at a brief, 7 of 9 addressable flows enter at `scope-project` and
+  `skaileup-concept-reverse` enters at `ops-reverse-engineer` (`.flow.yaml:43`); and
+  `ops-add-feature` is a real partial on-ramp that is unreachable (**zero flows**) and gated the
+  wrong way (hard-gates on `discovery/brief.md`, `:53-55`) — ticket 21 already re-points it.
+  **The second half was closed too early, and this ticket splits it in two.** Ticket 05's noun
+  stands (a refusal *is* a decision record marked rejected, no `.out-of-scope/`), but that ruling
+  described an artifact **nothing produced**: no `-mp` skill wrote a decision record at all, and
+  in the old collection 12 skills write the two logs and **none writes a refusal**. So —
+  **the reader stays absent, deliberately: `-mp` ships no re-litigation guard**, and the record
+  is documentation a human consults, not a check that fires (mp's `.out-of-scope/` earns its keep
+  at *read* time, `OUT-OF-SCOPE.md:74-76`, and that step no longer exists once triage is refused);
+  **the writer is supplied here** — `spec-feature` step 4 appends an OUT clearing the three-test
+  gate to `10_blueprint/decisions.md` with Status `rejected` (`SKILL.md:61-64`), because
+  `## Out of Scope` is one feature's and **freezes with its dossier** while re-litigation is
+  cross-feature. Two contract defects blocked that writer and are fixed rather than swept, since
+  a path check can neither invent a status nor choose which log a refusal binds to: **`rejected`
+  added to the Status enum** (`domain_model.md:87-91`) with the collision spelled out — it is
+  *the choice was refused*, **not** the "rejected alternatives" of *Options considered* — and the
+  **decision-log paths corrected to `10_blueprint/decisions.md` + `11_build/decisions.md`**
+  (`:9` and `:75-76`, which also disagreed with each other). **Accepted residue:** the three-test
+  gate is narrow, so most refusals fail it and stay in a frozen per-feature dossier. **Flagged,
+  not fixed:** `CONTEXT.md:100-101` says three decision-record levels, the contract gives paths
+  for two. To **ticket 16**: `mockup-feedback`'s **journey branch has no target of that shape**
+  (`triage.py:29-31` wants `<subdir>/<value>.md`; `04_journeys/` holds one `stories.yaml`) — a
+  dead branch, not a stale string; plus `domain_model.md`'s remaining pre-0007 *glossary* paths
+  and its phantom `skaileup-domain-model` skill (`:133`).
+
 ## Not yet specified
 
 - **The port itself, per domain.** **Mockup is done** (ticket 14) and **the slice loop is
@@ -437,7 +477,11 @@ grounds that the host might change later.
   (`spec-*` / `build-*` / `skaileup` / `concept-*`), not their contents. **Ticket 08 placed
   three of them**: `research` and `to-questionnaire` are steps inside `concept-research` and
   `concept-onboard`, and `to-spec` is `spec-feature` (ticket 07) — so what is left here is the
-  router and `grilling`. **Ticket 09 handed
+  router and `grilling`. **Ticket 13 added a requirement to the router**: it must carry the
+  intake rule for work the collection did not create — call the global `/triage`, then enter at
+  `spec-feature` (a new or changed feature) or `build-plan` (a defect against built code).
+  Ticket 13 refused a triage *skill*; the sentence still has to live somewhere, and `CONTEXT.md`
+  is glossary-only so it cannot be there. **Ticket 09 handed
   `contracts/grill_bank.md` here** (0 in-body readers) — it survives only if the absorbed
   `grilling` skill claims it, otherwise it is deleted.
 - **The docs site.** `docs/` is a Starlight site that renders every SKILL.md. Port, regenerate,
@@ -460,6 +504,14 @@ grounds that the host might change later.
   `ops-project-subsystem-map` skills that read it. Ruled out by ticket 09 on the same argument
   as `15_demo`: a meta-concept spanning several products is a different product from the
   app-building collection. Stays in the old repo.
+- **A general triage on-ramp for work the collection did not create** — ruled by
+  [13: A triage on-ramp and a durable record of rejected scope](issues/13-triage-onramp-and-scope-memory.md),
+  which the ticket itself asked to be closed either way rather than left as fog. The inbox is
+  upstream: skaileup's own repos hold 1 closed issue and 0, while the real queue sits on
+  `platform` + `workspaces` and is already triaged with mp's globally-installed `/triage`. `-mp`
+  keeps the *rule* (global `/triage`, then `spec-feature` or `build-plan`) as a router
+  requirement, not a skill. Returns only if a skaileup-built app grows an inbox of its own.
+
 - **Every forge-concept change — deferred to a successor effort, with a register.** This map
   rules host edits out for sequencing (see Notes), so each ticket below accepted a workaround
   instead. Each entry names the site that forced it, so a later map starts from the list rather
@@ -485,6 +537,14 @@ grounds that the host might change later.
     `_implementation/trace.yaml`, a root 0007 absorbed into `11_build/`. **A project on the
     `-mp` tree loses the review surface until the host is updated** — the sharpest entry here,
     because it degrades a feature rather than merely constraining a choice.
+  - **The host already has a `_concept/` intake channel the collection ignores** — a
+    per-document comment API (`server/api/comments/[...document].{get,post}.ts` over
+    `server/utils/concept-comment-store.ts`, 137 lines) giving any authenticated viewer
+    threaded comments anchored to a `documentId` on a `_concept/` file. **No skill reads it.**
+    The inverse shape of every other entry here — not a constraint that forced a workaround,
+    but a capability nothing takes — and the fact ticket 13's refusal turned on, since it was
+    the one channel where a skaileup-specific triage could have beaten mp's.
+
   - **`phaseForSkill` hardcodes `ops-eval*`, `ops-review`, `ops-sync`**
     (`shared/flow-phases.ts:23-24`). Inert while `-mp` declares `data.phase` per node, since
     `phaseForNode` prefers the explicit value — but it is a name-level coupling that binds again

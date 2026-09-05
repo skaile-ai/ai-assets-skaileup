@@ -46,3 +46,21 @@ Decide:
 ## Answer
 
 _(pending)_
+
+## Note from ticket 13
+
+Two things land here, and the first is **not** something a path check can catch.
+
+- **`mockup-feedback`'s journey branch has no target of that shape.** `-mp`'s shipped
+  `scripts/triage.py:29-31` resolves `screen > feature > journey` to `<subdir>/<value>.md`.
+  Two of the three subdirs are merely stale strings this ticket's path sweep will fix
+  (`experience/screens` → `07_screens/`, `experience/features` → `05_features/`). The third
+  is different in kind: **`04_journeys/` holds one `stories.yaml`**
+  (`contracts/concept_structure.md:53`), so no file of the form `04_journeys/<value>.md` can
+  ever exist. Repairing the string leaves a branch that resolves to nothing. It needs a
+  ruling — drop the branch, or give journey annotations a real target.
+- **`contracts/domain_model.md` is deliberately half-swept.** Ticket 13 fixed only what its
+  writer ruling needed — the decision-log paths (`:9`, `:75-76`) and the Status enum. Still
+  pre-0007 in that file: the **glossary paths** (`_concept/blueprint/glossary.md` at `:8`,
+  `:24`, `:63`, `:67`) and `:133`'s **`skaileup-domain-model` skill, which does not exist and
+  carries an old-scheme name.

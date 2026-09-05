@@ -1,7 +1,7 @@
 # 10: Flows and tiers
 
 **Type:** grilling
-**Blocked by:** 08 (01, 06, 07 resolved)
+**Blocked by:** 17, 18, 21 (01, 06, 07, 08 resolved)
 **Status:** blocked
 
 ## Question
@@ -11,8 +11,12 @@
 (`mvp` / `standard` / `complex`), folding `simple` into the existing `concept_depth`
 parameter and making `cli` a profile rather than a tier.
 
-This ticket can only be worked once the skill inventory exists (tickets 06/07/08), because a
-flow is a graph over skills that no longer have the same names or boundaries.
+This ticket can only be worked once the skill inventory exists, because a flow is a graph over
+skills that no longer have the same names or boundaries. **Re-blocked 2026-09-05:** 08 resolved,
+but the original blocking list (06/07/08) predates the graduation of tickets 17 (`quality`), 18
+(`architecture`+`build`) and 21 (`ops`) — three domains whose skills this ticket's graphs must
+name. The test pyramid nodes in particular are load-bearing flow nodes (see the note from ticket
+07 below) and ticket 17 decides whether they exist.
 
 **Ticket 01's flow facts, which narrow this ticket considerably.** Real contract: the
 `<id>.flow.yaml`-in-`<id>/` layout, `id`/`nodes`/`edges`, node kinds `skill|group|sub-flow|router`
