@@ -315,16 +315,62 @@ the ticket type says so.
   `05_types` did not port, as ticket 06 ruled; nor did the storybook validator's
   `_concept/experience/4_storybook` target, which nothing writes.
 
+- [08: Concept-side consolidation](issues/08-concept-side-consolidation.md):
+  **19 skills → 9, and the artifact tree becomes one numbered root.** Survivors:
+  `concept-brief` (absorbs `goals`+`comparable`) · `concept-onboard` (+`seeds`, +mp's
+  `to-questionnaire`) · `concept-research` (+`design-inspiration`, +mp's `research`) ·
+  `design-brand` · `experience-journeys` · `experience-behaviors` · `experience-shell` ·
+  `spec-featuresets` · `spec-feature`. **The screens boundary is W1: the loop owns screens,
+  the whole-app skill owns only the shell** — one writer per artifact, which dissolves a
+  collision the two writers cannot see today (`design-feature`'s scan looks for a slug segment
+  that `screens/<NN_group>/` does not have). `spec-feature` becomes the sole writer of screen
+  specs and of `elements:`. **`goals`/`comparable` were already flags twice over and neither
+  flag is read** — `metadata.parameters` in no code path, both discovery edges `type: optional`
+  (ticket 15: orders nothing) — so folding them moves prose, not behaviour; the cost is the
+  flow node, which was the only real UI affordance for a deep pass. **`.allium` dies**: its
+  grammar file `references/allium-subset.md` is cited as *"the constructs you may use"* and
+  **does not exist** — ticket 03's `EMIT` finding one domain over; the artifact survives as
+  markdown state tables (4 real readers). **`design-brand-voice` does not port** (`behavioral.md`:
+  zero readers collection-wide) and **`experience-components` dies** — both its readers were
+  deleted by ticket 06, and it writes *inside* `screens/`, which every surviving renderer globs
+  as `screens/**/*.md` excluding only `00_layout/`, so component specs are **rendered as
+  screens** today. **The tree: one root.** `_implementation/` is absorbed as `11_build/`;
+  `_concept/` stays because **forge-concept resolves the literal string in four source sites**
+  (`project.ts:112`, `artifact-contract.ts:187-188`/`:208-209`,
+  `api/concepts/[...name].post.ts:43`) — a neutral root is a forge-concept edit the map rules
+  out. **First level numbered, nothing below**: `AppSidebar.vue:332-338` sorts `localeCompare`
+  on the raw name, so the filename is the tree's only ordering mechanism, and the host already
+  strips `NN_` before display in three components. Number what the collection fixes, leave what
+  the project grows — this reverses ADR 0002 at one level *because the artifact tree has no
+  flow graph to carry order*, which is the same principle, not an exception. `01_meta` ·
+  `02_grounding` · `03_brand` · `04_journeys` · `05_features` · `06_behaviors` · `07_screens` ·
+  `08_dossiers` · `09_mockup` · `10_blueprint` · `11_build`, with `brief/goals/comparable.md`
+  as root files. **Sequence is dependency order, not the flows'** — `appbuilder-complex` runs
+  `behaviors` before `features` while `behaviors`' own gate reads *"when features are
+  approved"*. Also: **`concept.yaml` dies** (ticket 09's registry argument, one level down),
+  `_seeds`+`_standards` → `02_grounding/`, the mockup family's five top-level names → one with
+  **the renderer out of the path**, hyphenated filenames fixing three live writer/reader
+  spelling splits, and **no `parameters:` blocks** (tier read from `01_meta/scope.yaml`).
+  Recorded as **ADR 0007**; `contracts/concept_structure.md` rewritten 434 → 202 lines.
+  Handed off: **10** (two flows need a `spec-feature` loop; the behaviors/features order),
+  **16** (every written path resolves to a real top-level entry), **17** (the inspection
+  outputs land under `11_build/`), **19** (writes `spec-feature`). Graduated **21** — `14_ops/`
+  is 12 skills and **no ticket owned 8 of them** (2,207 lines, four on zero flows).
+
 ## Not yet specified
 
 - **The port itself, per domain.** **Mockup is done** (ticket 14); the slice loop graduated
-  as ticket 19; the concept-side port still can't be sized until ticket 08 lands, and the
-  quality and architecture/build ports wait on their own decision tickets (17, 18). Each is a
-  rewrite-from-the-model pass, one ticket per domain group.
+  as ticket 19. **The concept side is now sized — 9 skills, ticket 08** — and needs its own
+  port ticket; the quality and architecture/build ports wait on their own decision tickets
+  (17, 18), and the `ops` domain on ticket 21. Each is a rewrite-from-the-model pass, one
+  ticket per domain group.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
   Blocked on knowing which skills they replace. Ticket 04 fixed their *names*
-  (`spec-*` / `build-*` / `skaileup` / `concept-*`), not their contents. **Ticket 09 handed
+  (`spec-*` / `build-*` / `skaileup` / `concept-*`), not their contents. **Ticket 08 placed
+  three of them**: `research` and `to-questionnaire` are steps inside `concept-research` and
+  `concept-onboard`, and `to-spec` is `spec-feature` (ticket 07) — so what is left here is the
+  router and `grilling`. **Ticket 09 handed
   `contracts/grill_bank.md` here** (0 in-body readers) — it survives only if the absorbed
   `grilling` skill claims it, otherwise it is deleted.
 - **The docs site.** `docs/` is a Starlight site that renders every SKILL.md. Port, regenerate,
