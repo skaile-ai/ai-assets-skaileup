@@ -871,6 +871,30 @@ grounds that the host might change later.
   abolished — nothing breaks because **no skill body names that path**, deliberately. The
   workaround is the silence; the fix is the host's.
 
+- [25: Port architecture + build — write the 5 skills](issues/25-port-architecture-and-build.md):
+  **11 skills / 2,706 lines → 5 / 422**, each 74–90 against the 140 ceiling, no `references/`
+  needed at all. **Ticket 24's seam held**: eight of the sixteen atoms are read, **no atom
+  outside the list was wanted**, no template id appears in any skill body, and every `null` is
+  taken as a branch stated at the step rather than as a missing key to ask about — the defect
+  ticket 18 found in `foundation` cannot recur. Nine recipe sections cited by heading. The dying
+  sweep leaves nothing stranded: `generate` verified absorbed at `template-postxl:613`, and
+  `docs` + `doc_tracking.md` confirmed to be **this repo's own Starlight tooling** misfiled
+  under `impl-build`. **`infrastructure` had exactly one stack-neutral idea worth keeping** —
+  the *provider seam* (interface + real + in-memory, so a slice builds before credentials
+  exist), now `architecture-system` step 5; its five-layer bottom-up order is deliberately not
+  carried, because `build-plan` already rules layer-first decomposition out. Two defects fixed
+  rather than ported, both the same class: `build-scaffold`'s brand gate is **conditional**
+  (`appbuilder-mvp` has no `design-brand` node, so the inherited hard gate would refuse on every
+  run there) and it cuts `build/<app-slug>` **only when `build-branch` did not** (mvp has no
+  branch node). Three deviations from ticket 18's shape: the tie-break is written in flow names
+  now that `tier` is dead; **`project_type` comes from `01_meta/scope.yaml`, not
+  `onboarding.yaml`** — ticket 10's note predates the landed `concept-scope`, which writes it
+  there; and **`10_blueprint/glossary.md` is reconciled, not authored**, because
+  `contracts/domain_model.md` forbids a dedicated write-the-glossary pass — one entry per model
+  name and enum vocabulary, updated in place, renaming the model to match an existing term. It
+  still becomes the writer ADR 0007 left that file without. Nothing for the forge-concept
+  register: no constraint here traced to how the host reads anything.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /

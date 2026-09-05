@@ -1,8 +1,8 @@
 # 28: Write the four flow YAMLs
 
 **Type:** task
-**Blocked by:** 23, 25, 26 (every node skill must exist before `requires:` can resolve)
-**Status:** blocked
+**Blocked by:** None — 23, 25, 26 all resolved 2026-09-05 (every node skill now exists)
+**Status:** ready
 
 ## Question
 
