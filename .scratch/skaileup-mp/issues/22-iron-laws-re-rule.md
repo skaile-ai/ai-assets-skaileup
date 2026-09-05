@@ -79,3 +79,23 @@ rather than to a check. Note that `ready` is one of **four** things checking `_c
 cross-reference integrity today (with `ops-eval-concept`, `ops-review` and `audit` Phase 2,
 the last of which 17 deletes), which makes "the law names a skill" the weaker half of the
 problem — the stronger half is that the gate it names had three other implementations.
+
+## Note from ticket 21
+
+**Law 6's `ready` is settled, and the settlement makes the law's problem worse, not better.**
+Ticket 17 ruled `ready` out of `quality` and handed merge-or-keep here via 21; **21 merged it into
+`ops-review`**. So law 6 names a skill that does not exist under any domain — and the check it
+names now has *one* implementation where it had four (`ready`, `ops-eval-concept`, `ops-review`,
+`audit` Phase 2, the last three of which 17 and 21 deleted or merged). That is the stronger half
+17 identified: the law was pinned to a skill name while the gate it describes had three other
+implementations.
+
+**A second file with the same defect, found while ruling `evaluator.md`.**
+`contracts/evaluator.md:20-31` carries **six uppercase `MUST`/`NEVER` laws with no machine behind
+them** — no validator, no frontmatter gate, nothing that fires. Ticket 09's carve-out from ticket
+03's amendment was explicitly for `iron_laws` + `golden_principles` *as machine-enforced gates*;
+these do not qualify, and one of them (*"NEVER run from the same agent/session that produced the
+artifact"*) is a genuine guardrail that ticket 03 would want expressed as a named failure with a
+check behind it. The file survives ticket 21 on three readers (`ops-review`, `quality-review`,
+`quality-release`); the shape of its laws is yours, since it is the same question you are asking
+of `iron_laws.md`.

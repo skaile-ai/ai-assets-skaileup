@@ -591,13 +591,93 @@ grounds that the host might change later.
   **no live subject**, so ticket **10** should expect to adjust the reachability model when real
   flows land.
 
+- [21: The `ops` domain — eight skills nobody owned](issues/21-ops-domain.md):
+  **8 skills / 2,207 lines → 1 in `ops`, 1 renamed out, 1 handed to `quality`, 5 dead.**
+  `ops-review` absorbs **`ops-sync` + `ops-trace` + `ready` + `audit` Phase 2** — four
+  implementations of one check. `ops-sync`'s only stated difference is *"every change is
+  previewed"* (a step, not a boundary), and **ADR 0007 killed two of its three remaining jobs**:
+  its group-alignment check matches a shape that no longer exists, and the feature↔screen drift
+  it repairs is largely unreachable once W1 made `spec-feature` sole writer of both trees.
+  **`ops-eval-concept` dies with zero callers of any kind** (181 lines; its one mention is a list
+  of who reads a contract), **`ops-eval-feature` dies** into `quality-review`'s AC-honesty check,
+  and **`ops-eval-product` survives as `quality-release`** — the only skill that closes the loop
+  back to `brief.md` + `goals.md`. **Ticket 17 resolved before this ticket's note could reach it**,
+  so those two were owned by nobody and are ruled outright here rather than bounced to a closed
+  ticket. **`ops-add-feature` dies into ~4 lines of `spec-feature`**: the five-artifact cascade
+  (+162 lines of `cascade_rules.md`) is the multi-writer pattern ticket 08 dissolved, so what
+  replaces it is *naming which skill to re-run*; only the blast-radius grill and a
+  *"preserve existing `screens:`/`data_entities:`"* data-loss guard carry.
+  **`ops-reverse-engineer` becomes `concept-reverse`**, a thin orchestrator on ticket 02's
+  mechanism — it keeps validate, repo discovery and its own confidence grading and *calls* the
+  five writers instead of restating their templates; the ~210 lines of stack detection are the
+  one thing no other skill owns → `references/detection/`. It leaves `ops` because it **writes**
+  `_concept/`, which ticket 04's line never covered. **`ops` survives as a one-skill domain** — a
+  domain is a name segment, not a folder, and a prefix is mandatory anyway — but **ticket 04's
+  `quality`/`ops` line is now blurred and recorded as a live tension**: ADR 0007 folded
+  `_implementation/` into `11_build/`, so the merged `ops-review` reads the build half and
+  `git ls-files`, and 17 hit the same line from the other side. `quality-review` / `ops-review`
+  is not a collision but that line stated in the names. **This ticket's own first answer was
+  wrong and 17's placement won**: a twelfth root `12_review/` was minted on the finding that
+  `review-coverage.ts:135-146` **unions three files by feature id**, then withdrawn — all three
+  were under `_implementation/`, which ADR 0007 already renames to `11_build/`, so the host's fix
+  stays **one prefix** rather than a re-homing. → `11_build/review.yaml` + `11_build/trace.yaml`;
+  `01_meta/` is ruled out by 0007's own read direction. Accepted oddity: a concept-only project
+  grows an `11_build/` holding one review. **`contracts/evaluator.md` survives on a basis 17
+  could not have had** — it kept the file on four readers, three of them the `ops-eval-*` this
+  ticket deletes; the three that remain (`ops-review`, `quality-review`, `quality-release`) still
+  clear ticket 09's bar. Two defects → ticket 23: its header names five readers, four dead, and
+  17's pinned *"`approve` ⇒ zero critical and zero high"* uses a severity vocabulary the contract
+  does not have (`blocking|warning`). **Register: two entries change, no new constraint** —
+  `phaseForSkill`'s four hardcoded names reduce to one that still exists, and the review-surface
+  entry **downgrades from a redesign to a prefix change**. **Graduated 26** (port the concept
+  side — 08's nine plus `concept-reverse` and `ops-review`), which **empties the
+  port-per-domain fog patch**: every domain is now sized and every port has a ticket.
+
+- [18: Architecture + build — the eleven skills nobody owned](issues/18-architecture-and-build.md):
+  **11 skills / 2,706 lines → 5** — `architecture-{techstack,system,datamodel}` ·
+  `build-{scaffold,database}`. **`architecture` stays a domain**: every flow that declares a
+  phase puts it in `conceptualization` and build in `implementation`, and
+  `skaileup-concept-only` runs the whole block without ever reaching build. **One rule did most
+  of the work — ADR 0009: stack-specific knowledge lives in a template; a skill is stack-neutral
+  or it is not a skill.** It kills `generate` (25% vendor tokens, zero flows, its STEP 3/5 *is*
+  `template-postxl`'s `## Codegen`) and `infrastructure` (which admits the NestJS assumption in
+  its own body while wearing a stack-neutral name), and **re-grounds ticket 06's
+  `storybook-types` ruling**, whose "PostXL-only" criterion would also have condemned
+  `template-postxl`. **The mass was never in the skills:** `templates/` is 3,799 lines to the
+  eleven skills' 2,706 and **`-mp` had no `templates/` at all** — it becomes a root asset kind
+  beside `skills/`/`flows/`/`contracts/`/`profiles/`, dir name == template id, **no line
+  ceiling** (03's 140 governs instruction, not reference data). **The skill↔template contract was
+  broken for every key any skill extracts — 0/7 across all eleven names**, so `foundation`'s
+  "ask the user if the profile is missing a section" branch **fired on every run**; the fix types
+  the seam — **atoms** in template frontmatter, **recipes** as named sections cited by heading,
+  and no skill names either unless it exists. **`PLANS.md` dies, and so does project-level
+  `progress.yaml`** (ADR 0009): the nine readers were three disclaimers, one different file and
+  one existence test; order is the flow graph and status is duplication, and **0007 gives
+  `11_build/` no slot for either**. Residue re-homed — `## Raw Description` is an *answer* for
+  `onboarding.yaml`, Source Artifacts is recomputed not stored, the backlog note goes to 21.
+  `templates-select` folds into `techstack` (it **no-ops when `techstack` did its job**, behind a
+  second checkpoint over the same field); `scaffold`+`foundation` merge; `migrate`+`seed` merge
+  (3% and 8% per-ORM, and seed was written by **three** skills today). **`foundation`'s Storybook
+  step gated on the mockup project to theme the app's** — it dies, and the built app gets no
+  Storybook from this collection. **`impl-build-docs` was never a build skill** — `agent-framework/`
+  source paths, "relative from monorepo root", an `ai-resource-loader` exclusion: it is *this*
+  repo's doc tooling misfiled, which also **narrows the "docs site" fog patch** to
+  `generate-skill-pages.mjs` alone. `preview_compatibility.md` is claimed but **relocated to
+  `templates/`** — its seven readers are templates, not skills, so it fails 09's contracts bar.
+  `prog-expert-*` stops being a `MUST`: `skaile.yaml` has **no dependency mechanism**, so the
+  cross-collection dep is not expressible. **`architecture-datamodel` gains
+  `10_blueprint/glossary.md`**, a 0007 tree entry nothing wrote. Landed in `-mp`: **ADR 0009 +
+  0009**, `docs/adr/README.md` (which was also **missing 0007**), and `CONTEXT.md` gaining the
+  **datamodel / database** pair. Graduated **24** (port the templates) and **25** (write the 5),
+  **strictly ordered** — skills that read atoms cannot land before the atoms exist. To **10**:
+  the two sub-flows go 11 nodes → 5 and their `type: optional` edges order nothing. To **16**:
+  `-mp`'s `profiles/` still carry pre-0007 paths, plus a template-atom check. **21 resolved
+  concurrently and absorbs both of this ticket's handoffs**: it deletes `ops-add-feature`, so the
+  backlog note dies with it, and its merged `ops-review` has no PLAN-DRIFT indicator to port.
+  ADR 0009 leaves the **per-slice** `progress.yaml` alone — only the project-level file dies.
+
 ## Not yet specified
 
-- **The port itself, per domain.** **Mockup is done** (ticket 14) and **the slice loop is
-  done** (ticket 19). **The concept side is now sized — 9 skills, ticket 08** — and needs its own
-  port ticket. **Quality is sized too — 4 skills, ticket 17 — and graduated as ticket 23.**
-  The architecture/build port waits on ticket 18, and the `ops` domain on ticket 21. Each is a
-  rewrite-from-the-model pass, one ticket per domain group.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
   Blocked on knowing which skills they replace. Ticket 04 fixed their *names*
@@ -612,7 +692,13 @@ grounds that the host might change later.
   `contracts/grill_bank.md` here** (0 in-body readers) — it survives only if the absorbed
   `grilling` skill claims it, otherwise it is deleted.
 - **The docs site.** `docs/` is a Starlight site that renders every SKILL.md. Port, regenerate,
-  or drop — depends on how much frontmatter survives.
+  or drop. **Narrowed by ticket 18 to `docs/scripts/generate-skill-pages.mjs` alone** — two
+  Starlight sites were inside this patch, and the other one (`impl-build-docs`, which maintains a
+  *target project's* docs) turned out to be this repo's own tooling misfiled under `impl-build`
+  and does not port. What breaks the collection's site is **not** frontmatter pruning (it reads
+  `name`, `description`, `metadata.stage|version|tags`, all surviving) but that it renders a page
+  per `DOMAIN.md` — **ticket 05 deletes all 16** — and hard-links `contracts/asset_frontmatter.md`,
+  which ticket 09 deleted.
 - **Opt-in mechanics and the acceptance test.** How a project points at `-mp`
   (`skaile.yaml` deps, lockfiles), and which project plays the "flows load green" role.
 - **What carries over from the old repo besides skills** — `docs/devlog/`, git history,
@@ -627,10 +713,14 @@ grounds that the host might change later.
   `-mp` doesn't break it blindly, but switching it is a later, separate effort.
 - **Archiving or renaming the old repo.** Same reason.
 - **The multi-product umbrella feature** — `14_ops/contracts/CONTRACT.md` (314 lines,
-  `stage: alpha`, `do_not_invoke: true`) and the `ops-project-overview` /
-  `ops-project-subsystem-map` skills that read it. Ruled out by ticket 09 on the same argument
-  as `15_demo`: a meta-concept spanning several products is a different product from the
-  app-building collection. Stays in the old repo.
+  `stage: alpha`, `do_not_invoke: true`) and the **four** skills that read it:
+  `ops-project-overview` · `ops-project-subsystem-map` · `ops-project-integration` ·
+  `ops-project-review`. (Corrected 2026-09-05 by ticket 21, which rules four while this entry
+  named two.) Ruled out by ticket 09 on the same argument as `15_demo`: a meta-concept spanning
+  several products is a different product from the app-building collection. Stays in the old
+  repo. **Cutting them dangles a flow:** those four are the only `ops-*` nodes in
+  `appbuilder-complex.flow.yaml` (`:304-344`, edges `:506-523`), so that flow's tail needs
+  repair — **ticket 10's**, noted there.
 - **A general triage on-ramp for work the collection did not create** — ruled by
   [13: A triage on-ramp and a durable record of rejected scope](issues/13-triage-onramp-and-scope-memory.md),
   which the ticket itself asked to be closed either way rather than left as fog. The inbox is
@@ -666,8 +756,13 @@ grounds that the host might change later.
     feature docs under `experience/features/<NN_group>/`, both the old root *and* the
     `<NN_group>` shape ticket 08 removed; `app/pages/review.vue:22` names
     `_implementation/trace.yaml`, a root 0007 absorbed into `11_build/`. **A project on the
-    `-mp` tree loses the review surface until the host is updated** — the sharpest entry here,
-    because it degrades a feature rather than merely constraining a choice.
+    `-mp` tree loses the review surface until the host is updated.** **Downgraded by ticket 21**
+    from the sharpest entry here to a mechanical one: with `11_build/` chosen over a new root
+    (17's placement, adopted), the fix is **`_implementation/` → `_concept/11_build/`** across
+    `review-coverage.ts:109,122,130` and `review.vue:21-22`, plus `findConceptPath`'s
+    `experience/features/<NN_group>/` → `05_features/<featureset>/`. `buildCoverageReport` unions
+    three files by feature id — `trace.yaml` (ticket 21), `acceptance-criteria/` and
+    `reviews/<slug>.yaml` (ticket 17) — and all three now sit under that one prefix.
   - **The host already has a `_concept/` intake channel the collection ignores** — a
     per-document comment API (`server/api/comments/[...document].{get,post}.ts` over
     `server/utils/concept-comment-store.ts`, 137 lines) giving any authenticated viewer
@@ -689,4 +784,5 @@ grounds that the host might change later.
   - **`phaseForSkill` hardcodes `ops-eval*`, `ops-review`, `ops-sync`**
     (`shared/flow-phases.ts:23-24`). Inert while `-mp` declares `data.phase` per node, since
     `phaseForNode` prefers the explicit value — but it is a name-level coupling that binds again
-    if the phase-per-node rule is ever dropped.
+    if the phase-per-node rule is ever dropped. **Narrowed by ticket 21:** of the four names,
+    only `ops-review` still exists, and its lane (`review`) is still right.

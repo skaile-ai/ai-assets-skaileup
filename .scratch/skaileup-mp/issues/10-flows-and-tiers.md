@@ -98,3 +98,31 @@ The `quality` domain resolves to four skills (`quality-review` · `quality-test`
   the same three sub-agents three times over the same code.
 - **`skaileup-concept-reverse` loses its `standards-inject` node** (`:113`) — discover only.
 - **`skaileup-stepwise`'s `q-ready`** (`:158`) waits on ticket 21's ruling on `ready`.
+
+## Note from ticket 21
+
+The `ops` domain resolves to **one** skill (`ops-review`), plus `concept-reverse` (renamed from
+`ops-reverse-engineer`) and `quality-release` (`ops-eval-product`, moved to `quality`). Node
+changes, and one repair nobody owned:
+
+- **`quality-gate` loses another node beyond 17's three.** `ops-review` and `ops-sync` merge, so
+  `quality-gate.flow.yaml:111` + `:122` collapse to one node, and `:100`'s `ops-trace` folds into
+  the same skill. With 17's cut, `quality-gate` is `quality-test` → `quality-e2e` →
+  `quality-review` → `ops-review`, and its `q-ready` (17's open item) is answered: `ready` is a
+  step inside `ops-review`, not a node.
+- **`skaileup-stepwise`'s `q-ready` (`:158`)** — same answer: no node, or repoint at `ops-review`.
+  17 left this waiting on 21; it is settled.
+- **`skaileup-concept-only:280`** keeps its `ops-review` node, unchanged name.
+- **`skaileup-concept-reverse:68`** repoints from `ops-reverse-engineer` to **`concept-reverse`**.
+  It is that flow's entry node, and ticket 13 already noted this flow is the one addressable flow
+  that does not enter at `scope-project`.
+- **`quality-release` has zero flow nodes today** and needs one — a release gate after
+  `quality-gate`, grading the whole app against `brief.md` + `goals.md`. `quality-gate.md:21`
+  already describes it in prose. This ticket rules it survives; where it runs is yours.
+- **`data.phase` for the three:** `ops-review` → `review`, `quality-release` → `review`,
+  `concept-reverse` → `conceptualization`.
+
+**The repair nobody owned.** The four out-of-scope `ops-project-*` skills are the **only** `ops-*`
+nodes in `appbuilder-complex.flow.yaml` (`:304-344`, edges `:506-523`). Cutting them dangles that
+flow's tail, and no ticket claimed the fix — recorded in the map's Out of scope entry, which also
+named only two of the four until ticket 21 corrected it.

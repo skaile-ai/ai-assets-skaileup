@@ -284,3 +284,24 @@ string a path check should catch:
 - `13_impl-quality/contracts/evaluate-contract/CONTRACT.md`'s three stale paths
   (`_quality/audit-report.md`, `_quality/quality.yaml`, `_concept/4_testing/test_plan.md`) die
   with the file — it does not port.
+
+## Note from ticket 21
+
+Dead pointers found while ruling the `ops` domain — none of them ruled there, all of them
+mechanical once the surviving names are known (`ops-review` · `concept-reverse` ·
+`quality-release`; `ops-sync`, `ops-trace`, `ops-eval-concept`, `ops-eval-feature` and
+`ops-add-feature` die).
+
+- **Contracts naming deleted or renamed skills at pre-0007 paths:** `frontmatter.md:161` and
+  `:171` (`ops-reverse-engineer`, `ops-trace`), `concept_structure.md:55` (`ops-review` writing
+  `_concept/quality.yaml`, now `11_build/review.yaml`) and `:285` (`ops-trace`),
+  `acceptance_criteria.md:251` (names `ops-trace` as the ledger's reader — still true, but the
+  reader is now a step inside `ops-review`).
+- **Skills cross-naming skills this ruling deletes:** `12_trace/SKILL.md:57,62,68,69,106` and
+  `07_eval-product/SKILL.md:43,109,114`. Both files die, so these matter only as a check that
+  nothing *else* points at them.
+- **`_concept/quality.yaml` and `_implementation/{trace.yaml,eval-concept.yaml,eval-feature/,
+  eval-product.yaml}`** all resolve to nothing under ADR 0007. Two land at `11_build/review.yaml`
+  and `11_build/trace.yaml`; the other three have no successor artifact. This is exactly the check
+  ticket 08 handed here — *every written path resolves to a real top-level entry* — and the `ops`
+  family was the largest cluster failing it.
