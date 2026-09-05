@@ -952,6 +952,27 @@ grounds that the host might change later.
   disagreed with the host as well as with 0007. The premise is only now true. Graduated **33**
   (`docs/examples/` carries 14 pre-0007 paths and one example is superseded outright).
 
+- [33: `docs/examples/` is frozen against a tree that no longer exists](issues/33-docs-examples-disposition.md):
+  Both worked ports **deleted**, `WHY.md` kept with a dated header, `README.md` gone —
+  `docs/examples/` is one file. The astro example was superseded *measurably*: its
+  `references/scaffold/` is **byte-identical** to the landed skill's (`diff -r` empty) and its
+  `specs-json.md` differs in **exactly ten lines, all of them pre-0007 paths**, so freezing it
+  would have preserved nothing else. The `concept-brief` port failed the ticket's own
+  before/after test on a fact the ticket did not have: **there is no "before" in this repo** —
+  the 289-line source lives in the old collection, so `docs/examples/` held two *after* halves.
+  And its drift ran past paths: it hands off to `research`, `design-brand-visual` and
+  `product-spec-features`, **three skill names none of which exist**, and writes a `complexity`
+  scale ticket 10 retired. A dated header would have left a reader free to copy a dead skill
+  name out of a file kept as a model of good practice. **The reason it drifted unnoticed is
+  structural and worth carrying: `check.py` globs `skills/` and `contracts/` and never looks at
+  `docs/`, so skill prose living under `docs/` has no CI behind it.** `WHY.md` survives because
+  it is the one artifact the landed collection cannot reproduce — the measurements, the
+  44%-removable table, the per-section counts across 88 skills, and the constraint-transformation
+  table showing eight `MUST`/`NEVER` lines becoming positive statements at the step they bind. A
+  landed skill demonstrates the *after*; only this demonstrates the *move*. Swept in passing: the
+  two `RENDERER.md` opening sentences ticket 30 missed, still on `_concept/mockup-walkthrough/`
+  while their own `SKILL.md` was already right — the first sentence a renderer-branch agent reads.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -964,9 +985,11 @@ grounds that the host might change later.
   intake rule for work the collection did not create — call the global `/triage`, then enter at
   `spec-feature` (a new or changed feature) or `build-plan` (a defect against built code).
   Ticket 13 refused a triage *skill*; the sentence still has to live somewhere, and `CONTEXT.md`
-  is glossary-only so it cannot be there. **Ticket 09 handed
-  `contracts/grill_bank.md` here** (0 in-body readers) — it survives only if the absorbed
-  `grilling` skill claims it, otherwise it is deleted.
+  is glossary-only so it cannot be there. ~~Ticket 09 handed `contracts/grill_bank.md` here — it
+  survives only if the absorbed `grilling` skill claims it.~~ **Closed by ticket 26: dead.** Its
+  nine pillars are already inlined at `spec-feature:42-54` where they bind, and the "absorbed
+  `grilling` skill" it was waiting on turned out to be a **global install, not a `-mp` asset** —
+  which is also the answer to half of what is left in this patch.
 - **The docs site.** `docs/` is a Starlight site that renders every SKILL.md. Port, regenerate,
   or drop. **Narrowed by ticket 18 to `docs/scripts/generate-skill-pages.mjs` alone** — two
   Starlight sites were inside this patch, and the other one (`impl-build-docs`, which maintains a
@@ -974,7 +997,10 @@ grounds that the host might change later.
   and does not port. What breaks the collection's site is **not** frontmatter pruning (it reads
   `name`, `description`, `metadata.stage|version|tags`, all surviving) but that it renders a page
   per `DOMAIN.md` — **ticket 05 deletes all 16** — and hard-links `contracts/asset_frontmatter.md`,
-  which ticket 09 deleted.
+  which ticket 09 deleted. **Ticket 33 added a reason to decide rather than defer this:
+  `check.py` globs `skills/` and `contracts/` and never looks at `docs/`, so anything
+  skill-shaped living there has no CI behind it — which is how two worked examples drifted onto
+  a dead tree and three dead skill names unnoticed.
 - **What carries over from the old repo besides skills** — `docs/devlog/`, git history,
   the improvement backlog.
 
