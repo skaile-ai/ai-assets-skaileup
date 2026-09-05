@@ -1029,6 +1029,22 @@ grounds that the host might change later.
   already-cloned source is **not refetched on install**, so a fresh workspace resolved against
   a stale checkout even after the fix was pushed.
 
+- [31: `review.yaml` and `reviews/` are one letter apart](issues/31-review-yaml-collision.md):
+  the collision is resolved by **deleting one side**, not renaming either. `11_build/review.yaml`
+  — the whole-project verdict — had **zero readers** anywhere (not the host, not a skill, not a
+  flow's `requires:`), while `reviews/<feature_slug>.yaml` has two and is the tree-idiomatic
+  shape (every per-thing collection here is a plural directory). The sharper reason is a
+  distinction the tree now carries: a code review is **decided** and cannot be re-derived, so it
+  earns a file; a tree audit is **recomputed** every run, so a copy on disk can only be stale.
+  `ops-review` writes `trace.yaml` alone and delivers the verdict as the report. Nothing durable
+  replaces it — an echo into `decisions.md` was refused as the same category error elsewhere.
+  Generalised and gated: `concept_structure.md`'s Naming section now bans siblings differing
+  only by plural, and `check.py:check_tree_names` enforces it over the contract's own fenced
+  tree (verified firing and silent). **`-mp` did not bend to the host**: the host reads
+  `review/` singular *and* `acceptance_criteria` with an underscore, and the tree is uniformly
+  hyphenated — so the register entry grows from one path edit to three rather than importing
+  two names this ticket exists to call wrong.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -1119,6 +1135,13 @@ grounds that the host might change later.
     `experience/features/<NN_group>/` → `05_features/<featureset>/`. `buildCoverageReport` unions
     three files by feature id — `trace.yaml` (ticket 21), `acceptance-criteria/` and
     `reviews/<slug>.yaml` (ticket 17) — and all three now sit under that one prefix.
+    **Widened by ticket 31 from one edit to three, all in the same two files:** the host reads
+    `_implementation/review/` (**singular**, `review-coverage.ts:131`) and
+    `_implementation/acceptance_criteria` (**underscore**, `:122`), while `-mp`'s tree is
+    uniformly hyphenated and plural-for-collections. Ticket 31 kept `-mp` internally consistent
+    and let the host move, so the successor change is the prefix swap **plus** `review/` →
+    `reviews/` and `acceptance_criteria` → `acceptance-criteria`. Also: `review.yaml` no longer
+    exists to port — nothing in the host ever read it.
   - **The host already has a `_concept/` intake channel the collection ignores** — a
     per-document comment API (`server/api/comments/[...document].{get,post}.ts` over
     `server/utils/concept-comment-store.ts`, 137 lines) giving any authenticated viewer
