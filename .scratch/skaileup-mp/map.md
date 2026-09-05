@@ -925,6 +925,33 @@ grounds that the host might change later.
   **ticket 29 must push `-mp` `main` first** — the suite installs over SSH from GitHub and
   **self-skips when the repo is unreachable, so a missing push reads as a skip, not a failure.**
 
+- [30: The post-port contract sweep — what four ports found and none owned](issues/30-post-port-contract-sweep.md):
+  All nine items fixed, and **the re-run found eleven more — 32 files edited in total**, which is
+  the ticket's real result: the nine were only what four sessions happened to trip over.
+  `artifact_frontmatter.md`, `feedback_loop.md` and `seed_data.md` rewritten onto ADR 0007, and
+  each carried more than paths — dead writers (`impl-slice-commit`, `ops-reverse-engineer`,
+  `ops-trace`), a `stories.yaml` shown as JSON, an `## Event Emission` section whose only content
+  pointed at a nonexistent file. `tech_stack_skill` documented with its readers and the rule that
+  its legal values are `templates/` directory names. **`feature-map.json` wins** the separator
+  disagreement on the tiebreaker the ticket named: the landed `architecture-datamodel` writes it
+  hyphenated at three sites and `ops-review` reads that. **The pattern the re-run exposes is
+  sharper than any single fix: ticket 16's sweep updated the skills and left the contracts those
+  skills read.** `walkthrough_renderer.md` was **wholly pre-0007 at 26 sites**, the largest find;
+  `elements_block.md` at 9 (plus a hard `MUST` in vocabulary ADR 0003 retired);
+  `agent_patterns.md` at 5; both walkthrough fixture trees entirely pre-0007 *while their
+  SKILL.md calls the snapshot "what correct output looks like"*; `mockup-annotate`'s two
+  manifests at 32 sites each, missed by `e63316c` which updated the HTML sitting beside them.
+  **One live bug, not a stale path**: both `mockup-walkthrough` validators default
+  `project_root` to `source_root.parent.parent`, correct only for the two-segment
+  `experience/screens` — under 0007's one-segment `07_screens` they resolved a level too high, so
+  **every `data-spec-screen source missing` check was inert against a real tree**. Reverting the
+  fix reproduces three failures. Item 6 was half phantom: the `evaluator.md` row a port session
+  had already fixed. Register correction: ticket 26 recorded that nothing breaks from the host's
+  hardcoded `input.json` path because **no skill body names it** — two sites did, and
+  `agent_patterns.md` spelled it with the wrong directory *and* the wrong filename, so it
+  disagreed with the host as well as with 0007. The premise is only now true. Graduated **33**
+  (`docs/examples/` carries 14 pre-0007 paths and one example is superseded outright).
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
