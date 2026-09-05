@@ -1,8 +1,8 @@
 # 10: Flows and tiers
 
 **Type:** grilling
-**Blocked by:** 18, 21 (01, 06, 07, 08, 17 resolved)
-**Status:** blocked
+**Blocked by:** None — 18 and 21 both resolved 2026-09-05
+**Status:** ready
 
 ## Question
 
