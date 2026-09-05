@@ -2,7 +2,7 @@
 
 **Type:** task
 **Blocked by:** None (08, 19, 21 resolved)
-**Status:** claimed (2026-09-05, parallel port sessions)
+**Status:** resolved
 
 ## Question
 
@@ -72,7 +72,157 @@ the 140 ceiling holds for a merge this size.
 
 ## Answer
 
-_(pending)_
+**Twelve skills, 926 lines of `SKILL.md`, every one under the ceiling — and `ops-review` did
+not need a fallback.** Eleven written new plus the edit into the landed `spec-feature`, on
+`-mp` `main`, uncommitted. `scripts/check.py`: 24 skills, 0 errors; `test_check.py` 31 passed.
+
+| skill | lines | writes |
+|---|---|---|
+| `concept-scope` | 82 | `01_meta/scope.yaml` |
+| `concept-brief` | 69 | `brief.md` · `goals.md` · `comparable.md` |
+| `concept-onboard` | 74 | `02_grounding/onboarding/{onboarding.yaml,answers.json,questions.md}` |
+| `concept-research` | 65 | `02_grounding/research/` · `02_grounding/findings/` |
+| `concept-reverse` | 97 | brief trio · `10_blueprint/techstack.md` · `03_brand/` · `02_grounding/findings/{routes,screens,datamodel}.md` |
+| `design-brand` | 66 | `03_brand/` |
+| `experience-journeys` | 65 | `04_journeys/stories.yaml` |
+| `experience-behaviors` | 62 | `06_behaviors/<featureset>.md` |
+| `experience-shell` | 67 | `07_screens/shell.md` |
+| `spec-featuresets` | 69 | `05_features/featuresets.md` |
+| `ops-review` | 107 | `11_build/review.yaml` + `11_build/trace.yaml` |
+| `spec-feature` | 90 → 103 | (edited) |
+
+Plus `skills/concept-reverse/references/detection/{techstack,datamodel,brand,screens}.md`
+(164 lines) — the globs, the 8-source ORM priority list, the signal→value tables and the
+per-framework page globs, which is the one body of knowledge no other skill owns.
+
+### `ops-review`: the ceiling held, at fallback zero
+
+**107 of 140 as a single file.** No `references/checks.md`, no split into `ops-review` +
+`ops-trace`. ~900 source lines across four skills compressed without losing a check, and the
+reason is worth recording because it is the general answer, not luck: **the four skills were
+four implementations of one walk over one tree, and almost all of their bulk was restating
+what a contract already owns.** `evaluator.md` owns the stance, the flag shape and the
+verdict tiers; `golden_principles.md` owns the naming rules; `artifact_frontmatter.md` owns
+the per-type fields; `feedback_loop.md` owns the link protocol; `concept_structure.md` owns
+the tree. Twelve steps sequencing those four contracts is the whole skill. Two more sources
+of shrink: `ops-sync`'s audit/garden mode split collapsed to one mode with a diff shown
+before any repair (ticket 21 was right that "every change is previewed" is a step, not a
+boundary), and ticket 21's dead work — group alignment, the feature↔screen repair W1 made
+unreachable — simply is not there. **The ceiling is not under pressure from merge size; it is
+under pressure from restating contracts.** That is the finding for the remaining ports.
+
+`ops-review` also gives `golden_principles.md` and `evaluator.md` the readers
+`contracts/README.md` keeps them on notice for — both are read at a step, so both survive.
+Severities use `evaluator.md`'s own `blocking|warning`, not 17's `critical|high`; ticket 23
+owns that contract's vocabulary and this port did not pre-empt it.
+
+### Judgment calls
+
+- **`spec-featuresets` writes `05_features/featuresets.md`.** The narrowed skill had no named
+  artifact and a skill that writes nothing gives the loop no input. A root file under
+  `05_features/` rather than `<featureset>/index.md` keeps it out of `spec-feature`'s
+  `05_features/<featureset>/<slug>.md` glob. Added to `concept_structure.md`.
+- **`concept-scope` records the flow rather than deriving it.** Ticket 10 stripped flow choice
+  because the wizard's profile *is* the flow, but the schema still carries `flow` and the
+  orchestrator path has no wizard. Resolved as: the flow is given, this skill writes it down,
+  and derives it only where nothing has chosen — with the four-flow table as the whole
+  vocabulary.
+- **`concept-onboard` confirms `project_type` rather than collecting it.** `concept-scope`
+  owns the value; onboard owns the preferences-with-confidence (`locked|preferred|open`), the
+  existing-brand answer, `mockup.renderer` (a real reader in `mockup-walkthrough`), the seed
+  inventory, and `questions.md` (mp's `to-questionnaire`, aimed at the gap).
+- **The seed inventory has no file of its own.** `concept.yaml` died with ADR 0007 and a
+  standalone seed manifest would have no reader, so the classification lands in
+  `onboarding.yaml`, which eleven skills already read. One line of
+  `concept_structure.md` changed.
+- **`concept-reverse` writes brief/goals/comparable and the brand.** Ticket 10 names the seven
+  nodes that follow it; `concept-brief` and `design-brand` are not among them, so the
+  README-derived brief and the theme-derived tokens are its own detection output. Everything
+  a following node owns — features, screens, journeys, the model — goes to
+  `02_grounding/findings/` as *evidence*, which is what keeps
+  `references/detection/{screens,datamodel}.md` load-bearing while the skill writes neither
+  tree. The structural defect is gone: no headings and no fences inside the step list.
+- **`experience-behaviors` writes markdown transition tables**, per ticket 08. Stated
+  positively: a grammar with no parser drifts from what it claims to describe.
+- **`experience-shell` names nav targets that do not resolve yet**, because it runs before the
+  feature loop writes any screen. Called out at the step; the renderers' `unresolved_target`
+  soft-fail already covers it.
+
+### `contracts/grill_bank.md` — dead, and already gone
+
+It is **not in `-mp/contracts/`**; it was never ported. No skill written here reads it, and
+wiring one would be dishonest: its **9 pillars are already inlined verbatim at
+`spec-feature:42-54`** (state transitions, boundary inputs, concurrency, the role × action
+table, persistence, errors, cross-feature data — the pillar list, at the step it binds, which
+is exactly ADR 0003's rule), and its other half (tone, anti-patterns, one question at a time)
+belongs to the globally-installed `grilling` skill that `spec-feature` calls. Ticket 09
+handed it to "the absorbed `grilling` skill"; that skill turned out to be a global install,
+not a `-mp` asset, so there is nothing to hand it to. **Closed as dead.**
+
+### `CONTEXT.md`
+
+`tier` was already retired by `ac056b2` — Tier gone, Flow carrying the sizing sense — so that
+half needed nothing. The live conflict was elsewhere: **Profile** was defined as "a project's
+type" with `_Avoid_: project type`, while ticket 10's pinned schema key is `project_type` and
+the assets live at `profiles/<project_type>.yaml`. Split into two entries: **Project type**
+(what is being built; the word matches the key the machine reads) and **Profile** (the
+collection asset that describes one type). Same move ADR 0005 already made when "tech stack
+profile" became **template** — `profile` was carrying two meanings.
+
+### Also changed
+
+- **`profiles/*.yaml` rewritten** (483 → 97 lines). They had zero readers and `concept-scope`
+  is the first; wiring a read to them as they stood would have pointed a step at a file
+  declaring **an entirely different artifact tree** (`commands/`, `toolchain/`, `data/`) plus
+  the dead `artifacts.yaml` registry shape. Trimmed to `profile` · `description` · `version` ·
+  `not_grown`, with `prototype` → `mockup`/`mockup-storybook`, and `goals`/`comparable`
+  dropped from the exclusions because `concept-brief` writes all three root files in one run,
+  so excluding one of them is not actionable.
+- **`contracts/concept_structure.md`**: `05_features/featuresets.md`, `11_build/review.yaml`,
+  `11_build/trace.yaml`, the seed inventory in `onboarding.yaml`, detection evidence under
+  `findings/`. Merged around a concurrent sibling session's edits to the same file.
+
+### For later tickets
+
+1. **`11_build/review.yaml` sits one letter from `11_build/reviews/<feature_slug>.yaml`** —
+   ticket 21 pinned the first, ticket 17 the second, and neither saw the other. Not a path
+   collision, but a reader scanning `11_build/` cannot tell them apart. Worth a rename ticket.
+2. **`contracts/artifact_frontmatter.md` is still wholly on pre-0007 paths** —
+   `discovery/brief.md`, `experience/features/<group>/`, `_implementation/slices/`. Six of
+   these skills cite it for *shape* and `concept_structure.md` for *paths*, the split ticket
+   19 established, but a reader who follows its paths lands off-tree. Ticket 16's sweep
+   (`e63316c`) did not reach it. Same for `skills/mockup-walkthrough/SKILL.md` step 1, which
+   still says `_grounding/onboarding/onboarding.yaml` and `_meta/scope.yaml` unnumbered while
+   its own frontmatter is correct.
+3. **`contracts/README.md`'s "no reader in this repo yet" rows for `golden_principles.md` and
+   `evaluator.md` are now false** — `ops-review` reads both at a step. Left alone: another
+   session owns that file.
+4. **`05_features/featuresets.md` is caught by `mockup-walkthrough`'s `05_features/**/*.md`
+   glob** and would appear in the manifest as a phantom feature. One line in that skill.
+
+### Register — forge-concept
+
+**One entry moves from latent to live.** ADR 0011 recorded that the input dialog reads its
+collected values from `_concept/_grounding/<skillId>/input.json`
+(`resolver/src/validator.ts:107`) — a directory ADR 0007 renamed to `02_grounding/` — and that
+"the first `-mp` skill with `inputs_optional` inherits the clash". **Six of these skills
+declare `inputs_optional`** (`concept-scope`, `concept-brief`, `concept-onboard`,
+`concept-research`, `design-brand`, `concept-reverse`, `spec-featuresets`), so the host now
+writes into a directory the artifact tree does not have. Nothing breaks, because **no skill
+body names that path** — deliberately: each treats dialog answers as inputs that arrive with
+the run rather than as a file to read. The workaround is the silence; the fix is the host's.
+
+No other new constraint. `phaseForSkill`'s surviving `ops-review` entry still lands in the
+`review` lane, unchanged.
+
+### Deliberately not done
+
+- **No flow YAMLs** — ticket 28's.
+- **No `architecture-{techstack,system,datamodel}` or `build-scaffold`** — ticket 25's; these
+  skills name them as owners but do not write them.
+- **`design-brand-voice` and `experience-components` do not port** — ticket 08's ruling.
+- **`contracts/README.md`, `evaluator.md`, `acceptance_criteria.md`, `templates/`,
+  `build-plan`, `build-implement`, `quality-*`** — concurrent sibling sessions own them.
 
 ## Note from ticket 10
 

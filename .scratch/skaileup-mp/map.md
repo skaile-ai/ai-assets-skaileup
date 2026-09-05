@@ -843,6 +843,34 @@ grounds that the host might change later.
   used by three skills. Register: `11_build/reviews/` is a **second** host change beyond the
   ADR 0007 prefix — the host walks `_implementation/review/`, singular.
 
+- [26: Port the concept side — write the 10 skills](issues/26-port-concept-side.md):
+  Twelve skills, 926 lines, **62–107 each** — the whole concept half plus ticket 10's late
+  `concept-scope` and the `spec-feature` blast-radius edit. **`ops-review` took fallback zero**:
+  ~900 source lines from four skills fit in **107 of 140 as a single file**, no
+  `references/checks.md` and no split. The reason generalises and is the ticket's real finding —
+  they were four implementations of *one walk over one tree*, and their bulk was **restating
+  contracts that already own the rules** (`evaluator.md`, `golden_principles.md`,
+  `artifact_frontmatter.md`, `feedback_loop.md`, `concept_structure.md`); twelve steps sequencing
+  four contracts is the whole skill. **The 140 ceiling is not under pressure from merge size, it
+  is under pressure from restating contracts.** `CONTEXT.md`'s live conflict was not `tier`
+  (already retired by `ac056b2`) but **Profile**, defined as "a project's type" with
+  `_Avoid_: project type` against ticket 10's pinned machine key — split into **Project type**
+  (what is built, word matching the key) and **Profile** (the asset describing one), the same
+  move ADR 0005 made for *template*. **`profiles/*.yaml` rewritten 483 → 97**: `concept-scope`
+  is their first reader and they declared an entirely different artifact tree.
+  **`contracts/grill_bank.md` is dead** — its nine pillars are already inlined at
+  `spec-feature:42-54` where they bind, and ticket 09 handed the rest to "the absorbed `grilling`
+  skill", which turned out to be a global install, not a `-mp` asset. Four notes forward:
+  **`11_build/review.yaml` sits one letter from ticket 17's `11_build/reviews/<slug>.yaml`**
+  (21 and 17 never saw each other — worth a rename ticket); `contracts/artifact_frontmatter.md`
+  is **wholly** pre-0007, missed by sweep `e63316c`; `contracts/README.md`'s "no reader yet" rows
+  for `golden_principles.md` / `evaluator.md` are now false; and `05_features/featuresets.md` is
+  caught by `mockup-walkthrough`'s glob as a phantom manifest feature. Register, latent → live:
+  seven skills declare `inputs_optional`, so the host writes to
+  `_concept/_grounding/<skillId>/input.json` (`validator.ts:107`), a directory ADR 0007
+  abolished — nothing breaks because **no skill body names that path**, deliberately. The
+  workaround is the silence; the fix is the host's.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
