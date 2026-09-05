@@ -1,8 +1,8 @@
 # 25: Port architecture + build — write the 5 skills
 
 **Type:** task
-**Blocked by:** 24 (18 resolved)
-**Status:** blocked
+**Blocked by:** None — 24 resolved 2026-09-05 (18 resolved)
+**Status:** ready
 
 ## Question
 

@@ -796,6 +796,28 @@ grounds that the host might change later.
   unlike the host *behaviour* changes in the register. Graduated **28** (write the four flow
   YAMLs) and **29** (the acceptance run).
 
+- [24: Port the templates — 7 × TEMPLATE.md into `templates/`](issues/24-port-templates.md):
+  `templates/` exists at the repo root as a **fourth asset kind** (4,603 lines / 9 files), dir
+  name == template id. The typed seam is **16 atoms, not ADR 0009's nine** — the ADR's
+  parenthetical omitted the five Storybook keys ticket 14 needs plus `env_setup_command` and
+  `project_structure`, both of which `build-scaffold` extracted by name. All 16 are **7/7**,
+  verified twice (literal grep + YAML parse); every template declares every atom with a value or
+  an explicit `null`, so no skill needs a missing-key branch — the exact defect ticket 18 found
+  in `foundation`. **The nulls are answers, not gaps**: `env_setup_command` is null 7/7 (no
+  scaffolder emits `.env.example`; the contents are recipe material), `lint_command` null on the
+  four bun stacks (`nuxi init` / `sv create --no-add-ons` install no linter), and
+  `component_library` null on the two minimal stacks *is* the branch a storybook skill should
+  take. Every atom traces to prose — asserted values not in the source got a grounding line.
+  `impl-build-generate` is absorbed whole into `template-postxl`'s `## Codegen`, four-level
+  cascade as a table with the check that makes level 2 real (count `<<<<<<< Custom` markers
+  before and after). `## Seed` added 7/7 — `impl-build-seed`'s per-ORM layouts were written down
+  nowhere else. `preview_compatibility.md` ports to `templates/`, its seven readers being the
+  templates themselves. **Ticket 24 found its own premise half-wrong**: the
+  `preview_compatibility → walkthrough_renderer` row was never in `-mp`'s `contracts/README.md`
+  (ticket 16 rewrote that file wholesale) — what was missing was the *pointer*, now a "What is
+  not here" entry recording the fold that never happened. Full atom matrix lives in
+  `templates/README.md`, the one place tickets 25 and 16 both read. Unblocks 25.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
