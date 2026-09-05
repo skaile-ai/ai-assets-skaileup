@@ -651,7 +651,7 @@ grounds that the host might change later.
   "ask the user if the profile is missing a section" branch **fired on every run**; the fix types
   the seam — **atoms** in template frontmatter, **recipes** as named sections cited by heading,
   and no skill names either unless it exists. **`PLANS.md` dies, and so does project-level
-  `progress.yaml`** (ADR 0009): the nine readers were three disclaimers, one different file and
+  `progress.yaml`** (ADR 0010): the nine readers were three disclaimers, one different file and
   one existence test; order is the flow graph and status is duplication, and **0007 gives
   `11_build/` no slot for either**. Residue re-homed — `## Raw Description` is an *answer* for
   `onboarding.yaml`, Source Artifacts is recomputed not stored, the backlog note goes to 21.
@@ -666,15 +666,65 @@ grounds that the host might change later.
   `templates/`** — its seven readers are templates, not skills, so it fails 09's contracts bar.
   `prog-expert-*` stops being a `MUST`: `skaile.yaml` has **no dependency mechanism**, so the
   cross-collection dep is not expressible. **`architecture-datamodel` gains
-  `10_blueprint/glossary.md`**, a 0007 tree entry nothing wrote. Landed in `-mp`: **ADR 0009 +
-  0009**, `docs/adr/README.md` (which was also **missing 0007**), and `CONTEXT.md` gaining the
-  **datamodel / database** pair. Graduated **24** (port the templates) and **25** (write the 5),
+  `10_blueprint/glossary.md`**, a 0007 tree entry nothing wrote. Landed in `-mp` (`5dcdab8`): **ADR
+  0009 + 0010**, `docs/adr/README.md` (which was also **missing 0007**), and `CONTEXT.md` gaining
+  the **datamodel / database** pair. Graduated **24** (port the templates) and **25** (write the 5),
   **strictly ordered** — skills that read atoms cannot land before the atoms exist. To **10**:
   the two sub-flows go 11 nodes → 5 and their `type: optional` edges order nothing. To **16**:
   `-mp`'s `profiles/` still carry pre-0007 paths, plus a template-atom check. **21 resolved
   concurrently and absorbs both of this ticket's handoffs**: it deletes `ops-add-feature`, so the
   backlog note dies with it, and its merged `ops-review` has no PLAN-DRIFT indicator to port.
-  ADR 0009 leaves the **per-slice** `progress.yaml` alone — only the project-level file dies.
+  ADR 0010 leaves the **per-slice** `progress.yaml` alone — only the project-level file dies.
+
+- [22: The iron laws describe a pipeline that no longer runs](issues/22-iron-laws-re-rule.md):
+  **`contracts/iron_laws.md` deleted — ADR 0008.** The ticket asked which of two contradicting
+  things was wrong, laws 3+4 or `spec-feature`'s soft gates. **Neither. Both dependencies
+  survive and both moved downstream, and both are already gated where they moved to** — a screen
+  *spec* is prose plus `elements:` and consumes no tokens, *rendering* does
+  (`mockup-walkthrough:15`, `mockup-storybook:15`, hard); a screen spec becomes buildable at
+  `build-plan`, which is where the datamodel is gated (`:16`). The laws named the wrong step, so
+  re-cutting them would write down nothing not already declared — which is what killed the file
+  rather than amending it. **Three findings, in weight order.** (1) **The genre was already
+  ruled out by the collection's own vocabulary**: `CONTEXT.md` defines a gate as *"stated at the
+  step it binds"*, and a central register is what that forbids — settled at ticket 05, never
+  applied here. (2) **Ticket 09's machine-enforced premise fails twice over, not once**: the
+  prose does not enforce the gates and **neither does the frontmatter** —
+  `parseSkillRequirements` reads `fm.metadata ?? {}` with no root fallback
+  (`resolver/src/parser.ts:45-46`, identical in the deployed `@skaile/workspaces@0.48.1` bundle)
+  and **no `-mp` skill has a `metadata:` key**, while `validator.ts:81` joins against the
+  *project* root and no `-mp` path carries `_concept/`. So **ticket 19's demotion of two gates to
+  soft changed nothing observable — `spec-feature`'s two *hard* gates are equally unenforced** →
+  new ticket **27**. (3) **The reader evidence is a completed experiment, not a mid-port count**:
+  0 in-body readers in `-mp`, and across the old collection's 95 skills over the file's whole
+  life the six path laws were cited **zero times** — all 84 references named law 7, 8 or 9. *The
+  half that was cited is the half no `gate:` field can hold.* **Every law had a home already**:
+  1 and 5 are live hard gates (5's `mock` skill was a phantom name, nothing more), 7 and 9 are
+  verbatim in `agent_patterns.md`, **8 is stated at all three of its steps** (correcting the
+  brief, which had it homeless), 6's own second clause is satisfied by `build-plan:13-16` +
+  `build-implement:13-15`. **Both tables die**: the Rationalization Defense is *the pre-ADR-0003
+  form of a `MUST`/`NEVER` block*, its one live row already at `build-implement:35-39`, two rows
+  restating law 9 a third and fourth time, one pointing at a `prototype` **flow** that has never
+  existed. **The ruling is narrow — a gate register, not every zero-reader contract.**
+  `agent_patterns.md` and `golden_principles.md` are *also* 0-reader in `-mp`, so reader count
+  alone was never the bar; the distinguishing fact is that `-mp` holds **8 of ~30 skills**, so
+  their readers are **unbuilt, not absent**. Both are **kept on notice** using the disposition
+  `evaluator.md` already carries in `contracts/README.md` — a row naming the tickets that would
+  read it, dying with them — a pattern that has already paid off once (17 found `evaluator.md`
+  four readers). On `golden_principles` **ticket 16's handoff inverted the expected answer**:
+  `lint_concept.py` *was* ADR 0004's machine, it is deleted, and it **contradicted** the contract
+  it enforced (`:13,23` snake_case semantic layer vs the linter's PascalCase against the
+  *derived* PostXL schema) — **content sound, reader wrong**, the inverse of `iron_laws`.
+  **What is removed without replacement:** nothing says a screen spec written before the datamodel
+  is revisited when it lands. `build-plan:16`'s soft gate is **not a surface** — soft is excluded
+  from `satisfied` (`validator.ts:149`), never warned on, and the one route that would fetch the
+  report has **zero callers** → to **25** with law 2, and until 25 lands the loss is real. ADR
+  0004 gains a partial-supersession note (append, never edit — 19's precedent with 0006);
+  `contracts/README.md` loses one row, which makes its "Thirteen files" sentence true;
+  `scripts/check.py` green at 8 skills / 0 errors. Handed off: **27** (new, blocked on 16's path
+  sweep committing — fixing nesting first would turn four dead gates into live wrong ones, the
+  bug class ticket 14 already fixed once), **25** (law 2 + law 4's residue + `golden_principles`),
+  **26** (`agent_patterns` on notice with five stale sites; `golden_principles`' second reader,
+  since 21 put `ops-review` in that port).
 
 ## Not yet specified
 

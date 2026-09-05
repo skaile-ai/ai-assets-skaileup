@@ -43,7 +43,7 @@ flows and not by the name.
   scaffold command, git branch, then walk the template's named sections in order
   (`## Scaffold Recipe` → `## CSS Variables / Theming` → `## Auth Setup` → `## App Shell`).
   ticket 02's mechanism: the recipe lives in the template, the skill is order plus checkpoints.
-  **Writes no `PLANS.md`, no `progress.yaml`, no `decisions.md`** (ADR 0009 — the first two die;
+  **Writes no `PLANS.md`, no `progress.yaml`, no `decisions.md`** (ADR 0010 — the first two die;
   `11_build/decisions.md` already has its writer from ticket 13). **Runs no migration and no
   seed** — that triple-write is what `build-database` exists to end. **No Storybook step at all**
   (ADR 0009: the built app gets no Storybook from this collection).

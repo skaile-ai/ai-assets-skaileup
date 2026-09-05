@@ -142,7 +142,7 @@ backend/db ×1), tier tie-break from `scope.yaml`, existence check, `custom` esc
 **`scaffold` + `foundation` merge into `build-scaffold`.** Both are one-time, both read
 `techstack.md` + the template, both write seed files, and `foundation`'s five phases each open
 *"Read `<key>` from tech stack profile"* against keys that do not exist. Once ADR 0009 puts the
-recipe in named template sections and ADR 0009 deletes the `PLANS.md`/`progress.yaml` writes,
+recipe in named template sections and ADR 0010 deletes the `PLANS.md`/`progress.yaml` writes,
 `scaffold` is a scaffold command plus a git branch and `foundation` is "walk four template
 sections in order" — ticket 02's mechanism exactly: the recipe lives elsewhere, the skill is
 order plus checkpoints.
@@ -227,7 +227,7 @@ collection — and the decisive fact is that **`skaile.yaml` has no dependency m
 installed. The sections become *"if `prog-expert-<x>` is installed, consult it"* — optional, no
 gate, nothing declared.
 
-### `PLANS.md` and `progress.yaml` both die (ADR 0009)
+### `PLANS.md` and `progress.yaml` both die (ADR 0010)
 
 The nine in-body readers do not survive inspection — the same ~2.5× inflation ticket 09 found
 for `frontmatter.md`. **Three mention it only to disclaim it** (two say it carries no status, one
@@ -256,9 +256,13 @@ matter the fix is a rendering of the graph, not a second file to keep in step wi
 
 ### Landed in `-mp`
 
-- **ADR 0009** — `docs/adr/0008-stack-knowledge-lives-in-templates.md`
-- **ADR 0009** — `docs/adr/0009-no-plan-file-and-no-status-file.md`
-- `docs/adr/README.md` — 0008 and 0009 indexed, **and 0007, which ticket 08 never added**
+- **ADR 0009** — `docs/adr/0009-stack-knowledge-lives-in-templates.md`
+- **ADR 0010** — `docs/adr/0010-no-plan-file-and-no-status-file.md`
+- `docs/adr/README.md` — 0009 and 0010 indexed, **and 0007, which ticket 08 never added**.
+  A concurrent session took 0008 (`gates-live-at-the-step-they-bind`, ticket 22), which is why
+  these are 0009/0010 rather than 0008/0009; its README row is left for that session to add
+- `docs/adr/0006` — a pointer to 0010 for the `PLANS.md` question it deferred
+- Commit `5dcdab8` on `-mp` `main`, not pushed
 - `CONTEXT.md` — **datamodel** / **database** as a glossary pair; **Template** sharpened to name
   the atoms/recipes split and the stack-neutrality rule
 
@@ -282,6 +286,6 @@ lines must not reintroduce a `PLANS.md` write — and its merged `ops-review` si
 PLAN-DRIFT entropy indicator to port, nor the two `references/` gardening steps behind it, since
 the artifact those checked is gone. Nothing is left open for 21.
 
-**One thing ADR 0009 does *not* touch:** the **per-slice** `11_build/slices/<slice_id>/progress.yaml`,
+**One thing ADR 0010 does *not* touch:** the **per-slice** `11_build/slices/<slice_id>/progress.yaml`,
 which ADR 0006 already deletes on freeze and `build-implement` still uses to resume. Only the
 project-level file dies.
