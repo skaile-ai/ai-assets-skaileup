@@ -2,7 +2,7 @@
 
 **Type:** task
 **Blocked by:** None (17, 21 resolved)
-**Status:** claimed (2026-09-05, parallel port sessions)
+**Status:** resolved
 
 ## Question
 
