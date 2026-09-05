@@ -973,6 +973,35 @@ grounds that the host might change later.
   two `RENDERER.md` opening sentences ticket 30 missed, still on `_concept/mockup-walkthrough/`
   while their own `SKILL.md` was already right — the first sentence a renderer-branch agent reads.
 
+- [32: `check.py` passes flows that break every rule ticket 10 fixed](issues/32-check-py-enforces-the-flow-shape.md):
+  All seven gaps closed plus two rules the list did not have. `check.py` **471 → 728**,
+  `test_check.py` **31 → 59** cases, one negative fixture per rule — and **every new rule passed
+  all four landed flows on the first run**, so the gate was fitted to the shape the collection
+  actually ships rather than the flows fitted to the gate. Each rule was also smoke-tested by
+  mutating a real flow one way at a time, so none is a no-op. **Gap 4 was the one that mattered
+  and it needed a rule nobody had stated**: a skill node's `data.phase` must agree with its
+  group's, and making that airtight requires *a skill node to declare `parentNode` at all* —
+  without a parent there is no group phase to disagree with, so the check would have had a hole
+  the size of "author forgot the container". `${...}` is caught on the file's **raw text**, not
+  the parsed tree, because an interpolation can sit in any string. Two rules added from findings
+  rather than from the list: **a skill node may not carry `position`** (ticket 28's discovery —
+  authoring geometry drops the node from the lane computation and silently deletes the very
+  override gap 4 protects), and `placeholder` may not sit beside a non-`freeform` `input_style`.
+  **The `_concept/` prerequisite ban narrows to an allowlist rather than being kept or dropped.**
+  Kept, it is stricter than the reader it protects — `validator.ts:81` resolves a `package.json`
+  gate correctly, and a check whose stated bar is "the failure mode is quiet" was blocking a
+  declaration with no failure mode behind it; ticket 23 paid for that. Dropped, the obvious
+  relaxation reopens the class this repo actually bleeds: `experience/screens/foo.md` is a
+  **pre-0007 concept path**, not a project-root file, and a blanket rule passes it as one —
+  ticket 30 swept 32 files of that shape. So the unknown stays banned, the known becomes
+  declarable, and extending the list is a deliberate edit. Nothing landed changes; it removes a
+  trap rather than unblocking anything. **ADR 0011 carries a dated amendment and
+  `docs/skill-template.md` is updated**, so the rule is not documented one way and enforced
+  another. Register: banning `data.writes` leaves `resolveNodeFolders` with nothing —
+  `flow-manager.ts:361` falls through at `:368` to `getArtifactsProducibleBySkill` → the artifact
+  contract → **`artifacts.yaml`, unreachable as deployed**. Ticket 10's deletion and ticket 01's
+  finding compose into a dead node-folder surface for the whole collection.
+
 ## Not yet specified
 
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
@@ -1118,3 +1147,10 @@ grounds that the host might change later.
     acceptance target is forge-concept; platform validates looseObject and reads no icon, so
     nothing breaks — but the two hosts disagree about where a flow's presentation lives, and
     ticket 15's question about the two flow implementations is where that belongs.
+
+  - **Banning `data.writes` leaves node folders with no source.** `flow-manager.ts:361` reads
+    `data.writes`, else falls through at `:368` to `getArtifactsProducibleBySkill`, which resolves
+    through the artifact contract to **`artifacts.yaml` — unreachable as deployed** (ticket 01).
+    Ticket 10 deleted `data.writes` as decoration with zero readers, which was true of the *flow*
+    side; composed with ticket 01's finding it makes `resolveNodeFolders` dead for the whole
+    collection. Inert for ticket 29. Found by ticket 32 while writing the ban.
