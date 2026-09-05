@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None — 18 and 21 both resolved 2026-09-05
-**Status:** ready
+**Status:** claimed
 
 ## Question
 
