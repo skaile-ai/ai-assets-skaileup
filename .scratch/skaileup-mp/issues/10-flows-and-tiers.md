@@ -1,7 +1,7 @@
 # 10: Flows and tiers
 
 **Type:** grilling
-**Blocked by:** 17, 18, 21 (01, 06, 07, 08 resolved)
+**Blocked by:** 18, 21 (01, 06, 07, 08, 17 resolved)
 **Status:** blocked
 
 ## Question
@@ -80,3 +80,21 @@ Two consequences land here.
   and `impl-quality-debug-handoff` have no successor node at all. The test pyramid
   (`quality-test-{unit,integration,e2e}`) stays **flow nodes after the slice** rather than
   calls from inside `build-implement`, so those nodes are load-bearing.
+
+## Note from ticket 17
+
+The `quality` domain resolves to four skills (`quality-review` · `quality-test` ·
+`quality-e2e` · `quality-standards`), which changes five flows:
+
+- **`quality-test` takes a level parameter**, `parameters: {levels: [unit]}` /
+  `[unit, integration]`. Today's per-tier subsets (`{u}` / `{u,e}` / `{u,i}` / `{u,i,e}`) were
+  the argument for merging `test-unit` + `test-integration` in the first place — an arbitrary
+  set selected per tier is data. Precedent already in the tree: `q-test-e2e`'s
+  `parameters: {mode: '${e2e}'}`.
+- **`quality-gate` goes from five nodes to three** — `quality-test` → `quality-e2e` →
+  `quality-review`. `q-eval-code`, `q-audit` and `q-ready` have no successor skill here
+  (`ready` → ticket 21).
+- **`appbuilder-complex` loses `q-eval-code` and `q-audit`** (`:400`, `:411`). It was running
+  the same three sub-agents three times over the same code.
+- **`skaileup-concept-reverse` loses its `standards-inject` node** (`:113`) — discover only.
+- **`skaileup-stepwise`'s `q-ready`** (`:158`) waits on ticket 21's ruling on `ready`.

@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None (07, 08, 09, 19 resolved)
-**Status:** ready
+**Status:** in-progress
 
 ## Question
 
@@ -66,3 +66,16 @@ Decide:
 Ticket 16 owns "every written path resolves to a real top-level entry" and will catch the table
 above mechanically. **It cannot catch laws 3 and 4** — those are a live disagreement between two
 things that both parse.
+
+## Note from ticket 17
+
+**Law 6 names `ready`, and `ready` does not survive the `quality` domain.** Ticket 17 rules
+that it is an `ops` skill by ticket 04's line (it reads only `_concept/`, declares
+`Never load: Source code`, and writes nothing) and hands merge-or-keep to ticket 21 — so law 6
+may end up naming a skill that was folded into `ops-eval-concept`, or no skill at all.
+
+This is the same failure ticket 19 found in laws 3 and 4: a law pinned to a pipeline position
+rather than to a check. Note that `ready` is one of **four** things checking `_concept/`
+cross-reference integrity today (with `ops-eval-concept`, `ops-review` and `audit` Phase 2,
+the last of which 17 deletes), which makes "the law names a skill" the weaker half of the
+problem — the stronger half is that the gate it names had three other implementations.

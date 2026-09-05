@@ -464,13 +464,64 @@ grounds that the host might change later.
   dead branch, not a stale string; plus `domain_model.md`'s remaining pre-0007 *glossary* paths
   and its phantom `skaileup-domain-model` skill (`:133`).
 
+- [17: The `quality` domain — 13 skills, and which of them still have a job](issues/17-quality-domain.md):
+  **13 skills / 2,833 lines → 4** — `quality-review` · `quality-test` · `quality-e2e` ·
+  `quality-standards`. The through-line: this domain has **four globally-installed competitors**
+  (`code-review`, `tdd`, `diagnosing-bugs`, `improve-codebase-architecture`, all four verified
+  present), and they own *how to look at code* — so nothing that survives here is review
+  technique. **`quality-review` is ticket 07's `implement` mechanism inverted**: it does not
+  restate the review, it hands `code-review` the two inputs `code-review`'s own body says it
+  must ask a human for (fixed point from `commits[]`/`source_files[]`, spec from
+  `05_features/`), then adds the four things no global skill has — the **security** and **a11y**
+  axes, the **AC-ledger honesty check**, never-review-as-the-implementer, and `refactor.md` as
+  context. **`audit` dies** — its whole-repo scope is `improve-codebase-architecture`'s and its
+  Phase 2 is `ops-review`'s **by its own admission twice over** (`audit:52` sends you to
+  `review` for the work `audit:127-131` then performs); it was also the only "review" skill that
+  **edits code**. **`eval-code` dies as a skill, survives as two lines** — build+test is
+  `build-implement`'s in this map's model, its `scaffold` scope is `build-scaffold`'s done-check
+  (→ 18), and its verdict artifact — **the domain's only artifact with a real reader** — is
+  inherited. `appbuilder-complex` was running **the same three sub-agents three times over the
+  same code**. **The test trio splits at the tool, not the level**: `test-unit`+`test-integration`
+  are the same five-phase machine and today's per-tier subsets (`{u}`/`{u,e}`/`{u,i}`/`{u,i,e}`)
+  are what a **set-valued parameter** looks like — same argument ticket 06 used on the renderer —
+  while **e2e is a different tool** (`agent-browser`, platform gate, journeys from
+  `stories.yaml`). **The gate cost lands on the intersection, not the union** — integration's
+  `model.json`+`.env.example` become a check at the step that needs them (ticket 03's rule)
+  rather than frontmatter that blocks `appbuilder-mvp`. The 24%/40% vitest boilerplate drops.
+  **The debug pair dies whole** — four collisions with `diagnosing-bugs`, not a nuance: it
+  elicits the hypothesis **before any command is inventoried** (the named forbidden move), *"save
+  for later"* is an accepted terminal state so it can complete having run nothing, and **both its
+  schema and its `validator.py` make the red signal optional**; its four real additions are
+  artifact and interview mechanics, and `_debug/` has no home in ADR 0007. **`standards-inject`
+  was always a contract** — zero in-body callers out of 95, writes nothing, and its five steps
+  are `agent_patterns.md § Standards Injection` **step for step**; its auto-wrap
+  (`modes.standards.inject_skill`) is in the block ticket 15 found has no reader in any host, and
+  the artifact's two real readers **read `index.yml` directly, never through it**.
+  **`standards-sync` dies** on two fictional inputs (`cf__shared/profiles.json`; the prefix has
+  not existed since the migration). Its schema contradiction **needed no ruling — ADR 0007
+  already documents `applies_to` + `keywords`**. **`ready` leaves `quality`** without ambiguity
+  (`Never load: Source code`, `WRITES (none)`) and is the **fourth** thing checking the same
+  `_concept/` integrity → merge-or-keep to **21**, law 6 to **22**. **`test-plan` dies** — zero
+  flows, two `Optional` readers that never branch, and its AC accounting is the `.ac.md` ledger's,
+  upstream and unread. **The ledger gets a home, shrunk to the join** (ticket 19's handoff):
+  `11_build/acceptance-criteria/<featureset>/<feature>.ac.md`, rows citing `AC-n` + the spec
+  instead of **copying the EARS line verbatim**, created by `build-plan`, flipped by
+  `build-implement` + `quality-e2e`. **One verdict artifact, not two** —
+  `11_build/reviews/<feature_slug>.yaml`; `review/<slug>.yaml` and `audit-report.md` had 0
+  readers each. **Ticket 08's other two placements go to 21** — drawn on the *writer* rather than
+  the artifact's shape, `quality.yaml`/`eval-concept.yaml` are `ops`-written, which is also why
+  08's shape-drawn list of three missed `eval-code.yaml` and `review/<slug>.yaml`.
+  `evaluator.md` survives on four readers (three of them 21's); `evaluate-contract` does not port;
+  `analysis_checklists.md` becomes one skill's `references/`. Graduated **23** (write the four,
+  plus three authorised edits to landed skills).
+
 ## Not yet specified
 
 - **The port itself, per domain.** **Mockup is done** (ticket 14) and **the slice loop is
   done** (ticket 19). **The concept side is now sized — 9 skills, ticket 08** — and needs its own
-  port ticket; the quality and architecture/build ports wait on their own decision tickets
-  (17, 18), and the `ops` domain on ticket 21. Each is a rewrite-from-the-model pass, one
-  ticket per domain group.
+  port ticket. **Quality is sized too — 4 skills, ticket 17 — and graduated as ticket 23.**
+  The architecture/build port waits on ticket 18, and the `ops` domain on ticket 21. Each is a
+  rewrite-from-the-model pass, one ticket per domain group.
 - **The five absorbed skills' actual bodies** — what a skaileup-flavoured `to-spec` /
   `to-tickets` / router / `grilling` / `research` says once it knows about `_concept/`.
   Blocked on knowing which skills they replace. Ticket 04 fixed their *names*

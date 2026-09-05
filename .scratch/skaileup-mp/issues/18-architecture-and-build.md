@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None (07 resolved)
-**Status:** ready
+**Status:** in-progress
 
 ## Question
 
@@ -61,3 +61,16 @@ The mockup port handed two things to this ticket:
 
 Also confirmed from the mockup side: `build-foundation` keeps only the **real app's**
 Storybook theming; scaffolding the standalone Storybook landed in `mockup-storybook`.
+
+## Note from ticket 17
+
+**`eval-code`'s `scaffold` scope is `build-scaffold`'s done-check, not a skill.** Ticket 17
+deletes `impl-quality-eval-code`; its three scopes split cleanly, and the smallest one lands
+here. At `scope: scaffold` the skill runs `lint → typecheck → build` with
+*"MUST stop immediately if build fails"* and nothing else — no sub-agents, no tests, because
+at that point there are no features to review. That is a scaffold smoke test: it belongs at
+the end of `build-scaffold` as a step, the way ticket 07 put build+test inside
+`build-implement` rather than in a separate skill.
+
+The other two scopes go to `build-implement` (`feature`: + unit tests) and to
+`quality-review` (`full`: + analysis, which now means calling `code-review`).

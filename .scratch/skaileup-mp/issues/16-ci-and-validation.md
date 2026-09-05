@@ -2,7 +2,7 @@
 
 **Type:** grilling
 **Blocked by:** None (09 resolved)
-**Status:** ready
+**Status:** claimed
 
 ## Question
 
@@ -64,3 +64,26 @@ Two things land here, and the first is **not** something a path check can catch.
   pre-0007 in that file: the **glossary paths** (`_concept/blueprint/glossary.md` at `:8`,
   `:24`, `:63`, `:67`) and `:133`'s **`skaileup-domain-model` skill, which does not exist and
   carries an old-scheme name.
+
+## Note from ticket 17
+
+Dead pointers found while reading the quality domain. None is ruled by 17 — each is a stale
+string a path check should catch:
+
+- `04_test-unit/SKILL.md:69` and `01_test-plan/SKILL.md:81` route the user to a skill named
+  **`verify`**. No such skill exists (`grep '^name:.*verify'` finds only `debug-self-verify`,
+  which 17 deletes).
+- `08_standards-discover/SKILL.md:78` reads `_concept/05_techstack/stack.md`. Real path is
+  `10_blueprint/techstack.md` under ADR 0007.
+- **`contracts/acceptance_criteria.md` is wholly on pre-0007 paths** and its ownership table
+  names `impl-plan-plan-vertical`, a skill ticket 07 deleted. Ticket 17 re-homes the ledger to
+  `11_build/acceptance-criteria/<featureset>/<feature>.ac.md`; the rewrite is the port
+  ticket's, but the file is a live member of ticket 09's fourteen and is stale today.
+- **`cf__shared/` is cited in-body six times** — twice each by `standards-inject`,
+  `standards-discover` and `standards-sync`. The prefix has not existed since the migration
+  (it is the pre-migration name for `contracts/`). Two of those three skills die; the survivor
+  (`quality-standards`) is rewritten anyway, so this is a *pattern* worth a check rather than
+  three fixes.
+- `13_impl-quality/contracts/evaluate-contract/CONTRACT.md`'s three stale paths
+  (`_quality/audit-report.md`, `_quality/quality.yaml`, `_concept/4_testing/test_plan.md`) die
+  with the file — it does not port.
