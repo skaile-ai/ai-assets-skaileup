@@ -571,3 +571,231 @@ Sharpest form of each live question. No answers here.
     build skill at all, or the collection's own doc tooling filed in the wrong domain — and
     does the map's open "docs site" patch turn out to be about this skill or only about
     `generate-skill-pages.mjs`?
+
+
+---
+
+## Post-08 delta — recon pass, 2026-09-05
+
+Everything above predates ticket 08 (resolved 2026-09-05, ADR 0007). This section
+was gathered after, against the renumbered tree and the ported skills. Where the two
+halves disagree, this one is later. Still evidence only — nothing here is a ruling.
+
+Evidence only. Paths relative to `ai-assets-skaileup/skaileup/` unless noted.
+
+### Per-skill table
+| skill | lines | flows (node id) | writes | reads (hard gate) | named by |
+|---|---|---|---|---|---|
+| `impl-architecture-techstack` | 328 | `architecture`:`techstack` · `appbuilder-mvp`:132 · `skaileup-stepwise`:84 | `_concept/blueprint/techstack.md` | `discovery/brief.md` | no SKILL.md — only `09_impl-architecture/DOMAIN.md`, `contracts/{flows,concept_structure}.md` |
+| `impl-architecture-templates-select` | 223 | `architecture`:`templates` (optional, `skip` in 2 of 6 consumers) · `appbuilder-mvp`:144 | same file, `tech_stack_skill` field only | `blueprint/techstack.md` | `05_mockup-walkthrough/01_e_framework/SKILL.md:442`; `templates/README.md` |
+| `impl-architecture-system` | 279 | `architecture`:`arch-system` (optional, `skip` in 2 of 6) · `skaileup-concept-reverse`:136 | `blueprint/architecture.md` | `brief.md`, `experience/features`, `techstack.md` | no SKILL.md |
+| `impl-architecture-datamodel` | 373 | `architecture`:`datamodel` · `skaileup-concept-reverse`:147 · `skaileup-stepwise`:95 | `datamodel/{model.dbml,model.json,seed.json,feature_map.json}` + feature frontmatter feedback | `experience/features`, `techstack.md` | `04_product-spec/DOMAIN.md` |
+| `impl-build-scaffold` | 234 | `impl-build-setup`:`scaffold` · `appbuilder-mvp`:156 · `skaileup-stepwise`:107 | `_implementation/{PLANS.md,progress.yaml,decisions.md}` + project dir + git branch | `techstack.md`, `brief.md`, `model.json` | `contracts/preview_compatibility.md` |
+| `impl-build-foundation` | 279 | `impl-build-setup`:`foundation` · `skaileup-stepwise`:118 | `_implementation/progress.yaml`, `_implementation/verification/screenshots/foundation/` (`SKILL.md:224`), theme/auth/shell files | `package.json`, `discovery/brand/tokens.json`, `techstack.md` | `contracts/preview_compatibility.md` |
+| `impl-build-infrastructure` | 238 | `impl-build-setup`:`infra-opt` (optional) | `backend/libs/`, `backend/apps/`, `docker-compose.yml`, `.env.example` | `blueprint/architecture.md`, `backend/` | no SKILL.md |
+| `impl-build-migrate` | 169 | `impl-build-setup`:`migrate` · `skaileup-stepwise`:129 | `migrations/` (ORM-shaped) | `model.dbml`, `model.json`, `techstack.md` | no SKILL.md |
+| `impl-build-seed` | 190 | `impl-build-setup`:`seed` | `scripts/seed` | `seed.json`, `model.json`, `techstack.md`, `migrations` | no SKILL.md |
+| `impl-build-generate` | 139 | **zero** | `src/` (generated), `postxl-schema.json` | `postxl-schema.json` (hard) | no SKILL.md |
+| `impl-build-docs` | 254 | `impl-build-setup`:`docs` | `docs/src/content/docs/**` | `docs/` | no SKILL.md |
+
+**Zero cross-skill readers.** Grep of every `SKILL.md` in the collection for the eleven `name:` values
+returns exactly one hit outside the two clusters: `impl-architecture-templates-select`, cited by
+`05_mockup-walkthrough/01_e_framework/SKILL.md:442`. Everything else is `DOMAIN.md` / `contracts/flows.md`
+(which ticket 09 deleted, 0 readers). What other domains actually reference is the **`templates/` path**,
+never the skill: `06_mockup-component/.../06_orchestrator/SKILL.md:73,112,129,158`,
+`05_mockup-walkthrough/01_a_text/SKILL.md:143,166,208`, `01_e_framework/SKILL.md:53,73,410`.
+
+**Reachability.** Neither cluster is wired into a tier flow directly. Both are sub-flows:
+`architecture.flow.yaml` (consumed by `appbuilder-{simple,standard,complex,cli}`,
+`skaileup-implementation`, `skaileup-concept-only`) and `impl-build-setup.flow.yaml` (consumed by the
+same minus `concept-only`). Consumer overrides:
+`templates: skip` in `skaileup-implementation:91` and `skaileup-concept-only:259`;
+`system: skip` in `appbuilder-simple:186` and `appbuilder-cli:127`.
+
+**Sidecars** (1,292 lines / 48 KB): `validator.py` in 3 of 11 (`techstack` 91, `system` 78, `datamodel` 128 —
+none in `10_impl-build/`, none with fixtures); `references/` in the same 3 (52 / 184 / 223 lines);
+`CLI.md` ×4; two `DOMAIN.md`; `10_impl-build/contracts/` (`implementation-contract/CONTRACT.md` 104 —
+`requires:` of `impl-build-docs`; `subagent_dispatch.md` 117 — absorbed by `agent_patterns.md` per ticket 09);
+`10_impl-build/agents/skaileup-implement/` (99 lines, `-mp` has no `agents/`).
+
+### templates/ inventory
+
+**`templates/` is 3,799 lines / 134 KB of `TEMPLATE.md` + a 34-line README — larger than all eleven
+skills combined (2,706 lines / 121 KB).** Seven directories, each containing exactly one file.
+
+| template | lines | frontend / ui / data |
+|---|---|---|
+| `template-sveltekit-minimal` | 722 | SvelteKit 2 / none / Drizzle+SQLite |
+| `template-postxl` | 665 | React 19+Vite / custom / NestJS+Prisma+PG |
+| `template-nextjs-shadcn` | 556 | Next.js 15 / shadcn/ui / Supabase |
+| `template-nuxt-minimal` | 507 | Nuxt 4 / none / Drizzle+SQLite |
+| `template-nextjs-radix` | 486 | Next.js 15 / Radix / Directus |
+| `template-nuxt-primevue` | 441 | Nuxt 4 / PrimeVue 4 / Directus |
+| `template-nuxt-ui` | 422 | Nuxt 4 / @nuxt/ui v3 / Directus |
+
+All seven are **real, not stubs**, and structurally identical: `Identity` · `When to Use` ·
+`Scaffold Recipe` · `Preview Compatibility` · `CSS Variables / Theming` · `Auth Setup` · `App Shell` ·
+`Component Library` · `Mock Adaptation` · `Storybook Config` · `Migration / ORM` · `Codegen` ·
+`Expert Skills` · `Key Implementation Patterns`.
+
+**No template carries a `validator.py` or a fixture** — each dir is one file (`find templates -type f`
+= 8). The three `validator.py` files in this half sit on `techstack`/`system`/`datamodel`.
+
+**The skill↔template key contract is broken in both directions.** Literal-key grep across all seven:
+
+- `scaffold_command` **0/7** — read by `01_scaffold/SKILL.md:144,166`
+- `css_vars_mapping` **0/7** — read by `02_foundation/SKILL.md:120,158,258,269,270`
+- `seed_format` **0/7** — read by `02_foundation/SKILL.md:210,261`
+- `story_extension` · `component_library` · `icon_library` **0/7** — read by the storybook orchestrator (ticket 14's find, confirmed)
+- `storybook_addon` · `story_format` · `mock_template` **1/7 each** (mentions only, inside prose)
+
+The information exists as prose sections (`## Scaffold Recipe`, `## CSS Variables / Theming`,
+`## Component Library`), but no skill's extraction instruction names a section — they all name a key
+that does not exist.
+
+**`contracts/preview_compatibility.md` (292 lines) has exactly 7 readers, all here:**
+`templates/template-*/TEMPLATE.md` `## Preview Compatibility` (radix:126, nuxt-min:122, primevue:128,
+nuxt-ui:107, shadcn:136, sveltekit:225, postxl:175). Those sections are 22–74 lines each.
+
+**`prog-expert-*` resolves outside this repo.** Every template's `## Expert Skills` section names
+`prog-expert-{nextjs,nuxt,directus,prisma,nestjs,keycloak,supabase,primevue,sveltekit}`; so does
+`04_migrate/SKILL.md:112-114`. They live in `ai-assets/ai-assets/dev-implementation-experts-*/skills/`,
+a different collection — nothing in `skaile.yaml` here declares that dependency.
+
+### templates-select vs techstack — the seam
+
+`techstack` already picks a template. `SKILL.md:171` "Scan 09_impl-architecture/templates/\*/TEMPLATE.md";
+`:205` "select the best matching profile"; `:249` writes `tech_stack_skill: <profile-id>`; and its own
+checklist `:298` requires **"tech_stack_skill field is set (matches a 09_impl-architecture/templates/
+directory or 'custom')"**.
+
+`templates-select` then opens with the skip:
+
+> `02_templates-select/SKILL.md:114-117` — "IF `tech_stack_skill` already names an existing
+> `template-*` directory / > 'techstack.md already targets [id]. Re-pick the scaffold template?'
+> / UNLESS the user wants to re-pick, skip to STEP 5 (no change)"
+
+Its `## When NOT to Use` (`:63-66`) repeats this: "`tech_stack_skill` already names a real `template-*`
+directory and is approved". Its only distinct content is the weighted score (frontend ×3, ui ×2,
+backend/database ×1 each, `:143-146`) and a tier tie-break — a rubric `techstack` STEP 4 performs
+by narrative instead. Both scan the same directory; `templates-select` additionally hardcodes the
+seven ids in a table (`:129-137`) after a MUST forbidding exactly that (`:102`).
+
+Two of six sub-flow consumers already pass `templates: skip`.
+
+### Boilerplate vs instruction
+
+Region measurement (frontmatter / preamble prose / DSL header block / STEP body / CHECKLIST / tail sections):
+
+| skill | total | frontmatter | preamble | DSL hdr | STEP body | tail |
+|---|---|---|---|---|---|---|
+| techstack | 329 | 75 | 57 | 27 | 134 | 36 |
+| templates-select | 224 | 41 | 44 | 25 | 78 | 36 |
+| system | 280 | 66 | 61 | 29 | 84 | 40 |
+| datamodel | 374 | 75 | 65 | 40 | 146 | 48 |
+| scaffold | 235 | 55 | 48 | 34 | 68 | 30 |
+| foundation | 280 | 59 | 56 | 38 | 84 | 43 |
+| infrastructure | 239 | 49 | 42 | 35 | 100 | 13 |
+| generate | 140 | 34 | 27 | 24 | 45 | 10 |
+
+Genuine step instruction is **~40%** of each file; the rest is ticket 03's ten sections plus the
+`ROLE/READS/WRITES/REFERENCES/MUST/NEVER/EMIT` block that ticket 03 already showed restates frontmatter.
+`04_migrate` (169) and `05_seed` (190) use a different shape (no `STEP 1` marker, 129/146-line tails).
+
+Fattest single blocks, all removable:
+
+- `04_datamodel/SKILL.md:134-178` — `## Standalone Mode` **45 lines**, of which 40 are the DSL block.
+  Same section is 34 lines in `03_system/SKILL.md:121-154`.
+- `04_datamodel/SKILL.md:249-276` — `OUTPUT model.json` **28 lines** of JSON shape, duplicated by
+  `04_datamodel/references/model_conventions.md` (223 lines, "DBML + model.json template" per `:167`).
+- `03_system/references/output_template.md` — 184 lines that `03_system/SKILL.md:209-220` restates in 12.
+- `04_migrate/SKILL.md:97-104` — STEP 5 fans out per ORM ("For Prisma… For Drizzle… For Directus…
+  For raw SQL"). Every `TEMPLATE.md` already carries a `## Migration / ORM` section
+  (postxl:505, shadcn:412, radix:373, nuxt-min:393, primevue:349, nuxt-ui:346, sveltekit:579).
+- `02_foundation/SKILL.md:155-215` — five `Phase N` blocks each opening "Read <key> from tech stack
+  profile", where the key does not exist in any profile.
+- `06_generate` — its whole STEP 3/5 is the `## Codegen` section of `template-postxl/TEMPLATE.md:567-595`.
+- `03_infrastructure/SKILL.md` writes `backend/libs/<module>/src/`, `backend/apps/<process>/src/` —
+  the PostXL/NestJS monorepo layout, in a skill with no stack branch.
+
+Two dead reads inside the bodies: `04_datamodel/SKILL.md:150` reads
+`_concept/experience/behaviors/*.allium` (ticket 08 killed `.allium`), and
+`02_foundation/SKILL.md:219` gates on `_concept/prototype/storybook/`, which ADR 0007 relocates to
+`09_mockup/storybook/`.
+
+### Homes in the ADR 0007 tree
+
+Against `ai-assets-skaileup-mp/contracts/concept_structure.md` (commit `609ee67`).
+
+| current output | ADR 0007 home |
+|---|---|
+| `blueprint/techstack.md` | `10_blueprint/techstack.md` |
+| `blueprint/architecture.md` | `10_blueprint/architecture.md` |
+| `blueprint/datamodel/*` | `10_blueprint/datamodel/` |
+| `_implementation/decisions.md` | `11_build/decisions.md` |
+| project code, `migrations/`, `scripts/seed`, `backend/libs`, `docker-compose.yml`, `.env.example`, `src/`, `docs/` | outside the artifact tree — unaffected |
+| **`_implementation/PLANS.md`** | **none** |
+| **`_implementation/progress.yaml`** (project-level) | **none** — `11_build/` holds only `slices/<slice_id>/` and `decisions.md`, and ticket 07 has `impl-slice-commit` delete the per-slice `progress.yaml` as transient |
+| **`_implementation/verification/screenshots/foundation/`** (`02_foundation/SKILL.md:224`) | **none** |
+
+Unclaimed in the other direction: `10_blueprint/glossary.md` and `10_blueprint/decisions.md` exist in
+the tree and **none of the eleven writes either**; no ported `-mp` skill does either (`-mp/skills/` is
+the four mockup skills).
+
+#### `PLANS.md` — every writer and reader
+
+Writers (2): `10_impl-build/01_scaffold/SKILL.md:49,198` (creates it) ·
+`00_skaileup-orchestrator/skills/skaileup-build/SKILL.md:56,215` (writes `_implementation/PLANS.md`) —
+plus `skills/skaileup/SKILL.md:29,141` writing `_concept/PLANS.md`.
+
+Readers naming it at a step: `01_scaffold:116,122,234` · `02_foundation:228` · `03_infrastructure:238` ·
+`11_impl-plan/03_plan-vertical:163,189` · `12_impl-slice/01_git-prepare:79,110` ·
+`13_impl-quality/07_ready/references/report_templates.md:58` · `14_ops/08_review:100,118,200` +
+`references/checks.md:116` + `references/gardening.md:18,26` · `14_ops/10_add-feature:273` ·
+`14_ops/04_project-review:44,84,86` · `01_concept/01_brief:170` (reads a `## Raw Description` section
+out of it) · both orchestrator skills · both `agents/*/SOUL.md`.
+
+Contract + registry: `contracts/plans.md` (86 lines, deleted by ticket 09/07) ·
+`contracts/artifacts.yaml:251` (unreachable) ·
+`10_impl-build/contracts/implementation-contract/CONTRACT.md:35,80` ·
+`01_concept/.../conceptualization-contract/CONTRACT.md:35,83-85` ·
+`14_ops/contracts/CONTRACT.md:68,191,219,247,297-314` (out of scope per ticket 09).
+
+Three of the four remaining in-cluster mentions say PLANS.md holds **no status**:
+`01_scaffold:198` "NO checkboxes; status lives in progress.yaml", `02_foundation:228`, `03_infrastructure:238`.
+Two orchestrator readers say the opposite — `skaileup/SKILL.md:113` "MUST update PLANS.md at every
+checkpoint", `:232` "check the feature off in PLANS.md". Both orchestrators die with ticket 07.
+
+### Open questions for the human
+
+1. **The mass is in `templates/`, not the skills.** 3,799 lines vs 2,706. Ticket 09 hoisted `profiles/`
+   to the repo root; `-mp` already has `profiles/`. Do the seven templates become `profiles/`, and if so
+   is a 500-line stack profile acceptable when the *skill* ceiling is 140?
+2. **The skill↔template contract is broken for every key any skill extracts.** Fix by giving templates
+   frontmatter keys, or by rewriting the skills to read named sections? One is a 7-file edit, the other
+   is 4+ skill edits — and ticket 14 already chose "derive instead of ask" for the storybook three.
+3. **Does `templates-select` survive its own skip condition?** `techstack` writes a real `template-*` id
+   and `templates-select` no-ops when it did. Is this a skill, or `techstack` STEP 4 with a score table?
+4. **`preview_compatibility.md` (292 lines) is claimed by this ticket or lost.** Its seven readers are
+   template sections. Does it fold into each template (7× duplication) or survive as a root contract?
+5. **`PLANS.md`.** Every surviving in-cluster reader says it carries no status; every reader that treated
+   it as status is an orchestrator ticket 07 deletes. Does the artifact survive at all, and if it does,
+   where — `11_build/` has no slot, and `progress.yaml` and the flow graph cover status and order.
+6. **`generate` (139, zero flows, PostXL-only).** Its steps are `template-postxl/TEMPLATE.md:567-595`
+   plus a four-level conflict cascade. Ticket 06 killed `storybook-types` (also PostXL codegen) rather
+   than sending it here. Does codegen become a template section + a `build-implement` step, or die?
+7. **Does `architecture` stay a domain?** Four skills that write only `10_blueprint/` before any code —
+   but `techstack`'s output is read by `scaffold`, `foundation`, and three mockup skills, so the seam is
+   the artifact, not the domain.
+8. **`docs` overlaps the fog patch.** `10_impl-build/07_docs` documents the *generated app* with
+   Starlight, carries a `<!-- TODO -->` at `SKILL.md:26-28` admitting the Starlight lock-in, reads
+   `docs/astro.config.mjs` and paths "relative from monorepo root" — i.e. it was written against **this
+   repo's own** Starlight site (`docs/package.json`: `@astrojs/starlight ^0.37.7`,
+   `scripts/generate-skill-pages.mjs`), which the map's "docs site" fog patch is separately deciding.
+   Same skill, two sites. Not resolved here.
+9. **`10_impl-build/agents/` + `contracts/`.** `-mp` has no `agents/`; `subagent_dispatch.md` was
+   absorbed into `agent_patterns.md`; `implementation-contract` (104) is `requires:` of `impl-build-docs`
+   and describes the `_implementation/` tree ADR 0007 replaces.
+10. **`prog-expert-*` is a cross-collection dependency nothing declares.** Every template's
+    `## Expert Skills` and `04_migrate` STEP 4 point at `ai-assets/dev-implementation-experts-*`.
+    Does `-mp` declare it, drop the sections, or keep a dangling reference?

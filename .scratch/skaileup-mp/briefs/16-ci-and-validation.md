@@ -555,3 +555,203 @@ is `git ls-remote git@github.com:skaile-ai/ai-assets-skaileup.git HEAD` succeedi
     *our* rules, narrowed, rather than mirror a runtime), and it means its `data.phase` enum
     is the **only** machine check anywhere of ticket 04's every-node-declares-`phase`
     decision. Does that one enum alone justify keeping a schema file?
+
+
+---
+
+## Post-08 delta — recon pass, 2026-09-05
+
+Everything above predates ticket 08 (resolved 2026-09-05, ADR 0007). This section
+was gathered after, against the renumbered tree and the ported skills. Where the two
+halves disagree, this one is later. Still evidence only — nothing here is a ruling.
+
+Evidence only. Nothing ruled. Paths relative to `ai-assets-skaileup/` unless marked `-mp:`.
+
+### Script-by-script status
+
+Seven scripts, not six — the ticket's list omits `docs/scripts/audit.py`, which is one of the
+three jobs CI actually runs.
+
+| script | what it validates | opens | target alive after 03/09? | verdict |
+|---|---|---|---|---|
+| `skaileup/contracts/scripts/verify_artifacts.py` | 7 checks over `artifacts.yaml` ↔ each skill's `metadata.artifacts:` block (`:5-22`) | `REGISTRY = REPO/"skaileup"/"contracts"/"artifacts.yaml"` (`:42`); `.read_text()` unguarded (`:47`) | **No.** 09 deleted `artifacts.yaml`; `-mp/contracts/` has no such file | **DEAD** — crashes on import path, not just empty. Check 7 also greps a `WRITES` DSL block (`:88-92`) that 03 removed |
+| `skaileup/contracts/tests/test_verify_artifacts.py` | the above | same | No | **DEAD** with its subject. Still present in the source repo; absent from `-mp` |
+| `skaileup/contracts/scripts/validate_skill_rules.py` | runs a skill's `MUST`/`NEVER`/`CHECKLIST` via `validator_lib` (`:11`); parses `WRITES` paths (`:184-198`), terminator regex over `READS\|REFERENCES\|REQUIRES\|MUST\|NEVER\|STEP\|ROLE\|EMIT\|CHECKLIST\|PROCEDURE\|PATTERNS\|OUTPUT` (`:198`) | `project_root/"skills"/<subdir>/<name>/SKILL.md` (`:83`) — a path shape no repo has | No. 03 removed the DSL; 09 deleted `skill_grammar.md` | **DEAD.** Also called by nothing: zero refs in CI, pre-commit, or any SKILL.md |
+| `skaileup/contracts/scripts/validator_lib.py` | not a validator — the `Validator` class (`must`/`never`/`checklist`/`skip`, `parse_frontmatter`, `glob_files`) | n/a | **Yes — 17 importers**, all per-skill `validator.py` via `sys.path.insert(...contracts/scripts)` (e.g. `03_experience/03_screens/validator.py:8-9`) | **OPEN.** 14 ruled `validator.py` is a *step of the skill* shipping in `references/<r>/`, so this library needs a home the skills can import — but `-mp` has no `contracts/scripts/`, and the four ported skills already dropped the import |
+| `skaileup/contracts/scripts/ac_lib.py` | ledger structure of `.ac.md` (rows, statuses). **Names EARS once, in an error string** (`:108`) — 09's correction, re-verified | the `.ac.md` passed in (`:68-72`) | Readers: `11_impl-plan/03_plan-vertical/validator.py:22,309`, `12_impl-slice/04_test/validator.py:27,278-282` — both in skills 07 collapsed | **OPEN.** Live code, dead owner. The real EARS regex is duplicated in two `validator.py` files 07 deleted |
+| `skaileup/contracts/scripts/lint_concept.py` | `_concept/` frontmatter, cross-refs, golden principles, `postxl-schema.json`, `seed.json` (`:1-10`) | `concept/"blueprint/datamodel"/"postxl-schema.json"` (`:347,373`), `discovery/brand/tokens.json` (`:154`) | Contract kept by 09; **its hardcoded tree is 08's old tree** | **OPEN**, but see the contradiction below. Also invoked by nothing — not in CI, not in `pre-commit` |
+| `skaileup/flows/_meta/verify_flows.py` | 6 checks (`:12-31`), see next section | `contracts/flow.schema.json` (`:48`), `skaile.yaml` (`:50`), `flows/_meta/deferred_skills.yaml` (`:49`), `REPO.glob("**/SKILL.md")` (`:128`) | Schema kept by 09 | **OPEN, but not a straight port** — three hard deps `-mp` removed on purpose (below) |
+| `docs/scripts/audit.py` | every `SKILL.md` must carry `metadata.version`, `.stage`, `.tags`; no `user_inputs`/`reads_from`/`writes_to`; `stage: stable` ⇒ a `validator.py` exists (`:9-16`, `:94-121`) | `REPO_ROOT/"skaileup"` rglob `SKILL.md` (`:26-27`, `:146`) | `version` is read (01). **`stage` and `tags` are not** — 01's read-set is `version`, `artifacts.requires[].id`, `prerequisites.*`, `requires` | **OPEN and unmentioned by the ticket.** Its stable⇒validator rule collides head-on with 14's "validator.py is a step, in `references/`" |
+| `skaileup/contracts/scripts/pre-commit` | 4 gates: stale `_grounding/general/` path, deprecated `user_inputs`/`reads_from`/`writes_to`, `verify_artifacts.py`, `verify_flows.py` | — | gates 1–2 target strings no `-mp` skill contains; gate 3 is dead | **OPEN** — only gate 4 has a subject |
+
+#### What CI runs today (`.github/workflows/collection-ci.yml`)
+
+Three jobs, on push+PR to `main`: `audit` (`audit.py`, `:19`), `flows` (`verify_flows.py` +
+`pytest test_verify.py`, `:32-34`), `artifacts` (`verify_artifacts.py` + `pytest contracts/tests/`,
+`:47-49`). **One of three jobs is dead on arrival in `-mp`, and one is a script the ticket
+does not list.** `-mp` has no `.github/` (11).
+
+### `verify_flows.py` vs `flow.schema.json`
+
+It does validate against that file — `jsonschema.validate(instance=data, schema=schema)` at
+`verify_flows.py:260`, schema loaded from `contracts/flow.schema.json` (`:48`, `:105-106`). So
+09's "this script is its only validator" holds.
+
+Three portability blockers, none about the schema:
+
+1. **`gather_known_contracts()` (`:144-152`) reads `skaile.yaml`'s `assets:` block** and returns
+   the `kind: contract` names. `-mp/skaile.yaml` **ships no `assets:` block** (deliberate, 11) —
+   so check 5 sees zero known contracts and every `contract:` ref in a flow's `requires:` errors.
+2. **Hardcoded flow registries** — `TIER_FLOWS`, `SLICE_FLOWS`, `VARIANT_FLOWS` (`:52-60`) name
+   the old flow set. Ticket 10 owns `-mp`'s.
+3. **Hardcoded two-level layout** — `REPO/"skaileup"/"contracts"/...` (`:46-50`). `-mp` is flat.
+
+`deferred_skills.yaml` (`:113`) is a Phase-3 allow-list with no `-mp` meaning.
+
+### Schema vs runtime (15)
+
+| | `contracts/flow.schema.json` | `workspaces/.../flow/engine/flow-manifest.ts` |
+|---|---|---|
+| strictness | `additionalProperties: false` at **27 sites** | `z.looseObject` at every level (`:30,49,56`) |
+| required | `id`, and `position` on every node kind (`:153,244,307,352,391`) | `id`+`name` (`:57,59`); `nodes`/`edges` **optional** (`:74-75`) |
+| `phase` | 4 declarations, all `enum: [conceptualization, implementation, review]` (`:232-235`, `:261-263`, `:424-427`) | **the word appears 0 times** |
+| edge `type` | `enum: [flow, optional, parallel, review-loop]` (`:282`) | no `type` field at all (`:49-54`) |
+| node kinds | includes `gate` (`:356`) | none |
+
+Call sites (re-verified): `platform/backend/libs/router-trpc/src/routes/run-group.route.ts:558`,
+`platform/backend/libs/capabilities/src/handlers/run-group.handler.ts:109`, plus
+`flow-kind-provider.ts:38`. forge-concept: zero.
+
+So the two files describe different contracts. `flow.schema.json` is stricter than any runtime
+and encodes shapes (`gate`, `review-loop`, `position`) nothing implements.
+
+### The `lint_concept` ↔ `golden_principles` contradiction
+
+Both files are in `-mp` today (`-mp/contracts/golden_principles.md`), the linter is not.
+
+**`golden_principles.md` says:**
+- `:13` — "Entity names are `lowercase_snake_case` singular: `user`, `task`, `project_member`"
+- `:23` — "All field names are `lowercase_snake_case` in the semantic layer"
+- `:16-17` — the translation note: "Output conventions (PascalCase model names in Prisma/PostXL,
+  camelCase fields) are applied by the stack translator — **never in the semantic layer**"
+- `:80` — "If a feature has `data_entities:`, each entity MUST exist in `model.json`"
+- `:83-84` — "`model.json` is the canonical stack-agnostic data model. Stack-specific files
+  (`schema.prisma`, `postxl-schema.json`) are **derived** — cross-references always target `model.json`"
+
+**`lint_concept.py` does:**
+- opens `blueprint/datamodel/postxl-schema.json` and nothing else as the model
+  (`:347`, `:373-378`); **`model.json` appears nowhere in the file**
+- resolves feature `data_entities:` against that file's model names and errors
+  *"References data entity 'X' which is not a **PascalCase** model in postxl-schema.json"* (`:363-368`)
+- errors when a model name is not PascalCase (`:431-435`), where PascalCase is defined as
+  "starts uppercase, no underscores" (`:388-390`) — i.e. exactly what `:13` forbids
+- requires `standardFields` `["id","createdAt","updatedAt"]` (`:440-445`) against `:10`'s
+  `["id", "created_at", "updated_at"]`
+- errors unless every **field** name is camelCase (`:451-455`) — the direct inverse of `:23`
+
+**Stated precisely:** the contract declares the semantic layer snake_case and `model.json`
+canonical; the linter validates the derived PostXL artifact and rejects the contract's own
+casing. A feature written to `golden_principles.md:13` fails `lint_concept.py:363`. A
+`_concept/` with only `model.json` is silently unchecked (`:348` — `if schema_path.exists()`).
+
+Second, separate drift: both hardcoded paths (`blueprint/datamodel/`, `discovery/brand/`) are
+08's *old* tree. Under ADR 0007 they are `10_blueprint/datamodel/` and `03_brand/`, and
+`-mp/contracts/concept_structure.md:183-187` makes `postxl-schema.json` **one of four** possible
+formats, chosen by `techstack.md`.
+
+### The four files 09 handed off "rather than ruled"
+
+09 (map:178-180) handed off `slice_loop.md`+`plans.md`→07, `phase_procedures.md`→12,
+`grill_bank.md`→absorbed-skills fog, `contracts/scripts/`→**16**, "each defaulting to deletion
+unless that ticket gives it a reader." Three of the four have since been ruled elsewhere:
+
+| file | SKILL.md readers today | ruled since? |
+|---|---|---|
+| `slice_loop.md` | 8 (`08_concept-slice/*` ×4, `11_impl-plan/*` ×3, `12_impl-slice/04_test`) | **07: survives shrunk** (slug + freeze) — not 16's |
+| `plans.md` | 6 (`10_impl-build/01_scaffold`, `11_impl-plan/03_plan-vertical`, orchestrator ×2, `14_ops/09_sync`, `12_impl-slice/01_git-prepare`) | **07: deleted**, `PLANS.md`-the-artifact → 18 |
+| `phase_procedures.md` | 5 (`08_concept-slice/01,02`, `11_impl-plan/01,02,03`) | **12: dies by name** |
+| `grill_bank.md` | 2 (`08_concept-slice/02_align`, `11_impl-plan/02_align`) | Still open — map "Not yet specified", survives only if absorbed `grilling` claims it |
+
+Every reader listed sits in a skill 07 collapsed, so the counts are stale either way.
+Only `contracts/scripts/` is genuinely 16's.
+
+### The `phase` enum (12's handoff)
+
+`data.phase` readers, all in forge-concept, none in platform:
+- `shared/flow-phases.ts:36-41` — `phaseForNode`; valid `data.phase` wins, else infers from
+  `data.skill`/node id. Called at `app/utils/flow-layout.ts:93` and `app/components/AppSidebar.vue:478`.
+- `server/utils/flow-manager.ts:490` (group), `:535` (node), `:555` (node, session lookup) — passthrough to `phase: string | null`.
+- `app/utils/flow-layout.ts:88,132` and `app/components/FlowGraph.vue:24`, `AppSidebar.vue:57-62` — lane rendering.
+
+Values: `PHASE_ORDER = ["conceptualization","implementation","review"]` (`flow-phases.ts:8-10`).
+**An invalid value is silently swallowed** — `test/unit/flow-phases.test.ts:50` asserts
+`phase: "banana"` falls back to skill inference rather than erroring. The zod schema has no
+`phase`. So `flow.schema.json`'s enum is the only place a typo is ever caught.
+
+Today 57 nodes declare `phase` across 9 of the 18 flows (25 conceptualization / 21 implementation /
+11 review); the other 9 declare none. Ticket 04 requires **every** `-mp` node to declare it.
+
+### Ticket 08's "every written path resolves to a real top-level entry"
+
+Mechanically checkable, and it already fails. `-mp`'s four ported skills declare 10
+`prerequisites.files[].path` entries; **10 of 10 point at the pre-ADR-0007 tree**:
+
+| declared (`-mp/skills/…/SKILL.md`) | ADR 0007 entry |
+|---|---|
+| `experience/screens` (walkthrough`:13`, storybook`:14`) | `07_screens/` |
+| `experience/journeys/stories.yaml` (walkthrough`:14`, storybook`:17`) | `04_journeys/stories.yaml` |
+| `discovery/brand/tokens.json` (walkthrough`:15`, storybook`:15`) | `03_brand/tokens.json` |
+| `experience/features` (walkthrough`:16`) | `05_features/` |
+| `blueprint/techstack.md` (storybook`:17`) | `10_blueprint/techstack.md` |
+| `mockup-walkthrough` (annotate`:10`) | `09_mockup/walkthrough/` |
+| `_feedback/sessions` (feedback`:10`) | `09_mockup/feedback/sessions/` |
+
+Cause is ordering: ticket 14 landed at `f5ea080`, ADR 0007 at `609ee67` — the next commit.
+Body prose drifts the same way (`mockup-storybook/SKILL.md:22` writes `_concept/prototype/storybook/`;
+`mockup-annotate/SKILL.md:26` reads `_concept/mockup-walkthrough/<renderer>/`).
+
+These paths have a real machine reader — `workspaces/packages/workspaces/resolver/src/parser.ts:58-69`
+parses `metadata.prerequisites.files`, consumed by `skillCheckRequirements`
+(`workspace-plugin/src/tools/skills.ts:221,247-249`) and exposed as an MCP tool
+(`adapters/mcp.ts:173`). Note this is the **workspace plugin, not forge-concept** — forge-concept
+has zero `prerequisites` hits. Same failure mode 14 already found once: a hard gate on a path
+nothing writes can never pass.
+
+A checker would need to parse: (a) `-mp/contracts/concept_structure.md`'s fenced tree block
+(`:13-84`) into the set of legal first segments — 11 numbered dirs plus three root files
+`brief.md`/`goals.md`/`comparable.md` — deciding how deep to go (level-1 only is mechanical;
+below level 1 the tree carries `<featureset>`, `<feature_slug>`, `<slice_id>`, `<skill-name>`
+placeholders that no static check can resolve); (b) each `SKILL.md`'s frontmatter
+`prerequisites.files[].path` (10 today, unprefixed — the `_concept/` prefix is implicit and
+inconsistent with body prose, which spells it out); optionally (c) `_concept/…` literals in
+body prose, which is a grep, not a parse, and would need an exclusion list for the placeholders.
+
+### Open questions for the human
+
+1. `audit.py` is a CI job the ticket never lists. `stage` and `tags` are not in ticket 01's
+   read-set. Does anything in `-mp` want them — and does its `stage: stable ⇒ validator.py`
+   rule survive ticket 14's "`validator.py` is a step, in `references/`"?
+2. `validator_lib.py` has 17 importers and no home. If per-skill validators keep it, where does
+   it live in a flat tree — vendored per skill, one `scripts/` root entry, or a package? The four
+   already-ported `-mp` skills dropped the import entirely; is that the answer, or an oversight?
+3. `ac_lib.py` is live code whose only two callers are skills ticket 07 deleted, and the EARS
+   regex 09 kept `acceptance_criteria.md` for lives in two *other* files 07 also deleted. Does the
+   ledger check survive as a step of `build-plan`/`build-implement`, or die with its callers?
+4. The `lint_concept` ↔ `golden_principles` fork: rewrite the linter to `model.json` + snake_case,
+   rewrite the contract to match the linter, or drop the linter and leave the contract as prose
+   that nothing enforces (which reopens 09's machine-reader justification for keeping it)?
+5. `flow.schema.json` ports "narrowed or not at all" (15). What survives the narrowing — the
+   `phase` enum is the only argument for keeping the file at all, and it guards a rule
+   (`flow-phases.ts` silently swallows `"banana"`) no runtime enforces. Is that one enum worth a
+   400-line schema, or does it become a 20-line check in whatever replaces `verify_flows.py`?
+6. `verify_flows.py` can't be lifted: it needs `skaile.yaml.assets` (which `-mp` deliberately
+   omits), a hardcoded flow registry (ticket 10's), and the two-level layout. Rewrite, or replace
+   with the four cheap checks 15 named (unique node ids, no dangling endpoints, no self-loops,
+   `data.skill` resolves)?
+7. The `name:` == directory check (ticket 16 item 4) has no counterpart today. Does it land as one
+   script with the path check from §"08's handoff", or separately?
+8. `-mp` has 10/10 stale prerequisite paths *right now*, one commit after ADR 0007. Is fixing
+   those this ticket's job, ticket 14's follow-up, or the first thing the new checker reports?
+9. What runs any of it? A pre-commit hook only fires for people who install it (`pre-commit:4-5`);
+   CI catches everyone. `flows/` and most of `skills/` are still empty, so a green CI today proves
+   little — does CI land now, or when the collection is populated?

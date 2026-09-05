@@ -606,3 +606,209 @@ per-criterion rows pass/fail and stamping itself, and a real downstream reader i
    → `quality-gate` (which contains an optional `q-review-feature`) — the same three sub-agents over
    the same code, three times. Is that redundancy the reason to collapse, or is the intended answer
    one auditor invoked at three scopes (slice diff / feature back-links / whole repo)?
+
+
+---
+
+## Post-08 delta — recon pass, 2026-09-05
+
+Everything above predates ticket 08 (resolved 2026-09-05, ADR 0007). This section
+was gathered after, against the renumbered tree and the ported skills. Where the two
+halves disagree, this one is later. Still evidence only — nothing here is a ruling.
+
+Evidence only. Paths relative to `ai-assets-skaileup/skaileup/` unless noted. "Callers" excludes
+`contracts/flows.md` (0 readers, t09), `contracts/artifacts.yaml` (unreachable, t01) and
+`13_impl-quality/DOMAIN.md` (dies, t05).
+
+### Per-skill table
+
+| # | skill | lines | flow refs (flow : node) | writes | reads | named by (in-body) |
+|---|---|---|---|---|---|---|
+| 01 | `test-plan` | 312 | **0** | `_concept/testing/test_plan.md` (`01_test-plan/SKILL.md:229,296`) | features · stories.yaml · screens · model.json · seed.json · `behaviors/*.allium` (`:112-119`) | `07_mockup-feedback/03_patch/SKILL.md:190,245,268`; `04_apply/SKILL.md:108` (both collapse into one `mockup-feedback`, ticket 06) |
+| 02 | `eval-code` | 134 | `appbuilder-complex:400` (`q-eval-code`) | `_implementation/eval-code.yaml` (`:71`) | package.json · `techstack.md` · `_concept/_standards/index.yml` (`:65-68`) | `13_review-feature/SKILL.md:69`; `contracts/evaluator.md:4` |
+| 03 | `audit` | 189 | `appbuilder-complex:411` (`q-audit`) | `audit-report.md` at repo root, opt-in (`:88,179`) | package.json · `src/` · **`_concept/**/*.md`** (`:85`) | `13_review-feature/SKILL.md:68,193`; `02_eval-code/SKILL.md:109`; `contracts/evaluator.md:5` |
+| 04 | `test-unit` | 241 | `quality-gate:48` · `appbuilder-mvp:204` · `appbuilder-cli:168` · `appbuilder-simple:223` | test files under `src/` (fm `produces: src`) | features · techstack · package.json · existing tests · `test_plan.md` *(Optional, `:98`)* | **none** |
+| 05 | `test-integration` | 310 | `quality-gate:58` · `appbuilder-cli:179` | test files under `src/` | features · model.json · seed.json · techstack · `.env.example` · `test_plan.md` *(Optional, `:107`)* | **none** |
+| 06 | `test-e2e` | 259 | `quality-gate:68` · `appbuilder-simple:234` | `e2e-screenshots/**`, `e2e-test-report.md`, flips `.ac.md` Status rows (`:135-137`) | brief · features · stories.yaml · screens · model.json · seed.json | `12_impl-slice/04_test/validator.py:273` (`AC_UPDATERS`, **executable**); `contracts/acceptance_criteria.md:250` |
+| 07 | `ready` | 162 | `quality-gate:79` (`q-ready`) · `skaileup-stepwise:158` (`q-ready`, `phase: review`) | **`WRITES (none — read-only audit skill)`** `07_ready/SKILL.md:116` — but frontmatter declares `produces: impl-readiness` (`:32`) | **only `_concept/`**: features · screens · model.json · feature_map.json · tokens.json · techstack.md · storybook pages (`:106-113`) | **none** |
+| 08 | `standards-discover` | 174 | `skaileup-concept-reverse:102` | `_concept/_standards/{domain}/*.md` + `index.yml` (`:148-149`) | target codebase path (user input); `_concept/05_techstack/stack.md` (`:78` — **path does not exist in today's tree**) | `contracts/asset_frontmatter.md:337`; `contracts/concept_structure.md:254` |
+| 09 | `standards-inject` | 108 | `skaileup-concept-reverse:113` | **nothing** — `"No files written — returns matched standards as context to caller"` (`:96`) | `_concept/_standards/index.yml` + matched files | `contracts/asset_frontmatter.md:338` (`inject_skill:`) |
+| 10 | `standards-sync` | 128 | **0** | profile standards / `_concept/_standards/` + index.yml | `index.yml` · **`cf__shared/profiles.json`** (`:72,88` — `find . -name profiles.json` returns **nothing**; the dir is `contracts/profiles/*.yaml`) | **none** |
+| 11 | `debug-self-verify` | 305 | **0** — self-declared: *"This skill is **not** wired into any `flows/*.flow.yaml` yet"* (`:77-78`) | `_debug/<id>/protocol.md`, `_debug/<id>/context.md` | `_debug/<id>/context.md` · package.json · pyproject.toml · `_implementation/slices/<id>/plan.md` | `13_review-feature/SKILL.md:117,176,196`; `flows/quality-gate/quality-gate.md:20` |
+| 12 | `debug-handoff` | 314 | **0** | `_debug/<id>/handoff.md`, `context.md` | context.md · protocol.md · slice plan | `13_review-feature/SKILL.md:117,176`; `11_debug-self-verify/SKILL.md:80,290` |
+| 13 | `review-feature` | 197 | `quality-gate:89` (`q-review-feature`, `optional: true`) · `skaileup-slice-impl:149` (`i-review-feature`) | `_implementation/review/<slug>.yaml` — *"the ONLY file this skill writes"* (`:87`) | feature spec + `commits[]`/`source_files[]` back-links · `.ac.md` · slice plan/recap/refactor · `git show` | `14_ops/12_trace/SKILL.md:70` |
+
+**Counts (raw, no conclusion drawn).** Zero flow refs: **`test-plan`, `standards-sync`, `debug-self-verify`, `debug-handoff`** (matches t07:145). Zero in-body callers: **`test-unit`, `test-integration`, `ready`, `standards-sync`** (`test-e2e`'s one caller is *code*, not prose). Zero of both: **`standards-sync`** alone. Note the pair: `test-unit`/`test-integration` sit on flows but nothing names them, and both read `test_plan.md` as **Optional** — its only writer is on no flow.
+
+### quality/ops boundary cases
+
+Ticket 04's line: `quality` checks `src/`, `ops` checks `_concept/`.
+
+| skill | inspects | verdict per ticket 04's line |
+|---|---|---|
+| `eval-code` · `test-unit` · `test-integration` · `review-feature` | `src/` only (build/tests/diffs) | clean `quality` |
+| `test-e2e` | the **running app** — `agent-browser` vs a dev server (`06_test-e2e/SKILL.md:171,193,195`) | neither side — a third thing; reads `_concept/` only as the oracle |
+| **`audit`** | **both.** Phase 1 sub-agents read `src/`; **Phase 2 "Structure Integrity"** reads `_concept/`: *"Check cross-reference integrity (features <-> screens) · Check for orphaned files · Check frontmatter compliance · Check for stale files"* (`03_audit/SKILL.md:127-131`) | **boundary case.** Phase 2 is `ops-review`'s job verbatim — its description: *"scans completeness, cross-reference integrity, golden principle compliance, and entropy"* (`14_ops/08_review/SKILL.md:3`). `audit`'s own body says so: *"You want to audit the `_concept/` structure — use **review** instead"* (`:52`) — while doing it anyway in Phase 2 |
+| **`ready`** | **`_concept/` only.** Every path in `READS` is under `_concept/` (`07_ready/SKILL.md:106-113`); `NEVER load: Source code` (`:90`) | **plausibly ticket 21's** (`ops`). Its own "When NOT to Use" routes concept-health to `review` and code to `audit` (`:71-72`), leaving it as *feature-completeness-in-`_concept/`* |
+| **`standards-discover`** | an **external** codebase (`target_path` user input), writes into `_concept/` | **neither.** Not this project's `src/`; the artifact is grounding. Ticket 08 already gave it a home at `02_grounding/standards/` (`-mp contracts/concept_structure.md:41-43`) |
+| **`standards-inject`** / **`standards-sync`** | nothing / `_standards/` ↔ a profile file that does not exist | **neither.** Not inspections at all |
+| **`debug-self-verify`** | a **bug** — writes to `_debug/<id>/`, a root outside both `_concept/` and `src/` (`11_debug-self-verify/SKILL.md:88-97`) | **neither.** `_debug/` has no entry in ticket 08's eleven-folder tree |
+| `test-plan` | `_concept/` in, `_concept/` out (`_concept/testing/test_plan.md`) | **boundary case** — pure concept-side authoring wearing a `quality` name |
+
+### Ticket 12 / `debug-handoff`
+
+Deleted, and the citation is in **ticket 07, not 12**: `issues/07-implementation-side-consolidation.md:129`
+— *"**`impl-quality-debug-handoff` (314 lines) is deleted** — zero flow references, `-mp` has no
+`agents/`, and ticket 12 already ruled that `handoff` does not become a skill."* Ticket 12 itself
+(`issues/12-phase-boundary-policy.md:135-138`) explicitly **declines** to rule and hands it on.
+
+**Still referenced after deletion**, 4 live sites in surviving-or-undecided skills:
+`13_review-feature/SKILL.md:117` (a `MUST`: *"escalating to impl-quality-debug-handoff after two
+failed fix attempts"*) · `:176` (the `EMIT next=` pointer) · `11_debug-self-verify/SKILL.md:80`
+(*"The user wants to **escalate** … → use `impl-quality/debug-handoff`"*) · `:~290`, inside the
+**Failure Exit Conditions** section of the protocol schema `validator.py` enforces.
+
+`review-feature` survives on two flows. Its needs_changes path currently terminates in a deleted skill.
+
+### The `standards-*` cycle
+
+`_concept/_standards/index.yml` is written by **`standards-discover`** (`08:99,149`) and by
+**`standards-sync`** in the `profile_to_project` direction (`10:102`). It is read by
+`standards-inject` (`09:47`), `standards-sync` (`10:87`), and — the only reader outside the
+trio — **`eval-code`** (`02:45,68`, soft). `review-feature` cites the *folder* as a
+counter-authority for style nits (`13:122`) but does not read the index.
+
+`standards-inject`'s five workflow steps (`09:64-70`) are the five steps of
+`contracts/agent_patterns.md:96-104` **§ Pattern: Standards Injection**, in the same order,
+including the "no error if no standards exist" clause. Ticket 09 kept `agent_patterns.md`
+(9 in-body readers). Nothing else in the collection invokes `standards-inject` by name except
+`contracts/asset_frontmatter.md:338`'s `inject_skill:` key — and ticket 09 **deleted**
+`asset_frontmatter.md` (0 in-body readers).
+
+Ticket 08's tree has a home: `-mp contracts/concept_structure.md:41-43` —
+`02_grounding/standards/{index.yml, <domain>/}`. So the artifact survives ADR 0007 unchanged;
+what has no declared home is `_debug/` and `testing/`.
+
+### The three inspection outputs (ticket 08 → 17)
+
+Ticket 08 (`issues/08-concept-side-consolidation.md:153-155`) hands 17 the placement of
+`quality.yaml`, `eval-concept.yaml`, `testing/test_plan.md` under `11_build/`.
+**`11_build/` in the landed tree holds only `slices/<slice_id>/` and `decisions.md`**
+(`-mp contracts/concept_structure.md:80-82`) — none of the three has an entry yet.
+
+| path | writer | readers |
+|---|---|---|
+| `_concept/quality.yaml` | **`ops-review`** — `14_ops/08_review/SKILL.md:121,214`, enforced by `14_ops/08_review/validator.py:34` (`v.must("write _concept/quality.yaml after every run")`) | `00_skaileup-orchestrator/skills/skaileup/SKILL.md:344`; `.../agents/skaileup-conceptualize/SOUL.md:64`; `14_ops/08_review/SKILL.md:99,117` (previous score) |
+| `_concept/eval-concept.yaml` | **`ops-eval-concept`** — `14_ops/05_eval-concept/SKILL.md:88,163`, enforced by `14_ops/05_eval-concept/validator.py:14` | `00_skaileup-orchestrator/skills/skaileup/SKILL.md:38,102,294,297`; `.../skaileup-build/SKILL.md:39,109` — a **hard gate**: *"concept must pass eval-concept"* |
+| `_concept/testing/test_plan.md` | `impl-quality-test-plan` (`01:229`) | `04_test-unit/SKILL.md:40,98` (Optional) · `05_test-integration/SKILL.md:47,107` (Optional) |
+
+Bearing on "does the placement break anyone":
+- **Two of the three are written by `ops` skills**, not `quality` skills — ticket 21's domain.
+- Both non-`test-plan` readers are the **orchestrator** (`00_skaileup-orchestrator`), whose port is
+  still in the map's "Not yet specified" fog (the router).
+- `13_impl-quality/contracts/evaluate-contract/CONTRACT.md` names two of the three at **different
+  paths**: `_quality/quality.yaml` + `_quality/audit-report.md` (`:21`) and
+  `_concept/4_testing/test_plan.md` (`:24`) — neither matches the writers.
+- `_implementation/eval-code.yaml` and `_implementation/review/<slug>.yaml` are *also* "findings
+  about work" but were **not** in ticket 08's list of three.
+
+### Overlaps
+
+**`code-review` (global, `~/.claude/skills/code-review/SKILL.md`)** — two axes, both against a
+**diff from a user-supplied fixed point**: *"**Standards**: does the code conform to this repo's
+documented coding standards? **Spec**: does the code faithfully implement the originating issue /
+spec?"*, run as *"**parallel sub-agents** so they don't pollute each other's context"*. Standards
+carries a fixed **12-smell Fowler baseline** with the rule *"**The repo overrides.**"* and
+*"**Always a judgement call.**"*. No security axis, no UI/UX axis, no artifact written.
+
+**`audit`** — *"ROLE Static Code Auditor — analyzes codebase **without running it**"* (`:80`);
+whole-repo, no diff, no fixed point: *"STEP 1: Verify source exists"* then three sub-agents
+**Logic & Runtime / UI-UX & Accessibility / Security & Data Integrity** (`:114-119`), then
+Phase 2 `_concept/` structure integrity, then **Phase 4: Offer Fixes** — *"Would you like me to
+fix any of these issues?"* (`:164-170`). The only one of the four that **edits code**.
+
+**`eval-code`** — *"Build verification **always runs first** — if it fails, stop immediately"*
+(`:56-57`); the analysis is optional tail: *"Sub-agent analysis only runs for `full` scope"*.
+Its verdict is a **gate**: *"pass: build clean AND tests pass AND no critical/high findings"*
+(`:123`). Its three sub-agents are explicitly **not its own**: *"Same auditor trio as
+impl-quality-audit — checklists owned there"* (`:109`, pointing at
+`03_audit/references/analysis_checklists.md`, 64 lines).
+
+**`review-feature`** — scope is **one feature's back-links**: *"MUST scope the review to
+`commits[]` diffs + `source_files[]` contents; files outside that set get at most a one-line
+boundary note, never findings"* (`:111`). Two axes none of the others has: *"MUST cross-check the
+`.ac.md` … any criterion with Status pass whose assertion the code visibly cannot satisfy is a
+finding"* (`:113`) and *"NEVER review as the same agent/context that implemented the slice"*
+(`:119`). Runs *"all three check passes from `analysis_checklists.md`"* (`:112`) — **the same
+64-line file `audit` and `eval-code` use**.
+
+So: **three skills share one checklist file**; the distinguishing axes are scope (repo /
+build+repo / one feature's diff), whether a fixed point exists (`code-review`, `review-feature`),
+whether an artifact is written (`eval-code` + `review-feature` always, `audit` opt-in,
+`code-review` never), and whether it may edit (`audit` only). `review-feature:68-71` already draws
+three of these lines itself.
+
+### Stack-specific boilerplate in the test trio
+
+Measured on body lines (after frontmatter):
+
+| skill | body | fenced lines | what the fences are |
+|---|---|---|---|
+| `test-unit` | 196 | 47 (**24%**) — 22 `typescript`, 25 plain | one vitest/Vue template (`:138-159`, *"// Example for vitest + Vue/Nuxt"*) + a report table mock (`:197-221`) |
+| `test-integration` | 260 | 105 (**40%**) — 67 `typescript`, 38 plain | `beforeAll/afterEach/afterAll` DB setup (`:157-172`), an `asUser(role)` auth helper (`:175-181`), an endpoint-inventory table mock (`:127-134`) |
+| `test-e2e` | 195 | **0** | none — but the whole STEP block is `agent-browser` CLI invocations (`:171,193,195,206`) and a `hard: agent-browser` gate (`:145`) with a platform check *"agent-browser only supports Linux, WSL, and macOS"* (`:167`) |
+
+Non-fence coupling: `test-unit:109-118` enumerates runners/configs, ending *"Recommend adding
+vitest (for Nuxt/Vue) or jest"*; its stack-neutral core is the two tables at `:173-187`
+(**What to Test** / **What NOT to Test** — the actual pyramid instruction). `test-integration`'s
+neutral core is Phase 1's endpoint inventory + the "test database strategy" three-way choice
+(`:141-145`). Rough split: unit ≈ 25% boilerplate, integration ≈ 40%, e2e 0% fenced but ~100%
+coupled to one binary.
+
+### Open questions for the human
+
+1. **`standards-sync` is the domain's only skill with zero flows and zero callers — and it reads a
+   file that does not exist** (`cf__shared/profiles.json`, `10:72,88`). Does anything justify
+   porting it, or is the profile↔project sync a feature that was never wired?
+2. **`standards-inject` restates `agent_patterns.md:96-104` step for step.** Ticket 09 kept that
+   contract. Its only non-flow reference is a key in `asset_frontmatter.md`, which ticket 09
+   deleted. If it is a contract section rather than a skill, what happens to its
+   `skaileup-concept-reverse:113` flow node — deleted, or replaced by discover-only?
+3. **`test-plan` writes the only artifact two flow-mounted skills read, and is on no flow.** Is
+   the plan a real artifact or a step inside the test skills? If it stays, ticket 08's `11_build/`
+   has no `testing/` entry yet — and `test-plan` reads *and* writes `_concept/` only, which puts a
+   `quality`-named skill entirely on the `ops` side of ticket 04's line.
+4. **`audit` Phase 2 is `ops-review`.** `audit:52` sends the user to `review` for exactly the work
+   `audit:127-131` then performs. Does `audit` lose Phase 2 (making it clean `quality`), or does
+   ticket 21 lose it from `ops-review`?
+5. **`ready` reads nothing but `_concept/` and writes nothing.** Is it a `quality` skill at all, an
+   `ops` skill (ticket 21), or a gate expression inside a flow? Note the flow disagrees with the
+   skill about *when* it runs: the skill says *"Use **before** E2E testing"* (`07_ready:66`) but
+   `quality-gate.flow.yaml:73-82` places `q-ready` **after** `q-test-e2e`, labelled *"Release Ready"*.
+6. **`review-feature`'s `needs_changes` branch terminates in a deleted skill** (`:117,176`) and
+   `debug-self-verify`'s own failure-exit schema does too. If `debug-self-verify` also goes, what
+   does `review-feature` emit — `diagnosing-bugs` by name, nothing, or a flow edge?
+7. **`_debug/<id>/` has no entry in ADR 0007's eleven-folder tree.** Any surviving debug skill needs
+   a home or a different artifact. Is a per-bug workspace a twelfth top-level folder, a subfolder of
+   `11_build/`, or not an artifact at all?
+8. **Ticket 08 handed 17 three paths, two of which `ops` writes** (`ops-review` → `quality.yaml`,
+   `ops-eval-concept` → `eval-concept.yaml`) and whose only readers are the **orchestrator**, whose
+   port is unspecified. Does 17 rule on artifacts it does not own, or hand two of them to 21?
+   And why are `_implementation/eval-code.yaml` and `_implementation/review/<slug>.yaml` — same
+   "findings about work" argument — not in the list?
+9. **Three skills share one 64-line checklist file** (`03_audit/references/analysis_checklists.md`)
+   and a 69-line `contracts/evaluator.md` stance. If `audit`/`eval-code`/`review-feature` merge,
+   does the checklist become `references/` of the survivor, or a contract? If they do not merge,
+   what stops the survivor set from being `code-review` + a scope parameter?
+10. **`test-e2e` inspects a *running app*, not `src/` or `_concept/`.** Ticket 04's two-way line
+    does not have a slot for it. Does the line need a third case, or is "the running app" `src/`?
+11. **`test-unit`/`test-integration` are 25%/40% stack boilerplate for one stack (vitest + Vue/Nuxt +
+    a JS ORM), while `impl-architecture/templates/template-*` already carry stack facts.** If they
+    become one skill with a level parameter, where do the vitest snippets live — `references/<level>/`,
+    the templates, or nowhere?
+12. **Dead pointers found while reading** — do these have to be resolved here or by ticket 16?
+    `test-unit:69` and `test-plan:81` route to a skill named **`verify`** that does not exist
+    (`grep '^name:.*verify'` finds only `debug-self-verify`); `standards-discover:78` reads
+    `_concept/05_techstack/stack.md` (real path `_concept/blueprint/techstack.md`);
+    `test-plan:112,119` reads `experience/behaviors/*.allium`, and ticket 08 killed `.allium`;
+    `ready`'s `produces: impl-readiness` names an artifact the body never writes.

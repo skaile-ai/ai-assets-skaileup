@@ -17,6 +17,13 @@ installed-and-loading. The existing `forge-concept` integration test
 destination is the migrated repo itself, so tickets that build it are in scope, not just
 tickets that decide it. Decision tickets still come first — don't port ahead of the shape.
 
+**Read the ticket's brief first.** `.scratch/skaileup-mp/briefs/<NN>-*.md` holds the measured
+evidence for a ticket — counts, readers, greps, quoted contradictions — so the session starts at
+the tensions instead of re-deriving the facts. Briefs record findings, never answers; a brief that
+reads like a resolution has overstepped. Some carry a **`## Post-08 delta`** section: everything
+above it predates ADR 0007, and where the halves disagree the delta is later. A ticket with no
+brief is not a problem — gather what the question needs and leave one behind.
+
 **Skills every session should consult:** `grilling` + `domain-modeling` by default;
 `writing-for-agents` for anything that edits a SKILL.md; `prototype` and `research` where
 the ticket type says so.

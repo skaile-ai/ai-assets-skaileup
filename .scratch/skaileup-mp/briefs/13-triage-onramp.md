@@ -443,3 +443,169 @@ of mp's shape that `-mp` has not placed.
    `scope-project` for new work and `ops-add-feature`-or-successor for changes to a live
    concept — and does *that* force ticket 08 or a new `ops` ticket to rule on
    `ops-add-feature`, which today is owned by no ticket and referenced by no flow?
+
+
+---
+
+## Post-08 delta — recon pass, 2026-09-05
+
+Everything above predates ticket 08 (resolved 2026-09-05, ADR 0007). This section
+was gathered after, against the renumbered tree and the ported skills. Where the two
+halves disagree, this one is later. Still evidence only — nothing here is a ruling.
+
+Evidence only; nothing here is a resolution. Companion to `briefs/13-triage-onramp.md` — read this
+after it, not instead of it. **That brief is stale in two places:** its §6 lists ticket 08 as
+unresolved (it resolved — map:318-358, ADR 0007 at `609ee67`, so the destination set is 9 concept-side
+survivors), and says `ops-add-feature` is owned by no ticket and the `ops` domain has none — ticket
+**21** exists and its note from 08 already rules that "`ops-add-feature` is `spec-feature` entered on
+an existing project, not a third writer into `05_features/`".
+
+### Facts
+
+#### 1. mp's `triage` — what it is
+
+`~/.agents/skills/triage/SKILL.md` 112 lines + `AGENT-BRIEF.md` 207 + `OUT-OF-SCOPE.md` 105.
+
+- **Human-only.** `SKILL.md:4` `disable-model-invocation: true`; `agents/openai.yaml` sets
+  `allow_implicit_invocation: false`. A maintainer types `/triage` (`:49`).
+- **Its host is an issue tracker, not a repo.** Issues and external PRs by number (`:11`); labels come
+  from config, else "run `/setup-matt-pocock-skills`" (`:43`); discovery is three tracker queries
+  (`:58-64`). Machine: 2 category × 5 state roles, one of each, declared transitions (`:26-45`).
+- **Five steps** (`:70-86`): gather context — two checks, redundancy *by domain concept* and prior
+  rejection via `.out-of-scope/*.md` → recommend and **wait** → verify by reproducing the bug /
+  running the PR's tests → grill (calls `grilling` **and** `domain-modeling` by name, `:76`) → apply
+  one of four outcomes. It **writes** labels and tracker comments, each opening with a mandated AI
+  disclaimer (`:13-17`); the only *file* it writes is `.out-of-scope/<concept>.md` (`:85`).
+- **Assumes** a configured tracker + labels, a maintainer present at steps 2 and 4, a runnable repro
+  loop, a domain glossary + ADRs, and `.out-of-scope/` on disk — four of five are host/process
+  assumptions, not `_concept/` ones. The separation rule is not even in `triage`: it is
+  `ask-matt/SKILL.md:40`, "Triage is only for issues **you didn't create**".
+
+#### 2. `.out-of-scope/` — written, read, enforced
+
+One file per **concept**, not per issue (`OUT-OF-SCOPE.md:17`); kebab-case (`:58`); prose, not a
+database entry (`:21`).
+
+- **Read** at triage step 1 by an LLM, matched "by concept similarity, not keyword" (`:74-75`), then
+  surfaced to the maintainer as a question (`:76`). **Written** only when an *enhancement* is rejected
+  `wontfix` (`:86`); explicitly **not** for already-implemented, which "would poison the dedup checks
+  with false rejections" (`:88`). **Reversal is deletion** (`:101-104`).
+- **Nothing machine-reads it** — no `.py`/`.json`/`.sh`/`.ts` under `~/.agents/skills/` mentions it,
+  the only refs in all of mp being `triage/SKILL.md:22,70,83,85`. One sentence enforces it. And no
+  `.out-of-scope/` directory exists anywhere under `SKAILEdev/`.
+
+#### 3. `mockup-feedback-triage`, and what `-mp` kept
+
+Old: `skaileup/07_mockup-feedback/02_triage/` — 98-line `SKILL.md` wrapping `triage.py` (106),
+"Deterministic — no LLM" (`:3,35`). Routing resolves `screen > feature > journey` to
+`experience/<kind>/<value>.md`, existence-checked, unresolved recorded not dropped (`:60-61`).
+**`-mp` kept it verbatim**: `skills/mockup-feedback/SKILL.md:32-42` is step 2 of five and shells
+out to the same script; `scripts/triage.py:28-39` is the same resolver, same three subdirs.
+
+- **The `-mp` copy is already stale against ADR 0007.** `triage.py:29-31` hardcodes
+  `experience/screens|features|journeys`; the tree is now `07_screens/`, `05_features/`,
+  `04_journeys/` (`concept_structure.md:52-63`) — and `04_journeys/` holds **one `stories.yaml`**
+  (`:53`), so the journey branch has no target at all. Same for `_concept/_feedback/`
+  (`SKILL.md:10,28-29,36,69-70`), now `09_mockup/feedback/` (`:71`). Repair is ticket 16's (map:356).
+- Target space is **3 subdirectories**; it reaches no `01_meta`, `02_grounding`, `08_dossiers`,
+  `10_blueprint`, or decision record.
+
+#### 4. Entry points today — the claim, checked
+
+Computed over all 17 flow YAMLs (root = no incoming edge, `type: group` excluded): **7 of 9
+addressable flows enter at `skaileup-scope-scope-project`** (`appbuilder-mvp`, `-simple`, `-standard`,
+`-complex`, `-cli`, `skaileup-concept-only`, `skaileup-stepwise`). **`skaileup-concept-reverse` enters
+at `ops-reverse-engineer`** (`.flow.yaml:43` `entry: reverse-engineer`, onboarding inputs
+`repo_path`/`branch`/`context` at `:20-24`) — a genuine non-brief entry, at whole-repo granularity.
+`skaileup-implementation` enters at a sub-flow node; the other seven are shared blocks
+(`concept-discovery`→`concept-brief`, `architecture`, `impl-build-setup`, `quality-gate`,
+`mockup-feedback`, `skaileup-slice*`).
+
+**So "every flow starts from a project brief" is false as stated**: no flow starts at a brief, the
+project-level ones start at `scope`, and one starts at a repo. `scope-project`'s required input is
+`project_description` (`SKILL.md:24-27`); its four `shape` options are
+`app|cli|concept-only|reverse-engineer` (`:31`) — every branch *starts* something.
+`ops-add-feature`, the nearest per-request on-ramp, **hard-gates on a brief** ("Project brief must
+exist", `SKILL.md:53-55`, restated `:114,136,314`) and appears in **zero flows**.
+
+#### 5. What `-mp` implements of the Decision-record vocabulary
+
+`CONTEXT.md:97-102` is the glossary entry. `contracts/domain_model.md` is the only thing giving it a
+format, gate and path — and it disagrees with the rest of the repo:
+
+- **`rejected` is not a status.** `:87` enumerates `accepted | deprecated | superseded by …`.
+  "Rejected" appears only at `:89` and `:114`, meaning *an option not taken inside an accepted
+  decision* — not a refusal of scope.
+- **Paths pre-date ADR 0007.** `:9,75-76` name `_concept/blueprint/decisions.md` and
+  `_implementation/decisions.md`; the tree now has `10_blueprint/decisions.md` and
+  `11_build/decisions.md` (`concept_structure.md:77,82`), and `_implementation/` is gone (`:7`).
+- **Writer is generic** — "the grill/align skills … and the slice/build skills" (`:127-131`). No
+  `-mp` skill writes one (`skills/` holds four mockup skills); `:133` names a `skaileup-domain-model`
+  skill that does not exist and carries an old-scheme name. And **CONTEXT.md's three levels are two
+  in the contract**: `:100-101` says collection · design · build; `domain_model.md` gives paths for
+  design and build only.
+- Old repo: 4 writers of the design-time log, 8 of the build-time one, and **none writes a refusal**.
+  `concept-slice-scope-feature` writes `## Out of scope` / `## Deferred` into its own dossier
+  (`03_scope-feature/SKILL.md:156-157`) and emits counts (`:179`), never into a log.
+
+#### 6. Where either artifact would land in ADR 0007's tree
+
+Eleven numbered roots, `01_meta … 11_build` (`concept_structure.md:16-83`).
+
+- **A twelfth is a declared collection-level cost:** "Numbers are contiguous. Adding a twelfth kind
+  renumbers the ones after it — a collection-level change that already touches every skill that writes
+  there" (`:95-96`). The read-direction table (`:113-125`) has **no row for `01_meta/`** and none for
+  `02_grounding/` as a write target; every root it lists has exactly one writing domain.
+- Nothing in the tree is inbound. Closest is `02_grounding/onboarding/questions.md`, "open questions
+  routed to someone who is not in the room" (`:28`) — ticket 08's (`issues/08…:48-49`)
+  `concept-onboard` **outbound** channel. `09_mockup/feedback/` already owns `triage` as a path
+  segment (`:71`).
+- A rejected-scope record's candidate homes are `10_blueprint/decisions.md` and
+  `11_build/decisions.md` — both owned, both append-only, neither with a `rejected` status.
+
+### What the glossary already committed to
+
+`CONTEXT.md:97-102`, verbatim: a decision record is "an append-only note of a choice that was **hard
+to reverse**, **surprising without context**, and a **real trade-off**. All three, or it is not one.
+**A rejected scope decision is a decision record marked rejected, not a separate store.** Recorded at
+the level it binds: the collection, the design, or the build." `_Avoid_: ADR log, rationale,
+out-of-scope file`.
+
+A vocabulary ruling with **no implementation behind it in `-mp`**: no `rejected` status in the format
+contract, no skill that writes a decision record, no path reconciled to ADR 0007, and no reader that
+dedups against one the way `OUT-OF-SCOPE.md:74-76` does. The ticket's "Note from ticket 05" closes
+the second half on the strength of this paragraph alone.
+
+### Open questions for the human
+
+1. Ticket 05 settled the **noun** — did it settle the **behaviour**? `.out-of-scope/` earns its keep
+   at *read* time. Which `-mp` skill reads decision records before accepting scope, and if none does,
+   what stops the re-litigation the ticket says skaileup suffers?
+2. `domain_model.md:87` has no `rejected` status and its paths pre-date ADR 0007. Is fixing both a
+   condition of calling the second half closed, or does it fall to 16 / 21 / the concept port?
+3. The 3-test gate is deliberately narrow (`:105-108`); most scope refusals are easy to reverse and
+   unsurprising. Where does a refusal that *fails* the gate go — and if the answer is
+   `scope-feature`'s `## Out of scope` in a frozen per-feature dossier, will anyone look there, given
+   the re-litigation the ticket names is cross-feature?
+4. mp's triage is 4/5 host-and-process assumption and 1/5 `_concept/`. Does `-mp` want the *state
+   machine*, the *classification*, or only the *last mile* ("an accepted item enters at
+   `spec-feature`") — and which of those is a skill rather than a paragraph in a router?
+5. Ticket 07 deleted tier routing because "with one entry skill per side there is nothing left to
+   route to." With `spec-feature` and `build-plan` as the two lanes, does that argument delete this
+   router too — or is the classification the value and the route a by-product?
+6. mp's verify step reproduces against `src/`; ticket 04's line puts `_concept/` inspection in `ops`.
+   Does an `ops-triage` that runs the app violate the line, does verify get dropped, or does the line
+   need a third answer?
+7. If they merge, `-mp`'s `triage.py` — a deterministic dereference of an annotator-supplied target —
+   moves inside a judgement skill, the shape ticket 06 called wrong. If they don't, `-mp` ships two
+   things named triage sharing a name and nothing else. Which cost?
+8. `ops-add-feature` hard-gates on a brief, sits in zero flows, and ticket 21 already re-points it at
+   `spec-feature`. Does that re-point make a triage on-ramp unnecessary — or does triage become the
+   thing that decides *whether* to enter `spec-feature` at all?
+9. A twelfth numbered root renumbers the tree (`concept_structure.md:95-96`). If a triage artifact
+   must persist at all, which existing root adopts it, and does that break one-writer-per-root?
+10. Whose inbox is this? skaileup has 1 closed issue; the 500-issue queue is on `platform` and
+    `workspaces`, already triaged with mp's globally installed `/triage`. What arrives at a
+    skaileup-built app that mp's triage would not catch upstream?
+11. If refused: what does the **Out of scope** line say the entry *is* for work the collection did not
+    create — and does saying it force ticket 21 to rule on `ops-add-feature` first?
