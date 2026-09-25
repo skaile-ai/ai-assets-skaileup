@@ -18,3 +18,5 @@ _feedback/patches/
 
 # Git worktrees
 .worktrees/
+
+.DS_Store
