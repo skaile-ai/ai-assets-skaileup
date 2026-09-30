@@ -193,17 +193,10 @@ edges:
     source: migrate
     target: slice-loop
     type: optional
-  # Per-feature loop: after building a feature, run the slice again for the next
-  # one (its concept half discovers that feature's concept just-in-time). Exits
-  # to q-ready when the backlog is exhausted.
-  - id: e-slice-loop-slice-loop
-    source: slice-loop
-    target: slice-loop
-    type: review-loop
-    max_iterations: 50
-    exit_condition: >-
-      no unbuilt features remain — every feature the user still wants has a
-      frozen concept slice (index.md) and a committed impl slice
+  # No self-edge on slice-loop: a v2 flow graph must be acyclic, so the
+  # per-feature repetition is carried by the flow description, not an edge. The
+  # former `review-loop` self-edge was never followed by the engine (it walks
+  # only flow/optional/parallel edges), so dropping it changes no run.
   - id: e-slice-loop-q-ready
     source: slice-loop
     target: q-ready

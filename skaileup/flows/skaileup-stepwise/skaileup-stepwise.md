@@ -45,8 +45,10 @@ scope-project            (asks shape/size open questions → scope.yaml)
   → impl-quality-ready   (when the backlog is exhausted)
 ```
 
-The loop is a `review-loop` self-edge on the slice node; it exits to `ready` when
-no unbuilt features remain.
+The loop is not an edge in the graph: v2 flow graphs must be acyclic, so the
+flow file runs the slice node once and then continues to `ready`. The
+per-feature repetition lives in the flow description; the flow engine does not
+enforce it or cap it.
 
 ## Install manifest
 

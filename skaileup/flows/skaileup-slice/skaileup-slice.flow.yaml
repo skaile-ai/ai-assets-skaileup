@@ -12,8 +12,9 @@ description: >-
   fragments this feature requires, with the user, as a by-product of building
   (used by the start-in-the-middle skaileup-stepwise flow);
   `skip` = concept already exists up-front, run impl only.
-  Iteration semantics: a consumer runs this once per feature in its backlog (or
-  loops it via a review-loop edge). Standalone-runnable for testability.
+  Iteration semantics: a consumer runs this once per feature in its backlog
+  (v2 flow graphs are acyclic, so no edge can loop it). Standalone-runnable for
+  testability.
 meta:
   category: incremental
   tags:
