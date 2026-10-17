@@ -1,6 +1,6 @@
 ---
 name: concept-reverse
-description: "Use when a repository already exists and the concept has to be extracted from it rather than designed. Reads the routes, screens, schema, stack, brand and docs, and writes what the code actually says as graded findings the owning skills seed from. Triggers on 'reverse engineer this project', 'extract the concept from this codebase', 'document this existing app'."
+description: "Use when a repository already exists and the concept has to be extracted from it rather than designed. Reads the routes, screens, schema, stack, brand, interaction surfaces and docs, and writes what the code actually says as graded findings the owning skills seed from. Triggers on 'reverse engineer this project', 'extract the concept from this codebase', 'document this existing app'."
 version: "0.1.0"
 metadata:
   requires:
@@ -22,14 +22,16 @@ metadata:
 
 Reads an existing repository and writes down what it actually is, as graded findings and nothing
 else. It is one node in a flow: `concept-brief`, `design-brand` and `architecture-techstack` seed
-their drafts from the findings, and none of their artifacts is written here.
+their drafts from the findings, `experience-interaction` seeds `APP-DESIGN.md` from `interaction.md`,
+and none of their artifacts is written here.
 
 ## Route
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Extract and grade** — `tree/02_grounding/findings/README.md § Extracting (concept-reverse)`: confirm the repository, map it, write the six findings, verify citations, hand off.
-2. **Write the six findings** — `tree/02_grounding/findings/brief-seeds.md`, `tree/02_grounding/findings/stack.md`, `tree/02_grounding/findings/brand.md`, `tree/02_grounding/findings/routes.md`, `tree/02_grounding/findings/screens.md`, `tree/02_grounding/findings/datamodel.md`. Each node holds its detection recipe.
-3. **Catalogue them** — `tree/02_grounding/findings/index.md`, one row per file with `step: concept-reverse`.
+1. **Extract and grade** — `tree/02_grounding/findings/README.md § Extracting (concept-reverse)`: confirm the repository, map it, write the seven findings, verify citations, hand off.
+2. **Write the six evidence findings** — `tree/02_grounding/findings/brief-seeds.md`, `tree/02_grounding/findings/stack.md`, `tree/02_grounding/findings/brand.md`, `tree/02_grounding/findings/routes.md`, `tree/02_grounding/findings/screens.md`, `tree/02_grounding/findings/datamodel.md`. Each node holds its detection recipe.
+3. **Write the interaction census** — `tree/02_grounding/findings/interaction.md`: surfaces, editors, finders, save models and messages; its `§ Where UI sits per stack` holds the recipes shared with `quality-interaction`.
+4. **Catalogue them** — `tree/02_grounding/findings/index.md`, one row per file with `step: concept-reverse`.
 
-**Done when** `brief-seeds.md`, `stack.md`, `brand.md`, `routes.md`, `screens.md` and `datamodel.md` exist in `02_grounding/findings/` and are listed in `findings/index.md`, every value in them carries a confidence grade, and every cited path resolves on disk.
+**Done when** `brief-seeds.md`, `stack.md`, `brand.md`, `routes.md`, `screens.md`, `datamodel.md` and `interaction.md` exist in `02_grounding/findings/` and are listed in `findings/index.md`, every value in them carries a confidence grade, and every cited path resolves on disk.

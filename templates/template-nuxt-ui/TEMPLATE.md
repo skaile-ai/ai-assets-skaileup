@@ -129,65 +129,70 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-@nuxt/ui v3 uses Tailwind CSS 4's CSS-native configuration. Brand tokens from `_concept/03_brand/tokens.json` map through two mechanisms:
+@nuxt/ui v3 uses Tailwind CSS 4's CSS-native configuration. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`; colours come out as hex, dark overrides from `brand.dark.tokens.json` land in a `.dark` block) and they reach @nuxt/ui through two mechanisms:
 
-**Level 1 — `app.config.ts` color palette:**
+**Level 1 — a custom `brand` palette built from `color.primary`:**
+
+@nuxt/ui colours are palettes (`50`..`950`), but the token set holds one `color.primary` value. The ramp is derived from it with `color-mix()` rather than listed as required tokens; a brand that wants hand-picked shades adds them as optional extra tokens (for example `color.primary-50`) and the ramp points at those instead.
+
+```css
+/* main.css */
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+/* :root { --token-color-primary: #…; … } is generated from brand.tokens.json */
+
+@theme {
+  --color-brand-50: color-mix(in oklch, var(--token-color-primary) 8%, white);
+  --color-brand-500: var(--token-color-primary);
+  --color-brand-900: color-mix(in oklch, var(--token-color-primary) 40%, black);
+  /* ...100-400 and 600-800, 950 on the same pattern */
+
+  --font-sans: var(--token-font-body);
+  --font-display: var(--token-font-heading);
+  --font-mono: var(--token-font-mono);
+
+  --radius-md: var(--token-radius-base);
+  --radius-sm: calc(var(--token-radius-base) / 2);
+  --radius-lg: calc(var(--token-radius-base) * 2);
+}
+
+/* @nuxt/ui semantic surfaces, aliased so .dark follows the token overrides */
+:root {
+  --ui-bg: var(--token-color-background);
+  --ui-bg-muted: var(--token-color-surface);
+  --ui-text: var(--token-color-text);
+  --ui-text-muted: var(--token-color-text-muted);
+  --ui-border: var(--token-color-border);
+  --ui-radius: var(--token-radius-base);
+}
+```
 
 ```typescript
 // app.config.ts
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: 'violet', // maps to tokens.json color.primary (Tailwind palette name)
-      neutral: 'zinc', // maps to tokens.json color.neutral
+      primary: 'brand', // palette derived from color.primary
+      neutral: 'zinc', // a Tailwind palette; surfaces and text come from --ui-* above
+      success: 'green', // swap for a derived palette when color.success must match exactly
+      warning: 'amber',
+      error: 'red',
     },
   },
 })
 ```
 
-For custom brand colors not in the Tailwind palette, define them in `main.css`:
-
-```css
-@import 'tailwindcss';
-@import '@nuxt/ui';
-
-@theme {
-  /* Custom brand primary from tokens.json */
-  --color-brand-50: oklch(97% 0.02 270);
-  --color-brand-500: oklch(55% 0.18 270); /* tokens.json color.primary.500 */
-  --color-brand-900: oklch(25% 0.1 270);
-
-  /* Typography from tokens.json */
-  --font-sans: 'Inter Variable', sans-serif;
-  --font-display: 'Cal Sans', sans-serif;
-
-  /* Spacing / radius from tokens.json */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-}
-```
-
-Then reference the custom color in `app.config.ts`:
-
-```typescript
-ui: {
-  colors: {
-    primary: 'brand'
-  }
-}
-```
-
 Token mapping table:
-| `tokens.json` key | @nuxt/ui target | CSS variable |
-|-------------------|----------------|--------------|
-| `color.primary.*` | `ui.colors.primary` | `--color-primary-*` |
-| `color.neutral.*` | `ui.colors.neutral` | `--color-neutral-*` |
-| `typography.fontFamily.sans` | `@theme --font-sans` | `--font-sans` |
-| `borderRadius.default` | `@theme --radius-md` | `--radius-md` |
-| `color.success` | `ui.colors.success` | `--color-success-*` |
-| `color.warning` | `ui.colors.warning` | `--color-warning-*` |
-| `color.error` | `ui.colors.error` | `--color-error-*` |
+| DTCG path (`brand.tokens.json`) | @nuxt/ui target | CSS variable |
+|---------------------------------|----------------|--------------|
+| `color.primary` | `ui.colors.primary: 'brand'` | `--color-brand-*` (derived ramp) |
+| `color.background`, `color.surface` | `--ui-bg`, `--ui-bg-muted` | `--token-color-background`, `--token-color-surface` |
+| `color.text`, `color.text-muted` | `--ui-text`, `--ui-text-muted` | `--token-color-text`, `--token-color-text-muted` |
+| `color.border` | `--ui-border` | `--token-color-border` |
+| `font.body`, `font.heading` | `@theme --font-sans`, `--font-display` | `--token-font-body`, `--token-font-heading` |
+| `radius.base` | `--ui-radius`, `@theme --radius-md` | `--token-radius-base` |
+| `color.success`, `color.warning`, `color.error` | `ui.colors.success` / `warning` / `error` (derive a ramp the way `brand` is derived when the exact value matters) | `--token-color-success`, `--token-color-warning`, `--token-color-error` |
 
 **Level 2 — Component `ui` prop for per-instance overrides:**
 Every @nuxt/ui component accepts a `ui` prop with Tailwind classes for slot-level customization. This is the escape hatch for one-off style needs — avoid global overrides.

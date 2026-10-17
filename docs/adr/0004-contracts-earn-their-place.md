@@ -1,6 +1,6 @@
 # 0004 — A contract survives only if it is read in-body
 
-**Status:** superseded by 0015 ([the instruction tree mirrors the artifact tree](0015-the-instruction-tree-mirrors-the-artifact-tree.md))
+**Status:** superseded by 0017 ([the instruction tree mirrors the artifact tree](0017-the-instruction-tree-mirrors-the-artifact-tree.md))
 
 ## Context
 

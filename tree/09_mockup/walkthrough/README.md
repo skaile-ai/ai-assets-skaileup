@@ -310,7 +310,7 @@ renderer's `RENDERER.md` (e.g. astro's `stale_tailwind_config`). Extend cautious
    - Resolve every `target` / `row_target` / `items[].target` against that set; unresolved means `href: null` plus an `unresolved_target` warning.
    - Auto-slug what `elements:` leaves uncovered and derive ids for id-less `items[]`, per § Auto-slug fallback and § items[] id derivation.
    - Build the app nav per § App-shell navigation.
-   - Flatten `03_brand/tokens.json` into `--token-<dotted-path>` custom properties.
+   - Flatten `03_brand/brand.tokens.json` into `--token-*` custom properties per `tree/03_brand/brand.tokens.md § Flattening to CSS`, plus a `.dark { … }` block when `brand.dark.tokens.json` exists (`tree/03_brand/brand.tokens.md § Light and dark`).
    - Read `04_journeys/stories.yaml`; a journey without a `screen_sequence` gets a `missing_screen_sequence` warning and is skipped.
    - Glob `05_features/*/*.md` (one level; `featuresets.md` is the roster, not a feature) for manifest traceability only: features are never rendered, and their absence costs the manifest its feature links rather than stopping the render.
    - Element-schema validation is authoring-time work (`tree/07_screens/README.md`); handle render-time semantics only, and let a screen file with malformed YAML stop the run naming the file rather than ship a half-rendered site.

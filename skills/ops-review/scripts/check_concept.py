@@ -7,12 +7,12 @@ One line per problem, `path: message`; exit 0 when clean, 1 when anything is rep
 Stdlib + PyYAML only. Checks:
 
   1. root layout     every first-level entry is in the tree; the retired paths
-                     (`comparable.md`, `10_blueprint/glossary.md`,
-                     `10_blueprint/datamodel/feature-map.json`) are reported as unowned
+                     (`comparable.md`, `10_blueprint/glossary.md`, `10_blueprint/datamodel/feature-map.json`,
+                     `03_brand/tokens.json`, `11_build/interaction.yaml`) are reported as unowned
   2. frontmatter     `last_updated` (and `approved`, when present) is an ISO date on every
                      artifact markdown file, plus the fields its artifact type requires
   3. cross-links     a feature's `screens:` and a screen's `implements:` resolve, in both directions
-  4. data_entities   every name is a model in `10_blueprint/datamodel/model.json` (skipped without one)
+  4. data_entities   every name is an entity `id` in `10_blueprint/datamodel/model.json` (skipped without one)
   5. criterion ids   every `AC-…` a feature spec or ledger cites follows the id grammar and is
                      defined by `04_journeys/stories.yaml` (skipped without one) or scoped to the
                      feature's own slug
@@ -44,6 +44,8 @@ RETIRED = {
     "comparable.md": "folded into brief.md `## Comparables`",
     "10_blueprint/glossary.md": "the glossary is `glossary.md` at the root",
     "10_blueprint/datamodel/feature-map.json": "the join is each feature spec's `data_entities[]`",
+    "03_brand/tokens.json": "renamed to `brand.tokens.json`, DTCG format — ADR 0016",
+    "11_build/interaction.yaml": "replaced by `interaction.sarif` — ADR 0016",
 }
 REQUIRED = {  # artifact path (or glob-ish key) -> fields beyond last_updated
     "brief.md": ["elevator_pitch", "audience", "problem", "hero_flow"],
@@ -98,13 +100,9 @@ def is_date(v) -> bool:
 
 
 def model_names(model) -> set[str]:
-    items = model
-    if isinstance(model, dict):
-        items = next((model[k] for k in ("models", "entities", "tables") if k in model), model)
-    if isinstance(items, dict):
-        return set(items)
-    return {i["name"] for i in items if isinstance(i, dict) and "name" in i} \
-        if isinstance(items, list) else set()
+    """Entity ids of a model.json: the model names `data_entities[]` cites."""
+    entities = model.get("entities") if isinstance(model, dict) else None
+    return {e["id"] for e in entities or [] if isinstance(e, dict) and isinstance(e.get("id"), str)}
 
 
 def listed_paths(value) -> list[str]:

@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pyyaml pytest
+      - run: pip install pyyaml pytest jsonschema
       - name: check the collection
         run: python scripts/check.py --no-tests
       - name: test the checker

@@ -6,20 +6,21 @@ writers: [concept-reverse, concept-research, design-brand]
 
 # _concept/02_grounding/findings/
 
-Graded evidence and raw material from outside the room. `concept-reverse` writes the six
+Graded evidence and raw material from outside the room. `concept-reverse` writes the seven
 evidence files from an existing repository; `concept-research` and `design-brand` file
 screenshots and page saves here, and nowhere else. The skills that own the artifacts seed their
 drafts from the evidence and show each graded value to the user as a proposal: `concept-brief`
 from `brief-seeds.md`, `design-brand` from `brand.md`, `architecture-techstack` from `stack.md`;
 `experience-journeys`, `spec-featuresets`, `experience-shell`, the `spec-feature` loop,
 `architecture-datamodel`, `architecture-system` and `quality-standards` read the rest as
-evidence. Findings are never artifacts and never decisions.
+evidence; `experience-interaction` seeds `APP-DESIGN.md` from `interaction.md`, and `quality-interaction` reads it as the census to judge against. Findings are never artifacts and never decisions.
 
 ## Contents
 
 - `tree/02_grounding/findings/index.md` — the catalogue.
 - `tree/02_grounding/findings/brief-seeds.md`, `tree/02_grounding/findings/stack.md`, `tree/02_grounding/findings/brand.md` — what the docs, manifests and theme files say.
 - `tree/02_grounding/findings/routes.md`, `tree/02_grounding/findings/screens.md`, `tree/02_grounding/findings/datamodel.md` — what the code says.
+- `tree/02_grounding/findings/interaction.md` — how the code lets a user work: surfaces, editors, save models, messages, search.
 - Screenshots and page saves sit beside these files, each with a row in the catalogue.
 
 ## Format
@@ -52,9 +53,9 @@ every findings file the run wrote (`tree/README.md § Frontmatter every markdown
    `docs/`, the source root, framework config files, schema or migration directories, tests and
    CI configuration. Read selectively from that map; `dist/`, `build/`, `.next/`,
    `node_modules/` and lockfiles are generated and buy nothing but context.
-3. **Write the six evidence files**, grading each value as it is written, each following its own
-   node: `tree/02_grounding/findings/brief-seeds.md`, `tree/02_grounding/findings/stack.md`, `tree/02_grounding/findings/brand.md`, `tree/02_grounding/findings/routes.md`, `tree/02_grounding/findings/screens.md`, `tree/02_grounding/findings/datamodel.md`. Add a row per file to the catalogue with `step: concept-reverse`.
-4. **Verify the citations, then report.** Check every file path written into a finding exists.
+3. **Write the seven evidence files**, grading each value as it is written, each following its own
+   node: `tree/02_grounding/findings/brief-seeds.md`, `tree/02_grounding/findings/stack.md`, `tree/02_grounding/findings/brand.md`, `tree/02_grounding/findings/routes.md`, `tree/02_grounding/findings/screens.md`, `tree/02_grounding/findings/datamodel.md`, `tree/02_grounding/findings/interaction.md`. Add a row per file to the catalogue with `step: concept-reverse`.
+4. **Verify the citations, then report.** Check every file path written into a finding exists; in `interaction.md` the check is the one in `tree/02_grounding/findings/interaction.md § Verifying citations`: the full path from the repository root, with a line that exists.
    Present the counts per file of `extracted`, `inferred` and `needs_review`, list every
    `needs_review` value with what is missing, and note the ambiguities: two ORMs, no README,
    routes recovered from components because there is no router. A report claiming nothing needs
@@ -62,7 +63,7 @@ every findings file the run wrote (`tree/README.md § Frontmatter every markdown
    to prevent.
 5. **Hand off**, naming what each skill now has to work from — the brief from `brief-seeds.md`,
    the brand from `brand.md`, the stack from `stack.md`, the journeys and featuresets from
-   `routes.md`, the screens from `screens.md`, the model from `datamodel.md` — and what the user
+   `routes.md`, the screens from `screens.md`, the model from `datamodel.md`, the interaction decisions from `interaction.md` — and what the user
    should correct first, which is always the `needs_review` list. Once the user has accepted the
    report — corrections made, the `needs_review` list acknowledged — write `approved: <date>`
    into every findings file this run wrote.

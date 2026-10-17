@@ -3,7 +3,7 @@
 A skill holds frontmatter and the ordered list of nodes it visits. Format, procedure and
 checks for each `_concept/` part live in that part's node (see
 [`node-template.md`](./node-template.md)); the skill holds only the order and what is
-specific to this skill's use of the node. [ADR 0015](./adr/0015-the-instruction-tree-mirrors-the-artifact-tree.md)
+specific to this skill's use of the node. [ADR 0017](./adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md)
 has the reasoning.
 
 ```markdown
@@ -69,9 +69,13 @@ cite a node for every `_concept/` format they read.
   `{ id, path }`, mandatory on every skill: `id` is the kebab-case artifact id other skills
   name in `artifacts.requires` (every required id must be produced by some skill), and
   `path` starts with `_concept/` and resolves to a node that lists the skill under `writers`.
-  A skill that writes nothing under `_concept/` says `produces: []`. `scripts/check.py`
-  enforces it in both directions; the host's node done-state read is
-  `host:node-done-from-produced-by`.
+  A skill that writes nothing under `_concept/` says `produces: []`. The only path allowed
+  outside `_concept/` is the named project-root artifact `APP-DESIGN.md`
+  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md), the
+  `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`), whose node is `tree/APP-DESIGN.md`.
+  `scripts/check.py` enforces it in both directions; the host's node done-state read is
+  `host:node-done-from-produces`: a node is done when every non-templated path in the list
+  exists.
 - **A skill that cites the tree declares the contract** (`contract:@skaile-ai/shared-contracts`
   under `metadata.requires`), and a skill that declares it cites the tree.
 - **Frontmatter differs from `-mp` only where the tree requires it.** A skill whose body

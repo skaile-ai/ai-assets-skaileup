@@ -156,58 +156,57 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-Radix UI applies no default styling — it is purely behavioral. All visual design comes from Tailwind classes applied to the component wrappers. Brand tokens from `_concept/03_brand/tokens.json` are mapped directly to CSS custom properties in `globals.css`.
+Radix UI applies no default styling — it is purely behavioral. All visual design comes from Tailwind classes applied to the component wrappers. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG); the scaffold flattens them to `--token-*` custom properties as `tree/03_brand/brand.tokens.md § Flattening to CSS` describes, and `globals.css` aliases those into Tailwind's `@theme`.
 
 **`globals.css` pattern:**
 
 ```css
 @import "tailwindcss";
 
+/* :root { --token-color-primary: #…; … } is generated from brand.tokens.json;
+   the .dark { … } block is generated from brand.dark.tokens.json when it exists. */
+
 @theme {
-  /* Primary colors from tokens.json */
-  --color-primary-50: {tokens.color.primary.50};
-  --color-primary-100: {tokens.color.primary.100};
-  --color-primary-500: {tokens.color.primary.500};
-  --color-primary-600: {tokens.color.primary.600};
-  --color-primary-900: {tokens.color.primary.900};
+  /* Colors — DTCG paths color.* */
+  --color-primary: var(--token-color-primary);
+  --color-secondary: var(--token-color-secondary);
+  --color-accent: var(--token-color-accent);
+  --color-background: var(--token-color-background);
+  --color-surface: var(--token-color-surface);
+  --color-text: var(--token-color-text);
+  --color-text-muted: var(--token-color-text-muted);
+  --color-border: var(--token-color-border);
+  --color-error: var(--token-color-error);
+  --color-success: var(--token-color-success);
+  --color-warning: var(--token-color-warning);
 
-  /* Neutral / surface */
-  --color-surface: {tokens.color.surface};
-  --color-surface-raised: {tokens.color.surfaceRaised};
+  /* Typography — font.* */
+  --font-heading: var(--token-font-heading);
+  --font-sans: var(--token-font-body);
+  --font-mono: var(--token-font-mono);
 
-  /* Typography */
-  --font-sans: {tokens.typography.fontFamily.sans};
-  --font-mono: {tokens.typography.fontFamily.mono};
-
-  /* Border radius */
-  --radius-sm: {tokens.borderRadius.sm};
-  --radius-md: {tokens.borderRadius.md};
-  --radius-lg: {tokens.borderRadius.lg};
+  /* Radius and shadow — radius.base, shadow.* */
+  --radius-md: var(--token-radius-base);
+  --radius-sm: calc(var(--token-radius-base) / 2);
+  --radius-lg: calc(var(--token-radius-base) * 2);
   --radius-full: 9999px;
-}
-
-/* Semantic aliases for dark mode */
-:root {
-  --bg: var(--color-white);
-  --fg: var(--color-neutral-900);
-  --border: var(--color-neutral-200);
-}
-
-.dark {
-  --bg: var(--color-neutral-950);
-  --fg: var(--color-neutral-50);
-  --border: var(--color-neutral-800);
+  --shadow-sm: var(--token-shadow-sm);
+  --shadow-md: var(--token-shadow-md);
+  --shadow-lg: var(--token-shadow-lg);
 }
 ```
 
+Dark mode needs no second set of aliases: the `.dark` block redefines the same `--token-color-*` properties, so every `bg-background` / `text-text` utility follows. Shade scales such as `primary-50`..`900` are not in the required token set; derive them from `color.primary` with Tailwind's `color-mix()` or list them as optional extra tokens in `brand.tokens.json`.
+
 Token mapping table:
-| `tokens.json` key | CSS target | Tailwind usage |
-|-------------------|-----------|----------------|
-| `color.primary.*` | `--color-primary-*` | `bg-primary-500`, `text-primary-600` |
-| `color.neutral.*` | `--color-neutral-*` | `bg-neutral-50` |
-| `typography.fontFamily.sans` | `--font-sans` | `font-sans` |
-| `borderRadius.md` | `--radius-md` | `rounded-md` |
-| `shadow.default` | `--shadow-md` | `shadow-md` |
+| DTCG path (`brand.tokens.json`) | CSS target | Tailwind usage |
+|---------------------------------|-----------|----------------|
+| `color.primary` | `--token-color-primary` → `--color-primary` | `bg-primary`, `text-primary` |
+| `color.background`, `color.surface` | `--color-background`, `--color-surface` | `bg-background`, `bg-surface` |
+| `color.text`, `color.text-muted` | `--color-text`, `--color-text-muted` | `text-text`, `text-text-muted` |
+| `font.body` | `--font-sans` | `font-sans` |
+| `radius.base` | `--radius-md` | `rounded-md` |
+| `shadow.md` | `--shadow-md` | `shadow-md` |
 
 **`cn()` utility (required for Radix component composition):**
 
@@ -490,8 +489,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary-500 text-white hover:bg-primary-600',
-        outline: 'border border-border bg-transparent hover:bg-surface-raised',
+        primary: 'bg-primary text-background hover:bg-primary/90',
+        outline: 'border border-border bg-transparent hover:bg-surface',
       },
       size: { sm: 'px-3 py-1.5 text-sm', md: 'px-4 py-2 text-base' },
     },

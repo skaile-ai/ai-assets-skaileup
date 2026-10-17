@@ -191,7 +191,7 @@ contract, anti-patterns, and the underlying `[LegacyUnforgeable]` rationale.
 
 ## CSS Variables / Theming
 
-@postxl/ui-components uses a CSS custom property system similar to shadcn/ui but with PostXL-specific token names. Brand tokens from `_concept/03_brand/tokens.json` are applied in `globals.css` and Tailwind's `@theme` block.
+@postxl/ui-components uses a CSS custom property system similar to shadcn/ui but with PostXL-specific token names. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`; colours come out as hex) and `globals.css` points the component variables at them. Tailwind 4 accepts any CSS colour, so the variables hold colour values directly and need no HSL conversion.
 
 **`apps/frontend/src/styles/globals.css`:**
 
@@ -199,61 +199,60 @@ contract, anti-patterns, and the underlying `[LegacyUnforgeable]` rationale.
 @import "tailwindcss";
 @import "@postxl/ui-components/styles";
 
+/* :root { --token-color-primary: #…; … } is generated from brand.tokens.json;
+   the .dark { … } block is generated from brand.dark.tokens.json when it exists. */
+
 :root {
-  /* Border radius from tokens.json */
-  --radius: {tokens.borderRadius.default};             /* e.g. 0.5rem */
+  /* Border radius — radius.base */
+  --radius: var(--token-radius-base);
 
-  /* Typography from tokens.json */
-  --font-sans: {tokens.typography.fontFamily.sans};    /* e.g. 'Inter Variable', sans-serif */
-  --font-mono: {tokens.typography.fontFamily.mono};
+  /* Typography — font.* */
+  --font-sans: var(--token-font-body);
+  --font-heading: var(--token-font-heading);
+  --font-mono: var(--token-font-mono);
 
-  /* @postxl/ui-components semantic color tokens */
-  --background: {tokens.color.background.hsl};
-  --foreground: {tokens.color.foreground.hsl};
-  --card: {tokens.color.card.hsl};
-  --card-foreground: {tokens.color.cardForeground.hsl};
-  --primary: {tokens.color.primary.hsl};
-  --primary-foreground: 0 0% 100%;
-  --secondary: {tokens.color.secondary.hsl};
-  --secondary-foreground: {tokens.color.secondaryForeground.hsl};
-  --muted: {tokens.color.muted.hsl};
-  --muted-foreground: {tokens.color.mutedForeground.hsl};
-  --accent: {tokens.color.accent.hsl};
-  --accent-foreground: {tokens.color.accentForeground.hsl};
-  --destructive: {tokens.color.error.hsl};
-  --destructive-foreground: 0 0% 100%;
-  --border: {tokens.color.border.hsl};
-  --input: {tokens.color.input.hsl};
-  --ring: {tokens.color.primary.hsl};
-}
-
-.dark {
-  --background: {tokens.color.dark.background.hsl};
-  --foreground: {tokens.color.dark.foreground.hsl};
-  --primary: {tokens.color.primary.hsl};
-  /* ... dark values from tokens.json */
+  /* @postxl/ui-components semantic color tokens — color.* */
+  --background: var(--token-color-background);
+  --foreground: var(--token-color-text);
+  --card: var(--token-color-surface);
+  --card-foreground: var(--token-color-text);
+  --primary: var(--token-color-primary);
+  --primary-foreground: var(--token-color-background);  /* or optional extra token color.on-primary */
+  --secondary: var(--token-color-secondary);
+  --secondary-foreground: var(--token-color-text);
+  --muted: var(--token-color-surface);
+  --muted-foreground: var(--token-color-text-muted);
+  --accent: var(--token-color-accent);
+  --accent-foreground: var(--token-color-text);
+  --destructive: var(--token-color-error);
+  --destructive-foreground: var(--token-color-background);
+  --border: var(--token-color-border);
+  --input: var(--token-color-border);
+  --ring: var(--token-color-primary);
 }
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --font-sans: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
 }
 ```
 
+The `:root` aliases do not change for dark mode: the `.dark` block redefines the `--token-color-*` properties they point at, so it needs no component-variable overrides of its own.
+
 Token mapping table:
-| `tokens.json` key | CSS custom property | Usage |
-|-------------------|--------------------|-|
-| `color.primary.hsl` | `--primary` | `bg-primary text-primary-foreground` |
-| `color.background.hsl` | `--background` | `bg-background` |
-| `borderRadius.default` | `--radius` | `rounded-md` |
-| `typography.fontFamily.sans` | `--font-sans` | `font-sans` |
-| `color.error.hsl` | `--destructive` | `bg-destructive` |
+| DTCG path (`brand.tokens.json`) | CSS custom property | Usage |
+|---------------------------------|--------------------|-|
+| `color.primary` | `--primary`, `--ring` | `bg-primary text-primary-foreground` |
+| `color.background` | `--background` | `bg-background` |
+| `color.text` | `--foreground` | `text-foreground` |
+| `radius.base` | `--radius` | `rounded-md` |
+| `font.body` | `--font-sans` | `font-sans` |
+| `color.error` | `--destructive` | `bg-destructive` |
 
 ## Auth Setup
 

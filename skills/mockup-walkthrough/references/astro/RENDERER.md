@@ -41,8 +41,10 @@ the feedback round.
    proceeds and ships whatever the stale template renders.
 2. **Write `src/data/specs.json` and `src/styles/global.css`** on every run, overwriting.
    Shape, and the `specs.json` → `manifest.json` projection: `specs-json.md`. `global.css` is
-   the Tailwind base plus one `--token-*` line per flattened token. On update runs, compare the
-   token count against the CSS var count in the existing file first; a mismatch means
+   the Tailwind base plus one `--token-*` line per token of `03_brand/brand.tokens.json`,
+   flattened per `tree/03_brand/brand.tokens.md § Flattening to CSS`, and a `.dark { … }` block
+   from `brand.dark.tokens.json` when that file exists. On update runs, compare the `:root`
+   token count against the CSS var count in the existing file's `:root` first; a mismatch means
    `tailwind.config.mjs` needs a hand edit — record `stale_tailwind_config`.
 3. **Build** with `bun run build` from the project root. On non-zero exit, print the full
    stderr, stop, and leave `manifest.json` alone.

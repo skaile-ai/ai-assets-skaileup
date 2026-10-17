@@ -21,7 +21,7 @@ last_updated: YYYY-MM-DD
 
 Sections for layout patterns, colour directions, typography pairings and component patterns.
 Each reference carries its source and where in this product it would apply;
-`references_collected` equals the reference count. Once `_concept/03_brand/tokens.json` exists,
+`references_collected` equals the reference count. Once `_concept/03_brand/brand.tokens.json` exists,
 references stay inside it — an off-palette reference collected after the brand is chosen is one
 nothing can be built from.
 

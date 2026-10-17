@@ -13,6 +13,7 @@ metadata:
       - { id: brand-tokens }
       - { id: screens }
       - { id: grounding-findings }
+      - { id: app-design }
     produces:
       - { id: app-shell, path: "_concept/07_screens/shell.md" }
   prerequisites:
@@ -22,7 +23,8 @@ metadata:
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
       - { path: "_concept/02_grounding/findings", gate: soft }
       - { path: "_concept/04_journeys/stories.yaml", gate: soft }
-      - { path: "_concept/03_brand/tokens.json", gate: soft }
+      - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
+      - { path: "APP-DESIGN.md", gate: soft }
 ---
 
 # experience-shell
@@ -34,6 +36,7 @@ Writes exactly one file: `07_screens/shell.md`, the frame every screen appears i
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Know the `elements:` block** — `tree/07_screens/README.md`; the shell's nav element is written to its schema and `§ Content fidelity` shapes.
-2. **Draw and write the frame** — `tree/07_screens/shell.md`: read the screens, derive the navigation, layout areas, breakpoints, shared patterns, mirror the nav into `elements:`, then show the user and iterate to approval.
+2. **Draw and write the frame** — `tree/07_screens/shell.md`: read the screens, derive the navigation (under `APP-DESIGN.md`'s Navigation section when it exists), layout areas, breakpoints, layout-only shared patterns, mirror the nav into `elements:`, then show the user and iterate to approval.
+3. **Cite interaction decisions, never make them** — `tree/APP-DESIGN.md § Reading it`: empty, error, confirmation, message and editing patterns are referenced by MSG, EDIT and MOD id; without the file they go under `## Proposed interaction patterns` for `experience-interaction`.
 
-**Done when** `07_screens/shell.md` exists with its navigation, layout areas, breakpoints and shared patterns, and its `elements:` nav block lists the same destinations as its `## Navigation` section, in the same order.
+**Done when** `07_screens/shell.md` exists with its navigation, layout areas, breakpoints and layout-only shared patterns, and its `elements:` nav block lists the same destinations as its `## Navigation` section, in the same order.

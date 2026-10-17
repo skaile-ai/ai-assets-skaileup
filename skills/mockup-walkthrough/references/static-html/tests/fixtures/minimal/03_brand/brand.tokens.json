@@ -1,0 +1,12 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "color": {
+    "primary": {
+      "$type": "color",
+      "$value": { "colorSpace": "srgb", "components": [0.0549, 0.6471, 0.9137], "hex": "#0ea5e9" }
+    }
+  },
+  "spacing": {
+    "sm": { "$type": "dimension", "$value": { "value": 8, "unit": "px" } }
+  }
+}

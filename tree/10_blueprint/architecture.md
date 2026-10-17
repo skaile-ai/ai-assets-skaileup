@@ -1,12 +1,12 @@
 ---
 path: _concept/10_blueprint/architecture.md
-summary: custom modules, protocols and every external integration beyond the template
+summary: C4 levels — system context, containers, components, deployment, risks
 writers: [architecture-system]
 ---
 
 # _concept/10_blueprint/architecture.md
 
-The apps, custom modules, communication protocols and external integrations this project adds beyond its template, and nothing else. What the chosen stack already provides is written once, in `templates/<tech_stack_skill>/TEMPLATE.md`; restating it here produces a second copy that drifts. The artifact is optional by design: a project whose features need nothing beyond its stack gets a short document saying exactly that, which is the answer `build-plan` needs. `architecture-datamodel` reads it for the entities a module implies, `build-plan` for the work a slice crosses, `build-implement` for what to build against.
+The apps, custom modules, communication protocols and external integrations this project adds beyond its template, and nothing else, organised by the levels of the [C4 model](https://c4model.com/). What the chosen stack already provides is written once, in `templates/<tech_stack_skill>/TEMPLATE.md`; restating it here produces a second copy that drifts. The artifact is optional by design: a project whose features need nothing beyond its stack gets a short document saying exactly that, which is the answer `build-plan` needs. `architecture-datamodel` reads it for the entities a module implies, `build-plan` for the work a slice crosses, `build-implement` for what to build against. The HTTP and message contracts that sit beside it are `tree/10_blueprint/openapi.md` and `tree/10_blueprint/asyncapi.md`.
 
 ## Format
 
@@ -21,23 +21,42 @@ last_updated: YYYY-MM-DD
 ---
 ```
 
-Body: one section per addition, in the frontmatter order. Prose and diagrams, no code.
+Body: these sections, in this order, each holding only what its name says. Prose and diagrams, no code. An empty frontmatter list is a real result: say in the body that the stack covers this project as it stands instead of inflating sections to look complete.
 
-- A custom module names its purpose, what it depends on and the feature that asked for it.
-- A protocol names its endpoints, message types, connection lifecycle and error behaviour.
-- An external integration names the API or SDK, what data crosses the boundary, the retry and fallback behaviour and where the credentials live — left out here, these get invented differently in every slice that touches the integration.
-- `## External Integrations` is the only place in `_concept/` that records third-party services (payments, mail and SMS, file storage, analytics, error tracking, auth providers beyond the template's own).
-- An empty frontmatter list is a real result: say in the body that the stack covers this project as it stands instead of inflating four sections.
+### System context
+
+Who uses the system and which outside systems it talks to. Its `### External Integrations` subsection is the only place in `_concept/` that records third-party services (payments, mail and SMS, file storage, analytics, error tracking, auth providers beyond the template's own); `techstack.md` carries none. An integration names the API or SDK, what data crosses the boundary, the retry and fallback behaviour and where the credentials live — left out here, these get invented differently in every slice that touches the integration.
+
+### Containers
+
+The `apps`, `custom_services` and `protocols`: what runs separately and how the parts talk. A protocol names its endpoints, message types, connection lifecycle and error behaviour.
+
+### Components
+
+The `custom_modules`, written only where a container's insides matter; the section is left out when no module earns one. A module names its purpose, what it depends on and the feature that asked for it.
+
+### Deployment
+
+Where each container runs, as far as the stack and the features fix it.
+
+### Risks and technical debt
+
+What is known to be weak or deferred, each item with the feature or integration it touches.
 
 ## Writing it
 
-1. **Read the stack first, so you write the delta.** `_concept/10_blueprint/techstack.md` names `tech_stack_skill`; that template's `## Identity` and `## Scaffold Recipe` say what the project already gets — server runtime, ORM, auth provider, directory structure. Then read `_concept/brief.md` and every feature under `_concept/05_features/`.
+1. **Read the stack first, so you write the delta.** `_concept/10_blueprint/techstack.md` names `tech_stack_skill`; that template's `## Identity` and `## Scaffold Recipe` say what the project already gets — server runtime, ORM, auth provider, directory structure. Then read `_concept/brief.md`, every feature under `_concept/05_features/` and, when it exists, `_concept/10_blueprint/datamodel/` (a soft input: the entities the payloads of step 7 name).
 2. **Read the features for architecture signals**: real-time behaviour (chat, live updates, collaborative editing), background work (scheduling, long jobs, file processing), outside systems (payments, mail, third-party APIs), and data flows the stack has no shape for (event logs, multi-step workflows, pipelines). Where `_concept/06_behaviors/<featureset>.md` exists, its state tables sharpen all three: a transition on a timer is background work, one two actors race for is real-time, one that waits on an outside system names an adapter.
 3. **Ask only what the features left open** (one question per message — `tree/README.md § How a skill runs`): background or scheduled work, live updates, external services, streaming or instant communication, non-standard data handling. A question the feature specs already answer spends the round you needed for a real one.
 4. **Screen each addition against the design red flags** (below) before writing it; a module that fails the shallow-module question is usually a feature's helper, not an architecture entry.
 5. **Give every outside dependency a seam.** A module the app does not own — payment gateway, mail sender, model provider — is declared as an interface with a real implementation and an in-memory stand-in behind it, chosen by configuration, so a slice can be built and tested before anyone has credentials.
-6. **Write the file** per Format.
-7. **Approve it in plain language**: what the structure lets the app do, which features get live updates and over what, what the custom logic is for in business terms, which outside services it depends on; the counts underneath. Approve, or name what to change.
+6. **Write `architecture.md`** per `## Format`: the frontmatter lists, then the five sections in order.
+7. **Write the API and event contracts where the project has them.** An HTTP API served to clients other than the project's own UI — always for project type `api-service` — gets `_concept/10_blueprint/openapi.yaml` per `tree/10_blueprint/openapi.md`. A project that publishes or consumes messages on a channel — a broker, a websocket, a webhook stream — gets `_concept/10_blueprint/asyncapi.yaml` per `tree/10_blueprint/asyncapi.md`. A project with neither writes neither file; the stack already covers it, and the body of `architecture.md` says so. Payload schemas name entities from `_concept/10_blueprint/datamodel/model.json`, read and never coined; where that file does not exist they come from `_concept/glossary.md`, and a payload concept with neither stops the step: name it and hand back to `concept-glossary`. Each error response and each failed message names what the caller sees, which is the behaviour step 2 read in prose.
+8. **Approve it in plain language**: what the structure lets the app do, which features get live updates and over what, what the custom logic is for in business terms, which outside services it depends on and, where step 7 wrote a contract, which endpoints or channels outside parties can rely on. The counts — apps, modules, protocols, integrations, endpoints, channels — go underneath. Approve, or name what to change; the contracts are approved with `architecture.md`, not separately.
+
+### Re-entry
+
+`quality-e2e` reads `openapi.yaml`; `build-scaffold` and `build-implement` read both contract files; all three gate on them softly. A reader that needs an endpoint, a channel or a payload changed hands back to `architecture-system` with the change named; steps 6–8 re-run for the affected parts, and the reader never edits `openapi.yaml` or `asyncapi.yaml` itself.
 
 ### Design red flags
 
@@ -52,6 +71,7 @@ Ask each question of every candidate module, protocol and integration; a yes mea
 
 ## Checks
 
-- Every entry in the frontmatter lists is described in the body with its dependencies and its error behaviour.
-- Third-party services appear here and not in `techstack.md`.
-- The user approved the file.
+- Every entry in the frontmatter lists is described in the body with its dependencies and its error behaviour, under the C4 section its name says.
+- Third-party services appear under `System context` and not in `techstack.md`.
+- `openapi.yaml` and `asyncapi.yaml` exist exactly where step 7 says they are due.
+- The user approved `architecture.md` and any contract together.

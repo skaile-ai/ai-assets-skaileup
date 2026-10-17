@@ -19,6 +19,7 @@ metadata:
       - { path: "_concept/05_features", gate: hard, min_entries: 1 }
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
       - { path: "_concept/10_blueprint/datamodel", gate: soft }
+      - { path: "_concept/10_blueprint/openapi.yaml", gate: soft }
 ---
 
 # quality-e2e
@@ -32,6 +33,6 @@ criterion ids, observed in the browser with `agent-browser`.
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Walk every journey and write its verdict into the ledger** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, the `quality-e2e` procedure (steps 1–8). A feature with no ledger stops the run and names `build-plan`.
+1. **Walk every journey and write its verdict into the ledger** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, the `quality-e2e` procedure (steps 1–8). A feature with no ledger stops the run and names `build-plan`. A project with no UI journeys (an `api-service`) is walked through the operations of `openapi.yaml` instead (`tree/10_blueprint/openapi.md`), with no browser.
 
-**Done when** every story in `stories.yaml` (or, without journeys, every derived path) has been run with a pass or a fail and a criterion id behind it, the ledger rows this run evaluated carry that verdict and its evidence, and no dev server or browser session is left alive.
+**Done when** every story in `stories.yaml` (or, without journeys, every derived path or documented operation) has been run with a pass or a fail and a criterion id behind it, the ledger rows this run evaluated carry that verdict and its evidence, and no dev server or browser session is left alive.

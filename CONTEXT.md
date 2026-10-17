@@ -183,6 +183,36 @@ A UI pattern shared across screens, specified once.
 **Journey**:
 An ordered path a persona takes across screens to reach a goal.
 
+**App design**:
+The set of interaction decisions for one application — where each object's information
+lives, how it is edited, how users find and act on things, what saving and messages look
+like. One per project, decided once and cited by every screen, so the app behaves as one
+thing rather than as the sum of its screens.
+_Avoid_: UX guidelines, style guide, design system (that is visual, not behavioural)
+
+**Object type**:
+A kind of thing users see and act on — an order, a customer, an invoice. The unit that app
+design decides things for: each object type has its own place for information, editor and
+representations.
+_Avoid_: object class (the rulebook uses *class* for core/supporting/child/junction/system),
+entity (that is the data model's word for the stored thing), resource, model
+
+**Floorplan**:
+The map of where each object type's information lives in the app, and how the rooms
+connect.
+_Avoid_: sitemap, navigation tree, IA
+
+**Surface**:
+A place information appears or is edited — a page, a panel, a modal, a popover, an inline
+field. App design assigns each object type's views and edits to surfaces.
+_Avoid_: container, view, widget
+
+**Representation**:
+One way an object type is shown — a row, a card, a chip, a detail view, a table cell.
+The same object type has several; app design fixes which appears where, so the same thing
+looks the same wherever it turns up.
+_Avoid_: view, display, layout
+
 **Behavior**:
 A formalized rule or state machine governing an entity's lifecycle.
 

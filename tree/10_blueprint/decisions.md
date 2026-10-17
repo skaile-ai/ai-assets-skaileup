@@ -18,11 +18,11 @@ Append-only. Each entry is tiny:
 <1–3 sentences: the context, what was decided, and why.>
 ```
 
-Optional lines, only when they add real value:
+Optional lines, only when they add real value. They use the vocabulary of [MADR 4.0.0](https://adr.github.io/madr/), so a reader who knows that format reads the entries without a legend; the file stays one append-only log rather than MADR's one file per decision, and the entry is MADR's minimal form, cut further.
 
-- **Status**: `accepted | rejected | deprecated | superseded by <date/title>`. `rejected` means the choice was refused and is recorded so nobody re-litigates it; it is not the roads not taken inside an accepted decision. Scope decisions marked OUT in a feature spec are recorded with `Status: rejected`.
-- **Options considered** — only when the rejected alternatives are worth remembering.
-- **Consequences** — only when a non-obvious downstream effect must be flagged.
+- **Status**: `accepted | rejected | deprecated | superseded by <date/title>` — a subset of MADR's `status` values, written as a line rather than front matter. `rejected` means the choice was refused and is recorded so nobody re-litigates it; it is not the *Considered Options* below, which are the roads not taken inside an accepted decision. Scope decisions marked OUT in a feature spec are recorded with `Status: rejected`.
+- **Considered Options** — only when the rejected alternatives are worth remembering.
+- **Consequences** — only when a non-obvious downstream effect must be flagged; MADR files it under *Decision Outcome*.
 
 A landed entry is never edited. To change your mind, add a new entry that supersedes the old one and mark the old one's Status.
 

@@ -144,7 +144,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-PrimeVue 4 uses a `--p-*` CSS variable system tied to its preset (Aura, Lara, Material, Nora). Brand tokens from `_concept/03_brand/tokens.json` are mapped at two levels:
+PrimeVue 4 uses a `--p-*` CSS variable system tied to its preset (Aura, Lara, Material, Nora). Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`; colours come out as hex, dark overrides from `brand.dark.tokens.json` land in a `.dark` block) and they are mapped at two levels. PrimeVue's `primary` is a palette (`50`..`950`) while the token set holds one `color.primary`, so the ramp is derived from it with `color-mix()`; a brand that wants hand-picked shades adds them as optional extra tokens (for example `color.primary-50`) and the preset points at those instead.
 
 **Level 1 — PrimeVue preset override via `definePreset()`:**
 
@@ -153,18 +153,29 @@ PrimeVue 4 uses a `--p-*` CSS variable system tied to its preset (Aura, Lara, Ma
 import { definePreset } from '@primevue/themes'
 import Aura from '@primevue/themes/aura'
 
+// Values are CSS var() references, so the .dark token block flips them with no second preset.
 const BrandPreset = definePreset(Aura, {
   semantic: {
+    borderRadius: {
+      md: 'var(--token-radius-base)', // radius.base
+    },
     primary: {
-      50: '{tokens.color.primary.50}',
-      500: '{tokens.color.primary.500}', // from _concept/03_brand/tokens.json
-      900: '{tokens.color.primary.900}',
+      50: 'color-mix(in oklch, var(--token-color-primary) 8%, white)',
+      500: 'var(--token-color-primary)', // color.primary from _concept/03_brand/brand.tokens.json
+      900: 'color-mix(in oklch, var(--token-color-primary) 40%, black)',
+      // ...100-400 and 600-800, 950 on the same pattern
     },
     colorScheme: {
       light: {
         surface: {
-          0: '#ffffff',
-          ground: '{tokens.color.surface.ground}',
+          0: 'var(--token-color-background)', // color.background
+          50: 'var(--token-color-surface)', // color.surface
+        },
+      },
+      dark: {
+        surface: {
+          0: 'var(--token-color-background)',
+          50: 'var(--token-color-surface)',
         },
       },
     },
@@ -177,22 +188,26 @@ const BrandPreset = definePreset(Aura, {
 ```css
 @import 'tailwindcss';
 
+/* :root { --token-color-primary: #…; … } is generated from brand.tokens.json */
+
 @theme {
   --color-brand-primary: var(--p-primary-500);
-  --color-brand-surface: var(--p-surface-ground);
-  --font-sans: 'Inter Variable', sans-serif; /* from tokens.json typography */
-  --radius-md: 0.5rem; /* from tokens.json borderRadius */
+  --color-brand-surface: var(--token-color-surface);
+  --font-sans: var(--token-font-body); /* font.body */
+  --font-heading: var(--token-font-heading); /* font.heading */
+  --radius-md: var(--token-radius-base); /* radius.base */
+  --shadow-md: var(--token-shadow-md); /* shadow.md */
 }
 ```
 
 Token mapping table:
-| `tokens.json` key | PrimeVue target | Tailwind target |
-|-------------------|----------------|----------------|
-| `color.primary.*` | `--p-primary-*` | `--color-primary-*` |
-| `color.surface.*` | `--p-surface-*` | `--color-surface-*` |
-| `typography.fontFamily` | N/A | `--font-sans` |
-| `borderRadius.default` | `--p-border-radius-md` | `--radius-md` |
-| `shadow.default` | `--p-shadow-md` | `--shadow-md` |
+| DTCG path (`brand.tokens.json`) | PrimeVue target | Tailwind target |
+|---------------------------------|----------------|----------------|
+| `color.primary` | `--p-primary-500` (ramp derived) | `--color-brand-primary` |
+| `color.background`, `color.surface` | `--p-surface-0`, `--p-surface-50` (preset `colorScheme`) | `--color-brand-surface` |
+| `font.body` | N/A | `--font-sans` |
+| `radius.base` | `--p-border-radius-md` (set in the preset's `semantic.borderRadius`) | `--radius-md` |
+| `shadow.md` | N/A | `--shadow-md` |
 
 ## Auth Setup
 

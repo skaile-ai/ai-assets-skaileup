@@ -20,7 +20,7 @@ metadata:
       - { path: "_concept/brief.md", gate: hard }
       - { path: "_concept/11_build/trace.yaml", gate: hard }
       - { path: "_concept/goals.md", gate: soft }
-      - { path: "_concept/03_brand/tokens.json", gate: soft }
+      - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
 ---
 
 # quality-release

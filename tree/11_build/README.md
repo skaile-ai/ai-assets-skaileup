@@ -18,6 +18,7 @@ is decided.
 | `acceptance-criteria/` | the criteria status ledger, one file per feature | `build-plan` creates, `build-implement`, `quality-e2e`, `quality-review` flip rows |
 | `reviews/<feature_slug>.yaml` | one feature's code-review verdict | `quality-review` |
 | `release.yaml` | the whole-app release verdict | `quality-release` |
+| `interaction.sarif` | the app-wide interaction conformance verdict, SARIF 2.1.0 | `quality-interaction` (`tree/11_build/interaction.md`) |
 | `decisions.md` | build-time decision records | grown inline during the build |
 
 ## Verdicts
@@ -75,6 +76,19 @@ cannot do for a twenty-finding report.
 | `low` | no | a nit worth recording once, never worth blocking on |
 
 A skill may add scope-specific rules for placing a finding and never a fifth level.
+
+### SARIF levels
+
+A verdict written as SARIF 2.1.0 (OASIS, errata 01), which today is `quality-interaction`'s `interaction.sarif`, maps the four severities onto SARIF's `level` for every result that records a finding (`kind: "fail"`) and keeps the four-level value in the result's `properties.severity`, because SARIF's `level` has four values (`none`, `note`, `warning`, `error`) and three of them carry failures:
+
+| severity | SARIF `level` |
+|---|---|
+| `critical` | `error` |
+| `high` | `error` |
+| `medium` | `warning` |
+| `low` | `note` |
+
+A result that records conformance (`kind: "pass"`) takes `level: "none"`. The blocking boundary stays the one in `### Flag shape`: `critical` and `high` are the two that map to `error`. `reviews/<feature_slug>.yaml` stays YAML; a SARIF export of a review maps each flag's `severity` by this table and puts `category`, `note` and `resolution` in the result's `message.text` and `properties`.
 
 ### Verdict grammar
 

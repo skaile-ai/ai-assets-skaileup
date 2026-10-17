@@ -8,7 +8,7 @@ writers: [concept-reverse]
 
 The brand the code already carries. `design-brand` seeds its draft from it and shows each graded
 value as a proposal: only `extracted` values are what the code says, and `inferred` or
-`needs_review` ones are the user's to settle before they reach `tokens.json`.
+`needs_review` ones are the user's to settle before they reach `_concept/03_brand/brand.tokens.json`.
 
 ## Format
 
@@ -30,7 +30,8 @@ Frontmatter per `tree/02_grounding/findings/README.md`, with graded fields for:
    replacing it: `tailwind.config.{ts,js,mjs}` (`theme.extend.colors`, `fontFamily`,
    `borderRadius`, `darkMode`); CSS custom-property files (`tokens.css`, `variables.css`,
    `globals.css`, `app.css` — the `:root` and `.dark` blocks); design-token files
-   (`tokens.json`, `design-tokens.json`, a `style-dictionary/` tree); theme providers
+   (`tokens.json`, `design-tokens.json`, `*.tokens.json`, `*.tokens`, `*.resolver.json` — W3C DTCG; a
+   resolver names the light and dark files — a `style-dictionary/` tree); theme providers
    (`ThemeProvider.tsx`, `theme.ts`, a Chakra or Mantine theme object); framework theme config
    (`nuxt.config.ts` `ui.colors`, a Vuetify theme block); the root layout or `app.vue` for
    global styles, loaded fonts and body classes.
@@ -38,7 +39,7 @@ Frontmatter per `tree/02_grounding/findings/README.md`, with graded fields for:
    components is `inferred` and says so.
 3. A repository with no theme layer gets this file written with every field listed and
    `needs_review` throughout — a skeleton `design-brand` can report against beats an absence it
-   has to rediscover, and `design-brand` still writes `tokens.json` itself, since both mockup
+   has to rediscover, and `design-brand` still writes `brand.tokens.json` itself, since both mockup
    renderers hard-gate on that file. A palette assembled from taste when the repository
    declares none is indistinguishable from a real one and gets built against.
 

@@ -10,7 +10,7 @@ Realistic sample data organised as named scenarios, so each consumer picks the s
 
 ## Format
 
-Entity keys are the singular snake_case entity names in `model.json`; relation fields end in `_id`; enum values are PascalCase.
+Entity keys are the snake_case form of the entity `id` in `model.json`, singular (`Task` → `task`, `ProjectMember` → `project_member`); relation fields end in `_id`; enum values are PascalCase. The file validates against `tree/10_blueprint/datamodel/datamodel-seed.schema.json` (JSON Schema 2020-12: `version`, and `scenarios` with the four standard ones required, each `{ description, data }`); it cannot check that keys exist in the model, that relations resolve inside their scenario, or that `populated` covers every enum value, so the data quality rules below are checked by hand.
 
 ```json
 {
@@ -91,7 +91,7 @@ Further scenarios (`permissions` and others) are optional and follow feature nee
 
 ## Writing it
 
-Write the file after the model is approved, with all four standard scenarios plus `permissions` when the journeys name distinct roles. Generate values that are realistic and varied, with entity keys and field names following `tree/10_blueprint/datamodel/README.md § Naming`.
+Write the file after the model is approved, with all four standard scenarios plus `permissions` when the journeys name distinct roles. Generate values that are realistic and varied, with entity keys and field names following `tree/10_blueprint/datamodel/README.md § Naming`. Validate the file against `tree/10_blueprint/datamodel/datamodel-seed.schema.json` before writing it.
 
 Readers by scenario:
 
@@ -104,4 +104,4 @@ Readers by scenario:
 
 - All four standard scenarios exist.
 - Every relation resolves inside its own scenario.
-- Entity keys match `model.json` entity names.
+- `seed.json` validates against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`, and each entity key is the snake_case form of an entity `id` in `model.json`.

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skaile:schema:scope",
+  "title": "Project scope — the flow a project is sized by and its project type",
+  "description": "Written by concept-scope. The file records what was decided and nothing else, so the top level is closed.",
+  "x-artifact": "_concept/01_meta/scope.yaml",
+  "type": "object",
+  "required": ["flow", "project_type", "chosen_at"],
+  "additionalProperties": false,
+  "properties": {
+    "flow": {
+      "description": "The flow is the sizing. The four names are the whole vocabulary.",
+      "enum": ["appbuilder-mvp", "appbuilder-standard", "skaileup-concept-only", "skaileup-concept-reverse"]
+    },
+    "project_type": {
+      "description": "A row of tree/01_meta/scope.md § Project types; unset reads as web-app.",
+      "enum": ["web-app", "cli-tool", "api-service", "library", "mobile-app", "data-pipeline"]
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Two to six sentences naming which signals decided the flow."
+    },
+    "signals": { "$ref": "#/$defs/signals" },
+    "chosen_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp of the decision.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    }
+  },
+  "$defs": {
+    "signals": {
+      "type": "object",
+      "description": "Each answer as the user gave it; the reasoning quotes these values.",
+      "properties": {
+        "features_estimate": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many distinct things a user can do."
+        },
+        "multi_user": {
+          "type": "boolean",
+          "description": "Whether more than one role shares state."
+        },
+        "persistence": {
+          "type": "string",
+          "description": "How data is persisted: none, one relational schema, or an external store the project does not own.",
+          "examples": ["none", "structured", "external"]
+        },
+        "integrations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "External services the user named."
+        },
+        "existing_repo": {
+          "type": "boolean",
+          "description": "Whether a repository already exists."
+        }
+      }
+    }
+  }
+}

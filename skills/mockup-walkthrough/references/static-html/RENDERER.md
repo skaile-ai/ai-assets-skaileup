@@ -17,8 +17,10 @@ change a stakeholder already asked for reads as the tool ignoring the feedback r
   any directory it is later copied to.
 - **Everything runs at render time.** There is no build step and no pre-resolved data file, so
   targets, auto-slugs and `items[]` ids are resolved as each page is written.
-- **Styling is one inline `<style>` block** in the shell, carrying the flattened
-  `--token-<dotted-path>` custom properties. No stylesheet file, no bundle.
+- **Styling is one inline `<style>` block** in the shell, carrying the `--token-*` custom
+  properties flattened from `03_brand/brand.tokens.json` per
+  `tree/03_brand/brand.tokens.md § Flattening to CSS` (`:root`), plus a `.dark { … }`
+  block from `brand.dark.tokens.json` when that file exists. No stylesheet file, no bundle.
 - **Generate with the Python standard library plus PyYAML** — `html.escape`, `pathlib`, `json`,
   string substitution. No templating engine, no bundler. The generator runs at skill time and
   never ships, so its dependencies do not reach the output; keeping it stdlib-only is what makes

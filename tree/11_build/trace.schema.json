@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skaile:schema:trace",
+  "title": "Trace — the one feature to commit join",
+  "description": "Written by build-implement (step 7); read by quality-review, quality-release and ops-review, and by the host's coverage page (server/utils/review-coverage.ts), which reads features and orphans. Dates: validate after turning YAML dates into ISO text, per tree/README.md § Frontmatter every markdown artifact carries.",
+  "x-artifact": "_concept/11_build/trace.yaml",
+  "type": "object",
+  "required": ["features"],
+  "properties": {
+    "features": {
+      "type": "object",
+      "description": "Keyed by feature slug.",
+      "additionalProperties": { "$ref": "#/$defs/feature" }
+    },
+    "orphans": {
+      "type": "array",
+      "description": "Code the host's coverage page found with no feature behind it.",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    }
+  },
+  "$defs": {
+    "feature": {
+      "type": "object",
+      "properties": {
+        "featureset": { "type": "string", "description": "The featureset directory under 05_features/." },
+        "slices": {
+          "type": "array",
+          "description": "One entry per slice; an entry for the same slice id is replaced, not duplicated.",
+          "items": { "$ref": "#/$defs/slice" }
+        },
+        "specced": { "type": "boolean", "description": "Host coverage column." },
+        "sliced": { "type": "boolean", "description": "Host coverage column." },
+        "committed": { "type": "boolean", "description": "Host coverage column." },
+        "evaluated": { "type": "boolean", "description": "Host coverage column." },
+        "documented": { "type": "boolean", "description": "Host coverage column." },
+        "code_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Host coverage column: source files tracing to the feature."
+        }
+      }
+    },
+    "slice": {
+      "type": "object",
+      "required": ["id", "commits", "code"],
+      "properties": {
+        "id": { "type": "string", "description": "The slice id, as under 11_build/slices/." },
+        "commits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Short shas of the slice's commits."
+        },
+        "code": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Source files the commits touched, tests excluded."
+        }
+      }
+    }
+  }
+}

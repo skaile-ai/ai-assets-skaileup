@@ -69,3 +69,10 @@ recorded in the map's forge-concept register as the successor effort's cheapest 
   (`resolver/src/validator.ts:107`) — a hardcoded path that ADR 0007 renamed to
   `02_grounding/`. No `-mp` skill declares inputs yet; the first one that does inherits the
   clash. Recorded in the register.
+
+---
+
+**Project-root artifacts amended by [ADR 0015](0015-interaction-decisions-live-in-app-design.md)**
+(2026-10-17). A declared or produced path may also be a project-root artifact named in
+`check.py`'s `PROJECT_ROOT_ARTIFACTS` — today `APP-DESIGN.md` alone. Every other path starts
+with `_concept/` or is a named `PROJECT_ROOT_PREREQUISITES` gate.

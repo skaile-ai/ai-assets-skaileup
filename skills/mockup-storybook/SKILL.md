@@ -18,7 +18,7 @@ metadata:
   prerequisites:
     files:
       - { path: "_concept/07_screens", gate: hard, min_entries: 1 }
-      - { path: "_concept/03_brand/tokens.json", gate: hard }
+      - { path: "_concept/03_brand/brand.tokens.json", gate: hard }
       - { path: "_concept/10_blueprint/techstack.md", gate: hard }
       - { path: "_concept/04_journeys/stories.yaml", gate: soft, min_entries: 1 }
       # Soft: the manifest is the shortcut to screens and journeys already resolved once;

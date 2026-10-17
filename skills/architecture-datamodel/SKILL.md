@@ -30,7 +30,7 @@ Derives the data model from the journeys and the glossary and writes `model.dbml
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Derive, name and approve the model** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 1–4, applying `tree/10_blueprint/datamodel/README.md § Naming` to every entity, field, enum and relation.
-2. **Write `model.dbml` and `model.json`** — `tree/10_blueprint/datamodel/model.md`.
-3. **Write `seed.json` with all four scenarios** — `tree/10_blueprint/datamodel/seed.md`; then step 7 of the README's `## Writing it` (a stack export is `build-database`'s).
+2. **Write `model.dbml` and `model.json`** — `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first; entity `id`s are the PascalCase model names.
+3. **Write `seed.json` with all four scenarios** — `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`; then step 7 of the README's `## Writing it` (a stack export is `build-database`'s).
 
 **Done when** `model.dbml`, `model.json` and `seed.json` exist under `_concept/10_blueprint/datamodel/`, the model is approved, every model name and enum vocabulary is a term in `glossary.md`, and `seed.json` carries all four standard scenarios.

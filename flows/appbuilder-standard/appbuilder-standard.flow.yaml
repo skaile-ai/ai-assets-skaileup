@@ -3,10 +3,11 @@ version: "0.1.0"
 name: Appbuilder Standard
 description: >-
   The full path for a multi-user app: discovery, the shared vocabulary and brand, journeys,
-  then the data model before any feature is specified, featuresets and behaviours, the
-  per-feature spec loop that writes every screen, the app shell, the blueprint, the mockup
-  and feedback pass over those screens, the build against the codebase's standards, and
-  the review gate that ends in a release grade.
+  then the data model and the app's interaction design before any feature is specified,
+  featuresets and behaviours, the per-feature spec loop that writes every screen, the app
+  shell, the blueprint, the mockup and feedback pass over those screens, the build against
+  the codebase's standards, and the review gate (code, interaction patterns, concept) that
+  ends in a release grade.
 meta:
   icon: i-heroicons-squares-2x2
   onboarding:
@@ -30,6 +31,7 @@ requires:
   - skill:@skaile-ai/design-brand
   - skill:@skaile-ai/experience-journeys
   - skill:@skaile-ai/architecture-datamodel
+  - skill:@skaile-ai/experience-interaction
   - skill:@skaile-ai/spec-featuresets
   - skill:@skaile-ai/experience-behaviors
   - skill:@skaile-ai/spec-feature
@@ -49,6 +51,7 @@ requires:
   - skill:@skaile-ai/quality-test
   - skill:@skaile-ai/quality-e2e
   - skill:@skaile-ai/quality-review
+  - skill:@skaile-ai/quality-interaction
   - skill:@skaile-ai/ops-review
   - skill:@skaile-ai/quality-release
 globals:
@@ -61,21 +64,21 @@ nodes:
   - id: g-conceptualization
     type: group
     position: { x: 0, y: 0 }
-    style: { width: 3680, height: 240 }
+    style: { width: 3880, height: 240 }
     data:
       label: Conceptualization
       phase: conceptualization
   - id: g-implementation
     type: group
-    position: { x: 3720, y: 0 }
+    position: { x: 3920, y: 0 }
     style: { width: 1280, height: 240 }
     data:
       label: Implementation
       phase: implementation
   - id: g-review
     type: group
-    position: { x: 5040, y: 0 }
-    style: { width: 1080, height: 240 }
+    position: { x: 5240, y: 0 }
+    style: { width: 1280, height: 240 }
     data:
       label: Review
       phase: review
@@ -135,6 +138,13 @@ nodes:
     data:
       skill: architecture-datamodel
       label: Data Model
+      phase: conceptualization
+  - id: interaction
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-interaction
+      label: Interaction
       phase: conceptualization
   - id: featuresets
     type: skill
@@ -277,6 +287,13 @@ nodes:
       skill: quality-review
       label: Code Review
       phase: review
+  - id: interaction-check
+    type: skill
+    parentNode: g-review
+    data:
+      skill: quality-interaction
+      label: Interaction Check
+      phase: review
   - id: ops-review
     type: skill
     parentNode: g-review
@@ -299,7 +316,8 @@ edges:
   - { id: e-glossary-brand, source: glossary, target: brand, type: flow }
   - { id: e-brand-journeys, source: brand, target: journeys, type: flow }
   - { id: e-journeys-datamodel, source: journeys, target: datamodel, type: flow }
-  - { id: e-datamodel-featuresets, source: datamodel, target: featuresets, type: flow }
+  - { id: e-datamodel-interaction, source: datamodel, target: interaction, type: flow }
+  - { id: e-interaction-featuresets, source: interaction, target: featuresets, type: flow }
   - { id: e-featuresets-behaviors, source: featuresets, target: behaviors, type: flow }
   - { id: e-behaviors-feature, source: behaviors, target: feature, type: flow }
   - { id: e-feature-shell, source: feature, target: shell, type: flow }
@@ -318,5 +336,6 @@ edges:
   - { id: e-branch-test, source: branch, target: test, type: flow }
   - { id: e-test-e2e, source: test, target: e2e, type: flow }
   - { id: e-e2e-review, source: e2e, target: review, type: flow }
-  - { id: e-review-ops-review, source: review, target: ops-review, type: flow }
+  - { id: e-review-interaction-check, source: review, target: interaction-check, type: flow }
+  - { id: e-interaction-check-ops-review, source: interaction-check, target: ops-review, type: flow }
   - { id: e-ops-review-release, source: ops-review, target: release, type: flow }

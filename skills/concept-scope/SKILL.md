@@ -23,7 +23,7 @@ Writes `_concept/01_meta/scope.yaml`, the first file a project grows: the **flow
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Record the sizing** — `tree/01_meta/scope.md`. Its `## Writing it` is the whole procedure; its `## Project types` table resolves `project_type`.
+1. **Record the sizing** — `tree/01_meta/scope.md`. Its `## Writing it` is the whole procedure; its `## Project types` table resolves `project_type`; the record is validated against `tree/01_meta/scope.schema.json` before it is written.
 2. **Leave the pointer** — `tree/README.md § _concept/README.md`. Write that fixed text to `_concept/README.md` once the scope file is on disk.
 
 **Done when** `_concept/01_meta/scope.yaml` exists, its `flow` is one of the four, its `project_type` is a row of the `## Project types` table, the user has seen the reasoning, and `_concept/README.md` holds the pointer.

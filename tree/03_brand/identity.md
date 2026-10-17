@@ -36,8 +36,8 @@ Body sections: the direction and why it fits this product; colour usage rules, e
 
 ## Writing it
 
-Follow the procedure in `tree/03_brand/README.md § Writing it`; this node is step 5's first file. Take Tone and copy from the brief and the direction the user approved, and ask only when those leave the voice open, built on the feeling chosen in step 2. `approved: <date>` is written with the user's yes, per `tree/README.md § Frontmatter every markdown artifact carries`.
+Follow the procedure in `tree/03_brand/README.md § Writing it`; this node is step 5's first file. `approved: <date>` is also recorded in the token file (`tree/03_brand/brand.tokens.md § Writing it`). Take Tone and copy from the brief and the direction the user approved, and ask only when those leave the voice open, built on the feeling chosen in step 2. `approved: <date>` is written with the user's yes, per `tree/README.md § Frontmatter every markdown artifact carries`.
 
 ## Checks
 
-Every body section above is present, `mood` and `mode` match `tokens.json` (`mode`), and `approved:` is set.
+Every body section above is present, `mood` and `mode` match the token files (`tree/03_brand/brand.tokens.md § Light and dark`), and `approved:` is set.

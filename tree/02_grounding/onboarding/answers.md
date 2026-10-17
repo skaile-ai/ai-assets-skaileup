@@ -13,7 +13,7 @@ pre-collected input; `concept-onboard` merges those files into `answers.json` on
 
 ## Format
 
-A data file with no frontmatter. Keys are the `id` values of the `inputs_optional` fields a
+A data file with no frontmatter, described by `tree/02_grounding/onboarding/onboarding-answers.schema.json` (open: every skill's input dialog may add field ids; `last_updated` required). Keys are the `id` values of the `inputs_optional` fields a
 dialog rendered (`framework`, `database`, `ui_library`, `auth`, `has_brand`, …), holding the raw
 value; six reserved keys sit beside them: `approved`, `last_updated`, `confidence`, `rationale`,
 `renderer`, `seeds`.
@@ -64,13 +64,13 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
 6. Scan `02_grounding/seeds/` and show a table of file → artifact it seeds → grade; let the user
    correct it before recording, because a misclassified seed is ignored or treated as truth.
    Read the files where they sit and leave them there.
-7. Write the remaining answers: technology answers with `confidence` and any `rationale`, the
+7. Validate the record against `tree/02_grounding/onboarding/onboarding-answers.schema.json` (dates as ISO text), then write the remaining answers: technology answers with `confidence` and any `rationale`, the
    brand answer and file location, `renderer`, the `seeds` list. Set `last_updated`, carry
    `approved` forward on every write, and set a new `approved: <date>` once the user confirms.
    Report what was captured and which questions went out.
 
 ## Checks
 
-- The file parses as JSON and `approved` is present only after confirmation.
+- The file parses as JSON, validates against `tree/02_grounding/onboarding/onboarding-answers.schema.json`, and `approved` is present only after confirmation.
 - Every file under `02_grounding/seeds/` appears in `seeds`.
 - Every technology answer carries a `confidence` value.

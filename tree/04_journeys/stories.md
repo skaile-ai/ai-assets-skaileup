@@ -12,6 +12,8 @@ The personas and the staged journeys the product exists for, each with testable 
 
 A data file, not a markdown artifact — no frontmatter.
 
+The machine-readable form is `tree/04_journeys/journeys.schema.json`.
+
 ```yaml
 version: "1.0"
 last_updated: YYYY-MM-DD
@@ -87,7 +89,7 @@ Journeys register nothing by frontmatter: `spec-featuresets` discovers them by r
 4. **Map the rest, staged by what they are for, and write the `stages:` section.** `vital` — the other journeys that make the product usable day to day. `hygiene` — the operational flows nobody buys the product for and it cannot run without: onboarding, settings, roles, import and export. `backlog` — journeys deliberately out of this scope, sourced from the goals' non-goals and the gaps research found. The stage sets each story's priority, and `spec-featuresets` and `experience-shell` read it.
 5. **Write acceptance criteria in EARS for every story** — at least two on a hero story, one everywhere else — in the pattern that fits, each with its `AC-<story-id>-<nn>` id given at write time. A vague criterion ("the system should work") is fixed here, once.
 6. **Give every story its downstream hints** — `candidate_features`, `candidate_entities`, `candidate_screens` — as plain strings; they are hints, not specs. `candidate_entities` are read from `glossary.md`, never coined; a concept with no term is handed back, with the flow re-entering `concept-glossary`.
-7. **Write the file** — project name, problem and success metrics from the brief, the personas, the `stages:` section with its four definitions, then the journeys. Show the map as a table by stage with counts, and iterate until the user approves.
+7. **Write the file** — validated against `tree/04_journeys/journeys.schema.json` before writing (convert YAML dates to ISO text first: an unquoted `2026-10-17` loads as a date, and `json.loads(json.dumps(doc, default=str))` turns it back) — with the project name, problem and success metrics from the brief, the personas, the `stages:` section with its four definitions, then the journeys. Show the map as a table by stage with counts, and iterate until the user approves.
 
 ## Checks
 

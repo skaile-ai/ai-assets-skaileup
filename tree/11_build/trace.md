@@ -21,9 +21,11 @@ features:
 last_updated: YYYY-MM-DD
 ```
 
-`featureset` and the slug come from the feature file, found by globbing `_concept/05_features/*/<feature_slug>.md`. `commits` are the landed shas; `code` is the source files those commits touched, with tests and everything under `_concept/` excluded.
+`featureset` and the slug come from the feature file, found by globbing `_concept/05_features/*/<feature_slug>.md`. `commits` are the landed shas; `code` is the source files those commits touched, with tests and everything under `_concept/` excluded. The JSON Schema `tree/11_build/trace.schema.json` (2020-12) is the authority on shape: beyond the keys above it admits the host's coverage columns per feature (`specced`, `sliced`, `committed`, `evaluated`, `documented`, `code_refs`) and a top-level `orphans: [{ path, reason }]` (code the host's coverage page found with no feature behind it); `build-implement` writes neither.
 
 ## Writing it
+
+Validate the file against `tree/11_build/trace.schema.json` before writing it, after turning YAML dates into ISO text (`last_updated` is `YYYY-MM-DD`; `tree/README.md § Frontmatter every markdown artifact carries`).
 
 Written by `build-implement` after the last commit of a slice has landed:
 

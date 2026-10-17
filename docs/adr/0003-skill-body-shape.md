@@ -1,6 +1,6 @@
 # 0003 — 140-line ceiling; constraints at the step they bind
 
-**Status:** superseded by 0015 ([the instruction tree mirrors the artifact tree](0015-the-instruction-tree-mirrors-the-artifact-tree.md))
+**Status:** superseded by 0017 ([the instruction tree mirrors the artifact tree](0017-the-instruction-tree-mirrors-the-artifact-tree.md))
 
 ## Context
 

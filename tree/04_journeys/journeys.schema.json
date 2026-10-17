@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skaile:schema:journeys",
+  "title": "Journeys — personas and the staged story map",
+  "description": "Written by experience-journeys. One journey is one story; its id is the <story-id> in criterion ids (tree/04_journeys/stories.md § Criterion ids). Dates: validate after turning YAML dates into ISO text, per tree/README.md § Frontmatter every markdown artifact carries.",
+  "x-artifact": "_concept/04_journeys/stories.yaml",
+  "type": "object",
+  "required": ["version", "stages", "personas", "journeys"],
+  "properties": {
+    "version": { "type": "string" },
+    "last_updated": { "$ref": "#/$defs/isoDate" },
+    "stages": {
+      "type": "object",
+      "description": "The one place stages are defined: a one-line definition per stage id.",
+      "required": ["hero", "vital", "hygiene", "backlog"],
+      "properties": {
+        "hero": { "type": "string" },
+        "vital": { "type": "string" },
+        "hygiene": { "type": "string" },
+        "backlog": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "personas": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/persona" }
+    },
+    "journeys": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/journey" },
+      "description": "Exactly one journey carries stage hero; a second means the product's core has not been decided.",
+      "contains": {
+        "type": "object",
+        "required": ["stage"],
+        "properties": { "stage": { "const": "hero" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    }
+  },
+  "$defs": {
+    "isoDate": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Lowercase letters, digits and underscore; never contains a hyphen."
+    },
+    "persona": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "goals": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "criterion": {
+      "type": "object",
+      "required": ["id", "ears"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^AC-[a-z0-9_]+-[0-9]{2}$",
+          "description": "AC-<story-id>-<nn>, numbered per story from 01; never renumbered or reused."
+        },
+        "ears": {
+          "type": "string",
+          "description": "The EARS criterion, per tree/04_journeys/stories.md § EARS template."
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "description": "What the user does." },
+        "system_response": { "type": "string", "description": "What the system does." },
+        "acceptance": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/criterion" }
+        }
+      }
+    },
+    "journey": {
+      "type": "object",
+      "required": ["id", "persona", "title", "stage", "steps"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "persona": { "$ref": "#/$defs/slug", "description": "A persona id from personas." },
+        "title": { "type": "string" },
+        "stage": {
+          "enum": ["hero", "vital", "hygiene", "backlog"],
+          "description": "An id from stages."
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/step" }
+        },
+        "candidate_features": { "type": "array", "items": { "type": "string" } },
+        "candidate_entities": { "type": "array", "items": { "type": "string" } },
+        "candidate_screens": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

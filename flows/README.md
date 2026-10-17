@@ -26,17 +26,22 @@ iteration and the graph shows one pass, marked by a comment at the loop's first 
 ## Node order
 
 One linear `type: flow` chain per flow. The order encodes the hierarchy: domain language
-(brief, glossary) → data model → features → screens → mockups → architecture → build →
-quality. Node id = skill without its domain prefix, except `feature` = `spec-feature`,
-`featuresets` = `spec-featuresets`, `journeys`/`behaviors`/`shell` = `experience-*`.
+(brief, glossary) → data model → interaction design → features → screens → mockups →
+architecture → build → quality. Node id = skill without its domain prefix, except
+`feature` = `spec-feature`, `featuresets` = `spec-featuresets`, `journeys`/`behaviors`/
+`shell` = `experience-*`, `interaction` = `experience-interaction` and `interaction-check`
+= `quality-interaction`.
 
 |Flow|Order|
 |---|---|
-|`appbuilder-standard`|scope → onboard → research → brief → glossary → brand → journeys → datamodel → featuresets → behaviors → feature → shell → techstack → system → walkthrough → storybook → annotate → feedback → scaffold → database → standards → plan → implement → branch → test → e2e → review → ops-review → release|
+|`appbuilder-standard`|scope → onboard → research → brief → glossary → brand → journeys → datamodel → interaction → featuresets → behaviors → feature → shell → techstack → system → walkthrough → storybook → annotate → feedback → scaffold → database → standards → plan → implement → branch → test → e2e → review → interaction-check → ops-review → release|
 |`appbuilder-mvp`|scope → onboard → brief → glossary → journeys → featuresets → techstack → scaffold → plan → implement → test|
-|`skaileup-concept-only`|scope → onboard → research → brief → glossary → brand → journeys → datamodel → featuresets → behaviors → feature → shell → walkthrough → annotate → feedback → ops-review|
-|`skaileup-concept-reverse`|scope → reverse → standards → brief → glossary → brand → journeys → datamodel → featuresets → shell → feature → techstack → system → ops-review|
+|`skaileup-concept-only`|scope → onboard → research → brief → glossary → brand → journeys → datamodel → interaction → featuresets → behaviors → feature → shell → walkthrough → annotate → feedback → ops-review|
+|`skaileup-concept-reverse`|scope → reverse → standards → brief → glossary → brand → journeys → datamodel → interaction → featuresets → shell → feature → techstack → system → interaction-check → ops-review|
 
 `shell` follows the `feature` loop in every flow that has both: it derives the app-shell
-navigation from the screens the loop wrote. `concept-scope` is the entry of all four —
-reverse included — and writes the flow id into `scope.yaml`.
+navigation from the screens the loop wrote. `interaction` writes `APP-DESIGN.md` at the
+project root once, before the feature loop reads it; `interaction-check` hard-gates on it
+and sits in the review group. `appbuilder-mvp` carries neither — it grows no screens.
+`concept-scope` is the entry of all four — reverse included — and writes the flow id into
+`scope.yaml`.

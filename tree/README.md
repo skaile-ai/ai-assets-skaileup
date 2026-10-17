@@ -15,7 +15,7 @@ Before reading or writing anything under `_concept/<p>`, read the node at the sa
 | `_concept/` thing | node |
 |---|---|
 | directory `X/` | `X/README.md` here (also the node of `X/README.md` when that artifact exists) |
-| file `X/name.ext` | `X/name.md` here (extension always `.md`: `tokens.json` → `tokens.md`) |
+| file `X/name.ext` | `X/name.md` here (extension always `.md`: `stories.yaml` → `stories.md`) |
 | placeholder segment `<x>` | `[x]` in the node path: `05_features/[featureset]/[feature].md` |
 | siblings sharing a stem, or children a directory README covers | one node whose `path:` is a list |
 
@@ -37,6 +37,7 @@ _concept/                             the artifact tree, its read direction and 
 │   │   ├── brief-seeds.md            pitch, audience, problem and comparables as the repository's docs state them
 │   │   ├── datamodel.md              entities, fields, relations and enums the schema declares
 │   │   ├── index.md                  catalogue of findings files and raw material, with the skill that took each
+│   │   ├── interaction.md            surfaces, editors, save models, messages, search as the code has them today
 │   │   ├── routes.md                 every route or endpoint, the file defining it, what a user does there
 │   │   ├── screens.md                page components behind the routes, with bindings, interactions and states
 │   │   └── stack.md                  the platform, frameworks, database and tooling the manifests declare
@@ -58,9 +59,11 @@ _concept/                             the artifact tree, its read direction and 
 │       ├── index.yml                 fast matching of conventions by applies_to and keywords
 │       └── <domain>/
 ├── 03_brand/                         the visual identity folder and the procedure that fills it
+│   ├── brand.dark.tokens.json        brand as W3C design tokens, with optional dark overlay and resolver
+│   ├── brand.resolver.json           brand as W3C design tokens, with optional dark overlay and resolver
+│   ├── brand.tokens.json             brand as W3C design tokens, with optional dark overlay and resolver
 │   ├── brandbook.html                self-contained visual reference for the brand
-│   ├── identity.md                   colours, fonts, tone of voice and copy guidelines
-│   └── tokens.json                   machine-readable design tokens
+│   └── identity.md                   colours, fonts, tone of voice and copy guidelines
 ├── 04_journeys/                      personas and the staged story map
 │   └── stories.yaml                  personas, story map by stage, EARS criteria with ids
 ├── 05_features/                      the feature roster and one spec per feature, grouped into featuresets
@@ -86,9 +89,11 @@ _concept/                             the artifact tree, its read direction and 
 │   │   └── triage/                   deterministic routing of each annotation to the file it belongs in
 │   ├── storybook/                    standalone Storybook of components, page compositions and journey click-dummies
 │   └── walkthrough/                  clickable site per screen and journey, plus the manifest mockup-annotate reads
-├── 10_blueprint/                     how the app is built — stack, custom architecture, decisions, data model
-│   ├── architecture.md               custom modules, protocols and every external integration beyond the template
+├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, decisions, data model
+│   ├── architecture.md               C4 levels — system context, containers, components, deployment, risks
+│   ├── asyncapi.yaml                 AsyncAPI 3.1 contract of the channels the project publishes or consumes
 │   ├── decisions.md                  design-time decision records, append-only
+│   ├── openapi.yaml                  OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
 │   ├── techstack.md                  chosen technologies, resolved to one template id; no third-party services
 │   └── datamodel/                    stack-neutral data model, naming rules and how it becomes a database
 │       ├── model.dbml                the canonical stack-neutral model — semantic types, relations, metadata
@@ -96,6 +101,7 @@ _concept/                             the artifact tree, its read direction and 
 │       └── seed.json                 realistic seed scenarios for mockups, screen specs and E2E tests
 └── 11_build/                         slices, trace, criteria ledger, reviews, release verdict and decisions
     ├── decisions.md                  build-time decision records, append-only
+    ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
     ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
     ├── trace.yaml                    feature to slices to commits to code, the one feature-to-commit join
     ├── acceptance-criteria/          the criteria status ledger, one checkbox file per feature
@@ -152,7 +158,7 @@ approved: YYYY-MM-DD        # ISO date of the user's yes; absent = not yet appro
 ---
 ```
 
-The skill holding an artifact's approval step writes `approved:` in the same write that records the user's yes, and only then; a file still pending carries no `approved:` key rather than an empty one, and a later edit that changes the substance clears it until the user says yes again. Data files without frontmatter (`answers.json`, `tokens.json`) carry the same key at the top level where their node says so. Each node adds that artifact's own fields to these two.
+The skill holding an artifact's approval step writes `approved:` in the same write that records the user's yes, and only then; a file still pending carries no `approved:` key rather than an empty one, and a later edit that changes the substance clears it until the user says yes again. `tree/frontmatter.schema.json` is the machine-readable form of these two fields. To validate, load the YAML, turn date values into ISO text — PyYAML reads an unquoted `2026-10-17` as a date, and `json.loads(json.dumps(doc, default=str))` does it — then validate. Data files without frontmatter carry the same key where their node says so: `answers.json` at its top level, `brand.tokens.json` under `$extensions["ai.skaile"]` (`tree/03_brand/brand.tokens.md`). Each node adds that artifact's own fields to these two.
 
 ## How a skill runs
 
@@ -161,6 +167,29 @@ The skill holding an artifact's approval step writes `approved:` in the same wri
 3. **One question per message.** A question goes out as its own message, built on the user's last answer, with a status update or explanation in the message before it; a technical term is explained in parentheses, because a question buried at the end of a long message gets skimmed.
 4. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
 5. **Standalone or in a flow.** A standalone run applies the same gates, and its next steps are the skills whose required paths are now satisfied, which are the edges leaving this skill's flow node in the flow file; when none is unblocked, show what is missing and which skill produces it. When a flow is running the host dispatches the next step itself.
+
+## Beside the tree
+
+One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and has one writer, `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `.claude/contracts/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`.
+
+## arc42 map
+
+[arc42](https://arc42.org) 9.0 has twelve sections. The tree is not organised by them; this is where each one lives, so a reader who thinks in arc42 finds the same content.
+
+| arc42 | `_concept/` home |
+|---|---|
+| 1 Introduction & Goals | `_concept/brief.md`, `_concept/goals.md` |
+| 2 Constraints | `_concept/goals.md` (constraints, non-goals) |
+| 3 Context & Scope | `_concept/10_blueprint/architecture.md`, section System context |
+| 4 Solution Strategy | `_concept/10_blueprint/techstack.md` |
+| 5 Building Block View | `_concept/10_blueprint/architecture.md`, sections Containers and Components |
+| 6 Runtime View | `_concept/06_behaviors/`, `_concept/04_journeys/` |
+| 7 Deployment View | `_concept/10_blueprint/architecture.md`, section Deployment |
+| 8 Crosscutting Concepts | `APP-DESIGN.md`, `_concept/07_screens/shell.md` |
+| 9 Architecture Decisions | `_concept/10_blueprint/decisions.md`, `_concept/11_build/decisions.md` |
+| 10 Quality Requirements | `_concept/goals.md`, `tree/11_build/release.md § Release thresholds` |
+| 11 Risks & Technical Debt | `_concept/10_blueprint/architecture.md`, section Risks and technical debt |
+| 12 Glossary | `_concept/glossary.md` |
 
 ## _concept/README.md
 
@@ -171,6 +200,8 @@ This tree is maintained by the skaileup-tree collection. Every path here has an 
 `.claude/contracts/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`).
 Read the folder README and the node before editing a file here; the node says who writes it,
 its format, and what reads it.
+The one artifact outside this tree, APP-DESIGN.md at the project root, has its node at
+`.claude/contracts/shared-contracts/APP-DESIGN.md`.
 ```
 
 ## Checks

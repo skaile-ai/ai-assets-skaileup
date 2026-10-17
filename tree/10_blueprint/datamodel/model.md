@@ -6,9 +6,11 @@ writers: [architecture-datamodel]
 
 # _concept/10_blueprint/datamodel/model.dbml, model.json
 
-The canonical, stack-neutral data model, in two forms: `model.dbml` to read and `model.json` for the editor canvas. Both carry semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) always target `model.json`; stack-specific files are derived and never referenced. A container of models under `models`, `entities` or `tables` is accepted, each model identified by `name`; names follow `tree/10_blueprint/datamodel/README.md § Naming`.
+The canonical, stack-neutral data model, in two forms: `model.dbml` to read and `model.json` for the editor canvas. Both carry semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) always target the entity `id` in `model.json`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
 
 ## Format
+
+`model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` (JSON Schema 2020-12, lenient: the required keys are those the host's editor needs). Validate before writing. Top-level keys: `version` (`"1.0"`), `entities[]`, `relationships[]` and optional `enums[]`; `editor` (canvas viewport) is written by the editor, never by a skill. An entity carries `id` (PascalCase singular — the model name every other artifact cites), `display_name`, `fields[]` and the metadata below; a field carries a stable `id`, a snake_case `name` and a semantic `type` (the scalar types, `enum`, or `relation`).
 
 **Scalar types**
 
@@ -31,10 +33,11 @@ The canonical, stack-neutral data model, in two forms: `model.dbml` to read and 
 
 **Optionality.** Every field is required by default; mark an optional one `required: false`. The `?` suffix belongs to Prisma output and is never written in the model.
 
-**Enum type.** Defined inline as an object mapping PascalCase values to descriptions; a shared enum is defined at the top level of the schema and referenced by name. The translator generates the concrete enum (Prisma `enum`, SQL `CHECK`).
+**Enum type.** Defined inline as an object mapping PascalCase values to descriptions. Inline enums stay as written below; a shared enum reused across models lives in the top-level `enums[]`, each `{ id, values: [{ value, label }] }`, and a field references it by `enum_id`. The translator generates the concrete enum (Prisma `enum`, SQL `CHECK`).
 
 ```json
 {
+  "id": "task_status",
   "name": "status",
   "type": "enum",
   "values": {
@@ -53,7 +56,7 @@ The canonical, stack-neutral data model, in two forms: `model.dbml` to read and 
 | `o2m` | One-to-many (inverse of m2o) | user.tasks → Task[] |
 | `m2m` | Many-to-many | Task ↔ Tag (via junction model) |
 
-Declare `m2o` with the `_id` suffix on the owning side; never declare `o2m`, the translator generates it; give every `m2m` an explicit junction model (`TaskTag` with an `m2o` to both sides).
+Declare `m2o` with the `_id` suffix on the owning side, once in the entity's fields (`type: "relation"`, `relation_target` = the target entity `id`) and once in `relationships[]` (`from`, `from_field`, `to`, `type`, optional `on_delete`: `cascade | set_null | restrict`); never declare `o2m`, the translator generates it; give every `m2m` an explicit junction model (`TaskTag` with an `m2o` to both sides).
 
 **Model metadata**
 
@@ -80,29 +83,33 @@ Declare `m2o` with the `_id` suffix on the owning side; never declare `o2m`, the
 
 Stack-specific concerns (Prisma decorators, Directus system collections, PostXL `standardFields` casing) belong to the stack translator, not to the model; see `tree/10_blueprint/datamodel/README.md § Materialising the database`.
 
-**Example.** A minimal whole `model.json` in the canonical shape: the `models` container, each model identified by `name`, the `m2o` field typed with the referenced model's snake_case name, and the status enum inline.
+**Example.** A minimal whole `model.json` that validates against the schema: entities identified by PascalCase `id`, an `m2o` field of `type: "relation"` whose `relation_target` is the referenced entity id and which is also listed once in `relationships[]` (owning side only), and the status enum inline.
 
 ```json
 {
-  "models": [
+  "version": "1.0",
+  "entities": [
     {
-      "name": "user",
+      "id": "User",
+      "display_name": "User",
       "label_field": "display_name",
       "key_field": "email",
       "standard_fields": ["id", "created_at", "updated_at"],
       "fields": [
-        { "name": "display_name", "type": "string", "max_length": 80, "faker": "faker.person.fullName" },
-        { "name": "email", "type": "string", "unique": true, "faker": "faker.internet.email" },
-        { "name": "avatar", "type": "image", "required": false }
+        { "id": "user_display_name", "name": "display_name", "type": "string", "max_length": 80, "faker": "faker.person.fullName" },
+        { "id": "user_email", "name": "email", "type": "string", "unique": true, "faker": "faker.internet.email" },
+        { "id": "user_avatar", "name": "avatar", "type": "image", "required": false }
       ]
     },
     {
-      "name": "task",
+      "id": "Task",
+      "display_name": "Task",
       "label_field": "title",
       "standard_fields": ["id", "created_at", "updated_at"],
       "fields": [
-        { "name": "title", "type": "string", "max_length": 120 },
+        { "id": "task_title", "name": "title", "type": "string", "max_length": 120 },
         {
+          "id": "task_status",
           "name": "status",
           "type": "enum",
           "values": {
@@ -111,17 +118,21 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
             "Published": "Live and visible"
           }
         },
-        { "name": "due_date", "type": "date", "required": false },
-        { "name": "owner_id", "type": "user", "indexed": true }
+        { "id": "task_due_date", "name": "due_date", "type": "date", "required": false },
+        { "id": "task_owner_id", "name": "owner_id", "type": "relation", "relation_target": "User", "indexed": true }
       ]
     }
+  ],
+  "relationships": [
+    { "id": "task_owner", "from": "Task", "from_field": "owner_id", "to": "User", "type": "m2o", "on_delete": "cascade" }
   ]
 }
 ```
 
 ## Checks
 
+- `model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` before it is written.
 - Every field type is a semantic type from the table above; no raw SQL or Prisma type appears.
-- Every model sets `label_field` and declares `standard_fields`.
+- Every entity sets `label_field` and declares `standard_fields`.
 - Every `m2m` has a junction model and no `o2m` is declared.
 - `model.dbml` and `model.json` agree; where they diverge, a hand edit is the likely cause and `build-database` reports every disagreement rather than preferring one.

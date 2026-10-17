@@ -5,8 +5,9 @@ description: >-
   Builds a concept out of an existing repository. Scope fixes the flow, then the repository
   is read for findings only — stack with its confidence grade, routes, screens, data model
   and brand — and the codebase's standards are read. The brief, glossary, brand, journeys,
-  data model, featuresets, shell, every feature spec and the stack and system blueprint are
-  then written from those findings, ending on a concept review.
+  data model, interaction design, featuresets, shell, every feature spec and the stack and
+  system blueprint are then written from those findings, checked against the interaction
+  patterns, ending on a concept review.
 meta:
   icon: i-heroicons-arrow-path
   onboarding:
@@ -29,11 +30,13 @@ requires:
   - skill:@skaile-ai/design-brand
   - skill:@skaile-ai/experience-journeys
   - skill:@skaile-ai/architecture-datamodel
+  - skill:@skaile-ai/experience-interaction
   - skill:@skaile-ai/spec-featuresets
   - skill:@skaile-ai/experience-shell
   - skill:@skaile-ai/spec-feature
   - skill:@skaile-ai/architecture-techstack
   - skill:@skaile-ai/architecture-system
+  - skill:@skaile-ai/quality-interaction
   - skill:@skaile-ai/ops-review
 globals:
   research_depth: light
@@ -46,21 +49,21 @@ nodes:
   - id: g-conceptualization
     type: group
     position: { x: 0, y: 0 }
-    style: { width: 2680, height: 240 }
+    style: { width: 2880, height: 240 }
     data:
       label: Conceptualization
       phase: conceptualization
   - id: g-implementation
     type: group
-    position: { x: 2720, y: 0 }
+    position: { x: 2920, y: 0 }
     style: { width: 280, height: 240 }
     data:
       label: Implementation
       phase: implementation
   - id: g-review
     type: group
-    position: { x: 3040, y: 0 }
-    style: { width: 280, height: 240 }
+    position: { x: 3240, y: 0 }
+    style: { width: 480, height: 240 }
     data:
       label: Review
       phase: review
@@ -121,6 +124,13 @@ nodes:
       skill: architecture-datamodel
       label: Data Model
       phase: conceptualization
+  - id: interaction
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-interaction
+      label: Interaction
+      phase: conceptualization
   - id: featuresets
     type: skill
     parentNode: g-conceptualization
@@ -161,6 +171,13 @@ nodes:
       label: System
       phase: conceptualization
 
+  - id: interaction-check
+    type: skill
+    parentNode: g-review
+    data:
+      skill: quality-interaction
+      label: Interaction Check
+      phase: review
   - id: ops-review
     type: skill
     parentNode: g-review
@@ -176,9 +193,11 @@ edges:
   - { id: e-glossary-brand, source: glossary, target: brand, type: flow }
   - { id: e-brand-journeys, source: brand, target: journeys, type: flow }
   - { id: e-journeys-datamodel, source: journeys, target: datamodel, type: flow }
-  - { id: e-datamodel-featuresets, source: datamodel, target: featuresets, type: flow }
+  - { id: e-datamodel-interaction, source: datamodel, target: interaction, type: flow }
+  - { id: e-interaction-featuresets, source: interaction, target: featuresets, type: flow }
   - { id: e-featuresets-shell, source: featuresets, target: shell, type: flow }
   - { id: e-shell-feature, source: shell, target: feature, type: flow }
   - { id: e-feature-techstack, source: feature, target: techstack, type: flow }
   - { id: e-techstack-system, source: techstack, target: system, type: flow }
-  - { id: e-system-ops-review, source: system, target: ops-review, type: flow }
+  - { id: e-system-interaction-check, source: system, target: interaction-check, type: flow }
+  - { id: e-interaction-check-ops-review, source: interaction-check, target: ops-review, type: flow }

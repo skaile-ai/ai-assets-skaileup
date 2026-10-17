@@ -3,7 +3,7 @@
 `tree/` mirrors `_concept/` entry for entry. A node is the one place that says what a part
 is, how it is written, and when it is done. Skills are routes through nodes (see
 [`skill-template.md`](./skill-template.md)); nothing else holds instructions.
-[ADR 0015](./adr/0015-the-instruction-tree-mirrors-the-artifact-tree.md) has the reasoning.
+[ADR 0017](./adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md) has the reasoning.
 
 ## Where a node lives (R1)
 
@@ -19,6 +19,10 @@ Resolution of a `_concept/` path: first a literal match against any node's `path
 directory resolves to its `README.md`; a file resolves only through a `path:` entry, which every
 file node carries). A path below a directory entry of a list-form `path:` resolves to that README. Nothing else
 resolves. Node names are lowercase; every directory under `tree/` has a `README.md`.
+
+**The one root artifact.** `APP-DESIGN.md` sits beside `_concept/`, not in it; its node is
+`tree/APP-DESIGN.md` with `path: APP-DESIGN.md` (no `_concept/` prefix). It is the only node
+whose `path:` leaves `_concept/` (`PROJECT_ROOT_ARTIFACTS` in `scripts/check.py`).
 
 ## The shape (R2)
 
@@ -61,7 +65,15 @@ writers: [design-brand]                  # skills whose `produces` resolve here;
   skill-specific use stays in `## Writing it`.
 - `writers` is exactly the set of skills whose `produces` resolve to this node, and every
   writer has a `produces` entry that resolves here (or sits above or below it); `[]` means
-  nothing generates the part.
+  nothing generates the part. A **conditional file** — one a skill writes only sometimes,
+  so its `produces` leaves it out (`openapi.yaml`, `asyncapi.yaml`) — carries
+  `writers: []`, and its intro paragraph names the skill that writes it and when.
+- **A schema sits beside its node.** A JSON Schema for a machine artifact is a
+  `<name>.schema.json` file in the node's directory (`tree/03_brand/brand-tokens.schema.json`
+  beside `brand.tokens.md`). The node cites it as `` `tree/<dir>/<file>.schema.json` `` in
+  `## Format` or at the write step, and says to validate before writing. A schema file is
+  not a node: the checker skips it, and its `description` points at the node path and its
+  `§` heading, never at a contract file.
 - Cite another node by its repo-relative path under `tree/`, optionally followed by
   ` § <heading>` for one `##`/`###` heading of it, one citation per line. Cite a skill's own
   tooling as `skills/<name>/…`.

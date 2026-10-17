@@ -2,7 +2,7 @@
 
 All paths are under `_concept/09_mockup/storybook/`. Every value in angle brackets is either
 one of the six stack values resolved in step 1 or a key from
-`_concept/03_brand/tokens.json`.
+`_concept/03_brand/brand.tokens.json`.
 
 ## `package.json`
 
@@ -40,10 +40,10 @@ A Storybook theme object built entirely from tokens and the brief:
 
 | Theme key | Source |
 |---|---|
-| `base` | `tokens.mode` (`light` or `dark`) |
-| `appBg` | `tokens.colors.background` |
-| `fontBase` | `tokens.fonts.body` |
-| `fontCode` | `tokens.fonts.mono` |
+| `base` | `$extensions["ai.skaile"].mode` of `brand.tokens.json` (`light` or `dark`) |
+| `appBg` | `color.background` |
+| `fontBase` | `font.body` |
+| `fontCode` | `font.mono` |
 | `brandTitle` | the app name from `brief.md` |
 
 ## `.storybook/preview.<ts|js>`
@@ -54,19 +54,14 @@ and declares the same viewport presets as `main`.
 ## `src/styles/brand.css`
 
 `:root` carrying the Google Fonts import for the heading and body faces, then one custom
-property per token:
+property per token in `brand.tokens.json`, flattened per
+`tree/03_brand/brand.tokens.md § Flattening to CSS` (path segments joined with
+`-`, prefixed `--token-`: `color.primary` → `--token-color-primary`). The required token set
+is `tree/03_brand/brand.tokens.md § Required tokens`; extra tokens flatten the same way.
 
-```
---color-primary --color-secondary --color-accent --color-background --color-surface
---color-foreground --color-muted --color-border --color-destructive --color-success
---color-warning --radius --spacing-base
---font-heading --font-body --font-mono
---shadow-sm --shadow-md --shadow-lg
-```
-
-`tokens.mode: "both"` adds a `.dark { … }` block overriding the colour set. A single-mode
-brand gets no `.dark` block at all — an unused one drifts silently, because nothing renders
-it.
+When `brand.dark.tokens.json` exists, add a `.dark { … }` block with its tokens, per
+`tree/03_brand/brand.tokens.md § Light and dark`. A brand without that file gets no `.dark`
+block at all — an unused one drifts silently, because nothing renders it.
 
 ## `src/@types/`
 

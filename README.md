@@ -17,7 +17,7 @@ over: projects opt in by pointing `skaile.yaml` at `-tree`.
 
 ```
 skills/<name>/SKILL.md     one directory per skill; the directory name IS the name: field
-tree/                      mirror of _concept/, one node per part — the contract asset
+tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes) — the contract asset
 flows/<id>/<id>.flow.yaml  the graph over skills — order lives here, not in the filesystem
 templates/                 tech-stack references an implementation skill reads
 docs/                      skill and node templates, decision records
@@ -42,7 +42,7 @@ graph carries the sequence and no prose restates it. Four ship:
 | Flow | For |
 |---|---|
 | [`appbuilder-mvp`](./flows/appbuilder-mvp/) | The lean end-to-end path — 9 skills, one featureset pass |
-| [`appbuilder-standard`](./flows/appbuilder-standard/) | A multi-user app in full — 27 skills, discovery through review |
+| [`appbuilder-standard`](./flows/appbuilder-standard/) | A multi-user app in full — 31 skills, discovery through review |
 | [`skaileup-concept-only`](./flows/skaileup-concept-only/) | The conceptualization half alone, to hand a specified product on |
 | [`skaileup-concept-reverse`](./flows/skaileup-concept-reverse/) | A concept built out of an existing repository |
 
@@ -65,6 +65,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [experience-journeys](skills/experience-journeys/) | Defines personas and the staged story map features derive from |
 | [experience-shell](skills/experience-shell/) | Specifies navigation, layout areas, breakpoints and shared screen patterns |
 | [experience-behaviors](skills/experience-behaviors/) | Writes state machines and rules for entity lifecycles |
+| [experience-interaction](skills/experience-interaction/) | Decides where information lives and how it is edited, saved and found, and writes APP-DESIGN.md |
 | [spec-featuresets](skills/spec-featuresets/) | Derives the feature roster and cuts it into featuresets |
 | [spec-feature](skills/spec-feature/) | Writes one feature's permanent spec and every screen it needs |
 | [mockup-walkthrough](skills/mockup-walkthrough/) | Renders a clickable browser walkthrough, one page per screen and journey |
@@ -84,6 +85,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [quality-e2e](skills/quality-e2e/) | Proves journeys end to end in a real browser |
 | [quality-review](skills/quality-review/) | Reviews a finished feature's code adversarially against its spec |
 | [quality-release](skills/quality-release/) | Grades the running app against its brief on seven axes before release |
+| [quality-interaction](skills/quality-interaction/) | Checks the code against APP-DESIGN.md and writes an interaction conformance verdict |
 | [ops-review](skills/ops-review/) | Health-checks _concept/: cross-references and build/ship coverage |
 
 ## Writing a skill or a node
@@ -96,7 +98,7 @@ Instructions live in the node for the part they bind, never in a cross-cutting f
   [`docs/skill-template.md`](./docs/skill-template.md).
 - A **node** is the instruction for one part — start from
   [`docs/node-template.md`](./docs/node-template.md).
-- Why it is shaped this way: [ADR 0015](./docs/adr/0015-the-instruction-tree-mirrors-the-artifact-tree.md).
+- Why it is shaped this way: [ADR 0017](./docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md).
 
 ## Gate
 

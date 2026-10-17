@@ -160,70 +160,55 @@ export default defineConfig({
 
 ## CSS Variables / Theming
 
-Pure Tailwind CSS 4 with no component library. Brand tokens from `_concept/03_brand/tokens.json` map directly to CSS custom properties in the `@theme` block.
+Pure Tailwind CSS 4 with no component library. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`), and the `@theme` block aliases those.
 
 **`assets/css/tailwind.css`:**
 
 ```css
 @import "tailwindcss";
 
+/* :root { --token-color-primary: #…; … } is generated from brand.tokens.json;
+   the .dark { … } block is generated from brand.dark.tokens.json when it exists. */
+
 @theme {
-  /* Colors from tokens.json */
-  --color-primary-50: {tokens.color.primary.50};
-  --color-primary-100: {tokens.color.primary.100};
-  --color-primary-500: {tokens.color.primary.500};
-  --color-primary-600: {tokens.color.primary.600};
-  --color-primary-700: {tokens.color.primary.700};
-  --color-primary-900: {tokens.color.primary.900};
+  /* Colors — DTCG paths color.* */
+  --color-primary: var(--token-color-primary);
+  --color-secondary: var(--token-color-secondary);
+  --color-accent: var(--token-color-accent);
+  --color-background: var(--token-color-background);
+  --color-surface: var(--token-color-surface);
+  --color-text: var(--token-color-text);
+  --color-text-muted: var(--token-color-text-muted);
+  --color-border: var(--token-color-border);
+  --color-success: var(--token-color-success);
+  --color-warning: var(--token-color-warning);
+  --color-error: var(--token-color-error);
 
-  --color-neutral-50: {tokens.color.neutral.50};
-  --color-neutral-100: {tokens.color.neutral.100};
-  --color-neutral-500: {tokens.color.neutral.500};
-  --color-neutral-900: {tokens.color.neutral.900};
+  /* Typography — font.* */
+  --font-heading: var(--token-font-heading);
+  --font-sans: var(--token-font-body);
+  --font-mono: var(--token-font-mono);
 
-  --color-success: {tokens.color.success};
-  --color-warning: {tokens.color.warning};
-  --color-error: {tokens.color.error};
-
-  /* Typography from tokens.json */
-  --font-sans: {tokens.typography.fontFamily.sans};
-  --font-mono: {tokens.typography.fontFamily.mono};
-  --text-base: {tokens.typography.fontSize.base};
-
-  /* Border radius from tokens.json */
-  --radius-sm: {tokens.borderRadius.sm};
-  --radius-md: {tokens.borderRadius.md};
-  --radius-lg: {tokens.borderRadius.lg};
-
-  /* Shadows from tokens.json */
-  --shadow-sm: {tokens.shadow.sm};
-  --shadow-md: {tokens.shadow.md};
-}
-
-/* Dark mode semantic aliases */
-:root {
-  --bg: var(--color-white);
-  --bg-raised: var(--color-neutral-50);
-  --fg: var(--color-neutral-900);
-  --fg-muted: var(--color-neutral-500);
-  --border: var(--color-neutral-200);
-}
-
-.dark {
-  --bg: var(--color-neutral-950);
-  --bg-raised: var(--color-neutral-900);
-  --fg: var(--color-neutral-50);
-  --fg-muted: var(--color-neutral-400);
-  --border: var(--color-neutral-800);
+  /* Radius, spacing, shadows — radius.base, spacing.base, shadow.* */
+  --radius-md: var(--token-radius-base);
+  --radius-sm: calc(var(--token-radius-base) / 2);
+  --radius-lg: calc(var(--token-radius-base) * 2);
+  --spacing: var(--token-spacing-base);
+  --shadow-sm: var(--token-shadow-sm);
+  --shadow-md: var(--token-shadow-md);
+  --shadow-lg: var(--token-shadow-lg);
 }
 ```
 
+Dark mode needs no second set of aliases: the `.dark` block redefines the same `--token-color-*` properties, so `bg-background` and `text-text` follow. Shade scales (`primary-50`..`900`, a neutral ramp) are not in the required token set; derive them from `color.primary` and `color.surface` with Tailwind's `color-mix()` or list them as optional extra tokens in `brand.tokens.json`.
+
 Token mapping table:
-| `tokens.json` key | CSS custom property | Tailwind class |
-|-------------------|--------------------|-|
-| `color.primary.*` | `--color-primary-*` | `bg-primary-500` |
-| `typography.fontFamily.sans` | `--font-sans` | `font-sans` |
-| `borderRadius.md` | `--radius-md` | `rounded-md` |
+| DTCG path (`brand.tokens.json`) | CSS custom property | Tailwind class |
+|---------------------------------|--------------------|-|
+| `color.primary` | `--token-color-primary` → `--color-primary` | `bg-primary` |
+| `color.background`, `color.surface` | `--color-background`, `--color-surface` | `bg-background`, `bg-surface` |
+| `font.body` | `--font-sans` | `font-sans` |
+| `radius.base` | `--radius-md` | `rounded-md` |
 | `color.error` | `--color-error` | `text-error` |
 
 Since there is no component library, define a small set of reusable component classes using Tailwind `@layer components`:
@@ -231,16 +216,16 @@ Since there is no component library, define a small set of reusable component cl
 ```css
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md
-           hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-primary-500 focus-visible:ring-offset-2 transition-colors;
+    @apply inline-flex items-center px-4 py-2 bg-primary text-background rounded-md
+           hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors;
   }
   .card {
-    @apply bg-bg-raised border border-border rounded-lg shadow-sm p-6;
+    @apply bg-surface border border-border rounded-lg shadow-sm p-6;
   }
   .input {
-    @apply w-full rounded-md border border-border bg-bg px-3 py-2 text-sm
-           focus:outline-none focus:ring-2 focus:ring-primary-500;
+    @apply w-full rounded-md border border-border bg-background px-3 py-2 text-sm
+           focus:outline-none focus:ring-2 focus:ring-primary;
   }
 }
 ```

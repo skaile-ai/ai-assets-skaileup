@@ -63,6 +63,15 @@ reader may be a different session, host or person.
    name ("all the screens", "all the migrations", "wire it up after"): merge it into the slice
    that needs it or split it by user-facing seam. The data model sets slice *order* (parents
    before children) and never reshapes a slice into an entity.
+   Where `_concept/11_build/interaction.sarif` exists (`tree/11_build/interaction.md`), read
+   the entries of `runs[0].properties.changes` with `status: open` before cutting: one whose
+   `files` fall in this feature's code joins this feature's slices, in the slice that owns
+   those files. A change with `kind: systemic` (a shared editor, the action registry, one
+   confirm component) is prefactoring in step 1's sense: it becomes one leading slice that the
+   feature slices depending on it are blocked by, planned once rather than per feature. The
+   interaction decisions in `APP-DESIGN.md` reach the plan only through that verdict, never
+   read directly (`tree/APP-DESIGN.md § Reading it`). Without the file, slice from the spec
+   alone.
 3. **Sequence a wide refactor as expand–contract, not as a slice.** A wide refactor is one
    mechanical change (rename a column, retype a shared symbol) whose blast radius fans across
    the codebase, so no vertical slice can land green. Expand first: add the new form beside

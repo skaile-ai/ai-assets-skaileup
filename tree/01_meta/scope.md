@@ -25,7 +25,7 @@ signals:
 chosen_at: "2026-09-05T14:22:00Z"
 ```
 
-`chosen_at` is ISO-8601 UTC. Nothing else belongs in the file: it records what was decided, and a file that also named the flow that wrote it would be naming its own caller.
+`chosen_at` is ISO-8601 UTC. `tree/01_meta/scope.schema.json` is the machine-readable form: the top level is closed to `flow`, `project_type`, `reasoning`, `signals` and `chosen_at` (`flow`, `project_type` and `chosen_at` required). Nothing else belongs in the file: it records what was decided, and a file that also named the flow that wrote it would be naming its own caller.
 
 A flow *is* the sizing, so the project is sized by the flow it runs under. The four names are the whole vocabulary — a fifth value is a flow that will not load:
 
@@ -44,10 +44,10 @@ A flow *is* the sizing, so the project is sized by the flow it runs under. The f
 |---|---|
 | web-app | — |
 | mobile-app | mockup-storybook |
-| library | journeys, screens, brand-identity, brand-tokens, behaviors, datamodel, mockup, mockup-storybook |
-| cli-tool | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook |
-| data-pipeline | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook |
-| api-service | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook |
+| library | journeys, screens, brand-identity, brand-tokens, behaviors, datamodel, mockup, mockup-storybook, app-design, interaction-review |
+| cli-tool | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook, app-design, interaction-review |
+| data-pipeline | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook, app-design, interaction-review |
+| api-service | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook, app-design, interaction-review |
 
 A `hard` prerequisite on anything listed here would block a project that was never going to have it, so such a gate is `soft` and the step that reads it says what the skill does without the file.
 
@@ -57,9 +57,9 @@ A `hard` prerequisite on anything listed here would block a project that was nev
 2. **Collect the signals**, each question as its own message. Ask for: how many distinct things a user can do; whether more than one role shares state; how data is persisted (none, one relational schema, or an external store the project does not own); which external services are named; whether a repository already exists. Take what the description or the input dialog already answered and ask only for the rest. Record each answer as the user gave it — the reasoning quotes these numbers, and a normalised signal makes a re-scope argue with a sizing nobody can reconstruct.
 3. **Resolve the project type** against the table above. When the description settles it, confirm rather than ask.
 4. **Record the flow, deriving it only when nothing else has.** On a host that started the run from an onboarding profile the flow is already chosen and this step writes down which one. Where nothing has chosen, put the four flows to the user with your recommendation from the signals.
-5. **Show the decision, then write.** Present flow, project type, the signals literally, and two to six sentences of reasoning naming which signals decided it. On a re-scope show the diff against the loaded file and get a yes to overwriting: a silent re-size changes the depth of every skill still to run and leaves the artifacts already written at the old one. Then write the file.
+5. **Show the decision, then validate and write.** Present flow, project type, the signals literally, and two to six sentences of reasoning naming which signals decided it. On a re-scope show the diff against the loaded file and get a yes to overwriting: a silent re-size changes the depth of every skill still to run and leaves the artifacts already written at the old one. Validate the record against `tree/01_meta/scope.schema.json`, then write the file.
 
 ## Checks
 
-- `flow` is one of the four names, `project_type` is a row of the table above, and `chosen_at` is ISO-8601 UTC.
+- The record validates against `tree/01_meta/scope.schema.json`: `flow` is one of the four names, `project_type` is a row of the table above, and `chosen_at` is ISO-8601 UTC.
 - The user has seen the reasoning.

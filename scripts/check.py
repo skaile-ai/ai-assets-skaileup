@@ -18,7 +18,7 @@ loads them and drops the malformed ones silently — so anything not checked her
 checked anywhere.
 
 The instruction layer is `tree/`, a mirror of `_concept/` with one node per part (ADR
-0015). `load_tree` reads every node, `resolve` maps any `_concept/` path to the node that
+0017). `load_tree` reads every node, `resolve` maps any `_concept/` path to the node that
 documents it, and `--print-tree` renders the artifact tree from the nodes' `path:` entries —
 the one copy of that tree, pasted into `tree/README.md` and checked for staleness.
 
@@ -45,17 +45,19 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import unicodedata
 import sys
 from pathlib import Path
 
+import jsonschema
 import yaml
 
 import host_facts as hf
 
-# The published skill body ceilings (ADR 0015). A whole SKILL.md, frontmatter included —
+# The published skill body ceilings (ADR 0017). A whole SKILL.md, frontmatter included —
 # that is how a reader meets it. A skill that writes no artifact keeps its procedure in
 # the body (`## Steps`), so it gets the larger one.
 LINE_BUDGET = 60
@@ -90,7 +92,16 @@ ONBOARD_NODE = "02_grounding/onboarding/answers.md"
 # to a node) or if it is named here. Extend the list deliberately; a project-root path
 # cannot be verified from inside this collection, because whether it exists is a fact about
 # the scaffolded project, not about this repo.
-PROJECT_ROOT_PREREQUISITES = {"package.json"}
+PROJECT_ROOT_PREREQUISITES = {"package.json", "APP-DESIGN.md"}
+
+# The project-root files a skill may declare in `produces` (SRC ADR 0015). Every other `produces`
+# path has to sit under `_concept/` and resolve in the tree; these name an artifact that lives
+# at the project root, the directory holding `_concept/`. It still resolves through the tree: its
+# node is `tree/<artifact>`, which lists the name literally in `path:`. A hard gate on one is held
+# to the upstream-writer rule in `_check_gate_writers` (exact match); other project-root gates are
+# not. The tree listing (`--print-tree`) shows `_concept/` only; `tree/README.md § Beside the tree`
+# documents these.
+PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md"}
 
 # Skills this collection calls but does not ship (migration map, premise 6). Axis is
 # the upstream frontmatter: "user" = disable-model-invocation: true, reachable only by
@@ -167,7 +178,7 @@ INTERPOLATION_RE = re.compile(r"\$\{[^}]*\}")
 #                 `host_facts.py`. If one fails, either the collection is wrong or the
 #                 fact expired — and until someone runs `verify_host.py` that is
 #                 genuinely ambiguous, so the message says both.
-#   house style   decisions this map made (ADR 0015's ceilings, ticket 10's deletions,
+#   house style   decisions this map made (ADR 0017's ceilings, ticket 10's deletions,
 #                 the plural rule). They stay errors: a warning nobody is forced to read
 #                 is how a deleted key comes back.
 INTRINSIC = "intrinsic"
@@ -287,7 +298,7 @@ def split_frontmatter(text: str) -> tuple[dict, str]:
 
 
 # --------------------------------------------------------------------------
-# the instruction tree — one node per `_concept/` part (ADR 0015)
+# the instruction tree — one node per `_concept/` part (ADR 0017)
 # --------------------------------------------------------------------------
 
 
@@ -572,6 +583,17 @@ def _check_node(node: Node, skill_dirs: set[str], rep: Report) -> None:
     concept_dir = f"{ARTIFACT_ROOT}/" + "".join(f"{_placeholder_dir(p)}/" for p in parts[:-1])
     dir_segs = _segs(concept_dir)
     for entry in node.entries:
+        if entry in PROJECT_ROOT_ARTIFACTS:
+            # the project-root artifact's node is `tree/<artifact>`; the prefix and directory
+            # rules below are about `_concept/` parts and do not bind it
+            if node.rel != entry:
+                rep.fail(
+                    where,
+                    "node-location",
+                    f"`path:` names the project-root artifact {entry!r}, so the node belongs at "
+                    f"`{TREE_DIR}/{entry}`, not {where}",
+                )
+            continue
         if not entry.startswith(f"{ARTIFACT_ROOT}/"):
             rep.fail(where, "node-frontmatter", f"`path:` entry {entry!r} does not start with '{ARTIFACT_ROOT}/'")
             continue
@@ -627,7 +649,10 @@ def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
                 "has no `README.md` — every directory under the tree has a node of its own, "
                 "a `[placeholder]` directory included",
             )
-        if path.is_file() and path.name in ("README.md", "CONTRACT.md"):
+        if path.is_file() and (
+            path.name in ("README.md", "CONTRACT.md")
+            or (path.parent == tree_root and path.name in PROJECT_ROOT_ARTIFACTS)
+        ):
             continue
         if not NODE_NAME_RE.match(path.name):
             rep.fail(
@@ -709,18 +734,19 @@ def _check_produces(fm: dict, where: str, nodes: list[Node], rep: Report) -> set
 
     Returns the ids it declares well-formed. The list is mandatory (`[]` for a skill that
     writes nothing under `_concept/`), each entry names a kebab-case `id` and a `path` that
-    starts with `_concept/` and resolves to a node of the tree (ADR 0013, ADR 0015)."""
+    starts with `_concept/` and resolves to a node of the tree (ADR 0013, ADR 0017), or names a
+    project-root artifact in PROJECT_ROOT_ARTIFACTS, which resolves to the node `tree/<artifact>`."""
     block = _artifacts_block(fm)
     produces = block.get("produces") if block is not None else None
     if not isinstance(produces, list):
         rep.error(
             where,
-            "has no `metadata.artifacts.produces` list — it is the declaration {host}'s node "
-            "done-state read has to switch to; write `produces: []` for a skill that writes "
+            "has no `metadata.artifacts.produces` list — {host} reads it to decide when the "
+            "node is done; write `produces: []` for a skill that writes "
             "nothing under `_concept/`" if produces is None else
             f"`metadata.artifacts.produces` is a {type(produces).__name__}, not a list of "
-            "`{ id, path }` entries — {host}'s node done-state read has to switch to it",
-            fact="host:node-done-from-produced-by",
+            "`{ id, path }` entries — {host} reads it to decide when the node is done",
+            fact="host:node-done-from-produces",
             rule="produces-shape",
         )
         return set()
@@ -734,7 +760,7 @@ def _check_produces(fm: dict, where: str, nodes: list[Node], rep: Report) -> set
             rep.error(
                 where,
                 f"{label} must be a map with a string `id` and a string `path`, got {entry!r}",
-                fact="host:node-done-from-produced-by",
+                fact="host:node-done-from-produces",
                 rule="produces-shape",
             )
             continue
@@ -742,8 +768,21 @@ def _check_produces(fm: dict, where: str, nodes: list[Node], rep: Report) -> set
             rep.error(where, f"{label} id {ident!r} is not kebab-case — it is the id other skills name in `artifacts.requires`")
         else:
             ids.add(ident)
+        if path in PROJECT_ROOT_ARTIFACTS:
+            if nodes and resolve(nodes, path) is None:
+                rep.fail(
+                    where,
+                    "produces-path-resolves",
+                    f"{label} path {path!r} resolves to no node of `{TREE_DIR}/` — the node is "
+                    f"`{TREE_DIR}/{path}`, whose `path:` lists it",
+                )
+            continue
         if not path.startswith(ARTIFACT_ROOT + "/"):
-            rep.error(where, f"{label} path {path!r} does not start with {ARTIFACT_ROOT + '/'!r}")
+            rep.error(
+                where,
+                f"{label} path {path!r} does not start with {ARTIFACT_ROOT + '/'!r} and is not one of "
+                f"the named project-root artifacts ({', '.join(sorted(PROJECT_ROOT_ARTIFACTS))})",
+            )
             continue
         if not _gate_segments(path):
             rep.error(where, f"{label} path {path!r} names no artifact below `{ARTIFACT_ROOT}/`")
@@ -834,8 +873,9 @@ def _check_not_grown_gates(repo: Path, skills: list[tuple[str, dict]], rep: Repo
     not be blocked by a `hard` prerequisite on it (F35).
 
     A project type's never-grows entry is an artifact id from some skill's `produces`, a skill name,
-    or a domain (a name prefix, `mockup` for `mockup-*`). A skill that is itself a named skill
-    or lies in a named domain never runs for that type, so its gates are not held to it.
+    or a domain (a name prefix, `mockup` for `mockup-*`). A skill that is itself a named skill,
+    lies in a named domain, or writes only artifacts the project type never grows never runs for
+    that type, so its gates are not held to it.
     An entry that resolves to nothing is an error — the rule could not see what it excludes."""
     types = _project_types(repo, rep)
     if not types:
@@ -880,6 +920,11 @@ def _check_not_grown_gates(repo: Path, skills: list[tuple[str, dict]], rep: Repo
             for ptype, entries in left_out.items():
                 if any(covers(entry, skill) for entry in entries):
                     continue
+                # every artifact the skill writes is one this project type never grows, so the
+                # skill never runs here (`[]` writes nothing and earns no exemption)
+                own = {ident for ident, _path in _produced_entries(fm)}
+                if own and own <= entries.keys():
+                    continue
                 named += [
                     f"{entry!r} in project type {ptype}"
                     for entry, paths in entries.items()
@@ -893,6 +938,150 @@ def _check_not_grown_gates(repo: Path, skills: list[tuple[str, dict]], rep: Repo
                     f"({'; '.join(named)}) — make it `soft` and state in the step that reads it "
                     f"what the skill does without the file",
                 )
+
+
+# --------------------------------------------------------------------------
+# schemas — a machine file's JSON Schema sits beside the node that describes it
+# --------------------------------------------------------------------------
+
+# Every `tree/**/*.schema.json` is a JSON Schema 2020-12 document describing one machine file a
+# skill writes. It lives in the same directory as the node that documents that file, and that
+# node cites it (`` `tree/<dir>/<stem>.schema.json` ``) at the step that writes the file — a
+# schema nobody cites is never validated against. `x-artifact` names the `_concept/` file (or
+# project-root artifact) it describes; a schema without it (the universal frontmatter) is held to
+# the weaker bar of being cited by some node or skill.
+#
+# Rule ids: `schema-valid` (JSON object, 2020-12 dialect, passes the metaschema), `schema-id`
+# (`$id` is `urn:skaile:schema:<stem>`), `schema-artifact-resolves` (`x-artifact` is a legal
+# path, resolves to a node, and that node sits in the schema's directory), `schema-produced`
+# (some skill's `produces` covers `x-artifact`), `schema-cited` (the node — or, without
+# `x-artifact`, some node or skill — cites the schema).
+SCHEMA_DIALECT = "https://json-schema.org/draft/2020-12/schema"
+SCHEMA_ID_PREFIX = "urn:skaile:schema:"
+SCHEMA_SUFFIX = ".schema.json"
+
+
+def _path_covers(produced: str, artifact: str) -> bool:
+    """True when `artifact` is the `produced` path or lies under it. A `<...>` or `*` segment
+    matches any one segment, as in `_paths_overlap`, but only the produced side may be shorter —
+    a schema for a directory is not covered by a skill that writes one file inside it."""
+    p, a = _gate_segments(produced), _gate_segments(artifact)
+    return len(p) <= len(a) and all(
+        x == y or _is_placeholder(x) or _is_placeholder(y) for x, y in zip(p, a)
+    )
+
+
+def check_schemas(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: Report) -> None:
+    """Every `tree/**/*.schema.json` is a valid 2020-12 schema, placed beside and cited by its node.
+
+    A schema nobody cites is never validated against, and one whose `x-artifact` no skill
+    produces describes a file that is never written — both stay green and mean nothing."""
+    tree_root = repo / TREE_DIR
+    if not tree_root.is_dir():
+        return
+    schema_paths = sorted(
+        p for p in tree_root.rglob(f"*{SCHEMA_SUFFIX}")
+        if not any(part.startswith(".") for part in p.relative_to(tree_root).parts)
+    )
+    if not schema_paths:
+        return
+
+    # `tree/` paths cited per node (keyed by node file relative to `tree/`) and per skill.
+    node_cites = {n.rel: _cited_tree_refs((tree_root / n.rel).read_text(encoding="utf-8")) for n in nodes}
+    skill_cites = {
+        d: _cited_tree_refs((repo / "skills" / d / "SKILL.md").read_text(encoding="utf-8"))
+        for d in sorted(skill_fms)
+    }
+
+    for path in schema_paths:
+        rel = path.relative_to(tree_root).as_posix()
+        stem = path.name[: -len(SCHEMA_SUFFIX)]
+        where = f"{TREE_DIR}/{rel}"
+
+        try:
+            schema = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError as exc:
+            rep.fail(where, "schema-valid", f"is not valid JSON ({exc}) — a writer cannot validate against it")
+            continue
+        if not isinstance(schema, dict):
+            rep.fail(where, "schema-valid", f"is a JSON {type(schema).__name__}, not an object — a schema is an object")
+            continue
+
+        if schema.get("$schema") != SCHEMA_DIALECT:
+            rep.fail(
+                where,
+                "schema-valid",
+                f"`$schema` is {schema.get('$schema')!r}, not {SCHEMA_DIALECT!r} — a validator "
+                f"picks the dialect from it, and every schema here is written for 2020-12",
+            )
+        try:
+            jsonschema.Draft202012Validator.check_schema(schema)
+        except jsonschema.SchemaError as exc:
+            rep.fail(
+                where,
+                "schema-valid",
+                f"is not a valid 2020-12 schema ({exc.message}) — it would reject or pass the wrong files",
+            )
+        if schema.get("$id") != SCHEMA_ID_PREFIX + stem:
+            rep.fail(
+                where,
+                "schema-id",
+                f"`$id` is {schema.get('$id')!r}, not {SCHEMA_ID_PREFIX + stem!r} — the id is the "
+                f"file's stem, so a `$ref` to it resolves to this file and no other",
+            )
+
+        artifact = schema.get("x-artifact")
+        if artifact is None:
+            if not any(rel in cites for cites in [*node_cites.values(), *skill_cites.values()]):
+                rep.fail(
+                    where,
+                    "schema-cited",
+                    f"has no `x-artifact` and no node or skill cites `{where}` — nothing validates against it",
+                )
+            continue
+        if not isinstance(artifact, str) or not (
+            artifact.startswith(ARTIFACT_ROOT + "/") or artifact in PROJECT_ROOT_ARTIFACTS
+        ):
+            rep.fail(
+                where,
+                "schema-artifact-resolves",
+                f"`x-artifact` is {artifact!r}, which is not a path under `{ARTIFACT_ROOT}/` nor a "
+                f"named project-root artifact ({', '.join(sorted(PROJECT_ROOT_ARTIFACTS))})",
+            )
+            continue
+
+        node = resolve(nodes, artifact)
+        if node is None:
+            rep.fail(
+                where,
+                "schema-artifact-resolves",
+                f"`x-artifact` {artifact!r} resolves to no node of `{TREE_DIR}/` — the schema has no "
+                f"node to sit beside and no step to cite it",
+            )
+        elif node.rel.rpartition("/")[0] != rel.rpartition("/")[0]:
+            rep.fail(
+                where,
+                "schema-artifact-resolves",
+                f"`x-artifact` {artifact!r} resolves to `{node.file}`, which is in another directory — "
+                f"a schema sits beside the node that describes its file",
+            )
+        elif rel not in node_cites.get(node.rel, set()):
+            rep.fail(
+                where,
+                "schema-cited",
+                f"`{node.file}` does not cite `{where}` — the node's write step is the only place "
+                f"the schema is checked against, so it is never validated",
+            )
+
+        if not any(
+            _path_covers(p, artifact) for fm in skill_fms.values() for _id, p in _produced_entries(fm)
+        ):
+            rep.fail(
+                where,
+                "schema-produced",
+                f"`x-artifact` {artifact!r} is not a `produces` path of any skill, nor under one — "
+                f"no skill writes the file this schema describes",
+            )
 
 
 # --------------------------------------------------------------------------
@@ -911,9 +1100,9 @@ HEADING_RE = re.compile(r"^#{2,3}\s+(.+?)\s*$", re.MULTILINE)
 # ref could never resolve — `_` is not a legal asset-name character.
 CONTRACT_ASSET = "shared-contracts"
 
-# ADRs 0001–0014 are carried over verbatim from `-mp` and record decisions about a layout this
-# collection replaced; they name old paths on purpose. Only ADR 0015 and the ADR index are checked.
-FROZEN_DOC_RE = re.compile(r"^docs/adr/00(?:0[1-9]|1[0-4])-[^/]*\.md$")
+# ADRs 0001–0016 are carried over verbatim from `-mp` and record decisions about a layout this
+# collection replaced; they name old paths on purpose. Only ADR 0017 and the ADR index are checked.
+FROZEN_DOC_RE = re.compile(r"^docs/adr/00(?:0[1-9]|1[0-6])-[^/]*\.md$")
 
 
 def _cited_tree_refs(text: str) -> set[str]:
@@ -981,7 +1170,7 @@ def check_citations(repo: Path, rep: Report) -> None:
     files = [
         *sorted(repo.glob("*.md")),
         *_non_frozen(repo, _files(repo, "docs", (".md",))),
-        *_files(repo, TREE_DIR, (".md",)),
+        *_files(repo, TREE_DIR, (".md", ".json")),
         *_files(repo, "templates", (".md",)),
         *_files(repo, "flows", (".md", ".yaml", ".yml")),
         *_files(repo, "skills", (".md",)),
@@ -996,7 +1185,7 @@ def check_old_contract_paths(repo: Path, rep: Report) -> None:
     files = [
         *[repo / n for n in ("README.md", "CLAUDE.md") if (repo / n).is_file()],
         *_non_frozen(repo, _files(repo, "docs", (".md",))),
-        *_files(repo, TREE_DIR, (".md",)),
+        *_files(repo, TREE_DIR, (".md", ".json")),
         *_files(repo, "templates", (".md",)),
         *_files(repo, "skills", (".md", ".py", ".yaml", ".yml")),
     ]
@@ -1123,7 +1312,7 @@ def _check_writers(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Re
     fms = dict(skill_fms)
     for skill, fm in skill_fms:
         for _ident, path in _produced_entries(fm):
-            if not path.startswith(ARTIFACT_ROOT + "/"):
+            if not (path.startswith(ARTIFACT_ROOT + "/") or path in PROJECT_ROOT_ARTIFACTS):
                 continue
             node = resolve(nodes, path)
             if node is not None and skill not in node.writers:
@@ -1142,7 +1331,7 @@ def _check_writers(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Re
                 continue  # an unknown skill is `node-frontmatter`'s report
             ok = False
             for _ident, p in _produced_entries(fms[writer]):
-                if not p.startswith(ARTIFACT_ROOT + "/"):
+                if not (p.startswith(ARTIFACT_ROOT + "/") or p in PROJECT_ROOT_ARTIFACTS):
                     continue
                 ps = _segs(p)
                 if (
@@ -1863,8 +2052,9 @@ def _check_gate_writers(
     that lies on a path from `entry` to the node along `type: flow` edges, the node itself
     excluded — a node later in the run, or on a branch that never reaches it, writes too late.
     A writer's `produces[].path` meets the gate when the two are equal or one is a directory
-    prefix of the other, a placeholder segment matching any one. Paths outside `_concept/`
-    (the named project-root gates) are the project's, not a node's, and are not held to this.
+    prefix of the other, a placeholder segment matching any one. A project-root artifact named in
+    PROJECT_ROOT_ARTIFACTS is matched by exact path; other paths outside `_concept/` (the named
+    project-root gates) are the project's, not a node's, and are not held to this.
     A node unreachable from `entry` is reported by `_check_reachability` and skipped here."""
     entry = flow.get("entry")
     if entry not in by_id:
@@ -1916,9 +2106,12 @@ def _check_gate_writers(
             if item.get("gate") != "hard":
                 continue
             gate = str(item["path"]).lstrip("/")
-            if not gate.startswith(ARTIFACT_ROOT + "/"):
+            root_artifact = gate in PROJECT_ROOT_ARTIFACTS
+            if not gate.startswith(ARTIFACT_ROOT + "/") and not root_artifact:
                 continue
-            if any(_paths_overlap(gate, path) for path in written):
+            if any(
+                path == gate if root_artifact else _paths_overlap(gate, path) for path in written
+            ):
                 continue
             rep.error(
                 where,
@@ -2025,7 +2218,7 @@ def _prose_files(repo: Path) -> list[Path]:
     """Every markdown file no other check reads: `docs/` and the repo root.
 
     `skills/` and `tree/` are gated by their own checks, which know far more about what those
-    files are; `flows/` holds YAML. What is left is prose — minus ADRs 0001–0014, frozen
+    files are; `flows/` holds YAML. What is left is prose — minus ADRs 0001–0016, frozen
     records that name the layout this collection replaced (`FROZEN_DOC_RE`).
     """
     docs = sorted((repo / "docs").rglob("*.md")) if (repo / "docs").is_dir() else []
@@ -2066,6 +2259,7 @@ def run(repo: Path) -> Report:
     nodes = load_tree(repo)
     skill_names, skill_tree_refs, skill_fms = check_skills(repo, nodes, rep)
     check_tree(repo, nodes, rep)
+    check_schemas(repo, nodes, skill_fms, rep)
     check_citations(repo, rep)
     check_old_contract_paths(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)

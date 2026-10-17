@@ -1,4 +1,4 @@
-# 0015 — The instruction tree mirrors the artifact tree; a skill is a route
+# 0017 — The instruction tree mirrors the artifact tree; a skill is a route
 
 **Status:** accepted
 
@@ -49,6 +49,23 @@ one consequence clause per rule. See [`../node-template.md`](../node-template.md
 becomes a route: the ordered list of nodes it visits, at most 60 lines in all. The six skills
 with `produces: []` have no node of their own to point at, so they keep a compressed
 `## Steps`, at most 100 lines. See [`../skill-template.md`](../skill-template.md).
+
+Three tree-side choices follow from artifacts that do not fit the plain rule:
+
+- **A root artifact has a root node.** `APP-DESIGN.md` ([ADR 0015](0015-interaction-decisions-live-in-app-design.md))
+  sits beside `_concept/`, not in it, so its node is `tree/APP-DESIGN.md` with
+  `path: APP-DESIGN.md` — no `_concept/` prefix. It is the one such artifact
+  (`PROJECT_ROOT_ARTIFACTS` in `scripts/check.py`).
+- **A conditional file carries `writers: []`.** A file a skill writes only sometimes
+  (`openapi.yaml`, `asyncapi.yaml`) is left out of that skill's `produces`
+  ([ADR 0013](0013-a-skill-declares-what-it-produces.md)), so the writer check cannot name
+  it. Its node lists no writer and its intro paragraph names the skill that writes it and
+  when.
+- **A schema sits beside the node it describes.** The JSON Schema files of
+  [ADR 0016](0016-published-formats-where-one-exists.md) live in the tree next to their node
+  (`tree/03_brand/brand-tokens.schema.json` beside `brand.tokens.md`), with the file names
+  and `$id`s `-mp` gives them; the node cites the schema in `## Format` or at the write
+  step, and descriptions inside a schema point at the node rather than at a contract file.
 
 The tree is the one dir-scoped contract asset, `shared-contracts`: hosts and flows see the
 same asset as in `-mp`, with different contents. `scripts/check.py` derives the canonical

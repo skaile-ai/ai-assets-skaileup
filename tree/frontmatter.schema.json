@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skaile:schema:frontmatter",
+  "title": "Universal frontmatter fields of a _concept/ markdown file",
+  "description": "The fields every markdown file in _concept/ carries (tree/README.md § Frontmatter every markdown artifact carries). Per-artifact fields are open: each artifact's own section names them. approved is written by the skill that holds the approval step, in the same write that records the user's yes; a pending file carries no approved key rather than an empty one. Dates: validate after turning YAML dates into ISO text, per tree/README.md § Frontmatter every markdown artifact carries.",
+  "type": "object",
+  "required": ["last_updated"],
+  "additionalProperties": true,
+  "properties": {
+    "last_updated": {
+      "$ref": "#/$defs/isoDate",
+      "description": "Updated on every write."
+    },
+    "approved": {
+      "$ref": "#/$defs/isoDate",
+      "description": "The date the user approved this artifact; absent means not yet approved. A later edit that changes the substance clears it."
+    }
+  },
+  "$defs": {
+    "isoDate": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    }
+  }
+}

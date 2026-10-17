@@ -78,7 +78,7 @@ npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-al
 npx shadcn@latest init
 # When prompted:
 #   Style: New York (recommended)
-#   Base color: match tokens.json primary color
+#   Base color: any (the brand tokens in globals.css replace it)
 #   CSS variables: Yes
 
 # 3. Add shadcn/ui components you need
@@ -151,7 +151,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-shadcn/ui uses a CSS custom property system where semantic color names (`--background`, `--foreground`, `--primary`, `--primary-foreground`, etc.) map to HSL values. Brand tokens from `_concept/03_brand/tokens.json` map **1:1** to these semantic variables in `globals.css`.
+shadcn/ui uses a CSS custom property system where semantic color names (`--background`, `--foreground`, `--primary`, `--primary-foreground`, etc.) carry the theme. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`; colours come out as hex) and `globals.css` points the shadcn variables at them. Tailwind 4 accepts any CSS colour, so the variables hold colour values directly and need no `hsl()` wrapper or HSL conversion.
 
 **`src/app/globals.css` pattern:**
 
@@ -159,58 +159,68 @@ shadcn/ui uses a CSS custom property system where semantic color names (`--backg
 @import "tailwindcss";
 @import "@/components/ui/styles.css";  /* shadcn base styles */
 
+/* :root { --token-color-primary: #…; … } is generated from brand.tokens.json;
+   the .dark { --token-color-…: …; } block is generated from brand.dark.tokens.json. */
+
 @layer base {
   :root {
-    /* Map from tokens.json */
-    --background: {tokens.color.background};        /* e.g. 0 0% 100% */
-    --foreground: {tokens.color.foreground};        /* e.g. 240 10% 3.9% */
-    --card: {tokens.color.card};
-    --card-foreground: {tokens.color.cardForeground};
-    --primary: {tokens.color.primary.hsl};          /* e.g. 262 83% 58% */
-    --primary-foreground: 0 0% 100%;
-    --secondary: {tokens.color.secondary.hsl};
-    --secondary-foreground: {tokens.color.secondaryForeground};
-    --muted: {tokens.color.muted};
-    --muted-foreground: {tokens.color.mutedForeground};
-    --accent: {tokens.color.accent};
-    --accent-foreground: {tokens.color.accentForeground};
-    --destructive: {tokens.color.error};
-    --destructive-foreground: 0 0% 100%;
-    --border: {tokens.color.border};
-    --input: {tokens.color.input};
-    --ring: {tokens.color.primary.hsl};
-    --radius: {tokens.borderRadius.default};        /* e.g. 0.5rem */
-  }
-
-  .dark {
-    --background: {tokens.color.dark.background};
-    --foreground: {tokens.color.dark.foreground};
-    --primary: {tokens.color.primary.hsl};
-    /* ... dark mode values from tokens.json */
+    --background: var(--token-color-background);
+    --foreground: var(--token-color-text);
+    --card: var(--token-color-surface);
+    --card-foreground: var(--token-color-text);
+    --primary: var(--token-color-primary);
+    --primary-foreground: var(--token-color-background);  /* or optional extra token color.on-primary */
+    --secondary: var(--token-color-secondary);
+    --secondary-foreground: var(--token-color-text);
+    --muted: var(--token-color-surface);
+    --muted-foreground: var(--token-color-text-muted);
+    --accent: var(--token-color-accent);
+    --accent-foreground: var(--token-color-text);
+    --destructive: var(--token-color-error);
+    --destructive-foreground: var(--token-color-background);
+    --border: var(--token-color-border);
+    --input: var(--token-color-border);
+    --ring: var(--token-color-primary);
+    --radius: var(--token-radius-base);
   }
 }
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --font-sans: {tokens.typography.fontFamily.sans};
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--token-font-body);
+  --font-heading: var(--token-font-heading);
+  --font-mono: var(--token-font-mono);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
 }
 ```
 
+The `:root` aliases do not change for dark mode: the `.dark` block redefines the `--token-color-*` properties they point at, so `.dark` needs no shadcn-variable overrides of its own.
+
 Token mapping table:
-| `tokens.json` key | shadcn/ui CSS var | Usage class |
-|-------------------|------------------|-------------|
-| `color.primary.hsl` | `--primary` | `bg-primary text-primary-foreground` |
+| DTCG path (`brand.tokens.json`) | shadcn/ui CSS var | Usage class |
+|---------------------------------|------------------|-------------|
+| `color.primary` | `--primary`, `--ring` | `bg-primary text-primary-foreground` |
 | `color.background` | `--background` | `bg-background` |
-| `color.foreground` | `--foreground` | `text-foreground` |
-| `color.muted` | `--muted` | `bg-muted` |
-| `color.border` | `--border` | `border-border` |
-| `borderRadius.default` | `--radius` | `rounded-md` |
+| `color.text` | `--foreground` | `text-foreground` |
+| `color.surface` | `--card`, `--muted` | `bg-card`, `bg-muted` |
+| `color.text-muted` | `--muted-foreground` | `text-muted-foreground` |
+| `color.border` | `--border`, `--input` | `border-border` |
+| `radius.base` | `--radius` | `rounded-md` |
 | `color.error` | `--destructive` | `bg-destructive` |
 
 ## Auth Setup

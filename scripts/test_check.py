@@ -14,6 +14,7 @@ exactly one error. The four landed flows are the positive fixture for the flow r
 from __future__ import annotations
 
 import ast
+import json
 import re
 import sys
 from pathlib import Path
@@ -102,6 +103,8 @@ def good_tree(root: Path) -> None:
              "## Numbering\n\nThe first level is numbered.\n",
     )
     write_node(root, "brief.md", "_concept/brief.md", summary="the pitch", body="## Writing it\n\nWrite the pitch.\n")
+    write_node(root, "APP-DESIGN.md", "APP-DESIGN.md", summary="the interaction rulebook of the app",
+               body="## Format\n\nThe rulebook.\n")
     write_node(root, "01_meta/README.md", ["_concept/01_meta/"], summary="project settings")
     write_node(root, "01_meta/scope.md", "_concept/01_meta/scope.yaml", summary="flow and project type",
                body=PROJECT_TYPES)
@@ -127,7 +130,7 @@ def sync_writers(root: Path) -> None:
     for skill in sorted(p for p in skills.iterdir() if (p / "SKILL.md").is_file()) if skills.is_dir() else []:
         fm, _body = check.split_frontmatter((skill / "SKILL.md").read_text())
         for _ident, path in check._produced_entries(fm):
-            if not path.startswith("_concept/"):
+            if not (path.startswith("_concept/") or path in check.PROJECT_ROOT_ARTIFACTS):
                 continue
             hit = check.resolve(nodes, path)
             if hit is not None and skill.name not in writers[hit.rel]:
@@ -441,6 +444,42 @@ def test_produces_path_outside_the_tree(tmp_path):
     assert "resolves to no node of `tree/`" in errors(root)[0]
 
 
+def test_produces_path_at_the_named_project_root(tmp_path):
+    """`APP-DESIGN.md` is the one artifact that lives at the project root; it resolves to the node
+    `tree/APP-DESIGN.md`, which lists the name literally."""
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n')
+    assert errors(root) == []
+
+
+def test_produces_path_at_the_project_root_that_is_not_named(tmp_path):
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: app-design, path: "NOTES.md" }\n')
+    only(root, "is not one of the named project-root artifacts (APP-DESIGN.md)")
+
+
+def test_produces_the_project_root_artifact_with_no_node(tmp_path):
+    """The root artifact is named, but it still has to resolve: no `tree/APP-DESIGN.md`, no instruction."""
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n')
+    (root / "tree" / "APP-DESIGN.md").unlink()
+    only(root, "produces-path-resolves")
+    assert "resolves to no node of `tree/`" in errors(root)[0]
+
+
+def test_node_does_not_list_the_skill_producing_the_root_artifact(tmp_path):
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n')
+    edit_node(root, "APP-DESIGN.md", "writers: [spec-feature]", "writers: []")
+    only(root, "whose `writers:` does not list 'spec-feature'")
+
+
+def test_root_artifact_node_listing_a_writer_that_produces_nothing_there(tmp_path):
+    root = write_repo(tmp_path)
+    edit_node(root, "APP-DESIGN.md", "writers: []", "writers: [spec-feature]")
+    only(root, "lists writer 'spec-feature', but no `produces` path of that skill resolves to this node")
+
+
 @pytest.mark.parametrize(
     "path",
     [
@@ -580,6 +619,29 @@ def test_skill_in_a_not_grown_domain_is_not_held_to_its_own_gates(tmp_path):
     assert errors(root) == []
 
 
+def test_skill_whose_every_output_is_not_grown_is_not_held_to_its_own_gates(tmp_path):
+    """`spec-feature` writes only `brief`; a project type that never grows it never runs the skill."""
+    root = not_grown_repo(tmp_path)
+    write_project_types(root, {"api-service": ["screens", "brief"]})
+    assert errors(root) == []
+
+
+def test_skill_with_one_output_the_project_type_grows_is_held_to_its_gates(tmp_path):
+    """`spec-feature` writes `brief` and screens; the project type still grows `brief`, so it runs."""
+    root = not_grown_repo(tmp_path)
+    set_produces(root, SCREENS + '      - { id: brief, path: "_concept/brief.md" }\n')
+    write_project_types(root, {"api-service": ["screens"]})
+    only(root, "has a `hard` prerequisite on '_concept/07_screens'")
+
+
+def test_skill_that_writes_nothing_is_held_to_its_gates(tmp_path):
+    """`[]` writes nothing, so no set of never-grown artifacts covers it: the exemption needs an output."""
+    root = not_grown_repo(tmp_path)
+    set_produces(root, "    produces: []\n")
+    write_project_types(root, {"api-service": ["screens"]})
+    only(root, "has a `hard` prerequisite on '_concept/07_screens'")
+
+
 def test_scope_node_without_a_project_types_table(tmp_path):
     """The rule reads its data from the table; a node without it leaves the rule blind."""
     root = write_repo(tmp_path)
@@ -677,6 +739,41 @@ def test_soft_gate_needs_no_upstream_writer(tmp_path):
     set_gate(root, "spec-feature", "soft")
     write_flow(root, gate_flow("spec-feature", "zeta-producer"))
     assert errors(root) == []
+
+
+def test_hard_root_artifact_gate_with_no_upstream_writer(tmp_path):
+    """`APP-DESIGN.md` is a project-root artifact: a hard gate on it needs a writer upstream,
+    unlike `package.json`, which is the project's."""
+    root = gate_repo(
+        tmp_path,
+        gate="APP-DESIGN.md",
+        writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n',
+    )
+    write_flow(root, gate_flow("zeta-producer", "spec-feature"))
+    only(root, "no upstream node produces it")
+    assert "'APP-DESIGN.md'" in errors(root)[0]
+    assert "node 'b' runs skill 'spec-feature'" in errors(root)[0]
+
+
+def test_hard_root_artifact_gate_with_an_upstream_writer(tmp_path):
+    root = gate_repo(
+        tmp_path,
+        gate="APP-DESIGN.md",
+        writes='    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n',
+    )
+    write_flow(root, gate_flow("zeta-producer", "spec-feature"))
+    assert errors(root) == []
+
+
+def test_hard_root_artifact_gate_is_matched_exactly(tmp_path):
+    """The gate is matched by exact path: a writer of a `_concept/` directory does not open it."""
+    root = gate_repo(
+        tmp_path,
+        gate="APP-DESIGN.md",
+        writes='    produces:\n      - { id: screens, path: "_concept/07_screens/" }\n',
+    )
+    write_flow(root, gate_flow("zeta-producer", "spec-feature"))
+    only(root, "no upstream node produces it")
 
 
 def test_project_root_gate_is_not_held_to_an_upstream_writer(tmp_path):
@@ -1830,17 +1927,18 @@ FROZEN_ADR = (
 
 
 def test_frozen_adrs_may_name_what_they_replaced(tmp_path):
-    """ADRs 0001–0014 are carried over verbatim and record a layout that no longer exists; the gate
+    """ADRs 0001–0016 are carried over verbatim and record a layout that no longer exists; the gate
     reads the live documents, not the records."""
     root = write_repo(tmp_path)
     doc(root, "docs/adr/0004-contracts-earn-their-place.md", FROZEN_ADR)
     doc(root, "docs/adr/0014-the-glossary-is-a-root-file.md", FROZEN_ADR)
+    doc(root, "docs/adr/0016-machine-formats-follow-open-standards.md", FROZEN_ADR)
     assert errors(root) == []
 
 
-def test_adr_0015_is_not_frozen(tmp_path):
+def test_adr_0017_is_not_frozen(tmp_path):
     root = write_repo(tmp_path)
-    doc(root, "docs/adr/0015-the-instruction-tree-mirrors-the-artifact-tree.md", FROZEN_ADR)
+    doc(root, "docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md", FROZEN_ADR)
     errs = errors(root)
     assert len(errs) == 4, errs
     for fragment in ("links to `gone.md`", "names the path `skills/ghost`", "cites `tree/nothing.md`",
@@ -2163,7 +2261,7 @@ def concept_tree(root: Path) -> Path:
             "version: '1.0'\nlast_updated: 2026-09-05\njourneys:\n  - id: login\n    steps:\n"
             "      - action: sign in\n        acceptance:\n          - { id: AC-login-01, ears: 'WHEN x, THE SYSTEM SHALL y' }\n"
         ),
-        "10_blueprint/datamodel/model.json": '{"models": [{"name": "User"}]}',
+        "10_blueprint/datamodel/model.json": '{"version": "1.0", "entities": [{"id": "User", "display_name": "User", "fields": []}], "relationships": []}',
         "05_features/auth/login.md": (
             "---\npriority: must-have\npermissions: {member: [view]}\nscreens:\n  - path: 07_screens/login/login.md\n"
             "data_entities: [User]\nlast_updated: 2026-09-05\n---\n\n## Criteria\n\n- AC-login-01\n"
@@ -2214,6 +2312,29 @@ def test_check_concept_reports_the_retired_comparable_file_as_unowned(tmp_path):
     assert "comparable.md" in problems[0] and "unowned" in problems[0]
 
 
+@pytest.mark.parametrize(
+    "rel", ["03_brand/tokens.json", "11_build/interaction.yaml"],
+)
+def test_check_concept_reports_the_retired_machine_files_as_unowned(tmp_path, rel):
+    """`tokens.json` became `brand.tokens.json` and `interaction.yaml` became `interaction.sarif`."""
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / rel).parent.mkdir(parents=True, exist_ok=True)
+    (concept / rel).write_text("{}", encoding="utf-8")
+    problems = module.check(concept, script)
+    assert len(problems) == 1, problems
+    assert rel in problems[0] and "unowned" in problems[0]
+
+
+def test_check_concept_names_the_entity_ids_of_model_json():
+    """`data_entities[]` cites `entities[].id`; the old `models` / `name` shapes name nothing."""
+    module, _script = load_check_concept()
+    model = {"version": "1.0", "entities": [{"id": "User"}, {"id": "Order"}], "relationships": []}
+    assert module.model_names(model) == {"User", "Order"}
+    assert module.model_names({"models": [{"name": "User"}]}) == set()
+    assert module.model_names([]) == set()
+
+
 def test_check_concept_reads_the_real_trees_first_level_entries():
     """The fence in `tree/README.md` opens with ```text and carries a summary column; the parser
     must find it and take names only, or the script silently falls back to its built-in list."""
@@ -2222,6 +2343,213 @@ def test_check_concept_reads_the_real_trees_first_level_entries():
     assert entries is not module.BUILTIN_ROOT
     assert {"README.md", "brief.md", "01_meta", "11_build"} <= set(entries)
     assert all(" " not in e and not e.endswith("/") for e in entries), entries
+
+
+# -- the project-root artifact in the tree -----------------------------------
+
+def test_resolve_a_project_root_artifact_through_its_literal_entry():
+    nodes = nodes_of(("APP-DESIGN.md", "APP-DESIGN.md"))
+    assert check.resolve(nodes, "APP-DESIGN.md") is nodes[0]
+    assert check.resolve(nodes, "NOTES.md") is None
+
+
+def test_root_artifact_node_sits_at_the_tree_root(tmp_path):
+    """The exemption from the `_concept/` prefix and directory rules binds one place: `tree/<artifact>`."""
+    root = write_repo(tmp_path)
+    add_node(root, "01_meta/app.md", "APP-DESIGN.md")
+    only(root, "names the project-root artifact 'APP-DESIGN.md', so the node belongs at `tree/APP-DESIGN.md`")
+    assert "node-location" in errors(root)[0]
+
+
+def test_a_name_that_is_not_a_root_artifact_gets_no_exemption(tmp_path):
+    """Neither the prefix rule nor the lowercase rule is relaxed for a name outside PROJECT_ROOT_ARTIFACTS."""
+    root = write_repo(tmp_path)
+    add_node(root, "NOTES.md", "NOTES.md")
+    among(root, "does not start with '_concept/'", "'NOTES.md' is not lowercase")
+
+
+def test_the_listing_leaves_out_the_project_root_artifact(tmp_path):
+    root = write_repo(tmp_path)
+    assert not any("APP-DESIGN" in line for line in check.render_tree(check.load_tree(root)))
+
+
+# -- schemas (rules schema-valid, schema-id, schema-artifact-resolves, schema-produced, schema-cited) ---
+
+def good_schema(stem: str = "brief", **overrides) -> dict:
+    """A valid 2020-12 schema for the fixture skill's one artifact, `_concept/brief.md`."""
+    schema = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": f"urn:skaile:schema:{stem}",
+        "title": "Brief",
+        "x-artifact": "_concept/brief.md",
+        "type": "object",
+    }
+    schema.update(overrides)
+    return {k: v for k, v in schema.items() if v is not None}
+
+
+def write_schema(root: Path, schema: dict, rel: str = "brief") -> Path:
+    """`tree/<rel>.schema.json`: a schema sits beside the node that describes its file."""
+    path = root / "tree" / f"{rel}.schema.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(schema, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def cite_schema(root: Path, rel: str = "brief", node: str = "brief.md") -> None:
+    """The node names the schema at its write step; the cite leaves every skill's text alone."""
+    append(root, f"tree/{node}", f"\nValidate against `tree/{rel}.schema.json` before writing.\n")
+
+
+def test_schema_beside_and_cited_by_its_node_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema())
+    cite_schema(root)
+    assert errors(root) == []
+
+
+def test_schema_x_artifact_under_a_produced_directory_is_clean(tmp_path):
+    """A file inside a directory a skill produces is covered by that `produces` entry."""
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: screens, path: "_concept/07_screens" }\n')
+    write_schema(root, good_schema("screen", **{"x-artifact": "_concept/07_screens/shell.md"}), "07_screens/screen")
+    cite_schema(root, "07_screens/screen", "07_screens/shell.md")
+    assert errors(root) == []
+
+
+def test_schema_for_the_project_root_artifact_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n')
+    write_schema(root, good_schema("app-design", **{"x-artifact": "APP-DESIGN.md"}), "app-design")
+    cite_schema(root, "app-design", "APP-DESIGN.md")
+    assert errors(root) == []
+
+
+def test_schema_without_x_artifact_cited_by_a_node_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema("frontmatter", **{"x-artifact": None}), "frontmatter")
+    cite_schema(root, "frontmatter", "README.md")
+    assert errors(root) == []
+
+
+def test_schema_without_x_artifact_cited_by_a_skill_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema("frontmatter", **{"x-artifact": None}), "frontmatter")
+    cite(root, "spec-feature", "frontmatter.schema.json")
+    assert errors(root) == []
+
+
+def test_schema_that_is_not_json(tmp_path):
+    root = write_repo(tmp_path)
+    path = write_schema(root, good_schema())
+    path.write_text("{ not json", encoding="utf-8")
+    cite_schema(root)
+    only(root, "is not valid JSON")
+    assert "schema-valid" in errors(root)[0]
+
+
+def test_schema_that_is_not_an_object(tmp_path):
+    root = write_repo(tmp_path)
+    path = write_schema(root, good_schema())
+    path.write_text("[]", encoding="utf-8")
+    cite_schema(root)
+    only(root, "not an object")
+
+
+def test_schema_with_the_wrong_dialect(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(**{"$schema": "http://json-schema.org/draft-07/schema#"}))
+    cite_schema(root)
+    only(root, "`$schema` is 'http://json-schema.org/draft-07/schema#'")
+    assert "schema-valid" in errors(root)[0]
+
+
+def test_schema_that_fails_the_metaschema(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(type=5))
+    cite_schema(root)
+    only(root, "is not a valid 2020-12 schema")
+
+
+def test_schema_id_must_match_the_stem(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(**{"$id": "urn:skaile:schema:pitch"}))
+    cite_schema(root)
+    only(root, "`$id` is 'urn:skaile:schema:pitch', not 'urn:skaile:schema:brief'")
+    assert "schema-id" in errors(root)[0]
+
+
+def test_schema_x_artifact_no_skill_produces(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema("scope", **{"x-artifact": "_concept/01_meta/scope.yaml"}), "01_meta/scope")
+    cite_schema(root, "01_meta/scope", "01_meta/scope.md")
+    only(root, "is not a `produces` path of any skill")
+    assert "schema-produced" in errors(root)[0]
+
+
+def test_schema_x_artifact_outside_the_concept(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(**{"x-artifact": "NOTES.md"}))
+    cite_schema(root)
+    among(root, "which is not a path under `_concept/`")
+
+
+def test_schema_x_artifact_resolving_to_no_node(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(**{"x-artifact": "_concept/pitch.md"}))
+    among(root, "resolves to no node of `tree/`", "is not a `produces` path of any skill")
+    assert any("schema-artifact-resolves" in e for e in errors(root))
+
+
+def test_schema_beside_the_wrong_node(tmp_path):
+    """`tree/01_meta/brief.schema.json` describes `_concept/brief.md`, whose node is in `tree/`."""
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(), "01_meta/brief")
+    only(root, "which is in another directory")
+
+
+def test_schema_its_node_does_not_cite(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema())
+    only(root, "`tree/brief.md` does not cite `tree/brief.schema.json`")
+    assert "schema-cited" in errors(root)[0]
+
+
+def test_schema_without_x_artifact_must_be_cited(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema("frontmatter", **{"x-artifact": None}), "frontmatter")
+    only(root, "has no `x-artifact` and no node or skill cites")
+
+
+def test_a_producing_skill_citing_the_schema_does_not_replace_the_node(tmp_path):
+    """The write step lives in the node; a skill's citation does not satisfy an `x-artifact` schema."""
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema())
+    cite(root, "spec-feature", "brief.schema.json")
+    only(root, "does not cite `tree/brief.schema.json`")
+
+
+def test_a_schema_naming_a_retired_contract_path(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(description="See `contracts/elements_block.md`."))
+    cite_schema(root)
+    only(root, "names `contracts/elements_block.md`")
+    assert "tree/brief.schema.json" in errors(root)[0]
+    assert "no-old-contract-path" in errors(root)[0]
+
+
+def test_a_schema_citing_a_missing_node(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(description="See `tree/nothing.md`."))
+    cite_schema(root)
+    only(root, "cites `tree/nothing.md`, which does not exist")
+
+
+def test_a_schema_citing_a_section_that_exists_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_schema(root, good_schema(description="Per `tree/brief.md § Writing it`."))
+    cite_schema(root)
+    assert errors(root) == []
 
 
 if __name__ == "__main__":

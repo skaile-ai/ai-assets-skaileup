@@ -13,6 +13,7 @@ metadata:
       - { id: brand-tokens }
       - { id: datamodel }
       - { id: glossary }
+      - { id: app-design }
     produces:
       - { id: features, path: "_concept/05_features/<featureset>/<feature>.md" }
       - { id: screens, path: "_concept/07_screens/<feature_slug>/<screen>.md" }
@@ -25,6 +26,7 @@ metadata:
       - { path: "_concept/glossary.md", gate: hard }
       - { path: "_concept/04_journeys/stories.yaml", gate: soft }
       - { path: "_concept/10_blueprint/datamodel", gate: soft }
+      - { path: "APP-DESIGN.md", gate: soft }
 ---
 
 # spec-feature
@@ -37,6 +39,6 @@ Read `tree/README.md` once per session, then these nodes in order — each holds
 
 1. **Run the feature procedure** — `tree/05_features/[featureset]/[feature].md`. Its steps 1–9 are the run's order; steps 2, 6–7 and 9 hand to items 2–3 below at the moment they name. Step 2 calls the Skill tool with "grilling"; without it, run the rounds yourself. Steps 3–4 pin each decision that passes the gate in `_concept/10_blueprint/decisions.md` (format and gate: `tree/10_blueprint/decisions.md`) while the grill runs; an OUT that clears the gate lands as `rejected`.
 2. **Open the dossier at the grill, freeze it last** — `_concept/08_dossiers/<feature_slug>/index.md`, format and lifecycle in `tree/08_dossiers/[feature_slug]/index.md`.
-3. **Write the screens and register both directions** — `_concept/07_screens/<feature_slug>/<screen>.md`: `tree/07_screens/README.md` for the `elements:` block, then `tree/07_screens/[feature_slug]/[screen].md`.
+3. **Write the screens and register both directions** — `_concept/07_screens/<feature_slug>/<screen>.md`: `tree/07_screens/README.md` for the `elements:` block, then `tree/07_screens/[feature_slug]/[screen].md`. Where `APP-DESIGN.md` exists, each editing surface is the OBJ `task → surface` row of its entity (`tree/APP-DESIGN.md § Reading it`); a surface it lacks goes back to `experience-interaction`.
 
 **Done when** the spec, every screen it names and the frozen dossier are on disk, and the feature's `screens:` and each screen's `implements:` resolve to each other.

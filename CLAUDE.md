@@ -1,6 +1,6 @@
 # ai-assets-skaileup-tree
 
-The skaileup collection as a **mirror tree**: the same ~9 domains and 31 skills as
+The skaileup collection as a **mirror tree**: the same ~9 domains and 33 skills as
 [`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp), but the
 instructions live in `tree/` — a directory that mirrors `_concept/` one node per part — and
 a skill is only the route through those nodes. `-mp` stays live and untouched; projects opt
@@ -19,9 +19,10 @@ in via `skaile.yaml`.
 - **Order lives in the flow graph**, never in the filesystem.
 - **The tree mirrors `_concept/` and holds all instruction.** Every `_concept/` part has one
   node under `tree/`: directory `X/` → `X/README.md`, file `X/name.ext` → `X/name.md`,
-  placeholder `<x>` → `[x]`. Purpose, format, procedure and checks live in
+  placeholder `<x>` → `[x]`; the one project-root artifact, `APP-DESIGN.md`, has the node
+  `tree/APP-DESIGN.md`. Purpose, format, procedure and checks live in
   that node and nowhere else; there are no cross-cutting rulebooks. Resolution rules:
-  [ADR 0015](./docs/adr/0015-the-instruction-tree-mirrors-the-artifact-tree.md) and
+  [ADR 0017](./docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md) and
   `tree/README.md`.
 - **A skill is a route.** Its body is the ordered list of nodes it visits — at most 60 lines
   including frontmatter; the six skills with `produces: []` keep a compressed `## Steps`, at
@@ -79,4 +80,4 @@ concept-side per-feature thing is a **feature dossier**.
 ## Decisions
 
 [`docs/adr/`](./docs/adr/) holds the decision records this collection was built from.
-Read them before re-litigating shape questions. ADR 0015 supersedes 0003 and 0004.
+Read them before re-litigating shape questions. ADR 0017 supersedes 0003 and 0004.
