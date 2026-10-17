@@ -16,9 +16,9 @@ no workspace.
 _Avoid_: resource, module, package
 
 **Contract**:
-The collection's shared reference layer, as an asset: one dir-scoped thing named
-`shared-contracts`, installed whole. Singular because the directory installs as one —
-what a skill actually cites is a node inside it.
+The asset that ships the tree: one dir-scoped thing named `shared-contracts`, installed
+whole. There is exactly one contract and it holds nothing but the tree — what a skill
+actually cites is a node inside it.
 _Avoid_: reference file, shared docs
 
 **Tree**:
@@ -29,15 +29,15 @@ _Avoid_: contracts folder, reference layer
 **Node**:
 One file in the tree: the instruction for one `_concept/` part — purpose, format,
 procedure, checks — named by the part's path. A node is read at the step that touches its
-part.
+part. Not a **flow node** — that is a vertex of a flow graph, always written "flow node".
 _Avoid_: contract file, reference file
 
 **Skill**:
 One unit of agent work with a `name:` that is its whole identity — install path, flow
-node reference, and grounding key all at once.
+flow node reference, and grounding key all at once.
 
 **Flow**:
-A graph over skills, and the unit a project is sized by. Nodes name skills; edges order them;
+A graph over skills, and the unit a project is sized by. Flow nodes name skills; edges order them;
 the flow, not the filesystem, carries sequence. Choosing a flow and sizing the project are one
 act — `01_meta/scope.yaml` records the flow id, and a skill that varies its depth reads that.
 _Avoid_: pipeline, workflow, chain, tier

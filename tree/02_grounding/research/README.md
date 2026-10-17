@@ -14,7 +14,7 @@ claim without a source is a claim about a claim, and the stale one is the one th
 
 ## Contents
 
-One node per file: `tree/02_grounding/research/domain.md`, `tree/02_grounding/research/competitors.md`, `tree/02_grounding/research/audiences.md`, `tree/02_grounding/research/design-inspiration.md`, `tree/02_grounding/research/patterns.md`, `tree/02_grounding/research/colors-fonts.md`, `tree/02_grounding/research/behavioral-patterns.md`. Research run alongside one skill goes to `tree/02_grounding/research/step/README.md`. Raw material (screenshots, page saves) goes to `tree/02_grounding/findings/README.md`.
+One node per file: `tree/02_grounding/research/domain.md`, `tree/02_grounding/research/competitors.md`, `tree/02_grounding/research/audiences.md`, `tree/02_grounding/research/design-inspiration.md`, `tree/02_grounding/research/patterns.md`, `tree/02_grounding/research/colors-fonts.md`, `tree/02_grounding/research/behavioral-patterns.md`. Research run alongside one skill goes to `_concept/02_grounding/research/step/<skill-name>/` (`tree/02_grounding/research/step/README.md`). Raw material (screenshots, page saves) goes to `_concept/02_grounding/findings/` (`tree/02_grounding/findings/README.md`).
 
 ## Format
 
@@ -29,9 +29,9 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
 
 1. **Pick the depth before scoping.** It is `globals.research_depth` of the flow that is running
    (the value the host's onboarding depth picker shows and the user may have changed); with no
-   flow running, derive it from `flow` in `tree/01_meta/scope.md` (`appbuilder-mvp` → `skip`,
-   `appbuilder-standard` and `skaileup-concept-only` → `moderate`, `skaileup-concept-reverse` →
-   `light`); with neither, `moderate`. The four values are the whole vocabulary, and the depth sets
+   flow running, derive it from `flow` in `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`):
+   `appbuilder-mvp` → `skip`, `appbuilder-standard` and `skaileup-concept-only` → `moderate`,
+   `skaileup-concept-reverse` → `light`; with neither, `moderate`. The four values are the whole vocabulary, and the depth sets
    breadth, not rigour — every claim still names a source:
 
    | depth | files written | agents dispatched |
@@ -41,7 +41,7 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
    | `moderate` | the four default files, plus any topic `research_scope` names | one per topic |
    | `deep` | all seven files, `research_scope` or not | one per topic, and one per competitor or persona inside `competitors` and `audiences` |
 
-2. **Scope against what the project has said.** Read `02_grounding/onboarding/answers.json`. On a
+2. **Scope against what the project has said.** Read `_concept/02_grounding/onboarding/answers.json`. On a
    first run there is no brief, so domain, audience segments and named products come from the
    answers; on a re-run `brief.md` (its `## Comparables` section included) and `goals.md` exist
    and override the answers where they differ. The user's own comparables go on the list before
@@ -57,7 +57,8 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
 5. **Always write `design-inspiration.md`.** `design-brand`, `experience-shell` and both
    mockup renderers read it, and it is the file that most often goes unwritten because the
    competitor work ran long.
-6. **Catalogue the raw material** in `tree/02_grounding/findings/README.md`, with
+6. **Catalogue the raw material** as rows in `_concept/02_grounding/findings/index.md` (format:
+   `tree/02_grounding/findings/README.md`), with
    `step: concept-research` on each row.
 7. **Report what changed the picture**, not what was collected: the competitor gap, the
    persona nobody had in mind, the regulation that constrains the data model; and point at the

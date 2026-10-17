@@ -34,11 +34,10 @@ Settles what the product looks like and how it sounds: writes `03_brand/` (`iden
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Read the ground, discover the direction, extract from references, propose the whole brand** — steps 1–4 of `tree/03_brand/README.md § Writing it`. Nothing is written before the user approves the proposal in words.
-2. **Write the identity** — `tree/03_brand/identity.md`, with `approved: <date>` set in the same write as the user's yes.
-3. **Write the tokens** — `tree/03_brand/tokens.md`.
-4. **Write the brandbook** — `tree/03_brand/brandbook.md`.
-5. **File the reference screenshots and their index rows** — `tree/02_grounding/findings/README.md`, with `step: design-brand` on each row.
-6. **Report the distinctive choices** — step 6 of `tree/03_brand/README.md § Writing it`.
+1. **Read the ground, discover the direction, extract from references, propose the whole brand** — steps 1–4 of `tree/03_brand/README.md § Writing it`. Reference screenshots go into `_concept/02_grounding/findings/` with an index row each, `step: design-brand` (format: `tree/02_grounding/findings/README.md`). Nothing is written to `_concept/03_brand/` before the user approves the proposal in words.
+2. **Write the identity** — `_concept/03_brand/identity.md` per `tree/03_brand/identity.md`, with `approved: <date>` set in the same write as the user's yes.
+3. **Write the tokens** — `_concept/03_brand/tokens.json` per `tree/03_brand/tokens.md`.
+4. **Write the brandbook** — `_concept/03_brand/brandbook.html` per `tree/03_brand/brandbook.md`.
+5. **Report the distinctive choices** — step 6 of `tree/03_brand/README.md § Writing it`.
 
 **Done when** `identity.md`, `tokens.json` and `brandbook.html` exist, the token file carries every key its node lists, and `approved:` in `identity.md` records the user's approval.

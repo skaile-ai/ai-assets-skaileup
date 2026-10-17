@@ -10,7 +10,7 @@ The brand shown rather than described, for the user and stakeholders to judge by
 
 ## Format
 
-One HTML file that stands alone: inline CSS, Google Fonts `<link>`s as the only external reference, under 50 KB. It demonstrates the brand rather than listing it: swatches, type in use, spacing, elevation, and live button, card, input and nav previews, all drawn with the brand's own tokens from `tree/03_brand/tokens.md`.
+One HTML file that stands alone: inline CSS, Google Fonts `<link>`s as the only external reference, under 50 KB. It demonstrates the brand rather than listing it: swatches, type in use, spacing, elevation, and live button, card, input and nav previews, all drawn with the brand's own tokens from `_concept/03_brand/tokens.json` (format: `tree/03_brand/tokens.md`).
 
 ## Writing it
 

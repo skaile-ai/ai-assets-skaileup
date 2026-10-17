@@ -51,7 +51,7 @@ node at its own path. This file sequences the checks and does not restate them.
    featureset, feature and screen, the data model, the `11_build/slices/` dossiers and
    `git ls-files`. Then **check the naming rules** per
    `tree/10_blueprint/datamodel/README.md § Naming` (entity, field, enum, relation) and the
-   body a feature spec must have per `tree/05_features/README.md`; a generated concept fails
+   body a feature spec must have per `tree/05_features/[featureset]/[feature].md § Format`; a generated concept fails
    these first.
 3. **Check coverage.** Per feature: a spec, at least one screen that implements it, and an
    entity it reads or writes or an explicit statement that it needs none. Globally:

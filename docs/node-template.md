@@ -15,13 +15,15 @@ is, how it is written, and when it is done. Skills are routes through nodes (see
 | several siblings sharing a stem, or placeholder children a directory README covers | one node whose frontmatter `path:` is a **list** |
 
 Resolution of a `_concept/` path: first a literal match against any node's `path:` entries
-(`<x>` placeholders match any one segment), then the location rule above. A path below a
-directory node whose `path:` lists the directory resolves to that README. Nothing else
+(`<x>` placeholders match any one segment), then the location rule for directories only (a
+directory resolves to its `README.md`; a file resolves only through a `path:` entry, which every
+file node carries). A path below a directory entry of a list-form `path:` resolves to that README. Nothing else
 resolves. Node names are lowercase; every directory under `tree/` has a `README.md`.
 
 ## The shape (R2)
 
-Frontmatter, then these sections in this order, empty sections omitted:
+Frontmatter, then these sections in this order, empty sections omitted. Between `## Format`
+and `## Writing it` a node may carry further named `##` sections (see below):
 
 ```markdown
 ---
@@ -37,6 +39,9 @@ writers: [design-brand]                  # skills whose `produces` resolve here;
 ## Format
 <Frontmatter fields, body sections or schema, one minimal example.>
 
+## <Reference section, e.g. Naming>
+<Optional. Reference material other nodes cite by `§`.>
+
 ## Writing it
 <Numbered procedure. Multi-writer nodes: one `### <role> (<skill>)` subsection per writer.>
 
@@ -48,6 +53,12 @@ writers: [design-brand]                  # skills whose `produces` resolve here;
   directory with a trailing slash. `## Contents` lists the children that have no node of
   their own, one line each. `## Writing it` appears only when the directory is produced as a
   whole (`findings/`, `walkthrough/`).
+- **Named reference sections.** A node may carry additional `##` sections between
+  `## Format` and `## Writing it`. Each holds reference material that other nodes or skills
+  cite by `§` — for example `## Naming` (`10_blueprint/datamodel/README.md`), `## Verdicts`
+  (`11_build/README.md`), `## Manifest schema` (`09_mockup/walkthrough/README.md`). Name the
+  section for what it holds, so the `§` citation reads as a sentence. Procedure for a
+  skill-specific use stays in `## Writing it`.
 - `writers` is exactly the set of skills whose `produces` resolve to this node, and every
   writer has a `produces` entry that resolves here (or sits above or below it); `[]` means
   nothing generates the part.
@@ -75,6 +86,8 @@ lists — rewrite those as positive sentences at the step they bind.
 A sentence whose removal would change what the agent *does* is never dropped. When unsure,
 keep it and note the node path and sentence for review.
 
-**Expected size:** nodes of 40–150 lines. The two large renderers' nodes
-(`tree/09_mockup/walkthrough/README.md`, `tree/07_screens/README.md`) may reach ~250 because
-they carry a schema verbatim.
+**Expected size:** nodes of 40–150 lines are typical. Verbatim schemas and the generated
+tree fence in `tree/README.md` are excluded from the count, so the nodes that carry them may
+run longer — `tree/README.md`, `tree/09_mockup/walkthrough/README.md`,
+`tree/09_mockup/feedback/patches/README.md`, and `tree/07_screens/README.md` (the
+`elements:` block). A node over 150 lines after that exclusion is a sign it holds two parts.

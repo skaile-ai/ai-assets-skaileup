@@ -106,11 +106,13 @@ def good_tree(root: Path) -> None:
     write_node(root, "01_meta/scope.md", "_concept/01_meta/scope.yaml", summary="flow and project type",
                body=PROJECT_TYPES)
     write_node(
-        root, "07_screens/README.md", ["_concept/07_screens/", "_concept/07_screens/<feature_slug>/"],
+        root, "07_screens/README.md", ["_concept/07_screens/"],
         summary="the app shell and one spec per screen",
         body="## Format (the elements block)\n\nA screen lists its elements.\n",
     )
     write_node(root, "07_screens/shell.md", "_concept/07_screens/shell.md", summary="the app shell")
+    write_node(root, "07_screens/[feature_slug]/README.md", "_concept/07_screens/<feature_slug>/",
+               summary="screens of one feature")
     write_node(root, "07_screens/[feature_slug]/[screen].md", "_concept/07_screens/<feature_slug>/<screen>.md",
                summary="one spec per screen")
 
@@ -464,13 +466,23 @@ def test_produces_paths_that_resolve(tmp_path, path):
         "_concept/brief.md/extra",  # below a file entry
         "_concept/09_nothing/",  # not a root entry
         "_concept/pitch.md",  # the root README does not cover what no node names
-        "_concept/",  # names nothing
+        "_concept/brief",  # a file named without its extension is not the directory `brief/` either
+        "_concept/brief.json",  # `tree/brief.md` sits where the location rule puts `brief.*`; that is not a match
     ],
 )
 def test_produces_paths_that_do_not_resolve(tmp_path, path):
     root = write_repo(tmp_path)
     set_produces(root, f'    produces:\n      - {{ id: brief, path: "{path}" }}\n')
-    assert len(errors(root)) == 1, errors(root)
+    only(root, "produces-path-resolves")
+    assert "resolves to no node of `tree/`" in errors(root)[0]
+
+
+def test_produces_the_bare_artifact_root(tmp_path):
+    """`_concept/` names no part, so the resolver is never asked: the shape check reports it."""
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/" }\n')
+    only(root, "names no artifact below `_concept/`")
+    assert "produces-path-resolves" not in errors(root)[0]
 
 
 def test_required_artifact_nobody_produces(tmp_path):
@@ -1293,6 +1305,17 @@ def test_node_listing_a_writer_that_produces_nothing_there(tmp_path):
     assert "writer-without-produces" in errors(root)[0]
 
 
+def test_the_root_readme_is_not_the_writer_of_what_it_does_not_name(tmp_path):
+    """`_concept/` is a directory entry, but a root that covered every path would make any skill
+    its writer; only the root README itself is documented there."""
+    root = write_repo(tmp_path, skills=("spec-feature", "concept-scope", "design-brand"))
+    set_produces(root, '    produces:\n      - { id: concept-readme, path: "_concept/README.md" }\n', "concept-scope")
+    edit_node(root, "README.md", "writers: [concept-scope]", "writers: [concept-scope, design-brand]")
+    only(root, "lists writer 'design-brand', but no `produces` path of that skill resolves to this node")
+    assert "writer-without-produces" in errors(root)[0]
+    assert "tree/README.md" in errors(root)[0]
+
+
 def test_a_directory_produces_path_above_a_node_satisfies_its_writer(tmp_path):
     """A skill that writes `07_screens/` as a whole is the writer of what lies inside it."""
     root = write_repo(tmp_path, skills=("spec-feature", "zeta-producer"))
@@ -1442,11 +1465,14 @@ def test_directory_without_a_readme(tmp_path):
     assert "dir-has-readme" in errors(root)[0]
 
 
-def test_placeholder_directory_needs_no_readme_of_its_own(tmp_path):
-    """`[feature_slug]/` is described by the README above it; the baseline tree has one."""
+def test_placeholder_directory_without_a_readme(tmp_path):
+    """`[feature_slug]/` is a directory like any other: it needs a node of its own."""
     root = write_repo(tmp_path)
-    assert not (root / "tree" / "07_screens" / "[feature_slug]" / "README.md").exists()
-    assert errors(root) == []
+    (root / "tree" / "07_screens" / "[feature_slug]" / "README.md").unlink()
+    refresh_fence(root)
+    only(root, "has no `README.md`")
+    assert "dir-has-readme" in errors(root)[0]
+    assert "tree/07_screens/[feature_slug]/" in errors(root)[0]
 
 
 # -- the tree: the generated listing (T5) ------------------------------------------
@@ -1457,7 +1483,7 @@ def normalised(lines) -> list[str]:
 
 def test_render_tree_of_the_fixture(tmp_path):
     """Files before directories, placeholders last, a summary after each name, a directory
-    entry of a list-form `path:` described only by its first entry."""
+    described by the summary of its own README."""
     root = write_repo(tmp_path)
     assert normalised(check.render_tree(check.load_tree(root))) == [
         "_concept/ the artifact tree",
@@ -1467,7 +1493,7 @@ def test_render_tree_of_the_fixture(tmp_path):
         "│ └── scope.yaml flow and project type",
         "└── 07_screens/ the app shell and one spec per screen",
         "├── shell.md the app shell",
-        "└── <feature_slug>/",
+        "└── <feature_slug>/ screens of one feature",
         "└── <screen>.md one spec per screen",
     ]
 
@@ -1585,17 +1611,34 @@ def test_resolve_ignores_a_trailing_slash():
     assert check.resolve(nodes, "_concept/07_screens/") is nodes[0]
 
 
-def test_resolve_by_location_rule():
-    """A node that exists where the rule puts the part documents it, whatever its `path:` says."""
+def test_resolve_by_location_rule_is_for_directories():
+    """A directory resolves to the README that sits where the rule puts it, whatever its `path:`
+    says; `X` and `X/` alike, and a placeholder segment becomes `[x]`."""
     nodes = nodes_of(
         ("a/b.md", "_concept/a/c.yaml"),
         ("a/README.md", "_concept/a/other.yaml"),
-        ("a/[x]/c.md", "_concept/a/<x>/d.yaml"),
+        ("a/[x]/README.md", "_concept/a/<x>/d.yaml"),
     )
-    assert check.resolve(nodes, "_concept/a/b.yaml") is nodes[0]
     assert check.resolve(nodes, "_concept/a") is nodes[1]  # a directory named without its slash
-    assert check.resolve(nodes, "_concept/a/<x>/c.yaml") is nodes[2]
-    assert check.resolve(nodes, "_concept/a/zzz.yaml") is None
+    assert check.resolve(nodes, "_concept/a/") is nodes[1]
+    assert check.resolve(nodes, "_concept/a/<x>/") is nodes[2]
+    assert check.resolve(nodes, "_concept/a/zzz") is None  # no `a/zzz/README.md`
+    assert check.resolve(nodes, "_concept/a/c.yaml") is nodes[0]  # a file resolves through its `path:`
+
+
+def test_resolve_does_not_match_a_file_by_location():
+    """The location rule is extension-blind (`scope.yaml` and `scope.json` are both `scope.md`),
+    so a file path resolves only through a `path:` entry that names it."""
+    nodes = nodes_of(
+        ("01_meta/scope.md", "_concept/01_meta/scope.yaml"),
+        ("11_build/trace.md", "_concept/11_build/trace.yaml"),
+        ("brief.md", "_concept/brief.md"),
+    )
+    assert check.resolve(nodes, "_concept/01_meta/scope.yaml") is nodes[0]
+    assert check.resolve(nodes, "_concept/11_build/trace.yaml") is nodes[1]
+    assert check.resolve(nodes, "_concept/brief.md") is nodes[2]
+    for wrong in ("_concept/01_meta/scope.json", "_concept/11_build/trace.json", "_concept/brief"):
+        assert check.resolve(nodes, wrong) is None, wrong
 
 
 def test_only_a_list_form_directory_entry_covers_what_lies_below():
@@ -2169,6 +2212,16 @@ def test_check_concept_reports_the_retired_comparable_file_as_unowned(tmp_path):
     problems = module.check(concept, script)
     assert len(problems) == 1, problems
     assert "comparable.md" in problems[0] and "unowned" in problems[0]
+
+
+def test_check_concept_reads_the_real_trees_first_level_entries():
+    """The fence in `tree/README.md` opens with ```text and carries a summary column; the parser
+    must find it and take names only, or the script silently falls back to its built-in list."""
+    module, script = load_check_concept()
+    entries = module.root_entries(script)
+    assert entries is not module.BUILTIN_ROOT
+    assert {"README.md", "brief.md", "01_meta", "11_build"} <= set(entries)
+    assert all(" " not in e and not e.endswith("/") for e in entries), entries
 
 
 if __name__ == "__main__":

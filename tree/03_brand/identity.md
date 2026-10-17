@@ -36,7 +36,7 @@ Body sections: the direction and why it fits this product; colour usage rules, e
 
 ## Writing it
 
-Follow the procedure in `tree/03_brand/README.md § Writing it`; this node is step 5's first file. Take Tone and copy from the brief and the direction the user approved, and ask only when those leave the voice open, built on the feeling chosen in step 2. Write `approved: <date>` in the same write that records the user's yes; a later edit that changes the substance clears it until the user approves again.
+Follow the procedure in `tree/03_brand/README.md § Writing it`; this node is step 5's first file. Take Tone and copy from the brief and the direction the user approved, and ask only when those leave the voice open, built on the feeling chosen in step 2. `approved: <date>` is written with the user's yes, per `tree/README.md § Frontmatter every markdown artifact carries`.
 
 ## Checks
 

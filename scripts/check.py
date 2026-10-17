@@ -362,10 +362,11 @@ def load_tree(repo: Path) -> list[Node]:
     return nodes
 
 
-def _location_candidates(path: str) -> list[str]:
+def _location_candidates(path: str, files: bool = True) -> list[str]:
     """The node files (relative to `tree/`) the location rule names for a `_concept/` path:
     a directory `X` is `X/README.md`, a file `X/name.ext` is `X/name.md`, and `<x>` becomes `[x]`.
-    A path that may be either (no extension, no trailing slash) offers the directory first."""
+    A path that may be either (no extension, no trailing slash) offers the directory first.
+    `files=False` leaves out the file candidates — what resolution uses (see `resolve`)."""
     segs = _segs(path)
     if not segs or segs[0] != ARTIFACT_ROOT:
         return []
@@ -374,7 +375,7 @@ def _location_candidates(path: str) -> list[str]:
     out = []
     if kind in ("dir", "any"):
         out.append("/".join([*below, "README.md"]))
-    if kind in ("file", "any") and below:
+    if files and kind in ("file", "any") and below:
         name = below[-1]
         stem = name.rsplit(".", 1)[0] if "." in name else name
         out.append("/".join([*below[:-1], stem + ".md"]))
@@ -386,7 +387,11 @@ def resolve(nodes: list[Node], path: str) -> Node | None:
 
     1. a literal match against any node's `path:` entries — `<x>` matches any one segment on
        either side, a trailing slash is ignored, the entry with the fewest wildcard hits wins;
-    2. the location rule (`_location_candidates`) — a node that exists at that place;
+    2. the location rule for directories only (`_location_candidates(path, files=False)`) — `X`
+       or `X/` resolves to `X/README.md` when that node exists. A file path never resolves by
+       location: that rule is extension-blind, so `scope.json` would pass for `scope.yaml`.
+       Real files resolve through step 1 because T2 pins each node's first `path:` entry to
+       the node's location;
     3. covering: the deepest *directory* entry of a *list-form* `path:` above the path. The
        artifact root `_concept/` is not a covering entry: its README documents the root and
        `_concept/README.md`, and a root that covered everything would resolve every typo;
@@ -412,7 +417,7 @@ def resolve(nodes: list[Node], path: str) -> Node | None:
         return best[1]
 
     by_rel = {n.rel: n for n in nodes}
-    for rel in _location_candidates(path):
+    for rel in _location_candidates(path, files=False):
         if rel in by_rel:
             return by_rel[rel]
 
@@ -615,12 +620,12 @@ def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
         rel = path.relative_to(tree_root).as_posix()
         if any(part.startswith(".") for part in rel.split("/")):
             continue
-        if path.is_dir() and not path.name.startswith("[") and not (path / "README.md").is_file():
+        if path.is_dir() and not (path / "README.md").is_file():
             rep.fail(
                 f"{TREE_DIR}/{rel}/",
                 "dir-has-readme",
-                "has no `README.md` — every directory under the tree has a node of its own "
-                "(a `[placeholder]` directory is described by the README above it)",
+                "has no `README.md` — every directory under the tree has a node of its own, "
+                "a `[placeholder]` directory included",
             )
         if path.is_file() and path.name in ("README.md", "CONTRACT.md"):
             continue
@@ -776,16 +781,13 @@ def _produced_entries(fm: dict) -> list[tuple[str, str]]:
 
 def _gate_segments(path: str) -> list[str]:
     """A `_concept/`-prefixed path as its segments below the root."""
-    return [s for s in path.removeprefix(ARTIFACT_ROOT + "/").split("/") if s]
+    return _segs(path.removeprefix(ARTIFACT_ROOT + "/"))
 
 
 def _paths_overlap(a: str, b: str) -> bool:
     """True when one path equals, contains or lies under the other. A `<...>` or `*` segment
     matches any one segment, so a gate on `07_screens` meets `07_screens/<feature_slug>/<screen>.md`."""
-    return all(
-        x == y or _is_placeholder(x) or _is_placeholder(y)
-        for x, y in zip(_gate_segments(a), _gate_segments(b))
-    )
+    return all(_seg_eq(x, y) for x, y in zip(_gate_segments(a), _gate_segments(b)))
 
 
 PROJECT_TYPES_NODE = "01_meta/scope.md"
@@ -1116,7 +1118,8 @@ def _check_writers(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Re
 
     A produces path resolving to a node must find the skill in its `writers:`. A node's writer
     must have a produces path that resolves to the node, or a directory above one of the node's
-    entries, or a path below one of the node's directory entries."""
+    entries, or a path below one of the node's directory entries — a directory entry of at least
+    two segments, because the root entry `_concept/` would otherwise cover every path there is."""
     fms = dict(skill_fms)
     for skill, fm in skill_fms:
         for _ident, path in _produced_entries(fm):
@@ -1145,7 +1148,7 @@ def _check_writers(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Re
                 if (
                     resolve(nodes, p) is node
                     or any(prefix(ps, _segs(e)) for e in node.entries)
-                    or any(e.endswith("/") and prefix(_segs(e), ps) for e in node.entries)
+                    or any(e.endswith("/") and len(_segs(e)) >= 2 and prefix(_segs(e), ps) for e in node.entries)
                 ):
                     ok = True
                     break
@@ -1170,9 +1173,9 @@ def check_skills(
     """
     skills_dir = repo / "skills"
     names: set[str] = set()
-    contracts: dict[str, set[str]] = {}
+    tree_refs: dict[str, set[str]] = {}
     if not skills_dir.is_dir():
-        return names, contracts, {}
+        return names, tree_refs, {}
 
     produced: set[str] = set()
     required: list[tuple[str, str]] = []
@@ -1187,7 +1190,7 @@ def check_skills(
 
         # Keyed by directory, because that is what a flow node resolves against —
         # `name:` may be wrong, and the mismatch is reported separately below.
-        contracts[directory] = _cited_tree_refs(text)
+        tree_refs[directory] = _cited_tree_refs(text)
 
         if not fm:
             rep.error(where, "SKILL.md has no parseable YAML frontmatter")
@@ -1198,7 +1201,7 @@ def check_skills(
         # which reports a dependency that reached no workspace), while a flow's dependency
         # edges are built from its nodes' `run.assets`, never from its top-level `requires:`
         # (`extractFlowRequires`, @skaile/workspaces discovery/src/requires-graph.ts).
-        _check_skill_contract_dep(fm, contracts[directory], where, rep)
+        _check_skill_contract_dep(fm, tree_refs[directory], where, rep)
 
         # 1. identity. Three of the four roles a skill name plays resolve through the
         #    directory, and forge-concept never reads `name:` for identity at all
@@ -1309,7 +1312,7 @@ def check_skills(
     for where, body in bodies:
         _check_skill_calls(body, where, names, rep)
 
-    return names, contracts, dict(skill_fms)
+    return names, tree_refs, dict(skill_fms)
 
 
 def _check_skill_calls(body: str, where: str, names: set[str], rep: Report) -> None:
@@ -1414,7 +1417,7 @@ def _check_manifest(repo: Path, rep: Report) -> None:
 def check_flows(
     repo: Path,
     skill_names: set[str],
-    skill_contracts: dict[str, set[str]],
+    skill_tree_refs: dict[str, set[str]],
     skill_fms: dict[str, dict],
     rep: Report,
 ) -> None:
@@ -1433,7 +1436,7 @@ def check_flows(
         if not isinstance(flow, dict):
             rep.error(where, "does not contain a mapping")
             continue
-        _check_one_flow(repo, flow, text, flow_file, where, skill_names, skill_contracts, skill_fms, rep)
+        _check_one_flow(repo, flow, text, flow_file, where, skill_names, skill_tree_refs, skill_fms, rep)
 
 
 def _slugify_asset_name(raw: str) -> str:
@@ -1454,7 +1457,7 @@ def _check_one_flow(
     flow_file: Path,
     where: str,
     skill_names: set[str],
-    skill_contracts: dict[str, set[str]],
+    skill_tree_refs: dict[str, set[str]],
     skill_fms: dict[str, dict],
     rep: Report,
 ) -> None:
@@ -1563,7 +1566,7 @@ def _check_one_flow(
 
     # requires: exactness. A missing entry is not a house-rule violation — the
     # skill is then never installed, and the node runs with an empty prompt.
-    _check_requires(flow, node_skills, skill_contracts, repo, where, rep)
+    _check_requires(flow, node_skills, skill_tree_refs, repo, where, rep)
 
 
 def _check_presentation(flow: dict, text: str, where: str, rep: Report) -> None:
@@ -1933,11 +1936,16 @@ REF_RE = re.compile(r"^(skill|flow|contract):@([A-Za-z0-9_-]+)/([A-Za-z0-9_.-]+)
 def _check_requires(
     flow: dict,
     node_skills: set[str],
-    skill_contracts: dict[str, set[str]],
+    skill_tree_refs: dict[str, set[str]],
     repo: Path,
     where: str,
     rep: Report,
 ) -> None:
+    """The flow's `requires:` manifest against the skills its nodes run.
+
+    `skill_tree_refs` maps a skill directory to the `tree/` paths its body cites. The `skill:`
+    refs must equal the node skills exactly; the one `contract:` ref (`shared-contracts`, the
+    installed tree) must be present iff any node skill cites a `tree/` node."""
     requires = flow.get("requires")
     if requires is None:
         rep.error(where, "has no `requires:` manifest — installing the flow would install none of its skills")
@@ -1976,15 +1984,15 @@ def _check_requires(
     for extra in sorted(declared_skills - node_skills):
         rep.error(where, f"`requires:` lists skill {extra!r}, which no node in this flow runs")
 
-    # The reference layer is one asset, so a flow's contract manifest is one ref or none:
-    # present when any of its own node skills reads a contract file, absent when none
-    # does. Per-file exactness is not expressible here and is gated on the skills, which
-    # is where the reading happens — `skill:` refs keep the "no inheritance, no extras"
-    # rule because a skill really is per-node.
-    if node_skills and all(s in skill_contracts for s in node_skills):
-        needed = any(skill_contracts[skill] for skill in node_skills)
+    # The tree is one asset, so a flow's contract manifest is one ref or none: present when
+    # any of its own node skills cites a `tree/` node, absent when none does. Per-node
+    # exactness is not expressible here and is gated on the skills, which is where the
+    # citing happens — `skill:` refs keep the "no inheritance, no extras" rule because a
+    # skill really is per-node.
+    if node_skills and all(s in skill_tree_refs for s in node_skills):
+        needed = any(skill_tree_refs[skill] for skill in node_skills)
         if needed and CONTRACT_ASSET not in declared_contracts:
-            rep.error(where, f"its skills read contract files, but `requires:` does not list `contract:@skaile-ai/{CONTRACT_ASSET}` — the reference layer would not be installed")
+            rep.error(where, f"its skills cite `tree/` nodes, but `requires:` does not list `contract:@skaile-ai/{CONTRACT_ASSET}` — the tree would not be installed")
         if not needed and CONTRACT_ASSET in declared_contracts:
             rep.error(where, f"`requires:` lists {CONTRACT_ASSET!r}, which none of this flow's skills read")
 
@@ -2056,11 +2064,11 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
 def run(repo: Path) -> Report:
     rep = Report()
     nodes = load_tree(repo)
-    skill_names, skill_contracts, skill_fms = check_skills(repo, nodes, rep)
+    skill_names, skill_tree_refs, skill_fms = check_skills(repo, nodes, rep)
     check_tree(repo, nodes, rep)
     check_citations(repo, rep)
     check_old_contract_paths(repo, rep)
-    check_flows(repo, skill_names, skill_contracts, skill_fms, rep)
+    check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)
     check_docs(repo, skill_names, rep)
     return rep
 

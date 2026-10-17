@@ -52,7 +52,7 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
    once. A value already there changes only after the user confirms the change; new answers
    merge into the file rather than replacing it. A saved value is the default, and a question
    already answered is skipped.
-3. Read `tree/01_meta/scope.md` for `project_type` and the flow; confirm that value rather than
+3. Read `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`) for `project_type` and the flow; confirm that value rather than
    collecting it again.
 4. Ask the technology preferences — framework or language, data access and database, UI
    component library, authentication, overall architecture pattern — one question per message,

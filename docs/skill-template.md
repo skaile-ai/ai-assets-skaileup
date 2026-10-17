@@ -74,6 +74,12 @@ cite a node for every `_concept/` format they read.
   `host:node-done-from-produced-by`.
 - **A skill that cites the tree declares the contract** (`contract:@skaile-ai/shared-contracts`
   under `metadata.requires`), and a skill that declares it cites the tree.
+- **Frontmatter differs from `-mp` only where the tree requires it.** A skill whose body
+  cites `tree/` declares `contract:@skaile-ai/shared-contracts` under `metadata.requires`
+  (`scripts/check.py` rule `skill-declares-contract`, host fact `host:doctor-walks-requires`);
+  that is the one permitted change, and it is why `build-branch`, `build-scaffold` and
+  `quality-standards` gained it. `concept-scope` also gains `_concept/README.md` in
+  `produces`.
 - **Every route item cites a node** by its repo-relative path under `tree/`, optionally
   followed by ` § ` and a `##`/`###` heading of that node — one citation per line, as in the
   example above; `scripts/check.py` resolves both the file and the heading.

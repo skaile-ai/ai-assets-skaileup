@@ -19,7 +19,7 @@ Before reading or writing anything under `_concept/<p>`, read the node at the sa
 | placeholder segment `<x>` | `[x]` in the node path: `05_features/[featureset]/[feature].md` |
 | siblings sharing a stem, or children a directory README covers | one node whose `path:` is a list |
 
-A node's `path:` entries are matched first, `<x>` matching any one segment; the location column applies next; a path below a directory whose node lists the directory resolves to that README.
+A node's `path:` entries are matched first, `<x>` matching any one segment; the location column applies next, for directories only (a file resolves through its node's `path:` entry); a path below a directory entry of a list-form `path:` resolves to that README.
 
 ## The tree
 
@@ -160,7 +160,7 @@ The skill holding an artifact's approval step writes `approved:` in the same wri
 2. **The route is the todo list.** On entry the route's numbered items become the first todo items, verbatim and in order; an item that does not apply stays listed as `skip: <reason>`, and **Done when** is the last item. Where the harness has no todo tool, the first message lists them and each later message names the item it is on.
 3. **One question per message.** A question goes out as its own message, built on the user's last answer, with a status update or explanation in the message before it; a technical term is explained in parentheses, because a question buried at the end of a long message gets skimmed.
 4. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
-5. **Standalone or in a flow.** A standalone run applies the same gates, and its next steps are the skills whose required paths are now satisfied, which are the edges leaving this skill's node in the flow file; when none is unblocked, show what is missing and which skill produces it. When a flow is running the host dispatches the next step itself.
+5. **Standalone or in a flow.** A standalone run applies the same gates, and its next steps are the skills whose required paths are now satisfied, which are the edges leaving this skill's flow node in the flow file; when none is unblocked, show what is missing and which skill produces it. When a flow is running the host dispatches the next step itself.
 
 ## _concept/README.md
 

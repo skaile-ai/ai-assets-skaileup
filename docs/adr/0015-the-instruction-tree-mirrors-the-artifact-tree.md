@@ -34,11 +34,14 @@ it binds cannot drift away from that part.
 node path. Several siblings that share a stem, or placeholder children a directory README
 covers, share one node whose frontmatter `path:` is a list. Resolution of any `_concept/` path
 is a literal match against the nodes' `path:` entries first (`<x>` matches one segment), then
-the location rule above; nothing else resolves.
+the location rule for directories (a directory resolves to its `README.md`; a file only through
+a `path:` entry); nothing else resolves.
 
 **R2 — Node.** Every node is markdown with frontmatter `path`, `summary` (≤ 80 chars) and
 `writers` (the skills whose `produces` resolve to it), then in order: an intro paragraph,
-`## Format`, `## Writing it`, `## Checks`, empty sections omitted. All format, procedure and
+`## Format`, any named reference sections other nodes cite by `§` (e.g. `## Naming`,
+`## Verdicts`), `## Writing it`, `## Checks`, empty sections omitted; a directory README may
+also carry `## Contents`. All format, procedure and
 check text for a part lives in its node and nowhere else. Rationale is compressed to at most
 one consequence clause per rule. See [`../node-template.md`](../node-template.md).
 

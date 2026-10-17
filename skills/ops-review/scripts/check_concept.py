@@ -20,10 +20,12 @@ Stdlib + PyYAML only. Checks:
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
                      `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
 
-The tree's legal first-level entries are parsed from the fenced tree in `tree/README.md` when the
-script sits in the collection (`../../../tree/`), or from the installed copy
+The tree's legal first-level entries are parsed from the fenced tree in `tree/README.md` (a
+```text fence opening `_concept/` plus a summary column) when the script sits in the
+collection (`../../../tree/`), or from the installed copy
 (`../../../contracts/shared-contracts/README.md`); with neither, the built-in list below,
-mirrored from that fence, is used.
+mirrored from that fence, is used. An entry is the first token after the box-drawing prefix —
+the summary column is ignored — and a directory's trailing `/` is dropped.
 """
 from __future__ import annotations
 
@@ -65,7 +67,7 @@ def root_entries(here: Path) -> list[str]:
     for tree in (root / "tree" / "README.md", root / "contracts" / "shared-contracts" / "README.md") \
             if root else ():
         if tree.is_file():
-            fence = re.search(r"```\n_concept/\n(.*?)```", tree.read_text(encoding="utf-8"), re.S)
+            fence = re.search(r"```[a-z]*\n_concept/[^\n]*\n(.*?)```", tree.read_text(encoding="utf-8"), re.S)
             found = re.findall(r"^[├└]── (\S+)", fence.group(1), re.M) if fence else []
             if found:
                 return [e.rstrip("/") for e in found]

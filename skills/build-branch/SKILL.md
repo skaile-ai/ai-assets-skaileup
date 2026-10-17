@@ -22,7 +22,7 @@ skill never does. Most steps are plain git; two rules are its own, each stated a
 binds: no close while a slice is unlanded (step 5), and no merge or discard without the word
 typed back (step 7).
 
-Read `tree/README.md` once per session. The app slug comes from `tree/brief.md`; slice
+Read `tree/README.md` once per session. The app slug comes from `_concept/brief.md` (format: `tree/brief.md`); slice
 dossiers are `tree/11_build/slices/README.md`'s.
 
 ## Steps
