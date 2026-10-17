@@ -766,14 +766,40 @@ def test_hard_root_artifact_gate_with_an_upstream_writer(tmp_path):
 
 
 def test_hard_root_artifact_gate_is_matched_exactly(tmp_path):
-    """The gate is matched by exact path: a writer of a `_concept/` directory does not open it."""
+    """The gate is matched by exact path. The only writer produces `_concept/<file>.md`, whose
+    one placeholder segment `_paths_overlap` would match against `APP-DESIGN.md` (a placeholder
+    meets any one segment, and the two paths are one segment long), so the gate would wrongly
+    open under overlap matching."""
     root = gate_repo(
         tmp_path,
         gate="APP-DESIGN.md",
-        writes='    produces:\n      - { id: screens, path: "_concept/07_screens/" }\n',
+        writes='    produces:\n      - { id: root-file, path: "_concept/<file>.md" }\n',
     )
+    add_node(root, "[file].md", "_concept/<file>.md", summary="any one file at the concept root")
+    sync_writers(root)
+    assert check._paths_overlap("APP-DESIGN.md", "_concept/<file>.md")
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
     only(root, "no upstream node produces it")
+    assert "'APP-DESIGN.md'" in errors(root)[0]
+
+
+def test_prerequisite_on_the_root_artifact_resolves_to_its_node(tmp_path):
+    """`APP-DESIGN.md` is exempt from the `_concept/` prefix, not from resolving: a skill gating on
+    it with no `tree/APP-DESIGN.md` node is reported, as a `produces` path would be."""
+    root = write_repo(tmp_path)
+    skill = skill_file(root)
+    skill.write_text(skill.read_text().replace('path: "_concept/07_screens"', 'path: "APP-DESIGN.md"'))
+    assert errors(root) == []
+    (root / "tree" / "APP-DESIGN.md").unlink()
+    only(root, "prerequisite path 'APP-DESIGN.md' resolves to no node of `tree/`")
+
+
+def test_prerequisite_on_package_json_needs_no_node(tmp_path):
+    """The other project-root gate is the project's own: no node, no error."""
+    root = write_repo(tmp_path)
+    skill = skill_file(root)
+    skill.write_text(skill.read_text().replace('path: "_concept/07_screens"', 'path: "package.json"'))
+    assert errors(root) == []
 
 
 def test_project_root_gate_is_not_held_to_an_upstream_writer(tmp_path):
@@ -2327,12 +2353,31 @@ def test_check_concept_reports_the_retired_machine_files_as_unowned(tmp_path, re
 
 
 def test_check_concept_names_the_entity_ids_of_model_json():
-    """`data_entities[]` cites `entities[].id`; the old `models` / `name` shapes name nothing."""
+    """`data_entities[]` cites `entities[].id`; a file without an `entities[]` list names nothing
+    and is `None`, not an empty set that would fail every cited name."""
     module, _script = load_check_concept()
     model = {"version": "1.0", "entities": [{"id": "User"}, {"id": "Order"}], "relationships": []}
     assert module.model_names(model) == {"User", "Order"}
-    assert module.model_names({"models": [{"name": "User"}]}) == set()
-    assert module.model_names([]) == set()
+    assert module.model_names({"entities": []}) == set()
+    assert module.model_names({"models": [{"name": "User"}]}) is None
+    assert module.model_names({"entities": {"id": "User"}}) is None
+    assert module.model_names([]) is None
+
+
+def test_check_concept_reports_a_model_without_entities_once(tmp_path):
+    """The old `models` / `name` shape is one finding on `model.json`, not one per cited name."""
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "10_blueprint/datamodel/model.json").write_text(
+        '{"models": [{"name": "User"}, {"name": "Order"}]}', encoding="utf-8"
+    )
+    feature = concept / "05_features/auth/login.md"
+    feature.write_text(feature.read_text().replace("[User]", "[User, Order]"), encoding="utf-8")
+    problems = module.check(concept, script)
+    assert problems == [
+        "_concept/10_blueprint/datamodel/model.json: no `entities[]` list "
+        "(format: tree/10_blueprint/datamodel/model.md)"
+    ], problems
 
 
 def test_check_concept_reads_the_real_trees_first_level_entries():

@@ -30,10 +30,10 @@ The one writer of `APP-DESIGN.md` at the project root: where each object lives, 
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Read the ground** — `tree/APP-DESIGN.md § Reading it`, then step 1 of `tree/APP-DESIGN.md § Writing it`. An existing `APP-DESIGN.md` is intent: its decided entries stay. `tree/02_grounding/findings/interaction.md` present means a retrofit; `_concept/11_build/interaction.sarif` present means a re-entry, which jumps to item 5.
+1. **Read the ground** — `tree/APP-DESIGN.md § Reading it`, then step 1 of `tree/APP-DESIGN.md § Writing it`. An existing `APP-DESIGN.md` is intent: its decided entries stay. `_concept/02_grounding/findings/interaction.md` present means a retrofit; `_concept/11_build/interaction.sarif` present means a re-entry, which jumps to item 5.
 2. **Classify the objects and decide the global rules** — `tree/APP-DESIGN.md § Patterns` (P1–P17, object classes), steps 2–4 of `tree/APP-DESIGN.md § Writing it`. Object names come from the model and glossary and are never coined here; a concept neither names goes back to `concept-glossary`.
 3. **Ask in rounds** — `tree/APP-DESIGN.md § Decision catalogue`, step 5 of `tree/APP-DESIGN.md § Writing it`; the agenda is the catalogue's ⚖ rows first. At most five questions per round, one message each (`tree/README.md § How a skill runs`); without a user the contested calls carry `[open Qn]`.
-4. **Write `APP-DESIGN.md` after every round** — `tree/APP-DESIGN.md § Format`, step 6 of `tree/APP-DESIGN.md § Writing it`, rules in `tree/APP-DESIGN.md § Writing it`. Each write adds a Changelog line and sets `updated:`; `approved:` moves only on the user's yes.
+4. **Write `APP-DESIGN.md` after every round** — `tree/APP-DESIGN.md § Format`, step 6 of `tree/APP-DESIGN.md § Writing it`. Each write adds a Changelog line and sets `updated:`; `approved:` moves only on the user's yes.
 5. **Fold in a code check** — `tree/11_build/interaction.md` for the `interaction.sarif` fields, step 7 of `tree/APP-DESIGN.md § Writing it`. The verdict file is `quality-interaction`'s and stays as it is; an exception enters Exceptions only on the user's answer.
 6. **Hand off** — step 8 of `tree/APP-DESIGN.md § Writing it`: `spec-feature` applies the OBJ `task → surface` rows and hands back a screen whose surface the floorplan lacks; `experience-shell` derives the navigation and takes MSG, EDIT and MOD from the entries. Say which rows a re-entry changed.
 

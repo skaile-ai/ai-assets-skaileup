@@ -63,7 +63,7 @@ every findings file the run wrote (`tree/README.md § Frontmatter every markdown
    to prevent.
 5. **Hand off**, naming what each skill now has to work from — the brief from `brief-seeds.md`,
    the brand from `brand.md`, the stack from `stack.md`, the journeys and featuresets from
-   `routes.md`, the screens from `screens.md`, the model from `datamodel.md`, the interaction decisions from `interaction.md` — and what the user
+   `routes.md`, the screens from `screens.md`, the model from `datamodel.md`, the interaction census in `interaction.md` — and what the user
    should correct first, which is always the `needs_review` list. Once the user has accepted the
    report — corrections made, the `needs_review` list acknowledged — write `approved: <date>`
    into every findings file this run wrote.

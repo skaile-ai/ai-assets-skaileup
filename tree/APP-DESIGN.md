@@ -24,7 +24,7 @@ It holds *decisions*; findings, plans and questions stay in the output of the ru
 app: <name>
 updated: YYYY-MM-DD
 approved: YYYY-MM-DD
-rulebook: APP-DESIGN P1–P17
+rulebook: tree/APP-DESIGN.md § Patterns
 companions: { visual: _concept/03_brand/identity.md, glossary: _concept/glossary.md, shell: _concept/07_screens/shell.md, adr: docs/adr/ }
 ---
 # App design – <name>
@@ -177,15 +177,6 @@ A tooltip is short plain text, opens on hover *and* keyboard focus, holds nothin
 
 A button carries a text label; the icon is optional and leads. Icon-only is for repeated, universally known actions in toolbars and rows (close, previous/next, reload, overflow), always with an accessible name and a tooltip (P16), and not for a view's primary or create action. One primary button per view or dialog, the rest of lower emphasis; destructive buttons use the error colour and sit apart from benign ones. Labels are active verbs from P11's verb set, with the object where unclear — "OK" and "Yes" say nothing about what happens.
 
-### Recording findings
-
-- **One finding per distinct cause**, filed under the most specific rule and cross-referenced to the others it also breaks, and counted once.
-- **Severity:** `high` — users can see two values disagree, lose an edit, or act on stale data; `medium` — an inconsistency users have to learn; `low` — clutter or hygiene.
-- **Kind:** P1–P8 and P13–P17 findings are *consistency* defects in existing code; P9–P12 findings are often *completeness* gaps (the palette lacks actions). Mark completeness gaps so a count does not weigh a missing feature like a broken one.
-- **Status:** `open`, or `accepted` with the reason when the team keeps a deviation on purpose. An accepted deviation goes into § Exceptions through `experience-interaction`, the file's only writer, so the next run does not report it again. A skill that finds a deviation records it in its own output and proposes the exception; it does not edit the file.
-- **Intent first:** a deviation the repo's ADRs or `_concept/glossary.md` already decided is either an accepted exception or an *unimplemented decision* — say which; it is not a "design flaw".
-- **Absences** (no deep link, a type missing from search) have no line of their own: cite `absence: <what is missing>` with the nearest `file:line` where it would sit.
-
 ## Decision catalogue
 
 The agenda for the interview that fills the file. Each row is one decision `APP-DESIGN.md` should hold, with the default the cited source gives. ⚖ marks rows where sources disagree: these are the questions worth the user's time, because without a recorded choice two developers pick two answers. Rows without ⚖ are offered as "take the default?" and batched. The `id` is the suggested entry id in its area; an existing file's ids win. `P<n>` cites § Patterns.
@@ -253,7 +244,7 @@ The GitLab decision tree is the most complete source and orders the questions: d
 | BTN-3 | hierarchy | one primary per view or dialog; secondary/ghost for the rest; toolbars and rows use low emphasis | — | Carbon button usage; Primer Saving (appearance) |
 | BTN-4 ⚖ | placement | dialogs: bottom right, Cancel left of primary | **page forms: Primer bottom-left with Cancel right of Save**; many systems mirror dialogs | Primer Saving, Primer Dialog |
 | BTN-5 | labels | active verb, plus the object where unclear ("Save profile"); no "OK", "Yes", "Done"; verb set from LANG | — | Primer Saving (text); NN/g Confirmation dialogs; P11 |
-| BTN-6 | destructive actions | error colour; kept apart from benign actions | — | NN/g Proximity of consequential options (title only, unverified) |
+| BTN-6 | destructive actions | error colour; kept apart from benign actions | — | NN/g Proximity of consequential options |
 | BTN-7 | action registry | every action defined once (label, icon, shortcut, availability) and rendered as button, menu item, palette entry and shortcut | — | P11 |
 
 ### Search and commands (FIND)
@@ -281,15 +272,14 @@ Not catalogued: loading states, responsive layout and motion — visual or compo
 ### Sources
 
 - OOUX / ORCA — Sophia Prater, [A List Apart](https://alistapart.com/article/ooux-a-foundation-for-interaction-design/), [ooux.com](https://ooux.com/resources/introducing-orca-the-third-diamond-in-your-ux-process)
-- NN/g — [Icon Usability](https://www.nngroup.com/articles/icon-usability/) (labels always visible; few universal icons); [Tooltip Guidelines](https://www.nngroup.com/articles/tooltip-guidelines/); [Confirmation Dialogs](https://www.nngroup.com/articles/confirmation-dialog/) (action-named buttons, no default, typed confirm for rare cases, prefer undo); [Modal & Nonmodal Dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog); [Proximity of Consequential Options](https://www.nngroup.com/articles/proximity-consequential-options/) (title only, not read)
-- Primer (GitHub) — [Saving](https://primer.style/product/ui-patterns/saving/) (explicit vs automatic by control type, Save stays enabled, button placement, redirect after create); [Dialog guidelines](https://primer.style/product/components/dialog/guidelines) (anatomy, backdrop and dirty forms, nesting, deep linking, side sheets, bottom sheets)
-- GitLab Pajamas — [Choosing a messaging pattern](https://design.gitlab.com/patterns/choosing-a-messaging-pattern); [Saving and feedback](https://design.gitlab.com/patterns/saving-and-feedback) (autosave per input, inline status, no actions in toasts, debounce)
+- NN/g — [Icon Usability](https://www.nngroup.com/articles/icon-usability/); [Tooltip Guidelines](https://www.nngroup.com/articles/tooltip-guidelines/); [Confirmation Dialogs](https://www.nngroup.com/articles/confirmation-dialog/); [Modal & Nonmodal Dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog); [Proximity of Consequential Options](https://www.nngroup.com/articles/proximity-consequential-options/)
+- Primer (GitHub) — [Saving](https://primer.style/product/ui-patterns/saving/); [Dialog guidelines](https://primer.style/product/components/dialog/guidelines)
+- GitLab Pajamas — [Choosing a messaging pattern](https://design.gitlab.com/patterns/choosing-a-messaging-pattern); [Saving and feedback](https://design.gitlab.com/patterns/saving-and-feedback)
 - Cloudscape (AWS) — [Communicating unsaved changes](https://cloudscape.design/patterns/general/unsaved-changes/)
-- Carbon — [Button usage](https://v10.carbondesignsystem.com/components/button/usage/) (quoted via a search summary, page not opened)
-- SAP Fiori — [Object Handling](https://www.sap.com/design-system/fiori-design-web/v1-148/foundations/best-practices/global-patterns/object-handling/manage-objects) (dialog for ≤ 8 fields, object page otherwise; partial/local/global edit flows; Create vs Add); [Object Page](https://www.sap.com/design-system/fiori-design-web/v1-145/page-types/floorplans/object-page) and [Draft Handling](https://www.sap.com/design-system/fiori-design-web/v1-145/foundations/best-practices/global-patterns/object-handling/draft-handling) (not opened; the OBJ-2/OBJ-3 defaults attributed to them are unverified)
-- Sam Solomon — [Designing Command Palettes](https://solomon.io/designing-command-palettes/); Setproduct — [Command palette, 8 states](https://www.setproduct.com/blog/command-palette-ui-design-guide) (unverified, title only)
-- Vitaly Friedman — [Modal vs. Separate Page decision tree](https://www.smashingmagazine.com/2026/03/modal-separate-page-ux-decision-tree/); Ryan Neufeld — [Modal vs Page framework](https://uxplanet.org/modal-vs-page-a-decision-making-framework-34453e911129)
-- [PatternFly inline edit](https://v5-archive.patternfly.org/components/inline-edit/design-guidelines)
+- Carbon — [Button usage](https://v10.carbondesignsystem.com/components/button/usage/)
+- SAP Fiori — [Object Handling](https://www.sap.com/design-system/fiori-design-web/v1-148/foundations/best-practices/global-patterns/object-handling/manage-objects); [Object Page](https://www.sap.com/design-system/fiori-design-web/v1-145/page-types/floorplans/object-page); [Draft Handling](https://www.sap.com/design-system/fiori-design-web/v1-145/foundations/best-practices/global-patterns/object-handling/draft-handling)
+- Sam Solomon — [Designing Command Palettes](https://solomon.io/designing-command-palettes/); Setproduct — [Command palette, 8 states](https://www.setproduct.com/blog/command-palette-ui-design-guide)
+- Vitaly Friedman — [Modal vs. Separate Page decision tree](https://www.smashingmagazine.com/2026/03/modal-separate-page-ux-decision-tree/); Ryan Neufeld — [Modal vs Page framework](https://uxplanet.org/modal-vs-page-a-decision-making-framework-34453e911129); [PatternFly inline edit](https://v5-archive.patternfly.org/components/inline-edit/design-guidelines)
 
 ## Reading it
 
@@ -299,7 +289,7 @@ Each reader opens the file at its first step, as intent, before judging anything
 - `experience-shell` — derives the navigation under the NAV rule and takes MSG, EDIT and MOD patterns from the entries instead of deciding them.
 - `ops-review` — checks screen specs against the entries.
 - `quality-interaction` — checks the app's source against the entries.
-- `build-plan` — reads the file through `quality-interaction`'s verdict (`tree/11_build/interaction.md`), not directly.
+- `build-plan` — reads the verdict at `_concept/11_build/interaction.sarif` (format: `tree/11_build/interaction.md`), not the file itself.
 
 How a reader applies what it reads:
 
@@ -315,22 +305,14 @@ How a reader applies what it reads:
 
 ### Procedure (experience-interaction)
 
-1. **Read the ground.** Open an existing `APP-DESIGN.md` first as intent (§ Reading it): its decided entries and exceptions are settled and later steps draft only what it lacks. Then `_concept/10_blueprint/datamodel/model.json` (without it, the glossary's nouns and the brief carry the object list), `_concept/glossary.md`, and `_concept/04_journeys/stories.yaml` for roles and the tasks each journey performs (without it, the brief's audience and hero flow). Without `_concept/glossary.md` — a project on an older `_concept/` layout, where the brief, feature and blueprint files sit under other folder names — the object list comes from `_concept/02_grounding/findings/datamodel.md`, else from the schema and census the findings or the code give, and § Open gets one row asking for `concept-glossary` and the data-model step to pin the names. Where `_concept/02_grounding/findings/interaction.md` exists the app is a retrofit: every decision it records and grades is recommended as it stands wherever it passes the rule, so the file renames and fixes what the code does rather than redesigns it. Where `_concept/11_build/interaction.sarif` exists, this is a re-entry: go to step 7.
+1. **Read the ground.** Open an existing `APP-DESIGN.md` first as intent (§ Reading it): its decided entries and exceptions are settled and later steps draft only what it lacks. Then `_concept/10_blueprint/datamodel/model.json` (without it, the glossary's nouns and the brief carry the object list), `_concept/glossary.md`, and `_concept/04_journeys/stories.yaml` for roles and the tasks each journey performs (without it, the brief's audience and hero flow). Without `_concept/glossary.md` the object list comes from `_concept/02_grounding/findings/datamodel.md`, else from the schema and census the findings or the code give, and § Open gets one row asking for `concept-glossary` and the data-model step to pin the names. Where `_concept/02_grounding/findings/interaction.md` exists the app is a retrofit: every decision it records and grades is recommended as it stands wherever it passes the rule, so the file renames and fixes what the code does rather than redesigns it. Where `_concept/11_build/interaction.sarif` exists, this is a re-entry: go to step 7.
 2. **Classify the objects.** One row per object the model or glossary names, with its class (`core`, `supporting`, `child`, `junction`, `system`, as defined in § Patterns), `simple` or `complex` for core and supporting types, and the roles that edit it (one line when the app has one role). A word on the glossary's `_Avoid_` list is renamed to its term. A concept the files do not name is not appended here: name it and hand back, and the flow re-enters `concept-glossary`, which pins it before this step goes on. A `system` type users only read is listed once and leaves the later tables.
 3. **Decide the global rules.** For each of `P1`–`P17`: `adopt`, `adapt` with the adapted wording, or `reject`, each with a one-line reason grounded in this app's size, users and UI stack. An adaptation keeps the rule's obligation and changes its form; one that removes the obligation is a `reject` and is written as one, because it lands in § Exceptions.
 4. **Draft each type's floorplan.** One row per non-system type: index · canonical home · editor · create flow · delete confirmation · representations with their field subsets · in search. Under it, per type, its editing tasks as `task → surface` and its palette actions. In a retrofit mark each cell `as-is` or `change`.
-5. **Ask in rounds.** Everything above is a draft until the user has answered the decisions a reasonable maintainer could make the other way, taken from § Decision catalogue: the ⚖ rows and the core and supporting types' calls first, those that change a screen's surface before the rest. A round is at most five questions, each its own message (`tree/README.md § How a skill runs`), each with the recommendation first and its reason; the rows without ⚖ go as one "take these defaults?" message. Open questions already in § Open come first. Without a user, the ⚖ rows and the core and supporting types' calls are written as the recommendation with `[open Qn]` on the entry, and each question is a § Open row that stands alone: question, options, recommendation and why. The defaults without ⚖ are written as decided, and one § Open row asks the user to sign off the file.
+5. **Ask in rounds.** Everything above is a draft until the user has answered the decisions a reasonable maintainer could make the other way, taken from § Decision catalogue: the ⚖ rows and the core and supporting types' calls first, those that change a screen's surface before the rest. A round is at most five questions, each its own message (`tree/README.md § How a skill runs`), each with the recommendation first and its reason; the rows without ⚖ go as one "take these defaults?" message. Open questions already in § Open come first. Without a user, the ⚖ rows and the core and supporting types' calls are written as the recommendation with `[open Qn]` on the entry, and each question is a § Open row that stands alone: question, options, recommendation and why. The defaults without ⚖ are written as decided, and one § Open row asks the user to sign off the file. New questions take the next number after the highest `Qn` the file has ever used, § Changelog included.
 6. **Write `APP-DESIGN.md` after every round**, not once at the end: create it in the shape of § Format, or update it in place, leaving decided entries as written — flipping one needs the user's answer. Decisions become entries in their area (§ Format, Entries); the floorplan and representations go to § Objects; a rejected rule or accepted deviation goes to § Exceptions only on the user's answer. Each write adds one § Changelog line and sets `updated:`. When the user says yes to the file in words, set `approved:` in the same write; an edit after that leaves it at its last value until the user says yes again.
 7. **Fold in a code check.** Where `_concept/11_build/interaction.sarif` exists (`tree/11_build/interaction.md`), read its `fail` results as the violations, `runs[0].properties.changes` as the `(change)` candidates, the results carrying an `underReview` suppression as the proposed exceptions and `runs[0].properties.questions` as questions. Mark the entries they name `(change)` with their sites (past three sites, the count and the first), and ask each proposed exception and question in the next round, as new `Qn`: a yes to an exception enters § Exceptions, no answer becomes the § Open row `keep as exception?`. The verdict file is `quality-interaction`'s and stays as it is.
 8. **Hand off.** Name what reads the file next: `spec-feature` applies the OBJ `task → surface` rows to every screen and hands a screen that needs a surface the floorplan lacks back to this skill; `experience-shell` derives the navigation under § Navigation and takes MSG, EDIT and MOD from the entries. Say which rows a re-entry changed, so those screens are re-checked.
-
-### Rules of the file
-
-- **Exceptions need the user.** A deviation enters § Exceptions only on the user's answer.
-- **Missing file.** Create it from § Format with the sections it fills, plus § Open and § Changelog.
-- **Existing file.** Update in place: add entries, add `(change)` marks, and leave decided entries as written. Flipping one needs the user's answer; until then it is a question in § Open.
-- **No user available.** Entries that rest on a *contested* recommendation the user has not given — the ⚖ rows of § Decision catalogue and any call a reasonable maintainer could make the other way — carry `[open Qn]`; the file does not present an unconfirmed choice as decided. A default that adopts a rule or records what the code does and passes is decided by adoption and carries none. New questions take the next number after the highest `Qn` the file has ever used, § Changelog included.
-- **Every write** adds one § Changelog line and sets `updated:`; `approved:` moves only when the user signs the write off.
 
 ## Checks
 

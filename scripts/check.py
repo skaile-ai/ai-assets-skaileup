@@ -335,8 +335,9 @@ class Node:
     *list* also covers every path below it that has no node of its own, while a plain string
     covers only what it names."""
 
-    def __init__(self, rel: str, fm: dict) -> None:
+    def __init__(self, rel: str, fm: dict, text: str = "") -> None:
         self.rel = rel  # posix, relative to tree/
+        self.tree_refs = _cited_tree_refs(text)  # `tree/` paths the file cites, read once by load_tree
         self.file = f"{TREE_DIR}/{rel}"
         self.has_frontmatter = bool(fm)
         raw = fm.get("path")
@@ -368,8 +369,9 @@ def load_tree(repo: Path) -> list[Node]:
         rel = path.relative_to(root).as_posix()
         if rel == "CONTRACT.md" or any(part.startswith(".") for part in rel.split("/")):
             continue
-        fm, _body = split_frontmatter(path.read_text(encoding="utf-8"))
-        nodes.append(Node(rel, fm))
+        text = path.read_text(encoding="utf-8")
+        fm, _body = split_frontmatter(text)
+        nodes.append(Node(rel, fm, text))
     return nodes
 
 
@@ -971,7 +973,13 @@ def _path_covers(produced: str, artifact: str) -> bool:
     )
 
 
-def check_schemas(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: Report) -> None:
+def check_schemas(
+    repo: Path,
+    nodes: list[Node],
+    skill_fms: dict[str, dict],
+    skill_tree_refs: dict[str, set[str]],
+    rep: Report,
+) -> None:
     """Every `tree/**/*.schema.json` is a valid 2020-12 schema, placed beside and cited by its node.
 
     A schema nobody cites is never validated against, and one whose `x-artifact` no skill
@@ -986,12 +994,9 @@ def check_schemas(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep
     if not schema_paths:
         return
 
-    # `tree/` paths cited per node (keyed by node file relative to `tree/`) and per skill.
-    node_cites = {n.rel: _cited_tree_refs((tree_root / n.rel).read_text(encoding="utf-8")) for n in nodes}
-    skill_cites = {
-        d: _cited_tree_refs((repo / "skills" / d / "SKILL.md").read_text(encoding="utf-8"))
-        for d in sorted(skill_fms)
-    }
+    # `tree/` paths cited per node (keyed by node file relative to `tree/`) and per skill that parsed.
+    node_cites = {n.rel: n.tree_refs for n in nodes}
+    skill_cites = {d: skill_tree_refs[d] for d in sorted(skill_fms)}
 
     for path in schema_paths:
         rel = path.relative_to(tree_root).as_posix()
@@ -1444,9 +1449,11 @@ def check_skills(
         #    (`host:prerequisite-project-root`). A concept path without the prefix resolves
         #    one level too high, and the path has to resolve to a node of the tree. Paths
         #    outside the concept are legal only when named in PROJECT_ROOT_PREREQUISITES —
-        #    see that constant for why the restriction survives ticket 23's finding.
+        #    see that constant for why the restriction survives ticket 23's finding. A root
+        #    artifact (PROJECT_ROOT_ARTIFACTS) has a node like any `_concept/` part, so it is
+        #    resolved too; the other root gates are the project's and have none.
         for entry in _prerequisite_paths(fm):
-            if not entry.startswith(ARTIFACT_ROOT + "/"):
+            if not entry.startswith(ARTIFACT_ROOT + "/") and entry not in PROJECT_ROOT_ARTIFACTS:
                 if entry in PROJECT_ROOT_PREREQUISITES:
                     continue
                 rep.error(
@@ -2259,7 +2266,7 @@ def run(repo: Path) -> Report:
     nodes = load_tree(repo)
     skill_names, skill_tree_refs, skill_fms = check_skills(repo, nodes, rep)
     check_tree(repo, nodes, rep)
-    check_schemas(repo, nodes, skill_fms, rep)
+    check_schemas(repo, nodes, skill_fms, skill_tree_refs, rep)
     check_citations(repo, rep)
     check_old_contract_paths(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)

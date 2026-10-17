@@ -102,4 +102,6 @@ keep it and note the node path and sentence for review.
 tree fence in `tree/README.md` are excluded from the count, so the nodes that carry them may
 run longer — `tree/README.md`, `tree/09_mockup/walkthrough/README.md`,
 `tree/09_mockup/feedback/patches/README.md`, and `tree/07_screens/README.md` (the
-`elements:` block). A node over 150 lines after that exclusion is a sign it holds two parts.
+`elements:` block). `tree/APP-DESIGN.md` also runs long: the P1–P17 rulebook and the decision
+catalogue stay whole because one artifact needs both. A node over 150 lines after that
+exclusion is a sign it holds two parts.

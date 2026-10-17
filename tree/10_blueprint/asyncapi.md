@@ -43,9 +43,8 @@ components:
         title: { type: string }
 ```
 
-- Message payload schemas are named for the entities in `_concept/10_blueprint/datamodel/model.json`, with field names and enum values as the model has them; where the model does not exist the names come from `_concept/glossary.md`. Names are read, never coined.
-- Each channel carries the `protocols` entry from `tree/10_blueprint/architecture.md` it belongs to (broker, websocket, webhook), declared under `servers` where the transport is fixed.
-- Each failed or undeliverable message names what the sender or receiver sees (retry, dead-letter, error reply), written once here instead of per slice.
+- Message payload schemas are named for the entities in `_concept/10_blueprint/datamodel/model.json`, with field names and enum values as the model has them; where the model does not exist the names come from `_concept/glossary.md`, and a payload concept with neither stops the step: name it and hand back to `concept-glossary`. Names are read, never coined.
+- Each failed message names what the sender or receiver sees, which is the behaviour `tree/10_blueprint/architecture.md` wrote in prose.
 
 ## Writing it
 
@@ -55,4 +54,4 @@ Written by `architecture-system` in step 7 of `tree/10_blueprint/architecture.md
 
 - The document is valid AsyncAPI 3.1.0.
 - Every payload schema that matches an entity is named by that entity's `id`; no payload concept is invented.
-- Every channel and operation traces to a protocol in `architecture.md` or a feature, and each such protocol with messages has a channel here.
+- Every channel and operation traces to a protocol in `architecture.md` or a feature.

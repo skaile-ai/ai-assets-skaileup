@@ -99,10 +99,15 @@ def is_date(v) -> bool:
         return False
 
 
-def model_names(model) -> set[str]:
-    """Entity ids of a model.json: the model names `data_entities[]` cites."""
+def model_names(model) -> set[str] | None:
+    """Entity ids of a model.json: the model names `data_entities[]` cites.
+
+    None when the file has no `entities[]` list (the old `models` / `name` shape): the caller
+    reports that once rather than a finding per cited name."""
     entities = model.get("entities") if isinstance(model, dict) else None
-    return {e["id"] for e in entities or [] if isinstance(e, dict) and isinstance(e.get("id"), str)}
+    if not isinstance(entities, list):
+        return None
+    return {e["id"] for e in entities if isinstance(e, dict) and isinstance(e.get("id"), str)}
 
 
 def listed_paths(value) -> list[str]:
@@ -167,6 +172,8 @@ def check(concept: Path, here: Path) -> list[str]:
     if mj.is_file():
         try:
             model = model_names(json.loads(mj.read_text()))
+            if model is None:
+                report(rel(mj), "no `entities[]` list (format: tree/10_blueprint/datamodel/model.md)")
         except json.JSONDecodeError as e:
             report(rel(mj), f"not valid JSON ({e.msg})")
     defined = stories = None

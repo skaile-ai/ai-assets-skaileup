@@ -36,7 +36,7 @@ that block it and its own dossier under `11_build/slices/<slice_id>/`. It plans 
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Read the feature, cut the slices, give them blocking edges, quiz the user** — `tree/11_build/slices/README.md § Writing it` (steps 1–5). Only the feature spec is required to plan; write nothing until the user approves the breakdown. Open `interaction.sarif` changes join the slices that own their files, and a `systemic` change becomes one leading blocking slice (`tree/11_build/interaction.md`).
+1. **Read the feature, cut the slices, give them blocking edges, quiz the user** — `tree/11_build/slices/README.md § Writing it` (steps 1–5; step 2 joins the open `interaction.sarif` changes). Only the feature spec is required to plan; write nothing until the user approves the breakdown.
 2. **Write one dossier per approved slice** — `tree/11_build/slices/[slice_id]/plan.md`.
 3. **Create the criteria ledger** — `tree/11_build/acceptance-criteria/README.md § Creating the ledger`. Every row untested, one per criterion id the spec carries.
 4. **Report the frontier** — `tree/11_build/slices/README.md § Writing it` (step 7): the slices whose blockers are all satisfied, in the order they can start.

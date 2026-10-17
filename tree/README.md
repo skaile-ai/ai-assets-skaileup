@@ -187,7 +187,7 @@ One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root 
 | 7 Deployment View | `_concept/10_blueprint/architecture.md`, section Deployment |
 | 8 Crosscutting Concepts | `APP-DESIGN.md`, `_concept/07_screens/shell.md` |
 | 9 Architecture Decisions | `_concept/10_blueprint/decisions.md`, `_concept/11_build/decisions.md` |
-| 10 Quality Requirements | `_concept/goals.md`, `tree/11_build/release.md § Release thresholds` |
+| 10 Quality Requirements | `_concept/goals.md`, `_concept/11_build/release.yaml` |
 | 11 Risks & Technical Debt | `_concept/10_blueprint/architecture.md`, section Risks and technical debt |
 | 12 Glossary | `_concept/glossary.md` |
 
