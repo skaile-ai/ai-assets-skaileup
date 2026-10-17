@@ -1,0 +1,16 @@
+name: ai-assets-skaileup-tree
+description: skaileup skill collection as a mirror tree — one instruction node per _concept/ part, skills are routes
+publisher: skaile-ai
+version: 0.1.0
+agent-config:
+  default:
+    agent: claude-code
+    provider: anthropic
+    model: claude-sonnet-4-6
+    driver: claude-sdk
+    max_turns: 200
+
+# No `assets:` block, deliberately. Newer @skaile/workspaces throws on those keys, and the
+# old repo's block had already drifted from the filesystem. Discovery runs in glob mode:
+# every skills/<name>/SKILL.md is an asset, and its `name:` frontmatter is its identity.
+# If explicit listing is ever needed, it is a real skaile.manifest.yaml, not this file.

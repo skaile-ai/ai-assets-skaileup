@@ -1,0 +1,32 @@
+name: ci
+
+# One job, one script. The collection has no build and no runtime — the only
+# thing CI can usefully answer is whether it contains a reference that resolves
+# to nothing, or a flow whose shape the hosts read differently than it reads.
+# `scripts/check.py` answers that — it is the only gate, since forge-concept
+# validates no flow at all — and `scripts/test_check.py` is the failing fixture
+# behind every rule it enforces.
+#
+# Locally the two are one command: `check.py` runs the fixtures itself. Here they
+# stay two steps, so a red run names which half failed on the summary page without
+# anyone opening the log. `--no-tests` keeps the first step from running them twice.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml pytest
+      - name: check the collection
+        run: python scripts/check.py --no-tests
+      - name: test the checker
+        run: pytest scripts/test_check.py -q

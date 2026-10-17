@@ -1,0 +1,322 @@
+id: appbuilder-standard
+version: "0.1.0"
+name: Appbuilder Standard
+description: >-
+  The full path for a multi-user app: discovery, the shared vocabulary and brand, journeys,
+  then the data model before any feature is specified, featuresets and behaviours, the
+  per-feature spec loop that writes every screen, the app shell, the blueprint, the mockup
+  and feedback pass over those screens, the build against the codebase's standards, and
+  the review gate that ends in a release grade.
+meta:
+  icon: i-heroicons-squares-2x2
+  onboarding:
+    input_style: structured
+    fields:
+      - app_name
+      - problem
+      - audience
+      - notes
+requires:
+  # Exact and self-contained: every skill this flow's own nodes run, plus the
+  # shared-contracts asset when any of them reads a contract file. No inheritance,
+  # no extras. The reference layer is one dir-scoped asset, so it is one ref —
+  # the per-file exactness lives on the skills, which is where the reading happens.
+  - contract:@skaile-ai/shared-contracts
+  - skill:@skaile-ai/concept-scope
+  - skill:@skaile-ai/concept-onboard
+  - skill:@skaile-ai/concept-research
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/concept-glossary
+  - skill:@skaile-ai/design-brand
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/architecture-datamodel
+  - skill:@skaile-ai/spec-featuresets
+  - skill:@skaile-ai/experience-behaviors
+  - skill:@skaile-ai/spec-feature
+  - skill:@skaile-ai/experience-shell
+  - skill:@skaile-ai/architecture-techstack
+  - skill:@skaile-ai/architecture-system
+  - skill:@skaile-ai/mockup-walkthrough
+  - skill:@skaile-ai/mockup-storybook
+  - skill:@skaile-ai/mockup-annotate
+  - skill:@skaile-ai/mockup-feedback
+  - skill:@skaile-ai/build-scaffold
+  - skill:@skaile-ai/build-database
+  - skill:@skaile-ai/quality-standards
+  - skill:@skaile-ai/build-plan
+  - skill:@skaile-ai/build-implement
+  - skill:@skaile-ai/build-branch
+  - skill:@skaile-ai/quality-test
+  - skill:@skaile-ai/quality-e2e
+  - skill:@skaile-ai/quality-review
+  - skill:@skaile-ai/ops-review
+  - skill:@skaile-ai/quality-release
+globals:
+  research_depth: moderate
+entry: scope
+nodes:
+  # Phase containers. They carry the swimlane geometry and the phase every child
+  # repeats on its own node — the group's phase wins where the two are read together
+  # (forge-concept `flow-layout.ts`), so both come from one table.
+  - id: g-conceptualization
+    type: group
+    position: { x: 0, y: 0 }
+    style: { width: 3680, height: 240 }
+    data:
+      label: Conceptualization
+      phase: conceptualization
+  - id: g-implementation
+    type: group
+    position: { x: 3720, y: 0 }
+    style: { width: 1280, height: 240 }
+    data:
+      label: Implementation
+      phase: implementation
+  - id: g-review
+    type: group
+    position: { x: 5040, y: 0 }
+    style: { width: 1080, height: 240 }
+    data:
+      label: Review
+      phase: review
+
+  - id: scope
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: concept-scope
+      label: Scope
+      phase: conceptualization
+  - id: onboard
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: concept-onboard
+      label: Onboard
+      phase: conceptualization
+  - id: research
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: concept-research
+      label: Research
+      phase: conceptualization
+  - id: brief
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: concept-brief
+      label: Brief
+      phase: conceptualization
+  - id: glossary
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: concept-glossary
+      label: Glossary
+      phase: conceptualization
+  - id: brand
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: design-brand
+      label: Brand
+      phase: conceptualization
+  - id: journeys
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-journeys
+      label: Journeys
+      phase: conceptualization
+  - id: datamodel
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: architecture-datamodel
+      label: Data Model
+      phase: conceptualization
+  - id: featuresets
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: spec-featuresets
+      label: Featuresets
+      phase: conceptualization
+  - id: behaviors
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-behaviors
+      label: Behaviours
+      phase: conceptualization
+  # spec-feature runs once per feature and writes that feature's screens; the graph
+  # below shows one iteration. The loop lives in the skill body.
+  - id: feature
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: spec-feature
+      label: Feature Spec
+      phase: conceptualization
+  # shell follows the feature loop: it derives the app-shell navigation from the screens
+  # the spec-feature iterations wrote, so it cannot sit before them.
+  - id: shell
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-shell
+      label: App Shell
+      phase: conceptualization
+  - id: techstack
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: architecture-techstack
+      label: Tech Stack
+      phase: conceptualization
+  - id: system
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: architecture-system
+      label: System
+      phase: conceptualization
+  - id: walkthrough
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-walkthrough
+      label: Walkthrough
+      phase: conceptualization
+  - id: storybook
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-storybook
+      label: Storybook
+      phase: conceptualization
+  - id: annotate
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-annotate
+      label: Annotate
+      phase: conceptualization
+  - id: feedback
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-feedback
+      label: Feedback
+      phase: conceptualization
+
+  - id: scaffold
+    type: skill
+    parentNode: g-implementation
+    data:
+      skill: build-scaffold
+      label: Scaffold
+      phase: implementation
+  - id: database
+    type: skill
+    parentNode: g-implementation
+    data:
+      skill: build-database
+      label: Database
+      phase: implementation
+  - id: standards
+    type: skill
+    parentNode: g-implementation
+    data:
+      skill: quality-standards
+      label: Standards
+      phase: implementation
+  # build-plan and build-implement repeat per feature and per slice; the graph below
+  # shows one iteration. The loop lives in those two skill bodies.
+  - id: plan
+    type: skill
+    parentNode: g-implementation
+    data:
+      skill: build-plan
+      label: Plan Slices
+      phase: implementation
+  - id: implement
+    type: skill
+    parentNode: g-implementation
+    data:
+      skill: build-implement
+      label: Implement Slice
+      phase: implementation
+  - id: branch
+    type: skill
+    parentNode: g-implementation
+    data:
+      skill: build-branch
+      label: Close Branch
+      phase: implementation
+
+  - id: test
+    type: skill
+    parentNode: g-review
+    data:
+      skill: quality-test
+      label: Tests
+      phase: review
+  - id: e2e
+    type: skill
+    parentNode: g-review
+    data:
+      skill: quality-e2e
+      label: E2E
+      phase: review
+  - id: review
+    type: skill
+    parentNode: g-review
+    data:
+      skill: quality-review
+      label: Code Review
+      phase: review
+  - id: ops-review
+    type: skill
+    parentNode: g-review
+    data:
+      skill: ops-review
+      label: Concept Review
+      phase: review
+  - id: release
+    type: skill
+    parentNode: g-review
+    data:
+      skill: quality-release
+      label: Release Grade
+      phase: review
+edges:
+  - { id: e-scope-onboard, source: scope, target: onboard, type: flow }
+  - { id: e-onboard-research, source: onboard, target: research, type: flow }
+  - { id: e-research-brief, source: research, target: brief, type: flow }
+  - { id: e-brief-glossary, source: brief, target: glossary, type: flow }
+  - { id: e-glossary-brand, source: glossary, target: brand, type: flow }
+  - { id: e-brand-journeys, source: brand, target: journeys, type: flow }
+  - { id: e-journeys-datamodel, source: journeys, target: datamodel, type: flow }
+  - { id: e-datamodel-featuresets, source: datamodel, target: featuresets, type: flow }
+  - { id: e-featuresets-behaviors, source: featuresets, target: behaviors, type: flow }
+  - { id: e-behaviors-feature, source: behaviors, target: feature, type: flow }
+  - { id: e-feature-shell, source: feature, target: shell, type: flow }
+  - { id: e-shell-techstack, source: shell, target: techstack, type: flow }
+  - { id: e-techstack-system, source: techstack, target: system, type: flow }
+  - { id: e-system-walkthrough, source: system, target: walkthrough, type: flow }
+  - { id: e-walkthrough-storybook, source: walkthrough, target: storybook, type: flow }
+  - { id: e-storybook-annotate, source: storybook, target: annotate, type: flow }
+  - { id: e-annotate-feedback, source: annotate, target: feedback, type: flow }
+  - { id: e-feedback-scaffold, source: feedback, target: scaffold, type: flow }
+  - { id: e-scaffold-database, source: scaffold, target: database, type: flow }
+  - { id: e-database-standards, source: database, target: standards, type: flow }
+  - { id: e-standards-plan, source: standards, target: plan, type: flow }
+  - { id: e-plan-implement, source: plan, target: implement, type: flow }
+  - { id: e-implement-branch, source: implement, target: branch, type: flow }
+  - { id: e-branch-test, source: branch, target: test, type: flow }
+  - { id: e-test-e2e, source: test, target: e2e, type: flow }
+  - { id: e-e2e-review, source: e2e, target: review, type: flow }
+  - { id: e-review-ops-review, source: review, target: ops-review, type: flow }
+  - { id: e-ops-review-release, source: ops-review, target: release, type: flow }
