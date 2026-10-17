@@ -1,0 +1,5 @@
+journeys:
+  - id: user-signs-in
+    title: User signs in
+    steps:
+      - screen: 01_user_auth/login

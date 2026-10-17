@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+const { title = 'Walkthrough', bodyAttrs = {}, appNav = null } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body {...bodyAttrs} class="bg-white text-gray-900 font-sans p-4">
+    {appNav && (
+      <nav class="app-nav" data-spec-element={appNav.element_id} data-spec-provisional="true">
+        {appNav.groups.map((group: any) => (
+          <div class="nav-group">
+            <span class="nav-group-label">{group.label}</span>
+            <ul class="flex gap-4 list-none p-0">
+              {group.items.map((item: any) => (
+                <li><a href={item.href ?? '#'} data-spec-element={item.element_id} data-spec-provisional="true">{item.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    )}
+    <slot />
+    <footer class="mt-8 text-sm text-gray-500">
+      <a href="/">← Back to index</a>
+    </footer>
+  </body>
+</html>

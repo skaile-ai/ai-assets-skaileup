@@ -1,0 +1,29 @@
+{
+  "sessionId": "test-partial-fail",
+  "appliedAt": "__VOLATILE__",
+  "items": [
+    {
+      "annotationId": "ann-bad",
+      "patchId": "p-bad",
+      "target": {
+        "file": "07_screens/01_user_auth/login.md",
+        "section": "## NONEXISTENT SECTION",
+        "category": "change"
+      },
+      "body": "change something",
+      "status": "failed",
+      "error": "section not found: '## NONEXISTENT SECTION'"
+    },
+    {
+      "annotationId": "ann-good",
+      "patchId": "p-good",
+      "target": {
+        "file": "07_screens/01_user_auth/login.md",
+        "section": "## Layout",
+        "category": "change"
+      },
+      "body": "right-align the button",
+      "status": "applied"
+    }
+  ]
+}

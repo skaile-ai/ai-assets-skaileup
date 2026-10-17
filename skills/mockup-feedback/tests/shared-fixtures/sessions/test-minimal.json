@@ -1,0 +1,57 @@
+{
+  "sessionId": "test-minimal",
+  "annotations": [
+    {
+      "id": "ann-change-1",
+      "sessionId": "test-minimal",
+      "createdAt": "2026-05-09T14:23:11Z",
+      "specRef": {
+        "element": "submit-button",
+        "screen": "01_user_auth/login",
+        "provisional": true
+      },
+      "body": "this should be on the right",
+      "category": "change",
+      "status": "open"
+    },
+    {
+      "id": "ann-add-1",
+      "sessionId": "test-minimal",
+      "createdAt": "2026-05-09T14:24:00Z",
+      "specRef": {
+        "element": "email-input",
+        "screen": "01_user_auth/login",
+        "provisional": false
+      },
+      "body": "add disabled state when loading",
+      "category": "add",
+      "status": "open"
+    },
+    {
+      "id": "ann-question-1",
+      "sessionId": "test-minimal",
+      "createdAt": "2026-05-09T14:25:00Z",
+      "specRef": {
+        "element": "submit-button",
+        "screen": "01_user_auth/login",
+        "provisional": true
+      },
+      "body": "Should this submit or go to forgot password?",
+      "category": "question",
+      "status": "open"
+    },
+    {
+      "id": "ann-remove-1",
+      "sessionId": "test-minimal",
+      "createdAt": "2026-05-09T14:26:00Z",
+      "specRef": {
+        "element": "email-input",
+        "screen": "01_user_auth/login",
+        "provisional": false
+      },
+      "body": "loading state is obvious, remove this line",
+      "category": "remove",
+      "status": "open"
+    }
+  ]
+}

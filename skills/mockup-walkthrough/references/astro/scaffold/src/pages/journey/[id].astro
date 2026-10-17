@@ -1,0 +1,51 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import specs from '../../data/specs.json';
+
+export function getStaticPaths() {
+  return (specs as any).journeys.map((journey: any) => ({
+    params: { id: journey.journey_id },
+    props: { journey },
+  }));
+}
+
+const { journey } = Astro.props as any;
+const screens = (specs as any).screens;
+
+function findScreen(screen_id: string) {
+  return screens.find((s: any) => s.screen_id === screen_id);
+}
+---
+<Shell title={journey.title || journey.journey_id} bodyAttrs={{ 'data-spec-journey': journey.journey_id }}>
+  <h1 class="text-2xl font-bold mb-2">{journey.title}</h1>
+  {journey.description && <p class="text-gray-600 mb-6">{journey.description}</p>}
+  <ol class="space-y-4 list-decimal pl-6">
+    {journey.screen_sequence.map((screen_id: string, i: number) => {
+      const screen = findScreen(screen_id);
+      const isLast = i === journey.screen_sequence.length - 1;
+      if (!screen) {
+        return (
+          <li class="journey-step-missing text-red-500">
+            <span data-spec-screen={screen_id}>Missing screen: {screen_id}</span>
+          </li>
+        );
+      }
+      return (
+        <li>
+          <h2 class="font-semibold">Step {i + 1}: {screen.title || screen_id}</h2>
+          <a href={`/screen/${screen_id}`} data-spec-screen={screen_id} class="text-blue-600 underline">
+            Open screen
+          </a>
+          {!isLast && (
+            <span class="ml-4">
+              <a href={`/screen/${journey.screen_sequence[i + 1]}`} class="text-blue-600 underline">Next →</a>
+            </span>
+          )}
+          {isLast && (
+            <span class="ml-4"><a href="/" class="text-blue-600 underline">→ Index</a></span>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</Shell>

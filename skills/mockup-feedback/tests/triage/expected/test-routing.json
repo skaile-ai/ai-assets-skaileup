@@ -1,0 +1,16 @@
+{
+  "sessionId": "test-routing",
+  "triagedAt": "__VOLATILE__",
+  "groups": [
+    {
+      "file": "04_journeys/stories.yaml",
+      "annotations": ["ann-journey-1"]
+    }
+  ],
+  "unresolved": [
+    {
+      "annotationId": "ann-feature-1",
+      "reason": "no specRef target (screen and journey both absent or null)"
+    }
+  ]
+}

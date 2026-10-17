@@ -1,0 +1,147 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import specs from '../../data/specs.json';
+
+export function getStaticPaths() {
+  return (specs as any).screens.map((screen: any) => ({
+    params: { slug: screen.screen_id },
+    props: { screen },
+  }));
+}
+
+const { screen } = Astro.props as any;
+
+function provAttr(el: any): string {
+  return el.provisional ? ' data-spec-provisional="true"' : '';
+}
+
+function renderItems(items: any[], kind: string): string {
+  if (!items || items.length === 0) {
+    return kind === 'list' ? '<li>…</li>' : '';
+  }
+  return items
+    .map((item: any, i: number) => {
+      const prov = provAttr(item);
+      const label = item.label ?? String(item);
+      if (kind === 'list') {
+        const inner = item.href ? `<a href="${item.href}">${label}</a>` : label;
+        return `<li data-spec-element="${item.element_id}"${prov}>${inner}</li>`;
+      }
+      if (kind === 'tabs') {
+        const active = i === 0 ? ' active' : '';
+        return item.href
+          ? `<a href="${item.href}" class="tab${active}" data-spec-element="${item.element_id}"${prov}>${label}</a>`
+          : `<span class="tab${active}" data-spec-element="${item.element_id}"${prov}>${label}</span>`;
+      }
+      // nav
+      return `<li><a href="${item.href ?? '#'}" data-spec-element="${item.element_id}"${prov}>${label}</a></li>`;
+    })
+    .join('\n');
+}
+
+function renderTable(el: any): string {
+  const thead = `<tr>${el.columns.map((c: string) => `<th class="border px-2 py-1 text-left">${c}</th>`).join('')}</tr>`;
+  let tbody: string;
+  if (el.sample_rows && el.sample_rows.length > 0) {
+    tbody = el.sample_rows
+      .map((row: string[]) => {
+        const cells = row.map((cell: string, i: number) => {
+          const content = i === 0 && el.row_href ? `<a href="${el.row_href}">${cell}</a>` : cell;
+          return `<td class="border px-2 py-1">${content}</td>`;
+        });
+        return `<tr>${cells.join('')}</tr>`;
+      })
+      .join('\n');
+  } else {
+    // No sample_rows declared — header + one skeleton row, never fabricated content.
+    tbody = `<tr>${el.columns.map(() => '<td class="border px-2 py-1"></td>').join('')}</tr>`;
+  }
+  return `<table data-spec-element="${el.element_id}"${provAttr(el)} class="border-collapse w-full"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+}
+
+function renderElement(el: any): string {
+  const prov = provAttr(el);
+  const href = el.href ?? '#';
+  let base: string;
+  switch (el.kind) {
+    case 'input':
+      base = el.options
+        ? `<select name="${el.element_id}" aria-label="${el.label}" data-spec-element="${el.element_id}"${prov} class="border rounded px-2 py-1">${el.options.map((o: string) => `<option value="${o}">${o}</option>`).join('')}</select>`
+        : `<input name="${el.element_id}" aria-label="${el.label}" data-spec-element="${el.element_id}"${prov} class="border rounded px-2 py-1" />`;
+      break;
+    case 'button':
+      base = el.href
+        ? `<a href="${href}" data-spec-element="${el.element_id}"${prov} class="button px-4 py-2 bg-primary text-white rounded inline-block">${el.label}</a>`
+        : `<button data-spec-element="${el.element_id}"${prov} class="px-4 py-2 bg-primary text-white rounded">${el.label}</button>`;
+      break;
+    case 'link':
+      base = `<a href="${href}" data-spec-element="${el.element_id}"${prov} class="text-blue-600 underline">${el.label}</a>`;
+      break;
+    case 'image':
+      base = `<img src="#" alt="${el.label}" data-spec-element="${el.element_id}"${prov} class="w-full" />`;
+      if (el.href) base = `<a href="${href}">${base}</a>`;
+      break;
+    case 'text':
+      base = `<span data-spec-element="${el.element_id}"${prov}>${el.label}</span>`;
+      break;
+    case 'region':
+      base = `<section data-spec-element="${el.element_id}"${prov}><h3>${el.label}</h3></section>`;
+      break;
+    case 'list': {
+      const inner = renderItems(el.items, 'list');
+      base = `<ul data-spec-element="${el.element_id}"${prov} class="list-disc pl-6">${inner}</ul>`;
+      if (el.href) base = `<a href="${href}">${base}</a>`;
+      break;
+    }
+    case 'form':
+      base = `<form data-spec-element="${el.element_id}"${prov}></form>`;
+      break;
+    case 'nav': {
+      const inner = renderItems(el.items, 'nav');
+      base = `<nav data-spec-element="${el.element_id}"${prov} class="flex gap-4">${inner}</nav>`;
+      break;
+    }
+    case 'tabs': {
+      const inner = renderItems(el.items, 'tabs');
+      base = `<nav class="tabs flex gap-2 border-b" data-spec-element="${el.element_id}"${prov}>${inner}</nav>`;
+      break;
+    }
+    case 'table':
+      base = renderTable(el);
+      break;
+    case 'media':
+      base = `<figure data-spec-element="${el.element_id}"${prov}><figcaption>${el.label}</figcaption></figure>`;
+      break;
+    default: // custom, and unknown_element_kind fallback
+      base = `<div data-spec-element="${el.element_id}"${prov}>${el.label}</div>`;
+      if (el.href) base = `<a href="${href}" data-spec-element="${el.element_id}"${prov}>${el.label}</a>`;
+  }
+  const states = (el.states || [])
+    .filter((s: string) => s !== 'default')
+    .map((s: string) => `<span class="state-${s}">${el.label} [${s}]</span>`)
+    .join('');
+  return `<div>${base}${states}</div>`;
+}
+
+const nonProvisional = screen.elements.filter((el: any) => !el.provisional);
+const openPanel = nonProvisional.length === 0;
+---
+<Shell title={screen.title || screen.screen_id} bodyAttrs={{ 'data-spec-screen': screen.screen_id }} appNav={screen.app_nav}>
+  <h1 class="text-2xl font-bold mb-4">{screen.title || screen.screen_id}</h1>
+  <main class="space-y-4">
+    {screen.elements.map((el: any) => (
+      <Fragment set:html={renderElement(el)} />
+    ))}
+  </main>
+  <details class="spec-panel mt-4 border rounded p-2" open={openPanel}>
+    <summary class="cursor-pointer font-semibold">View spec</summary>
+    <Fragment set:html={screen.body_html} />
+  </details>
+  <section class="mt-8 text-sm text-gray-500">
+    <p>Journeys: {screen.journeys.length === 0 ? 'none' :
+      screen.journeys.map((jid: string) => (
+        <a href={`/journey/${jid}`} class="underline mr-2">{jid}</a>
+      ))
+    }</p>
+  </section>
+</Shell>

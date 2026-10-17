@@ -1,0 +1,34 @@
+{
+  "sessionId": "test-routing",
+  "annotations": [
+    {
+      "id": "ann-journey-1",
+      "sessionId": "test-routing",
+      "createdAt": "2026-09-05T09:00:00Z",
+      "specRef": {
+        "element": "step-1",
+        "screen": null,
+        "journey": "user-signs-in",
+        "provisional": false
+      },
+      "body": "this journey should start at the landing page",
+      "category": "change",
+      "status": "open"
+    },
+    {
+      "id": "ann-feature-1",
+      "sessionId": "test-routing",
+      "createdAt": "2026-09-05T09:01:00Z",
+      "specRef": {
+        "element": "auth-card",
+        "screen": null,
+        "feature": "01_user_auth",
+        "journey": null,
+        "provisional": false
+      },
+      "body": "a feature key no renderer emits — must not route",
+      "category": "question",
+      "status": "open"
+    }
+  ]
+}
