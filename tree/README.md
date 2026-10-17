@@ -10,7 +10,7 @@ writers: [concept-scope]
 
 ## The rule
 
-Before reading or writing anything under `_concept/<p>`, read the node at the same path `<p>` in this directory (installed at `.claude/contracts/shared-contracts/<p>`): the folder's `README.md`, then the file's node. If the exact node is missing, the nearest `README.md` up the path applies.
+Before reading or writing anything under `_concept/<p>`, read the node at the same path `<p>` in this directory (installed at `<contracts>/shared-contracts/<p>`, where `<contracts>` is the harness's contract directory: `.omp/contracts` for omp, `.claude/contracts` for Claude Code, `.codex/contracts` for Codex): the folder's `README.md`, then the file's node. If the exact node is missing, the nearest `README.md` up the path applies.
 
 | `_concept/` thing | node |
 |---|---|
@@ -197,11 +197,13 @@ One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root 
 
 ```
 This tree is maintained by the skaileup-tree collection. Every path here has an instruction node at
-`.claude/contracts/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`).
+`<contracts>/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`),
+where `<contracts>` is the agent harness's contract directory: `.omp/contracts`, `.claude/contracts`
+or `.codex/contracts`, whichever exists.
 Read the folder README and the node before editing a file here; the node says who writes it,
 its format, and what reads it.
 The one artifact outside this tree, APP-DESIGN.md at the project root, has its node at
-`.claude/contracts/shared-contracts/APP-DESIGN.md`.
+`<contracts>/shared-contracts/APP-DESIGN.md`.
 ```
 
 ## Checks
