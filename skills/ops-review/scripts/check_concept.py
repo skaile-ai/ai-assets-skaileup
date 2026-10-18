@@ -58,7 +58,10 @@ REQUIRED = {  # artifact path (or glob-ish key) -> fields beyond last_updated
     "screen": ["implements"],
     "ledger": ["feature", "feature_ref"],
 }
-ID_RE = re.compile(r"^AC-([a-z0-9_]+)-(\d{2})$")
+# A story id never contains `-`; a feature slug may. Either way the id ends in `-<nn>`, so the
+# scope is everything between `AC-` and the last `-`.
+STORY_ID_RE = re.compile(r"^AC-([a-z0-9_]+)-(\d{2})$")
+ID_RE = re.compile(r"^AC-([a-z0-9][a-z0-9_-]*)-(\d{2})$")
 CITE_RE = re.compile(r"AC-[A-Za-z0-9_-]+")
 ROW_RE = re.compile(r"^- \[(PASS|FAIL| )\] (\S+)(?: — (.*))?$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
@@ -128,7 +131,7 @@ def story_ids(stories: dict, report) -> tuple[set[str], set[str]]:
         if isinstance(node, dict):
             if "id" in node and isinstance(node["id"], str) and node["id"].startswith("AC-"):
                 cid = node["id"]
-                m = ID_RE.match(cid)
+                m = STORY_ID_RE.match(cid)
                 if not m:
                     report("04_journeys/stories.yaml", f"criterion id {cid!r} is not AC-<story-id>-<nn>")
                 elif journey and m.group(1) != journey:

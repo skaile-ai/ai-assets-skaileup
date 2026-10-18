@@ -2338,6 +2338,32 @@ def test_check_concept_reports_the_retired_comparable_file_as_unowned(tmp_path):
     assert "comparable.md" in problems[0] and "unowned" in problems[0]
 
 
+def test_check_concept_accepts_a_hyphenated_feature_scope_but_not_a_hyphenated_story_id(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    old = concept / "05_features/auth/login.md"
+    feature = old.with_name("password-reset.md")
+    feature.write_text(old.read_text().replace("- AC-login-01\n", "- AC-login-01\n- AC-password-reset-01\n"))
+    old.unlink()
+    (concept / "07_screens/login/login.md").write_text(
+        "---\nimplements:\n  - 05_features/auth/password-reset.md\nlast_updated: 2026-09-05\n---\n"
+    )
+    ledger = concept / "11_build/acceptance-criteria/auth/login.ac.md"
+    ledger.with_name("password-reset.ac.md").write_text(
+        ledger.read_text()
+        .replace("feature: login", "feature: password-reset")
+        .replace("auth/login.md", "auth/password-reset.md")
+        + "- [ ] AC-password-reset-01\n"
+    )
+    ledger.unlink()
+    assert module.check(concept, script) == []
+
+    stories = concept / "04_journeys/stories.yaml"
+    stories.write_text(stories.read_text().replace("AC-login-01", "AC-log-in-01"))
+    problems = module.check(concept, script)
+    assert any("'AC-log-in-01' is not AC-<story-id>-<nn>" in p for p in problems), problems
+
+
 @pytest.mark.parametrize(
     "rel", ["03_brand/tokens.json", "11_build/interaction.yaml"],
 )

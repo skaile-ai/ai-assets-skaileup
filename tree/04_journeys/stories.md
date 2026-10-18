@@ -59,7 +59,7 @@ Variants: `WHILE <state>, THE SYSTEM SHALL <response>` (state-driven); `IF <unwa
 
 - `<story-id>` is the `id` of the journey the criterion belongs to; because a story id never contains `-`, the trailing `-<nn>` is unambiguous.
 - `<nn>` is two digits, numbered per story in write order from `01`.
-- A criterion `spec-feature` adds that no story holds takes the same shape with the feature slug as scope, `AC-<feature_slug>-<nn>`, using a slug that is not a story id. Only `experience-journeys` and `spec-feature` coin ids.
+- A criterion `spec-feature` adds that no story holds takes the same shape with the feature slug as scope, `AC-<feature_slug>-<nn>`, using a slug that is not a story id. The slug keeps its hyphens (`AC-rechner-inputs-03`); the id still ends in `-<nn>`, so it parses from the right. Only `experience-journeys` and `spec-feature` coin ids.
 - An id never changes and is never reused: a dropped criterion retires its id, an edited wording keeps it, a changed meaning is a new criterion with the next number.
 - Every other artifact cites the id and never retypes the criterion text; the text lives here or in the feature spec that wrote it, and a second copy is the one that drifts.
 
