@@ -2444,6 +2444,23 @@ def test_the_listing_leaves_out_the_project_root_artifact(tmp_path):
     assert not any("APP-DESIGN" in line for line in check.render_tree(check.load_tree(root)))
 
 
+def test_check_concept_accepts_another_features_criterion_only_when_that_spec_carries_it(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "05_features/auth/logout.md").write_text(
+        "---\npriority: must-have\npermissions: {member: [view]}\nscreens: []\n"
+        "data_entities: [User]\nlast_updated: 2026-09-05\n---\n\n## Criteria\n\n- AC-logout-01\n"
+    )
+    login = concept / "05_features/auth/login.md"
+    login.write_text(login.read_text() + "\nSigning out is AC-logout-01.\n")
+    assert module.check(concept, script) == []
+
+    login.write_text(login.read_text().replace("AC-logout-01", "AC-logout-02"))
+    problems = module.check(concept, script)
+    assert len(problems) == 1, problems
+    assert "AC-logout-02 is scoped to feature 'logout', whose spec does not carry it" in problems[0]
+
+
 # -- schemas (rules schema-valid, schema-id, schema-artifact-resolves, schema-produced, schema-cited) ---
 
 def good_schema(stem: str = "brief", **overrides) -> dict:

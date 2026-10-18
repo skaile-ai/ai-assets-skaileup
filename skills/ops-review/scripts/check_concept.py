@@ -14,8 +14,8 @@ Stdlib + PyYAML only. Checks:
   3. cross-links     a feature's `screens:` and a screen's `implements:` resolve, in both directions
   4. data_entities   every name is an entity `id` in `10_blueprint/datamodel/model.json` (skipped without one)
   5. criterion ids   every `AC-…` a feature spec or ledger cites follows the id grammar and is
-                     defined by `04_journeys/stories.yaml` (skipped without one) or scoped to the
-                     feature's own slug
+                     defined by `04_journeys/stories.yaml` (skipped without one), scoped to the
+                     feature's own slug, or scoped to another feature whose spec carries it
   6. ledger          `11_build/acceptance-criteria/<featureset>/<feature>.ac.md` rows are checkbox
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
                      `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
@@ -249,8 +249,11 @@ def check(concept: Path, here: Path) -> list[str]:
     cited: dict[Path, set[str]] = {}
     for f in features:
         cited[f] = set(CITE_RE.findall(frontmatter(f)[1]))
+    # A feature-scoped id belongs to the spec named by its scope; another spec may cite it.
+    owned = {f.stem: cited[f] for f in features}
+    for f in features:
         for cid in sorted(cited[f]):
-            report_id(cid, f.stem, defined, stories, rel(f), report)
+            report_id(cid, f.stem, defined, stories, owned, rel(f), report)
 
     # 6. ledger
     for ac in ledgers:
@@ -273,7 +276,7 @@ def check(concept: Path, here: Path) -> list[str]:
                 report(where, "not a ledger row — rows are `- [ ] <id>` or `- [PASS|FAIL] <id> — <evidence>`")
                 continue
             marker, cid, evidence = m.groups()
-            report_id(cid, slug, defined, stories, where, report)
+            report_id(cid, slug, defined, stories, owned, where, report)
             if spec and spec in cited and cid not in cited[spec]:
                 report(where, f"{cid} is not cited in {ref}")
             if marker == " " and evidence:
@@ -285,14 +288,18 @@ def check(concept: Path, here: Path) -> list[str]:
     return problems
 
 
-def report_id(cid, slug, defined, stories, where, report):
+def report_id(cid, slug, defined, stories, owned, where, report):
     m = ID_RE.match(cid)
     if not m:
         report(where, f"{cid} is not a criterion id (AC-<story-id>-<nn>)")
     elif defined is None or cid in defined:
         return
     elif m.group(1) != slug:
-        report(where, f"{cid} is neither in stories.yaml nor scoped to feature {slug!r}")
+        scope = m.group(1)
+        if scope not in owned:
+            report(where, f"{cid} is neither in stories.yaml nor scoped to a feature")
+        elif cid not in owned[scope]:
+            report(where, f"{cid} is scoped to feature {scope!r}, whose spec does not carry it")
     elif slug in stories:
         report(where, f"{cid} is scoped to feature {slug!r}, which is also a story id")
 
