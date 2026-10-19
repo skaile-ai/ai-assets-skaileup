@@ -26,7 +26,6 @@ REPO = Path(__file__).resolve().parents[3]  # repo root (skaileup/flows/_meta/ i
 FLOWS = REPO / "skaileup" / "flows"
 VERIFIER = FLOWS / "_meta" / "verify_flows.py"
 SCHEMA = REPO / "skaileup" / "contracts" / "flow.schema.json"
-SKAILE_YAML = REPO / "skaile.yaml"
 
 
 def _run(verifier_path: Path) -> subprocess.CompletedProcess:
@@ -55,16 +54,19 @@ def _build_scratch_repo(tmp_path: Path) -> Path:
     """Mirror the minimum repo structure the verifier touches.
 
     Layout (self-contained flows; new contracts location):
-      <root>/skaile.yaml                                 (copied)
+      <root>/skaileup/**/CONTRACT.md                     (copied; contract names)
       <root>/skaileup/contracts/flow.schema.json         (copied)
       <root>/skaileup/flows/_meta/deferred_skills.yaml   (copied)
       <root>/skaileup/flows/_meta/verify_flows.py        (copied)
       <root>/skaileup/flows/<app>/<app>.flow.yaml        (copied)
       <root>/<each existing SKILL.md as a stub so name-resolution works>
     """
-    shutil.copy2(SKAILE_YAML, tmp_path / "skaile.yaml")
     (tmp_path / "skaileup" / "contracts").mkdir(parents=True)
     shutil.copy2(SCHEMA, tmp_path / "skaileup" / "contracts" / "flow.schema.json")
+    for contract_md in (REPO / "skaileup").rglob("CONTRACT.md"):
+        dest = tmp_path / contract_md.relative_to(REPO)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(contract_md, dest)
     (tmp_path / "skaileup" / "flows" / "_meta").mkdir(parents=True)
     shutil.copy2(FLOWS / "_meta" / "verify_flows.py",
                  tmp_path / "skaileup" / "flows" / "_meta" / "verify_flows.py")

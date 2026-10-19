@@ -25,8 +25,9 @@ Checks performed:
    the flow does not run. (Self-contained, exact: no inheritance, no extras.)
    A tier that delegates a loop to a sub-flow node requires that `flow:` instead
    of re-listing the loop's skills; the sub-flow's own manifest provides them.
-5. Every `contract:` ref in a flow's `requires:` resolves to a contract declared
-   in `skaile.yaml`; every sub-flow node target resolves to a known flow id.
+5. Every `contract:` ref in a flow's `requires:` resolves to a contract the
+   tree ships (a `CONTRACT.md` whose frontmatter `name:` matches, as discovery
+   reads it); every sub-flow node target resolves to a known flow id.
 6. `requires:` refs use the scoped grammar `kind:@publisher/name` with the
    `skill`/`contract`/`flow` kinds (`flow:` only when a sub-flow node delegates).
 """
@@ -47,7 +48,7 @@ REPO = Path(__file__).resolve().parents[3]  # repo root (skaileup/flows/_meta/ i
 FLOWS = REPO / "skaileup" / "flows"
 SCHEMA_PATH = REPO / "skaileup" / "contracts" / "flow.schema.json"
 DEFERRED_PATH = FLOWS / "_meta" / "deferred_skills.yaml"
-SKAILE_YAML = REPO / "skaile.yaml"
+CONTRACTS_ROOT = REPO / "skaileup"
 
 TIER_FLOWS = ["appbuilder-mvp", "appbuilder-simple", "appbuilder-standard", "appbuilder-complex"]
 # Slice building blocks: the unified skaileup-slice parent plus its two halves.
@@ -148,13 +149,18 @@ def gather_existing_skill_names() -> set[str]:
 
 
 def gather_known_contracts() -> set[str]:
-    """Return the set of contract names declared in skaile.yaml."""
-    data = yaml.safe_load(SKAILE_YAML.read_text()) or {}
-    return {
-        str(a["name"])
-        for a in data.get("assets", [])
-        if isinstance(a, dict) and a.get("kind") == "contract" and "name" in a
-    }
+    """Return the names of the contracts the tree ships: the frontmatter `name:`
+    of every `CONTRACT.md` (the file discovery turns into a `contract` asset)."""
+    names: set[str] = set()
+    for path in CONTRACTS_ROOT.rglob("CONTRACT.md"):
+        text = path.read_text()
+        if not text.startswith("---"):
+            continue
+        front = text.split("---", 2)[1]
+        data = yaml.safe_load(front) or {}
+        if isinstance(data, dict) and data.get("name"):
+            names.add(str(data["name"]))
+    return names
 
 
 def collect_flow_skills(flow_data: dict) -> set[str]:
@@ -341,7 +347,7 @@ def main() -> int:
             if c not in known_contracts:
                 errors.append(
                     f"{fid}: requires unknown contract {c!r} "
-                    f"(not declared in skaile.yaml)"
+                    f"(no CONTRACT.md declares that name)"
                 )
         if not req_contracts:
             warnings.append(f"{fid}: requires lists no contract (expected shared-contracts)")
