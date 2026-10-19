@@ -18,9 +18,10 @@ recursively and building a catalog from recognized manifest files:
 | `CONTRACT.md` | `contract` |
 | `MCP.md` | `mcp-server` |
 | `CONNECTOR.md` | `connector` |
-| `MOUNT.md` | `mount` |
 | `<name>.prompt.md` | `prompt` |
-| `<name>.bundle.yaml` | `bundle` |
+| `<name>.preset.yaml` | `preset` |
+| `PERSONA.md` | `persona` |
+| `RULESET.md` | `ruleset` |
 | `<name>.flow.yaml` | `flow` |
 
 Each manifest file produces exactly one catalog entry. Name collisions (same `kind:name`) are

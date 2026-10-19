@@ -1,6 +1,6 @@
-spec_version: '0.1.0'
+spec_version: '0.2'
 name: 'skaileup'
-version: '1.0.0'
+version: '1.1.0'
 description: 'Conversational guide for the full skaileup concept → implementation pipeline. Discovers installed orchestrators and flows at runtime. Guides users step by step, with or without the flow engine.'
 extends: '../../ai-asset-management/agents/skaile/agent.yaml'
 model:
@@ -25,7 +25,6 @@ tags:
   - 'flow-engine'
 metadata:
   domain: 'skaileup'
-  soul: 'agents/skaileup/SOUL.md'
   stage: 'alpha'
   discovers_agents: '.claude/agents/skaileup-*.md'
   discovers_flows: '.skaile/flows/**/*.flow.yaml'
