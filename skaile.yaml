@@ -1,7 +1,5 @@
 name: ai-assets-skaileup-tree
 description: skaileup skill collection as a mirror tree — one instruction node per _concept/ part, skills are routes
-publisher: skaile-ai
-version: 0.1.0
 agent-config:
   default:
     agent: claude-code
