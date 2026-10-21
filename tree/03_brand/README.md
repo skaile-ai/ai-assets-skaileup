@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/03_brand/
 
-What the product looks like and how it sounds. Every skill that renders anything reads `brand.tokens.json`, and both mockup renderers hard-gate on it, so this folder is what the visual half of the project stands on. Reads `brief.md`, `glossary.md` and `02_grounding/`; `design-brand` writes every file here, and `identity.md` is the one home of the tone of voice and copy guidelines.
+What the product looks like and how it sounds. Every skill that renders anything reads `brand.tokens.json`, and both mockup renderers hard-gate on it, so this folder is what the visual half of the project stands on. Reads `brief.md`, the glossary (`tree/glossary.md § Where the words live`) and `02_grounding/`; `design-brand` writes every file here, and `identity.md` is the one home of the tone of voice and copy guidelines.
 
 ## Contents
 

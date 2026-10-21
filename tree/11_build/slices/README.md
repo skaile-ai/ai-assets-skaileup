@@ -55,7 +55,7 @@ reader may be a different session, host or person.
    codebase for what is already there. Where `_concept/02_grounding/standards/index.yml`
    exists, match its entries on `applies_to: build-plan` and the feature's keywords and load
    the hits, so seams and names follow the conventions the code already has. Slice titles use
-   the glossary's terms (`_concept/glossary.md`; format `tree/glossary.md`) and respect the
+   the glossary's terms (`tree/glossary.md § Where the words live`) and respect the
    decision records in the area they touch (`_concept/10_blueprint/decisions.md`; format
    `tree/10_blueprint/decisions.md`), because a plan in different words than the code
    is one the implementer has to translate. Look for prefactoring that makes the change easy

@@ -44,7 +44,7 @@ components:
         title: { type: string }
 ```
 
-- Message payload schemas are named for the entities in `_concept/10_blueprint/datamodel/model.json`, with field names and enum values as the model has them; where the model does not exist the names come from `_concept/glossary.md`, and a payload concept with neither becomes a `proposed` glossary entry (`tree/glossary.md`) that the schema is named for. Names are read, never coined.
+- Message payload schemas are named for the entities in `_concept/10_blueprint/datamodel/model.json`, with field names and enum values as the model has them; where the model does not exist the names come from the glossary (`tree/glossary.md § Where the words live`), and a payload concept with neither becomes a `proposed` term, filed per `tree/glossary.md § Where the words live`, that the schema is named for. Names are read, never coined.
 - Each failed message names what the sender or receiver sees, which is the behaviour `tree/10_blueprint/architecture.md` wrote in prose.
 
 ## Writing it

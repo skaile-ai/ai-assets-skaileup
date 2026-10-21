@@ -34,6 +34,6 @@ Writes `06_behaviors/<featureset>.md`: the states an entity can be in, what move
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Write the state tables** — `tree/06_behaviors/[featureset].md`: read the featuresets (or propose the featureset slug), find the entities with a life, write one file per featureset, name the constants, record open questions, report them to the user.
-2. **Name entities and enums as the data model does** — `tree/10_blueprint/datamodel/README.md § Naming`; these tables read the model's names where it exists, else the glossary's, and coin none.
+2. **Name entities and enums as the data model does** — `tree/10_blueprint/datamodel/README.md § Naming`; these tables read the model's names where it exists, else the glossary's (`tree/glossary.md § Where the words live`), and coin none.
 
 **Done when** every featureset with a real lifecycle has a file, each entity in it has its states and a transition table, and the open questions have been put to the user.

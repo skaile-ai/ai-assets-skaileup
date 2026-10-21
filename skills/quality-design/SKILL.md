@@ -41,7 +41,7 @@ Read `tree/README.md` once per session, then these nodes in order — each holds
 4. **Ask which candidate to pursue** — step 5 of `tree/11_build/design-candidates.md § Writing it`; one batch per rule 2, one candidate per run.
 5. **Grill the candidate** — step 6 of `tree/11_build/design-candidates.md § Writing it`. Call the Skill tool with "grilling"; when it is absent, run the same questions inline as one batch.
 6. **Design it twice (optional)** — step 7 of `tree/11_build/design-candidates.md § Writing it`; three parallel alternatives and a consequence table, when the user agrees.
-7. **Land the result** — step 8 of `tree/11_build/design-candidates.md § Writing it` and `tree/11_build/design-candidates.md § Landing proposals`: `proposed` entries through each owner's node (`tree/glossary.md § Format`, `tree/APP-DESIGN.md § Format`, `tree/07_screens/[screen].md § Format`) and the record per `tree/10_blueprint/decisions.md § Format`.
+7. **Land the result** — step 8 of `tree/11_build/design-candidates.md § Writing it` and `tree/11_build/design-candidates.md § Landing proposals`: `proposed` entries through each owner's node (a term filed as a proposed term per `tree/glossary.md § Where the words live`, then `tree/APP-DESIGN.md § Format`, `tree/07_screens/[screen].md § Format`) and the record per `tree/10_blueprint/decisions.md § Format`.
 8. **Report** — step 9 of `tree/11_build/design-candidates.md § Writing it`; claims measured or inferred per rule 8, next steps named by demand.
 
 **Done when** `tree/11_build/design-candidates.md § Checks` holds: the report parses, every candidate cites a `file:line` that passes the citation check, the picked candidate carries its `DR-<n>`, and every landed proposal names `quality-design` as proposer.

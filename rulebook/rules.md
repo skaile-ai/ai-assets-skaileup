@@ -103,7 +103,7 @@ In an object-led or hybrid app (P22), primary navigation lists the indexes of `n
 
 ### P13 — One noun per object
 
-Each object and attribute has one user-facing name, taken from `_concept/glossary.md` where one exists, and used unchanged in navigation, page titles, editor labels, representations, palette entries and messages. A field labelled three ways across three editors is one finding, not three. No implementation noun (record, payload, job) is shown raw.
+Each object and attribute has one user-facing name, taken from the project's glossary where one exists, and used unchanged in navigation, page titles, editor labels, representations, palette entries and messages. A field labelled three ways across three editors is one finding, not three. No implementation noun (record, payload, job) is shown raw.
 
 *Why:* two names for one thing read as two things. *Source:* Johnson & Henderson; NN/g Top-10 mistakes (inconsistency) (`standard`); CLINICO LANG-2 and weiterbildungsplaner LANG-2, LANG-5 (`field`).
 

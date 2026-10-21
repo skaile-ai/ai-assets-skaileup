@@ -33,7 +33,7 @@ Where screens, objects, editors and finders hide, per stack. `concept-reverse` r
 
 ### Intent and vocabulary
 
-Before judging, read the app's `APP-DESIGN.md` at the project root (`tree/APP-DESIGN.md § Reading it`), `_concept/glossary.md`, the decision records (`docs/adr/`, or `docs/decisions/`, `_devlog/decisions/`), any UI or design concept (`docs/*konzept*`, `docs/*design*`, `docs/ui*`, `docs/*wireframe*`, UX documents inside `_concept/` — headings first, then the parts a rule touches) and `CLAUDE.md`/`AGENTS.md`. They name the objects (P13) and record deviations decided on purpose. A decision such a document holds that `APP-DESIGN.md` lacks becomes an entry citing it, not a finding.
+Before judging, read the app's `APP-DESIGN.md` at the project root (`tree/APP-DESIGN.md § Reading it`), the glossary (`tree/glossary.md § Where the words live`), the decision records (`docs/adr/`, or `docs/decisions/`, `_devlog/decisions/`), any UI or design concept (`docs/*konzept*`, `docs/*design*`, `docs/ui*`, `docs/*wireframe*`, UX documents inside `_concept/` — headings first, then the parts a rule touches) and `CLAUDE.md`/`AGENTS.md`. They name the objects (P13) and record deviations decided on purpose. A decision such a document holds that `APP-DESIGN.md` lacks becomes an entry citing it, not a finding.
 
 ### Screens (routes)
 
