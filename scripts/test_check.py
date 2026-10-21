@@ -840,7 +840,7 @@ def test_a_skill_declaring_a_per_file_contract(tmp_path):
         '    - "contract:@skaile-ai/shared-contracts"\n',
         '    - "contract:@skaile-ai/shared-contracts"\n    - "contract:@skaile-ai/seed_data"\n',
     ))
-    only(root, "the only contract asset is 'shared-contracts'")
+    only(root, "the contract assets are 'shared-contracts' and 'app-design-rulebook'")
 
 
 def test_node_citing_a_missing_node(tmp_path):
@@ -1481,18 +1481,246 @@ def test_a_title_cased_manifest_name_slugifies_to_the_contract_asset(tmp_path):
     assert errors(root) == []
 
 
-def test_a_second_manifest_anywhere(tmp_path):
+def test_a_third_manifest_anywhere(tmp_path):
     """Verification 4: the installer ships the whole directory of every `CONTRACT.md` it finds,
-    so a second one would ship a competing instruction layer."""
+    so a third one would ship a competing instruction layer."""
     root = write_repo(tmp_path)
     (root / "skills" / "spec-feature" / "CONTRACT.md").write_text(CONTRACT_MANIFEST)
-    only(root, "is a second `CONTRACT.md`")
-    assert "only-one-contract-manifest" in errors(root)[0]
+    only(root, "is a third `CONTRACT.md`")
+    assert "contract-manifests" in errors(root)[0]
 
 
 def test_the_manifest_is_not_a_node(tmp_path):
     root = write_repo(tmp_path)
     assert "CONTRACT.md" not in {n.rel for n in check.load_tree(root)}
+
+
+# -- the rulebook: second contract asset ----------------------------------------
+
+RULEBOOK_MANIFEST = CONTRACT_MANIFEST.replace("shared-contracts", "app-design-rulebook").replace(
+    "The instruction tree.", "The app-design rulebook."
+)
+
+RULES = """\
+# Rules
+
+### P1 — Floorplan selection
+
+Pick one floorplan per screen.
+
+### P2 — Density
+
+Pick one density per area.
+
+## Heuristics
+
+| id | heuristic |
+|---|---|
+| H1 | Count the objects first. |
+| H2 | Name the user's next step. |
+"""
+
+DEFAULTS = """\
+# Defaults
+
+### DF1 — Table density
+
+Compact.
+
+### DF2 — Empty state
+
+One sentence and one action.
+"""
+
+
+def write_rulebook(root: Path, rules: str = RULES, defaults: str = DEFAULTS) -> None:
+    """The smallest rulebook: a manifest with the right name, a README, `rules.md`, `defaults.md`."""
+    rb = root / "rulebook"
+    rb.mkdir(parents=True, exist_ok=True)
+    (rb / "CONTRACT.md").write_text(RULEBOOK_MANIFEST)
+    (rb / "README.md").write_text("# Rulebook\n\nThe rules and defaults an app design draws on.\n")
+    (rb / "rules.md").write_text(rules)
+    (rb / "defaults.md").write_text(defaults)
+
+
+def cite_rulebook(root: Path, skill: str, ref: str, declare: bool = True) -> None:
+    """Make `skill` cite `rulebook/<ref>` from its body and, by default, declare the rulebook contract."""
+    p = skill_file(root, skill)
+    text = p.read_text() + f"\nApplies `rulebook/{ref}`.\n"
+    if declare:
+        shared = '    - "contract:@skaile-ai/shared-contracts"\n'
+        assert shared in text
+        text = text.replace(shared, shared + '    - "contract:@skaile-ai/app-design-rulebook"\n', 1)
+    p.write_text(text)
+
+
+def test_a_rulebook_with_its_manifest_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    assert errors(root) == []
+
+
+def test_a_collection_without_a_rulebook_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    assert not (root / "rulebook").exists()
+    assert errors(root) == []
+
+
+def test_rulebook_without_a_manifest(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    (root / "rulebook" / "CONTRACT.md").unlink()
+    only(root, "has no `CONTRACT.md`")
+
+
+def test_rulebook_manifest_name_must_slugify_to_the_rulebook_asset(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    (root / "rulebook" / "CONTRACT.md").write_text(RULEBOOK_MANIFEST.replace("app-design-rulebook", "Design Things"))
+    only(root, "installs as 'design-things', but every `contract:` ref names 'app-design-rulebook'")
+
+
+def test_a_title_cased_rulebook_manifest_name_slugifies_to_the_rulebook_asset(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    (root / "rulebook" / "CONTRACT.md").write_text(RULEBOOK_MANIFEST.replace("app-design-rulebook", "App Design Rulebook"))
+    assert errors(root) == []
+
+
+def test_a_third_manifest_beside_the_rulebook(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    (root / "skills" / "spec-feature" / "CONTRACT.md").write_text(CONTRACT_MANIFEST)
+    only(root, "is a third `CONTRACT.md` — only `tree/CONTRACT.md` and `rulebook/CONTRACT.md` ship")
+
+
+def test_a_manifest_in_a_rulebook_subdirectory_is_a_third(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    (root / "rulebook" / "floorplans").mkdir()
+    (root / "rulebook" / "floorplans" / "CONTRACT.md").write_text(RULEBOOK_MANIFEST)
+    only(root, "rulebook/floorplans/CONTRACT.md")
+
+
+def test_citing_a_rulebook_file_that_does_not_exist(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "gone.md")
+    only(root, "cites `rulebook/gone.md`, which does not exist")
+    assert "rulebook-citation-resolves" in errors(root)[0]
+
+
+def test_a_rule_id_citation_resolves_to_its_heading(tmp_path):
+    """`### P1 — Floorplan selection` answers to `§ P1`; `P1` is not a prefix match for `P10`."""
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § P1")
+    assert errors(root) == []
+
+
+def test_a_section_citation_resolves_to_a_plain_heading(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § Heuristics")
+    assert errors(root) == []
+
+
+def test_a_citation_of_a_rule_that_does_not_exist(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § P99")
+    only(root, "cites `rulebook/rules.md § P99`, and rules.md has no such heading")
+
+
+def test_a_rule_id_is_not_a_prefix_match(tmp_path):
+    """`§ P1` must not resolve against `### P10 — …` alone."""
+    root = write_repo(tmp_path)
+    write_rulebook(root, rules=RULES.replace("### P1 —", "### P10 —"))
+    cite_rulebook(root, "spec-feature", "rules.md § P1")
+    only(root, "has no such heading")
+
+
+def test_a_rulebook_pattern_is_not_resolved_but_still_needs_the_contract(tmp_path):
+    """Same as `tree/<p>`: a placeholder path is never resolved, but the skill still reads the
+    rulebook at runtime, so it declares the contract."""
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    p = skill_file(root)
+    shared = '    - "contract:@skaile-ai/shared-contracts"\n'
+    p.write_text(p.read_text().replace(shared, shared + '    - "contract:@skaile-ai/app-design-rulebook"\n', 1))
+    body(root, "spec-feature", "A floorplan sits at `rulebook/floorplans/<id>/README.md`.")
+    assert errors(root) == []
+
+
+def test_citing_the_rulebook_without_declaring_its_contract(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § P1", declare=False)
+    only(root, "cites 1 `rulebook/` path(s) but does not declare `contract:@skaile-ai/app-design-rulebook`")
+
+
+def test_declaring_the_rulebook_contract_without_citing(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § P1")
+    p = skill_file(root)
+    p.write_text(re.sub(r"`rulebook/[^`]*`", "the rulebook", p.read_text()))
+    only(root, "declares 'app-design-rulebook' but cites no `rulebook/` path")
+
+
+def test_a_flow_whose_skills_cite_the_rulebook_must_require_it(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § P1")
+    write_flow(root, good_flow())
+    only(root, "its skills cite `rulebook/` files, but `requires:` does not list `contract:@skaile-ai/app-design-rulebook`")
+
+
+def test_a_flow_that_requires_the_rulebook_its_skills_cite_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    cite_rulebook(root, "spec-feature", "rules.md § P1")
+    flow = good_flow()
+    flow["requires"].append("contract:@skaile-ai/app-design-rulebook")
+    write_flow(root, flow)
+    assert errors(root) == []
+
+
+def test_a_flow_that_requires_a_rulebook_no_skill_cites(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    flow = good_flow()
+    flow["requires"].append("contract:@skaile-ai/app-design-rulebook")
+    write_flow(root, flow)
+    only(root, "`requires:` lists 'app-design-rulebook', which none of this flow's skills read")
+
+
+def test_a_duplicate_rule_id(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root, rules=RULES.replace("### P2 —", "### P1 —"))
+    only(root, "defines P1 at rulebook/rules.md:7, already defined at rulebook/rules.md:3")
+    assert "rulebook-id-unique" in errors(root)[0]
+
+
+def test_a_duplicate_heuristic_id(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root, rules=RULES.replace("| H2 |", "| H1 |"))
+    only(root, "defines H1 at rulebook/rules.md:")
+    assert "rulebook-id-unique" in errors(root)[0]
+
+
+def test_a_duplicate_default_id(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root, defaults=DEFAULTS.replace("### DF2 —", "### DF1 —"))
+    only(root, "defines DF1 at rulebook/defaults.md:7, already defined at rulebook/defaults.md:3")
+    assert "rulebook-id-unique" in errors(root)[0]
+
+
+def test_a_table_row_outside_the_heuristics_section_is_not_an_id(tmp_path):
+    """Only the `## Heuristics` table defines `H<n>`; a table elsewhere may reuse the cell text."""
+    root = write_repo(tmp_path)
+    write_rulebook(root, rules=RULES + "\n## Notes\n\n| id | note |\n|---|---|\n| H1 | not a heuristic |\n")
+    assert errors(root) == []
 
 
 # -- the tree: node frontmatter and location (T2) ---------------------------------
@@ -1891,7 +2119,7 @@ def test_requires_names_a_per_file_contract(tmp_path):
     flow = good_flow()
     flow["requires"].append("contract:@skaile-ai/seed_data")
     write_flow(root, flow)
-    only(root, "the only contract asset is 'shared-contracts'")
+    only(root, "the contract assets are 'shared-contracts' and 'app-design-rulebook'")
 
 
 def test_requires_omits_the_contract_its_skills_read(tmp_path):

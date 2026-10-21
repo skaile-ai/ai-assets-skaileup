@@ -1114,12 +1114,17 @@ def check_schemas(
 # optional `../` run is for prose one directory down (`flows/README.md`). A path with `<` or `>`
 # is a pattern (`tree/<p>`), not a citation — node file names use `[x]` for exactly that reason.
 TREE_REF_RE = re.compile(r"`(?:\.\./)*tree/([^`\s§]*)(?: § ([^`]+))?`")
+RULEBOOK_REF_RE = re.compile(r"`(?:\.\./)*rulebook/([^`\s§]*)(?: § ([^`]+))?`")
 HEADING_RE = re.compile(r"^#{2,3}\s+(.+?)\s*$", re.MULTILINE)
 
 # The whole instruction tree installs as one dir-scoped asset: `tree/CONTRACT.md` names it,
 # and `contract` is a dir-scoped kind, so the directory deploys whole. A per-file `contract:`
-# ref could never resolve — `_` is not a legal asset-name character.
+# ref could never resolve — `_` is not a legal asset-name character. The rulebook is the
+# second asset, shipped the same way from `rulebook/CONTRACT.md`.
 CONTRACT_ASSET = "shared-contracts"
+RULEBOOK_DIR = "rulebook"
+RULEBOOK_ASSET = "app-design-rulebook"
+CONTRACT_ASSETS = frozenset({CONTRACT_ASSET, RULEBOOK_ASSET})
 
 # ADRs 0001–0016 are carried over verbatim from `-mp` and record decisions about a layout this
 # collection replaced; they name old paths on purpose. Only ADR 0017 and the ADR index are checked.
@@ -1131,30 +1136,43 @@ def _cited_tree_refs(text: str) -> set[str]:
     return {path for path, _section in TREE_REF_RE.findall(re.sub(r"\n[ \t]*", " ", text))}
 
 
+def _cited_rulebook_refs(text: str) -> set[str]:
+    """Every `rulebook/<path>` this text cites in an inline-code span."""
+    return {path for path, _section in RULEBOOK_REF_RE.findall(re.sub(r"\n[ \t]*", " ", text))}
+
+
 def _check_tree_citations(text: str, where: str, repo: Path, rep: Report) -> None:
-    """Rule `tree-citation-resolves`: a cited file exists, and a cited section resolves to a `##` or
-    `###` heading equal to it or starting with `<section> (`.
+    """Rules `tree-citation-resolves` and `rulebook-citation-resolves`: a cited file exists, and a
+    cited section resolves to a `##` or `###` heading equal to it or starting with `<section> (`
+    or `<section> —` (a rule id heading `### P18 — Title` answers to `§ P18`).
 
     A rewrite that renames a heading leaves every `§` citation of it dangling, and the
     file-exists check cannot see that."""
-    headings: dict[str, list[str]] = {}
-    for path, section in sorted(set(TREE_REF_RE.findall(re.sub(r"\n[ \t]*", " ", text)))):
-        if "<" in path or ">" in path:
-            continue
-        target = repo / TREE_DIR / path
-        exists = target.is_dir() if (not path or path.endswith("/")) else target.is_file()
-        if not exists:
-            rep.fail(where, "tree-citation-resolves", f"cites `tree/{path}`, which does not exist")
-            continue
-        if not section:
-            continue
-        if not target.is_file():
-            rep.fail(where, "tree-citation-resolves", f"cites `tree/{path} § {section}`, but {path} is a directory")
-            continue
-        if path not in headings:
-            headings[path] = HEADING_RE.findall(target.read_text(encoding="utf-8"))
-        if not any(h == section or h.startswith(f"{section} (") for h in headings[path]):
-            rep.fail(where, "tree-citation-resolves", f"cites `tree/{path} § {section}`, and {path} has no such heading")
+    flat = re.sub(r"\n[ \t]*", " ", text)
+    headings: dict[tuple[str, str], list[str]] = {}
+    for folder, ref_re, rule in (
+        (TREE_DIR, TREE_REF_RE, "tree-citation-resolves"),
+        (RULEBOOK_DIR, RULEBOOK_REF_RE, "rulebook-citation-resolves"),
+    ):
+        for path, section in sorted(set(ref_re.findall(flat))):
+            if "<" in path or ">" in path:
+                continue
+            target = repo / folder / path
+            exists = target.is_dir() if (not path or path.endswith("/")) else target.is_file()
+            if not exists:
+                rep.fail(where, rule, f"cites `{folder}/{path}`, which does not exist")
+                continue
+            if not section:
+                continue
+            if not target.is_file():
+                rep.fail(where, rule, f"cites `{folder}/{path} § {section}`, but {path} is a directory")
+                continue
+            if (folder, path) not in headings:
+                headings[(folder, path)] = HEADING_RE.findall(target.read_text(encoding="utf-8"))
+            if not any(
+                h == section or h.startswith((f"{section} (", f"{section} —")) for h in headings[(folder, path)]
+            ):
+                rep.fail(where, rule, f"cites `{folder}/{path} § {section}`, and {path} has no such heading")
 
 
 # The old cross-cutting layer is gone. A path into it is a citation of nothing, and it is the
@@ -1186,18 +1204,73 @@ def _non_frozen(repo: Path, paths: list[Path]) -> list[Path]:
 
 
 def check_citations(repo: Path, rep: Report) -> None:
-    """Rule `tree-citation-resolves` over every file that cites the tree: skills, nodes, templates,
-    flows, docs (frozen ADRs excepted) and the root markdown."""
+    """Rule `tree-citation-resolves` and `rulebook-citation-resolves` over every file that cites
+    them: skills, nodes, the rulebook itself, templates, flows, docs (frozen ADRs excepted) and
+    the root markdown."""
     files = [
         *sorted(repo.glob("*.md")),
         *_non_frozen(repo, _files(repo, "docs", (".md",))),
         *_files(repo, TREE_DIR, (".md", ".json")),
+        *_files(repo, RULEBOOK_DIR, (".md",)),
         *_files(repo, "templates", (".md",)),
         *_files(repo, "flows", (".md", ".yaml", ".yml")),
         *_files(repo, "skills", (".md",)),
     ]
     for path in files:
         _check_tree_citations(path.read_text(encoding="utf-8"), _where_of(repo, path), repo, rep)
+
+
+# Rulebook ids are the citation handles every skill, ADR and review uses, and they are cited by
+# bare id (`rulebook/rules.md § P18`). A duplicate makes the citation ambiguous, and the file-exists
+# check cannot see it. Rules are `### P<n> — …` headings, heuristics are rows of `## Heuristics`,
+# defaults are `### DF<n> — …` headings.
+RULE_ID_HEADING_RE = re.compile(r"^###\s+(P\d+)(?=\s|$)", re.MULTILINE)
+DEFAULT_ID_HEADING_RE = re.compile(r"^###\s+(DF\d+)(?=\s|$)", re.MULTILINE)
+HEURISTIC_ID_RE = re.compile(r"^H\d+$")
+HEURISTICS_HEADING_RE = re.compile(r"^## Heuristics[ \t]*$")
+
+
+def _rulebook_ids(repo: Path) -> list[tuple[str, str]]:
+    """Every `(id, "<file>:<line>")` the rulebook defines, in file order."""
+    found: list[tuple[str, str]] = []
+    rules = repo / RULEBOOK_DIR / "rules.md"
+    if rules.is_file():
+        text = rules.read_text(encoding="utf-8")
+        where = f"{RULEBOOK_DIR}/rules.md"
+        for m in RULE_ID_HEADING_RE.finditer(text):
+            found.append((m.group(1), f"{where}:{text.count(chr(10), 0, m.start()) + 1}"))
+        in_table = False
+        for number, line in enumerate(text.splitlines(), start=1):
+            if line.startswith("## "):
+                in_table = bool(HEURISTICS_HEADING_RE.match(line))
+            elif in_table and line.lstrip().startswith("|"):
+                first = line.strip().strip("|").split("|", 1)[0].strip()
+                if HEURISTIC_ID_RE.match(first):
+                    found.append((first, f"{where}:{number}"))
+    defaults = repo / RULEBOOK_DIR / "defaults.md"
+    if defaults.is_file():
+        text = defaults.read_text(encoding="utf-8")
+        for m in DEFAULT_ID_HEADING_RE.finditer(text):
+            found.append((m.group(1), f"{RULEBOOK_DIR}/defaults.md:{text.count(chr(10), 0, m.start()) + 1}"))
+    return found
+
+
+def check_rulebook_ids(repo: Path, rep: Report) -> None:
+    """Rule `rulebook-id-unique`: a `P<n>`, `H<n>` or `DF<n>` id is defined once across the
+    rulebook. A repo without `rulebook/` has nothing to check."""
+    if not (repo / RULEBOOK_DIR).is_dir():
+        return
+    first_seen: dict[str, str] = {}
+    for ident, place in _rulebook_ids(repo):
+        if ident in first_seen:
+            rep.fail(
+                place.rsplit(":", 1)[0],
+                "rulebook-id-unique",
+                f"defines {ident} at {place}, already defined at {first_seen[ident]} — renumber one "
+                f"of them, because a citation of `{ident}` must name exactly one rule",
+            )
+        else:
+            first_seen[ident] = place
 
 
 def check_old_contract_paths(repo: Path, rep: Report) -> None:
@@ -1240,34 +1313,40 @@ def _declared_contract_assets(fm: dict) -> set[str]:
     return out
 
 
-def _check_skill_contract_dep(fm: dict, cited: set[str], where: str, rep: Report) -> None:
-    """Cite a tree node and you declare the contract asset — and vice versa."""
+def _check_skill_contract_dep(fm: dict, cited_tree: set[str], cited_rulebook: set[str], where: str, rep: Report) -> None:
+    """Cite a tree node and you declare the tree contract asset; cite a rulebook file and you
+    declare the rulebook contract asset — and vice versa."""
     declared = _declared_contract_assets(fm)
-    for wrong in sorted(declared - {CONTRACT_ASSET}):
+    for wrong in sorted(declared - CONTRACT_ASSETS):
         rep.error(
             where,
-            f"declares contract {wrong!r}, but the only contract asset is {CONTRACT_ASSET!r} — "
-            f"{{host}} indexes an asset under its slugified `name:`, so a per-file ref names nothing",
+            f"declares contract {wrong!r}, but the contract assets are {CONTRACT_ASSET!r} and "
+            f"{RULEBOOK_ASSET!r} — {{host}} indexes an asset under its slugified `name:`, so a "
+            f"per-file ref names nothing",
             fact="host:asset-name-slug",
             rule="contract-asset-is-one",
         )
-    if cited and CONTRACT_ASSET not in declared:
-        rep.error(
-            where,
-            f"cites {len(cited)} `tree/` path(s) but does not declare "
-            f"`contract:@skaile-ai/{CONTRACT_ASSET}` in `metadata.requires` — "
-            f"nothing would install what it reads, and {{host}} is what reports the gap",
-            fact="host:doctor-walks-requires",
-            rule="skill-declares-contract",
-        )
-    if not cited and CONTRACT_ASSET in declared:
-        rep.error(
-            where,
-            f"declares {CONTRACT_ASSET!r} but cites no `tree/` path — {{host}} would "
-            f"report a dependency that reached no reader",
-            fact="host:doctor-walks-requires",
-            rule="skill-declares-contract",
-        )
+    for asset, cited, noun in (
+        (CONTRACT_ASSET, cited_tree, "`tree/`"),
+        (RULEBOOK_ASSET, cited_rulebook, "`rulebook/`"),
+    ):
+        if cited and asset not in declared:
+            rep.error(
+                where,
+                f"cites {len(cited)} {noun} path(s) but does not declare "
+                f"`contract:@skaile-ai/{asset}` in `metadata.requires` — "
+                f"nothing would install what it reads, and {{host}} is what reports the gap",
+                fact="host:doctor-walks-requires",
+                rule="skill-declares-contract",
+            )
+        if not cited and asset in declared:
+            rep.error(
+                where,
+                f"declares {asset!r} but cites no {noun} path — {{host}} would "
+                f"report a dependency that reached no reader",
+                fact="host:doctor-walks-requires",
+                rule="skill-declares-contract",
+            )
 
 
 ROUTE_HEADING_RE = re.compile(r"^## Route[ \t]*$", re.MULTILINE)
@@ -1412,7 +1491,7 @@ def check_skills(
         # which reports a dependency that reached no workspace), while a flow's dependency
         # edges are built from its nodes' `run.assets`, never from its top-level `requires:`
         # (`extractFlowRequires`, @skaile/workspaces discovery/src/requires-graph.ts).
-        _check_skill_contract_dep(fm, tree_refs[directory], where, rep)
+        _check_skill_contract_dep(fm, tree_refs[directory], _cited_rulebook_refs(text), where, rep)
 
         # 1. identity. Three of the four roles a skill name plays resolve through the
         #    directory, and forge-concept never reads `name:` for identity at all
@@ -1581,45 +1660,55 @@ def _prerequisite_paths(fm: dict) -> list[str]:
 # the contract manifest
 # --------------------------------------------------------------------------
 
-def _check_manifest(repo: Path, rep: Report) -> None:
-    """Without `tree/CONTRACT.md`, discovery finds no contract at all — and a second manifest
-    anywhere would ship a second, competing instruction layer.
+def _check_one_manifest(repo: Path, folder: str, asset: str, rep: Report) -> Path:
+    """`<folder>/CONTRACT.md` exists (when the folder does) and its `name:` slugifies to `asset`.
 
-    Same failure ticket 29 gated for flows, from the other side: the installer indexes
-    the asset under its slugified `name:`, so a name that does not slugify to what every
-    `contract:` ref says leaves those refs naming nothing.
-    """
-    where = f"{TREE_DIR}/CONTRACT.md"
-    manifest = repo / TREE_DIR / "CONTRACT.md"
+    The installer indexes the asset under its slugified `name:`, so a name that does not
+    slugify to what every `contract:` ref says leaves those refs naming nothing."""
+    where = f"{folder}/CONTRACT.md"
+    manifest = repo / folder / "CONTRACT.md"
     if not manifest.is_file():
-        rep.error(f"{TREE_DIR}/", "has no `CONTRACT.md` — discovery finds no contract asset and every `contract:` ref names nothing")
-    else:
-        fm, _body = split_frontmatter(manifest.read_text())
-        if not fm:
-            rep.error(where, "has no parseable YAML frontmatter — the manifest is the frontmatter")
-        else:
-            name = fm.get("name")
-            if not name:
-                rep.error(where, "frontmatter has no `name:`")
-            elif _slugify_asset_name(str(name)) != CONTRACT_ASSET:
-                rep.error(
-                    where,
-                    f"`name:` {name!r} installs as {_slugify_asset_name(str(name))!r}, but every "
-                    f"`contract:` ref names {CONTRACT_ASSET!r} — {{host}} takes the asset's identity "
-                    f"from the slugified name",
-                    fact="host:asset-name-slug",
-                    rule="contract-manifest-slug",
-                )
+        rep.error(f"{folder}/", "has no `CONTRACT.md` — discovery finds no contract asset and every `contract:` ref names nothing")
+        return manifest
+    fm, _body = split_frontmatter(manifest.read_text())
+    if not fm:
+        rep.error(where, "has no parseable YAML frontmatter — the manifest is the frontmatter")
+        return manifest
+    name = fm.get("name")
+    if not name:
+        rep.error(where, "frontmatter has no `name:`")
+    elif _slugify_asset_name(str(name)) != asset:
+        rep.error(
+            where,
+            f"`name:` {name!r} installs as {_slugify_asset_name(str(name))!r}, but every "
+            f"`contract:` ref names {asset!r} — {{host}} takes the asset's identity "
+            f"from the slugified name",
+            fact="host:asset-name-slug",
+            rule="contract-manifest-slug",
+        )
+    return manifest
+
+
+def _check_manifest(repo: Path, rep: Report) -> None:
+    """Exactly two manifests ship: `tree/CONTRACT.md` and `rulebook/CONTRACT.md`. Without one,
+    discovery finds no contract at all; a third anywhere would ship a competing instruction layer.
+
+    Same failure ticket 29 gated for flows, from the other side: see `_check_one_manifest`.
+    A repo with no `rulebook/` directory has no rulebook manifest to demand.
+    """
+    manifests = {_check_one_manifest(repo, TREE_DIR, CONTRACT_ASSET, rep)}
+    if (repo / RULEBOOK_DIR).is_dir():
+        manifests.add(_check_one_manifest(repo, RULEBOOK_DIR, RULEBOOK_ASSET, rep))
 
     for other in sorted(repo.rglob("CONTRACT.md")):
         rel = other.relative_to(repo)
-        if other == manifest or any(part.startswith(".") for part in rel.parts):
+        if other in manifests or any(part.startswith(".") for part in rel.parts):
             continue
         rep.fail(
             rel.as_posix(),
-            "only-one-contract-manifest",
-            f"is a second `CONTRACT.md` — `{TREE_DIR}/CONTRACT.md` is the only one, and the installer "
-            f"ships the whole directory of every manifest it discovers",
+            "contract-manifests",
+            f"is a third `CONTRACT.md` — only `{TREE_DIR}/CONTRACT.md` and `{RULEBOOK_DIR}/CONTRACT.md` ship, "
+            f"and the installer ships the whole directory of every manifest it discovers",
         )
 
 
@@ -2161,8 +2250,9 @@ def _check_requires(
     """The flow's `requires:` manifest against the skills its nodes run.
 
     `skill_tree_refs` maps a skill directory to the `tree/` paths its body cites. The `skill:`
-    refs must equal the node skills exactly; the one `contract:` ref (`shared-contracts`, the
-    installed tree) must be present iff any node skill cites a `tree/` node."""
+    refs must equal the node skills exactly. Each `contract:` ref (`shared-contracts`, the
+    installed tree; `app-design-rulebook`, the installed rulebook) must be present iff any node
+    skill cites that asset — a `tree/` node or a `rulebook/` file."""
     requires = flow.get("requires")
     if requires is None:
         rep.error(where, "has no `requires:` manifest — installing the flow would install none of its skills")
@@ -2185,12 +2275,12 @@ def _check_requires(
             rep.error(where, f"`requires:` lists flow {name!r}, but `-mp` ships no `sub-flow` nodes — nothing can delegate to it")
         elif kind == "contract":
             declared_contracts.add(name)
-            if name != CONTRACT_ASSET:
+            if name not in CONTRACT_ASSETS:
                 unresolvable_contracts.add(name)
                 rep.error(
                     where,
-                    f"`requires:` names contract {name!r}, but the only contract asset is "
-                    f"{CONTRACT_ASSET!r} — {{host}} indexes by slugified name, so a per-file "
+                    f"`requires:` names contract {name!r}, but the contract assets are "
+                    f"{CONTRACT_ASSET!r} and {RULEBOOK_ASSET!r} — {{host}} indexes by slugified name, so a per-file "
                     f"ref resolves to nothing",
                     fact="host:asset-name-slug",
                     rule="requires-contract-per-file",
@@ -2201,17 +2291,25 @@ def _check_requires(
     for extra in sorted(declared_skills - node_skills):
         rep.error(where, f"`requires:` lists skill {extra!r}, which no node in this flow runs")
 
-    # The tree is one asset, so a flow's contract manifest is one ref or none: present when
-    # any of its own node skills cites a `tree/` node, absent when none does. Per-node
-    # exactness is not expressible here and is gated on the skills, which is where the
-    # citing happens — `skill:` refs keep the "no inheritance, no extras" rule because a
-    # skill really is per-node.
+    # Each contract asset is one dir-scoped ref or none: present when any of the flow's own
+    # node skills cites it, absent when none does. Per-node exactness is not expressible here
+    # and is gated on the skills, which is where the citing happens — `skill:` refs keep the
+    # "no inheritance, no extras" rule because a skill really is per-node.
     if node_skills and all(s in skill_tree_refs for s in node_skills):
         needed = any(skill_tree_refs[skill] for skill in node_skills)
         if needed and CONTRACT_ASSET not in declared_contracts:
             rep.error(where, f"its skills cite `tree/` nodes, but `requires:` does not list `contract:@skaile-ai/{CONTRACT_ASSET}` — the tree would not be installed")
         if not needed and CONTRACT_ASSET in declared_contracts:
             rep.error(where, f"`requires:` lists {CONTRACT_ASSET!r}, which none of this flow's skills read")
+
+        rulebook_needed = any(
+            _cited_rulebook_refs((repo / "skills" / skill / "SKILL.md").read_text(encoding="utf-8"))
+            for skill in node_skills
+        )
+        if rulebook_needed and RULEBOOK_ASSET not in declared_contracts:
+            rep.error(where, f"its skills cite `rulebook/` files, but `requires:` does not list `contract:@skaile-ai/{RULEBOOK_ASSET}` — the rulebook would not be installed")
+        if not rulebook_needed and RULEBOOK_ASSET in declared_contracts:
+            rep.error(where, f"`requires:` lists {RULEBOOK_ASSET!r}, which none of this flow's skills read")
 
 
 # --------------------------------------------------------------------------
@@ -2285,6 +2383,7 @@ def run(repo: Path) -> Report:
     check_tree(repo, nodes, rep)
     check_schemas(repo, nodes, skill_fms, skill_tree_refs, rep)
     check_citations(repo, rep)
+    check_rulebook_ids(repo, rep)
     check_old_contract_paths(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)
     check_docs(repo, skill_names, rep)
