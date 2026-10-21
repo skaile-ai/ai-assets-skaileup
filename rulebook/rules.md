@@ -133,7 +133,7 @@ A button carries a text label; the icon is optional and leads. Icon-only is for 
 
 ### P18 — Floorplan selection
 
-A shell frame is chosen once for the app; a screen floorplan is chosen for each screen. Both come from `floorplans/` in this rulebook and are recorded (the frame in `_concept/07_screens/shell.md`, the floorplan in each screen's spec), with a deviation recorded as an exception. The choice follows the task, the object axes and the navigation model (P22), not habit. A screen that fits none is a signal to add a floorplan (`README.md § Adding or retiring`), not to draw an unnamed layout.
+A shell frame is chosen once for the app; a screen floorplan is chosen for each screen. Both come from `floorplans/` in this rulebook and are recorded (the frame in `_concept/07_screens/shell.md`, the floorplan in each screen's spec), with a deviation recorded as an exception. The choice follows the task, the object axes and the navigation model (P22), not habit. A screen that fits none is a signal to add a floorplan (`README.md § Adding or retiring`), not to draw an unnamed layout. An app may start from a row of `archetypes.md`, recorded as `archetype:` in `APP-DESIGN.md § Navigation model`; the row's frame and floorplans are its defaults until a NAV entry departs from them.
 
 **Shell frames** — the regions that persist around every screen:
 

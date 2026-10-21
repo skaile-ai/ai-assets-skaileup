@@ -33,6 +33,7 @@ Sovereign: people stay on an index. Keyboard row navigation and selection, resto
 
 - Wide ≥ 960 px: all regions stacked as listed; `results` is a table with sticky header.
 - Narrow ≤ 640 px: the table becomes cards in the same row order, each card a `card` representation (title, status, two or three tier-1 facts); the `overview-strip` becomes a two-column grid; `saved-views` scrolls horizontally; `filter-bar` wraps with the search field first; the `bulk-bar` becomes a bottom bar; the `peek` becomes a bottom sheet.
+- The `overview-strip` tiles follow the width of their container, not the viewport: one column, then two, then four (shadcn/ui dashboard-01 registry entry).
 
 ## Interaction constraints
 

@@ -31,6 +31,7 @@ Sovereign: long daily work. The status line is persistent, keyboard accelerators
 
 - Wide ≥ 960 px: rail (about 230 px), work area and drawer (about 300 px) side by side; the rail collapses to a 52 px strip of initials, the drawer closes to give the work area the width.
 - Narrow ≤ 640 px: the work area alone, full width. The rail becomes an overlay panel from the left, opened from the toolbar; the drawer becomes a bottom sheet over the work area, opened from the toolbar; both close on selection or an explicit Close. The status line sticks to the bottom edge. Neither overlay holds an edit form (`rulebook/rules.md § P5`).
+- A pane the user can resize keeps a minimum of 256 px, and the width the user sets is persisted per user (GitHub Primer — PageLayout).
 
 ## Interaction constraints
 

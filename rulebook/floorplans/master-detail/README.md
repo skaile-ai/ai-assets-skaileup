@@ -30,6 +30,7 @@ Sovereign, as `list-report`: keyboard navigation up and down the list, Enter sel
 
 - Wide ≥ 960 px: `list` and `detail` side by side, the detail a fixed-width panel (about 360 px) on the right; the `activity-strip` sits under the list.
 - Narrow ≤ 640 px: list, then detail as its own full view. Selecting a row opens the detail with a "Back to list" control; Back restores the list with its scroll position and selection; the `activity-strip` is dropped, its state lives in the URL. Rows become two-line cards (name and status, then date and owner).
+- Where the list is a share of the width rather than a fixed column, it takes 20–30 % and the detail fills the rest; below 1024 px the detail opens as its own view over the list (Nuxt UI dashboard template inbox page).
 
 ## Interaction constraints
 

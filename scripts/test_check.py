@@ -1900,6 +1900,94 @@ def test_a_skill_citing_a_floorplan_readme_resolves(tmp_path):
     assert errors(root) == []
 
 
+# -- the rulebook: archetypes ---------------------------------------------------------
+
+ARCHETYPES_HEADER = """\
+# App archetypes
+
+Starting compositions.
+
+| id | device | data weight | organization | primary_surface | shell_frame | journey floorplans | bends |
+|---|---|---|---|---|---|---|---|
+"""
+
+
+def archetype_row(aid="desktop-admin", frame="shell-sidebar", floorplan="list-report", bends="DF1") -> str:
+    return (
+        f"| `{aid}` | desktop | data-heavy | object-led | sidebar | `{frame}` | `{floorplan}` | {bends} |\n"
+    )
+
+
+def write_archetypes(root: Path, rows: str | None = None) -> None:
+    """`rulebook/archetypes.md` with `rows` (default: one clean row)."""
+    (root / "rulebook" / "archetypes.md").write_text(ARCHETYPES_HEADER + (archetype_row() if rows is None else rows))
+
+
+def write_archetype_card(root: Path, aid="desktop-admin", frame="shell-sidebar", floorplan="list-report") -> None:
+    """`docs/app-archetypes/<aid>.md`: one screen, `orders`, on `floorplan`."""
+    cards = root / "docs" / "app-archetypes"
+    cards.mkdir(parents=True, exist_ok=True)
+    (cards / f"{aid}.md").write_text(
+        f"---\nid: {aid}\nshell_frame: {frame}\nscreens:\n  - {{ step: 1, id: orders, floorplan: {floorplan} }}\n"
+        f"journey: [orders]\ndefaults_bend: []\n---\n\n# {aid}\n\nA card.\n"
+    )
+
+
+def archetype_repo(root: Path, frame="shell-sidebar", floorplan="list-report", bends="DF1") -> Path:
+    """A rulebook with a `shell-sidebar` shell and a `list-report` screen, one row and its card."""
+    write_repo(root)
+    write_rulebook(root)
+    write_floorplan(root, "list-report")
+    write_floorplan(
+        root,
+        "shell-sidebar",
+        readme=FLOORPLAN_README.replace("id: list-report", "id: shell-sidebar").replace("kind: screen", "kind: shell"),
+    )
+    write_archetypes(root, archetype_row(frame=frame, floorplan=floorplan, bends=bends))
+    write_archetype_card(root, frame=frame, floorplan=floorplan)
+    return root
+
+
+def test_a_clean_archetype_row_with_its_card(tmp_path):
+    assert errors(archetype_repo(tmp_path)) == []
+
+
+def test_an_archetype_row_with_a_misspelled_floorplan(tmp_path):
+    root = archetype_repo(tmp_path, floorplan="list-reprot")
+    only(root, "journey floorplan 'list-reprot' is not a `kind: screen` floorplan")
+    assert "archetype-shape" in errors(root)[0]
+
+
+def test_an_archetype_row_bending_an_unknown_default(tmp_path):
+    root = archetype_repo(tmp_path, bends="DF9")
+    only(root, "bends 'DF9', which rulebook/defaults.md does not define")
+    assert "archetype-shape" in errors(root)[0]
+
+
+def test_an_archetype_card_whose_frame_differs_from_its_row(tmp_path):
+    root = archetype_repo(tmp_path)
+    write_archetype_card(root, frame="none")
+    only(root, "card `desktop-admin` has shell_frame 'none', but its row")
+    assert "archetype-card-sync" in errors(root)[0]
+
+
+def test_an_archetype_row_without_a_card(tmp_path):
+    root = archetype_repo(tmp_path)
+    (root / "docs" / "app-archetypes" / "desktop-admin.md").unlink()
+    only(root, "row `desktop-admin` has no card at docs/app-archetypes/desktop-admin.md")
+    assert "archetype-card-sync" in errors(root)[0]
+
+
+def test_an_archetype_with_no_frame_is_clean(tmp_path):
+    assert errors(archetype_repo(tmp_path, frame="none")) == []
+
+
+def test_a_rulebook_without_an_archetype_table_is_clean(tmp_path):
+    root = archetype_repo(tmp_path)
+    (root / "rulebook" / "archetypes.md").unlink()
+    assert errors(root) == []
+
+
 # -- the tree: node frontmatter and location (T2) ---------------------------------
 
 def raw_node(root: Path, rel: str, text: str) -> None:

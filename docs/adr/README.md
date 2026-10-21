@@ -4,7 +4,7 @@ The decisions this collection was built from. Each one was worked as a ticket on
 migration map (`.scratch/skaileup-mp/` in the old repo); these are the durable form, kept
 here once the map ends. 0001–0016 are carried over from `ai-assets-skaileup-mp`; 0017 is
 where this variant departs from it; 0018–0023 are the app-design clean slate; 0024 splits the
-glossary by kind.
+glossary by kind; 0025 adds archetypes as an optional declared default.
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -33,3 +33,4 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0022](./0022-shared-artifact-contracts-and-proposed-entries.md) | `owner` + `may_propose`, proposed entries, one decision record |
 | [0023](./0023-two-advisory-flows.md) | Two advisory flows; tier becomes `depth`; supersedes the tier-as-flow part of 0002/0007 |
 | [0024](./0024-the-glossary-splits-by-kind.md) | The glossary splits by kind when the project keeps its own: words in the project glossary, ontology in `_concept/glossary.md`; amends 0014 and 0022 |
+| [0025](./0025-archetypes-are-an-optional-declared-default.md) | Archetypes are an optional declared default: one table in `rulebook/archetypes.md`, `archetype:` in `APP-DESIGN.md`, cards stay research; extends 0015 and 0018 |

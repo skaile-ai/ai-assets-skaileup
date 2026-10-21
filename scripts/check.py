@@ -1391,6 +1391,122 @@ def check_floorplan_cited(repo: Path, rep: Report) -> None:
             )
 
 
+# An archetype is a starting composition an app declares on the `§ Navigation model` line of
+# `APP-DESIGN.md`. `rulebook/archetypes.md` is the table the skills read; the research cards in
+# `docs/app-archetypes/` are where a row is argued, so the two are kept in step here.
+ARCHETYPES_FILE = "archetypes.md"
+ARCHETYPE_CARDS_DIR = "docs/app-archetypes"
+ARCHETYPE_ID_RE = re.compile(r"^[a-z0-9-]+$")
+ARCHETYPE_DEVICES = ("desktop", "mobile", "both")
+ARCHETYPE_DATA_WEIGHTS = ("simple", "data-heavy")
+ARCHETYPE_ORGANIZATIONS = ("object-led", "task-led", "hybrid")
+ARCHETYPE_SURFACES = ("sidebar", "topbar", "tabs", "rail+drawer", "bottom-tabs", "none")
+ARCHETYPE_COLUMNS = 8
+DEFAULT_ID_RE = re.compile(r"^DF\d+$")
+
+
+def _floorplan_kind(repo: Path, fid: str) -> str | None:
+    """The `kind:` of floorplan `fid`, or None when it has no directory, no README or no readable `kind`."""
+    readme = repo / RULEBOOK_DIR / FLOORPLANS_DIR / fid / "README.md"
+    if not readme.is_file():
+        return None
+    kind = split_frontmatter(readme.read_text(encoding="utf-8"))[0].get("kind")
+    return kind if isinstance(kind, str) else None
+
+
+def _archetype_rows(text: str) -> tuple[list[tuple[int, list[str]]], bool]:
+    """The data rows `(line number, cells)` of the first table whose header starts `| id |`, and
+    whether such a table exists."""
+    lines = text.splitlines()
+    for start, line in enumerate(lines):
+        if line.startswith("| id |"):
+            rows: list[tuple[int, list[str]]] = []
+            for number in range(start + 2, len(lines)):
+                if not lines[number].lstrip().startswith("|"):
+                    break
+                rows.append((number + 1, [c.strip() for c in lines[number].strip().strip("|").split("|")]))
+            return rows, True
+    return [], False
+
+
+def check_archetypes(repo: Path, rep: Report) -> None:
+    """Rules `archetype-shape` and `archetype-card-sync`. Every row of `rulebook/archetypes.md`
+    names a device, data weight, organization, surface, shell frame, journey floorplans and
+    bends that exist; each row pairs with a card in `docs/app-archetypes/` whose frame and
+    journey floorplans it repeats. A repo without the table has nothing to check, and one
+    without the cards skips only the pairing."""
+    table = repo / RULEBOOK_DIR / ARCHETYPES_FILE
+    if not table.is_file():
+        return
+    where = f"{RULEBOOK_DIR}/{ARCHETYPES_FILE}"
+    rows, found = _archetype_rows(table.read_text(encoding="utf-8"))
+    if not found:
+        rep.fail(where, "archetype-shape", "has no table whose header starts `| id |` — the archetype rows go in one table, so an app can declare one by id")
+    defaults = {i for i, _ in _rulebook_ids(repo) if DEFAULT_ID_RE.match(i)}
+    parsed: dict[str, tuple[str, list[str]]] = {}
+    for number, cells in rows:
+        label = f"{where}:{number}"
+        if len(cells) != ARCHETYPE_COLUMNS:
+            rep.fail(label, "archetype-shape", f"row has {len(cells)} cells, not {ARCHETYPE_COLUMNS} — give id, device, data weight, organization, primary_surface, shell_frame, journey floorplans and bends")
+            continue
+        ident, device, weight, organization, surface, frame, journey, bends = cells
+        ident = ident.strip("`")
+        frame = frame.strip("`")
+        floorplans = re.findall(r"`([^`]+)`", journey)
+        if not ARCHETYPE_ID_RE.match(ident):
+            rep.fail(label, "archetype-shape", f"row id {ident!r} is not lowercase letters, digits and hyphens — an app declares it as `archetype: <id>`")
+        elif ident in parsed:
+            rep.fail(label, "archetype-shape", f"row id `{ident}` appears twice — give each archetype one row")
+        for column, value, allowed in (
+            ("device", device, ARCHETYPE_DEVICES),
+            ("data weight", weight, ARCHETYPE_DATA_WEIGHTS),
+            ("organization", organization, ARCHETYPE_ORGANIZATIONS),
+            ("primary_surface", surface, ARCHETYPE_SURFACES),
+        ):
+            if value not in allowed:
+                rep.fail(label, "archetype-shape", f"row `{ident}` has {column} {value!r}, not one of {', '.join(allowed)} — use one of those words")
+        if frame != "none" and _floorplan_kind(repo, frame) != "shell":
+            rep.fail(label, "archetype-shape", f"row `{ident}` has shell_frame {frame!r}, which is not a `kind: shell` floorplan under rulebook/floorplans/ — name a shell floorplan, or `none`")
+        if not floorplans:
+            rep.fail(label, "archetype-shape", f"row `{ident}` lists no journey floorplan — name each one in backticks, in journey order")
+        for fid in floorplans:
+            if _floorplan_kind(repo, fid) != "screen":
+                rep.fail(label, "archetype-shape", f"row `{ident}` journey floorplan {fid!r} is not a `kind: screen` floorplan under rulebook/floorplans/ — fix the spelling or add the floorplan")
+        if bends != "—":
+            for df in (b.strip() for b in bends.split(",")):
+                if df not in defaults:
+                    rep.fail(label, "archetype-shape", f"row `{ident}` bends {df!r}, which rulebook/defaults.md does not define — name a `DF<n>` it defines, or `—`")
+        parsed.setdefault(ident, (frame, floorplans))
+
+    cards = repo / ARCHETYPE_CARDS_DIR
+    if not cards.is_dir():
+        return
+    paired: set[str] = set()
+    for card in sorted(cards.glob("*.md")):
+        if card.name == "README.md":
+            continue
+        fm = split_frontmatter(card.read_text(encoding="utf-8"))[0]
+        if not fm:
+            continue
+        cid = fm.get("id") if isinstance(fm.get("id"), str) else card.stem
+        cwhere = f"{ARCHETYPE_CARDS_DIR}/{card.name}"
+        if cid not in parsed:
+            rep.fail(cwhere, "archetype-card-sync", f"card `{cid}` has no row in {where} — add its row, or delete the card")
+            continue
+        paired.add(cid)
+        frame, floorplans = parsed[cid]
+        if fm.get("shell_frame") != frame:
+            rep.fail(cwhere, "archetype-card-sync", f"card `{cid}` has shell_frame {fm.get('shell_frame')!r}, but its row in {where} has {frame!r} — change the card first, then make the row match")
+        by_id = {s.get("id"): s.get("floorplan") for s in fm.get("screens") or [] if isinstance(s, dict)}
+        journey = fm.get("journey") if isinstance(fm.get("journey"), list) else []
+        card_floorplans = [by_id.get(step) for step in journey]
+        if card_floorplans != floorplans:
+            rep.fail(cwhere, "archetype-card-sync", f"card `{cid}` journey runs {' → '.join(map(str, card_floorplans))}, but its row in {where} has {' → '.join(floorplans)} — change the card first, then make the row match")
+    for ident in parsed:
+        if ident not in paired:
+            rep.fail(where, "archetype-card-sync", f"row `{ident}` has no card at {ARCHETYPE_CARDS_DIR}/{ident}.md — write the card first, then keep its row")
+
+
 def check_old_contract_paths(repo: Path, rep: Report) -> None:
     """Rule `no-old-contract-path`: nothing under `skills/`, `tree/`, `templates/`, `docs/`
     (frozen ADRs excepted), `README.md` or `CLAUDE.md` names `contracts/<name>.md`."""
@@ -2559,6 +2675,7 @@ def run(repo: Path) -> Report:
     check_rulebook_ids(repo, rep)
     check_floorplan_shape(repo, rep)
     check_floorplan_cited(repo, rep)
+    check_archetypes(repo, rep)
     check_old_contract_paths(repo, rep)
     check_flat_screens(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)

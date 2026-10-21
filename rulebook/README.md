@@ -11,6 +11,7 @@ The collection-level rules for how an application behaves: where each object's i
 | `rules.md` | the invariants `P1`–`P31`, then the `## Heuristics` table `H1`… |
 | `defaults.md` | the bundle `DF1`… of rules independent projects re-derived identically, then the decisions that legitimately diverge |
 | `floorplans/<id>/` | one directory per floorplan: `README.md` (regions, tiers, posture, density, responsive transformation, constraints, sketch, when not to use) and `preview.html` |
+| `archetypes.md` | the starting compositions an app may declare: device and data weight → shell frame → journey floorplans → the defaults that usually bend |
 
 ## How to read it
 
@@ -18,6 +19,7 @@ The collection-level rules for how an application behaves: where each object's i
 2. **Heuristics (`H`).** A value or range that practitioners use and sources do not fix: a field limit, a row height, a latency threshold. Nothing in `## Heuristics` is enforced until the app adopts a value in `APP-DESIGN.md`; the entry that adopts it names the `H` id, and a check measures against that value alone.
 3. **Defaults (`DF`).** Rules that two or more projects here re-derived identically, offered as one bundle. An app adopts the bundle with one line, and a default it declines is one row in `§ Exceptions` citing the `DF` id. A choice that projects made differently is not a default: it sits under `## Decisions, not defaults` in `defaults.md`, and the app decides it.
 4. **Floorplans.** Layout templates chosen per `P18`: the shell frame once for the app, a screen floorplan once per screen.
+5. **Archetypes.** A starting composition an app declares once in `APP-DESIGN.md § Navigation model`, or `none`, which is the default. A declared row's frame and floorplans hold until a NAV entry departs from them; nothing in `archetypes.md` is enforced in an app that declares `none`.
 
 A P-rule is an invariant the app may override only by a recorded exception; an H value is adopted per app, with no exception needed to pick any value in its range.
 
