@@ -1,17 +1,15 @@
 ---
 name: experience-interaction
-description: "Use when the glossary and the data model exist and the app's interaction rules are not written down yet — where information lives, one editor per object, inline vs modal vs page, saving, messages, popups, buttons, search and command palette — or when a code check has proposed changes to them. Decides the rules per object type with the user and writes APP-DESIGN.md. Triggers on 'write the app design', 'APP-DESIGN.md', 'when do we use a modal', 'UI rules for this app', 'interaction decisions'."
+description: "Use when the app's interaction rules are not written down yet — navigation model, where information lives, one editor per object, inline vs dialog vs page, information tiers, saving, messages, popups, buttons, search and command palette — or when a code check has proposed changes to them. Adopts the rulebook's defaults with the user, decides what remains in batches and writes APP-DESIGN.md. Triggers on 'write the app design', 'APP-DESIGN.md', 'when do we use a modal', 'UI rules for this app', 'interaction decisions'."
 version: "0.1.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
+    - contract:@skaile-ai/app-design-rulebook
   artifacts:
-    requires:
-      - { id: glossary }
-      - { id: journeys }
-      - { id: datamodel }
     produces:
       - { id: app-design, path: "APP-DESIGN.md" }
+      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     files:
       - { path: "_concept/glossary.md", gate: soft }
@@ -24,17 +22,17 @@ metadata:
 
 # experience-interaction
 
-The one writer of `APP-DESIGN.md` at the project root: where each object lives, which surface edits what, how saving, messages, popups and buttons work, how people find and trigger things. It runs after the glossary and the data model and before any screen is specified; it decides and records, and writes no screen, no navigation and no code.
+The one writer of `APP-DESIGN.md` at the project root: the app's recorded choices against the rulebook — navigation model, object map, information tiers, screen defaults, surfaces, saving, messages, popups, buttons, finding. It decides and records, and writes no screen, no destination list and no code.
 
 ## Route
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Read the ground** — `tree/APP-DESIGN.md § Reading it`, then step 1 of `tree/APP-DESIGN.md § Writing it`. An existing `APP-DESIGN.md` is intent: its decided entries stay. `_concept/02_grounding/findings/interaction.md` present means a retrofit; `_concept/11_build/interaction.sarif` present means a re-entry, which jumps to item 5.
-2. **Classify the objects and decide the global rules** — `tree/APP-DESIGN.md § Patterns` (P1–P17, object classes), steps 2–4 of `tree/APP-DESIGN.md § Writing it`. Object names come from the model and glossary and are never coined here; a concept neither names goes back to `concept-glossary`.
-3. **Ask in rounds** — `tree/APP-DESIGN.md § Decision catalogue`, step 5 of `tree/APP-DESIGN.md § Writing it`; the agenda is the catalogue's ⚖ rows first. At most five questions per round, one message each (`tree/README.md § How a skill runs`); without a user the contested calls carry `[open Qn]`.
-4. **Write `APP-DESIGN.md` after every round** — `tree/APP-DESIGN.md § Format`, step 6 of `tree/APP-DESIGN.md § Writing it`. Each write adds a Changelog line and sets `updated:`; `approved:` moves only on the user's yes.
-5. **Fold in a code check** — `tree/11_build/interaction.md` for the `interaction.sarif` fields, step 7 of `tree/APP-DESIGN.md § Writing it`. The verdict file is `quality-interaction`'s and stays as it is; an exception enters Exceptions only on the user's answer.
-6. **Hand off** — step 8 of `tree/APP-DESIGN.md § Writing it`: `spec-feature` applies the OBJ `task → surface` rows and hands back a screen whose surface the floorplan lacks; `experience-shell` derives the navigation and takes MSG, EDIT and MOD from the entries. Say which rows a re-entry changed.
+1. **Resolve the facts** — `tree/APP-DESIGN.md § Reading it`, then steps 1–2 of `tree/APP-DESIGN.md § Writing it`. An existing `APP-DESIGN.md` is intent: its decided entries stay. Glossary and data model are read when they exist and none is required; object names are never coined here. `_concept/11_build/interaction.sarif` present means a re-entry, which jumps to item 5.
+2. **Offer the defaults bundle** — `rulebook/defaults.md`, step 3 of `tree/APP-DESIGN.md § Writing it`: one message, accept all or pick DF1–DF15; each adopted default becomes an entry, each declined one an exception.
+3. **Ask the depth** — step 4 of `tree/APP-DESIGN.md § Writing it` (`sketch · standard · exhaustive`, rule 3 of `tree/README.md § How a skill runs`).
+4. **Decide in batches, write after each** — `rulebook/rules.md`, steps 5–6 of `tree/APP-DESIGN.md § Writing it` and `tree/APP-DESIGN.md § Format`. One batch per message, recommendation first (rule 2 of `tree/README.md § How a skill runs`); without a user the recommendation carries `[open Qn]`. Each write adds a Changelog line and sets `updated:`; `approved:` moves only on the user's yes.
+5. **Refine or fold in a code check** — step 7 of `tree/APP-DESIGN.md § Writing it` and `tree/11_build/interaction.md § Format` for the `interaction.sarif` fields. The verdict file is `quality-interaction`'s and stays as it is; an exception enters the file only on the user's answer.
+6. **Carry gaps and trade-offs home, then hand off** — step 8 of `tree/APP-DESIGN.md § Writing it`: a missing term goes to the glossary as `proposed`, a choice with rejected options to `tree/10_blueprint/decisions.md § Format`. Name the entries a re-entry changed so the screens that read them are re-checked.
 
-**Done when** `tree/APP-DESIGN.md § Checks` holds: every rule P1–P17 decided with a reason, every non-system type in the floorplan, every contested decision answered or an `[open Qn]` entry with a stand-alone Open row, the file written after the last round, `approved:` set or Open saying why not.
+**Done when** `tree/APP-DESIGN.md § Checks` holds: every section present, every decided entry citing a rule, heuristic or default id or listed as an exception, every non-`none` object in the object map, every tier-3 attribute behind a peek, popover or named disclosure or an exception, every open question with a stable id and a recommendation, the file written after the last batch, `approved:` set or Open saying why not.

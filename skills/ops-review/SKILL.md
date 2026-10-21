@@ -5,6 +5,7 @@ version: "0.1.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
+    - contract:@skaile-ai/app-design-rulebook
   artifacts:
     requires:
       - { id: brief }
@@ -55,7 +56,8 @@ and naming is the node at its own path. This file sequences the checks and does 
    missing step.
 4. **Check the screen specs against `APP-DESIGN.md`**, where the file exists (`tree/APP-DESIGN.md § Reading it`);
    without it say the interaction check did not run. Read `07_screens/` for four rules of
-   `tree/APP-DESIGN.md § Patterns`: **P1**, an attribute editable on two screens; **P4**, two editors of one object type; **P8**, two index
+   `rulebook/rules.md`: **P1**, an attribute whose editing behaviour two screens define separately (their own validation,
+   labels or save path; one editor hosted on several screens is fine); **P4**, two editors of one object type; **P8**, two index
    screens of one type; **P13**, a label that is not a term in `glossary.md`. Each is a `warning` citing the rule, the
    entry it breaks and both screen files. The fixer is `spec-feature` when the screen strays from a decision the file
    makes, and `experience-interaction` when the file has no decision for it or two entries conflict. The code is

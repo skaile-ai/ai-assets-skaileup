@@ -1,13 +1,13 @@
 ---
 path: _concept/10_blueprint/decisions.md
 summary: design-time decision records, append-only
-owner: [spec-feature, architecture-datamodel]
+owner: [spec-feature, architecture-datamodel, experience-interaction]
 may_propose: []
 ---
 
 # _concept/10_blueprint/decisions.md
 
-The one append-only record of why a hard-to-reverse design choice was made, written while the work happens and never authored up front. A future reader opens it to learn that a decision was made and why; the value is the reason, not the template. Every authoring skill appends here: a skill that starts appending declares `{ id: decisions, path: "_concept/10_blueprint/decisions.md" }` in its `metadata.artifacts.produces` and joins `owner:` of this node in the same change, because the gate requires the owner list to equal the producers. Today those are `spec-feature` and `architecture-datamodel`. `_concept/11_build/decisions.md` is the build-time twin with the same format and gate (`tree/11_build/decisions.md`). Rejections of `proposed` entries are recorded here too (`tree/README.md § Ownership`).
+The one append-only record of why a hard-to-reverse design choice was made, written while the work happens and never authored up front. A future reader opens it to learn that a decision was made and why; the value is the reason, not the template. Every authoring skill appends here: a skill that starts appending declares `{ id: decisions, path: "_concept/10_blueprint/decisions.md" }` in its `metadata.artifacts.produces` and joins `owner:` of this node in the same change, because the gate requires the owner list to equal the producers. `_concept/11_build/decisions.md` is the build-time twin with the same format and gate (`tree/11_build/decisions.md`). Rejections of `proposed` entries are recorded here too (`tree/README.md § Ownership`).
 
 ## Format
 

@@ -16,7 +16,7 @@ Frontmatter per `tree/02_grounding/findings/README.md`. Every value carries a re
 - **Surfaces** — one row per overlay (modal, drawer, popover, palette): purpose (editor, confirm, picker, info), host component, trigger.
 - **Editors** — per object type, the component that owns the field set and the submit, and its surface kind (modal, drawer, popover, inline, page editor).
 - **Finders** — command palette, global search, shortcuts, action definitions.
-- **Save models, messages, popups and buttons** — per `tree/APP-DESIGN.md § Patterns` P14–P17: autosave or explicit save and the leave guards; toast, inline and empty-state channels with the confirm components; tooltips and menus; icon-only buttons, solid-primary counts per view and destructive buttons.
+- **Save models, messages, popups and buttons** — per `rulebook/rules.md § P14` to P17: autosave or explicit save and the leave guards; toast, inline and empty-state channels with the confirm components; tooltips and menus; icon-only buttons, solid-primary counts per view and destructive buttons.
 - **Unread** — the regions of a large app read by sampling only; the last section of the file.
 
 ```markdown
@@ -29,7 +29,7 @@ A surface seen only in a vendored UI library is not in the census. A rule with n
 
 ## Where UI sits per stack
 
-Where screens, objects, editors and finders hide, per stack. `concept-reverse` reads it to write this file, and `quality-interaction` reads it to check the app's source against `APP-DESIGN.md` (`src/`, or the stack's own roots: `app/` and `server/` in Nuxt). Read the row for the detected stack; when a pattern is missing, extend the table rather than guess. The patterns it serves (P1–P17) are `tree/APP-DESIGN.md § Patterns`; the shape of `APP-DESIGN.md` is `tree/APP-DESIGN.md § Format`.
+Where screens, objects, editors and finders hide, per stack. `concept-reverse` reads it to write this file, and `quality-interaction` reads it to check the app's source against `APP-DESIGN.md` (the roots the stack names, or `src/`; `app/` and `server/` in Nuxt). Read the row for the detected stack; when a pattern is missing, extend the table rather than guess. The rules it serves are `rulebook/rules.md`; the shape of `APP-DESIGN.md` is `tree/APP-DESIGN.md § Format`.
 
 ### Intent and vocabulary
 

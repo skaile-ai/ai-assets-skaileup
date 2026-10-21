@@ -22,6 +22,7 @@ requires:
   # no extras. The reference layer is one dir-scoped asset, so it is one ref —
   # the per-file exactness lives on the skills, which is where the reading happens.
   - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/app-design-rulebook
   - skill:@skaile-ai/concept-scope
   - skill:@skaile-ai/concept-reverse
   - skill:@skaile-ai/quality-standards
