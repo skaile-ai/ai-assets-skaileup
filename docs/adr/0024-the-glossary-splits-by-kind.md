@@ -31,11 +31,12 @@ already holds the first kind and cannot hold the second without a format change.
 ## Decision
 
 **G1 — Where the words live is a fact, resolved one way.** The `glossary` key of
-`_concept/01_meta/scope.yaml` is a project-relative path (split mode, that file is the project
-glossary) or the value `concept` (concept mode, everything in `_concept/glossary.md` as before).
-An absent key reads as split mode with `CONTEXT.md` when the project root has one, else concept
-mode. The key exists to override: a glossary elsewhere, or `concept` to keep everything in
-`_concept/`. The common case asks nothing.
+`_concept/01_meta/scope.yaml` — or, while it is absent, its latest `proposed` entry — is a
+project-relative path (split mode, that file is the project glossary) or the value `concept`
+(concept mode, everything in `_concept/glossary.md` as before). With neither, the mode is split
+with `CONTEXT.md` when the project root has one, else concept mode (G6 for `CONTEXT-MAP.md`). The
+key exists to override: a glossary elsewhere, or `concept` to keep everything in `_concept/`. The
+common case asks nothing.
 
 **G2 — Split by kind.** In split mode the project glossary holds term, definition and `_Avoid_`
 in its own format. `_concept/glossary.md` holds, per term, `kind`, `is-a`, `part-of`, `roles`,
@@ -45,36 +46,42 @@ term of the project glossary has an ontology entry with at least `kind`. Each pi
 has one home.
 
 **G3 — Ids are derived, never written into the project glossary.** The id is the kebab-case slug
-of the bold term, with ä, ö, ü and ß transliterated to ae, oe, ue and ss. `CONTEXT-FORMAT.md` has
-no id syntax, and adding one would change the project's file format. An ontology entry whose id
-matches no term is a rename or a removal; `concept-glossary` asks which, in a batch.
+of the bold term: lowercased first, then ä, ö, ü and ß transliterated to ae, oe, ue and ss
+(`LÄK-Punkte` → `laek-punkte`). `CONTEXT-FORMAT.md` has no id syntax, and adding one would change
+the project's file format. Derived ids are unique across the project glossary: two meanings of one
+word get distinct, qualified bold terms (`Order (Billing)` → `order-billing`), which
+`concept-glossary` asks for. An ontology-only entry whose id matches no term is a rename or a
+removal; `concept-glossary` asks which, in a batch.
 
 **G4 — Proposed terms in split mode go to the project glossary.** That is where any agent that
 follows the project's instruction puts them. The entry is appended at the end of `## Language` (or
-the matching cluster), in the project's format, followed by the marker lines of
+the matching cluster heading, `##` or `###`; else the end of the file), in the project's format,
+followed by the marker lines of
 [ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md) (`status`, `proposed_by`,
 `proposed_on`, `source`); the markers also keep an unconfirmed term visible to coding agents that
 read the file. A known `kind` goes into a proposed entry of the same id in `_concept/glossary.md`.
 Promotion drops the markers in both files and completes the ontology entry; rejection removes both
 and records the rejection in the decision record.
 
-**G5 — The project glossary stays the project's.** `concept-glossary` writes definitions there and
-nothing else. Entries written by `domain-modeling` or by hand are kept, never reordered or
-reformatted, and no frontmatter is added. `approved:` lives in `_concept/glossary.md` and covers
-both parts. This is the one exception to the rule that project files outside `_concept/` are
-sources only; `tree/README.md § Ownership` names it. Two writers on one file are safe only when the
-second preserves what the first wrote.
+**G5 — The project glossary stays the project's.** `concept-glossary` writes there only the
+definitions and `_Avoid_` lines of terms it adds or moves, the promotion of a proposed entry
+(dropping its marker lines) and its rejection (removing the entry). Entries written by
+`domain-modeling` or by hand are kept, never reordered or reformatted, and no frontmatter is added.
+`approved:` lives in `_concept/glossary.md` and covers both parts. This is the one exception to the
+rule that project files outside `_concept/` are sources only; `tree/README.md § Ownership` names
+it. Two writers on one file are safe only when the second preserves what the first wrote.
 
-**G6 — A `CONTEXT-MAP.md` with no `glossary` key is undecided.** A `_concept/` describes one app,
-and a map of several contexts does not say which. Proposers file full entries in
-`_concept/glossary.md` as in concept mode; `concept-glossary` asks once which context file this
-`_concept/` describes and proposes the answer as a `scope.yaml` entry.
+**G6 — A `CONTEXT-MAP.md` with no `glossary` key and no root `CONTEXT.md` is undecided.** A
+`_concept/` describes one app, and a map of several contexts does not say which. Proposers file full
+entries in `_concept/glossary.md` as in concept mode; `concept-glossary` asks once which context
+file this `_concept/` describes and proposes the answer as a `scope.yaml` entry. A root
+`CONTEXT.md` settles the mode (split) and asks nothing.
 
-**G7 — No new node.** `tree/glossary.md` gains the section `## Where the words live` and describes
-both parts. `concept-glossary` still produces `_concept/glossary.md` only, and that file exists
-after every run, so gates and the project-root artifact list stay as they are. The declared path is
-variable, and a node per variable path would break the mirror rule of
-[ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md).
+**G7 — No new node.** `tree/glossary.md` gains the section `## Where the words live`, placed after
+`## Format` as node-template allows, and describes both parts. `concept-glossary` still produces
+`_concept/glossary.md` only, and that file exists after every run, so gates and the project-root
+artifact list stay as they are. The declared path is variable, and a node per variable path would
+break the mirror rule of [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md).
 
 ## Options rejected
 
@@ -97,7 +104,10 @@ variable, and a node per variable path would break the mirror rule of
   `glossary_id` targets keep `_concept/glossary.md`.
 - `check_concept.py` resolves the mode and, in split mode, reports an ontology id with no term, a
   definition or `_Avoid_` line left in `_concept/glossary.md`, a stale proposal in the project
-  glossary, and a declared path that does not exist.
-- A project changes mode by editing the `glossary` key.
-- A project with a `CONTEXT-MAP.md` carries one question until it answers.
+  glossary, a term whose derived id repeats an earlier one, and a declared path that does not exist.
+- A project changes mode by editing the `glossary` key, or by gaining a root `CONTEXT.md`.
+- A project with a `CONTEXT-MAP.md` and no `CONTEXT.md` carries one question until it answers.
 - Concept mode is unchanged, so a project without a root `CONTEXT.md` sees no difference.
+- A full entry left in `_concept/glossary.md` when the mode turns split — a `domain-modeling` run
+  creating `CONTEXT.md`, an answered CONTEXT-MAP question, a key set later — is moved by
+  `concept-glossary`: definition and `_Avoid_` go to the project glossary, the ontology lines stay.

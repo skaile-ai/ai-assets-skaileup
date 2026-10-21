@@ -29,9 +29,10 @@ Stdlib + PyYAML only. Checks:
   9. glossary split  when the project keeps its own glossary (`01_meta/scope.yaml` key `glossary` names a
                      path, or the key is absent and the root holds a `CONTEXT.md`; `tree/glossary.md
                      § Where the words live`): every `_concept/glossary.md` entry id is the slug of a
-                     term there, the entries carry no definition or `_Avoid_` line, and every confirmed
-                     term there has an entry; a named path that does not exist is one line. Mode
-                     `concept` (and an undecided `CONTEXT-MAP.md` root) checks none of this
+                     term there, the entries carry no definition or `_Avoid_` line, every confirmed
+                     term there has an entry, and no two terms there share an id (two meanings of
+                     one word get distinct bold terms); a named path that does not exist is one
+                     line. Mode `concept` (and an undecided `CONTEXT-MAP.md` root) checks none of this
 
 A screen whose `floorplan:` is missing or empty is reported under 2; the floorplan is the one fact the
 walkthrough and `quality-design` read it by.
@@ -410,18 +411,26 @@ def glossary_target(concept: Path) -> tuple[str | None, bool]:
 
 
 def glossary_lines(path: Path):
-    """(line number, text) of every line outside a fenced code block."""
-    fenced = False
+    """(line number, text) of every line outside a fenced code block. A fence closes on a line of
+    the opening character, at least as long as the opening, with nothing else on it (CommonMark), so a
+    three-backtick block inside a four-backtick fence stays fenced."""
+    fence = None  # (char, length) of the open fence
     for n, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-        if line.lstrip().startswith(("```", "~~~")):
-            fenced = not fenced
-        elif not fenced:
-            yield n, line
+        stripped = line.strip()
+        run = re.match(r"(`{3,}|~{3,})", stripped)
+        if fence is None:
+            if run:
+                fence = (run.group(1)[0], len(run.group(1)))
+            else:
+                yield n, line
+        elif run and run.group(1)[0] == fence[0] and len(run.group(1)) >= fence[1] \
+                and not stripped[len(run.group(1)):].strip():
+            fence = None
 
 
 def glossary_split_problems(concept: Path, root: Path) -> list[str]:
     """The split-mode rules (docstring rule 9): `_concept/glossary.md` holds ontology entries, the
-    project glossary holds the words, and the two name the same terms."""
+    project glossary holds the words with one id per term, and the two name the same terms."""
     pg, explicit = glossary_target(concept)
     if pg is None:
         return []
@@ -435,17 +444,23 @@ def glossary_split_problems(concept: Path, root: Path) -> list[str]:
         return []
     out: list[str] = []
 
-    terms: dict[str, tuple[int, bool]] = {}  # id -> (line, confirmed)
-    current = None
+    terms: dict[str, tuple[int, bool]] = {}  # id -> (first line, first occurrence confirmed)
+    current = None  # (id, is the first occurrence)
     for n, line in glossary_lines(pg_path):
         m = TERM_RE.match(line)
         if m:
-            current = term_id(m.group(1))
-            terms.setdefault(current, (n, True))
+            tid = term_id(m.group(1))
+            if tid in terms:
+                out.append(f"{pg}:{n}: term `{tid}` repeats the id of line {terms[tid][0]} — "
+                           f"concept-glossary qualifies one")
+                current = (tid, False)
+            else:
+                terms[tid] = (n, True)
+                current = (tid, True)
         elif line.startswith("#"):
             current = None
-        elif current and line.strip() == "- status: proposed":
-            terms[current] = (terms[current][0], False)
+        elif current and current[1] and line.strip() == "- status: proposed":
+            terms[current[0]] = (terms[current[0]][0], False)
 
     entries: dict[str, int] = {}  # id -> line
     block = None  # (id, reported)

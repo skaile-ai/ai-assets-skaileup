@@ -35,7 +35,7 @@ No run stopped with "run X first". Screenshots of scenario 3's prototypes are in
 The smoke found three defects, which are fixed in the commit that adds this file:
 
 - **Glossary batch size.** The glossary's confirm-or-reject step said "one batch", so it produced batches of 9, 11 and 14. Step 7 now settles entries seven at a time, step 4 splits long gap lists, and § Checks counts questions per message. Scenario 2's re-run peaked at 7.
-- **Glossary proposals.** A proposed glossary term could land in a project's `CONTEXT.md`. `tree/README.md § Ownership` now keeps project files outside `_concept/` as sources, and `tree/APP-DESIGN.md` step 8 names `_concept/glossary.md`.
+- **Glossary proposals.** A proposed glossary term could land in a project's `CONTEXT.md`. The ADC fix kept project files as sources only; the GLS effort below replaced it with a split by kind.
 - **No owner file yet.** When the owner's file did not exist yet, the proposal had nowhere to go. The protocol now has the proposer create the owner's file holding only its proposed entries; scenario 1's re-run shows the stub `APP-DESIGN.md`.
 
 ## Decisions settled after the smoke (2026-10-21)
@@ -45,9 +45,25 @@ The smoke found three defects, which are fixed in the commit that adds this file
 - **`scope.yaml`:** keeps its seven proposers (ADR 0023).
 - **Local working files:** `.omp/` and `.scratch/` are ignored. The research handoff is not committed, because `rulebook/rules.md § Sources` carries its citations.
 
-## Open decision for the owner
+## Glossary split (GLS, 2026-10-21)
 
-**The project's glossary versus `_concept/glossary.md`.** CLINICO's `CLAUDE.md:148` says "one root `CONTEXT.md` is the glossary". In scenario 4, `experience-interaction` quoted the node's `_concept/glossary.md` rule, then followed the project instruction and appended its proposed term to `CONTEXT.md`. Project instructions outrank the collection, so the nodes cannot win this. Four devBench repos keep both files (CLINICO, weiterbildungsplaner, KNOWLEDGE-WORK/kgs, SKAILEdev/platform). The recommended option is a split by kind: a `glossary:` path in `scope.yaml`, definitions in that file, and kind, axes and relations in `_concept/glossary.md` keyed by term id.
+The open decision on the project's glossary versus `_concept/glossary.md` was settled as option (a), split by kind ([ADR 0024](../adr/0024-the-glossary-splits-by-kind.md)). Plan `.omp/plans/GLS_GLOSSARY_SPLIT_PLAN.md`, tickets `.scratch/glossary-split/issues/` (local).
+
+| ticket | commit |
+|---|---|
+| i-gls-split-contract | `85bac44` |
+| i-gls-proposers-follow | `463cb89` |
+
+- **Rule.** `scope.yaml` key `glossary` names the project glossary; absent, a root `CONTEXT.md` is it (split mode), else everything stays in `_concept/glossary.md` (concept mode). In split mode the words (term, definition, `_Avoid_`) live in the project glossary and the ontology (kind, axes, relations) in `_concept/glossary.md`, keyed by the term's derived id. `tree/glossary.md § Where the words live` is the one place every proposer and reader cites.
+- **Checker.** `check_concept.py` reports an ontology entry with no term, words left in `_concept/glossary.md`, a confirmed term with no entry, stale proposals in the project glossary and a declared path that does not exist.
+
+Smoke, same setup as above under `/tmp/gls-smoke/`:
+
+| repo | run | result | max batch |
+|---|---|---|---|
+| CLINICO | `experience-interaction` records the Eingang | Eingang and Eingang-Eintrag appended to `CONTEXT.md` with the four marker lines; `_concept/glossary.md` created with the `Words:` line and two proposed entries carrying `kind`. `check_concept` reports the 15 older `CONTEXT.md` terms as waiting for `concept-glossary` (medium), as designed | 6 |
+| weiterbildungsplaner | `concept-glossary` | split mode inferred with no question; `CONTEXT.md` +64 lines, 0 changed or removed (8 proposed terms); `_concept/glossary.md` ontology-only for every term; `check_concept` clean | 7 |
+| herdr-dashboard | `concept-glossary` (no `CONTEXT.md`) | concept mode as before: 17 full entries with definitions and `_Avoid_`; `check_concept` clean | 7 |
 
 ## Caveats
 

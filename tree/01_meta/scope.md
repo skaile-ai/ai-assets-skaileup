@@ -58,7 +58,7 @@ A `hard` prerequisite on anything listed here would block a project that was nev
 
 ## Asking a missing key
 
-A skill that needs `project_type` or `depth`, finds the key absent and asks it in its own batch, appends one `proposed` entry — `key`, `value`, `proposed_by`, `proposed_on`, `source` — and works with that value at once. While the key is absent, the latest proposed entry for it is its value. `skaileup` confirms an entry by writing the key and dropping the entry, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. `glossary` is asked by `concept-glossary` alone, and only when the key is absent and the project root holds a `CONTEXT-MAP.md` — a map names several contexts and does not say which one this `_concept/` describes; every other absence reads as the default and asks nothing.
+A skill that needs `project_type` or `depth`, finds the key absent and asks it in its own batch, appends one `proposed` entry — `key`, `value`, `proposed_by`, `proposed_on`, `source` — and works with that value at once. While the key is absent, the latest proposed entry for it (greatest `proposed_on`, the later list position breaking a tie) is its value. `skaileup` confirms an entry by writing the key and dropping the entry, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. `glossary` is asked by `concept-glossary` alone, and only when the key is absent, the project root has no `CONTEXT.md` and holds a `CONTEXT-MAP.md` — a map names several contexts and does not say which one this `_concept/` describes; every other absence reads as the default and asks nothing.
 
 ## Routing a want
 

@@ -3485,6 +3485,43 @@ def test_check_concept_split_mode_ignores_terms_inside_fenced_code(tmp_path):
     assert module.check(concept, script, today=_today()) == []
 
 
+def test_check_concept_split_mode_keeps_a_shorter_fence_inside_a_longer_one_fenced(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(
+        tmp_path, PROJECT_GLOSSARY + "\n````\n```\n**Example**:\nnot a term\n```\n**Other**:\nnot a term\n````\n")
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_split_mode_reports_two_terms_that_share_an_id_once(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(
+        tmp_path, PROJECT_GLOSSARY + "\n## Billing\n\n**Order**:\nA payment request.\n_Avoid_: bill\n")
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert problems[0].startswith("CONTEXT.md:"), problems
+    assert "term `order` repeats the id of line 7 — concept-glossary qualifies one" in problems[0], problems
+
+
+def test_check_concept_split_mode_takes_proposed_status_per_occurrence(tmp_path):
+    """A `- status: proposed` on the second same-id term does not hide the first's missing entry."""
+    module, script = load_check_concept()
+    concept = split_tree(
+        tmp_path,
+        PROJECT_GLOSSARY + "\n## Billing\n\n**Order**:\nA payment request.\n"
+        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-10-15\n",
+        TRANSFER_ENTRY,
+    )
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 2, problems
+    assert any("term `order` repeats the id of line 7" in p for p in problems), problems
+    assert any("term `order` has no entry in _concept/glossary.md" in p and ":7:" in p for p in problems), problems
+
+
+def test_check_concept_term_id_lowercases_before_it_transliterates():
+    module, _script = load_check_concept()
+    assert module.term_id("LÄK-Punkte") == "laek-punkte"
+
+
 def test_check_concept_split_mode_reports_a_named_glossary_path_that_does_not_exist(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
