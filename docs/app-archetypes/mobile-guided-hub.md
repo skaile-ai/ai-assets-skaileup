@@ -14,7 +14,6 @@ journey: [hub, walk]
 defaults_bend:
   - { id: DF11, why: "a phone hub of four to six task tiles is its own search; a keyboard palette has no trigger on a touch screen" }
   - { id: DF14, why: "touch has no hover; the hint is a visible one-line status on the tile and an info control with an accessible name" }
-  - { id: DF15, why: "a phone has no hardware keyboard, so no single-key shortcuts are declared" }
 sources:
   - { kind: rules, title: "Apple HIG — Designing for iOS", url: "https://developer.apple.com/design/human-interface-guidelines/designing-for-ios", grade: standard, note: "settled where controls sit on an iPhone and how people go back" }
   - { kind: rules, title: "GOV.UK — Question pages", url: "https://design-system.service.gov.uk/patterns/question-pages/", grade: standard, note: "settled what one walk step holds, how progress reads and which footer parts are required" }

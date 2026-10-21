@@ -32,8 +32,8 @@ Back-office staff run an order system all day: they scan what needs attention, f
 1. `home` → open "All orders due this week" → `orders`
 2. `orders` → open an order row → `order`
 3. `order` → back through the breadcrumb, press Create order → `order-create`
-4. `order-create` → press Create order on the summary step → completion state "Order created", linking to the new order
-5. `order-create` → open Settings in the sidebar → `settings`
+4. `order-create` → press Create order on the summary step → completion state "Order created" → open the new order → `order`
+5. `order` → open Settings in the sidebar → `settings`
 6. `settings` → save a section, open Overview in the sidebar → `home`
 
 ## Why these floorplans

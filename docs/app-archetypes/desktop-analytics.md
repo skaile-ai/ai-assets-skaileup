@@ -28,14 +28,14 @@ A marketing analyst or campaign manager opens this app every morning to see how 
 
 ## Journey
 
-1. `home` → follow "View all campaigns" on a metric card → `campaigns`
+1. `home` → follow "View all campaigns" at the end of an attention block → `campaigns`
 2. `campaigns` → open the analysis of one campaign from its row → `analysis`
 3. `analysis` → open the full record from the analysis header → `campaign`
 4. `campaign` → follow the "Overview" breadcrumb → `home`
 
 ## Why these floorplans
 
-- `home` (overview): "the landing screen that answers "what needs me now" with the next actionable rows" — the day starts here, with a block per kind of waiting work and a link into the filtered list.
+- `home` (overview): "the landing screen that answers "what needs me now" with the next actionable rows" — the day starts here with the campaigns that need a decision (over budget, ending soon) as the first read of how the business is doing, each block ending in a link into the filtered list; the figures themselves are not in the floorplan (Q1).
 - `campaigns` (list-report): "the index of one `navigation: primary` object: overview strip, filter bar, table or cards" — the drill-down target holds the rows behind a number, to compare and sort.
 - `analysis` (tabbed-tool): "a single-column tool with a tab list, a shared filter row and an overlay detail" — one campaign is read through sibling views that share one date range.
 - `campaign` (object-page): "one object with a header, key facts, sections and child collections; the home of a complex object" — the full record, with ad sets and spend as child collections.
@@ -47,16 +47,16 @@ A marketing analyst or campaign manager opens this app every morning to see how 
 - Each card holds one metric or a group of closely related metrics, ranked before placement because the ranking becomes the stacking order on one column; columns are equal width (four at 1200–1400 px, 16 px gutters) and a growing events card gets a four-row height cap with scroll (PatternFly — dashboard design guidelines).
 - The journey is a hierarchical structure (abstract overview, then detail pages), while the tabs inside `analysis` are a parallel structure reached by tab links, and a stratified layout puts the highest-level figures on top (Dashboard Design Patterns catalogue).
 - Block order is metric cards (1, 2, then 4 columns by container width), one interactive area chart whose 90/30/7-day toggle becomes a select on a narrow card and presets 7 days on mobile, then the data table, whose row detail opens in a right drawer (a bottom drawer on mobile) (shadcn/ui dashboard-01 registry entry).
-- The grid fills the viewport height minus header and margin, sparklines sit in a table column at a 42 px row height, and font and grid spacing shrink at 720 px instead of the table turning into cards (AG Grid finance demo).
+- The grid fills the viewport height minus header and margin, sparklines sit in a table column at a 42 px row height, and font and grid spacing shrink at 720 px, so the table stays a table; this holds only while rows carry trend cells (AG Grid finance demo).
 
 ## Narrow
 
 - `home` stacks into one column in ranked order; the time-range control folds into a select with a short default range, and a data-heavy chart gives way to a link into `analysis`, since touch handles dense charts poorly.
-- `campaigns` turns the table into cards with a two-column strip, a bottom bulk bar and a bottom-sheet peek; `analysis` keeps only the search field in its filter row and moves the rest into a "Filters · n" bottom sheet, with the detail overlay full-screen.
+- `campaigns` follows the `list-report` fold: the table turns into cards with a two-column strip, a bottom bulk bar and a bottom-sheet peek (the AG Grid demo keeps its table at this width, see Q1); `analysis` keeps only the search field in its filter row and moves the rest into a "Filters · n" bottom sheet, with the detail overlay full-screen.
 - `campaign` stacks its header, shows facts in a two-column grid and scrolls the section navigation sideways; the sidebar becomes a drawer at 767 px and below, with the pinned destinations in a bottom pill.
 
 ## Open
 
-- **Q1.** The `overview` floorplan carries no totals, counters or charts, yet every source opens a dashboard with metric cards and a trend chart. Keep `overview` and add a metrics region for this archetype, give `home` its own dashboard floorplan, or let the overview strip of `campaigns` carry the figures?
+- **Q1.** The `overview` floorplan carries no totals, counters or charts, yet every source opens a dashboard with metric cards and a trend chart. Keep `overview` and add a metrics region for this archetype, give `home` its own dashboard floorplan, or let the overview strip of `campaigns` carry the figures? If `campaigns` carries them with sparkline columns, does its table keep the grid and shrink its spacing at 720 px, as the AG Grid demo does, or turn into cards as `list-report` does?
 - **Q2.** `tabbed-tool` is described as a small lookup tool without an object hierarchy, while `analysis` studies one campaign with a chart per tab. Should `analysis` stay a screen of its own, or become the tab set of the `campaign` object page?
 - **Q3.** Cloudscape prefers a static layout when the order of items matters, as it does for monitoring a campaign, and warns against mixing static and configurable items. Is `home` static, with a fixed block order, or may people hide and reorder cards?

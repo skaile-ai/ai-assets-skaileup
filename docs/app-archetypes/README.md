@@ -58,7 +58,7 @@ The body has a `# <title>` line, then exactly these headings in this order. A st
 
 - Intro: one paragraph between the title line and `## Journey`: who uses the app daily and for what, in two or three sentences.
 - `## Journey`: a numbered list, one hop per line, screen ids in backticks and the arrow `→`: ``1. `home` → open an order → `order` ``. The last line ends on a completion state or on the sovereign screen.
-- `## Why these floorplans`: one bullet per screen, starting with the screen id in backticks and the floorplan in parentheses, then the task phrase from the P18 table in quotes and one clause why: ``- `orders` (list-report): "the index of one navigation: primary object" — rows are compared and acted on``.
+- `## Why these floorplans`: one bullet per screen, starting with the screen id in backticks and the floorplan in parentheses, then the task phrase from the P18 table in quotes and one clause why: ``- `orders` (list-report): "the index of one `navigation: primary` object" — rows are compared and acted on``.
 - `## What the sources add`: three to six bullets, each one fact that changes a choice and each ending with the source title in parentheses, exactly as written in `sources[].title`.
 - `## Narrow`: two to four bullets: what the archetype does on a phone-width viewport, per the chosen floorplans' responsive sections and per any source rule.
 - `## Open`: one to three bullets, each starting `**Q1.**`, `**Q2.**` and so on: the questions a reviewer answers in a comment.

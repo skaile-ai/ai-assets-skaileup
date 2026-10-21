@@ -18,7 +18,7 @@ sources:
   - { kind: rules, title: "Salesforce Lightning Design System — Layout", url: "https://www.lightningdesignsystem.com/2e1ef8501/p/33e9af-layout", grade: standard, note: "Board columns 12 to 25 rem, 2/3 and 1/3 record and workspace layouts, master-detail from 1024 px." }
   - { kind: rules, title: "Atlassian Design System — Layout usage", url: "https://atlassian.design/components/navigation-system/layout/usage", grade: standard, note: "Panel beside the main area, overlay at 1024 px and below, panel versus modal, slot and tab order." }
   - { kind: rules, title: "Android Developers — Canonical layouts", url: "https://developer.android.com/develop/adaptive-apps/guides/canonical-layouts", grade: standard, note: "Supporting pane split 70/30 expanded, 50/50 medium, below or bottom sheet compact; the Material 3 supporting-pane page rendered empty, so this page stands in." }
-  - { kind: code, title: "Refine — CRM application template", url: "https://refine.dev/core/templates/crm-application/", grade: heuristic, note: "Enterprise-flagged template, so read for which screens a kanban app ships, not for reuse." }
+  - { kind: code, title: "Focalboard — kanban board styles", url: "https://raw.githubusercontent.com/mattermost-community/focalboard/main/webapp/src/components/kanban/kanban.scss", grade: heuristic, note: "Open-source kanban stylesheets (kanban.scss and kanbanCard.scss in the same folder): 260 px columns, 15 px gaps, sticky header, sideways scroll, a 220 px hidden-columns strip, 12 by 16 px cards." }
   - { kind: screens, title: "SaaS Interface — Boards design examples", url: "https://saasinterface.com/pages/boards/", grade: heuristic, note: "Free page lists 45 shipped board screens (ClickUp, Attio, Fibery and more); thumbnails only, full gallery is paid." }
 ---
 
@@ -46,7 +46,7 @@ A small team or a solo planner opens the board every day to see where each task 
 - A panel sits beside the main area and can be collapsed or resized, but at 1024 px and below it becomes an overlay; a modal is for a decision the person must make before going back (Atlassian Design System — Layout usage)
 - Slots keep the order top nav, main, panel for tab and reading order, and the grid covers the main area only, never the panel: the card drawer comes after the columns and sits outside the column grid (Atlassian Design System — Layout usage)
 - A supporting pane is meaningful only beside its primary content, unlike a list-detail pane; it takes 70/30 at expanded width, 50/50 at medium and goes below the main area or into a bottom sheet at compact, so the card drawer follows the supporting-pane split (Android Developers — Canonical layouts)
-- The CRM template gives the sprint kanban, the sales pipeline and the calendar their own destinations beside the dashboard and administration, where the board floorplan makes them views of one index (Refine — CRM application template)
+- Columns are fixed at 260 px with 15 px gaps, the header row sticks to the top, the board scrolls sideways and nothing reflows at narrow widths; columns can be hidden into a trailing 220 px strip, and a card pads 12 by 16 px with its title clamped to five lines, so a one-column fold on a phone has to be designed, not inherited (Focalboard — kanban board styles)
 
 ## Narrow
 
@@ -58,4 +58,4 @@ A small team or a solo planner opens the board every day to see where each task 
 
 - **Q1.** The drawer pushes the columns from 960 px in the board floorplan, but Atlassian turns its panel into an overlay at 1024 px and below; should the board overlay between 960 and 1024 px, and should the drawer host quick edits of status, assignee and due date (the bent DF2)?
 - **Q2.** The top bar frame is transient and comfortable, while a board that is open all day is sovereign; keep the top bar with a recorded exception for the board, or move such a board to a sidebar frame?
-- **Q3.** The Refine template gives kanban and calendar their own destinations and SLDS's workspace layout puts activity ahead of related records; keep one board with a view switch and the fixed object-page order, or split the views and reorder the task page? The Material 3 supporting-pane page loaded as an empty shell, so the Android canonical-layouts page stands in for it; is that enough?
+- **Q3.** SLDS's workspace layout puts activity ahead of related records; keep the fixed object-page order, or reorder the task page for a board? Focalboard lets a person hide stages into a trailing strip while the board floorplan has no such region; should it? The Material 3 supporting-pane page loaded as an empty shell, so the Android canonical-layouts page stands in for it; is that enough?

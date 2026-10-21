@@ -40,7 +40,6 @@ A person who spends the whole day on one workspace uses it: an editor or analyst
 ## What the sources add
 
 - An editing app takes a menu bar and a command bar over the work area and tight 12 epx margins, while a settings page keeps roomy margins and a left section list (Windows app silhouettes).
-- Windows names a tab view silhouette for an editor such as Terminal, which `work` does not use today (Windows app silhouettes).
 - Settings is one optional entry in the navigation pane, not a page per topic; the pane steps from expanded to icon-only to a menu button at 1008 and 640 px, and content margins drop from 24 px to 12 px when it is minimal (WinUI NavigationView).
 - The sidebar keeps a minimum width of 248, sticks and scrolls on its own, the bottom bar stays inside the page body so it never runs under the sidebar, and everything flips to one column at small breakpoints (EUI page template).
 - Each pane takes minimum and maximum sizes and collapses below its minimum; the layout is saved only after the drag ends, and separators are kept because they carry keyboard resizing (react-resizable-panels).

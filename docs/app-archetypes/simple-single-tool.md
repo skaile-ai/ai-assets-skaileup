@@ -14,7 +14,6 @@ screens:
 journey: [setup, tool, settings]
 defaults_bend:
   - { id: DF11, why: "one destination and three tabs leave little for a Cmd/Ctrl-K palette to rank; the top bar keeps a plain search field instead" }
-  - { id: DF12, why: "the destination list holds the tool and Settings, so the registry is two constants and needs no shared machinery" }
 sources:
   - { kind: rules, title: "SAP Fiori — wizard usage", url: "https://www.sap.com/design-system/fiori-design-web/v1-136/ui-elements/wizard/usage", grade: standard, note: "wizard length of 3 to 8 steps, summary screen with Edit per section, footer button order and how the progress bar groups steps when narrow" }
   - { kind: rules, title: "AWS Cloudscape — create resource", url: "https://cloudscape.design/patterns/resource-management/create/", grade: standard, note: "criteria table that separates a single-page form from a multipage wizard by field count, groups and frequency" }
@@ -58,5 +57,5 @@ A person who opens one small lookup tool most working days, on a laptop or a pho
 ## Open
 
 - **Q1.** `tool` is sovereign but sits in `shell-topbar`, whose density is comfortable: should the tool stay sovereign at default density as tabled, or declare the transient posture because it is a lookup opened briefly?
-- **Q2.** Cloudscape and Fiori send a short setup to a single page; is the first run really three or more independent steps for this tool, or should `setup` become one form with a summary?
+- **Q2.** Cloudscape and Fiori send a short setup to a single page; is the first run really three or more independent steps for this tool, or should `setup` become one form with a summary? No free screens page showed a shipped first-run setup (SaaSUI's onboarding page shows only thumbnails), so which one should the review compare against?
 - **Q3.** After the first run, should `setup` stay reachable again, for example as a link at the end of a `settings` section, or never be shown again?

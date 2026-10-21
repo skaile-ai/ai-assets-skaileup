@@ -32,12 +32,12 @@ A technician or inspector works through the day's assigned jobs on site, one han
 1. `home` → open "All jobs due today" → `jobs`
 2. `jobs` → tap a job card → `job`
 3. `job` → "Start capture" → `capture`
-4. `capture` → "Save findings" on the summary step → completion state "Findings saved" → `jobs`, with the next job on top
+4. `capture` → "Save findings" on the summary step → completion state "Findings saved" → `jobs`
 
 ## Why these floorplans
 
 - `home` (overview): "the landing screen that answers "what needs me now" with the next actionable rows" — a technician starts the day with the next due jobs, not totals.
-- `jobs` (list-report): "the index of one navigation: primary object" — the queue is the one list of jobs, shown as cards with status views.
+- `jobs` (list-report): "the index of one `navigation: primary` object" — the queue is the one list of jobs, shown as cards with status views.
 - `job` (object-page): "one object with a header, key facts, sections and child collections" — a job carries site facts, tasks and earlier findings that a dialog cannot hold.
 - `capture` (wizard): "a guided, linear task with independent steps" — findings are asked one question per step, with a summary and a completion state (P31).
 
