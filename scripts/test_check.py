@@ -3373,6 +3373,171 @@ def test_check_concept_reports_a_screen_with_an_empty_floorplan(tmp_path):
     assert "07_screens/login.md" in problems[0] and "`floorplan` is empty" in problems[0]
 
 
+# --- check_concept.py: the glossary splits by kind when the project keeps its own ---------------
+
+GLOSSARY_FRONT = "---\nlast_updated: 2026-09-05\napproved: 2026-09-05\n---\n\n"
+PROJECT_GLOSSARY = (
+    "# Shop\n\nA shop.\n\n## Language\n\n"
+    "**Order**:\nA customer request.\n_Avoid_: purchase\n\n"
+    "**Überweisung**:\nA bank transfer.\n_Avoid_: transfer\n"
+)
+
+
+def split_ontology(*entries: str, words: str = "CONTEXT.md") -> str:
+    return (
+        GLOSSARY_FRONT + "# Glossary — Shop\n\n"
+        f"Words: `{words}` (split mode, `tree/glossary.md § Where the words live`).\n\n"
+        + "".join(f"{e}\n" for e in entries) + "## Relations\n"
+    )
+
+
+ORDER_ENTRY = "**Order** (`order`):\n- kind: entity\n"
+TRANSFER_ENTRY = "**Überweisung** (`ueberweisung`):\n- kind: entity\n"
+
+
+def split_tree(root: Path, project_glossary: str = PROJECT_GLOSSARY, *entries: str) -> Path:
+    concept = concept_tree(root)
+    (root / "CONTEXT.md").write_text(project_glossary, encoding="utf-8")
+    (concept / "glossary.md").write_text(
+        split_ontology(*(entries or (ORDER_ENTRY, TRANSFER_ENTRY))), encoding="utf-8")
+    return concept
+
+
+def test_check_concept_term_id_is_the_transliterated_kebab_slug():
+    module, _script = load_check_concept()
+    assert module.term_id("Überweisung") == "ueberweisung"
+    assert module.term_id("Eingang-Eintrag") == "eingang-eintrag"
+    assert module.term_id("Straße & Weg") == "strasse-weg"
+    assert module.term_id("  Order ") == "order"
+
+
+def test_check_concept_split_mode_by_a_root_context_file_is_clean_for_a_matching_pair(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path)
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_split_mode_reports_an_entry_with_no_term(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path, PROJECT_GLOSSARY, ORDER_ENTRY, TRANSFER_ENTRY,
+                         "**Invoice** (`invoice`):\n- kind: entity\n")
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert problems[0].startswith("_concept/glossary.md:"), problems
+    assert "entry `invoice` has no term in CONTEXT.md" in problems[0], problems
+    assert "renamed or removed; concept-glossary settles it" in problems[0], problems
+
+
+def test_check_concept_split_mode_reports_a_definition_left_in_the_concept_glossary(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path, PROJECT_GLOSSARY,
+                         "**Order** (`order`):\nA customer request.\n- kind: entity\n", TRANSFER_ENTRY)
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert "entry `order` carries a definition or _Avoid_ line" in problems[0], problems
+    assert "the words live in CONTEXT.md" in problems[0], problems
+
+
+def test_check_concept_split_mode_reports_an_avoid_line_once_per_entry(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path, PROJECT_GLOSSARY,
+                         "**Order** (`order`):\nA request.\n_Avoid_: purchase\n- kind: entity\n", TRANSFER_ENTRY)
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1 and "entry `order` carries a definition" in problems[0], problems
+
+
+def test_check_concept_split_mode_reports_a_confirmed_term_with_no_entry(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path, PROJECT_GLOSSARY, ORDER_ENTRY)
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert problems[0].startswith("CONTEXT.md:"), problems
+    assert "term `ueberweisung` has no entry in _concept/glossary.md" in problems[0], problems
+    assert "concept-glossary adds its kind" in problems[0], problems
+
+
+def test_check_concept_split_mode_does_not_ask_an_entry_for_a_proposed_term(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(
+        tmp_path,
+        PROJECT_GLOSSARY + "\n**Backorder**:\nAn Order line the stock cannot fill yet.\n_Avoid_: waitlist\n"
+        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-10-15\n- source: spec\n",
+    )
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_split_mode_reports_a_stale_proposal_in_the_project_glossary(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(
+        tmp_path,
+        PROJECT_GLOSSARY + "\n**Backorder**:\nAn Order line the stock cannot fill yet.\n_Avoid_: waitlist\n"
+        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-09-01\n- source: spec\n",
+    )
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert problems[0].startswith("CONTEXT.md:"), problems
+    assert "2026-09-01" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0], problems
+
+
+def test_check_concept_split_mode_ignores_terms_inside_fenced_code(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path, PROJECT_GLOSSARY + "\n```\n**Example**:\nnot a term\n```\n")
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_split_mode_reports_a_named_glossary_path_that_does_not_exist(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "01_meta").mkdir()
+    (concept / "01_meta/scope.yaml").write_text(
+        "glossary: docs/glossary.md\nchosen_at: '2026-09-05T14:22:00Z'\n", encoding="utf-8")
+    (concept / "glossary.md").write_text(split_ontology(ORDER_ENTRY, words="docs/glossary.md"), encoding="utf-8")
+    problems = module.check(concept, script, today=_today())
+    assert problems == ["_concept/01_meta/scope.yaml: glossary names docs/glossary.md, which does not exist"], problems
+
+
+def test_check_concept_split_mode_takes_a_proposed_glossary_path_and_reads_that_file(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path)
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "CONTEXT.md").rename(tmp_path / "docs/glossary.md")
+    (concept / "01_meta").mkdir()
+    (concept / "01_meta/scope.yaml").write_text(
+        "proposed:\n  - { key: glossary, value: docs/old.md, proposed_by: concept-glossary, proposed_on: '2026-10-15' }\n"
+        "  - { key: glossary, value: docs/glossary.md, proposed_by: concept-glossary, proposed_on: '2026-10-20' }\n",
+        encoding="utf-8")
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_split_mode_lets_a_confirmed_key_win_over_a_root_context_file(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path)
+    (concept / "01_meta").mkdir()
+    (concept / "01_meta/scope.yaml").write_text("glossary: docs/glossary.md\n", encoding="utf-8")
+    problems = module.check(concept, script, today=_today())
+    assert problems == ["_concept/01_meta/scope.yaml: glossary names docs/glossary.md, which does not exist"], problems
+
+
+def test_check_concept_concept_mode_keeps_the_full_entry_beside_a_root_context_file(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (tmp_path / "CONTEXT.md").write_text(PROJECT_GLOSSARY, encoding="utf-8")
+    (concept / "01_meta").mkdir()
+    (concept / "01_meta/scope.yaml").write_text("glossary: concept\n", encoding="utf-8")
+    (concept / "glossary.md").write_text(
+        GLOSSARY_FRONT + "**Invoice** (`invoice`):\nA bill.\n_Avoid_: receipt\n- kind: entity\n", encoding="utf-8")
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_leaves_an_undecided_context_map_root_to_concept_mode(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (tmp_path / "CONTEXT-MAP.md").write_text("# Context map\n\n- [Shop](./shop/CONTEXT.md)\n", encoding="utf-8")
+    (concept / "glossary.md").write_text(
+        GLOSSARY_FRONT + "**Invoice** (`invoice`):\nA bill.\n_Avoid_: receipt\n- kind: entity\n", encoding="utf-8")
+    assert module.check(concept, script, today=_today()) == []
+
+
 def test_check_concept_usage_errors_exit_2(tmp_path):
     module, _script = load_check_concept()
     assert module.main(["check_concept.py"]) == 2

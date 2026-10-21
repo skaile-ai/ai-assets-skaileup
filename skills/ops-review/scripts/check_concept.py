@@ -26,6 +26,12 @@ Stdlib + PyYAML only. Checks:
                      promotes or rejects it
   8. open questions  every `## Open` row of `APP-DESIGN.md` and every `### Open` bullet of a screen spec
                      carries a recommendation; an `[open Qn]` entry has its row
+  9. glossary split  when the project keeps its own glossary (`01_meta/scope.yaml` key `glossary` names a
+                     path, or the key is absent and the root holds a `CONTEXT.md`; `tree/glossary.md
+                     § Where the words live`): every `_concept/glossary.md` entry id is the slug of a
+                     term there, the entries carry no definition or `_Avoid_` line, and every confirmed
+                     term there has an entry; a named path that does not exist is one line. Mode
+                     `concept` (and an undecided `CONTEXT-MAP.md` root) checks none of this
 
 A screen whose `floorplan:` is missing or empty is reported under 2; the floorplan is the one fact the
 walkthrough and `quality-design` read it by.
@@ -93,6 +99,12 @@ PROPOSAL_OWNERS = (  # display-path prefix -> the skill that promotes or rejects
     ("_concept/10_blueprint/datamodel/", "architecture-datamodel"),
 )
 NO_RECOMMENDATION = {"", "-", "—", "?", "tbd", "TBD", "n/a"}
+
+
+SLUG_ALNUM_RE = re.compile(r"[^a-z0-9]+")
+TERM_RE = re.compile(r"^\*\*(.+?)\*\*:")
+ENTRY_RE = re.compile(r"^\*\*(.+?)\*\* \(`([^`]+)`\):\s*$")
+TRANSLITERATE = str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"})
 
 
 def root_entries(here: Path) -> list[str]:
@@ -323,21 +335,29 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
 
     # 7-8. proposals and open questions
     root = concept.parent
-    problems += stale_proposals(concept, root, today or datetime.date.today(), stale_days)
+    pg, _ = glossary_target(concept)
+    problems += stale_proposals(concept, root, today or datetime.date.today(), stale_days,
+                                pg if pg and is_project_path(pg) else None)
     problems += open_question_problems(concept, root, screens + [concept / "07_screens/shell.md"])
+    problems += glossary_split_problems(concept, root)
     return problems
 
 
-def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int) -> list[str]:
-    """One line per `proposed` entry whose proposal date is more than `days` days old."""
+def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int,
+                    project_glossary: str | None = None) -> list[str]:
+    """One line per `proposed` entry whose proposal date is more than `days` days old. In split mode
+    `project_glossary` (a root-relative path) is scanned too, its owner `concept-glossary`."""
     out: list[str] = []
     files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
              if p.is_file() and p.suffix in (".md", ".yaml", ".yml", ".json")]
     files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(PROPOSAL_SKIP)]
     if (root / "APP-DESIGN.md").is_file():
         files.append(("APP-DESIGN.md", root / "APP-DESIGN.md"))
+    if project_glossary and (root / project_glossary).is_file():
+        files.append((project_glossary, root / project_glossary))
     for shown, p in files:
-        owner = next((o for prefix, o in PROPOSAL_OWNERS if shown.startswith(prefix)), "its owner skill")
+        owner = "concept-glossary" if shown == project_glossary else \
+            next((o for prefix, o in PROPOSAL_OWNERS if shown.startswith(prefix)), "its owner skill")
         for n, line in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
             for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE):
                 for m in pattern.finditer(line):
@@ -348,6 +368,104 @@ def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int) 
                     if age > days:
                         out.append(f"{shown}:{n}: proposed entry from {m.group(1)} is {age} days old "
                                    f"(limit {days}) — promote or reject it with {owner}")
+    return out
+
+
+def term_id(term: str) -> str:
+    """The id of a glossary term: its kebab-case slug, umlauts transliterated (`Überweisung` → `ueberweisung`)."""
+    return SLUG_ALNUM_RE.sub("-", term.lower().translate(TRANSLITERATE)).strip("-")
+
+
+def is_project_path(value: str) -> bool:
+    """A project-relative path: no leading `/`, no `..`."""
+    return not value.startswith("/") and ".." not in Path(value).parts
+
+
+def glossary_target(concept: Path) -> tuple[str | None, bool]:
+    """(project glossary path, explicit) per `tree/glossary.md § Where the words live`; the path is
+    None in concept mode and in the undecided mode. A confirmed `glossary` key in `scope.yaml` wins,
+    else the latest `proposed` entry for it, else `CONTEXT.md` when the project root has one."""
+    root = concept.parent
+    scope = concept / "01_meta/scope.yaml"
+    data = None
+    if scope.is_file():
+        try:
+            data = yaml.safe_load(scope.read_text(encoding="utf-8"))
+        except yaml.YAMLError:
+            data = None
+    value = None
+    if isinstance(data, dict):
+        if isinstance(data.get("glossary"), str) and data["glossary"].strip():
+            value = data["glossary"].strip()
+        else:
+            proposed = [e for e in data.get("proposed") or []
+                        if isinstance(e, dict) and e.get("key") == "glossary"
+                        and isinstance(e.get("value"), str) and e["value"].strip()]
+            if proposed:
+                latest = max(enumerate(proposed), key=lambda ie: (str(ie[1].get("proposed_on", "")), ie[0]))[1]
+                value = latest["value"].strip()
+    if value is not None:
+        return (None, False) if value == "concept" else (value, True)
+    return ("CONTEXT.md", False) if (root / "CONTEXT.md").is_file() else (None, False)
+
+
+def glossary_lines(path: Path):
+    """(line number, text) of every line outside a fenced code block."""
+    fenced = False
+    for n, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+        if line.lstrip().startswith(("```", "~~~")):
+            fenced = not fenced
+        elif not fenced:
+            yield n, line
+
+
+def glossary_split_problems(concept: Path, root: Path) -> list[str]:
+    """The split-mode rules (docstring rule 9): `_concept/glossary.md` holds ontology entries, the
+    project glossary holds the words, and the two name the same terms."""
+    pg, explicit = glossary_target(concept)
+    if pg is None:
+        return []
+    pg_path = root / pg
+    if not is_project_path(pg) or not pg_path.is_file():
+        if explicit:
+            return [f"_concept/01_meta/scope.yaml: glossary names {pg}, which does not exist"]
+        return []
+    ontology = concept / "glossary.md"
+    if not ontology.is_file():
+        return []
+    out: list[str] = []
+
+    terms: dict[str, tuple[int, bool]] = {}  # id -> (line, confirmed)
+    current = None
+    for n, line in glossary_lines(pg_path):
+        m = TERM_RE.match(line)
+        if m:
+            current = term_id(m.group(1))
+            terms.setdefault(current, (n, True))
+        elif line.startswith("#"):
+            current = None
+        elif current and line.strip() == "- status: proposed":
+            terms[current] = (terms[current][0], False)
+
+    entries: dict[str, int] = {}  # id -> line
+    block = None  # (id, reported)
+    for n, line in glossary_lines(ontology):
+        m = ENTRY_RE.match(line)
+        if m:
+            block = [m.group(2), False]
+            entries.setdefault(block[0], n)
+            if block[0] not in terms:
+                out.append(f"_concept/glossary.md:{n}: entry `{block[0]}` has no term in {pg} — "
+                           f"renamed or removed; concept-glossary settles it")
+        elif line.startswith("#"):
+            block = None
+        elif block and not block[1] and line.strip() and not line.startswith("- "):
+            block[1] = True
+            out.append(f"_concept/glossary.md:{n}: entry `{block[0]}` carries a definition or _Avoid_ line — "
+                       f"in split mode the words live in {pg}")
+    for tid, (n, confirmed) in terms.items():
+        if confirmed and tid not in entries:
+            out.append(f"{pg}:{n}: term `{tid}` has no entry in _concept/glossary.md — concept-glossary adds its kind")
     return out
 
 

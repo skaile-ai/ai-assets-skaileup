@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:skaile:schema:scope",
-  "title": "Project scope — the flow, project type and depth a project is sized by",
+  "title": "Project scope — the flow, project type, depth and glossary location a project is sized by",
   "description": "Written by skaileup. The file records what was decided and nothing else, so the top level is closed; every key is optional and an absent key reads as its default (tree/01_meta/scope.md § Format).",
   "x-artifact": "_concept/01_meta/scope.yaml",
   "type": "object",
@@ -32,6 +32,11 @@
         "standard",
         "exhaustive"
       ]
+    },
+    "glossary": {
+      "type": "string",
+      "description": "Where the words live (tree/glossary.md § Where the words live): `concept` keeps every definition in _concept/glossary.md; any other value is the project-relative path of the project glossary, with no leading / and no .. segment. Absent reads as CONTEXT.md when the project root has one, else concept.",
+      "pattern": "^(?!/)(?!(.*/)?\\.\\.(/|$)).+$"
     },
     "reasoning": {
       "type": "string",
@@ -104,7 +109,8 @@
         "key": {
           "enum": [
             "project_type",
-            "depth"
+            "depth",
+            "glossary"
           ]
         },
         "value": {

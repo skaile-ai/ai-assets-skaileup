@@ -2,12 +2,12 @@
 path: _concept/01_meta/scope.yaml
 summary: flow, project type and depth — written when the first skill needs one
 owner: [skaileup]
-may_propose: [architecture-techstack, concept-brief, concept-onboard, concept-research, experience-interaction, quality-test, spec-feature]
+may_propose: [architecture-techstack, concept-brief, concept-glossary, concept-onboard, concept-research, experience-interaction, quality-test, spec-feature]
 ---
 
 # _concept/01_meta/scope.yaml
 
-The project's recorded sizing, grown one key at a time: a key is written when the first skill that needs it finds it absent and asks. It holds three values and the evidence behind them — the **flow** (the advisory recipe the project started from), its **project type** and its **depth**. A wrong value mis-sizes every artifact that reads it; an absent one blocks nothing.
+The project's recorded sizing, grown one key at a time: a key is written when the first skill that needs it finds it absent and asks. It holds the **flow** (the advisory recipe the project started from), its **project type**, its **depth** and, where it differs from the default, where the project's **glossary** words live, with the evidence behind them. A wrong value mis-sizes every artifact that reads it; an absent one blocks nothing.
 
 ## Format
 
@@ -15,6 +15,7 @@ The project's recorded sizing, grown one key at a time: a key is written when th
 flow: skaileup-greenfield
 project_type: web-app
 depth: standard
+glossary: CONTEXT.md        # only to override the default; absent reads as in the table
 reasoning: |
   Nine user-facing capabilities with two roles sharing state and one relational
   schema — standard depth rather than sketch on both counts.
@@ -36,8 +37,9 @@ chosen_at: "2026-09-05T14:22:00Z"
 | `flow` | `skaileup-greenfield` · `skaileup-reverse` | no recipe chosen; nothing waits on it |
 | `project_type` | the rows of `## Project types` | `web-app` |
 | `depth` | `sketch` · `standard` · `exhaustive` | `standard` |
+| `glossary` | a project-relative path (no leading `/`, no `..`) · `concept` | `CONTEXT.md` when the project root has one, else `concept` |
 
-`flow` names the recipe in `flows/`, which orders skills and sizes nothing. `depth` is the project-wide default for how far each artifact goes — `sketch` the thinnest version that still lets the next artifact be written, `standard` the version a team can build from, `exhaustive` every case and consequence stated; a skill states in its node what each level changes, and may ask a deeper or shallower one for a single artifact (`tree/README.md § How a skill runs`, rule 3).
+`flow` names the recipe in `flows/`, which orders skills and sizes nothing. `depth` is the project-wide default for how far each artifact goes — `sketch` the thinnest version that still lets the next artifact be written, `standard` the version a team can build from, `exhaustive` every case and consequence stated; a skill states in its node what each level changes, and may ask a deeper or shallower one for a single artifact (`tree/README.md § How a skill runs`, rule 3). `glossary` names the project glossary — the file outside `_concept/` that holds the definitions — or `concept` for every word in `_concept/glossary.md`; every skill resolves it the same way (`tree/glossary.md § Where the words live`).
 
 ## Project types
 
@@ -56,7 +58,7 @@ A `hard` prerequisite on anything listed here would block a project that was nev
 
 ## Asking a missing key
 
-A skill that needs `project_type` or `depth`, finds the key absent and asks it in its own batch, appends one `proposed` entry — `key`, `value`, `proposed_by`, `proposed_on`, `source` — and works with that value at once. While the key is absent, the latest proposed entry for it is its value. `skaileup` confirms an entry by writing the key and dropping the entry, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`.
+A skill that needs `project_type` or `depth`, finds the key absent and asks it in its own batch, appends one `proposed` entry — `key`, `value`, `proposed_by`, `proposed_on`, `source` — and works with that value at once. While the key is absent, the latest proposed entry for it is its value. `skaileup` confirms an entry by writing the key and dropping the entry, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. `glossary` is asked by `concept-glossary` alone, and only when the key is absent and the project root holds a `CONTEXT-MAP.md` — a map names several contexts and does not say which one this `_concept/` describes; every other absence reads as the default and asks nothing.
 
 ## Routing a want
 

@@ -1,6 +1,6 @@
 # 0022 — Shared artifact contracts and proposed entries
 
-**Status:** accepted
+**Status:** accepted; amended by [0024](0024-the-glossary-splits-by-kind.md) (in split mode a proposed glossary term lands in the project glossary)
 
 Supersedes the `writers` key and the "conditional file carries `writers: []`" choice of
 [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md), and the single-writer

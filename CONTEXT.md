@@ -168,6 +168,26 @@ how an object term is reached, owned and originated. Words and the relations bet
 stored fields stay with the datamodel. Grown lazily as terms get pinned, read by every skill so
 vocabulary does not drift; any authoring skill may propose a term. Distinct from this file.
 
+**Project glossary**:
+The file outside `_concept/` that holds a project's words — term, definition and what to avoid
+saying — when the project keeps its own, usually the root `CONTEXT.md` that the
+`domain-modeling` skill tends. It stays the project's: this collection adds definitions to it and
+rearranges nothing already there. What the words mean lives here; what kind of thing each one is
+lives in the **glossary**.
+_Avoid_: external glossary, words file, context file, CONTEXT.md (that is one project's name for it)
+
+**Split mode**:
+The way a project keeps its glossary when it has a **project glossary**: the words live there,
+and the **glossary** holds only the ontology around them. Each term has its home for definition
+and another for kind, so neither file repeats the other.
+_Avoid_: dual glossary, hybrid mode, linked glossary
+
+**Concept mode**:
+The way a project keeps its glossary when it has no **project glossary**, or declares that it
+wants none: the **glossary** holds words and ontology together, as one file. Not the **concept**,
+which is the design half of a project.
+_Avoid_: default mode, single-file mode, standalone glossary
+
 **Decision record**:
 An append-only note of a choice that was **hard to reverse**, **surprising without
 context**, and a **real trade-off**. All three, or it is not one. One record per project,

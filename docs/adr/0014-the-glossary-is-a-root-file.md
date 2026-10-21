@@ -1,6 +1,6 @@
 # 0014 — The glossary is a root file
 
-**Status:** accepted; partly superseded by [0021](0021-the-glossary-carries-the-light-ontology.md) (the glossary is no longer words only) and [0022](0022-shared-artifact-contracts-and-proposed-entries.md) (other skills may append `proposed` entries)
+**Status:** accepted; partly superseded by [0021](0021-the-glossary-carries-the-light-ontology.md) (the glossary is no longer words only) and [0022](0022-shared-artifact-contracts-and-proposed-entries.md) (other skills may append `proposed` entries); amended by [0024](0024-the-glossary-splits-by-kind.md) (the words may live in a project glossary outside `_concept/`)
 
 Amends the root-file list in [ADR 0007](0007-one-numbered-artifact-tree.md).
 
