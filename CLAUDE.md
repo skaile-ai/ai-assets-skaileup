@@ -16,12 +16,17 @@ in via `skaile.yaml`.
   build · quality · ops`. `quality` inspects `src/`; `ops` inspects `_concept/`.
 - **Names are `domain-skill`** — 2 segments by default, 3 for a real sub-cluster, never 4.
   Separator `-`, never `_`.
-- **Order lives in the flow graph**, never in the filesystem.
+- **Order is advisory.** Flows are recipes whose edges suggest an order and gate nothing
+  ([ADR 0023](./docs/adr/0023-two-advisory-flows.md)); no skill's prose restates one. Which
+  skill to run and what it still needs is resolved on demand by `skaileup`, the router, never
+  by the filesystem.
 - **The tree mirrors `_concept/` and holds all instruction.** Every `_concept/` part has one
   node under `tree/`: directory `X/` → `X/README.md`, file `X/name.ext` → `X/name.md`,
   placeholder `<x>` → `[x]`; the one project-root artifact, `APP-DESIGN.md`, has the node
   `tree/APP-DESIGN.md`. Purpose, format, procedure and checks live in
-  that node and nowhere else; there are no cross-cutting rulebooks. Resolution rules:
+  that node and nowhere else; the one cross-cutting asset is `rulebook/` — the app-design
+  rules, defaults and floorplans, a second contract
+  ([ADR 0018](./docs/adr/0018-the-rulebook-is-a-second-contract-asset.md)). Resolution rules:
   [ADR 0017](./docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md) and
   `tree/README.md`.
 - **A skill is a route.** Its body is the ordered list of nodes it visits — at most 60 lines
@@ -37,8 +42,9 @@ in via `skaile.yaml`.
   that is where the readers look, and neither failure raises ([ADR 0011](./docs/adr/0011-the-machine-layer-sits-under-metadata.md)).
 - **Flow nodes declare `data.phase`** rather than relying on forge-concept's name-prefix
   fallback.
-- **One `CONTRACT.md`**, in `tree/`. `@skaile/workspaces` discovers it recursively and ships
-  its whole directory as the `shared-contracts` asset.
+- **Two `CONTRACT.md` manifests**: `tree/CONTRACT.md` (`shared-contracts`) and
+  `rulebook/CONTRACT.md` (`app-design-rulebook`). `@skaile/workspaces` discovers each recursively
+  and ships its whole directory as one asset; a third is rejected.
 
 ## The gate
 

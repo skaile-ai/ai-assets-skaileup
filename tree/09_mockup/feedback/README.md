@@ -25,7 +25,7 @@ The one place a stakeholder's comment on the walkthrough becomes an edit to a sp
 
 ### Patch scope
 
-1. A session annotation routes by its `specRef` to one file, `07_screens/<screen>.md`. The patch edits that file alone, anchored to a heading, and nothing else under `07_screens/` or `05_features/`.
+1. A session annotation routes by its `specRef` to one file, `07_screens/<screen>.md`, which `mockup-feedback` co-owns for human-approved patches only (`tree/07_screens/[screen].md § Patching (mockup-feedback)`). The patch edits that file alone, anchored to a heading, and nothing else under `07_screens/` or `05_features/`.
 2. A feature spec is `spec-feature`'s artifact and takes no patch. An annotation that asks for a different rule, scope line or permission becomes a `needs_manual` entry naming the screen's `implements:` feature file; the change itself is `spec-feature`'s to make for that feature.
 3. `04_journeys/stories.yaml` takes no patch either: every diff anchors on a literal markdown heading, and the no-removes path of `apply.py` appends to the end of the file, which corrupts YAML silently. A journey annotation becomes a `needs_manual` entry quoting what was asked, so the comment reaches a human (`experience-journeys` owns the journey).
 4. The feedback loop registers no new cross-reference: no screen is created, deleted or renamed, so the `implements:` / `screens:` links stay as they are.

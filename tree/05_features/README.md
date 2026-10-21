@@ -37,7 +37,7 @@ Every link between a feature and a screen exists in both files: if screen X impl
 | when | write | and |
 |---|---|---|
 | `spec-feature` adds a roster row | `story_refs` on the feature = the journey ids that motivated it | features may be added, merged or split beyond what journeys suggest; `story_refs` traces the origin |
-| `spec-feature` lists a screen | the feature's `screens:` names the existing screen file | append a proposed entry to that screen's `implements:`; a screen that does not exist yet is named for `experience-screen` to write |
+| `spec-feature` lists a screen | the feature's `screens:` names the existing screen file | append a proposed entry to that screen's `implements:`; for a screen that does not exist yet, `spec-feature` calls `experience-screen`, whose write lands in the next row |
 | `experience-screen` writes a screen | the screen's `implements:` lists the feature path(s) | append a proposed entry to each feature's `screens:` |
 | `spec-feature` writes a feature spec | `data_entities:` = model names from `10_blueprint/datamodel/model.json` | the feature's `data_entities` is the only feature↔entity join; the model holds no list of features |
 | a screen is deleted or renamed | find every feature whose `screens:` names it; remove or update the entry | |

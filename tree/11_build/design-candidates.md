@@ -66,12 +66,12 @@ Each kind has one detection pass, a subagent task that returns `file:line` lists
 
 ## Landing proposals
 
-The owner's node holds the entry shape; this is the shape `quality-design` appends there. Each proposal carries `proposed_by: quality-design`, `proposed_on: YYYY-MM-DD` and `source: DC-<n>`, and adds without editing a confirmed entry. An owner file that does not exist is not created: the proposal then sits in the decision record only, and the completion summary names the owner.
+The owner's node holds the entry shape; this is the shape `quality-design` appends there. Each proposal names its source `DC-<n>` and carries `proposed_by: quality-design` and `proposed_on: YYYY-MM-DD`, or in `APP-DESIGN.md` and a screen's `### Open` the marker `(proposed by quality-design, YYYY-MM-DD)` that stands for both, and adds without editing a confirmed entry. An owner file that does not exist is created holding only the proposal (`tree/README.md § Ownership`); the completion summary names the owner who settles it.
 
 | owner artifact | proposal |
 |---|---|
 | `_concept/glossary.md` | a `status: proposed` term entry per `tree/glossary.md § Format`: both terms of a split, or the winning term of a rename (the losing word goes under `_Avoid_` when the owner promotes it) |
-| `APP-DESIGN.md` | a § Open row `Q<n>` per `tree/APP-DESIGN.md § Format`: question, the alternatives as options, the recommendation, the question cell ending `(proposed by quality-design, YYYY-MM-DD, DC-<n>)` |
+| `APP-DESIGN.md` | a § Open row `Q<n>` per `tree/APP-DESIGN.md § Format`: question naming `DC-<n>`, the alternatives as options, and the recommendation cell ending `(proposed by quality-design, YYYY-MM-DD)` |
 | `_concept/07_screens/<screen>.md` | a `### Open` bullet `Q-<screen_id>-<n>` per `tree/07_screens/[screen].md § Format`, with the recommendation, a one-line consequence and the same marker; a merge lands on the surviving screen |
 | `_concept/10_blueprint/decisions.md` | a record `By: quality-design` per `tree/10_blueprint/decisions.md § Format`; **Decision** states the chosen concept, **Options rejected** the design-it-twice losers and the status quo, **Refs** `DC-<n>`, the evidence lines and the proposed entry ids |
 
@@ -81,8 +81,8 @@ The owner's node holds the entry shape; this is the shape `quality-design` appen
 2. **Scan in parallel.** One subagent per kind of `## Detection`, on a small, fast model, briefed with its row and the citation rule (paths from the repository root); each returns `file:line` lists and writes nothing. Skip generated and vendored code (`tree/02_grounding/findings/interaction.md § Generated and vendored code`). Judging stays in this session.
 3. **Judge into candidates.** One candidate per distinct cause, filled per `## Format`; drop any without a measured `file:line` or without user friction. Check every citation per `tree/02_grounding/findings/interaction.md § Verifying citations`. Order by strength grade, then by how many tasks the friction touches; keep at most seven, the rest named in the summary.
 4. **Write the report** to `_concept/11_build/design-candidates.md`. When the user asks for a presentation, render the same candidates as one self-contained HTML file in the system temp directory and print its path; the Markdown file stays the only artifact.
-5. **Ask which candidate** in one decision batch (`tree/README.md § How a skill runs`, rule 2): the question is which one to pursue, options are the candidates plus `none, stop here`, the recommendation first with its consequence line. One candidate is pursued per run; mark it `selected`.
-6. **Grill the candidate.** Call the Skill tool with "grilling" on the selected candidate: its purpose, the "and" in it, the task that suffers, what users see after, data and permission effects, the entries it affects, reversibility. When the skill is absent, ask the same as one batch of at most seven questions, recommendation first.
+5. **Ask which candidate** in one decision batch (`tree/README.md § How a skill runs`, rule 2): the question is which one to pursue, options are the candidates plus `none, stop here`. One candidate is pursued per run; mark it `selected`.
+6. **Grill the candidate.** Call the Skill tool with "grilling" on the selected candidate: its purpose, the "and" in it, the task that suffers, what users see after, data and permission effects, the entries it affects, reversibility. When the skill is absent, ask the same as one decision batch (rule 2).
 7. **Design it twice** when the grill leaves the after-concept open or the change is hard to reverse, and the user agrees: three subagents each design a different after-concept (for instance minimal interface, most flexible, tuned to the commonest task), then compare them with the status quo as one consequence table (user-visible · data/permission · affected artifacts · reversibility) per rule 5, and ask which wins.
 8. **Land the result** per `## Landing proposals`: the proposals for the artifacts the decision touches, and one decision record whether the candidate was accepted or rejected (a rejection with `Status: rejected`, so it is not offered again). Set the candidate's `Status` to `accepted DR-<n>` or `rejected DR-<n>`. Application code stays untouched.
 9. **Completion summary** (rule 8): the report path with candidate counts per kind, the proposals landed and where, the record id, the unread regions, and next steps by demand — `experience-interaction`, `concept-glossary` and `experience-screen` promote what landed in their artifacts, `build-plan` plans the code change once the design is promoted.
@@ -92,5 +92,5 @@ The owner's node holds the entry shape; this is the shape `quality-design` appen
 - The file has `last_updated`, `source_sha` and `intent`; every candidate has all eight fields and a unique `DC-<n>`.
 - Every `Evidence` line passes the citation check; no candidate lacks friction.
 - At most one candidate is `selected` or decided per run, and a decided one cites its `DR-<n>` and a record exists.
-- Every proposal landed carries `proposed_by: quality-design`, `proposed_on` and `source: DC-<n>`, and no confirmed entry or application file changed.
+- Every proposal landed carries `proposed_by: quality-design`, `proposed_on` and `source: DC-<n>` (or the marker and `DC-<n>` where § Landing proposals says so), and no confirmed entry or application file changed.
 - The unread regions are named under `## Not examined`.

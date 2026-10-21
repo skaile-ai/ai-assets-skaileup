@@ -26,7 +26,7 @@ A markdown table, one row per file, with the universal frontmatter
 
 ## Writing it
 
-Each writer appends a row per file it adds, in the same write: `concept-reverse` for each
+Each owner appends a row per file it adds, in the same write: `concept-reverse` for each
 evidence file it writes (a re-derive updates the row's date), `concept-research` for its raw material, `design-brand` for each reference it
 screenshots.
 

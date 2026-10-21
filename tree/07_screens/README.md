@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/07_screens/
 
-The app frame and every screen, one spec per screen. `shell.md` is the frame (`tree/07_screens/shell.md`, written by `experience-shell`); every other screen is one flat file `<screen>.md` (`tree/07_screens/[screen].md`, written by `experience-screen`, the only writer of screen specs and of their `elements:` blocks), with no feature or other directory level above it. A screen's name is its `screen_id`: the filename stem, lowercase and hyphenated, `^[a-z][a-z0-9-]{1,47}$`, no numeric prefix. `shell` is a reserved name: no screen may take it. Features reference screens, never contain them.
+The app frame and every screen, one spec per screen. `shell.md` is the frame (`tree/07_screens/shell.md`, owned by `experience-shell`); every other screen is one flat file `<screen>.md` (`tree/07_screens/[screen].md`), owned by `experience-screen` together with its `elements:` block. `mockup-feedback` is the one other skill that writes a screen, and only as human-approved patches (`tree/07_screens/[screen].md § Patching (mockup-feedback)`). No screen sits in a feature or other directory level. A screen's name is its `screen_id`: the filename stem, lowercase and hyphenated, `^[a-z][a-z0-9-]{1,47}$`, no numeric prefix. `shell` is a reserved name: no screen may take it. Features reference screens, never contain them.
 
 ## Contents
 

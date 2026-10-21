@@ -17,7 +17,8 @@ over: projects opt in by pointing `skaile.yaml` at `-tree`.
 
 ```
 skills/<name>/SKILL.md     one directory per skill; the directory name IS the name: field
-tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes) — the contract asset
+tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes) — the `shared-contracts` asset
+rulebook/                  app-design rules, defaults and floorplans that APP-DESIGN.md adopts — the `app-design-rulebook` asset
 flows/<id>/<id>.flow.yaml  advisory recipes over skills — recommended order lives here, not in the filesystem
 templates/                 tech-stack references an implementation skill reads
 docs/                      skill and node templates, decision records

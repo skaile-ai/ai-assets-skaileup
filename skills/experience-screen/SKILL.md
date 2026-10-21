@@ -15,6 +15,7 @@ metadata:
     produces:
       - { id: screens, path: "_concept/07_screens/<screen>.md" }
       - { id: screen-prototypes, path: "_concept/09_mockup/prototypes/<screen>/a.html" }
+      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     files:
       - { path: "_concept/02_grounding/findings/screens.md", gate: soft }
@@ -29,7 +30,7 @@ metadata:
 
 # experience-screen
 
-Writes one screen at `07_screens/<screen>.md`, on its own: no feature, brief or shell is needed first, and every missing input is derived from the code or asked. It writes no feature, no shell and no `APP-DESIGN.md`; what belongs to them goes to their owners as `proposed` entries.
+Writes one screen at `07_screens/<screen>.md`, on its own: no feature, brief or shell is needed first, and every missing input is derived from the code or asked. It writes no feature, no shell and no `APP-DESIGN.md`, and records a rejected `proposed` entry in `_concept/10_blueprint/decisions.md`; what belongs to them goes to their owners as `proposed` entries.
 
 ## Route
 

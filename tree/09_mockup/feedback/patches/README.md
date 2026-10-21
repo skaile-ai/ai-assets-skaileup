@@ -90,7 +90,7 @@ Two patches are emitted alongside a content patch rather than in response to a c
     {
       "id": "p-ann-c1-content",
       "annotationId": "ann-c1",
-      "file": "07_screens/01_user_auth/login.md",
+      "file": "07_screens/login.md",
       "section": "## Layout",
       "kind": "content",
       "category": "change",

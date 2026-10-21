@@ -33,7 +33,7 @@ _concept/09_mockup/storybook/
 
 ### Group naming
 
-A screen spec's directory segment carries a sort key and a label: `01_user_auth` → prefix `01`, label `User Auth`. Page components go to `src/pages/01_user_auth/`; their stories go to `src/stories/Pages/01 User Auth/` (space, not underscore: Storybook renders the folder name in the sidebar).
+A screen is a file directly under `07_screens/`, so its group is the featureset of the first feature in its `implements:` (`05_features/user-auth/login.md` → featureset `user-auth`); a screen with `implements: []` goes to the group `other`. The label is the slug in title case (`user-auth` → `User Auth`) and the sort key is the featureset's two-digit position in the `05_features/featuresets.md` roster (`01`), `99` for `other`. Page components go to `src/pages/user-auth/`; their stories go to `src/stories/Pages/01 User Auth/` (space, not underscore: Storybook renders the folder name in the sidebar).
 
 ### Story titles
 
@@ -63,9 +63,9 @@ One entry per screen spec, keyed by the spec's path relative to `_concept/`:
 
 ```json
 {
-  "07_screens/01_user_auth/login.md": {
-    "component": "01_user_auth/Login",
-    "import": "./src/pages/01_user_auth/Login",
+  "07_screens/login.md": {
+    "component": "user-auth/Login",
+    "import": "./src/pages/user-auth/Login",
     "route": "/login"
   }
 }

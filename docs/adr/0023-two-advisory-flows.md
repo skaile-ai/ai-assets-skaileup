@@ -39,6 +39,8 @@ absorbs it. The findings / intent split and the independence of the roster stay.
 
 **`decisions.md` opens to every authoring skill** ([ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md)).
 
+**`scope.yaml` takes proposed entries** from the skills that first need `depth` or `project_type`: `architecture-techstack`, `concept-brief`, `concept-onboard`, `concept-research`, `experience-interaction`, `quality-test` and `spec-feature`. The plan's ownership table listed none; the router asks these keys lazily, at the moment a skill needs one, so that skill is the one holding the answer and `skaileup` confirms it later.
+
 ## Consequences
 
 - The skill count is 33 again: 31 remaining, plus `experience-screen` and `quality-design`.

@@ -55,7 +55,7 @@ An instance, showing the value shapes the schema leaves open (`triagedAt` is ISO
   "sessionId": "<sid>",
   "triagedAt": "2026-01-01T12:00:00Z",
   "groups": [
-    { "file": "07_screens/01_user_auth/login.md", "annotations": ["ann-c1", "ann-c2"] }
+    { "file": "07_screens/login.md", "annotations": ["ann-c1", "ann-c2"] }
   ],
   "unresolved": [
     { "annotationId": "ann-x", "reason": "no specRef target (screen and journey both absent or null)" }

@@ -19,7 +19,7 @@ metadata:
 
 # mockup-feedback
 
-One pass over one session file: adopt, triage, patch, apply. It ends with edited screen specs, an audit trail and exactly one commit, and never edits the walkthrough; `mockup-walkthrough` re-renders it. The pass stops at the review file: nothing is written into the specs until the user approves it.
+One pass over one session file: adopt, triage, patch, apply. It ends with edited screen specs, an audit trail and exactly one commit, and never edits the walkthrough; `mockup-walkthrough` re-renders it. The pass stops at the review file: nothing is written into the specs until the user approves it, and a screen takes human-approved patches only (`tree/07_screens/[screen].md § Patching (mockup-feedback)`).
 
 ## Route
 

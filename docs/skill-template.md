@@ -63,8 +63,8 @@ cite a node for every `_concept/` format they read.
   `name`, `description` and `version` stay at the root: those readers normalise both.
 - **A declared path is joined to the *project* root** (`resolver/src/validator.ts:81`), not to
   `_concept/`, so every concept path carries the prefix. `scripts/check.py` enforces both
-  halves: a path either starts with `_concept/` and resolves to a node, or is one of the named
-  project-root gates in `PROJECT_ROOT_PREREQUISITES`.
+  halves: a path either starts with `_concept/` and resolves to a node, or is the named
+  project-root artifact in `PROJECT_ROOT_ARTIFACTS`.
 - **A skill declares what it writes** (ADR 0013). `metadata.artifacts.produces` is a list of
   `{ id, path }`, mandatory on every skill: `id` is the kebab-case artifact id other skills
   name in `artifacts.requires` (every required id must be produced by some skill), and

@@ -2,7 +2,7 @@
 
 Rules that CLINICO and weiterbildungsplaner, two apps by different teams on different domains, derived independently and identically. Each default implements an invariant of `rules.md` in one concrete form and cites the entries that carry it in those projects (`field` evidence, `README.md § Strength grades`).
 
-The defaults are one bundle. `experience-interaction` offers it as "adopt all defaults" in a single question, and the app records one line in its `APP-DESIGN.md` naming the adopted ids. A default the app declines is one row in `§ Exceptions` citing its `DF` id and the reason; a default the app adopts needs no entry of its own. What the projects decided differently is not here but under `## Decisions, not defaults`.
+The defaults are one bundle. `experience-interaction` offers it as "adopt all defaults" in a single question, and the app records one `defaults:` line in its `APP-DESIGN.md` frontmatter naming the adopted ids. A default the app declines is one row in `§ Exceptions` citing its `DF` id and the reason, and is left off that line; a default the app adopts needs no entry of its own, except where the app adds a value of its own. What the projects decided differently is not here but under `## Decisions, not defaults`.
 
 ## Defaults
 

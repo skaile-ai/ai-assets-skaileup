@@ -9,7 +9,7 @@ An **object** is a noun the user manages (OOUX), including a derived object the 
 - `origin: user | system | derived` — `system` is generated or imported and read-only to users; `derived` is computed, not stored;
 - `operations:` a subset of `create · read · edit · delete · archive` — the default permitted operations, narrowed by role in feature permissions.
 
-An older file's single `class` maps once: core = `primary`/`independent`/`user`; supporting = `contextual`/`independent`/`user`; child = `contextual`/`owned-by`; junction = `none`/`link`; system = origin `system`, operations `read`. An object with its own navigation entry and index is `navigation: primary`, whatever its field count.
+An object with its own navigation entry and index is `navigation: primary`, whatever its field count.
 
 ## Invariants
 
@@ -193,7 +193,7 @@ The tier-rendering policy table the app keeps, filled with these defaults:
 
 ### P22 — Navigation model
 
-The app records one navigation model: `organization: object-led | task-led | hybrid` and `primary_surface: sidebar | topbar | tabs | rail+drawer | bottom-tabs | none`. The shell holds one destination list, from which every navigation surface (sidebar, rail, drawer, tab bar, palette entries, shortcut hints) is rendered; no surface keeps a second list. The shell frame of P18 realises the primary surface, usually `sidebar` and `rail+drawer` in `shell-sidebar`, `topbar` and `tabs` in `shell-topbar`, `bottom-tabs` in `shell-mobile-tabs`. Where the model is still a fallback — the app groups destinations by feature set because nobody decided — the shell says so visibly, so the fallback is not mistaken for the design.
+The app records one navigation model: `organization: object-led | task-led | hybrid` and `primary_surface: sidebar | topbar | tabs | rail+drawer | bottom-tabs | none`. The shell holds one destination list, from which every navigation surface (sidebar, rail, drawer, tab bar, palette entries, shortcut hints) is rendered; no surface keeps a second list. The shell frame of P18 realises the primary surface, and every value maps to a frame: `sidebar` takes `shell-sidebar`, or `shell-dock` when the app is a desktop-native tool with docked panes (P18) and the nav-pane's top section is the destination list; `rail+drawer` takes `shell-sidebar`; `topbar` and `tabs` take `shell-topbar`; `bottom-tabs` takes `shell-mobile-tabs`; `none` takes `shell-dock`, the one-workspace tool whose tree is the content. A phone-sized hub (`hub-areas`) has no navigation surface and no frame in P18 realises it, so it records its frame as an exception. Where the model is still a fallback — the app groups destinations by feature set because nobody decided — the shell says so visibly, so the fallback is not mistaken for the design.
 
 *Why:* an unrecorded navigation model is re-decided by every screen. *Source:* navigation model as a recorded choice: owner decision, 2026-10-21 (`owner`); CLINICO NAV-2 and weiterbildungsplaner NAV-1 (`field`).
 

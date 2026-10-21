@@ -347,22 +347,13 @@ def test_prerequisite_path_without_the_concept_prefix(tmp_path):
     only(root, "does not start with '_concept/'")
 
 
-def test_named_project_root_prerequisite_is_allowed(tmp_path):
-    """`host:prerequisite-project-root` joins to the project root, so `package.json` genuinely resolves —
-    the restriction is a named list now, not a blanket ban."""
-    root = write_repo(tmp_path)
-    skill = root / "skills" / "spec-feature" / "SKILL.md"
-    skill.write_text(skill.read_text().replace('path: "_concept/07_screens"', 'path: "package.json"'))
-    assert errors(root) == []
-
-
 def test_unnamed_project_root_prerequisite_is_still_rejected(tmp_path):
-    """The list is the whole exception. A path outside `_concept/` that is not on it is
-    still the pre-0007 concept path this check exists to catch."""
+    """A path outside `_concept/` that is not a root artifact is still the pre-0007 concept path
+    this check exists to catch."""
     root = write_repo(tmp_path)
     skill = root / "skills" / "spec-feature" / "SKILL.md"
     skill.write_text(skill.read_text().replace('path: "_concept/07_screens"', 'path: "experience/screens"'))
-    only(root, "named project-root gates")
+    only(root, "is not a project-root artifact")
 
 
 def test_prerequisites_at_the_frontmatter_root(tmp_path):
@@ -742,8 +733,7 @@ def test_soft_gate_needs_no_upstream_writer(tmp_path):
 
 
 def test_hard_root_artifact_gate_with_no_upstream_writer(tmp_path):
-    """`APP-DESIGN.md` is a project-root artifact: a hard gate on it needs a writer upstream,
-    unlike `package.json`, which is the project's."""
+    """`APP-DESIGN.md` is a project-root artifact: a hard gate on it needs a writer upstream."""
     root = gate_repo(
         tmp_path,
         gate="APP-DESIGN.md",
@@ -795,21 +785,6 @@ def test_prerequisite_on_the_root_artifact_resolves_to_its_node(tmp_path):
     only(root, "prerequisite path 'APP-DESIGN.md' resolves to no node of `tree/`")
 
 
-def test_prerequisite_on_package_json_needs_no_node(tmp_path):
-    """The other project-root gate is the project's own: no node, no error."""
-    root = write_repo(tmp_path)
-    skill = skill_file(root)
-    skill.write_text(skill.read_text().replace('path: "_concept/07_screens"', 'path: "package.json"'))
-    assert errors(root) == []
-
-
-def test_project_root_gate_is_not_held_to_an_upstream_writer(tmp_path):
-    """`package.json` is the project's, not a node's — the rule is about `_concept/` artifacts."""
-    root = gate_repo(tmp_path, gate="package.json")
-    write_flow(root, gate_flow("spec-feature", "zeta-producer"))
-    assert errors(root) == []
-
-
 # -- hard gates need a producer anywhere in the collection ------------------------
 
 def test_hard_gate_with_no_producer_in_the_collection(tmp_path):
@@ -826,21 +801,12 @@ def test_hard_gate_with_a_producer_in_the_collection_is_clean(tmp_path):
 
 
 def test_hard_root_artifact_gate_needs_a_producer_in_the_collection(tmp_path):
-    """`APP-DESIGN.md` is both a root prerequisite and a root artifact: the artifact reading wins,
-    so the gate needs the skill that writes it."""
+    """`APP-DESIGN.md` is a root artifact: the gate needs the skill that writes it."""
     root = gate_repo(
         tmp_path, gate="APP-DESIGN.md", writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
     )
     only(root, "has a `hard` prerequisite on 'APP-DESIGN.md'")
     set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n', "zeta-producer")
-    assert errors(root) == []
-
-
-def test_hard_project_root_prerequisite_needs_no_producer(tmp_path):
-    """`package.json` is the project's own: no skill writes it and the gate is still legal."""
-    root = gate_repo(
-        tmp_path, gate="package.json", writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
-    )
     assert errors(root) == []
 
 
@@ -2024,22 +1990,52 @@ def test_node_still_carrying_writers(tmp_path):
     only(root, "still carries `writers:` — rename it to `owner:`")
 
 
+def records_decisions(root: Path, skill: str = "spec-feature") -> None:
+    """Give `skill` the decision-log entry in `produces` (and the log its node), the way an owner of a
+    node that takes `proposed` entries has it."""
+    add_node(root, "10_blueprint/README.md", ["_concept/10_blueprint/"], summary="the blueprint")
+    add_node(root, "10_blueprint/decisions.md", "_concept/10_blueprint/decisions.md", summary="decision records")
+    set_produces(
+        root,
+        '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+        '      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }\n',
+        skill,
+    )
+
+
 def test_node_with_a_proposer_that_is_no_skill(tmp_path):
     root = write_repo(tmp_path)
+    records_decisions(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [ghost]")
     only(root, "`may_propose:` lists 'ghost', which is no skill in this collection")
 
 
 def test_node_with_a_proposer_that_is_also_its_owner(tmp_path):
     root = write_repo(tmp_path)
+    records_decisions(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [spec-feature]")
     only(root, "`may_propose:` lists 'spec-feature', which is also in `owner:`")
 
 
 def test_node_with_a_known_proposer_is_clean(tmp_path):
     root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    records_decisions(root)
     set_produces(root, "    produces: []\n", "design-brand")
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    assert errors(root) == []
+
+
+def test_owner_of_a_node_with_proposers_that_records_no_decisions(tmp_path):
+    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    set_produces(root, "    produces: []\n", "design-brand")
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    only(root, "its owner 'spec-feature' does not list")
+    found = errors(root)[0]
+    assert "tree/brief.md" in found and "proposal-owner-records-decisions" in found
+
+
+def test_owner_of_a_node_without_proposers_needs_no_decisions(tmp_path):
+    root = write_repo(tmp_path)
     assert errors(root) == []
 
 
@@ -2310,6 +2306,28 @@ def test_a_flat_screen_path_passes_flat_screens(tmp_path, path):
     set_produces(root, f'    produces:\n      - {{ id: screens, path: "{path}" }}\n')
     append(root, "tree/brief.md", f"\nSee `{path}`.\n")
     assert errors(root) == []
+
+
+@pytest.mark.parametrize("rel", ["tree/brief.md", "skills/spec-feature/SKILL.md", "README.md"])
+def test_a_bare_nested_screen_path_fails_flat_screens(tmp_path, rel):
+    """Prose and manifest examples cite `07_screens/<dir>/<screen>.md` without `_concept/`."""
+    root = write_repo(tmp_path)
+    append(root, rel, '\nExample: `"file": "07_screens/01_user_auth/login.md"`.\n')
+    found = flat_screens_errors(root)
+    assert len(found) == 1, found
+    assert "`07_screens/01_user_auth/login.md`" in found[0]
+
+
+def test_a_flat_screen_with_an_anchor_passes_flat_screens(tmp_path):
+    root = write_repo(tmp_path)
+    append(root, "tree/brief.md", '\n"source_anchor": "07_screens/login.md#elements/submit-button"; see `07_screens/` and `09_mockup/prototypes/<screen>/a.html`.\n')
+    assert flat_screens_errors(root) == []
+
+
+def test_a_nested_screen_path_in_a_skills_test_fixture_passes_flat_screens(tmp_path):
+    root = write_repo(tmp_path)
+    append(root, "skills/spec-feature/tests/fixtures/before/review.md", "## 07_screens/01_user_auth/login.md\n")
+    assert flat_screens_errors(root) == []
 
 
 
@@ -3380,7 +3398,7 @@ def test_check_concept_reports_a_hard_gate_no_skill_produces(tmp_path):
 
 def test_check_concept_accepts_hard_gates_a_skill_produces_or_the_project_owns(tmp_path):
     module, _script = load_check_concept()
-    _skill_dir(tmp_path, "build-database", hard=["_concept/10_blueprint/datamodel/model.json", "package.json"])
+    _skill_dir(tmp_path, "build-database", hard=["_concept/10_blueprint/datamodel/model.json"])
     _skill_dir(tmp_path, "architecture-datamodel", produces=["_concept/10_blueprint/datamodel/"])
     _skill_dir(tmp_path, "quality-interaction", hard=["APP-DESIGN.md"])
     _skill_dir(tmp_path, "experience-interaction", produces=["APP-DESIGN.md"])
@@ -3388,10 +3406,18 @@ def test_check_concept_accepts_hard_gates_a_skill_produces_or_the_project_owns(t
     assert module.unproduced_hard_gates(tmp_path) == []
 
 
-def test_check_concept_does_not_count_a_skill_as_its_own_producer(tmp_path):
+def test_check_concept_counts_a_skill_as_its_own_producer(tmp_path):
+    """The same rule as `hard-gate-has-producer` in `scripts/check.py`, which counts every writer."""
     module, _script = load_check_concept()
     _skill_dir(tmp_path, "build-x", hard=["_concept/11_build/trace.yaml"], produces=["_concept/11_build/trace.yaml"])
     _skill_dir(tmp_path, "other", produces=["_concept/brief.md"])
+    assert module.unproduced_hard_gates(tmp_path) == []
+
+
+def test_check_concept_matches_the_root_artifact_gate_exactly(tmp_path):
+    module, _script = load_check_concept()
+    _skill_dir(tmp_path, "quality-interaction", hard=["APP-DESIGN.md"])
+    _skill_dir(tmp_path, "root-file", produces=["_concept/<file>.md"])
     assert len(module.unproduced_hard_gates(tmp_path)) == 1
 
 

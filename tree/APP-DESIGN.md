@@ -19,26 +19,6 @@ It holds *decisions*; findings, plans and questions stay in the output of the ru
 
 `build-scaffold` writes a line in the project's root `AGENTS.md` that points coding agents here, creating the file when it creates the project. In a project that existed before scaffolding the skills leave `CLAUDE.md` and `AGENTS.md` alone, and the plan says the link is missing.
 
-## Reading it
-
-Each reader opens the file at its first step, as intent, before judging anything:
-
-- screen and feature skills (`spec-feature`, `experience-screen`) — take each editing task's host from the object map's editor cell, each attribute's tier from § Information hierarchy, posture and density from § Screen defaults. A screen that needs a host the map lacks records it as a `proposed` object-map row and names `experience-interaction` as the owner of the decision; the screen spec does not invent one.
-- `experience-shell` — derives the destination list under § Navigation model and takes messages, editing and dialog patterns from the entries instead of deciding them.
-- `ops-review` — checks screen specs against the entries.
-- `quality-interaction`, `quality-design` — check the app's source against the entries.
-- `build-plan` — reads the verdict at `_concept/11_build/interaction.sarif` (format: `tree/11_build/interaction.md`), not the file itself.
-
-How a reader applies what it reads:
-
-- A decided entry wins over the rule it cites (`rulebook/README.md`). Code that deviates is one finding, filed under the entry with the rule tagged (`MOD-2 / P5`), counted once.
-- A deviation listed in § Exceptions is not reported.
-- An `[open Qn]` entry is judged by its recommendation, and the finding is tagged `[Qn]`.
-- Tier 3 appears only in a peek, a popover or a named disclosure unless § Exceptions records otherwise (`rulebook/rules.md § P21`); a heuristic is measured against the value § Adopted heuristics names, and not at all while none is adopted.
-- An entry that removes a rule's obligation without being listed as an exception is reported once, as a question for § Open, and neither followed nor overruled in silence.
-- An entry whose *Why* the code contradicts (the stated fact is false) is reported once, as a question for § Open with the evidence; the entry stays as written until the user answers.
-- Where to look: navigation model → § Navigation model; where an object lives, is listed, edited, created, deleted and shown → § Objects; what is shown at which weight → § Information hierarchy; layout posture and density → § Screen defaults; everything else → the section named for the topic.
-
 ## Format
 
 ````markdown
@@ -61,6 +41,7 @@ organization: hybrid · primary_surface: sidebar
 |---|---|---|---|---|---|---|---|
 | OBJ-1 | Project | page | list-report | status: inline · contact: dialog · all: page | quick-create dialog → page | confirm naming tasks | row(name, status, due) · chip(name) · peek(+client, owner) |
 | OBJ-2 | Task | n/a (Project section) | n/a | all: dialog | dialog | undo, H7 | row(title, assignee, status) |
+| OBJ-3 | Attachment | n/a (Task section) | n/a | all: dialog | dialog | undo, H7 | chip(filename) (proposed by experience-screen, YYYY-MM-DD) |
 ## Information hierarchy
 | object | attribute | tier | per-screen override (task reason) |
 |---|---|---|---|
@@ -76,11 +57,11 @@ organization: hybrid · primary_surface: sidebar
 |---|---|---|---|
 | SCR-1 | list-report | sovereign | compact |
 ## Surfaces
-- **SURF-1 A drawer reads and triages; editing opens a dialog or the page.** as DF2. *Rules:* P5.
+- **SURF-1 The inbox drawer is the only drawer; it reads and triages, editing opens a dialog or the page.** *Rules:* P5; DF2.
 ## Modals
-- **MOD-1 One dialog component owns busy lock and dirty guard.** as DF7. *Rules:* P5, P14.
+- **MOD-1 Dialogs are 480 px wide, 720 px for tables.** *Rules:* P5, P14; DF7.
 ## Popups
-- **POP-1 Tooltips open on hover and focus; no `title=`.** as DF14. *Rules:* P16.
+- **POP-1 Tooltips open after 500 ms on hover and on focus.** *Rules:* P16; DF14.
 ## Editing
 - **EDIT-1 Dialogs hold at most 12 fields.** *Why:* three flat editors reach 11–12. *Rules:* P5; H1.
 ## Messages
@@ -89,9 +70,9 @@ organization: hybrid · primary_surface: sidebar
 - **BTN-1 Create actions carry a text label.** *Rules:* P17.
 - **LANG-1 Verbs: Create · Add · Edit · Save · Delete · Remove, in the UI language; nouns from the glossary.** *Rules:* P11, P13.
 ## Find
-- **FIND-1 Search is a mode of the Cmd/Ctrl-K palette.** as DF11. *Rules:* P9, P10.
+- **FIND-1 An empty palette lists recent objects above destinations.** *Rules:* P9, P10; DF11.
 ## View state and disclosure
-- **VIEW-1 Filters, sort and the selected item live in the URL on index screens.** *Rules:* P23; DF8.
+- **VIEW-1 Filters, sort and the selected item live in the URL on index screens.** *Rules:* P23.
 ## Feedback
 - **FBK-1 Latency thresholds 0.1 s · 1 s · 10 s; one state per data region.** *Rules:* P26; H5; DF13.
 ## Interaction concepts
@@ -106,6 +87,7 @@ organization: hybrid · primary_surface: sidebar
 | deviation | rule id | reason |
 |---|---|---|
 | Budget code shown in a row | P21 | finance scans it daily, tier 3 outside a peek |
+| Dialogs are not addressable by `?<noun>=<id>` | DF8 | objects open on their own pages, so the path carries the selection |
 ## Open
 | id | question | options | recommendation |
 |---|---|---|---|
@@ -134,32 +116,56 @@ organization: hybrid · primary_surface: sidebar
 | CON | Interaction concepts | name, purpose, operational principle, dependencies | P27 |
 
 - **Entry shape:** one bullet — imperative, applicable in a pull request without opening a source: `- **EDIT-1 Title.** the decision. *Why:* one line. *Rules:* P5, P14 adapt; DF5; H1. [open Q3]`. `adapt` after a rule id marks an entry that changes the rule's form and keeps its obligation; an adapted rule is not an exception. A rule adopted unchanged needs no entry.
-- **Defaults** the app adopts are one entry each, in the section its rule belongs to, worded `as DF<n>` plus any local value; a declined default is a § Exceptions row citing its `DF` id, and `defaults:` in the frontmatter names the adopted ids.
+- **Proposed entry** (`tree/README.md § Ownership`): from `experience-screen` or `quality-design`, one entry or table row in the section its subject belongs to, in that section's own shape, ending with the marker `(proposed by <skill>, YYYY-MM-DD)` — the end of the bullet or of the row's last cell — and naming its source (a screen id, a `DC-<n>`, the user's words) in its text. It takes the section's next free id and never edits a decided entry; a question is a § Open row with its recommendation. `experience-interaction` settles it in step 9 of § Writing it.
+- **Defaults** the app adopts are named once, in the frontmatter `defaults:` line, and need no entry (`rulebook/defaults.md`). An entry cites a `DF` id only where it carries the app's own value or decision, worded `*Rules:* P5; DF7`; a declined default is a § Exceptions row citing its `DF` id and is left off the `defaults:` line.
 - **Citations** are ids (`P5`, `H1`, `DF4`) and, where a section is meant, inline code such as `rulebook/rules.md § P5`. A decided entry whose cell, attribute or value rests on an unanswered question ends with `[open Qn]`; the § Open row stands alone — question, options, recommendation and its reason — because the person who answers it may never see the run that raised it.
 - **Code locations** are not tracked here: violations, exemplars and fix sites live in `interaction.sarif`, where a re-run keeps them current. A code contract (the action registry's `id`, `label`, `icon`, `shortcut`, `scope`, `available`, `run`) sits in the BTN entry that owns it, as a short block in the stack's syntax.
 - **Loading** belongs to § Feedback; responsive behaviour is the floorplan's § Responsive plus the shell's breakpoints, and is not written here.
 
+## Reading it
+
+Each reader opens the file at its first step, as intent, before judging anything:
+
+- screen and feature skills (`spec-feature`, `experience-screen`) — take each editing task's host from the object map's editor cell, each attribute's tier from § Information hierarchy, posture and density from § Screen defaults. A screen that needs a host the map lacks appends a proposed object-map row (§ Format, Proposed entry) and names `experience-interaction` as the owner of the decision; the screen spec does not invent one.
+- `experience-shell` — derives the destination list under § Navigation model and takes messages, editing and dialog patterns from the entries instead of deciding them.
+- `ops-review` — checks screen specs against the entries.
+- `quality-interaction`, `quality-design` — check the app's source against the entries.
+- `build-plan` — reads the verdict at `_concept/11_build/interaction.sarif` (format: `tree/11_build/interaction.md`), not the file itself.
+
+How a reader applies what it reads:
+
+- A decided entry wins over the rule it cites (`rulebook/README.md`). Code that deviates is one finding, filed under the entry with the rule tagged (`MOD-2 / P5`), counted once.
+- A deviation listed in § Exceptions is not reported.
+- An `[open Qn]` entry is judged by its recommendation, and the finding is tagged `[Qn]`. A proposed entry is followed like one while it waits for its owner, and a finding against it is one question for § Open, not a violation.
+- Tier 3 appears only in a peek, a popover or a named disclosure unless § Exceptions records otherwise (`rulebook/rules.md § P21`); a heuristic is measured against the value § Adopted heuristics names, and not at all while none is adopted.
+- An entry that removes a rule's obligation without being listed as an exception is reported once, as a question for § Open, and neither followed nor overruled in silence.
+- An entry whose *Why* the code contradicts (the stated fact is false) is reported once, as a question for § Open with the evidence; the entry stays as written until the user answers.
+- Where to look: navigation model → § Navigation model; where an object lives, is listed, edited, created, deleted and shown → § Objects; what is shown at which weight → § Information hierarchy; layout posture and density → § Screen defaults; everything else → the section named for the topic.
+
 ## Writing it
 
-`experience-interaction` is the only writer; any other skill with something to say records it in its own output and leaves the file as it is. Object names come from the glossary and the data model and are never coined here: two names for one object split every later entry that cites it.
+`experience-interaction` owns the file and writes it directly. `experience-screen` and `quality-design` append `proposed` entries in the shape of § Format, creating the file with only those entries when it does not exist (`tree/README.md § Ownership`); any other skill records what it has to say in its own output. Object names come from the glossary and the data model and are never coined here: two names for one object split every later entry that cites it.
 
-1. **Resolve facts first** (`tree/README.md § How a skill runs`, rule 1). Read, in any order and none required: an existing `APP-DESIGN.md` as intent (§ Reading it: decided entries and exceptions are settled), `_concept/glossary.md` for the objects and their axes (`tree/glossary.md § Format`; a word on `_Avoid_` is renamed to its term), `_concept/10_blueprint/datamodel/model.json` for attributes, `_concept/04_journeys/stories.yaml` for roles and tasks, `_concept/07_screens/` for screens, and `_concept/02_grounding/findings/interaction.md`. Where the code holds evidence and no findings exist, run `concept-reverse` scoped to interaction. Without a glossary the object list comes from the data model, else the findings or the brief, and § Open asks for `concept-glossary` to pin the names.
+1. **Resolve facts first** (`tree/README.md § How a skill runs`, rule 1). Read, in any order and none required: an existing `APP-DESIGN.md` as intent (§ Reading it: decided entries and exceptions are settled; one with proposed entries is a re-entry that goes on to step 9 for them), `_concept/glossary.md` for the objects and their axes (`tree/glossary.md § Format`; a word on `_Avoid_` is renamed to its term), `_concept/10_blueprint/datamodel/model.json` for attributes, `_concept/04_journeys/stories.yaml` for roles and tasks, `_concept/07_screens/` for screens, and `_concept/02_grounding/findings/interaction.md`. Where the code holds evidence and no findings exist, run `concept-reverse` scoped to interaction. Without a glossary the object list comes from the data model, else the findings or the brief, and § Open asks for `concept-glossary` to pin the names.
 2. **Sort before asking** (rule 4). Draft every section from what exists: one object-map row per object with `navigation` ≠ `none`, tiers proposed from the attributes, a floorplan per screen, interaction concepts from the glossary's operational principles. Mark each inferred entry `[inferred]`; ask only about gaps.
-3. **Offer the defaults bundle** — one message offering to adopt `rulebook/defaults.md § Defaults`, DF1–DF15, at once: accept all, or pick. Each adopted default becomes an entry citing its id; each declined one becomes an § Exceptions row with its reason. A re-run offers only the ids not yet answered.
+3. **Offer the defaults bundle** — one message offering to adopt `rulebook/defaults.md § Defaults`, DF1–DF15, at once: accept all, or pick. The adopted ids go on the frontmatter `defaults:` line without an entry each; each declined one becomes an § Exceptions row with its reason and is left off the line. A re-run offers only the ids in neither place.
 4. **Ask the depth** (rule 3): `sketch` writes § Context, § Navigation model, the object map for `navigation: primary` objects, the defaults and § Open, and every other section holds `Not decided` with its row; `standard` writes every section for every object with `navigation` ≠ `none`, tiers for primary objects, and the heuristics the batches settle; `exhaustive` adds tiers and per-screen overrides for every object, screen defaults per floorplan, the interaction concepts and every heuristic with its reason. Without a user, `standard` is recorded in § Context.
-5. **Decide in batches** (rule 2). What remains after the bundle goes in batches by topic, each question with the recommendation first and a one-line consequence: the `rulebook/defaults.md § Decisions, not defaults` choices; the navigation model and primary surface; the heuristics to adopt (`rulebook/rules.md § Heuristics`); then the per-object calls (home, hosts, tiers) in the order that changes a screen's surface first. Without a user, the recommendation is written with `[open Qn]` on the entry and a stand-alone § Open row.
+5. **Decide in batches** (rule 2). What remains after the bundle goes in batches by topic: the `rulebook/defaults.md § Decisions, not defaults` choices; the navigation model and primary surface; the heuristics to adopt (`rulebook/rules.md § Heuristics`); then the per-object calls (home, hosts, tiers) in the order that changes a screen's surface first. Without a user, the recommendation is written with `[open Qn]` on the entry and a stand-alone § Open row.
 6. **Write after every batch**: create the file in the shape of § Format, or update it in place, leaving decided entries as written — flipping one needs the user's answer. Each write adds one § Changelog line and sets `updated:`. A rejected rule or accepted deviation goes to § Exceptions only on the user's answer. When the user says yes to the file in words, set `approved:` in the same write; an edit after that leaves it at its last value until the user says yes again.
 7. **Refine in place.** On an existing `APP-DESIGN.md`, a request about one entry changes that entry alone and adds a § Changelog line; no interview reruns. A re-entry after a code check reads `_concept/11_build/interaction.sarif` (`tree/11_build/interaction.md § Format`): each proposed exception and each question in it is asked in the next batch as a new `Qn`; a yes to an exception enters § Exceptions, no answer becomes the § Open row `keep as exception?`. The verdict file is `quality-interaction`'s and stays as it is.
 8. **Carry gaps and trade-offs to their homes.** A term the glossary lacks is appended there as a `proposed` entry (`tree/README.md § Ownership`) and the step carries on with it. A substantive choice with rejected options — hard to reverse, surprising without context — becomes a decision record (`tree/10_blueprint/decisions.md § Writing it`) and the entry cites its `DR-<n>`.
+9. **Promote proposed entries.** On every run, list the entries ending `(proposed by <skill>, YYYY-MM-DD)` (entry, proposer, source) and settle them in confirm-or-reject batches with a recommendation each (rule 2). A confirmed entry drops the marker, gets its `Rules:` citation and counts as decided; a confirmed question row drops it and is asked as any `Q<n>`. A rejected entry is removed and the rejection recorded in `_concept/10_blueprint/decisions.md` with the reason (`tree/10_blueprint/decisions.md § Writing it`), so it is not proposed again. A file a proposer created holds those entries alone; the first write of step 6 builds the frontmatter and the other sections around them. Each outcome adds a § Changelog line.
 
 The completion summary (`tree/README.md § How a skill runs`, rule 8) says which entries a re-entry changed, so the screens that read them are re-checked.
 
 ## Checks
 
-- Every section of § Format is present; a section not yet decided says so and has an § Open row.
+- Every section of § Format is present in a file the owner has written; a section not yet decided says so and has an § Open row. A file a proposer created holds only proposed entries until then.
 - Every decided entry cites a `P`, `H` or `DF` id, or is a § Exceptions row.
 - Every object in the glossary with `navigation` ≠ `none` has an object-map row (`n/a` cells allowed).
 - Every attribute in the tier table has a tier; every tier-3 attribute shown outside a peek, a popover or a named disclosure has an § Exceptions row.
 - Every adopted heuristic names its `H` id and value; § Navigation model has both `organization` and `primary_surface`.
 - Every open question has a stable `Q<n>` id and a recommendation, and every `[open Qn]` entry has its row.
 - The file was written after the last batch, carries `updated:`, and `approved:` is set — or § Open says why the user has not yet signed off.
+- Every adopted default is named on the `defaults:` line and every declined one has an § Exceptions row; no entry restates an adopted default without the app's own value.
+- No entry still ends `(proposed by …)` at the last write of a run that had the user in the room, except one the user deferred, which § Open names.

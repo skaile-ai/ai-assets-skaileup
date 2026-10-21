@@ -2,7 +2,7 @@
 path: _concept/01_meta/scope.yaml
 summary: flow, project type and depth — written when the first skill needs one
 owner: [skaileup]
-may_propose: [architecture-techstack, build-scaffold, concept-brief, concept-glossary, concept-onboard, concept-research, concept-reverse, experience-interaction, mockup-walkthrough, quality-test, spec-feature]
+may_propose: [architecture-techstack, concept-brief, concept-onboard, concept-research, experience-interaction, quality-test, spec-feature]
 ---
 
 # _concept/01_meta/scope.yaml
@@ -79,7 +79,7 @@ The inputs of a producer are its `metadata.prerequisites.files` and `metadata.ar
 | want | the screen `inbox` → producer `experience-screen` |
 | `findings/screens.md` | `derivable` — `concept-reverse` scope `screens`, paths `app/pages/inbox*` |
 | glossary terms of the inbox | `ask` — answered in the batch and filed as `proposed` glossary entries |
-| `APP-DESIGN.md` | absent — the floorplan is chosen from the rulebook defaults and recorded as `proposed` screen defaults, with open rows in a stub `APP-DESIGN.md § Open` |
+| `APP-DESIGN.md` | absent — the floorplan is chosen from the rulebook defaults and appended as a proposed `§ Screen defaults` row in a stub `APP-DESIGN.md` holding only proposed entries (`tree/APP-DESIGN.md § Format`) |
 | `scope.yaml` | `depth` is the only key the screen needs and it is absent → one question in the same batch; `flow` and `project_type` stay unasked |
 
 Next step: `experience-screen`, one batch (floorplan confirmation, posture, tier-3 exceptions), `07_screens/inbox.md` written. No brief, feature or flow was needed.

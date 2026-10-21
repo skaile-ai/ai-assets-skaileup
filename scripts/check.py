@@ -76,31 +76,14 @@ TREE_DIR = "tree"
 GROUNDING_USER_INPUT = "_grounding/<step>/user_input.json"
 ONBOARD_NODE = "02_grounding/onboarding/answers.md"
 
-# The named exceptions to "every prerequisite path lives under `_concept/`".
-#
-# `host:prerequisite-project-root` joins the declared path to the *project* root, so a project-root
-# gate like `package.json` resolves correctly — the blanket ban this check used to carry
-# was stricter than the reader it protects (found by ticket 23, which had to move
-# `quality-test`'s source-exists gate into the step body to work around it).
-#
-# The ban still earns its keep for everything else, and the reason is drift, not the
-# reader: the dominant defect class in this repo is a *concept* path written against a
-# superseded tree (ADR 0007 renamed the whole first level; ticket 30 swept 32 files of
-# it). Allowing arbitrary paths outside `_concept/` would let `experience/screens/foo.md`
-# — a pre-0007 concept path — pass as "some project-root file". So the restriction stays,
-# narrowed from a ban to this list: a path is legal if it is under `_concept/` (and resolves
-# to a node) or if it is named here. Extend the list deliberately; a project-root path
-# cannot be verified from inside this collection, because whether it exists is a fact about
-# the scaffolded project, not about this repo.
-PROJECT_ROOT_PREREQUISITES = {"package.json", "APP-DESIGN.md"}
-
-# The project-root files a skill may declare in `produces` (SRC ADR 0015). Every other `produces`
-# path has to sit under `_concept/` and resolve in the tree; these name an artifact that lives
-# at the project root, the directory holding `_concept/`. It still resolves through the tree: its
-# node is `tree/<artifact>`, which lists the name literally in `path:`. A hard gate on one is held
-# to the upstream-writer rule in `_check_gate_writers` (exact match); other project-root gates are
-# not. The tree listing (`--print-tree`) shows `_concept/` only; `tree/README.md § Beside the tree`
-# documents these.
+# The project-root files a skill may declare in `produces` or gate on (SRC ADR 0015). Every other
+# path has to sit under `_concept/` and resolve in the tree — the restriction catches the dominant
+# defect class here, a *concept* path written against a superseded tree (ADR 0007 renamed the whole
+# first level), which would otherwise pass as "some project-root file". A root artifact still
+# resolves through the tree: its node is `tree/<artifact>`, which lists the name literally in
+# `path:`. A hard gate on one is held to the upstream-writer rule in `_check_gate_writers` (exact
+# match). The tree listing (`--print-tree`) shows `_concept/` only; `tree/README.md § Beside the
+# tree` documents these.
 PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md"}
 
 # Skills this collection calls but does not ship (migration map, premise 6). Axis is
@@ -959,14 +942,12 @@ def _check_not_grown_gates(repo: Path, skills: list[tuple[str, dict]], rep: Repo
 
 
 def _check_hard_gates_have_producer(skills: list[tuple[str, dict]], rep: Report) -> None:
-    """Rule `hard-gate-has-producer`: every `hard` prerequisite is written by some skill, or is a
-    project-root prerequisite the project owns (ADR 0019).
+    """Rule `hard-gate-has-producer`: every `hard` prerequisite is written by some skill.
 
     A hard gate on a file nobody produces can never open, and the host reports `satisfied: true` or
     blocks forever without raising. Matching is placeholder-aware (`_paths_overlap`): a gate on
     `07_screens` meets a skill that writes `07_screens/<screen>.md`. A project-root artifact
-    (PROJECT_ROOT_ARTIFACTS) must be written under that exact path; any other project-root
-    prerequisite (`package.json`) is the project's, not a skill's."""
+    (PROJECT_ROOT_ARTIFACTS) must be written under that exact path."""
     written = [path for _, fm in skills for _, path in _produced_entries(fm)]
     for skill, fm in skills:
         for item in _prerequisite_items(fm):
@@ -975,8 +956,6 @@ def _check_hard_gates_have_producer(skills: list[tuple[str, dict]], rep: Report)
             gate = str(item["path"]).lstrip("/")
             if gate in PROJECT_ROOT_ARTIFACTS:
                 met = gate in written
-            elif gate in PROJECT_ROOT_PREREQUISITES:
-                continue
             elif gate.startswith(ARTIFACT_ROOT + "/"):
                 met = any(p.startswith(ARTIFACT_ROOT + "/") and _paths_overlap(gate, p) for p in written)
             else:
@@ -986,7 +965,7 @@ def _check_hard_gates_have_producer(skills: list[tuple[str, dict]], rep: Report)
                     f"skills/{skill}",
                     "hard-gate-has-producer",
                     f"has a `hard` prerequisite on {gate!r}, which no skill declares in "
-                    f"`metadata.artifacts.produces` and which is no project-root prerequisite — the "
+                    f"`metadata.artifacts.produces` — the "
                     f"gate can never open; make it `soft` with a derive-or-ask step, or add the "
                     f"skill that writes it",
                 )
@@ -1434,21 +1413,29 @@ def check_old_contract_paths(repo: Path, rep: Report) -> None:
 
 # A screen is `_concept/07_screens/<screen>.md`, one segment below `07_screens/` (ADR 0020). The
 # match starts at the first segment and runs to the end of the path token, so `<feature_slug>/`
-# (a nested directory) and `<feature_slug>/<screen>.md` both name the nested shape.
-NESTED_SCREEN_PATH_RE = re.compile(r"_concept/07_screens/[^\s/`\"'),;|]+/[^\s`\"'),;|]*")
+# (a nested directory) and `<feature_slug>/<screen>.md` both name the nested shape. The
+# `_concept/` prefix is optional because prose and manifests cite the bare `07_screens/...`; a
+# `#` ends the segment, so the anchor of a flat screen (`07_screens/login.md#elements/submit`) is
+# not a second segment.
+NESTED_SCREEN_PATH_RE = re.compile(r"(?<!\w)(?:_concept/)?07_screens/[^\s/#`\"'),;|]+/[^\s`\"'),;|]*")
 
 
 def check_flat_screens(repo: Path, rep: Report) -> None:
-    """Rule `flat-screens`: no `_concept/07_screens/` path has a second segment below it. That
-    covers a node's `path:`, a skill's `produces` / `requires` / `prerequisites` path and a prose
-    citation, in `tree/`, `skills/`, `templates/`, `docs/` (ADRs excepted — they record the
-    decision and name the old shape on purpose), `README.md` and `CLAUDE.md`."""
+    """Rule `flat-screens`: no `07_screens/` path, with or without `_concept/` before it, has a
+    second segment below it. That covers a node's `path:`, a skill's `produces` / `requires` /
+    `prerequisites` path and a prose citation, in `tree/`, `skills/`, `templates/`, `docs/` (ADRs
+    excepted — they record the decision and name the old shape on purpose), `README.md` and
+    `CLAUDE.md`. A skill's `tests/` directory is excepted: its fixtures hold the inputs of the
+    renderers and scripts they exercise, including ones a stale project would carry."""
     files = [
         *[repo / n for n in ("README.md", "CLAUDE.md") if (repo / n).is_file()],
         *[p for p in _files(repo, "docs", (".md",)) if not p.relative_to(repo).as_posix().startswith("docs/adr/")],
         *_files(repo, TREE_DIR, (".md", ".json")),
         *_files(repo, "templates", (".md",)),
-        *_files(repo, "skills", (".md", ".py", ".yaml", ".yml")),
+        *[
+            p for p in _files(repo, "skills", (".md", ".py", ".yaml", ".yml"))
+            if "tests" not in p.relative_to(repo).parts
+        ],
     ]
     for path in files:
         for found in sorted(set(NESTED_SCREEN_PATH_RE.findall(path.read_text(encoding="utf-8")))):
@@ -1568,6 +1555,9 @@ def _check_route_shape(produces_empty: bool, body: str, where: str, rep: Report)
             rep.fail(where, "route-shape", f"route item {i} cites no `tree/…` node — a route is a list of nodes to read")
 
 
+DECISIONS_PATH = "_concept/10_blueprint/decisions.md"
+
+
 def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Report) -> None:
     """Rule `produces-writer-listed` / `writer-without-produces`: a node's `owner:` and the skills'
     `produces` say the same thing from both ends.
@@ -1576,7 +1566,9 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
     must have a produces path that resolves to the node, or a directory above one of the node's
     entries, or a path below one of the node's directory entries — a directory entry of at least
     two segments, because the root entry `_concept/` would otherwise cover every path there is.
-    `may_propose:` is not cross-checked: a proposer appends entries, it does not generate the part."""
+    `may_propose:` is not cross-checked against `produces`: a proposer appends entries, it does not
+    generate the part. Rule `proposal-owner-records-decisions`: the owner of a node with a non-empty
+    `may_propose:` produces `DECISIONS_PATH`, where it records the rejections."""
     fms = dict(skill_fms)
     for skill, fm in skill_fms:
         for _ident, path in _produced_entries(fm):
@@ -1615,6 +1607,21 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
                     "writer-without-produces",
                     f"lists owner {owner!r}, but no `produces` path of that skill resolves to this node "
                     f"or lies above or below its `path:` entries",
+                )
+
+    # A node that takes `proposed` entries has an owner who rejects some, and a rejection is
+    # recorded in the decision log (`tree/README.md § Ownership`) — so that owner appends there.
+    for node in nodes:
+        if not node.may_propose:
+            continue
+        for owner in node.owner:
+            if owner in fms and DECISIONS_PATH not in {p for _i, p in _produced_entries(fms[owner])}:
+                rep.fail(
+                    node.file,
+                    "proposal-owner-records-decisions",
+                    f"takes `proposed` entries (`may_propose:`), but its owner {owner!r} does not list "
+                    f"`{{ id: decisions, path: \"{DECISIONS_PATH}\" }}` in `produces` — the owner records "
+                    f"each rejection there",
                 )
 
 
@@ -1710,19 +1717,15 @@ def check_skills(
 
         # 5. declared prerequisites are joined to the *project* root, not to `_concept/`
         #    (`host:prerequisite-project-root`). A concept path without the prefix resolves
-        #    one level too high, and the path has to resolve to a node of the tree. Paths
-        #    outside the concept are legal only when named in PROJECT_ROOT_PREREQUISITES —
-        #    see that constant for why the restriction survives ticket 23's finding. A root
-        #    artifact (PROJECT_ROOT_ARTIFACTS) has a node like any `_concept/` part, so it is
-        #    resolved too; the other root gates are the project's and have none.
+        #    one level too high, and the path has to resolve to a node of the tree. A path
+        #    outside the concept is legal only as a root artifact (PROJECT_ROOT_ARTIFACTS), which
+        #    has a node like any `_concept/` part and is resolved too.
         for entry in _prerequisite_paths(fm):
             if not entry.startswith(ARTIFACT_ROOT + "/") and entry not in PROJECT_ROOT_ARTIFACTS:
-                if entry in PROJECT_ROOT_PREREQUISITES:
-                    continue
                 rep.error(
                     where,
                     f"prerequisite path {entry!r} does not start with {ARTIFACT_ROOT + '/'!r} and is not "
-                    f"one of the named project-root gates ({', '.join(sorted(PROJECT_ROOT_PREREQUISITES))}) — "
+                    f"a project-root artifact ({', '.join(sorted(PROJECT_ROOT_ARTIFACTS))}) — "
                     f"{{host}} joins it to the project root, so a concept path without the prefix "
                     f"resolves outside the concept",
                     fact="host:prerequisite-project-root",

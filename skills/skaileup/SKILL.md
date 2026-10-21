@@ -9,6 +9,7 @@ metadata:
     produces:
       - { id: scope, path: "_concept/01_meta/scope.yaml" }
       - { id: concept-readme, path: "_concept/README.md" }
+      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     inputs_optional:
       - { id: want, label: "What do you want?", type: textarea, hint: "An artifact, a screen, a question or a request — in your own words" }
@@ -16,7 +17,7 @@ metadata:
 
 # skaileup
 
-The collection's front door, demand-driven: it takes what the user wants, names the skill that produces it and each input of that skill as present, derivable or to ask, and records `flow`, `project_type` and `depth` only when something needs one. It writes `_concept/01_meta/scope.yaml` and the `_concept/README.md` pointer and nothing else; the producer does the work, because a router that also did it would define a skill's job twice.
+The collection's front door, demand-driven: it takes what the user wants, names the skill that produces it and each input of that skill as present, derivable or to ask, and records `flow`, `project_type` and `depth` only when something needs one. It writes `_concept/01_meta/scope.yaml`, the `_concept/README.md` pointer and the decision record of a rejected `proposed` entry (`tree/10_blueprint/decisions.md`), and nothing else; the producer does the work, because a router that also did it would define a skill's job twice.
 
 ## Route
 

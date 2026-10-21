@@ -405,9 +405,10 @@ def _paths_overlap(a: str, b: str) -> bool:
 
 
 def unproduced_hard_gates(skills_dir: Path) -> list[str]:
-    """A `hard` gate in one skill's frontmatter that no *other* skill produces: a skill that can
-    never open, reported as `skills/<name>/SKILL.md: …`. A gate outside `_concept/` other than
-    `APP-DESIGN.md` (`package.json`) belongs to the project, not to a skill."""
+    """A `hard` gate in one skill's frontmatter that no skill produces: a skill that can never
+    open, reported as `skills/<name>/SKILL.md: …`. The rule is `scripts/check.py`'s
+    `hard-gate-has-producer`: a `_concept/` gate is placeholder-aware, `APP-DESIGN.md` matches
+    exactly, any other path is not checked."""
     produced: dict[str, list[str]] = {}
     gates: dict[str, list[str]] = {}
     for skill in sorted(skills_dir.glob("*/SKILL.md")):
@@ -421,12 +422,17 @@ def unproduced_hard_gates(skills_dir: Path) -> list[str]:
         ]
     if len(produced) < 2:
         return []
+    written = [p for ps in produced.values() for p in ps]
     out = []
     for name, paths in gates.items():
         for gate in paths:
-            if not gate.startswith("_concept/") and gate != "APP-DESIGN.md":
+            if gate == "APP-DESIGN.md":
+                met = gate in written
+            elif gate.startswith("_concept/"):
+                met = any(p.startswith("_concept/") and _paths_overlap(gate, p) for p in written)
+            else:
                 continue
-            if not any(_paths_overlap(gate, p) for other, ps in produced.items() if other != name for p in ps):
+            if not met:
                 out.append(f"skills/{name}/SKILL.md: hard gate on {gate} — no skill produces it; "
                            "make the gate soft or add the skill that writes it")
     return out

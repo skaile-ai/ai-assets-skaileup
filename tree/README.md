@@ -146,7 +146,7 @@ may_propose: []             # skills that may append `proposed` entries through 
 
 A directory node lists the owners of the parts it covers. `may_propose` names skills of this collection and repeats no owner.
 
-**Proposed entry.** An entry a non-owner skill appends to the owner's artifact, marked `status: proposed`, with `proposed_by: <skill>`, `proposed_on: YYYY-MM-DD` and its source (an evidence reference or the user's words). It adds and never edits a confirmed entry. The owner reviews it with the user and promotes it by dropping the marker, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. Each node's `## Format` holds the per-artifact shape.
+**Proposed entry.** An entry a non-owner skill appends to the owner's artifact, marked `status: proposed`, with `proposed_by: <skill>`, `proposed_on: YYYY-MM-DD` and its source (an evidence reference or the user's words). It adds and never edits a confirmed entry. When the owner's artifact does not exist yet, the proposer creates it holding only its proposed entries and no `approved:` key, so the owner's first write fills it instead of finding a gap. The owner reviews each entry with the user and promotes it by dropping the marker, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. Each node's `## Format` holds the per-artifact shape, one shape per node.
 
 ## Frontmatter every markdown artifact carries
 
@@ -165,7 +165,7 @@ Every skill binds these rules at its interviewing step by citing `tree/README.md
 
 **The route is the todo list.** On entry the route's numbered items become the first todo items, verbatim and in order; an item that does not apply stays listed as `skip: <reason>`, and **Done when** is the last item. Where the harness has no todo tool, the first message lists them and each later message names the item it is on.
 
-1. **Resolve facts, then ask.** Read existing artifacts in any order, and an optional one only after checking it exists; `_concept/` outranks the conversation, so a disagreement between them is a question for the user. Run `concept-reverse` scoped for evidence the code holds; mark inferred facts; batch only what tools cannot settle.
+1. **Resolve facts, then ask.** Read existing artifacts in any order, and an optional one only after checking it exists; `_concept/` outranks the conversation, so a disagreement between them is a question for the user. Run `concept-reverse` scoped for evidence the code holds; mark inferred facts; batch only what tools cannot settle. A `hard`-gated input that is missing stops the skill in one sentence naming the missing path and the skill that produces it.
 2. **One decision batch per message.** At most 7 independently answerable questions on one topic; each with the recommendation first and a one-line consequence; an "accept all defaults" option; questions whose options depend on an unanswered one are deferred to the next batch; a status line precedes the batch. A technical term is explained in parentheses.
 3. **Match the user's specificity.** Infer depth from the material supplied; where it matters, ask per artifact how deep to go (`sketch · standard · exhaustive`) and say what each level produces; a user precise about roles and vague about layout gets precise role questions and a layout proposal.
 4. **Sort before asking.** Restate the user's input as a coherent draft (terms, objects, screens, rules) with gaps marked, then ask about the gaps — never a questionnaire first.

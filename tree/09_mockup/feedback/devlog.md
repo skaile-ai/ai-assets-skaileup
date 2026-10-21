@@ -15,7 +15,7 @@ Committed, append-only. `apply.py` adds one block per applied session. Both walk
 
 ## 2026-07-05 · session <sid>
 
-### 07_screens/01_user_auth/login.md
+### 07_screens/login.md
 
 - p-ann-c1-content applied (change): 'this should be on the right'
 - p-ann-c1-promotion applied (derived): 'this should be on the right'

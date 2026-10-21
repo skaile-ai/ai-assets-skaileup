@@ -11,6 +11,7 @@ metadata:
       - { id: grounding-findings }
     produces:
       - { id: glossary, path: "_concept/glossary.md" }
+      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     files:
       - { path: "_concept/brief.md", gate: soft }
@@ -19,7 +20,7 @@ metadata:
 
 # concept-glossary
 
-The owner of `_concept/glossary.md`: the project's ubiquitous language and its light ontology (kinds, is-a, part-of, roles, relations, object axes). It writes no fields, types or paths. Other skills append `proposed` terms; this skill confirms or rejects them.
+The owner of `_concept/glossary.md`: the project's ubiquitous language and its light ontology (kinds, is-a, part-of, roles, relations, object axes). It writes no fields, types or paths. Other skills append `proposed` terms; this skill confirms them or rejects them into `_concept/10_blueprint/decisions.md`.
 
 ## Route
 

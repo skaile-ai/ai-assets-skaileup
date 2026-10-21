@@ -46,7 +46,7 @@ The goals are drafted from this brief by `tree/goals.md`; approval comes only af
 ### Approving both files
 
 5. **Show `_concept/brief.md` and `_concept/goals.md` together and wait for a yes in words.** Apply changes, show them again, ask again — an unapproved root propagates its mistakes into work that costs far more to redo. On the yes, write `approved: <date>` into the frontmatter of both in the same write, per `tree/README.md § Frontmatter every markdown artifact carries`.
-6. **Leave the words to the glossary.** A term the user corrected you on is used in their wording throughout and named in the completion summary, so `concept-glossary` pins it while the correction is fresh; glossary entries written here would put a second writer on a file that has one.
+6. **Leave the words to the glossary.** A term the user corrected you on is used in their wording throughout and named in the completion summary, so `concept-glossary` pins it while the correction is fresh; glossary entries written here would put a second owner on a file that has one.
 
 ## Checks
 
