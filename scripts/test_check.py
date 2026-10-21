@@ -1979,7 +1979,11 @@ def test_an_archetype_row_without_a_card(tmp_path):
 
 
 def test_an_archetype_with_no_frame_is_clean(tmp_path):
-    assert errors(archetype_repo(tmp_path, frame="none")) == []
+    root = archetype_repo(tmp_path)
+    write_archetypes(root, archetype_row(aid="mobile-guided-hub", frame="none"))
+    write_archetype_card(root, aid="mobile-guided-hub", frame="none")
+    (root / "docs" / "app-archetypes" / "desktop-admin.md").unlink()
+    assert errors(root) == []
 
 
 def test_a_rulebook_without_an_archetype_table_is_clean(tmp_path):

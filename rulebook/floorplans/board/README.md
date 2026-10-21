@@ -30,7 +30,7 @@ Sovereign (`rulebook/rules.md § P19`): a long daily surface, so keyboard moveme
 
 - **Wide (≥ 960 px):** `items` fills the width; `card-drawer` is a column of about 320 px at the right that pushes `items` narrower; columns share the rest and scroll horizontally past five.
 - **Narrow (≤ 640 px):** columns become one column at a time, swiped or chosen from a status tab strip, each card full width; `filter-bar` collapses to a search field and one "Filters" button with the applied count; the list view shows two-line rows; the calendar becomes an agenda of the days that hold items; `card-drawer` becomes a bottom sheet over `items` that closes by swipe, Esc or its close button.
-- Columns are 12–25 rem wide and the board scrolls sideways past the viewport; when they do not fill it they stop at 25 rem and leave the area right of the last column empty (Salesforce Lightning Design System — Layout).
+- A column is 12–25 rem wide: when the columns share the width they stop growing at 25 rem and the area right of the last one stays empty, and when they do not fit they keep 12 rem and the board scrolls sideways (Salesforce Lightning Design System 2 — Layout).
 
 ## Interaction constraints
 

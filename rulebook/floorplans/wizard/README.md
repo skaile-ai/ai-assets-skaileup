@@ -71,7 +71,7 @@ NARROW
 ## When not to use
 
 - The steps need each other's content, or the task is done daily: one screen, `object-page` or a dialog with a short form.
-- The task has fewer than 3 steps, or fewer than 16 fields in at most 5 groups: one page, because a wizard runs 3–8 steps and starts above 16 fields or 5 groups (SAP Fiori — wizard usage; AWS Cloudscape — create resource).
+- The task has fewer than 3 steps, or at most 16 fields in at most 5 groups: one page, because a wizard runs 3–8 steps and starts above 16 fields or 5 groups (SAP Fiori — wizard usage; AWS Cloudscape — create resource).
 - The task creates one simple object with few fields: a dialog or a quick-create (`rulebook/rules.md § P6`).
 - The task edits an existing object in sections: `object-page`.
 - The task is configuration reached from navigation: `settings`.

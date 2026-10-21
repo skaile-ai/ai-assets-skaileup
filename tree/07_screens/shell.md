@@ -49,7 +49,7 @@ last_updated: YYYY-MM-DD
 ## Checks
 
 - `shell_frame` is a directory under `rulebook/floorplans/` whose README has `kind: shell`, and it matches `primary_surface` per `rulebook/rules.md § P22`.
-- `shell_frame` equals the frame of the archetype `APP-DESIGN.md § Navigation model` declares, or `APP-DESIGN.md` has a NAV entry naming the departure.
+- Where `APP-DESIGN.md § Navigation model` names an archetype id, `shell_frame` equals that row's frame, or `APP-DESIGN.md` has a NAV entry naming the departure; with `archetype: none` or no `APP-DESIGN.md`, nothing is compared.
 - `organization` and `primary_surface` equal `APP-DESIGN.md § Navigation model` when that section decides them; otherwise `navigation: provisional` and the visible line under `## Navigation` are both present.
 - The `elements:` nav block lists the same destinations as `## Navigation`, in the same order, with every `target` a `screen_id`.
 - No destination list exists elsewhere: sidebar, rail, drawer, tab bar and palette entries are all rendered from this one.
