@@ -11,7 +11,7 @@ metadata:
     produces: []
   prerequisites:
     files:
-      - { path: "_concept/brief.md", gate: hard }
+      - { path: "_concept/brief.md", gate: soft }
 ---
 
 # build-branch
@@ -22,13 +22,13 @@ skill never does. Most steps are plain git; two rules are its own, each stated a
 binds: no close while a slice is unlanded (step 5), and no merge or discard without the word
 typed back (step 7).
 
-Read `tree/README.md` once per session. The app slug comes from `_concept/brief.md` (format: `tree/brief.md`); slice
+Read `tree/README.md` once per session. The app slug is a fact to resolve, not a file to demand (`tree/README.md § How a skill runs`, rule 1): `_concept/brief.md` carries the app name (format: `tree/brief.md`); without it take the project's package name or directory name, and ask only when neither gives one. Slice
 dossiers are `tree/11_build/slices/README.md`'s.
 
 ## Steps
 
 1. **Read which end this is from git, not from the user.** No branch matching
-   `build/<app-slug>` (the slug from `brief.md`) means open. The branch checked out with
+   `build/<app-slug>` (the slug resolved above) means open. The branch checked out with
    commits on it means close. Both readings possible (the branch exists and no slice has
    landed) is a resume: say which branch you found and continue on it.
 

@@ -1,13 +1,13 @@
-id: appbuilder-standard
+id: skaileup-greenfield
 version: "0.1.0"
-name: Appbuilder Standard
+name: Skaileup Greenfield
 description: >-
-  The full path for a multi-user app: discovery, the shared vocabulary and brand, journeys,
-  then the data model and the app's interaction design before any feature is specified,
-  behaviours, the per-feature spec loop that grows the featureset roster, the screens each
-  feature uses, the app shell, the blueprint, the mockup and feedback pass over those screens, the build against
-  the codebase's standards, and the review gate (code, interaction patterns, concept) that
-  ends in a release grade.
+  The full path for a new app: discovery, the shared vocabulary and brand, journeys, then the data model
+  and the app's interaction design before any feature is specified, behaviours, the per-feature spec loop
+  that grows the featureset roster, the screens each feature uses, the app shell, the blueprint, the mockup
+  and feedback pass over those screens, the build against the codebase's standards, and the review gate
+  (code, interaction patterns, concept) that ends in a release grade. An advisory order: any skill also runs
+  on its own, from the middle of a project, when the router names it.
 meta:
   icon: i-heroicons-squares-2x2
   onboarding:
@@ -24,7 +24,6 @@ requires:
   # the per-file exactness lives on the skills, which is where the reading happens.
   - contract:@skaile-ai/shared-contracts
   - contract:@skaile-ai/app-design-rulebook
-  - skill:@skaile-ai/concept-scope
   - skill:@skaile-ai/concept-onboard
   - skill:@skaile-ai/concept-research
   - skill:@skaile-ai/concept-brief
@@ -57,7 +56,7 @@ requires:
   - skill:@skaile-ai/quality-release
 globals:
   research_depth: moderate
-entry: scope
+entry: onboard
 nodes:
   # Phase containers. They carry the swimlane geometry and the phase every child
   # repeats on its own node — the group's phase wins where the two are read together
@@ -65,32 +64,25 @@ nodes:
   - id: g-conceptualization
     type: group
     position: { x: 0, y: 0 }
-    style: { width: 3880, height: 240 }
+    style: { width: 3680, height: 240 }
     data:
       label: Conceptualization
       phase: conceptualization
   - id: g-implementation
     type: group
-    position: { x: 3920, y: 0 }
+    position: { x: 3720, y: 0 }
     style: { width: 1280, height: 240 }
     data:
       label: Implementation
       phase: implementation
   - id: g-review
     type: group
-    position: { x: 5240, y: 0 }
+    position: { x: 5040, y: 0 }
     style: { width: 1280, height: 240 }
     data:
       label: Review
       phase: review
 
-  - id: scope
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: concept-scope
-      label: Scope
-      phase: conceptualization
   - id: onboard
     type: skill
     parentNode: g-conceptualization
@@ -311,7 +303,6 @@ nodes:
       label: Release Grade
       phase: review
 edges:
-  - { id: e-scope-onboard, source: scope, target: onboard, type: flow }
   - { id: e-onboard-research, source: onboard, target: research, type: flow }
   - { id: e-research-brief, source: research, target: brief, type: flow }
   - { id: e-brief-glossary, source: brief, target: glossary, type: flow }

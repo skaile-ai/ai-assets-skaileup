@@ -1,6 +1,6 @@
 ---
 name: design-brand
-description: "Use when the brief is approved and the project has no visual identity yet, or the user wants to change it. Discovers a direction in plain language, extracts from reference sites, and writes the palette, tokens and brandbook. Triggers on 'brand', 'colors', 'fonts', 'design tokens', 'make it look good'."
+description: "Use when the project has no visual identity yet, or the user wants to change it. Discovers a direction in plain language, extracts from reference sites, and writes the palette, tokens and brandbook; a brief sharpens it and is not required. Triggers on 'brand', 'colors', 'fonts', 'design tokens', 'make it look good'."
 version: "0.1.0"
 metadata:
   requires:
@@ -17,7 +17,7 @@ metadata:
       - { id: grounding-findings, path: "_concept/02_grounding/findings/" }
   prerequisites:
     files:
-      - { path: "_concept/brief.md", gate: hard }
+      - { path: "_concept/brief.md", gate: soft }
       - { path: "_concept/02_grounding/research/design-inspiration.md", gate: soft }
       - { path: "_concept/02_grounding/findings", gate: soft }
     inputs_optional:
@@ -34,7 +34,7 @@ Settles what the product looks like and how it sounds: writes `03_brand/` (`iden
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Read the ground, discover the direction, extract from references, propose the whole brand** — steps 1–4 of `tree/03_brand/README.md § Writing it`. Reference screenshots go into `_concept/02_grounding/findings/` with an index row each, `step: design-brand` (format: `tree/02_grounding/findings/README.md`). Nothing is written to `_concept/03_brand/` before the user approves the proposal in words.
+1. **Resolve the ground, discover the direction, extract from references, propose the whole brand** — steps 1–4 of `tree/03_brand/README.md § Writing it`. Without a brief the app, audience and tone come from `findings/brand.md` (a scoped `concept-reverse` for `brand` when the code holds the theme) or from the first batch (`tree/README.md § How a skill runs`). Reference screenshots go into `_concept/02_grounding/findings/` with an index row each, `step: design-brand` (format: `tree/02_grounding/findings/README.md`). Nothing is written to `_concept/03_brand/` before the user approves the proposal in words.
 2. **Write the identity** — `_concept/03_brand/identity.md` per `tree/03_brand/identity.md`, with `approved: <date>` set in the same write as the user's yes.
 3. **Write the tokens** — `_concept/03_brand/brand.tokens.json` per `tree/03_brand/brand.tokens.md`, validated against `tree/03_brand/brand-tokens.schema.json` before writing; with a dark mode also `brand.dark.tokens.json` and `brand.resolver.json`. Record the approval in the token file's `$extensions` too (`§ Writing it`).
 4. **Write the brandbook** — `_concept/03_brand/brandbook.html` per `tree/03_brand/brandbook.md`.

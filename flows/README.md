@@ -12,11 +12,14 @@ change.
 The contract has no schema file — it is enforced by [`../scripts/check.py`](../scripts/check.py),
 which is the only thing that reads a flow besides the hosts.
 
-**Four flows, and a flow *is* the tier.** `appbuilder-mvp` and `appbuilder-standard` build
-an app; `skaileup-concept-only` stops at a specified product; `skaileup-concept-reverse`
-starts from an existing repository instead of from scope. There are no sub-flows and no
-shared building blocks — every flow the loader finds becomes a card in the onboarding
-wizard, so a flow that is not a way to start a project has no business being one.
+**Two advisory recipes.** `skaileup-greenfield` starts from an idea and walks the whole
+chain, concept to release grade; `skaileup-reverse` starts from an existing repository and
+writes the concept out of what the code holds. The onboarding wizard shows these two cards
+and nothing else, so a flow that is not a way to start a project has no business being one.
+A flow is a recommended order, not a gate and not a size: how deep a project goes is
+`depth` in `scope.yaml` (`tree/01_meta/scope.md`), a skill resolves its own inputs instead
+of waiting on its predecessor, and `skaileup` reaches any skill directly from the middle of
+a project. `quality-design` is on demand and sits in neither graph.
 
 Each flow carries three group nodes and repeats their `data.phase` on every skill node.
 The per-feature loops are **not** in the graph: the host orders nodes only along
@@ -34,18 +37,14 @@ architecture → build → quality. Node id = skill without its domain prefix, e
 
 |Flow|Order|
 |---|---|
-|`appbuilder-standard`|scope → onboard → research → brief → glossary → brand → journeys → datamodel → interaction → behaviors → feature → screen → shell → techstack → system → walkthrough → storybook → annotate → feedback → scaffold → database → standards → plan → implement → branch → test → e2e → review → interaction-check → ops-review → release|
-|`appbuilder-mvp`|scope → onboard → brief → glossary → journeys → feature → techstack → scaffold → plan → implement → test|
-|`skaileup-concept-only`|scope → onboard → research → brief → glossary → brand → journeys → datamodel → interaction → behaviors → feature → screen → shell → walkthrough → annotate → feedback → ops-review|
-|`skaileup-concept-reverse`|scope → reverse → standards → brief → glossary → brand → journeys → datamodel → interaction → shell → feature → screen → techstack → system → interaction-check → ops-review|
+|`skaileup-greenfield`|onboard → research → brief → glossary → brand → journeys → datamodel → interaction → behaviors → feature → screen → shell → techstack → system → walkthrough → storybook → annotate → feedback → scaffold → database → standards → plan → implement → branch → test → e2e → review → interaction-check → ops-review → release|
+|`skaileup-reverse`|reverse → standards → brief → glossary → brand → journeys → datamodel → interaction → shell → feature → screen → techstack → system → interaction-check → ops-review|
 
-`screen` follows `feature` in every flow that has it: `spec-feature` lists the screens a
-feature needs and `experience-screen` writes them. `shell` follows the `screen` loop in the
-two forward flows, where it derives the app-shell navigation from the screens the loop wrote,
-and precedes `feature` in the reverse flow, where the frame is drawn around the screens the
-codebase already has. `interaction` writes `APP-DESIGN.md` at the
-project root once, before the feature loop reads it; `interaction-check` hard-gates on it
-and sits in the review group. `appbuilder-mvp` carries neither — it grows no screens — and its `feature` node adds the
-roster row for each feature it specifies.
-`concept-scope` is the entry of all four — reverse included — and writes the flow id into
-`scope.yaml`.
+`screen` follows `feature` in both flows: `spec-feature` lists the screens a feature needs and
+`experience-screen` writes them. `shell` follows the `screen` loop in the greenfield flow,
+where it derives the app-shell navigation from the screens the loop wrote, and precedes
+`feature` in the reverse flow, where the frame is drawn around the screens the codebase
+already has. `interaction` writes `APP-DESIGN.md` at the project root once, before the
+feature loop reads it; `interaction-check` hard-gates on it and sits in the review group.
+Neither flow has a scope node: `skaileup` writes `flow` into `scope.yaml` when a skill
+first needs it.

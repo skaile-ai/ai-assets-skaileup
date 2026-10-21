@@ -7,11 +7,14 @@ metadata:
     - contract:@skaile-ai/shared-contracts
     - contract:@skaile-ai/app-design-rulebook
   artifacts:
+    requires:
+      - { id: scope }
     produces:
       - { id: app-design, path: "APP-DESIGN.md" }
       - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     files:
+      - { path: "_concept/01_meta/scope.yaml", gate: soft }
       - { path: "_concept/glossary.md", gate: soft }
       - { path: "_concept/10_blueprint/datamodel/", gate: soft }
       - { path: "_concept/04_journeys/stories.yaml", gate: soft }
@@ -30,9 +33,9 @@ Read `tree/README.md` once per session, then these nodes in order — each holds
 
 1. **Resolve the facts** — `tree/APP-DESIGN.md § Reading it`, then steps 1–2 of `tree/APP-DESIGN.md § Writing it`. An existing `APP-DESIGN.md` is intent: its decided entries stay. Glossary and data model are read when they exist and none is required; object names are never coined here. `_concept/11_build/interaction.sarif` present means a re-entry, which jumps to item 5.
 2. **Offer the defaults bundle** — `rulebook/defaults.md`, step 3 of `tree/APP-DESIGN.md § Writing it`: one message, accept all or pick DF1–DF15; each adopted default becomes an entry, each declined one an exception.
-3. **Ask the depth** — step 4 of `tree/APP-DESIGN.md § Writing it` (`sketch · standard · exhaustive`, rule 3 of `tree/README.md § How a skill runs`).
+3. **Ask the depth** — step 4 of `tree/APP-DESIGN.md § Writing it` (`sketch · standard · exhaustive`, rule 3 of `tree/README.md § How a skill runs`). `depth` in `scope.yaml` (`tree/01_meta/scope.md`) is the recommendation when present; an answer given where it is absent is recorded there as a `proposed` entry.
 4. **Decide in batches, write after each** — `rulebook/rules.md`, steps 5–6 of `tree/APP-DESIGN.md § Writing it` and `tree/APP-DESIGN.md § Format`. One batch per message, recommendation first (rule 2 of `tree/README.md § How a skill runs`); without a user the recommendation carries `[open Qn]`. Each write adds a Changelog line and sets `updated:`; `approved:` moves only on the user's yes.
 5. **Refine or fold in a code check** — step 7 of `tree/APP-DESIGN.md § Writing it` and `tree/11_build/interaction.md § Format` for the `interaction.sarif` fields. The verdict file is `quality-interaction`'s and stays as it is; an exception enters the file only on the user's answer.
-6. **Carry gaps and trade-offs home, then hand off** — step 8 of `tree/APP-DESIGN.md § Writing it`: a missing term goes to the glossary as `proposed`, a choice with rejected options to `tree/10_blueprint/decisions.md § Format`. Name the entries a re-entry changed so the screens that read them are re-checked.
+6. **Carry gaps and trade-offs home** — step 8 of `tree/APP-DESIGN.md § Writing it`: a missing term goes to the glossary as `proposed`, a choice with rejected options to `tree/10_blueprint/decisions.md § Format`. Name the entries a re-entry changed so the screens that read them are re-checked.
 
 **Done when** `tree/APP-DESIGN.md § Checks` holds: every section present, every decided entry citing a rule, heuristic or default id or listed as an exception, every non-`none` object in the object map, every tier-3 attribute behind a peek, popover or named disclosure or an exception, every open question with a stable id and a recommendation, the file written after the last batch, `approved:` set or Open saying why not.

@@ -8,10 +8,10 @@ may_propose: []
 # _concept/02_grounding/research/
 
 Findings that other skills design against: the domain, the competitors, the audience, the visual
-references. `concept-research` writes them after `concept-onboard` and before `concept-brief`,
-so the brief, glossary and brand are written against what it found; it runs again beside any
-later step that needs grounding. It writes findings only — no brief, no features, no tokens. A
-claim without a source is a claim about a claim, and the stale one is the one that gets built on.
+references. `concept-research` writes them once for the project, so the brief, glossary and brand
+can be written against what it found, and again beside any later step that needs grounding. It
+writes findings only — no brief, no features, no tokens. A claim without a source is a claim about
+a claim, and the stale one is the one that gets built on.
 
 ## Contents
 
@@ -30,9 +30,10 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
 
 1. **Pick the depth before scoping.** It is `globals.research_depth` of the flow that is running
    (the value the host's onboarding depth picker shows and the user may have changed); with no
-   flow running, derive it from `flow` in `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`):
-   `appbuilder-mvp` → `skip`, `appbuilder-standard` and `skaileup-concept-only` → `moderate`,
-   `skaileup-concept-reverse` → `light`; with neither, `moderate`. The four values are the whole vocabulary, and the depth sets
+   flow running, map `depth` in `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`):
+   `sketch` → `light`, `standard` → `moderate`, `exhaustive` → `deep`. With neither, ask it as the
+   first question of the step 2 batch (recommending `moderate`) and record the answer as a `proposed`
+   `depth` entry in `scope.yaml`. The four values are the whole vocabulary, and the depth sets
    breadth, not rigour — every claim still names a source:
 
    | depth | files written | agents dispatched |

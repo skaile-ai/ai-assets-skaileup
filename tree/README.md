@@ -1,7 +1,7 @@
 ---
 path: [_concept/, _concept/README.md]
 summary: the artifact tree, its ownership rule and how a skill runs
-owner: [concept-scope]
+owner: [skaileup]
 may_propose: []
 ---
 
@@ -30,8 +30,8 @@ _concept/                             the artifact tree, its ownership rule and 
 ├── brief.md                          the pitch, with its comparables — what the user said, no more
 ├── glossary.md                       the ubiquitous language and its light ontology — terms, kinds, relations
 ├── goals.md                          success criteria, KPIs, constraints and explicit non-goals
-├── 01_meta/                          project metadata — the sizing every skill reads its depth from
-│   └── scope.yaml                    flow and project type — the sizing every skill reads its depth from
+├── 01_meta/                          project metadata — the sizing skills read when they need it
+│   └── scope.yaml                    flow, project type and depth — written when the first skill needs one
 ├── 02_grounding/                     everything that came from outside the room, readable by every skill
 │   ├── findings/                     graded evidence and raw material from outside the room
 │   │   ├── brand.md                  colours, type, radius, spacing and mode the repository's theme carries
@@ -105,6 +105,7 @@ _concept/                             the artifact tree, its ownership rule and 
 │       └── seed.json                 realistic seed scenarios for mockups, screen specs and E2E tests
 └── 11_build/                         slices, trace, criteria ledger, reviews, release verdict and decisions
     ├── decisions.md                  build-time decision records, append-only
+    ├── design-candidates.md          evidenced candidates for a better design, found in the code
     ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
     ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
     ├── trace.yaml                    feature to slices to commits to code, the one feature-to-commit join
@@ -200,7 +201,7 @@ A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, def
 
 ## _concept/README.md
 
-`concept-scope` writes this fixed pointer into the project and nothing else:
+`skaileup` writes this fixed pointer into the project, once, the first time it creates `_concept/`, and nothing else:
 
 ```
 This tree is maintained by the skaileup-tree collection. Every path here has an instruction node at

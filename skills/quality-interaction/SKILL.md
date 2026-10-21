@@ -13,6 +13,8 @@ metadata:
       - { id: interaction-review, path: "_concept/11_build/interaction.sarif" }
   prerequisites:
     files:
+      # Hard: `APP-DESIGN.md` is the machine-read rule set this skill judges the code against (its entry grammar and
+      # tier tables); it is a project-root file the project owns, written by `experience-interaction`, and cannot be derived from code.
       - { path: "APP-DESIGN.md", gate: hard }
       - { path: "_concept/10_blueprint/techstack.md", gate: soft }
       - { path: "_concept/02_grounding/findings/stack.md", gate: soft }
@@ -30,7 +32,7 @@ Read `tree/README.md` once per session, then these nodes in order — each holds
 2. **Take the census and walk the entries** — `tree/02_grounding/findings/interaction.md § Where UI sits per stack` for where UI sits and how citations are checked; steps 2–3 of `tree/11_build/interaction.md § Writing it`, which include the tier checks and the duplicated-behaviour check. Evidence passes that only collect run in parallel on a small, fast model; classifying and judging stay in this session.
 3. **Record, count, order** — steps 4–6 of `tree/11_build/interaction.md § Writing it` (one finding per cause, severity, class), counts per `tree/11_build/interaction.md § Counting`. Counts come from a script or `jq` over the file, never from typing.
 4. **Check the citations** — step 7 of `tree/11_build/interaction.md § Writing it`; a failing citation is fixed or the finding dropped before anything is written.
-5. **Write the verdict** — `tree/11_build/interaction.md § Format`, level mapping from `tree/11_build/README.md § SARIF levels`, step 8 of `tree/11_build/interaction.md § Writing it`. The file replaces the previous run's whole. Hand the `underReview` results and the questions back to the user and name `experience-interaction` as the skill that folds them in; `build-plan` reads the `open` changes.
+5. **Write the verdict** — `tree/11_build/interaction.md § Format`, level mapping from `tree/11_build/README.md § SARIF levels`, step 8 of `tree/11_build/interaction.md § Writing it`. The file replaces the previous run's whole. Show the `underReview` results and the questions to the user; an answer that changes an entry reaches `APP-DESIGN.md` through `experience-interaction`, and `build-plan` reads the `open` changes.
 6. **Report** — step 9 of `tree/11_build/interaction.md § Writing it`: score table, changes in order, unchecked rules, unread regions, questions.
 
 **Done when** `tree/11_build/interaction.md § Checks` holds: `_concept/11_build/interaction.sarif` is valid SARIF 2.1.0, every `fail` result cites a `file:line` the citation check passes, every rule is scored or listed as unchecked, every violation is covered by a change or carries an `underReview` suppression, and the unread regions are named.

@@ -958,6 +958,40 @@ def _check_not_grown_gates(repo: Path, skills: list[tuple[str, dict]], rep: Repo
                 )
 
 
+def _check_hard_gates_have_producer(skills: list[tuple[str, dict]], rep: Report) -> None:
+    """Rule `hard-gate-has-producer`: every `hard` prerequisite is written by some skill, or is a
+    project-root prerequisite the project owns (ADR 0019).
+
+    A hard gate on a file nobody produces can never open, and the host reports `satisfied: true` or
+    blocks forever without raising. Matching is placeholder-aware (`_paths_overlap`): a gate on
+    `07_screens` meets a skill that writes `07_screens/<screen>.md`. A project-root artifact
+    (PROJECT_ROOT_ARTIFACTS) must be written under that exact path; any other project-root
+    prerequisite (`package.json`) is the project's, not a skill's."""
+    written = [path for _, fm in skills for _, path in _produced_entries(fm)]
+    for skill, fm in skills:
+        for item in _prerequisite_items(fm):
+            if item.get("gate") != "hard":
+                continue
+            gate = str(item["path"]).lstrip("/")
+            if gate in PROJECT_ROOT_ARTIFACTS:
+                met = gate in written
+            elif gate in PROJECT_ROOT_PREREQUISITES:
+                continue
+            elif gate.startswith(ARTIFACT_ROOT + "/"):
+                met = any(p.startswith(ARTIFACT_ROOT + "/") and _paths_overlap(gate, p) for p in written)
+            else:
+                continue  # a path outside the concept is reported by the prefix rule
+            if not met:
+                rep.fail(
+                    f"skills/{skill}",
+                    "hard-gate-has-producer",
+                    f"has a `hard` prerequisite on {gate!r}, which no skill declares in "
+                    f"`metadata.artifacts.produces` and which is no project-root prerequisite — the "
+                    f"gate can never open; make it `soft` with a derive-or-ask step, or add the "
+                    f"skill that writes it",
+                )
+
+
 # --------------------------------------------------------------------------
 # schemas — a machine file's JSON Schema sits beside the node that describes it
 # --------------------------------------------------------------------------
@@ -1728,6 +1762,9 @@ def check_skills(
     # 7b. a hard gate on an artifact a project type never grows — needs every skill's declarations,
     #     so it is a second pass too.
     _check_not_grown_gates(repo, skill_fms, rep)
+
+    # 7b2. a hard gate is produced by some skill or is a project-root prerequisite.
+    _check_hard_gates_have_producer(skill_fms, rep)
 
     # 7c. a node's owner and the skills' produces agree from both ends.
     _check_owners(nodes, skill_fms, rep)

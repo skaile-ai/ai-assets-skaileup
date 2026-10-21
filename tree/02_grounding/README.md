@@ -21,4 +21,4 @@ artifact that owns it.
 - `research/` — topic findings written by `concept-research`.
 - `seeds/` — material the user dropped in; nothing generates it.
 - `standards/` — conventions discovered in an existing codebase.
-- `findings/` — graded evidence and raw material, with its catalogue.
+- `findings/` — graded evidence and raw material, with its catalogue; each evidence file carries the `source_sha` it was read at and can be re-derived per scope.

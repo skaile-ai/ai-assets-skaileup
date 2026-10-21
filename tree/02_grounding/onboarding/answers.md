@@ -50,15 +50,18 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
    once. A value already there changes only after the user confirms the change; new answers
    merge into the file rather than replacing it. A saved value is the default, and a question
    already answered is skipped.
-3. Read `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`) for `project_type` and the flow; confirm that value rather than
-   collecting it again.
+3. Read `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`) for `project_type` and confirm that value rather than
+   collecting it again. Absent, derive it where a repository exists (`_concept/02_grounding/findings/stack.md`, or
+   `concept-reverse` scoped to `stack`), mark it inferred, and put it into the step 4 batch; the confirmed value is
+   recorded as a `proposed` entry in `scope.yaml`.
 4. Ask the technology preferences — framework or language, data access and database, UI
-   component library, authentication, overall architecture pattern — one decision batch per message,
-   each answer with its `confidence`. Skip what the user has not decided rather than recording
+   component library, authentication, overall architecture pattern — as one decision batch
+   (`tree/README.md § How a skill runs`), each answer with its `confidence`; the stack findings, where they
+   exist, are the recommended answers. Skip what the user has not decided rather than recording
    a null.
 5. Ask whether the project has a brand (logo, palette, typography, style guide) and where its
-   files are, because `design-brand` extracts from them instead of proposing. On a flow that
-   renders a walkthrough, ask which `renderer` the project wants.
+   files are, because `design-brand` extracts from them instead of proposing. When the project will
+   render a walkthrough, ask which `renderer` it wants.
 6. Scan `02_grounding/seeds/` and show a table of file → artifact it seeds → grade; let the user
    correct it before recording, because a misclassified seed is ignored or treated as truth.
    Read the files where they sit and leave them there.

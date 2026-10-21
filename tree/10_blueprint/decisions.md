@@ -1,7 +1,7 @@
 ---
 path: _concept/10_blueprint/decisions.md
 summary: design-time decision records, append-only
-owner: [spec-feature, architecture-datamodel, experience-interaction]
+owner: [spec-feature, architecture-datamodel, experience-interaction, quality-design]
 may_propose: []
 ---
 

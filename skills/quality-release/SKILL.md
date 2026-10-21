@@ -12,15 +12,23 @@ metadata:
       - { id: journeys }
       - { id: brand-tokens }
       - { id: acceptance-criteria }
+      - { id: review }
+      - { id: grounding-findings }
       - { id: trace }
     produces:
       - { id: release-verdict, path: "_concept/11_build/release.yaml" }
   prerequisites:
     files:
-      - { path: "_concept/brief.md", gate: hard }
+      # Hard: `trace.yaml` is the build loop's machine-read record (features, slices, commits) the refusal in step 1 checks
+      # completeness against; it cannot be derived or asked for, and `build-implement` writes it.
       - { path: "_concept/11_build/trace.yaml", gate: hard }
+      - { path: "_concept/brief.md", gate: soft }
       - { path: "_concept/goals.md", gate: soft }
       - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
+      - { path: "_concept/04_journeys/stories.yaml", gate: soft }
+      - { path: "_concept/11_build/acceptance-criteria", gate: soft }
+      - { path: "_concept/11_build/reviews", gate: soft }
+      - { path: "_concept/02_grounding/findings", gate: soft }
 ---
 
 # quality-release

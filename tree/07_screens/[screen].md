@@ -2,7 +2,7 @@
 path: _concept/07_screens/<screen>.md
 summary: one screen on its own — floorplan, region bindings, tier overrides, elements
 owner: [experience-screen]
-may_propose: [spec-feature]
+may_propose: [spec-feature, quality-design]
 ---
 
 # _concept/07_screens/<screen>.md
@@ -46,7 +46,7 @@ Body: `# Screen: <Title>`, then these sections, in this order, under these exact
 5. `### Situations` — the states this screen is in (default, loading, error, empty, success), one bullet each; mention the seed scenarios `empty` and `edge_cases` here.
 6. `### UI Elements` — the catalogue of functional elements; each is declared in `elements:`.
 7. `### Template Data` — reference the seed's `populated` scenario (`tree/10_blueprint/datamodel/seed.md`); say "Not applicable" when no scenario fits.
-8. `### Open` — only while a choice waits for an owner: one bullet per question with a stable id (`Q-<screen_id>-<n>`), the recommendation and a one-line consequence.
+8. `### Open` — only while a choice waits for an owner: one bullet per question, `- Q-<screen_id>-<n>: <question> — Recommendation: <option> — <one-line consequence>`; `ops-review` reports a bullet without the `Recommendation:` label as an open question with no recommendation.
 
 ## Writing it
 

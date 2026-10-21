@@ -16,22 +16,22 @@ metadata:
       - { id: walkthrough, path: "_concept/09_mockup/walkthrough/" }
   prerequisites:
     files:
-      - { path: "_concept/07_screens", gate: hard, min_entries: 1 }
-      - { path: "_concept/04_journeys/stories.yaml", gate: hard }
-      - { path: "_concept/03_brand/brand.tokens.json", gate: hard }
+      - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
+      - { path: "_concept/04_journeys/stories.yaml", gate: soft }
+      - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
       - { path: "_concept/05_features", gate: soft, min_entries: 1 }
 ---
 
 # mockup-walkthrough
 
-Turns screen specs, journeys and brand tokens into a clickable site at `_concept/09_mockup/walkthrough/<renderer>/`: `index.html`, one page per screen and journey, a floorplan frame per screen, and a `manifest.json`. Each screen page shows the floorplan the screen chose at a wide and a narrow width, beside the collapsed spec panel. This skill stops at the built site; instrumenting it for comments is `mockup-annotate`.
+Turns screen specs, journeys and brand tokens into a clickable site at `_concept/09_mockup/walkthrough/<renderer>/`: `index.html`, one page per screen and journey, a floorplan frame per screen, and a `manifest.json`. Each screen page shows the floorplan the screen chose at a wide and a narrow width, beside the collapsed spec panel. Every gate is soft: absent journeys or tokens change what is drawn, and screens are the one input a walkthrough cannot do without. This skill stops at the built site; instrumenting it for comments is `mockup-annotate`.
 
 ## Route
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Resolve the renderer, once, before anything else** — `tree/09_mockup/walkthrough/README.md § Writing it` step 1. A flow the table does not list means an unscoped project: say so and stop.
-2. **Read the inputs into one in-memory model** — `tree/09_mockup/walkthrough/README.md § Writing it` step 2, with `§ Auto-slug fallback` and `§ items[] id derivation`; brand tokens flatten per `tree/03_brand/brand.tokens.md § Flattening to CSS`. Screens are flat (`07_screens/<screen>.md`, `shell.md` excluded). Each screen's floorplan resolves against the rulebook installed as contract `app-design-rulebook` (`rulebook/floorplans/<id>/`); an unresolved one gets the notice and a `no_floorplan` warning, per `§ Floorplan frame`.
+1. **Resolve the renderer, once, before anything else** — `tree/09_mockup/walkthrough/README.md § Writing it` step 1. The renderer follows `answers.json`, else `depth`, and a missing `depth` reads `standard`.
+2. **Read the inputs into one in-memory model, resolving what is missing first** — `tree/09_mockup/walkthrough/README.md § Writing it` step 2, with `§ Auto-slug fallback` and `§ items[] id derivation`; brand tokens flatten per `tree/03_brand/brand.tokens.md § Flattening to CSS`. Screens are flat (`07_screens/<screen>.md`, `shell.md` excluded). Each screen's floorplan resolves against the rulebook installed as contract `app-design-rulebook` (`rulebook/floorplans/<id>/`); an unresolved one gets the notice and a `no_floorplan` warning, per `§ Floorplan frame`.
 3. **Read that renderer's references, and only those, then render** — `skills/mockup-walkthrough/references/<renderer>/RENDERER.md` expands `tree/09_mockup/walkthrough/README.md § Writing it` step 3. The other renderer's directory stays closed: its hrefs, build step and styling would leak into the output. Each directory also holds a `validator.py` (step 5's check) and `tests/` with a hand-curated expected snapshot, worth reading when a rule is ambiguous.
 4. **Write `manifest.json`** — `tree/09_mockup/walkthrough/README.md § Manifest schema`, written per `§ Writing it` step 4: declared targets echoed verbatim, arrays sorted, atomic write.
 5. **Validate** — `tree/09_mockup/walkthrough/README.md § Writing it` step 5: `python skills/mockup-walkthrough/references/<renderer>/validator.py _concept/09_mockup/walkthrough/<renderer>`, with `--rulebook <contracts>/app-design-rulebook` when the rulebook is not at the default location. An unknown floorplan, a region outside it or a posture or density outside the enums fails the run.

@@ -13,7 +13,7 @@ value as a proposal: only `extracted` values are what the code says, and `inferr
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`, with graded fields for:
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: brand` and the freshness fields (`paths`, `source_sha`, `last_updated`), and graded fields for:
 
 - **Colours** — primary, secondary, accent, background, surface, text, muted text, border, and
   the semantic set (success, warning, error). A palette expressed as a scale (`50`…`900`) gives
@@ -46,4 +46,4 @@ Frontmatter per `tree/02_grounding/findings/README.md`, with graded fields for:
 
 ## Checks
 
-Every field is listed and graded; colours come from a cited theme source or are `needs_review`.
+Every field is listed and graded; colours come from a cited theme source or are `needs_review`; `scope`, `paths`, `source_sha` and `last_updated` are set, and an entry outside `paths` that predates `source_sha` carries `as_of`.

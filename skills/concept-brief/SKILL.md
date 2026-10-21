@@ -28,14 +28,14 @@ metadata:
 
 # concept-brief
 
-The two root files of a concept — `brief.md` (comparables included as a section) and `goals.md` — and nothing else. It writes what the user actually said and hands off to `concept-glossary`.
+The two root files of a concept — `brief.md` (comparables included as a section) and `goals.md` — and nothing else. It writes what the user actually said; pinning the words they settled is `concept-glossary`'s.
 
 ## Route
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Draft the brief and its comparables** — `tree/brief.md § Drafting the brief`. Covers reading `02_grounding/`, seeding from `brief-seeds.md`, the pitch and `## Comparables`; nothing is approved yet.
-2. **Draft the goals** — `tree/goals.md`. Run it after the pitch exists and before any approval, so the user sees the goals.
-3. **Approve both and hand off** — `tree/brief.md § Approving both files`. One yes covers `brief.md` and `goals.md`.
+1. **Resolve the facts and draft the brief** — `tree/brief.md § Drafting the brief`, steps 1–4. Read `02_grounding/`; a missing `brief-seeds.md` for a built project is derived by a scoped `concept-reverse` (`brief`); the user's description, `depth` from `scope.yaml` (asked in the same batch when absent, per `tree/01_meta/scope.md`) and the gaps go in one batch (`tree/README.md § How a skill runs`). Nothing is approved yet.
+2. **Draft the goals** — `tree/goals.md`. Draft them after the pitch exists and before any approval, so the user sees the goals.
+3. **Approve both files** — `tree/brief.md § Approving both files`. One yes covers `brief.md` and `goals.md`.
 
 **Done when** `brief.md` (with its `## Comparables` section) and `goals.md` are on disk and the user has said yes to both, which `approved:` in their frontmatter records.

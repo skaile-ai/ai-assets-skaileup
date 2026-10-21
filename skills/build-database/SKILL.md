@@ -12,8 +12,10 @@ metadata:
     produces: []
   prerequisites:
     files:
-      - { path: "_concept/10_blueprint/datamodel", gate: soft, min_entries: 1 }
-      - { path: "_concept/10_blueprint/techstack.md", gate: hard }
+      # Hard: `model.json` is the machine-read model this skill translates; it cannot be derived from
+      # `model.dbml` (a generated render) or asked for field by field, and `architecture-datamodel` writes it.
+      - { path: "_concept/10_blueprint/datamodel/model.json", gate: hard }
+      - { path: "_concept/10_blueprint/techstack.md", gate: soft }
 ---
 
 # build-database
@@ -22,12 +24,12 @@ One pass over `_concept/10_blueprint/datamodel/`: the schema first, then the see
 
 Almost all of it is stack-neutral. The rest lives in two sections of the chosen template — `## Migration / ORM` for the schema file and the migrate commands, `## Seed` for the seed layout and run command — which this skill cites rather than restates. Types, conventions and validation are `tree/10_blueprint/datamodel/README.md § Materialising the database`; the scenarios and their rules are `tree/10_blueprint/datamodel/seed.md`; the model's own format is `tree/10_blueprint/datamodel/model.md`.
 
-It is optional by flow: `appbuilder-mvp` designs no data model and grows its schema inside `build-implement`, so a missing migration there is not a gap.
+Without `techstack.md` the target is derived or asked (step 2), so the only hard input is the model.
 
 ## Steps
 
-1. **Find the model, then cross-check its two halves.** Without `_concept/10_blueprint/datamodel/` the project type grows no data model: report that and stop, writing no schema and no seed. Otherwise `model.dbml` is authoritative for structure, `model.json` for relationship and enum metadata. Name every disagreement to the user rather than preferring one — a divergence is somebody's hand edit, and the wrong pick propagates into schema and seeds at once.
-2. **Resolve the target from the template.** `_concept/10_blueprint/techstack.md` names `tech_stack_skill`; that template's `## Migration / ORM` gives the schema file, its location and the migrate commands, and its `seed_format` atom (`prisma`, `drizzle` or `sql`) selects the layout described in its `## Seed`. Where a `prog-expert-<orm>` skill is installed, consult it for idiomatic patterns; nothing here waits on one.
+1. **Cross-check the model's two halves.** `model.json` is present (the gate); `model.dbml`, when present, is authoritative for structure and `model.json` for relationship and enum metadata. Name every disagreement to the user rather than preferring one — a divergence is somebody's hand edit, and the wrong pick propagates into schema and seeds at once.
+2. **Resolve the target from the template, deriving or asking when the stack is unrecorded** (`tree/README.md § How a skill runs`, rule 1). `_concept/10_blueprint/techstack.md` names `tech_stack_skill`; without it read `_concept/02_grounding/findings/stack.md` (`concept-reverse` scoped `stack` fills it from the code), then ask for the template in one batch with whatever else is open. That template's `## Migration / ORM` gives the schema file, its location and the migrate commands, and its `seed_format` atom (`prisma`, `drizzle` or `sql`) selects the layout described in its `## Seed`. Where a `prog-expert-<orm>` skill is installed, consult it for idiomatic patterns; nothing here waits on one.
 3. **Translate every semantic type** through the translation table in `tree/10_blueprint/datamodel/README.md § Materialising the database`; a semantic type left in the output fails at the migration tool.
 4. **Apply the conventions the model leaves out**, from the same section: expand `standard_fields`, snake_case the columns, take `on_delete` from `model.json` (SET NULL where unset), give every `m2m` its junction table with the two foreign keys, and generate `o2m` from its `m2o`.
 5. **Validate the schema six ways, then migrate** — the six checks in the same section. Run the migrate command, confirming first when the target is anything but a local development database.

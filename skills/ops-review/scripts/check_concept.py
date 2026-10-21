@@ -21,6 +21,16 @@ Stdlib + PyYAML only. Checks:
   6. ledger          `11_build/acceptance-criteria/<featureset>/<feature>.ac.md` rows are checkbox
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
                      `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
+  7. stale proposals every `proposed_on:` date (or `proposed by <skill>, <date>` marker) in an artifact
+                     that is older than `--stale-days` (default 14) is reported with the owner skill that
+                     promotes or rejects it
+  8. open questions  every `## Open` row of `APP-DESIGN.md` and every `### Open` bullet of a screen spec
+                     carries a recommendation; an `[open Qn]` entry has its row
+  9. hard gates      `unproduced_hard_gates()` — a `hard` gate in a sibling skill's frontmatter that no
+                     skill produces (run from `main` over the skills directory the script sits in)
+
+A screen whose `floorplan:` is missing or empty is reported under 2; the floorplan is the one fact the
+walkthrough and `quality-design` read it by.
 
 The tree's legal first-level entries are parsed from the fenced tree in `tree/README.md` (a
 ```text fence opening `_concept/` plus a summary column) when the script sits in the
@@ -31,6 +41,7 @@ the summary column is ignored — and a directory's trailing `/` is dropped.
 """
 from __future__ import annotations
 
+import argparse
 import datetime
 import json
 import re
@@ -67,6 +78,23 @@ ID_RE = re.compile(r"^AC-([a-z0-9][a-z0-9_-]*)-(\d{2})$")
 CITE_RE = re.compile(r"AC-[A-Za-z0-9_-]+")
 ROW_RE = re.compile(r"^- \[(PASS|FAIL| )\] (\S+)(?: — (.*))?$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
+PROPOSED_ON_RE = re.compile(r"proposed_on:\s*[\"']?(\d{4}-\d{2}-\d{2})")
+PROPOSED_BY_RE = re.compile(r"proposed by [a-z][a-z0-9-]*, (\d{4}-\d{2}-\d{2})")
+STALE_DAYS = 14
+# Parts that quote proposals without holding one: findings carry code evidence, the decision
+# records and the candidate report cite entries they already settled or reported.
+PROPOSAL_SKIP = ("02_grounding/", "10_blueprint/decisions.md", "11_build/decisions.md",
+                 "11_build/design-candidates.md")
+PROPOSAL_OWNERS = (  # display-path prefix -> the skill that promotes or rejects a proposal there
+    ("APP-DESIGN.md", "experience-interaction"),
+    ("_concept/glossary.md", "concept-glossary"),
+    ("_concept/07_screens/shell.md", "experience-shell"),
+    ("_concept/07_screens/", "experience-screen"),
+    ("_concept/05_features/", "spec-feature"),
+    ("_concept/01_meta/scope.yaml", "skaileup"),
+    ("_concept/10_blueprint/datamodel/", "architecture-datamodel"),
+)
+NO_RECOMMENDATION = {"", "-", "—", "?", "tbd", "TBD", "n/a"}
 
 
 def root_entries(here: Path) -> list[str]:
@@ -153,7 +181,8 @@ def story_ids(stories: dict, report) -> tuple[set[str], set[str]]:
     return defined, {j["id"] for j in journeys if isinstance(j.get("id"), str)}
 
 
-def check(concept: Path, here: Path) -> list[str]:
+def check(concept: Path, here: Path, today: datetime.date | None = None,
+          stale_days: int = STALE_DAYS) -> list[str]:
     problems: list[str] = []
 
     def report(path, msg):
@@ -225,6 +254,9 @@ def check(concept: Path, here: Path) -> list[str]:
             report(rel(p), "`status:` belongs to dossiers only — a stale template wrote it")
         if kind.get(p) == "screen" and "screen_id" in data and data["screen_id"] != p.stem:
             report(rel(p), f"`screen_id` {data['screen_id']!r} does not match the file name {p.stem!r}")
+        if kind.get(p) == "screen" and "floorplan" in data and not (
+                isinstance(data["floorplan"], str) and data["floorplan"].strip()):
+            report(rel(p), "`floorplan` is empty — name one floorplan id of `rulebook/floorplans/`")
 
     # 3. cross-links
     for f in features:
@@ -290,7 +322,120 @@ def check(concept: Path, here: Path) -> list[str]:
                 parts = [x.strip() for x in (evidence or "").split(" · ")]
                 if len(parts) != 4 or not all(parts) or not COMMIT_RE.match(parts[2]) or not is_date(parts[3]):
                     report(where, "evidence must be `<pointer> · <evaluator> · <commit> · <date>`")
+
+    # 7-8. proposals and open questions
+    root = concept.parent
+    problems += stale_proposals(concept, root, today or datetime.date.today(), stale_days)
+    problems += open_question_problems(concept, root, screens + [concept / "07_screens/shell.md"])
     return problems
+
+
+def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int) -> list[str]:
+    """One line per `proposed` entry whose proposal date is more than `days` days old."""
+    out: list[str] = []
+    files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
+             if p.is_file() and p.suffix in (".md", ".yaml", ".yml", ".json")]
+    files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(PROPOSAL_SKIP)]
+    if (root / "APP-DESIGN.md").is_file():
+        files.append(("APP-DESIGN.md", root / "APP-DESIGN.md"))
+    for shown, p in files:
+        owner = next((o for prefix, o in PROPOSAL_OWNERS if shown.startswith(prefix)), "its owner skill")
+        for n, line in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE):
+                for m in pattern.finditer(line):
+                    try:
+                        age = (today - datetime.date.fromisoformat(m.group(1))).days
+                    except ValueError:
+                        continue
+                    if age > days:
+                        out.append(f"{shown}:{n}: proposed entry from {m.group(1)} is {age} days old "
+                                   f"(limit {days}) — promote or reject it with {owner}")
+    return out
+
+
+def open_question_problems(concept: Path, root: Path, screens: list[Path]) -> list[str]:
+    """Open questions without a recommendation: `APP-DESIGN.md` `## Open` rows (and `[open Qn]`
+    entries with no row) and the `### Open` bullets of screen specs. A bullet has one when it
+    contains the word "recommend"."""
+    out: list[str] = []
+    app = root / "APP-DESIGN.md"
+    if app.is_file():
+        lines = app.read_text(encoding="utf-8", errors="replace").splitlines()
+        rows: set[str] = set()
+        in_open = False
+        for n, line in enumerate(lines, 1):
+            if line.startswith("## "):
+                in_open = line[3:].strip().lower() == "open"
+            elif in_open and line.startswith("|"):
+                cells = [c.strip() for c in line.strip().strip("|").split("|")]
+                if re.fullmatch(r"Q\d+", cells[0]):
+                    rows.add(cells[0])
+                    if len(cells) < 4 or cells[3] in NO_RECOMMENDATION:
+                        out.append(f"APP-DESIGN.md:{n}: open question {cells[0]} has no recommendation "
+                                   "— experience-interaction writes one beside every question")
+        for n, line in enumerate(lines, 1):
+            for qid in re.findall(r"\[open (Q\d+)\]", line):
+                if qid not in rows:
+                    out.append(f"APP-DESIGN.md:{n}: [open {qid}] has no row in `## Open` "
+                               "— experience-interaction writes the question and its recommendation")
+    for s in screens:
+        if not s.is_file():
+            continue
+        shown = f"_concept/{s.relative_to(concept).as_posix()}"
+        bullets: list[tuple[int, str]] = []
+        in_open = False
+        for n, line in enumerate(s.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            if line.startswith("#"):
+                in_open = line.lstrip("#").strip().lower() == "open"
+            elif in_open and line.startswith("- "):
+                bullets.append((n, line))
+            elif in_open and bullets and line.strip():
+                bullets[-1] = (bullets[-1][0], bullets[-1][1] + " " + line.strip())
+        for n, text in bullets:
+            if not re.search("recommend", text, re.I):
+                out.append(f"{shown}:{n}: open question without a recommendation "
+                           "— experience-screen states one beside every question")
+    return out
+
+
+def _paths_overlap(a: str, b: str) -> bool:
+    """Equal, or one a directory prefix of the other; a `<placeholder>` segment matches any one."""
+    pa, pb = a.strip("/").split("/"), b.strip("/").split("/")
+    return all(x == y or ("<" in x and ">" in x) or ("<" in y and ">" in y) for x, y in zip(pa, pb))
+
+
+def unproduced_hard_gates(skills_dir: Path) -> list[str]:
+    """A `hard` gate in one skill's frontmatter that no *other* skill produces: a skill that can
+    never open, reported as `skills/<name>/SKILL.md: …`. A gate outside `_concept/` other than
+    `APP-DESIGN.md` (`package.json`) belongs to the project, not to a skill."""
+    produced: dict[str, list[str]] = {}
+    gates: dict[str, list[str]] = {}
+    for skill in sorted(skills_dir.glob("*/SKILL.md")):
+        data, _ = frontmatter(skill)
+        meta = (data or {}).get("metadata") or {}
+        arts = meta.get("artifacts") or {}
+        produced[skill.parent.name] = listed_paths_raw(arts.get("produces"))
+        gates[skill.parent.name] = [
+            str(g["path"]) for g in (meta.get("prerequisites") or {}).get("files") or []
+            if isinstance(g, dict) and g.get("gate") == "hard" and isinstance(g.get("path"), str)
+        ]
+    if len(produced) < 2:
+        return []
+    out = []
+    for name, paths in gates.items():
+        for gate in paths:
+            if not gate.startswith("_concept/") and gate != "APP-DESIGN.md":
+                continue
+            if not any(_paths_overlap(gate, p) for other, ps in produced.items() if other != name for p in ps):
+                out.append(f"skills/{name}/SKILL.md: hard gate on {gate} — no skill produces it; "
+                           "make the gate soft or add the skill that writes it")
+    return out
+
+
+def listed_paths_raw(value) -> list[str]:
+    """`path` of each `{ id, path }` entry, `_concept/` prefix kept."""
+    return [i["path"] for i in value if isinstance(i, dict) and isinstance(i.get("path"), str)] \
+        if isinstance(value, list) else []
 
 
 def report_id(cid, slug, defined, stories, owned, where, report):
@@ -310,15 +455,24 @@ def report_id(cid, slug, defined, stories, owned, where, report):
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 2:
-        print("usage: check_concept.py <project-root | _concept-dir>", file=sys.stderr)
+    parser = argparse.ArgumentParser(prog="check_concept.py", add_help=False)
+    parser.add_argument("project", nargs="?")
+    parser.add_argument("--stale-days", type=int, default=STALE_DAYS)
+    try:
+        args = parser.parse_args(argv[1:])
+    except SystemExit:
+        args = None
+    if args is None or args.project is None:
+        print("usage: check_concept.py <project-root | _concept-dir> [--stale-days N]", file=sys.stderr)
         return 2
-    root = Path(argv[1])
+    root = Path(args.project)
     concept = root / "_concept" if (root / "_concept").is_dir() else root
     if not concept.is_dir():
         print(f"{root}: no _concept/ directory", file=sys.stderr)
         return 2
-    problems = check(concept, Path(__file__).resolve())
+    here = Path(__file__).resolve()
+    problems = check(concept, here, stale_days=args.stale_days)
+    problems += unproduced_hard_gates(here.parents[2])
     print("\n".join(problems))
     return 1 if problems else 0
 

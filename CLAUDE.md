@@ -25,7 +25,7 @@ in via `skaile.yaml`.
   [ADR 0017](./docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md) and
   `tree/README.md`.
 - **A skill is a route.** Its body is the ordered list of nodes it visits — at most 60 lines
-  including frontmatter; the six skills with `produces: []` keep a compressed `## Steps`, at
+  including frontmatter; the five skills with `produces: []` keep a compressed `## Steps`, at
   most 100. See [`docs/skill-template.md`](./docs/skill-template.md).
 - **A node follows one shape**: frontmatter `path` / `summary` / `owner` / `may_propose`, then intro,
   `## Format`, `## Writing it`, `## Checks`. No `MUST`/`NEVER` block — constraints are stated

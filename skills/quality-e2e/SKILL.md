@@ -11,14 +11,17 @@ metadata:
       - { id: features }
       - { id: screens }
       - { id: datamodel }
+      - { id: grounding-findings }
     produces:
       - { id: acceptance-criteria, path: "_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md" }
   prerequisites:
     files:
       - { path: "_concept/04_journeys/stories.yaml", gate: soft }
-      - { path: "_concept/05_features", gate: hard, min_entries: 1 }
+      - { path: "_concept/05_features", gate: soft, min_entries: 1 }
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
       - { path: "_concept/10_blueprint/datamodel", gate: soft }
+      - { path: "_concept/02_grounding/findings", gate: soft }
+      - { path: "_concept/11_build/acceptance-criteria", gate: soft }
       - { path: "_concept/10_blueprint/openapi.yaml", gate: soft }
 ---
 
@@ -33,6 +36,6 @@ criterion ids, observed in the browser with `agent-browser`.
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Walk every journey and write its verdict into the ledger** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, the `quality-e2e` procedure (steps 1–8; step 2 covers an `api-service` with no UI journeys). A feature with no ledger stops the run and names `build-plan`.
+1. **Walk every journey and write its verdict into the ledger** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, the `quality-e2e` procedure (steps 1–8; step 2 derives the journey list from stories, specs or findings, and covers an `api-service` with no UI journeys). A feature with no ledger gets its verdict in the report and the name of the skill that creates rows.
 
 **Done when** every story in `stories.yaml` (or, without journeys, every derived path or documented operation) has been run with a pass or a fail and a criterion id behind it, the ledger rows this run evaluated carry that verdict and its evidence, and no dev server or browser session is left alive.

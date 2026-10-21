@@ -13,7 +13,7 @@ the user.
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`. One entry per route: the route, the file
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: routes` and the freshness fields (`paths`, `source_sha`, `last_updated`). One entry per route: the route, the file
 that defines it, and what a user does there, kept in user terms — the route is the citation, what
 the user can do is the finding. Routes recovered from component names because there is no router
 are `inferred`, and the report says so.
@@ -34,4 +34,4 @@ File-system routers give the route from the path; explicit routers give it from 
 
 ## Checks
 
-Every entry cites its defining file, which exists on disk.
+Every entry cites its defining file, which exists on disk; `scope`, `paths`, `source_sha` and `last_updated` are set, and an entry outside `paths` that predates `source_sha` carries `as_of`.

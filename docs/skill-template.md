@@ -21,8 +21,8 @@ metadata:                            # everything a machine reads sits under thi
     produces:                        # what this skill writes, mandatory; `[]` writes nothing
       - { id: <artifact>, path: "_concept/<part>/..." }   # resolves to a node
   prerequisites:
-    files:                           # the live gate: `_concept/`-prefixed, `hard` or `soft`
-      - { path: "_concept/<part>/...", gate: hard, min_entries: 1 }
+    files:                           # `_concept/`-prefixed; `soft` unless the skill parses the file's format
+      - { path: "_concept/<part>/...", gate: soft }
     inputs_optional:                 # the input dialog forge-concept renders
       - { id: <field>, label: "...", type: text }
 ---
@@ -48,7 +48,7 @@ and procedure for its part; this file holds only the order.
 **Ceiling 60 lines including frontmatter.** A skill that does not fit is a missing node or a
 procedure that belongs in one.
 
-**`produces: []` skills** (`skaileup`, `build-branch`, `build-scaffold`, `build-database`,
+**`produces: []` skills** (`build-branch`, `build-scaffold`, `build-database`,
 `quality-test`, `ops-review`) write nothing under `_concept/`, so no node holds their
 procedure. They carry `## Steps` in place of `## Route` — the compressed procedure, stated
 positively at the step each constraint binds — with a **ceiling of 100 lines**. They still
@@ -82,11 +82,20 @@ cite a node for every `_concept/` format they read.
   cites `tree/` declares `contract:@skaile-ai/shared-contracts` under `metadata.requires`
   (`scripts/check.py` rule `skill-declares-contract`, host fact `host:doctor-walks-requires`);
   that is the one permitted change, and it is why `build-branch`, `build-scaffold` and
-  `quality-standards` gained it. `concept-scope` also gains `_concept/README.md` in
+  `quality-standards` gained it. `skaileup` also lists `_concept/README.md` in
   `produces`.
 - **Every route item cites a node** by its repo-relative path under `tree/`, optionally
   followed by ` § ` and a `##`/`###` heading of that node — one citation per line, as in the
   example above; `scripts/check.py` resolves both the file and the heading.
+- **`hard` is for a machine-read format the skill can neither derive nor ask for** — the
+  data model `model.json` for `build-database`, `APP-DESIGN.md` for `quality-interaction`
+  ([ADR 0019](./adr/0019-scoped-fact-resolution.md)). Every other input is `soft`, and the
+  route step that reads it is a derive-or-ask step, so a missing input is never a stop.
+  `scripts/check.py` rule `hard-gate-has-producer` fails a hard gate that no skill produces
+  and that is not a project-root prerequisite.
+- **An input is declared once per field.** `metadata.prerequisites.files` holds the paths and
+  `metadata.artifacts.requires` the ids, and hosts read both; each names an input once, and
+  `requires` lists only artifacts the route reads. No id there contradicts a `soft` gate.
 - **A `soft` gate renders nowhere** — it is excluded from `satisfied` and never warned on. If
   its absence changes what the skill does, the step says so; the frontmatter alone tells the
   human nothing.

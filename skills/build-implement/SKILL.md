@@ -11,7 +11,6 @@ metadata:
       - { id: acceptance-criteria }
       - { id: features }
       - { id: screens }
-      - { id: datamodel }
       - { id: standards }
     produces:
       - { id: slice-index, path: "_concept/11_build/slices/<slice_id>/index.md" }
@@ -19,8 +18,11 @@ metadata:
       - { id: trace, path: "_concept/11_build/trace.yaml" }
   prerequisites:
     files:
+      # Hard: `plan.md` is the machine-read plan (feature, blocked_by, rows, criterion ids) the slice is
+      # built from; it cannot be derived from the code or asked for field by field, and `build-plan` writes it.
       - { path: "_concept/11_build/slices", gate: hard, min_entries: 1 }
-      - { path: "_concept/05_features", gate: hard, min_entries: 1 }
+      - { path: "_concept/05_features", gate: soft, min_entries: 1 }
+      - { path: "_concept/11_build/acceptance-criteria", gate: soft }
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
       - { path: "_concept/02_grounding/standards/index.yml", gate: soft }
       - { path: "_concept/10_blueprint/openapi.yaml", gate: soft }
@@ -30,7 +32,7 @@ metadata:
 # build-implement
 
 Builds one vertical slice and lands it. What it knows about the work is `plan.md` and the
-artifacts that plan names; what it knows about how to build is `tdd` and `code-review`, which
+artifacts that plan names; a spec or screen the plan names but the project lacks is asked for, not a stop. What it knows about how to build is `tdd` and `code-review`, which
 it calls and does not restate. Both have to be installed: this skill stops and names the
 missing one rather than improvising a test loop or a review.
 

@@ -14,7 +14,8 @@ and audience are what source code never states, so a thin README yields thin see
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`; the body has one section each for pitch,
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: brief` and the freshness
+fields (`paths`, `source_sha`, `last_updated`); the body has one section each for pitch,
 audience, problem, hero flow, roadmap, constraints and comparables, every value graded.
 
 ## Writing it
@@ -28,4 +29,4 @@ audience, problem, hero flow, roadmap, constraints and comparables, every value 
 
 ## Checks
 
-Every value is graded and cites the file that backs it.
+Every value is graded and cites the file that backs it; `scope`, `paths`, `source_sha` and `last_updated` are set, and an entry outside `paths` that predates `source_sha` carries `as_of`.

@@ -11,7 +11,7 @@ The census of how the code lets a user work today: the surfaces, editors, finder
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`. Every value carries a repository-root `file:line` citation and its grade in `extraction_confidence`. Sections:
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: interaction` and the freshness fields (`paths`, `source_sha`, `last_updated`). Every value carries a repository-root `file:line` citation and its grade in `extraction_confidence`. Sections:
 
 - **Surfaces** — one row per overlay (modal, drawer, popover, palette): purpose (editor, confirm, picker, info), host component, trigger.
 - **Editors** — per object type, the component that owns the field set and the submit, and its surface kind (modal, drawer, popover, inline, page editor).
@@ -137,3 +137,4 @@ A bare file name (`Abschnitt.vue:12`) reports as missing — that is the point: 
 - Every value carries a repository-root `file:line` that exists and a grade.
 - No surface in the census comes from vendored UI-library code alone.
 - Every rule of P14–P17 has a row or a `needs_review` entry naming its grep.
+- `scope`, `paths`, `source_sha` and `last_updated` are set, and a row outside `paths` that predates `source_sha` carries `as_of`.

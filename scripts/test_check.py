@@ -14,6 +14,7 @@ exactly one error. The four landed flows are the positive fixture for the flow r
 from __future__ import annotations
 
 import ast
+import datetime
 import json
 import re
 import sys
@@ -675,10 +676,11 @@ def test_hard_gate_with_no_upstream_writer(tmp_path):
     """The writer is in the flow and writes something else: the gate has nothing to open it."""
     root = gate_repo(tmp_path, writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n')
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
-    only(root, "no upstream node produces it")
-    assert "node 'b' runs skill 'spec-feature'" in errors(root)[0]
-    assert "'_concept/07_screens'" in errors(root)[0]
-    assert "flow 'tiny'" in errors(root)[0]
+    among(root, "no upstream node produces it", "hard-gate-has-producer")
+    flow_msg = next(e for e in errors(root) if "no upstream node produces it" in e)
+    assert "node 'b' runs skill 'spec-feature'" in flow_msg
+    assert "'_concept/07_screens'" in flow_msg
+    assert "flow 'tiny'" in flow_msg
 
 
 def test_hard_gate_with_the_writer_upstream_is_clean(tmp_path):
@@ -729,7 +731,7 @@ def test_hard_gate_on_a_sibling_path_is_not_met(tmp_path):
         writes='    produces:\n      - { id: shell, path: "_concept/07_screens/shell.md" }\n',
     )
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
-    only(root, "no upstream node produces it")
+    among(root, "no upstream node produces it", "hard-gate-has-producer")
 
 
 def test_soft_gate_needs_no_upstream_writer(tmp_path):
@@ -748,9 +750,10 @@ def test_hard_root_artifact_gate_with_no_upstream_writer(tmp_path):
         writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n',
     )
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
-    only(root, "no upstream node produces it")
-    assert "'APP-DESIGN.md'" in errors(root)[0]
-    assert "node 'b' runs skill 'spec-feature'" in errors(root)[0]
+    among(root, "no upstream node produces it", "hard-gate-has-producer")
+    flow_msg = next(e for e in errors(root) if "no upstream node produces it" in e)
+    assert "'APP-DESIGN.md'" in flow_msg
+    assert "node 'b' runs skill 'spec-feature'" in flow_msg
 
 
 def test_hard_root_artifact_gate_with_an_upstream_writer(tmp_path):
@@ -777,8 +780,8 @@ def test_hard_root_artifact_gate_is_matched_exactly(tmp_path):
     sync_owners(root)
     assert check._paths_overlap("APP-DESIGN.md", "_concept/<file>.md")
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
-    only(root, "no upstream node produces it")
-    assert "'APP-DESIGN.md'" in errors(root)[0]
+    among(root, "no upstream node produces it", "hard-gate-has-producer")
+    assert any("'APP-DESIGN.md'" in e for e in errors(root))
 
 
 def test_prerequisite_on_the_root_artifact_resolves_to_its_node(tmp_path):
@@ -804,6 +807,46 @@ def test_project_root_gate_is_not_held_to_an_upstream_writer(tmp_path):
     """`package.json` is the project's, not a node's — the rule is about `_concept/` artifacts."""
     root = gate_repo(tmp_path, gate="package.json")
     write_flow(root, gate_flow("spec-feature", "zeta-producer"))
+    assert errors(root) == []
+
+
+# -- hard gates need a producer anywhere in the collection ------------------------
+
+def test_hard_gate_with_no_producer_in_the_collection(tmp_path):
+    """No flow involved: a hard gate on a path no skill writes can never open."""
+    root = gate_repo(tmp_path, writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n')
+    only(root, "has a `hard` prerequisite on '_concept/07_screens', which no skill declares")
+    assert "skills/spec-feature" in errors(root)[0]
+    assert "hard-gate-has-producer" in errors(root)[0]
+
+
+def test_hard_gate_with_a_producer_in_the_collection_is_clean(tmp_path):
+    root = gate_repo(tmp_path)
+    assert errors(root) == []
+
+
+def test_hard_root_artifact_gate_needs_a_producer_in_the_collection(tmp_path):
+    """`APP-DESIGN.md` is both a root prerequisite and a root artifact: the artifact reading wins,
+    so the gate needs the skill that writes it."""
+    root = gate_repo(
+        tmp_path, gate="APP-DESIGN.md", writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+    )
+    only(root, "has a `hard` prerequisite on 'APP-DESIGN.md'")
+    set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n', "zeta-producer")
+    assert errors(root) == []
+
+
+def test_hard_project_root_prerequisite_needs_no_producer(tmp_path):
+    """`package.json` is the project's own: no skill writes it and the gate is still legal."""
+    root = gate_repo(
+        tmp_path, gate="package.json", writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+    )
+    assert errors(root) == []
+
+
+def test_soft_gate_needs_no_producer_in_the_collection(tmp_path):
+    root = gate_repo(tmp_path, writes='    produces:\n      - { id: brief, path: "_concept/brief.md" }\n')
+    set_gate(root, "spec-feature", "soft")
     assert errors(root) == []
 
 
@@ -990,12 +1033,12 @@ def test_flow_name_must_slugify_to_its_id(tmp_path):
 
 
 def test_a_title_cased_name_slugifies_to_its_id(tmp_path):
-    """The rule is the slug, not string equality — `Appbuilder MVP` is a legal title for
-    `appbuilder-mvp`, and every landed flow is named that way."""
+    """The rule is the slug, not string equality — `Skaileup Greenfield` is a legal title for
+    `skaileup-greenfield`, and every landed flow is named that way."""
     root = write_repo(tmp_path)
     flow = good_flow()
-    flow["id"] = "appbuilder-mvp"
-    flow["name"] = "Appbuilder MVP"
+    flow["id"] = "skaileup-greenfield"
+    flow["name"] = "Skaileup Greenfield"
     write_flow(root, flow)
     assert errors(root) == []
 
@@ -1087,7 +1130,7 @@ def test_flow_needs_globals(tmp_path):
 def test_meta_category_is_dead(tmp_path):
     root = write_repo(tmp_path)
     flow = good_flow()
-    flow["meta"]["category"] = "appbuilder"
+    flow["meta"]["category"] = "greenfield"
     write_flow(root, flow)
     only(root, "carries `meta.category:`")
 
@@ -1429,9 +1472,9 @@ def test_node_listing_a_writer_that_produces_nothing_there(tmp_path):
 def test_the_root_readme_is_not_the_writer_of_what_it_does_not_name(tmp_path):
     """`_concept/` is a directory entry, but a root that covered every path would make any skill
     its writer; only the root README itself is documented there."""
-    root = write_repo(tmp_path, skills=("spec-feature", "concept-scope", "design-brand"))
-    set_produces(root, '    produces:\n      - { id: concept-readme, path: "_concept/README.md" }\n', "concept-scope")
-    edit_node(root, "README.md", "owner: [concept-scope]", "owner: [concept-scope, design-brand]")
+    root = write_repo(tmp_path, skills=("spec-feature", "skaileup", "design-brand"))
+    set_produces(root, '    produces:\n      - { id: concept-readme, path: "_concept/README.md" }\n', "skaileup")
+    edit_node(root, "README.md", "owner: [skaileup]", "owner: [skaileup, design-brand]")
     only(root, "lists owner 'design-brand', but no `produces` path of that skill resolves to this node")
     assert "writer-without-produces" in errors(root)[0]
     assert "tree/README.md" in errors(root)[0]
@@ -2859,7 +2902,7 @@ def test_check_concept_accepts_a_proposed_implements_entry_for_the_cross_link(tm
     screen = concept / "07_screens/login.md"
     screen.write_text(screen.read_text().replace(
         "  - 05_features/auth/login.md\n",
-        "  - { path: 05_features/auth/login.md, status: proposed, proposed_by: spec-feature, proposed_on: 2026-09-05 }\n",
+        f"  - {{ path: 05_features/auth/login.md, status: proposed, proposed_by: spec-feature, proposed_on: {datetime.date.today().isoformat()} }}\n",
     ))
     assert module.check(concept, script) == []
 
@@ -3179,6 +3222,196 @@ def test_a_schema_citing_a_section_that_exists_is_clean(tmp_path):
     write_schema(root, good_schema(description="Per `tree/brief.md § Writing it`."))
     cite_schema(root)
     assert errors(root) == []
+
+
+# --- check_concept.py: stale proposals, open questions, empty floorplans, unproduced hard gates ---
+
+def _today():
+    import datetime
+
+    return datetime.date(2026, 10, 21)
+
+
+def test_check_concept_reports_a_proposed_glossary_entry_older_than_the_limit(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "glossary.md").write_text(
+        "---\nlast_updated: 2026-09-05\napproved: 2026-09-05\n---\n\n"
+        "**Backorder** (`backorder`):\nAn Order line the stock cannot fill yet.\n"
+        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-09-01\n\n"
+        "**Refund** (`refund`):\nMoney returned.\n"
+        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-10-15\n",
+        encoding="utf-8",
+    )
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert problems[0].startswith("_concept/glossary.md:10:"), problems
+    assert "2026-09-01" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0]
+
+
+def test_check_concept_limit_is_a_parameter(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "glossary.md").write_text(
+        "---\nlast_updated: 2026-09-05\n---\n- proposed_on: 2026-10-15\n", encoding="utf-8"
+    )
+    assert module.check(concept, script, today=_today()) == []
+    problems = module.check(concept, script, today=_today(), stale_days=5)
+    assert len(problems) == 1 and "6 days old (limit 5)" in problems[0], problems
+
+
+def test_check_concept_reports_stale_proposals_in_frontmatter_scope_and_app_design(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    screen = concept / "07_screens/login.md"
+    screen.write_text(
+        screen.read_text().replace(
+            "  - 05_features/auth/login.md\n",
+            "  - 05_features/auth/login.md\n"
+            "  - { path: 05_features/auth/other.md, status: proposed, proposed_by: spec-feature, proposed_on: 2026-08-01 }\n",
+        )
+    )
+    (concept / "05_features/auth/other.md").write_text(
+        "---\npriority: must-have\npermissions: {}\nscreens:\n  - path: 07_screens/login.md\n"
+        "data_entities: [User]\nlast_updated: 2026-09-05\n---\n"
+    )
+    (concept / "01_meta").mkdir()
+    (concept / "01_meta/scope.yaml").write_text(
+        'proposed:\n  - { key: depth, value: sketch, proposed_by: concept-research, proposed_on: "2026-09-01", source: x }\n'
+    )
+    (tmp_path / "APP-DESIGN.md").write_text(
+        "---\napp: x\nupdated: 2026-09-05\n---\n## Open\n| id | question | options | recommendation |\n|---|---|---|---|\n"
+        "| Q1 | Undo? (proposed by quality-design, 2026-09-01, DC-1) | 10 s · none | 10 s |\n"
+    )
+    problems = module.check(concept, script, today=_today())
+    owners = {p.split(":")[0]: p for p in problems}
+    assert "experience-screen" in owners["_concept/07_screens/login.md"], problems
+    assert "skaileup" in owners["_concept/01_meta/scope.yaml"], problems
+    assert "experience-interaction" in owners["APP-DESIGN.md"], problems
+    assert len(problems) == 3, problems
+
+
+def test_check_concept_skips_decision_records_and_the_candidate_report(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    for rel in ("10_blueprint/decisions.md", "11_build/design-candidates.md"):
+        path = concept / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("- proposed_on: 2026-01-01\n", encoding="utf-8")
+    assert module.check(concept, script, today=_today()) == []
+
+
+APP_DESIGN_OPEN = (
+    "---\napp: x\nupdated: 2026-10-20\n---\n# App design – x\n## Buttons\n"
+    "- **BTN-1 Save.** Primary. *Why:* y. *Rules:* P17. [open Q2]\n"
+    "## Open\n| id | question | options | recommendation |\n|---|---|---|---|\n"
+    "| Q1 | Undo window? | 10 s · none |  |\n"
+    "| Q3 | Archive? | keep · drop | keep: cheap |\n"
+)
+
+
+def test_check_concept_reports_open_rows_without_a_recommendation_and_markers_without_a_row(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (tmp_path / "APP-DESIGN.md").write_text(APP_DESIGN_OPEN, encoding="utf-8")
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 2, problems
+    assert any(p.startswith("APP-DESIGN.md:11:") and "Q1 has no recommendation" in p for p in problems), problems
+    assert any(p.startswith("APP-DESIGN.md:7:") and "[open Q2] has no row" in p for p in problems), problems
+
+
+def test_check_concept_accepts_open_rows_with_recommendations(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (tmp_path / "APP-DESIGN.md").write_text(
+        APP_DESIGN_OPEN.replace("|  |", "| 10 s: cheap |").replace(" [open Q2]", ""), encoding="utf-8"
+    )
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_reports_a_screen_open_bullet_without_a_recommendation(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    screen = concept / "07_screens/login.md"
+    screen.write_text(
+        screen.read_text()
+        + "\n### Open\n\n- Q-login-1: Remember me? Cost: one more cookie.\n"
+        "- Q-login-2: Magic link?\n  Recommendation: yes. Consequence: no password reset.\n",
+        encoding="utf-8",
+    )
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert "_concept/07_screens/login.md:" in problems[0] and "without a recommendation" in problems[0]
+    assert "Q-login-1" not in problems[0]  # the line number, not the text, locates it
+
+
+def test_check_concept_reports_a_screen_with_an_empty_floorplan(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    screen = concept / "07_screens/login.md"
+    screen.write_text(screen.read_text().replace("floorplan: focused-task", "floorplan:"))
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert "07_screens/login.md" in problems[0] and "`floorplan` is empty" in problems[0]
+
+
+def _skill_dir(skills: Path, name: str, *, hard=(), soft=(), produces=()):
+    meta = {
+        "artifacts": {"produces": [{"id": f"a{i}", "path": p} for i, p in enumerate(produces)]},
+        "prerequisites": {"files": [{"path": p, "gate": "hard"} for p in hard]
+                          + [{"path": p, "gate": "soft"} for p in soft]},
+    }
+    (skills / name).mkdir(parents=True)
+    (skills / name / "SKILL.md").write_text(
+        f"---\nname: {name}\ndescription: d\nversion: '0.1.0'\nmetadata: {json.dumps(meta)}\n---\n", encoding="utf-8"
+    )
+
+
+def test_check_concept_reports_a_hard_gate_no_skill_produces(tmp_path):
+    module, _script = load_check_concept()
+    _skill_dir(tmp_path, "build-x", hard=["_concept/04_journeys/stories.yaml"])
+    _skill_dir(tmp_path, "concept-y", produces=["_concept/brief.md"])
+    problems = module.unproduced_hard_gates(tmp_path)
+    assert problems == [
+        "skills/build-x/SKILL.md: hard gate on _concept/04_journeys/stories.yaml — no skill produces it; "
+        "make the gate soft or add the skill that writes it"
+    ], problems
+
+
+def test_check_concept_accepts_hard_gates_a_skill_produces_or_the_project_owns(tmp_path):
+    module, _script = load_check_concept()
+    _skill_dir(tmp_path, "build-database", hard=["_concept/10_blueprint/datamodel/model.json", "package.json"])
+    _skill_dir(tmp_path, "architecture-datamodel", produces=["_concept/10_blueprint/datamodel/"])
+    _skill_dir(tmp_path, "quality-interaction", hard=["APP-DESIGN.md"])
+    _skill_dir(tmp_path, "experience-interaction", produces=["APP-DESIGN.md"])
+    _skill_dir(tmp_path, "ops-review", soft=["_concept/11_build/trace.yaml"])
+    assert module.unproduced_hard_gates(tmp_path) == []
+
+
+def test_check_concept_does_not_count_a_skill_as_its_own_producer(tmp_path):
+    module, _script = load_check_concept()
+    _skill_dir(tmp_path, "build-x", hard=["_concept/11_build/trace.yaml"], produces=["_concept/11_build/trace.yaml"])
+    _skill_dir(tmp_path, "other", produces=["_concept/brief.md"])
+    assert len(module.unproduced_hard_gates(tmp_path)) == 1
+
+
+def test_check_concept_matches_a_placeholder_segment_of_a_produced_path(tmp_path):
+    module, _script = load_check_concept()
+    _skill_dir(tmp_path, "build-plan", hard=["_concept/05_features/auth/login.md"])
+    _skill_dir(tmp_path, "spec-feature", produces=["_concept/05_features/<featureset>/<feature>.md"])
+    assert module.unproduced_hard_gates(tmp_path) == []
+
+
+def test_check_concept_skips_the_producer_check_for_a_single_installed_skill(tmp_path):
+    module, _script = load_check_concept()
+    _skill_dir(tmp_path, "ops-review", hard=["_concept/brief.md"])
+    assert module.unproduced_hard_gates(tmp_path) == []
+
+
+def test_check_concept_usage_errors_exit_2(tmp_path):
+    module, _script = load_check_concept()
+    assert module.main(["check_concept.py"]) == 2
+    assert module.main(["check_concept.py", str(tmp_path / "nope")]) == 2
 
 
 if __name__ == "__main__":

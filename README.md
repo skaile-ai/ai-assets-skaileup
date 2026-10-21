@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/skaile-ai/ai-assets-skaileup-tree/actions/workflows/ci.yml/badge.svg)](https://github.com/skaile-ai/ai-assets-skaileup-tree/actions/workflows/ci.yml)
 
-The skaileup skill collection as a mirror tree. Same product domains, skills and flows as
+The skaileup skill collection as a mirror tree. Same product domains and skills as
 [`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp) — design,
 spec, mockups, build, quality — with one shared vocabulary ([`CONTEXT.md`](./CONTEXT.md)) and
 a flat tree. What changes is where the instructions live: `tree/` mirrors the `_concept/`
@@ -18,7 +18,7 @@ over: projects opt in by pointing `skaile.yaml` at `-tree`.
 ```
 skills/<name>/SKILL.md     one directory per skill; the directory name IS the name: field
 tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes) — the contract asset
-flows/<id>/<id>.flow.yaml  the graph over skills — order lives here, not in the filesystem
+flows/<id>/<id>.flow.yaml  advisory recipes over skills — recommended order lives here, not in the filesystem
 templates/                 tech-stack references an implementation skill reads
 docs/                      skill and node templates, decision records
 CONTEXT.md                 the collection's glossary — the words skills use with each other
@@ -30,21 +30,23 @@ domains are **concept · design · experience · spec · mockup · architecture 
 quality · ops**.
 
 One skill carries no domain: [`skaileup`](./skills/skaileup/), the router. It is named for
-the collection because it is the door into it rather than a step inside one domain — run it
-when work arrives from outside a flow, or when a `_concept/` tree is opened cold and the
-next skill is unclear.
+the collection because it is the door into it rather than a step inside one domain — tell it
+what you want (an artifact, a screen, a question) and it names the skill that produces it
+and marks each input present, derivable from the code, or still to ask.
 
 ## How a project moves through it
 
-A **flow** is the unit a project is sized by: it names the skills and the order, so the
-graph carries the sequence and no prose restates it. Four ship:
+A **flow** is an advisory recipe: it names the skills and a recommended order, so the
+graph carries the sequence and no prose restates it. Nothing gates on it — any skill runs
+on its own, from the middle of a project. Two ship, and they are the two cards of the
+onboarding wizard:
 
 | Flow | For |
 |---|---|
-| [`appbuilder-mvp`](./flows/appbuilder-mvp/) | The lean end-to-end path — 11 skills, one feature-spec pass |
-| [`appbuilder-standard`](./flows/appbuilder-standard/) | A multi-user app in full — 31 skills, discovery through review |
-| [`skaileup-concept-only`](./flows/skaileup-concept-only/) | The conceptualization half alone, to hand a specified product on |
-| [`skaileup-concept-reverse`](./flows/skaileup-concept-reverse/) | A concept built out of an existing repository |
+| [`skaileup-greenfield`](./flows/skaileup-greenfield/) | A new app from idea to release grade — discovery, concept, blueprint, build, review |
+| [`skaileup-reverse`](./flows/skaileup-reverse/) | A concept built out of an existing repository |
+
+How deep a project goes is `depth` in `_concept/01_meta/scope.yaml`, asked when a skill first needs it.
 
 A host picks the flow (in forge-concept the profile key *is* the flow id) and runs its
 nodes; each writes into `_concept/`, the one artifact tree, whose instruction mirror is
@@ -54,9 +56,8 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 
 | skill | does |
 |---|---|
-| [skaileup](skills/skaileup/) | Routes cold work or an unclear next step to the right skill |
+| [skaileup](skills/skaileup/) | Routes a want to the skill that produces it, marks each input present, derivable or to ask, and records the project's flow, type and depth |
 | [concept-onboard](skills/concept-onboard/) | Captures what the user already knows: tech preferences, brand, material |
-| [concept-scope](skills/concept-scope/) | Records the flow the project is sized by and its project type |
 | [concept-brief](skills/concept-brief/) | Writes the pitch, goals and comparables everything downstream reads |
 | [concept-glossary](skills/concept-glossary/) | Pins the product's words — terms, definitions, words to avoid — right after the brief |
 | [concept-research](skills/concept-research/) | Grounds decisions in domain, competitor, audience and visual research |
@@ -86,6 +87,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [quality-review](skills/quality-review/) | Reviews a finished feature's code adversarially against its spec |
 | [quality-release](skills/quality-release/) | Grades the running app against its brief on seven axes before release |
 | [quality-interaction](skills/quality-interaction/) | Checks the code against APP-DESIGN.md and writes an interaction conformance verdict |
+| [quality-design](skills/quality-design/) | Scans the code for design candidates, grills the one the user picks and files proposed entries with a decision record |
 | [ops-review](skills/ops-review/) | Health-checks _concept/: cross-references and build/ship coverage |
 
 ## Writing a skill or a node

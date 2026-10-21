@@ -41,9 +41,13 @@ reader may be a different session, host or person.
 1. **Read the feature, then the code.** Load `_concept/05_features/<featureset>/<feature_slug>.md`
    (`tree/05_features/[featureset]/[feature].md`), every screen its `screens:` list names
    (`_concept/07_screens/<screen>.md`, `tree/07_screens/[screen].md`), and `_concept/10_blueprint/` for stack, architecture
-   and data model where they exist. Only the feature spec is required: without `techstack.md`
-   the slices name no framework and the first one has to establish it, and without a data
-   model every slice that touches storage carries its own schema decision. Where the project
+   and data model where they exist. Only the feature spec is required, because its criterion ids and
+   `screens:` list are what the plan and the ledger join on; a missing screen, stack or model is
+   derived or asked (`tree/README.md § How a skill runs`, rule 1): read `_concept/02_grounding/findings/`
+   (`stack.md`, `datamodel.md`, `screens.md`; `concept-reverse` scoped to them fills the gaps from the
+   code) and put what the findings leave open into step 5's batch. A slice plan with no recorded stack
+   names no framework and the first slice has to establish it; with no data model every slice that
+   touches storage carries its own schema decision. Where the project
    type grows no screens (`tree/01_meta/scope.md § Project types`), plan from the spec and the
    roster `_concept/05_features/featuresets.md`: the roster places the feature among its
    neighbours, the spec's behaviour and criteria give the seams, and a slice's UI row becomes

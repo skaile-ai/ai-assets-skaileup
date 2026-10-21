@@ -54,7 +54,7 @@ Entity names come from `_concept/glossary.md`: where the glossary has a term the
 5. **Approve in plain language** — what the app keeps track of and how those things relate, in the user's words, counts underneath. Write nothing before the user says yes; a model features, screens and seeds are about to name is cheapest to change while it is still a paragraph.
 6. **Write `model.json`, then render `model.dbml`** per `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first and applying `## Naming`. An `m2m` gets an explicit junction model; a raw SQL type here survives into a migration that will not apply.
 7. **Write `seed.json`** per `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`, with all four standard scenarios plus `permissions` when the journeys name distinct roles.
-8. **Hand a stack export to `build-database`.** When the user asks for a stack-specific schema, `build-database` writes it against these files rather than replacing them.
+8. **A stack export is `build-database`'s.** When the user asks for a stack-specific schema, `build-database` writes it against these files rather than replacing them.
 
 ## Materialising the database
 

@@ -26,7 +26,7 @@ The body restates the lists as prose sections: the one outcome that would mean t
 
 ## Writing it
 
-1. **Turn the vision into goals** after the pitch in `_concept/brief.md` exists, using the same depth and the same one-question-per-message rule. Write the draft without `approved:`.
+1. **Turn the vision into goals** after the pitch in `_concept/brief.md` exists, at the same depth and in the same decision batch (`tree/README.md § How a skill runs`, rule 2). Write the draft without `approved:`.
 2. **Tie each criterion to the brief.** Every criterion traces to the brief's problem or hero flow, and each is a number, a threshold or a yes/no condition.
 3. **Write `TBD` for what the user never implied.** A deadline or budget the user did not give is `TBD`; an invented one gets planned around.
 4. **Leave approval to the brief's.** The goals are shown with the brief and approved by the same yes (`tree/brief.md § Approving both files`), which writes `approved:` here.

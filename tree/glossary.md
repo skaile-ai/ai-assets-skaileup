@@ -2,7 +2,7 @@
 path: _concept/glossary.md
 summary: the ubiquitous language and its light ontology — terms, kinds, relations
 owner: [concept-glossary]
-may_propose: [concept-brief, experience-journeys, architecture-datamodel, spec-feature, experience-interaction, experience-shell, experience-screen, experience-behaviors, concept-reverse]
+may_propose: [concept-brief, experience-journeys, architecture-datamodel, architecture-system, spec-feature, experience-interaction, experience-shell, experience-screen, experience-behaviors, concept-reverse, quality-design]
 ---
 
 # _concept/glossary.md

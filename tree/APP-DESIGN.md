@@ -2,7 +2,7 @@
 path: APP-DESIGN.md
 summary: the app's interaction choices against the rulebook — objects, tiers, surfaces
 owner: [experience-interaction]
-may_propose: [experience-screen]
+may_propose: [experience-screen, quality-design]
 ---
 
 # APP-DESIGN.md
@@ -23,7 +23,7 @@ It holds *decisions*; findings, plans and questions stay in the output of the ru
 
 Each reader opens the file at its first step, as intent, before judging anything:
 
-- screen and feature skills (`spec-feature`, `experience-screen`) — take each editing task's host from the object map's editor cell, each attribute's tier from § Information hierarchy, posture and density from § Screen defaults. A screen that needs a host the map lacks is handed back to `experience-interaction`; the screen spec does not invent one.
+- screen and feature skills (`spec-feature`, `experience-screen`) — take each editing task's host from the object map's editor cell, each attribute's tier from § Information hierarchy, posture and density from § Screen defaults. A screen that needs a host the map lacks records it as a `proposed` object-map row and names `experience-interaction` as the owner of the decision; the screen spec does not invent one.
 - `experience-shell` — derives the destination list under § Navigation model and takes messages, editing and dialog patterns from the entries instead of deciding them.
 - `ops-review` — checks screen specs against the entries.
 - `quality-interaction`, `quality-design` — check the app's source against the entries.

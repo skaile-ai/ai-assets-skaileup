@@ -9,59 +9,47 @@ metadata:
   artifacts:
     requires:
       - { id: brief }
+      - { id: glossary }
       - { id: features }
       - { id: screens }
       - { id: datamodel }
+      - { id: techstack }
+      - { id: brand-tokens }
+      - { id: slice-plan }
       - { id: trace }
       - { id: app-design }
     produces: []
   prerequisites:
     files:
-      - { path: "_concept/brief.md", gate: hard }
+      - { path: "_concept/brief.md", gate: soft }
+      - { path: "_concept/glossary.md", gate: soft }
       - { path: "_concept/05_features", gate: soft, min_entries: 1 }
+      - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
+      - { path: "_concept/10_blueprint/datamodel", gate: soft }
+      - { path: "_concept/10_blueprint/techstack.md", gate: soft }
+      - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
       - { path: "_concept/11_build/slices", gate: soft }
       - { path: "_concept/11_build/trace.yaml", gate: soft }
-      - { path: "_concept/10_blueprint/datamodel", gate: soft }
       - { path: "APP-DESIGN.md", gate: soft }
+    inputs_optional:
+      - { id: stale_days, label: "Days before a proposed entry counts as stale", type: text, hint: "Defaults to 14" }
 ---
 
 # ops-review
 
-Inspects `_concept/` and reports what is wrong with it, in two halves. **Review** is the tree's integrity: structure,
-frontmatter, cross-references, naming, coverage and decay. **Coverage** is build coverage: per feature, the slices,
-commits and code behind it from `11_build/trace.yaml`, plus the tracked files that belong to no feature. Both are
-recomputed every run, delivered as the report and never written to disk; the only writes are the cross-reference
-repairs the user approved.
+Inspects `_concept/` and reports what is wrong with it, in two halves. **Review** is the tree's integrity: structure, frontmatter, cross-references, naming, coverage, pending proposals and decay. **Coverage** is build coverage: per feature, the slices, commits and code behind it from `11_build/trace.yaml`, plus the tracked files that belong to no feature. Both are recomputed every run, delivered as the report and never written to disk; the only writes are the cross-reference repairs the user approved.
 
-Read `tree/README.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the
-legal paths and what each skill may write or propose are `tree/README.md § Ownership`; every `_concept/` file's frontmatter
-and naming is the node at its own path. This file sequences the checks and does not restate them.
+Read `tree/README.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the legal paths and what each skill may write or propose are `tree/README.md § Ownership`; every `_concept/` file's frontmatter and naming is the node at its own path. This file sequences the checks and does not restate them.
 
 ## Steps
 
-1. **Run the mechanical check.** `python3 <skill-dir>/scripts/check_concept.py <project>` prints one `path: message`
-   line per problem. Report each line unedited, the message as the finding's `note`; rereading the files to
-   second-guess it spends the run on what the script already settled. `not valid JSON` or `not valid YAML` on
-   `model.json` or `stories.yaml` is `critical`: the script then skips the data-entity and criterion checks, and the
-   model or journeys cannot be read. Every other line is `high`: `unowned` entries (retired paths included), missing or
-   non-ISO frontmatter fields, broken `screens:` and `implements:` links, `data_entities[]` absent from the model, bad
-   criterion ids, and malformed ledger rows. A project with no `_concept/` is the missing step, not a finding.
+1. **Run the mechanical check.** `python3 <skill-dir>/scripts/check_concept.py <project> --stale-days <stale_days, else 14>` prints one `path: message` line per problem. Report each line unedited, the message as the finding's `note`; rereading the files to second-guess it spends the run on what the script already settled. `not valid JSON` or `not valid YAML` on `model.json` or `stories.yaml` is `critical`: the script then skips the data-entity and criterion checks, and the model or journeys cannot be read. A `proposed entry … days old` line and an `open question …` line are `medium`: the entry waits on its owner, and the line names the skill that promotes or rejects it. Every other line is `high`: `unowned` entries (retired paths included), missing or non-ISO frontmatter fields, a screen with a missing or empty `floorplan`, broken `screens:` and `implements:` links, `data_entities[]` absent from the model, bad criterion ids, malformed ledger rows, and a `hard` gate in an installed skill that no skill produces (a collection fault: soften the gate or add its producer). A project with no `_concept/` is the missing step, not a finding.
 2. **Inventory what the script does not read**, once and before scoring anything: every featureset, feature and
    screen, the data model, the `11_build/slices/` dossiers and `git ls-files`. Then **check the naming rules** per
    `tree/10_blueprint/datamodel/README.md § Naming` (entity, field, enum, relation) and the body a feature spec must
    have per `tree/05_features/[featureset]/[feature].md § Format`; a generated concept fails these first.
-3. **Check coverage.** Per feature: a spec, at least one screen that implements it, and an entity it reads or writes
-   or an explicit statement that it needs none. Globally: `03_brand/brand.tokens.json` and `10_blueprint/techstack.md`
-   exist, since the renderers and the planner hard-gate on them. A gap here is work not yet done, reported as the
-   missing step.
-4. **Check the screen specs against `APP-DESIGN.md`**, where the file exists (`tree/APP-DESIGN.md § Reading it`);
-   without it say the interaction check did not run. Read `07_screens/` for four rules of
-   `rulebook/rules.md`: **P1**, an attribute whose editing behaviour two screens define separately (their own validation,
-   labels or save path; one editor hosted on several screens is fine); **P4**, two editors of one object type; **P8**, two index
-   screens of one type; **P13**, a label that is not a term in `glossary.md`. Each is a `warning` citing the rule, the
-   entry it breaks and both screen files. The fixer is `experience-screen` when the screen strays from a decision the file
-   makes, and `experience-interaction` when the file has no decision for it or two entries conflict. The code is
-   `quality-interaction`'s; this step reads specs only.
+3. **Check coverage.** Per feature: a spec, at least one screen that implements it, and an entity it reads or writes or an explicit statement that it needs none. Globally: `03_brand/brand.tokens.json` and `10_blueprint/techstack.md` exist, since the renderers and the planner read them. A gap here is work not yet done, reported as the missing step.
+4. **Check the screen specs against `APP-DESIGN.md`**, where the file exists (`tree/APP-DESIGN.md § Reading it`); without it say the interaction check did not run. Read `07_screens/` for four rules of `rulebook/rules.md`: **P1**, an attribute whose editing behaviour two screens define separately (their own validation, labels or save path; one editor hosted on several screens is fine); **P4**, two editors of one object type; **P8**, two index screens of one type; **P13**, a label that is not a term in `glossary.md`. Each is a `warning` citing the rule, the entry it breaks and both screen files. The fixer is `experience-screen` when the screen strays from a decision the file makes, and `experience-interaction` when the file has no decision for it or two entries conflict. The code is `quality-interaction`'s; this step reads specs only.
 5. **Check for decay.** A screen no feature implements and a model no feature's `data_entities[]` lists are orphans; a
    file whose `last_updated` sits far behind its siblings is stale. Report both; deleting is the user's call, since an
    orphan is as often planned work as a leftover.
@@ -78,13 +66,7 @@ and naming is the node at its own path. This file sequences the checks and does 
 7. **Scan the other direction for orphan code.** Every file `git ls-files` reports under the source directories, minus
    the union of every feature's `code` in the trace, minus tests, build output, configuration, dotfiles and
    `_concept/`. What remains is code no feature claims: advisory, never deleted, a question for the user.
-8. **Name the fixing skill on every finding**, the script's included. A missing screen is `experience-screen`; a missing
-   shell is `experience-shell`; missing tokens are `design-brand`; a missing stack or model is `architecture-techstack`
-   or `architecture-datamodel`; a retired path is the skill that now writes its replacement (`03_brand/tokens.json` →
-   `design-brand`, `11_build/interaction.yaml` → `quality-interaction`, `comparable.md` → `concept-brief`); a missing
-   glossary is `concept-glossary`; an unplanned feature is `build-plan`; an unfrozen slice or missing trace entry is
-   `build-implement` or `build-branch`; a feature with no featureset or roster row is `spec-feature`. A finding without a next
-   command leaves the reader to triage it.
+8. **Name the fixing skill on every finding**, the script's included. A missing screen or a screen without `floorplan` is `experience-screen`; a missing shell is `experience-shell`; missing tokens are `design-brand`; a missing stack or model is `architecture-techstack` or `architecture-datamodel`; a retired path is the skill that now writes its replacement (`03_brand/tokens.json` → `design-brand`, `11_build/interaction.yaml` → `quality-interaction`, `comparable.md` → `concept-brief`); a missing glossary is `concept-glossary`; an unplanned feature is `build-plan`; an unfrozen slice or missing trace entry is `build-implement` or `build-branch`; a feature with no featureset or roster row is `spec-feature`. A finding without a next command leaves the reader to triage it.
 9. **Show everything, then offer the repairs.** Rank findings by the severities of `tree/11_build/README.md § Verdicts`,
    `critical` and `high` being the blocking issues in its report format. Beyond the script's lines (step 1): a red
    coverage row is `high`; a naming violation or an amber row is `medium`; an orphan screen or model,

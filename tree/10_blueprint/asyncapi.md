@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/10_blueprint/asyncapi.yaml
 
-The machine-readable contract of the messages the project publishes or consumes on a channel — a broker, a websocket, a webhook stream — written by `architecture-system` only when the project has such a channel. It is not a `produces` entry of any skill, because the router and the host call a node done when every listed path exists; readers gate on it softly and treat a missing file as "no channels". `build-scaffold` creates channel and handler stubs from it and `build-implement` builds each send and receive operation against it. A reader that needs a channel or a message changed hands back to `architecture-system` and never edits the file itself.
+The machine-readable contract of the messages the project publishes or consumes on a channel — a broker, a websocket, a webhook stream — written by `architecture-system` only when the project has such a channel. It is not a `produces` entry of any skill, because the router and the host call a node done when every listed path exists; readers gate on it softly and treat a missing file as "no channels". `build-scaffold` creates channel and handler stubs from it and `build-implement` builds each send and receive operation against it. A change to a channel or a message belongs to `architecture-system`: a reader names the change and never edits the file itself.
 
 ## Format
 
@@ -44,7 +44,7 @@ components:
         title: { type: string }
 ```
 
-- Message payload schemas are named for the entities in `_concept/10_blueprint/datamodel/model.json`, with field names and enum values as the model has them; where the model does not exist the names come from `_concept/glossary.md`, and a payload concept with neither stops the step: name it and hand back to `concept-glossary`. Names are read, never coined.
+- Message payload schemas are named for the entities in `_concept/10_blueprint/datamodel/model.json`, with field names and enum values as the model has them; where the model does not exist the names come from `_concept/glossary.md`, and a payload concept with neither becomes a `proposed` glossary entry (`tree/glossary.md`) that the schema is named for. Names are read, never coined.
 - Each failed message names what the sender or receiver sees, which is the behaviour `tree/10_blueprint/architecture.md` wrote in prose.
 
 ## Writing it

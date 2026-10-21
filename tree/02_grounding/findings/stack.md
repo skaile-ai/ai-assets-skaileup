@@ -12,7 +12,7 @@ asks about every value; the chosen template still has to be scored and approved 
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`, with one graded field per dimension:
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: stack` and the freshness fields (`paths`, `source_sha`, `last_updated`), and one graded field per dimension:
 `platform`, `frontend`, `ui_library`, `backend`, `database`, `orm`, `auth`, `hosting`,
 `package_manager`. The body carries what no field holds: version constraints that will bite (a
 major pinned below current, a peer-dependency conflict), unusual combinations that look
@@ -47,4 +47,4 @@ gets built on.
 
 ## Checks
 
-All nine dimensions are present and graded.
+All nine dimensions are present and graded; `scope`, `paths`, `source_sha` and `last_updated` are set, and a dimension outside `paths` that predates `source_sha` carries `as_of`.

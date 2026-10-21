@@ -14,7 +14,7 @@ catches it.
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`. Per entity: field names and types,
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: datamodel` and the freshness fields (`paths`, `source_sha`, `last_updated`). Per entity: field names and types,
 relations (foreign keys, `@relation`, `hasMany` / `belongsTo`), unique constraints, nullability,
 defaults and enum values, with the file and line the entity came from. Framework types are
 translated to the types in `tree/10_blueprint/datamodel/model.md`, never carried over raw; a
@@ -52,4 +52,4 @@ stack-specific type in the semantic layer cannot be retargeted.
 
 ## Checks
 
-Every entity cites its file and line, and every type is a semantic type.
+Every entity cites its file and line, and every type is a semantic type; `scope`, `paths`, `source_sha` and `last_updated` are set, and an entity outside `paths` that predates `source_sha` carries `as_of`.

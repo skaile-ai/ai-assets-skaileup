@@ -8,12 +8,12 @@ may_propose: []
 # _concept/02_grounding/findings/screens.md
 
 The page components behind the routes in `tree/02_grounding/findings/routes.md`: evidence that
-`experience-shell` and the `spec-feature` loop read. Feature and screen specs are written from it
+`experience-shell`, `experience-screen` and the `spec-feature` loop read. Feature and screen specs are written from it
 by the skills that own those trees.
 
 ## Format
 
-Frontmatter per `tree/02_grounding/findings/README.md`. Per screen, with its defining file cited:
+Frontmatter per `tree/02_grounding/findings/README.md` with `scope: screens` and the freshness fields (`paths`, `source_sha`, `last_updated`). Per screen, with its defining file cited:
 the layout or template it wraps in; the entities it fetches or submits; the interactions a user
 has (buttons, forms, links, and where each leads); the states the component renders
 conditionally (loading, empty, error, populated); and the guard or middleware protecting it,
@@ -35,4 +35,4 @@ Find each page component by framework:
 
 ## Checks
 
-Every screen entry cites its component file, which exists on disk.
+Every screen entry cites its component file, which exists on disk; `scope`, `paths`, `source_sha` and `last_updated` are set, and an entry outside `paths` that predates `source_sha` carries `as_of`.
