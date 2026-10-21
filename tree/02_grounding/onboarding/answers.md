@@ -1,16 +1,13 @@
 ---
 path: _concept/02_grounding/onboarding/answers.json
-summary: the one answer record — values, confidence, seed inventory, approval
+summary: the onboarding intake record — values, confidence, seed inventory, approval
 owner: [concept-onboard]
 may_propose: []
 ---
 
 # _concept/02_grounding/onboarding/answers.json
 
-The one record of what the user answered. `concept-onboard` owns it; every other skill reads it
-and no skill reads the host's own files, so an answer missing here is asked again. The host
-saves each step's wizard input at `_concept/_grounding/<step>/user_input.json` and shows it as
-pre-collected input; `concept-onboard` merges those files into `answers.json` once.
+The record of what the user answered at onboarding intake: technology preferences with their confidence, the brand's location, the renderer and the seed inventory. `concept-onboard` owns it and every other skill reads it, and no skill reads the host's own files, so an intake answer missing here is asked again. It holds intake answers only: an answer given later lives at its semantic home — the name of a thing in the glossary, a role in the feature's permissions, a colour in the brand — and is never copied back here. The host saves each step's wizard input at `_concept/_grounding/<step>/user_input.json` and shows it as pre-collected input; `concept-onboard` merges those files into `answers.json` once.
 
 ## Format
 

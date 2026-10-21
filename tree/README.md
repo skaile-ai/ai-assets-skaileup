@@ -28,7 +28,7 @@ A node's `path:` entries are matched first, `<x>` matching any one segment; the 
 _concept/                             the artifact tree, its ownership rule and how a skill runs
 ├── README.md                         the artifact tree, its ownership rule and how a skill runs
 ├── brief.md                          the pitch, with its comparables — what the user said, no more
-├── glossary.md                       the project's ubiquitous language — terms, definitions, _Avoid_ lists
+├── glossary.md                       the ubiquitous language and its light ontology — terms, kinds, relations
 ├── goals.md                          success criteria, KPIs, constraints and explicit non-goals
 ├── 01_meta/                          project metadata — the sizing every skill reads its depth from
 │   └── scope.yaml                    flow and project type — the sizing every skill reads its depth from
@@ -43,7 +43,7 @@ _concept/                             the artifact tree, its ownership rule and 
 │   │   ├── screens.md                page components behind the routes, with bindings, interactions and states
 │   │   └── stack.md                  the platform, frameworks, database and tooling the manifests declare
 │   ├── onboarding/                   the preferences, constraints and material a project arrives with
-│   │   ├── answers.json              the one answer record — values, confidence, seed inventory, approval
+│   │   ├── answers.json              the onboarding intake record — values, confidence, seed inventory, approval
 │   │   └── questions.md              open questions routed to someone who is not in the room
 │   ├── research/                     sourced findings per topic that other skills design against
 │   │   ├── audiences.md              personas with real job titles, tools, pain points and design implications
@@ -97,8 +97,8 @@ _concept/                             the artifact tree, its ownership rule and 
 │   ├── openapi.yaml                  OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
 │   ├── techstack.md                  chosen technologies, resolved to one template id; no third-party services
 │   └── datamodel/                    stack-neutral data model, naming rules and how it becomes a database
-│       ├── model.dbml                the canonical stack-neutral model — semantic types, relations, metadata
-│       ├── model.json                the canonical stack-neutral model — semantic types, relations, metadata
+│       ├── model.dbml                model.json is authored, model.dbml generated — semantic types, relations
+│       ├── model.json                model.json is authored, model.dbml generated — semantic types, relations
 │       └── seed.json                 realistic seed scenarios for mockups, screen specs and E2E tests
 └── 11_build/                         slices, trace, criteria ledger, reviews, release verdict and decisions
     ├── decisions.md                  build-time decision records, append-only

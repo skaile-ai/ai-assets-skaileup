@@ -2,23 +2,24 @@
 path: _concept/10_blueprint/datamodel/
 summary: stack-neutral data model, naming rules and how it becomes a database
 owner: [architecture-datamodel]
-may_propose: []
+may_propose: [spec-feature]
 ---
 
 # _concept/10_blueprint/datamodel/
 
-The project's data model, derived from the journeys and the glossary and written three ways: `model.dbml` to read, `model.json` for the editor canvas, `seed.json` for everything that needs realistic data. It runs before any feature exists, so it is the vocabulary that feature specs, behaviors and screens are written against: downstream skills read entity names from `model.json` and never coin their own, and each feature spec lists the models it uses in its own `data_entities[]` (the model holds no list of features). The model is stack-neutral — types are semantic, never SQL or Prisma — because translating it here would freeze a schema before the stack's migration tool has seen it. Node files: `tree/10_blueprint/datamodel/model.md` and `tree/10_blueprint/datamodel/seed.md`.
+The project's data model, derived from the glossary, the journeys and whatever else exists, and kept as `model.json` (the one authored model, for the editor canvas), `model.dbml` (generated from it, to read) and `seed.json` (realistic data for everything that needs it). It is the vocabulary that feature specs, behaviors and screens are written against: downstream skills read entity names from `model.json` and never coin their own, and each feature spec lists the models it uses in its own `data_entities[]` (the model holds no list of features). Every entity cites the glossary term it models, so the glossary stays the one place a concept is defined and its object axes (navigation, lifecycle, origin, operations) live there, not here. The model is stack-neutral — types are semantic, never SQL or Prisma — because translating it here would freeze a schema before the stack's migration tool has seen it. Node files: `tree/10_blueprint/datamodel/model.md` and `tree/10_blueprint/datamodel/seed.md`.
 
 ## Format
 
-`architecture-datamodel` owns `model.dbml`, `model.json` and `seed.json`. A stack-specific schema file is `build-database`'s alone: a translation of `model.json` for one migration tool, written where the chosen template's `## Migration / ORM` section says, and the canonical files are never edited to match it.
+`architecture-datamodel` owns `model.json`, `model.dbml` and `seed.json`. `model.json` is the one authored model; `model.dbml` is generated from it, rendered by the skill on every write of `model.json` and never edited by hand. A stack-specific schema file is `build-database`'s alone: a translation of `model.json` for one migration tool, written where the chosen template's `## Migration / ORM` section says, and the canonical files are never edited to match it. A feature spec that needs an entity or field the model lacks appends a `proposed` entry to `model.json` (`tree/README.md § Ownership`) and the owner promotes or rejects it.
 
 ## Naming
 
-Names are settled against `_concept/glossary.md` before modelling: where the glossary has a term the model uses it, and a word on a term's `_Avoid_` list is renamed to the term. Output conventions (camelCase fields in Prisma or PostXL) are applied by the stack translator, never in the semantic layer.
+Entity names come from `_concept/glossary.md`: where the glossary has a term the model uses it, and a word on a term's `_Avoid_` list is renamed to the term. Output conventions (camelCase fields in Prisma or PostXL) are applied by the stack translator, never in the semantic layer.
 
 **Entities**
 - The entity `id` in `model.json` is the model name: PascalCase singular (`User`, `Task`, `ProjectMember`); no two entities share an id.
+- Every entity carries `glossary_id`, the id of the glossary term it models: the kebab-case slug of the term (`Order line` → `order-line`), while the entity `id` is its PascalCase form (`OrderLine`). An entity with no term in the glossary gets a `proposed` glossary entry first (`## Writing it`, step 2), and its `glossary_id` points at that entry.
 - Every entity declares `standard_fields` including at least `["id", "created_at", "updated_at"]`; `id` is `uuid` with `primary: true`, the timestamps are `datetime`.
 
 **Fields**
@@ -41,15 +42,19 @@ Names are settled against `_concept/glossary.md` before modelling: where the glo
 
 ## Writing it
 
-1. **Read what the model is built from.** `_concept/04_journeys/stories.yaml` is the main source: actors, stages and EARS criteria — event criteria become transitions, state criteria become guards, and what a journey creates, changes or looks up is an entity or a field. Project types that grow no journeys (`api-service`, `cli-tool`, `data-pipeline`, `library`) have no such file; the model then comes from the brief's hero flow and problem plus the glossary's terms, and the questions in step 3 carry what the journeys would have. `_concept/brief.md` gives the domain and `_concept/glossary.md` (always required) the words already pinned.
-   - `_concept/10_blueprint/techstack.md`, when it exists, gives translation hints only (a stack that forces a join table); without it the model stays generic.
-   - `_concept/10_blueprint/architecture.md`, when it exists, usually implies entities for a custom module or integration; without it, an entity only an integration needs surfaces later and this step re-runs.
-2. **Settle the vocabulary before modelling.** List every candidate entity and enum vocabulary the journeys (or the brief) imply — each journey's `candidate_entities` is the starting list — plus entities with no journey behind them (sessions, audit logs, job records), and check each against the glossary per `## Naming`. A concept with no term is not appended to the glossary here: name it and hand back, and the flow re-enters `concept-glossary`, which pins it before this step goes on.
-3. **Ask what the journeys left ambiguous** (one decision batch per message — `tree/README.md § How a skill runs`): what each journey stores, how things connect ("a user has many tasks"), which roles may see or change what. The roles answer feeds the seed's `permissions` scenario and the fields those rules evaluate on. The grants themselves are the feature specs' `## Permissions` tables; this step runs before them, records no grants, and on a re-run reads those tables where they exist and seeds the roles and grants as written there.
-4. **Approve in plain language** — what the app keeps track of and how those things relate, in the user's words, counts underneath. Write nothing before the user says yes; a model features, screens and seeds are about to name is cheapest to change while it is still a paragraph.
-5. **Write `model.dbml` and `model.json`** per `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first and applying `## Naming`. An `m2m` gets an explicit junction model; a raw SQL type here survives into a migration that will not apply.
-6. **Write `seed.json`** per `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`, with all four standard scenarios plus `permissions` when the journeys name distinct roles.
-7. **Hand a stack export to `build-database`.** When the user asks for a stack-specific schema, `build-database` writes it against these files rather than replacing them.
+1. **Read what exists, in any order.** `_concept/glossary.md` (the words already pinned, and each object's axes), `_concept/04_journeys/stories.yaml` (actors, stages and EARS criteria — event criteria become transitions, state criteria become guards, and what a journey creates, changes or looks up is an entity or a field), the feature specs and their `data_entities[]`, `_concept/02_grounding/findings/datamodel.md`, `_concept/brief.md`, and `techstack.md` and `architecture.md` when they exist (translation hints; an integration's entities). Each is read when it exists and its absence only widens step 3: project types that grow no journeys (`api-service`, `cli-tool`, `data-pipeline`, `library`) take the brief's hero flow and problem instead. Derive what the sources settle, run `concept-reverse` scoped where the code holds the schema, and ask only what neither settles (`tree/README.md § How a skill runs`).
+2. **Settle the vocabulary.** List every candidate entity and enum vocabulary the sources imply — each journey's `candidate_entities` is the starting list — plus entities with no journey behind them (sessions, audit logs, job records), and check each against the glossary per `## Naming`. A concept with no term gets a `proposed` entry in `_concept/glossary.md` (format and protocol: `tree/glossary.md`, `tree/README.md § Ownership`) and modelling carries on against it; `concept-glossary` confirms or renames it later, and a rename is one `glossary_id` edit.
+3. **Ask what the sources left ambiguous** (`tree/README.md § How a skill runs`, one decision batch per message): what each journey stores, how things connect ("a user has many tasks"), which roles may see or change what. The roles answer feeds the seed's `permissions` scenario and the fields those rules evaluate on. The grants themselves are the feature specs' `## Permissions` tables; this step records no grants, and on a re-run reads those tables where they exist and seeds the roles and grants as written there.
+4. **Compare consequences before committing a modelling choice** (`tree/README.md § How a skill runs`, rule 5): a table per choice, one row per option, with these columns, in the user's words:
+
+   | option | user-visible | data / permission | affected artifacts | reversibility |
+   |---|---|---|---|---|
+
+   For an expensive choice — inheritance versus composition, the tenant model, soft versus hard delete across the whole model — **design it twice**: sketch three genuinely different models (in parallel, one subagent per sketch where the harness has subagents), compare them on the five columns, and let the user pick. The losers go to `_concept/10_blueprint/decisions.md` as the *options rejected* of one record (`tree/10_blueprint/decisions.md`).
+5. **Approve in plain language** — what the app keeps track of and how those things relate, in the user's words, counts underneath. Write nothing before the user says yes; a model features, screens and seeds are about to name is cheapest to change while it is still a paragraph.
+6. **Write `model.json`, then render `model.dbml`** per `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first and applying `## Naming`. An `m2m` gets an explicit junction model; a raw SQL type here survives into a migration that will not apply.
+7. **Write `seed.json`** per `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`, with all four standard scenarios plus `permissions` when the journeys name distinct roles.
+8. **Hand a stack export to `build-database`.** When the user asks for a stack-specific schema, `build-database` writes it against these files rather than replacing them.
 
 ## Materialising the database
 
@@ -100,6 +105,7 @@ The file lives where the chosen template's `## Migration / ORM` section says; it
 
 ## Checks
 
-- `model.dbml`, `model.json` and `seed.json` exist, the model is approved, and every model name and enum vocabulary is a term in `glossary.md`.
+- `model.json` and `seed.json` exist, `model.dbml` was rendered from the current `model.json`, and the model is approved.
+- Every entity has a `glossary_id` that exists in `_concept/glossary.md` (a `proposed` term counts), and every enum vocabulary is a term there.
 - `seed.json` carries all four standard scenarios.
 - The mechanical rules in `## Naming` hold; a violation is a finding in the audit report.

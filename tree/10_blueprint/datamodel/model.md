@@ -1,17 +1,19 @@
 ---
 path: [_concept/10_blueprint/datamodel/model.dbml, _concept/10_blueprint/datamodel/model.json]
-summary: the canonical stack-neutral model — semantic types, relations, metadata
+summary: model.json is authored, model.dbml generated — semantic types, relations
 owner: [architecture-datamodel]
-may_propose: []
+may_propose: [spec-feature]
 ---
 
 # _concept/10_blueprint/datamodel/model.dbml, model.json
 
-The canonical, stack-neutral data model, in two forms: `model.dbml` to read and `model.json` for the editor canvas. Both carry semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) always target the entity `id` in `model.json`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
+The canonical, stack-neutral data model, in two forms: `model.json`, the one authored model (and the editor canvas's file), and `model.dbml`, generated from it to read. The skill renders `model.dbml` from `model.json` on every write and nobody edits it by hand. Both carry semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) always target the entity `id` in `model.json`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
 
 ## Format
 
-`model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` (JSON Schema 2020-12, lenient: the required keys are those the host's editor needs). Validate before writing. Top-level keys: `version` (`"1.0"`), `entities[]`, `relationships[]` and optional `enums[]`; `editor` (canvas viewport) is written by the editor, never by a skill. An entity carries `id` (PascalCase singular — the model name every other artifact cites), `display_name`, `fields[]` and the metadata below; a field carries a stable `id`, a snake_case `name` and a semantic `type` (the scalar types, `enum`, or `relation`).
+`model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` (JSON Schema 2020-12, lenient: the required keys are those the host's editor needs, plus `glossary_id`). Validate before writing. Top-level keys: `version` (`"1.0"`), `entities[]`, `relationships[]` and optional `enums[]`; `editor` (canvas viewport) is written by the editor, never by a skill. An entity carries `id` (PascalCase singular — the model name every other artifact cites), `glossary_id` (the kebab-case id of the glossary term it models — `Order line` → `order-line`; the name, definition and object axes live on that term, so the entity holds no copy of them), `display_name`, `fields[]` and the metadata below; a field carries a stable `id`, a snake_case `name` and a semantic `type` (the scalar types, `enum`, or `relation`).
+
+**Proposed entity.** A skill in `may_propose` (`spec-feature`) that needs an entity the model lacks appends it with `status: "proposed"`, `proposed_by`, `proposed_on` and `source` (`tree/README.md § Ownership`); `architecture-datamodel` promotes it by dropping the markers or rejects it with a record in `_concept/10_blueprint/decisions.md`. A proposed entity is never confirmed in `model.dbml` and carries no seed data until promoted.
 
 **Scalar types**
 
@@ -92,6 +94,7 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
   "entities": [
     {
       "id": "User",
+      "glossary_id": "user",
       "display_name": "User",
       "label_field": "display_name",
       "key_field": "email",
@@ -104,6 +107,7 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
     },
     {
       "id": "Task",
+      "glossary_id": "task",
       "display_name": "Task",
       "label_field": "title",
       "standard_fields": ["id", "created_at", "updated_at"],
@@ -133,7 +137,8 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
 ## Checks
 
 - `model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` before it is written.
+- Every entity has a `glossary_id` that exists in `_concept/glossary.md`, and its `id` is that term in PascalCase.
 - Every field type is a semantic type from the table above; no raw SQL or Prisma type appears.
 - Every entity sets `label_field` and declares `standard_fields`.
 - Every `m2m` has a junction model and no `o2m` is declared.
-- `model.dbml` and `model.json` agree; where they diverge, a hand edit is the likely cause and `build-database` reports every disagreement rather than preferring one.
+- `model.dbml` is the render of the current `model.json`; where they diverge, a hand edit is the likely cause and `build-database` reports every disagreement rather than preferring one.

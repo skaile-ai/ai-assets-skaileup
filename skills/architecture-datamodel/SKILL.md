@@ -1,7 +1,7 @@
 ---
 name: architecture-datamodel
-description: "Use when the glossary exists and the project needs a schema before any feature is specified — derives entities, relationships and enums from the journeys (or the brief where there are none), settles every name against the glossary, and writes the stack-neutral model with its seed scenarios. Triggers on 'data model', 'design the schema', 'what entities do we need', 'seed data'."
-version: "0.2.0"
+description: "Use when the project needs a schema before or while features are specified — derives entities, relationships and enums from whatever exists (glossary, journeys, features, findings, the brief), cites a glossary term for every entity, compares the consequences of the expensive modelling choices with the user, and writes the stack-neutral model with its seed scenarios. Triggers on 'data model', 'design the schema', 'what entities do we need', 'seed data'."
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -13,24 +13,26 @@ metadata:
       - { id: techstack }
     produces:
       - { id: datamodel, path: "_concept/10_blueprint/datamodel/" }
+      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     files:
       - { path: "_concept/04_journeys/stories.yaml", gate: soft }
-      - { path: "_concept/glossary.md", gate: hard }
+      - { path: "_concept/glossary.md", gate: soft }
       - { path: "_concept/10_blueprint/techstack.md", gate: soft }
       - { path: "_concept/10_blueprint/architecture.md", gate: soft }
 ---
 
 # architecture-datamodel
 
-Derives the data model from the journeys and the glossary and writes `model.dbml`, `model.json` and `seed.json`. It runs before any feature exists and stays stack-neutral; translating into a stack is `build-database`'s step.
+Derives the data model from what exists and writes `model.json`, generated `model.dbml` and `seed.json`. Every entity cites a glossary term; a term the glossary lacks is appended there as `proposed`, not waited for. It stays stack-neutral — translating into a stack is `build-database`'s step. Every gate is soft: a missing glossary, journeys or features widen the questions, they do not stop the run.
 
 ## Route
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Derive, name and approve the model** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 1–4, applying `tree/10_blueprint/datamodel/README.md § Naming` to every entity, field, enum and relation.
-2. **Write `model.dbml` and `model.json`** — `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first; entity `id`s are the PascalCase model names.
-3. **Write `seed.json` with all four scenarios** — `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`; then step 7 of the README's `## Writing it` (a stack export is `build-database`'s).
+1. **Read, settle the vocabulary, ask the gaps** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 1–3, applying `tree/10_blueprint/datamodel/README.md § Naming` to every entity, field, enum and relation. Interview per `tree/README.md § How a skill runs`; a concept with no glossary term becomes a `proposed` entry in `_concept/glossary.md` (`tree/glossary.md`; a missing file starts with these entries) and modelling carries on.
+2. **Compare consequences, design the expensive choices twice, approve** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 4–5. Rejected alternatives and the reason go to `_concept/10_blueprint/decisions.md` as the *options rejected* of one record (`tree/10_blueprint/decisions.md`).
+3. **Write `model.json`, render `model.dbml`** — `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first; every entity carries its `glossary_id`, and `model.dbml` is regenerated from `model.json` on every write.
+4. **Write `seed.json` with all four scenarios** — `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`; then steps 7–8 of the README's `## Writing it` (a stack export is `build-database`'s).
 
-**Done when** `model.dbml`, `model.json` and `seed.json` exist under `_concept/10_blueprint/datamodel/`, the model is approved, every model name and enum vocabulary is a term in `glossary.md`, and `seed.json` carries all four standard scenarios.
+**Done when** `model.json`, `model.dbml` (rendered from it) and `seed.json` exist under `_concept/10_blueprint/datamodel/`, the model is approved, every entity's `glossary_id` is a term in `glossary.md`, and `seed.json` carries all four standard scenarios.

@@ -65,9 +65,18 @@
     },
     "entity": {
       "type": "object",
-      "required": ["id", "display_name", "fields"],
+      "required": ["id", "glossary_id", "display_name", "fields"],
       "properties": {
         "id": { "$ref": "#/$defs/modelName", "description": "The model name: PascalCase singular (Task, ProjectMember). A feature's data_entities[] entries, relationships' from/to and a field's relation_target all use it." },
+        "glossary_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "Id of the glossary term this entity models: the kebab-case slug of the term (Order line → order-line). Must exist in _concept/glossary.md; the entity id is that term in PascalCase."
+        },
+        "status": { "const": "proposed", "description": "Present only on an entity a may_propose skill appended; the owner drops it on promotion (tree/README.md § Ownership)." },
+        "proposed_by": { "type": "string", "description": "Skill that appended the proposed entity." },
+        "proposed_on": { "type": "string", "description": "ISO date (YYYY-MM-DD) of the proposal." },
+        "source": { "type": "string", "description": "Evidence reference or the user's words behind a proposed entity." },
         "display_name": { "type": "string" },
         "icon": { "type": "string", "description": "Iconify icon name." },
         "color": { "type": "string", "description": "Hex colour for canvas rendering." },
