@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/behavioral-patterns.md
 summary: state machines and lifecycles seen in the field
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/behavioral-patterns.md

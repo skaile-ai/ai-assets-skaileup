@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/feedback/patches/
 summary: proposed section-anchored patches and the review file a human approves
-writers: [mockup-feedback]
+owner: [mockup-feedback]
+may_propose: []
 ---
 
 # _concept/09_mockup/feedback/patches/

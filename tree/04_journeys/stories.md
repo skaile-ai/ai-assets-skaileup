@@ -1,7 +1,8 @@
 ---
 path: _concept/04_journeys/stories.yaml
 summary: personas, story map by stage, EARS criteria with ids
-writers: [experience-journeys]
+owner: [experience-journeys]
+may_propose: []
 ---
 
 # _concept/04_journeys/stories.yaml

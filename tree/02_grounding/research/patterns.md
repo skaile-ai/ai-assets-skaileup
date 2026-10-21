@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/patterns.md
 summary: UX and architectural patterns for this domain
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/patterns.md

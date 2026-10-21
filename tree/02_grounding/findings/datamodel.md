@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/datamodel.md
 summary: entities, fields, relations and enums the schema declares
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/datamodel.md

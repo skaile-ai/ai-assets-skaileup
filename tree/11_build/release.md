@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/release.yaml
 summary: "the whole-app release verdict: goals, seven scores, findings, improvements"
-writers: [quality-release]
+owner: [quality-release]
+may_propose: []
 ---
 
 # _concept/11_build/release.yaml

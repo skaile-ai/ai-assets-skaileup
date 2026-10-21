@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/domain.md
 summary: terminology, regulations, trends and workflows the domain already has
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/domain.md

@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/stack.md
 summary: the platform, frameworks, database and tooling the manifests declare
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/stack.md

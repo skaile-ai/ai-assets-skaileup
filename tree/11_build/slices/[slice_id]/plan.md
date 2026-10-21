@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/slices/<slice_id>/plan.md
 summary: one slice's scope, rows, criteria by id, tests and carry-overs
-writers: [build-plan]
+owner: [build-plan]
+may_propose: []
 ---
 
 # _concept/11_build/slices/<slice_id>/plan.md

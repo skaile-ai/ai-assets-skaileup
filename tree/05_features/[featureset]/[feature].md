@@ -1,7 +1,8 @@
 ---
 path: _concept/05_features/<featureset>/<feature>.md
 summary: one feature's permanent spec — scope line, permissions, acceptance criteria
-writers: [spec-feature]
+owner: [spec-feature]
+may_propose: []
 ---
 
 # _concept/05_features/<featureset>/<feature>.md

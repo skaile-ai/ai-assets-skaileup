@@ -1,7 +1,8 @@
 ---
 path: _concept/04_journeys/
 summary: personas and the staged story map
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/04_journeys/

@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/interaction.sarif
 summary: SARIF 2.1.0 verdict of the code against APP-DESIGN.md
-writers: [quality-interaction]
+owner: [quality-interaction]
+may_propose: []
 ---
 
 # _concept/11_build/interaction.sarif

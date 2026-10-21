@@ -1,7 +1,8 @@
 ---
 path: [_concept/09_mockup/feedback/sessions/, _concept/09_mockup/feedback/sessions/<sessionId>.json]
 summary: raw annotation sessions downloaded from the overlay, one file per round
-writers: [mockup-annotate]
+owner: [mockup-annotate]
+may_propose: []
 ---
 
 # _concept/09_mockup/feedback/sessions/

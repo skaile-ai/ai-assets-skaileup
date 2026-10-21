@@ -1,7 +1,8 @@
 ---
 path: _concept/03_brand/identity.md
 summary: colours, fonts, tone of voice and copy guidelines
-writers: [design-brand]
+owner: [design-brand]
+may_propose: []
 ---
 
 # _concept/03_brand/identity.md

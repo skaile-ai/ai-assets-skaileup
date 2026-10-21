@@ -5,7 +5,7 @@ Each case builds a minimal collection in a tmpdir — skills, the instruction tr
 exactly one thing, and asserts the break is reported. A gate with no test for its negative case is
 the same silent pass the gate exists to close, so every rule in `check.py` has one here.
 
-The fixture is clean by construction: `write_repo` writes a tree whose `writers:` are derived from
+The fixture is clean by construction: `write_repo` writes a tree whose `owner:` lists are derived from
 the skills' `produces` and whose listing fence is generated, so a test that breaks one thing sees
 exactly one error. The four landed flows are the positive fixture for the flow rules.
 
@@ -81,14 +81,15 @@ PROJECT_TYPES = """\
 """
 
 
-def write_node(root: Path, rel: str, path, writers=(), summary: str = "a part", body: str = "") -> None:
+def write_node(root: Path, rel: str, path, owner=(), summary: str = "a part", body: str = "", may_propose=()) -> None:
     """Write `tree/<rel>` with the frontmatter every node carries. `path` is a string or a list."""
     p = root / "tree" / rel
     p.parent.mkdir(parents=True, exist_ok=True)
     first = path[0] if isinstance(path, (list, tuple)) else path
     shown = "[" + ", ".join(f'"{e}"' for e in path) + "]" if isinstance(path, (list, tuple)) else f'"{path}"'
     p.write_text(
-        f"---\npath: {shown}\nsummary: {summary}\nwriters: [{', '.join(writers)}]\n---\n\n# {first}\n\n{body}"
+        f"---\npath: {shown}\nsummary: {summary}\nowner: [{', '.join(owner)}]\n"
+        f"may_propose: [{', '.join(may_propose)}]\n---\n\n# {first}\n\n{body}"
     )
 
 
@@ -120,12 +121,12 @@ def good_tree(root: Path) -> None:
                summary="one spec per screen")
 
 
-def sync_writers(root: Path) -> None:
-    """Rewrite every node's `writers:` from the skills' `produces`: a skill writes the node its
+def sync_owners(root: Path) -> None:
+    """Rewrite every node's `owner:` from the skills' `produces`: a skill writes the node its
     `produces` path resolves to. The fixture stays clean when a test swaps a `produces` block;
     the tests of rule S11 desynchronise it on purpose, afterwards."""
     nodes = check.load_tree(root)
-    writers: dict[str, list[str]] = {n.rel: [] for n in nodes}
+    owners: dict[str, list[str]] = {n.rel: [] for n in nodes}
     skills = root / "skills"
     for skill in sorted(p for p in skills.iterdir() if (p / "SKILL.md").is_file()) if skills.is_dir() else []:
         fm, _body = check.split_frontmatter((skill / "SKILL.md").read_text())
@@ -133,11 +134,11 @@ def sync_writers(root: Path) -> None:
             if not (path.startswith("_concept/") or path in check.PROJECT_ROOT_ARTIFACTS):
                 continue
             hit = check.resolve(nodes, path)
-            if hit is not None and skill.name not in writers[hit.rel]:
-                writers[hit.rel].append(skill.name)
+            if hit is not None and skill.name not in owners[hit.rel]:
+                owners[hit.rel].append(skill.name)
     for node in nodes:
         p = root / "tree" / node.rel
-        p.write_text(re.sub(r"(?m)^writers: .*$", f"writers: [{', '.join(writers[node.rel])}]", p.read_text(), count=1))
+        p.write_text(re.sub(r"(?m)^owner: .*$", f"owner: [{', '.join(owners[node.rel])}]", p.read_text(), count=1))
 
 
 def refresh_fence(root: Path) -> None:
@@ -154,7 +155,7 @@ def write_repo(root: Path, skills=("spec-feature",)) -> Path:
         d.mkdir(parents=True, exist_ok=True)
         (d / "SKILL.md").write_text(SKILL.format(name=name))
     (root / "flows").mkdir(exist_ok=True)
-    sync_writers(root)
+    sync_owners(root)
     refresh_fence(root)
     return root
 
@@ -188,7 +189,7 @@ def set_produces(root: Path, block: str, skill: str = "spec-feature") -> None:
     if "produces: []" in block:
         text = text.replace("## Route", "## Steps")
     p.write_text(text)
-    sync_writers(root)
+    sync_owners(root)
 
 
 def cite(root: Path, skill: str, node: str) -> None:
@@ -401,7 +402,7 @@ def test_skill_without_an_artifacts_block(tmp_path):
     skill.write_text(skill.read_text().replace("  artifacts:\n    produces:\n", "").replace(
         '      - { id: brief, path: "_concept/brief.md" }\n', ""
     ))
-    sync_writers(root)
+    sync_owners(root)
     only(root, "has no `metadata.artifacts.produces` list")
 
 
@@ -470,14 +471,14 @@ def test_produces_the_project_root_artifact_with_no_node(tmp_path):
 def test_node_does_not_list_the_skill_producing_the_root_artifact(tmp_path):
     root = write_repo(tmp_path)
     set_produces(root, '    produces:\n      - { id: app-design, path: "APP-DESIGN.md" }\n')
-    edit_node(root, "APP-DESIGN.md", "writers: [spec-feature]", "writers: []")
-    only(root, "whose `writers:` does not list 'spec-feature'")
+    edit_node(root, "APP-DESIGN.md", "owner: [spec-feature]", "owner: []")
+    only(root, "whose `owner:` does not list 'spec-feature'")
 
 
 def test_root_artifact_node_listing_a_writer_that_produces_nothing_there(tmp_path):
     root = write_repo(tmp_path)
-    edit_node(root, "APP-DESIGN.md", "writers: []", "writers: [spec-feature]")
-    only(root, "lists writer 'spec-feature', but no `produces` path of that skill resolves to this node")
+    edit_node(root, "APP-DESIGN.md", "owner: []", "owner: [spec-feature]")
+    only(root, "lists owner 'spec-feature', but no `produces` path of that skill resolves to this node")
 
 
 @pytest.mark.parametrize(
@@ -776,7 +777,7 @@ def test_hard_root_artifact_gate_is_matched_exactly(tmp_path):
         writes='    produces:\n      - { id: root-file, path: "_concept/<file>.md" }\n',
     )
     add_node(root, "[file].md", "_concept/<file>.md", summary="any one file at the concept root")
-    sync_writers(root)
+    sync_owners(root)
     assert check._paths_overlap("APP-DESIGN.md", "_concept/<file>.md")
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
     only(root, "no upstream node produces it")
@@ -915,7 +916,7 @@ def onboard_repo(root: Path, node_body: str) -> Path:
                summary="the wizard answers")
     write_node(root, "02_grounding/onboarding/answers.md", "_concept/02_grounding/onboarding/answers.json",
                summary="the answers", body=node_body)
-    sync_writers(root)
+    sync_owners(root)
     refresh_fence(root)
     return root
 
@@ -1392,7 +1393,7 @@ def test_skill_that_writes_nothing_has_no_steps_heading(tmp_path):
     only(root, "writes no artifact (`produces: []`) and has no `## Steps` heading")
 
 
-# -- skills <-> nodes: writers say the same thing from both ends (S3, S11) ---------
+# -- skills <-> nodes: owners say the same thing from both ends (S3, S11) ---------
 
 def test_produces_path_below_a_string_form_directory_entry_does_not_resolve(tmp_path):
     """Verification 4: a skill producing a path no node documents. The directory has a node, but
@@ -1414,17 +1415,17 @@ def test_produces_path_below_a_list_form_directory_entry_resolves(tmp_path):
 
 def test_node_that_does_not_list_the_skill_producing_it(tmp_path):
     root = write_repo(tmp_path)
-    edit_node(root, "brief.md", "writers: [spec-feature]", "writers: []")
-    only(root, "whose `writers:` does not list 'spec-feature'")
+    edit_node(root, "brief.md", "owner: [spec-feature]", "owner: []")
+    only(root, "whose `owner:` does not list 'spec-feature'")
     assert "produces-writer-listed" in errors(root)[0]
 
 
 def test_node_listing_a_writer_that_produces_nothing_there(tmp_path):
-    """Verification 4: `writers: [design-brand]` with no matching `produces`."""
+    """Verification 4: `owner: [design-brand]` with no matching `produces`."""
     root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
     set_produces(root, "    produces: []\n", "design-brand")
-    edit_node(root, "brief.md", "writers: [spec-feature]", "writers: [spec-feature, design-brand]")
-    only(root, "lists writer 'design-brand', but no `produces` path of that skill resolves to this node")
+    edit_node(root, "brief.md", "owner: [spec-feature]", "owner: [spec-feature, design-brand]")
+    only(root, "lists owner 'design-brand', but no `produces` path of that skill resolves to this node")
     assert "writer-without-produces" in errors(root)[0]
 
 
@@ -1433,8 +1434,8 @@ def test_the_root_readme_is_not_the_writer_of_what_it_does_not_name(tmp_path):
     its writer; only the root README itself is documented there."""
     root = write_repo(tmp_path, skills=("spec-feature", "concept-scope", "design-brand"))
     set_produces(root, '    produces:\n      - { id: concept-readme, path: "_concept/README.md" }\n', "concept-scope")
-    edit_node(root, "README.md", "writers: [concept-scope]", "writers: [concept-scope, design-brand]")
-    only(root, "lists writer 'design-brand', but no `produces` path of that skill resolves to this node")
+    edit_node(root, "README.md", "owner: [concept-scope]", "owner: [concept-scope, design-brand]")
+    only(root, "lists owner 'design-brand', but no `produces` path of that skill resolves to this node")
     assert "writer-without-produces" in errors(root)[0]
     assert "tree/README.md" in errors(root)[0]
 
@@ -1443,21 +1444,21 @@ def test_a_directory_produces_path_above_a_node_satisfies_its_writer(tmp_path):
     """A skill that writes `07_screens/` as a whole is the writer of what lies inside it."""
     root = write_repo(tmp_path, skills=("spec-feature", "zeta-producer"))
     set_produces(root, '    produces:\n      - { id: screens, path: "_concept/07_screens/" }\n', "zeta-producer")
-    edit_node(root, "07_screens/[feature_slug]/[screen].md", "writers: []", "writers: [zeta-producer]")
+    edit_node(root, "07_screens/[feature_slug]/[screen].md", "owner: []", "owner: [zeta-producer]")
     assert errors(root) == []
 
 
 def test_a_produces_path_below_a_directory_entry_satisfies_the_readme_writer(tmp_path):
     root = write_repo(tmp_path, skills=("spec-feature", "zeta-producer"))
     set_produces(root, SCREENS, "zeta-producer")
-    edit_node(root, "07_screens/README.md", "writers: []", "writers: [zeta-producer]")
+    edit_node(root, "07_screens/README.md", "owner: []", "owner: [zeta-producer]")
     assert errors(root) == []
 
 
 def test_node_listing_a_writer_that_is_no_skill(tmp_path):
     root = write_repo(tmp_path)
-    edit_node(root, "brief.md", "writers: [spec-feature]", "writers: [spec-feature, ghost]")
-    only(root, "`writers:` lists 'ghost', which is no skill in this collection")
+    edit_node(root, "brief.md", "owner: [spec-feature]", "owner: [spec-feature, ghost]")
+    only(root, "`owner:` lists 'ghost', which is no skill in this collection")
 
 
 # -- the tree: manifest (T1) ---------------------------------------------------
@@ -1512,7 +1513,7 @@ def test_node_without_frontmatter(tmp_path):
 
 def test_node_path_that_is_neither_a_string_nor_a_list(tmp_path):
     root = write_repo(tmp_path)
-    raw_node(root, "extra.md", "---\npath: 3\nsummary: x\nwriters: []\n---\n")
+    raw_node(root, "extra.md", "---\npath: 3\nsummary: x\nowner: []\nmay_propose: []\n---\n")
     only(root, "`path:` must be a string or a non-empty list of strings")
 
 
@@ -1550,7 +1551,7 @@ def test_node_in_the_wrong_place(tmp_path):
 
 def test_node_without_a_summary(tmp_path):
     root = write_repo(tmp_path)
-    raw_node(root, "extra.md", '---\npath: "_concept/extra.yaml"\nwriters: []\n---\n')
+    raw_node(root, "extra.md", '---\npath: "_concept/extra.yaml"\nowner: []\nmay_propose: []\n---\n')
     only(root, "has no `summary:`")
 
 
@@ -1566,10 +1567,41 @@ def test_node_summary_of_exactly_80_characters_is_legal(tmp_path):
     assert errors(root) == []
 
 
-def test_node_without_a_writers_list(tmp_path):
+def test_node_without_an_owner_list(tmp_path):
     root = write_repo(tmp_path)
-    raw_node(root, "extra.md", '---\npath: "_concept/extra.yaml"\nsummary: x\n---\n')
-    only(root, "has no `writers:` list")
+    raw_node(root, "extra.md", '---\npath: "_concept/extra.yaml"\nsummary: x\nmay_propose: []\n---\n')
+    only(root, "has no `owner:` list")
+
+
+def test_node_without_a_may_propose_list(tmp_path):
+    root = write_repo(tmp_path)
+    raw_node(root, "extra.md", '---\npath: "_concept/extra.yaml"\nsummary: x\nowner: []\n---\n')
+    only(root, "has no `may_propose:` list")
+
+
+def test_node_still_carrying_writers(tmp_path):
+    root = write_repo(tmp_path)
+    raw_node(root, "extra.md", '---\npath: "_concept/extra.yaml"\nsummary: x\nwriters: []\nmay_propose: []\n---\n')
+    only(root, "still carries `writers:` — rename it to `owner:`")
+
+
+def test_node_with_a_proposer_that_is_no_skill(tmp_path):
+    root = write_repo(tmp_path)
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [ghost]")
+    only(root, "`may_propose:` lists 'ghost', which is no skill in this collection")
+
+
+def test_node_with_a_proposer_that_is_also_its_owner(tmp_path):
+    root = write_repo(tmp_path)
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [spec-feature]")
+    only(root, "`may_propose:` lists 'spec-feature', which is also in `owner:`")
+
+
+def test_node_with_a_known_proposer_is_clean(tmp_path):
+    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    set_produces(root, "    produces: []\n", "design-brand")
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    assert errors(root) == []
 
 
 # -- the tree: names (T3) --------------------------------------------------------
@@ -1700,7 +1732,7 @@ def test_a_nested_plural_pair_is_found_too(tmp_path):
 # -- resolution (R1), without the filesystem -----------------------------------------
 
 def nodes_of(*specs) -> list:
-    return [check.Node(rel, {"path": path, "summary": "s", "writers": []}) for rel, path in specs]
+    return [check.Node(rel, {"path": path, "summary": "s", "owner": [], "may_propose": []}) for rel, path in specs]
 
 
 def test_node_remembers_whether_its_path_was_a_list():

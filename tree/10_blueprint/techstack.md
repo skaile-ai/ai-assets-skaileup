@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/techstack.md
 summary: chosen technologies, resolved to one template id; no third-party services
-writers: [architecture-techstack]
+owner: [architecture-techstack]
+may_propose: []
 ---
 
 # _concept/10_blueprint/techstack.md
@@ -34,7 +35,7 @@ last_updated: YYYY-MM-DD
    - A `techstack.md` that already exists is a handed-off concept: read it back to the user and confirm it instead of re-running the selection, or everything downstream silently loses its basis.
    - When `_concept/02_grounding/findings/stack.md` exists (reverse flow), its graded values are proposals: show them, and step 3 asks about every one — an `extracted` value as a confirmation. The template still gets scored and approved here.
 2. **Discover candidates at runtime.** Scan `templates/*/TEMPLATE.md`, reading only each `## Identity` table and `## When to Use`. The candidate set is whatever is on disk and the id is the directory name character for character; never write a list of ids into this file.
-3. **Ask in plain language** (one question per message — `tree/README.md § How a skill runs`): framework experience, web / mobile / desktop / API, how data-heavy the app is, CMS or admin panel, self-hosted or managed, budget. Skip every question an input already answered: a `locked` value in `answers.json` is honoured and not asked, a `preferred` one is offered as the default, an `open` one is recommended from and still asked. `appbuilder-mvp` settles this in a round or two; the other three flows work the whole list. Outside services are not asked here.
+3. **Ask in plain language** (one decision batch per message — `tree/README.md § How a skill runs`): framework experience, web / mobile / desktop / API, how data-heavy the app is, CMS or admin panel, self-hosted or managed, budget. Skip every question an input already answered: a `locked` value in `answers.json` is honoured and not asked, a `preferred` one is offered as the default, an `open` one is recommended from and still asked. `appbuilder-mvp` settles this in a round or two; the other three flows work the whole list. Outside services are not asked here.
 4. **Score every candidate on four weighted axes**: frontend framework ×3, UI library ×2, backend ×1, database ×1. Frontend dominates so a Nuxt project never lands on a Next template.
 5. **Break ties on the flow** from `scope.yaml`. `appbuilder-mvp` takes the lighter `*-minimal` template; `appbuilder-standard`, `skaileup-concept-only` and `skaileup-concept-reverse` take the fuller UI-library one. Ties are the normal case because several templates share a frontend.
 6. **A top frontend score of zero is an answer.** Report the gap, then offer the closest framework match or `tech_stack_skill: custom` (no template; `build-scaffold` works from this file alone with each command confirmed). A stack with no template is recorded as a gap in `templates/`.

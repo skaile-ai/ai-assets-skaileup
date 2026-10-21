@@ -1,7 +1,8 @@
 ---
 path: _concept/05_features/<featureset>/
 summary: one featureset — a user purpose and its feature specs
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/05_features/<featureset>/

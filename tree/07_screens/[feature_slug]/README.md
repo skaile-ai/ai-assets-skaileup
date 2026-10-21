@@ -1,7 +1,8 @@
 ---
 path: _concept/07_screens/<feature_slug>/
 summary: the screen specs of one feature
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/07_screens/<feature_slug>/

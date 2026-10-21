@@ -1,7 +1,8 @@
 ---
 path: _concept/06_behaviors/
 summary: optional state machines and rules, one file per featureset
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/06_behaviors/

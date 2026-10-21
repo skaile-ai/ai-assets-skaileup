@@ -1,6 +1,6 @@
 # 0002 — Flat tree; the domain lives in the name
 
-**Status:** accepted
+**Status:** accepted; partly superseded by [0023](0023-two-advisory-flows.md) — flows are advisory recipes, no longer the source of order or of project size
 
 ## Context
 

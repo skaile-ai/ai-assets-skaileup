@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/storybook/
 summary: standalone Storybook of components, page compositions and journey click-dummies
-writers: [mockup-storybook]
+owner: [mockup-storybook]
+may_propose: []
 ---
 
 # _concept/09_mockup/storybook/

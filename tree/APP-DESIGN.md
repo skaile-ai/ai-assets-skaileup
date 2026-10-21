@@ -1,7 +1,8 @@
 ---
 path: APP-DESIGN.md
 summary: the app's interaction decisions — where objects live, editing, saving, finding
-writers: [experience-interaction]
+owner: [experience-interaction]
+may_propose: []
 ---
 
 # APP-DESIGN.md

@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/trace.yaml
 summary: feature to slices to commits to code, the one feature-to-commit join
-writers: [build-implement]
+owner: [build-implement]
+may_propose: []
 ---
 
 # _concept/11_build/trace.yaml

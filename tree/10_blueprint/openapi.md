@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/openapi.yaml
 summary: OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/10_blueprint/openapi.yaml

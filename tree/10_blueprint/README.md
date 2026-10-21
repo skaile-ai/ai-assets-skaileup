@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/
 summary: how the app is built — stack, architecture, API contracts, decisions, data model
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/10_blueprint/

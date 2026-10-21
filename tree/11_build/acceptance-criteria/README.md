@@ -1,7 +1,8 @@
 ---
 path: [_concept/11_build/acceptance-criteria/, _concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md]
 summary: the criteria status ledger, one checkbox file per feature
-writers: [build-plan, build-implement, quality-e2e, quality-review]
+owner: [build-plan, build-implement, quality-e2e, quality-review]
+may_propose: []
 ---
 
 # _concept/11_build/acceptance-criteria/

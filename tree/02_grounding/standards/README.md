@@ -1,7 +1,8 @@
 ---
 path: [_concept/02_grounding/standards/, _concept/02_grounding/standards/<domain>/]
 summary: conventions discovered in an existing codebase, one file per convention
-writers: [quality-standards]
+owner: [quality-standards]
+may_propose: []
 ---
 
 # _concept/02_grounding/standards/

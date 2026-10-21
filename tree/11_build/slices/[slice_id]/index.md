@@ -1,7 +1,8 @@
 ---
 path: [_concept/11_build/slices/<slice_id>/index.md, _concept/11_build/slices/<slice_id>/progress.yaml]
 summary: the frozen slice record and its transient progress file
-writers: [build-implement]
+owner: [build-implement]
+may_propose: []
 ---
 
 # _concept/11_build/slices/<slice_id>/index.md

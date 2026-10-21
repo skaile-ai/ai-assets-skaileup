@@ -1,7 +1,8 @@
 ---
 path: _concept/03_brand/brandbook.html
 summary: self-contained visual reference for the brand
-writers: [design-brand]
+owner: [design-brand]
+may_propose: []
 ---
 
 # _concept/03_brand/brandbook.html

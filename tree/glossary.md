@@ -1,7 +1,8 @@
 ---
 path: _concept/glossary.md
 summary: the project's ubiquitous language — terms, definitions, _Avoid_ lists
-writers: [concept-glossary]
+owner: [concept-glossary]
+may_propose: []
 ---
 
 # _concept/glossary.md

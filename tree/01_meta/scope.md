@@ -1,7 +1,8 @@
 ---
 path: _concept/01_meta/scope.yaml
 summary: flow and project type — the sizing every skill reads its depth from
-writers: [concept-scope]
+owner: [concept-scope]
+may_propose: []
 ---
 
 # _concept/01_meta/scope.yaml

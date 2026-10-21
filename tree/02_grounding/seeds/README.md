@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/seeds/
 summary: material the user dropped in; nothing generates it
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/02_grounding/seeds/

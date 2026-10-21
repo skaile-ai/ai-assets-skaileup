@@ -1,7 +1,8 @@
 ---
 path: _concept/08_dossiers/<feature_slug>/index.md
 summary: one feature's framing, grill answers and rejected options, frozen at the end
-writers: [spec-feature]
+owner: [spec-feature]
+may_propose: []
 ---
 
 # _concept/08_dossiers/<feature_slug>/index.md

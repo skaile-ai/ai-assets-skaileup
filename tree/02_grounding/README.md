@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/
 summary: everything that came from outside the room, readable by every skill
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/02_grounding/

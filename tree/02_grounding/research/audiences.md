@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/audiences.md
 summary: personas with real job titles, tools, pain points and design implications
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/audiences.md

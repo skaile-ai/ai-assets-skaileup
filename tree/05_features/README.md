@@ -1,7 +1,8 @@
 ---
 path: [_concept/05_features/]
 summary: the feature roster and one spec per feature, grouped into featuresets
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/05_features/

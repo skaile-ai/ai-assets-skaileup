@@ -1,6 +1,6 @@
 # 0017 — The instruction tree mirrors the artifact tree; a skill is a route
 
-**Status:** accepted
+**Status:** accepted; partly superseded by [0018](0018-the-rulebook-is-a-second-contract-asset.md) (a second contract asset, the rulebook) and [0022](0022-shared-artifact-contracts-and-proposed-entries.md) (`writers` becomes `owner` + `may_propose`)
 
 Supersedes [ADR 0003](0003-skill-body-shape.md) (skill body shape) and
 [ADR 0004](0004-contracts-earn-their-place.md) (contracts earn their place). Builds on

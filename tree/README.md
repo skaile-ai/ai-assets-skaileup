@@ -1,7 +1,8 @@
 ---
 path: [_concept/, _concept/README.md]
-summary: the artifact tree, its read direction and how a skill runs
-writers: [concept-scope]
+summary: the artifact tree, its ownership rule and how a skill runs
+owner: [concept-scope]
+may_propose: []
 ---
 
 # _concept/
@@ -24,8 +25,8 @@ A node's `path:` entries are matched first, `<x>` matching any one segment; the 
 ## The tree
 
 ```text
-_concept/                             the artifact tree, its read direction and how a skill runs
-├── README.md                         the artifact tree, its read direction and how a skill runs
+_concept/                             the artifact tree, its ownership rule and how a skill runs
+├── README.md                         the artifact tree, its ownership rule and how a skill runs
 ├── brief.md                          the pitch, with its comparables — what the user said, no more
 ├── glossary.md                       the project's ubiquitous language — terms, definitions, _Avoid_ lists
 ├── goals.md                          success criteria, KPIs, constraints and explicit non-goals
@@ -126,28 +127,22 @@ The first level is numbered and contiguous, and nothing below it is: the prefix 
 - No two siblings differ only by singular and plural (`review.yaml` beside `reviews/`), because a path written from memory then silently reads nothing; a whole-tree fact and a per-thing collection carry unrelated names.
 - Directories under `05_features/` and `07_screens/` are slugs: lowercase, hyphenated, no spaces, no numeric prefix; `shell` is reserved under `07_screens/`.
 - `02_grounding/research/step/` subfolders are named for the dispatching skill's `name:`, character for character.
-- Entity names come from the data model, not from features: the data model is built from the journeys and features read its names rather than coin them, so a feature that invents an entity name splits one concept into two.
+- Term ids come from the glossary, not from features: the data model cites glossary ids rather than coin names, so a feature that invents a name splits one concept into two.
 
-## Read direction
+## Ownership
 
-A skill reads from anywhere earlier in the tree and writes only into the folder it owns. `02_grounding/` is readable by every skill at any point.
+Read anything, in any order; write only the artifacts you own, through the owner node's contract. `02_grounding/` is readable by every skill. An artifact another skill owns takes only `proposed` entries, and only from a skill listed under that node's `may_propose`. `06_behaviors/` and `10_blueprint/architecture.md` are optional; a reader checks for existence before reading.
 
-| writes to | may read |
-|---|---|
-| `brief.md` · `goals.md` | `02_grounding/` |
-| `glossary.md` | `02_grounding/`, `brief.md` |
-| `03_brand/` | `02_grounding/`, `brief.md`, `glossary.md` |
-| `04_journeys/` | `02_grounding/`, `brief.md`, `goals.md`, `glossary.md` |
-| `10_blueprint/datamodel/` | `02_grounding/`, `brief.md`, `glossary.md`, `04_journeys/`, and `10_blueprint/techstack.md` · `architecture.md` when they exist |
-| `05_features/` | the above, and `10_blueprint/datamodel/` |
-| `06_behaviors/` | the above + `05_features/` |
-| `07_screens/` | the above, and `10_blueprint/` when it exists |
-| `08_dossiers/` | everything the feature loop touched |
-| `09_mockup/` | `03_brand/`, `04_journeys/`, `05_features/`, `07_screens/`, `10_blueprint/datamodel/` |
-| `10_blueprint/` (the rest) | everything above it |
-| `11_build/` | everything |
+A node's frontmatter carries two keys, both required:
 
-`06_behaviors/` and `10_blueprint/architecture.md` are optional; a reader checks for existence before reading.
+```yaml
+owner: [concept-glossary]   # skills whose `produces` resolve here; [] when nothing generates it
+may_propose: []             # skills that may append `proposed` entries through this node; disjoint from owner
+```
+
+A directory node lists the owners of the parts it covers. `may_propose` names skills of this collection and repeats no owner.
+
+**Proposed entry.** An entry a non-owner skill appends to the owner's artifact, marked `status: proposed`, with `proposed_by: <skill>`, `proposed_on: YYYY-MM-DD` and its source (an evidence reference or the user's words). It adds and never edits a confirmed entry. The owner reviews it with the user and promotes it by dropping the marker, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. Each node's `## Format` holds the per-artifact shape.
 
 ## Frontmatter every markdown artifact carries
 
@@ -162,15 +157,24 @@ The skill holding an artifact's approval step writes `approved:` in the same wri
 
 ## How a skill runs
 
-1. **Gates first.** Check the `metadata.prerequisites.files` gates before any output and stop, naming the missing path and the skill that produces it, when a hard one fails. Then read every required input and the optional ones where present; `_concept/` outranks the conversation, so a disagreement between them is a question for the user.
-2. **The route is the todo list.** On entry the route's numbered items become the first todo items, verbatim and in order; an item that does not apply stays listed as `skip: <reason>`, and **Done when** is the last item. Where the harness has no todo tool, the first message lists them and each later message names the item it is on.
-3. **One question per message.** A question goes out as its own message, built on the user's last answer, with a status update or explanation in the message before it; a technical term is explained in parentheses, because a question buried at the end of a long message gets skimmed.
-4. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
-5. **Standalone or in a flow.** A standalone run applies the same gates, and its next steps are the skills whose required paths are now satisfied, which are the edges leaving this skill's flow node in the flow file; when none is unblocked, show what is missing and which skill produces it. When a flow is running the host dispatches the next step itself.
+Every skill binds these rules at its interviewing step by citing `tree/README.md § How a skill runs`; a node does not restate them.
+
+**The route is the todo list.** On entry the route's numbered items become the first todo items, verbatim and in order; an item that does not apply stays listed as `skip: <reason>`, and **Done when** is the last item. Where the harness has no todo tool, the first message lists them and each later message names the item it is on.
+
+1. **Resolve facts, then ask.** Read existing artifacts in any order, and an optional one only after checking it exists; `_concept/` outranks the conversation, so a disagreement between them is a question for the user. Run `concept-reverse` scoped for evidence the code holds; mark inferred facts; batch only what tools cannot settle.
+2. **One decision batch per message.** At most 7 independently answerable questions on one topic; each with the recommendation first and a one-line consequence; an "accept all defaults" option; questions whose options depend on an unanswered one are deferred to the next batch; a status line precedes the batch. A technical term is explained in parentheses.
+3. **Match the user's specificity.** Infer depth from the material supplied; where it matters, ask per artifact how deep to go (`sketch · standard · exhaustive`) and say what each level produces; a user precise about roles and vague about layout gets precise role questions and a layout proposal.
+4. **Sort before asking.** Restate the user's input as a coherent draft (terms, objects, screens, rules) with gaps marked, then ask about the gaps — never a questionnaire first.
+5. **Show consequences before commitments** on data, feature and navigation choices: what the user sees, data and permission effects, affected artifacts, reversibility; for expensive choices compare genuinely different alternatives (design-it-twice).
+6. **Prototype when the choice is spatial.** A floorplan preview with sample data (neutral styling, two variants on request) before the screen is specified.
+7. **Record at the semantic home**, as `proposed` when another skill owns it; open questions get stable ids.
+8. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps, named by demand: the skills that own what is still missing. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
 
 ## Beside the tree
 
-One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and has one writer, `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `.claude/contracts/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`.
+One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and is owned by `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `<contracts>/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`.
+
+A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, defaults, floorplans), holds the application-design rules skills cite. It is not a `_concept/` part and has no node here.
 
 ## arc42 map
 
@@ -200,7 +204,7 @@ This tree is maintained by the skaileup-tree collection. Every path here has an 
 `<contracts>/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`),
 where `<contracts>` is the agent harness's contract directory: `.omp/contracts`, `.claude/contracts`
 or `.codex/contracts`, whichever exists.
-Read the folder README and the node before editing a file here; the node says who writes it,
+Read the folder README and the node before editing a file here; the node says who owns it and who may propose into it,
 its format, and what reads it.
 The one artifact outside this tree, APP-DESIGN.md at the project root, has its node at
 `<contracts>/shared-contracts/APP-DESIGN.md`.

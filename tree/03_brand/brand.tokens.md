@@ -1,7 +1,8 @@
 ---
 path: [_concept/03_brand/brand.tokens.json, _concept/03_brand/brand.dark.tokens.json, _concept/03_brand/brand.resolver.json]
 summary: brand as W3C design tokens, with optional dark overlay and resolver
-writers: [design-brand]
+owner: [design-brand]
+may_propose: []
 ---
 
 # _concept/03_brand/brand.tokens.json

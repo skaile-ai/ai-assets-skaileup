@@ -1,7 +1,8 @@
 ---
 path: _concept/06_behaviors/<featureset>.md
 summary: states, transitions and named constants for one featureset's entities
-writers: [experience-behaviors]
+owner: [experience-behaviors]
+may_propose: []
 ---
 
 # _concept/06_behaviors/<featureset>.md

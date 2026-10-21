@@ -1,7 +1,8 @@
 ---
 path: _concept/01_meta/
 summary: project metadata — the sizing every skill reads its depth from
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/01_meta/

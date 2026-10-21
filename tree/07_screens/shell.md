@@ -1,7 +1,8 @@
 ---
 path: _concept/07_screens/shell.md
 summary: the app frame — navigation, layout areas, breakpoints, shared patterns
-writers: [experience-shell]
+owner: [experience-shell]
+may_propose: []
 ---
 
 # _concept/07_screens/shell.md

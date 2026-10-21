@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/interaction.md
 summary: surfaces, editors, save models, messages, search as the code has them today
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/interaction.md

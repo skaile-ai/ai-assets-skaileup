@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/design-inspiration.md
 summary: layout, colour, typography and component references with sources
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/design-inspiration.md

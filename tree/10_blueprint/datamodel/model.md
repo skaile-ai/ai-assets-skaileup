@@ -1,7 +1,8 @@
 ---
 path: [_concept/10_blueprint/datamodel/model.dbml, _concept/10_blueprint/datamodel/model.json]
 summary: the canonical stack-neutral model — semantic types, relations, metadata
-writers: [architecture-datamodel]
+owner: [architecture-datamodel]
+may_propose: []
 ---
 
 # _concept/10_blueprint/datamodel/model.dbml, model.json

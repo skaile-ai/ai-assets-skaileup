@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/onboarding/
 summary: the preferences, constraints and material a project arrives with
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/02_grounding/onboarding/

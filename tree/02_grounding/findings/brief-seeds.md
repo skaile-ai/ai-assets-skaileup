@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/brief-seeds.md
 summary: pitch, audience, problem and comparables as the repository's docs state them
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/brief-seeds.md

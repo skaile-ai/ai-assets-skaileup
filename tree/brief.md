@@ -1,7 +1,8 @@
 ---
 path: _concept/brief.md
 summary: the pitch, with its comparables — what the user said, no more
-writers: [concept-brief]
+owner: [concept-brief]
+may_propose: []
 ---
 
 # _concept/brief.md
@@ -37,7 +38,7 @@ approved: YYYY-MM-DD     # only after the user's yes
 
 1. **Read what exists.** `_concept/02_grounding/onboarding/answers.json` for answers a dialog collected, and `_concept/02_grounding/research/{domain,competitors,audiences}.md` where research ran first — that set is the deep pass, and this skill distils it rather than re-running it. The `flow` in `_concept/01_meta/scope.yaml` sets the depth of the pitch, the comparables and the goals: `appbuilder-mvp` takes one pass at each, `appbuilder-standard` and `skaileup-concept-only` work them until the user stops correcting.
 2. **Seed from findings when they exist.** When `_concept/02_grounding/findings/brief-seeds.md` exists (the reverse flow), seed the pitch, goals and comparables from it and show each graded value as a proposal: `extracted` is what the repository says, `inferred` and `needs_review` are guesses only the user can settle, and none is a decision yet.
-3. **Get the pitch.** With a free-form description, mine it for name, pitch, audience, problem, hero flow, comparables and success criteria, and carry on with the gaps — the approval review fills one more cheaply than an interview. Otherwise ask, one question per message: what it does in a sentence, who the primary user is, the single most important problem, the one action every user must take, similar apps, what success looks like. Write the frontmatter and the vision, without `approved:`.
+3. **Get the pitch.** With a free-form description, mine it for name, pitch, audience, problem, hero flow, comparables and success criteria, and carry on with the gaps — the approval review fills one more cheaply than an interview. Otherwise ask, as one decision batch (`tree/README.md § How a skill runs`): what it does in a sentence, who the primary user is, the single most important problem, the one action every user must take, similar apps, what success looks like. Write the frontmatter and the vision, without `approved:`.
 4. **Study the comparables** as `## Comparables`: three to six products, at least one direct competitor, one indirect, one adjacent. Each gets a borrow and an avoid named as a specific pattern ("good UX" is not one), and the section closes on the positioning gap tied to the audience. When the user named none and no research exists, write that; a fabricated competitor looks real by the time features are cut against it, and an unverifiable claim about a real one is marked `unverified`.
 
 The goals are drafted next, from this brief, by `tree/goals.md`; approval comes only after both drafts exist.

@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/decisions.md
 summary: design-time decision records, append-only
-writers: [spec-feature]
+owner: [spec-feature]
+may_propose: []
 ---
 
 # _concept/10_blueprint/decisions.md

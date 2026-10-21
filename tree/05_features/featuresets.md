@@ -1,7 +1,8 @@
 ---
 path: _concept/05_features/featuresets.md
 summary: the roster of featuresets and the features in each, with priorities
-writers: [spec-featuresets]
+owner: [spec-featuresets]
+may_propose: []
 ---
 
 # _concept/05_features/featuresets.md

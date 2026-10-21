@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/slices/<slice_id>/
 summary: "one slice's dossier directory: plan, working state, frozen index"
-writers: [build-plan, build-implement]
+owner: [build-plan, build-implement]
+may_propose: []
 ---
 
 # _concept/11_build/slices/<slice_id>/

@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/feedback/triage/
 summary: deterministic routing of each annotation to the file it belongs in
-writers: [mockup-feedback]
+owner: [mockup-feedback]
+may_propose: []
 ---
 
 # _concept/09_mockup/feedback/triage/

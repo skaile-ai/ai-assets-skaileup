@@ -33,7 +33,7 @@ recomputed every run, delivered as the report and never written to disk; the onl
 repairs the user approved.
 
 Read `tree/README.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the
-legal paths and what each skill may read are `tree/README.md § Read direction`; every `_concept/` file's frontmatter
+legal paths and what each skill may write or propose are `tree/README.md § Ownership`; every `_concept/` file's frontmatter
 and naming is the node at its own path. This file sequences the checks and does not restate them.
 
 ## Steps

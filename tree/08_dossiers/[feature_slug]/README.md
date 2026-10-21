@@ -1,7 +1,8 @@
 ---
 path: _concept/08_dossiers/<feature_slug>/
 summary: the dossier directory of one feature
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/08_dossiers/<feature_slug>/

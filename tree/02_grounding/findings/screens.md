@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/screens.md
 summary: page components behind the routes, with bindings, interactions and states
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/screens.md

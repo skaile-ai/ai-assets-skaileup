@@ -346,10 +346,15 @@ class Node:
         items = raw if isinstance(raw, list) else ([raw] if isinstance(raw, str) else [])
         self.entries: list[str] = [e for e in items if isinstance(e, str)]
         self.summary = fm.get("summary")
-        self.raw_writers = fm.get("writers")
-        self.writers: list[str] = (
-            [w for w in self.raw_writers if isinstance(w, str)] if isinstance(self.raw_writers, list) else []
+        self.raw_owner = fm.get("owner")
+        self.owner: list[str] = (
+            [w for w in self.raw_owner if isinstance(w, str)] if isinstance(self.raw_owner, list) else []
         )
+        self.raw_may_propose = fm.get("may_propose")
+        self.may_propose: list[str] = (
+            [w for w in self.raw_may_propose if isinstance(w, str)] if isinstance(self.raw_may_propose, list) else []
+        )
+        self.has_writers_key = "writers" in fm
 
     @property
     def is_readme(self) -> bool:
@@ -619,12 +624,23 @@ def _check_node(node: Node, skill_dirs: set[str], rep: Report) -> None:
         rep.fail(where, "node-frontmatter", "has no `summary:` — the tree listing renders it")
     elif len(summary) > 80:
         rep.fail(where, "node-frontmatter", f"`summary:` is {len(summary)} characters, over the 80-character limit")
-    if not isinstance(node.raw_writers, list):
-        rep.fail(where, "node-frontmatter", "has no `writers:` list — write `writers: []` for a part nothing generates")
+    if node.has_writers_key:
+        rep.fail(where, "node-frontmatter", "still carries `writers:` — rename it to `owner:`")
+    if not isinstance(node.raw_owner, list):
+        if not node.has_writers_key:  # the rename message above already says it
+            rep.fail(where, "node-frontmatter", "has no `owner:` list — write `owner: []` for a part nothing generates")
     else:
-        for writer in node.raw_writers:
-            if not isinstance(writer, str) or writer not in skill_dirs:
-                rep.fail(where, "node-frontmatter", f"`writers:` lists {writer!r}, which is no skill in this collection")
+        for owner in node.raw_owner:
+            if not isinstance(owner, str) or owner not in skill_dirs:
+                rep.fail(where, "node-frontmatter", f"`owner:` lists {owner!r}, which is no skill in this collection")
+    if not isinstance(node.raw_may_propose, list):
+        rep.fail(where, "node-frontmatter", "has no `may_propose:` list — write `may_propose: []` when no other skill proposes here")
+    else:
+        for proposer in node.raw_may_propose:
+            if not isinstance(proposer, str) or proposer not in skill_dirs:
+                rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is no skill in this collection")
+            elif proposer in node.owner:
+                rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is also in `owner:` — an owner writes directly")
 
 
 def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
@@ -1306,36 +1322,37 @@ def _check_route_shape(produces_empty: bool, body: str, where: str, rep: Report)
             rep.fail(where, "route-shape", f"route item {i} cites no `tree/…` node — a route is a list of nodes to read")
 
 
-def _check_writers(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Report) -> None:
-    """Rule `produces-writer-listed` / `writer-without-produces`: a node's `writers:` and the skills'
+def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Report) -> None:
+    """Rule `produces-writer-listed` / `writer-without-produces`: a node's `owner:` and the skills'
     `produces` say the same thing from both ends.
 
-    A produces path resolving to a node must find the skill in its `writers:`. A node's writer
+    A produces path resolving to a node must find the skill in its `owner:`. A node's owner
     must have a produces path that resolves to the node, or a directory above one of the node's
     entries, or a path below one of the node's directory entries — a directory entry of at least
-    two segments, because the root entry `_concept/` would otherwise cover every path there is."""
+    two segments, because the root entry `_concept/` would otherwise cover every path there is.
+    `may_propose:` is not cross-checked: a proposer appends entries, it does not generate the part."""
     fms = dict(skill_fms)
     for skill, fm in skill_fms:
         for _ident, path in _produced_entries(fm):
             if not (path.startswith(ARTIFACT_ROOT + "/") or path in PROJECT_ROOT_ARTIFACTS):
                 continue
             node = resolve(nodes, path)
-            if node is not None and skill not in node.writers:
+            if node is not None and skill not in node.owner:
                 rep.fail(
                     f"skills/{skill}",
                     "produces-writer-listed",
-                    f"produces {path!r}, which resolves to `{node.file}`, whose `writers:` does not list {skill!r}",
+                    f"produces {path!r}, which resolves to `{node.file}`, whose `owner:` does not list {skill!r}",
                 )
 
     def prefix(a: list[str], b: list[str]) -> bool:
         return len(a) <= len(b) and all(_seg_eq(x, y) for x, y in zip(a, b))
 
     for node in nodes:
-        for writer in node.writers:
-            if writer not in fms:
+        for owner in node.owner:
+            if owner not in fms:
                 continue  # an unknown skill is `node-frontmatter`'s report
             ok = False
-            for _ident, p in _produced_entries(fms[writer]):
+            for _ident, p in _produced_entries(fms[owner]):
                 if not (p.startswith(ARTIFACT_ROOT + "/") or p in PROJECT_ROOT_ARTIFACTS):
                     continue
                 ps = _segs(p)
@@ -1350,7 +1367,7 @@ def _check_writers(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Re
                 rep.fail(
                     node.file,
                     "writer-without-produces",
-                    f"lists writer {writer!r}, but no `produces` path of that skill resolves to this node "
+                    f"lists owner {owner!r}, but no `produces` path of that skill resolves to this node "
                     f"or lies above or below its `path:` entries",
                 )
 
@@ -1500,8 +1517,8 @@ def check_skills(
     #     so it is a second pass too.
     _check_not_grown_gates(repo, skill_fms, rep)
 
-    # 7c. a node's writers and the skills' produces agree from both ends.
-    _check_writers(nodes, skill_fms, rep)
+    # 7c. a node's owner and the skills' produces agree from both ends.
+    _check_owners(nodes, skill_fms, rep)
 
     # 7. a skill is called one way, and only if it exists here or in EXTERNAL_SKILLS —
     #    a second pass, so a call to a skill later in the directory order resolves.

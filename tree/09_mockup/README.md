@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/
 summary: reviewable prototypes of the design and the feedback that edits the specs
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/09_mockup/

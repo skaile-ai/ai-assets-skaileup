@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/competitors.md
 summary: per-product analysis of comparable products
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/competitors.md

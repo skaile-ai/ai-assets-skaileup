@@ -1,7 +1,8 @@
 ---
 path: [_concept/02_grounding/findings/]
 summary: graded evidence and raw material from outside the room
-writers: [concept-reverse, concept-research, design-brand]
+owner: [concept-reverse, concept-research, design-brand]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/

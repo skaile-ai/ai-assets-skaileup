@@ -1,6 +1,6 @@
 # 0015 — Interaction decisions live in `APP-DESIGN.md` at the project root
 
-**Status:** accepted
+**Status:** accepted; amended by [0018](0018-the-rulebook-is-a-second-contract-asset.md) (the rules leave the `APP-DESIGN.md` node) and [0022](0022-shared-artifact-contracts-and-proposed-entries.md) (other skills may add `proposed` entries)
 
 Amends the path rule in [ADR 0011](0011-the-machine-layer-sits-under-metadata.md) and the
 `produces` path rule in [ADR 0013](0013-a-skill-declares-what-it-produces.md): one named

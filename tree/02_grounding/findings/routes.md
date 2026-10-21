@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/routes.md
 summary: every route or endpoint, the file defining it, what a user does there
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/routes.md

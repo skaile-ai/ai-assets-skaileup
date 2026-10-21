@@ -16,13 +16,13 @@ no workspace.
 _Avoid_: resource, module, package
 
 **Contract**:
-The asset that ships the tree: one dir-scoped thing named `shared-contracts`, installed
-whole. There is exactly one contract and it holds nothing but the tree — what a skill
-actually cites is a node inside it.
+An asset that ships shared reference, dir-scoped and installed whole. There are two: the
+tree (`shared-contracts`) and the rulebook (`app-design-rulebook`). What a skill actually
+cites is a node inside the first or a rule or floorplan inside the second.
 _Avoid_: reference file, shared docs
 
 **Tree**:
-The instruction mirror of `_concept/`, shipped as the one contract asset. One node per
+The instruction mirror of `_concept/`, shipped as one of the two contract assets. One node per
 `_concept/` part; adding a part to `_concept/` means adding its node.
 _Avoid_: contracts folder, reference layer
 
@@ -37,9 +37,10 @@ One unit of agent work with a `name:` that is its whole identity — install pat
 flow node reference, and grounding key all at once.
 
 **Flow**:
-A graph over skills, and the unit a project is sized by. Flow nodes name skills; edges order them;
-the flow, not the filesystem, carries sequence. Choosing a flow and sizing the project are one
-act — `01_meta/scope.yaml` records the flow id, and a skill that varies its depth reads that.
+A recipe over skills. Flow nodes name skills; edges suggest an order and gate nothing — what
+a project runs follows from what it asks for, and how far each skill goes is its **depth**.
+A project follows one of two flows, greenfield or reverse (starting from existing code);
+`01_meta/scope.yaml` records which.
 _Avoid_: pipeline, workflow, chain, tier
 
 **Route**:
@@ -48,9 +49,9 @@ _Avoid_: steps, workflow
 
 **Router**:
 The one skill that names another skill instead of doing work — `skaileup`, the collection's
-front door. It answers only where nothing else already does: work arriving from outside the
-collection, and a `_concept/` tree opened cold. Which flow a project runs is `concept-scope`'s
-answer and the host's before that; what follows a completed skill is the flow's own edges.
+front door. Given a want (an artifact, a screen, a question) it names the skill that produces
+it and says, for each of that skill's inputs, whether it is present, derivable from the code,
+or still to ask. It also asks, lazily, for the flow, project type and depth, and records them.
 _Avoid_: dispatcher, orchestrator, entry skill
 
 **Host**:
@@ -101,12 +102,26 @@ will. One row per type in the `## Project types` table of the tree's `01_meta/sc
 The word names the description; the project has a *project type*, not a profile.
 _Avoid_: project profile, project shape; onboarding profile (that is forge-concept's, keyed by flow id — a different thing that shares the word)
 
+**Depth**:
+How far a project, or one artifact, is worked out — a sketch, a standard pass, or an
+exhaustive one. Recorded once for the project and asked per artifact where it matters, with
+what each level produces said up front. Replaces the old meaning of *tier* as project size.
+_Avoid_: tier, size, level, scope (that is what is in the project, not how far each part goes)
+
 **Template**:
 A tech-stack reference an implementation skill reads after the stack is chosen. Carries
 **atoms** in its frontmatter (one value each, extracted by name) and **recipes** as named
 sections (paragraphs, cited by heading). All stack-specific knowledge lives here; a skill
 that needs a stack branch has found a missing template section. Not a profile, not a skill.
 _Avoid_: stack profile, scaffold, boilerplate
+
+**Rulebook**:
+The collection's shared application-design rules, shipped as the second contract asset:
+numbered rules each with a strength grade, tunable heuristics, an adoptable bundle of
+defaults, and the catalogue of floorplans. Invariants always apply; a heuristic applies at the
+value the app adopted. Distinct from an app's own **app design**, which records what that app
+decided under these rules.
+_Avoid_: style guide, guidelines, design system, patterns file
 
 ## What a project grows
 
@@ -147,15 +162,33 @@ _Avoid_: context, background, inputs
 A convention discovered in an existing codebase, applied to new work.
 
 **Glossary**:
-A project's ubiquitous language — its own domain terms. Grown lazily as terms get
-pinned, read by every skill so vocabulary does not drift. Distinct from this file.
+A project's ubiquitous language — its own domain terms and the light ontology around them:
+what kind of thing each term is, what it is part of, what roles it plays, why it exists, and
+how an object term is reached, owned and originated. Words and the relations between them;
+stored fields stay with the datamodel. Grown lazily as terms get pinned, read by every skill so
+vocabulary does not drift; any authoring skill may propose a term. Distinct from this file.
 
 **Decision record**:
 An append-only note of a choice that was **hard to reverse**, **surprising without
-context**, and a **real trade-off**. All three, or it is not one. A rejected scope
-decision is a decision record marked rejected, not a separate store. Recorded at the
-level it binds: the collection, the design, or the build.
+context**, and a **real trade-off**. All three, or it is not one. One record per project,
+open to every authoring skill; each entry says what was decided, by whom, which options were
+rejected and what follows. A rejected scope decision, or a rejected **proposed entry**, is a
+decision record marked rejected, not a separate store. Recorded at the level it binds: the
+collection, the design, or the build.
 _Avoid_: ADR log, rationale, out-of-scope file
+
+**Owner**:
+The skill whose output an artifact is, and the only one that confirms what it holds. Anyone
+may read the artifact; another skill adds to it only as a **proposed entry**, and only when the
+owner's contract lists it as a proposer.
+_Avoid_: writer, author, maintainer
+
+**Proposed entry**:
+An entry a skill that does not own an artifact appends to it, marked as proposed with who
+proposed it, when, and the evidence or the user's words behind it. It adds and never edits a
+confirmed entry. The owner reviews it with the user and either promotes it or rejects it into
+the **decision record**.
+_Avoid_: suggestion, draft entry, TODO
 
 **Answer**:
 A value a user supplied to a question. Onboarding collects answers; they are inputs,
@@ -175,7 +208,8 @@ _Avoid_: feature group, group, epic, module
 A user-facing goal in a journey, staged by importance. Feeds features; is not one.
 
 **Screen**:
-One specified view of the application.
+One specified view of the application. An artifact of its own: features reference screens,
+a screen belongs to no feature.
 
 **Component**:
 A UI pattern shared across screens, specified once.
@@ -194,13 +228,60 @@ _Avoid_: UX guidelines, style guide, design system (that is visual, not behaviou
 A kind of thing users see and act on — an order, a customer, an invoice. The unit that app
 design decides things for: each object type has its own place for information, editor and
 representations.
-_Avoid_: object class (the rulebook uses *class* for core/supporting/child/junction/system),
-entity (that is the data model's word for the stored thing), resource, model
+_Avoid_: object class (what an object is, how it is reached and where it came from are three
+separate facts in the glossary), entity (that is the data model's word for the stored thing),
+resource, model
 
 **Floorplan**:
-The map of where each object type's information lives in the app, and how the rooms
-connect.
-_Avoid_: sitemap, navigation tree, IA
+A named layout template for one screen: its regions, which region is primary, where secondary
+information sits, which surfaces tertiary information may use, how it folds on a narrow
+viewport, and what may be a drawer and what must stay a page. Chosen from the rulebook per
+screen, with a preview that can be seen before the screen is specified.
+_Avoid_: wireframe, page template, layout, sitemap, IA (the per-object map is the **object map**)
+
+**Shell frame**:
+The app-wide floorplan, chosen once: the regions that persist around every screen and carry
+navigation — a sidebar, a top bar, bottom tabs, a dock. Each screen's floorplan fills the
+frame's work area.
+_Avoid_: chrome, app layout, master page
+
+**Navigation model**:
+The app-wide choice of how people move between things: whether the app is organised by
+objects, by tasks, or both, and which surface carries primary navigation. Recorded once, so
+the shell frame realises it rather than re-inventing it; where it is still a fallback it is
+visibly provisional.
+_Avoid_: menu structure, sitemap, nav style
+
+**Object map**:
+The map of where each object type's information lives — its home, its index, its editor, how
+it is created and deleted — and its representations. One row per object type. Not a
+**floorplan**, which lays out a screen.
+_Avoid_: floorplan, sitemap, navigation tree
+
+**Posture**:
+How a screen is used: **sovereign** (a long, daily work surface, optimised for people who
+stay), **transient** (comes, does one job, leaves), or **auxiliary** (a supporting view beside
+other work). Decides density, input richness and defaults; says nothing about who the user is.
+_Avoid_: mode, persona, screen type
+
+**Density**:
+How much information a screen or table packs into its area — compact, default or comfortable,
+one level per table. A floorplan and a posture each imply a default; a screen may override it.
+_Avoid_: spacing (that is a brand token), size, zoom
+
+**Tier**:
+How much an attribute of an object type matters to the person looking: primary (always
+shown), secondary (shown, summarised) or tertiary (only on demand, in a peek or popover, never
+shown unasked). Set per object type and overridden sparingly per screen. Not a project's
+**depth**.
+_Avoid_: level, priority (that is a story's stage), rank
+
+**Interaction concept**:
+A named, reusable idea of how the app works — for example a saved view or a triage queue —
+with its purpose, its operational principle, what it depends on, and where it appears.
+Recorded once in the app design and referenced by screens, so one idea is not re-described on
+each.
+_Avoid_: pattern (a rule in the rulebook), feature, mode
 
 **Surface**:
 A place information appears or is edited — a page, a panel, a modal, a popover, an inline

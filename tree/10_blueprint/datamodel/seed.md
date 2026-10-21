@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/datamodel/seed.json
 summary: realistic seed scenarios for mockups, screen specs and E2E tests
-writers: [architecture-datamodel]
+owner: [architecture-datamodel]
+may_propose: []
 ---
 
 # _concept/10_blueprint/datamodel/seed.json

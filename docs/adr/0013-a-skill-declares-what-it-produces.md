@@ -1,6 +1,6 @@
 # 0013 — A skill declares what it produces
 
-**Status:** accepted
+**Status:** accepted; amended by [0019](0019-scoped-fact-resolution.md) — the flow-walking producer check becomes "every hard gate is produced or a root prerequisite"
 
 Extends [ADR 0004](0004-contracts-earn-their-place.md)'s rule that machine-read data lives in
 `SKILL.md` frontmatter. Builds on [ADR 0011](0011-the-machine-layer-sits-under-metadata.md)'s

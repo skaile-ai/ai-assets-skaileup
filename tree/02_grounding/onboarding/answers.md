@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/onboarding/answers.json
 summary: the one answer record — values, confidence, seed inventory, approval
-writers: [concept-onboard]
+owner: [concept-onboard]
+may_propose: []
 ---
 
 # _concept/02_grounding/onboarding/answers.json
@@ -55,7 +56,7 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
 3. Read `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`) for `project_type` and the flow; confirm that value rather than
    collecting it again.
 4. Ask the technology preferences — framework or language, data access and database, UI
-   component library, authentication, overall architecture pattern — one question per message,
+   component library, authentication, overall architecture pattern — one decision batch per message,
    each answer with its `confidence`. Skip what the user has not decided rather than recording
    a null.
 5. Ask whether the project has a brand (logo, palette, typography, style guide) and where its

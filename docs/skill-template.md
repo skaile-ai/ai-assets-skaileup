@@ -68,7 +68,7 @@ cite a node for every `_concept/` format they read.
 - **A skill declares what it writes** (ADR 0013). `metadata.artifacts.produces` is a list of
   `{ id, path }`, mandatory on every skill: `id` is the kebab-case artifact id other skills
   name in `artifacts.requires` (every required id must be produced by some skill), and
-  `path` starts with `_concept/` and resolves to a node that lists the skill under `writers`.
+  `path` starts with `_concept/` and resolves to a node that lists the skill under `owner`.
   A skill that writes nothing under `_concept/` says `produces: []`. The only path allowed
   outside `_concept/` is the named project-root artifact `APP-DESIGN.md`
   ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md), the
@@ -90,6 +90,13 @@ cite a node for every `_concept/` format they read.
 - **A `soft` gate renders nowhere** — it is excluded from `satisfied` and never warned on. If
   its absence changes what the skill does, the step says so; the frontmatter alone tells the
   human nothing.
+- **No flow-order prose.** A skill does not say "runs after X" or "hands over to Y": order
+  lives in the flow graph, and next steps are named by demand — the skills that own what is
+  still missing (`tree/README.md § How a skill runs`, rule 8).
+- **An interviewing route item is a derive-or-ask step**: read what exists → derive the rest
+  from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) →
+  batch-ask what neither settles; it cites `tree/README.md § How a skill runs` and does not
+  restate the rules.
 - **The environment and the tree are sources of truth; the body is not a cache of them.** No
   READS/WRITES path list (the frontmatter and the nodes have it), no CHECKLIST (the node's
   `## Checks` has it), no Context Budget table.

@@ -1,7 +1,8 @@
 ---
 path: _concept/08_dossiers/
 summary: the concept-side working record of each feature, frozen when its loop ends
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/08_dossiers/

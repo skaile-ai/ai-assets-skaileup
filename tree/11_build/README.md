@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/
 summary: slices, trace, criteria ledger, reviews, release verdict and decisions
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/11_build/

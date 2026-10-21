@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/
 summary: sourced findings per topic that other skills design against
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/

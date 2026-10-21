@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/onboarding/questions.md
 summary: open questions routed to someone who is not in the room
-writers: [concept-onboard]
+owner: [concept-onboard]
+may_propose: []
 ---
 
 # _concept/02_grounding/onboarding/questions.md

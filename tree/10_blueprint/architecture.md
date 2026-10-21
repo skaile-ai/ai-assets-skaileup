@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/architecture.md
 summary: C4 levels — system context, containers, components, deployment, risks
-writers: [architecture-system]
+owner: [architecture-system]
+may_propose: []
 ---
 
 # _concept/10_blueprint/architecture.md
@@ -47,7 +48,7 @@ What is known to be weak or deferred, each item with the feature or integration 
 
 1. **Read the stack first, so you write the delta.** `_concept/10_blueprint/techstack.md` names `tech_stack_skill`; that template's `## Identity` and `## Scaffold Recipe` say what the project already gets — server runtime, ORM, auth provider, directory structure. Then read `_concept/brief.md`, every feature under `_concept/05_features/` and, when it exists, `_concept/10_blueprint/datamodel/` (a soft input: the entities the payloads of step 7 name).
 2. **Read the features for architecture signals**: real-time behaviour (chat, live updates, collaborative editing), background work (scheduling, long jobs, file processing), outside systems (payments, mail, third-party APIs), and data flows the stack has no shape for (event logs, multi-step workflows, pipelines). Where `_concept/06_behaviors/<featureset>.md` exists, its state tables sharpen all three: a transition on a timer is background work, one two actors race for is real-time, one that waits on an outside system names an adapter.
-3. **Ask only what the features left open** (one question per message — `tree/README.md § How a skill runs`): background or scheduled work, live updates, external services, streaming or instant communication, non-standard data handling. A question the feature specs already answer spends the round you needed for a real one.
+3. **Ask only what the features left open** (one decision batch per message — `tree/README.md § How a skill runs`): background or scheduled work, live updates, external services, streaming or instant communication, non-standard data handling. A question the feature specs already answer spends the round you needed for a real one.
 4. **Screen each addition against the design red flags** (below) before writing it; a module that fails the shallow-module question is usually a feature's helper, not an architecture entry.
 5. **Give every outside dependency a seam.** A module the app does not own — payment gateway, mail sender, model provider — is declared as an interface with a real implementation and an in-memory stand-in behind it, chosen by configuration, so a slice can be built and tested before anyone has credentials.
 6. **Write `architecture.md`** per `## Format`: the frontmatter lists, then the five sections in order.

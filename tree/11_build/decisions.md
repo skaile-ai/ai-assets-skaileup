@@ -1,7 +1,8 @@
 ---
 path: _concept/11_build/decisions.md
 summary: build-time decision records, append-only
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/11_build/decisions.md

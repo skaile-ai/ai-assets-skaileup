@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/index.md
 summary: catalogue of findings files and raw material, with the skill that took each
-writers: [concept-reverse, concept-research, design-brand]
+owner: [concept-reverse, concept-research, design-brand]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/index.md

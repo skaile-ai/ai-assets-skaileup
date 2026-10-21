@@ -1,7 +1,8 @@
 ---
 path: [_concept/11_build/slices/]
 summary: one dossier per vertical slice, cut from a frozen feature spec
-writers: [build-plan]
+owner: [build-plan]
+may_propose: []
 ---
 
 # _concept/11_build/slices/

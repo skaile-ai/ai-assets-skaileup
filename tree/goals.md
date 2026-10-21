@@ -1,7 +1,8 @@
 ---
 path: _concept/goals.md
 summary: success criteria, KPIs, constraints and explicit non-goals
-writers: [concept-brief]
+owner: [concept-brief]
+may_propose: []
 ---
 
 # _concept/goals.md

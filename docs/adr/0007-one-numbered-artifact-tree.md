@@ -1,6 +1,6 @@
 # 0007 — One artifact root, numbered at the first level only
 
-**Status:** accepted
+**Status:** accepted; partly superseded by [0023](0023-two-advisory-flows.md) (flows are advisory recipes) and amended by [0019](0019-scoped-fact-resolution.md) (the numbering is a place in the tree, not a reading order)
 
 ## Context
 

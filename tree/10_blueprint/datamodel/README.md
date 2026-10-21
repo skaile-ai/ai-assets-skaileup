@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/datamodel/
 summary: stack-neutral data model, naming rules and how it becomes a database
-writers: [architecture-datamodel]
+owner: [architecture-datamodel]
+may_propose: []
 ---
 
 # _concept/10_blueprint/datamodel/
@@ -44,7 +45,7 @@ Names are settled against `_concept/glossary.md` before modelling: where the glo
    - `_concept/10_blueprint/techstack.md`, when it exists, gives translation hints only (a stack that forces a join table); without it the model stays generic.
    - `_concept/10_blueprint/architecture.md`, when it exists, usually implies entities for a custom module or integration; without it, an entity only an integration needs surfaces later and this step re-runs.
 2. **Settle the vocabulary before modelling.** List every candidate entity and enum vocabulary the journeys (or the brief) imply — each journey's `candidate_entities` is the starting list — plus entities with no journey behind them (sessions, audit logs, job records), and check each against the glossary per `## Naming`. A concept with no term is not appended to the glossary here: name it and hand back, and the flow re-enters `concept-glossary`, which pins it before this step goes on.
-3. **Ask what the journeys left ambiguous** (one question per message — `tree/README.md § How a skill runs`): what each journey stores, how things connect ("a user has many tasks"), which roles may see or change what. The roles answer feeds the seed's `permissions` scenario and the fields those rules evaluate on. The grants themselves are the feature specs' `## Permissions` tables; this step runs before them, records no grants, and on a re-run reads those tables where they exist and seeds the roles and grants as written there.
+3. **Ask what the journeys left ambiguous** (one decision batch per message — `tree/README.md § How a skill runs`): what each journey stores, how things connect ("a user has many tasks"), which roles may see or change what. The roles answer feeds the seed's `permissions` scenario and the fields those rules evaluate on. The grants themselves are the feature specs' `## Permissions` tables; this step runs before them, records no grants, and on a re-run reads those tables where they exist and seeds the roles and grants as written there.
 4. **Approve in plain language** — what the app keeps track of and how those things relate, in the user's words, counts underneath. Write nothing before the user says yes; a model features, screens and seeds are about to name is cheapest to change while it is still a paragraph.
 5. **Write `model.dbml` and `model.json`** per `tree/10_blueprint/datamodel/model.md`, validating `model.json` against `tree/10_blueprint/datamodel/datamodel-model.schema.json` first and applying `## Naming`. An `m2m` gets an explicit junction model; a raw SQL type here survives into a migration that will not apply.
 6. **Write `seed.json`** per `tree/10_blueprint/datamodel/seed.md`, validated against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`, with all four standard scenarios plus `permissions` when the journeys name distinct roles.

@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/feedback/devlog.md
 summary: append-only log of feedback edits, read by renderers so re-renders keep them
-writers: [mockup-feedback]
+owner: [mockup-feedback]
+may_propose: []
 ---
 
 # _concept/09_mockup/feedback/devlog.md

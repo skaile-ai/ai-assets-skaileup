@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/standards/index.yml
 summary: fast matching of conventions by applies_to and keywords
-writers: [quality-standards]
+owner: [quality-standards]
+may_propose: []
 ---
 
 # _concept/02_grounding/standards/index.yml

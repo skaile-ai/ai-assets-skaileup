@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/feedback/
 summary: stakeholder annotations, their triage, reviewed patches and the audit trail
-writers: [mockup-annotate, mockup-feedback]
+owner: [mockup-annotate, mockup-feedback]
+may_propose: []
 ---
 
 # _concept/09_mockup/feedback/

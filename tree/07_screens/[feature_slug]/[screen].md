@@ -1,7 +1,8 @@
 ---
 path: _concept/07_screens/<feature_slug>/<screen>.md
 summary: one screen's spec — body sections, links to its feature, elements block
-writers: [spec-feature]
+owner: [spec-feature]
+may_propose: []
 ---
 
 # _concept/07_screens/<feature_slug>/<screen>.md

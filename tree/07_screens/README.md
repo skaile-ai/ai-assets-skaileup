@@ -1,7 +1,8 @@
 ---
 path: [_concept/07_screens/]
 summary: the app shell and one spec per screen, with the elements block
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/07_screens/

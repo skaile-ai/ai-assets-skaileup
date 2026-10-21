@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/findings/brand.md
 summary: colours, type, radius, spacing and mode the repository's theme carries
-writers: [concept-reverse]
+owner: [concept-reverse]
+may_propose: []
 ---
 
 # _concept/02_grounding/findings/brand.md

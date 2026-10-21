@@ -1,7 +1,8 @@
 ---
 path: _concept/02_grounding/research/colors-fonts.md
 summary: palette and typography research for the domain
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/colors-fonts.md

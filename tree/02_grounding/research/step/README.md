@@ -1,7 +1,8 @@
 ---
 path: [_concept/02_grounding/research/step/, _concept/02_grounding/research/step/<skill-name>/]
 summary: research dispatched alongside one skill, in a folder named for that skill
-writers: [concept-research]
+owner: [concept-research]
+may_propose: []
 ---
 
 # _concept/02_grounding/research/step/

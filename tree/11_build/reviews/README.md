@@ -1,7 +1,8 @@
 ---
 path: [_concept/11_build/reviews/, _concept/11_build/reviews/<feature_slug>.yaml]
 summary: one feature's code-review verdict and findings
-writers: [quality-review]
+owner: [quality-review]
+may_propose: []
 ---
 
 # _concept/11_build/reviews/

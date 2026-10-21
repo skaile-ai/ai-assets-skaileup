@@ -1,7 +1,8 @@
 ---
 path: _concept/10_blueprint/asyncapi.yaml
 summary: AsyncAPI 3.1 contract of the channels the project publishes or consumes
-writers: []
+owner: []
+may_propose: []
 ---
 
 # _concept/10_blueprint/asyncapi.yaml

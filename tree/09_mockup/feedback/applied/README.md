@@ -1,7 +1,8 @@
 ---
 path: _concept/09_mockup/feedback/applied/
 summary: committed per-session record of which patches landed and which failed
-writers: [mockup-feedback]
+owner: [mockup-feedback]
+may_propose: []
 ---
 
 # _concept/09_mockup/feedback/applied/

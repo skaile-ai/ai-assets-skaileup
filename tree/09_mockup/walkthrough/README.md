@@ -1,7 +1,8 @@
 ---
 path: [_concept/09_mockup/walkthrough/]
 summary: clickable site per screen and journey, plus the manifest mockup-annotate reads
-writers: [mockup-walkthrough]
+owner: [mockup-walkthrough]
+may_propose: []
 ---
 
 # _concept/09_mockup/walkthrough/
