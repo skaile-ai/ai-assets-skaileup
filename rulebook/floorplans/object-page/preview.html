@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — object-page</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+button{font:inherit;color:inherit}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.shell{height:36px;display:flex;align-items:center;gap:var(--fp-gap);padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.shell i{width:14px;height:14px;border-radius:3px;background:var(--fp-accent);display:inline-block}
+.work{flex:1;max-width:1000px;width:100%;margin:0 auto;padding:var(--fp-gap);display:flex;flex-direction:column;gap:var(--fp-gap)}
+.card{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.btn{border:1px solid var(--fp-border);background:var(--fp-surface);border-radius:var(--fp-radius);padding:6px 12px;cursor:pointer}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface);font-weight:600}
+.link{background:none;border:0;color:var(--fp-accent);cursor:pointer;padding:0;text-decoration:underline;font-size:12px}
+.badge{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;background:var(--fp-surface-2);border:1px solid var(--fp-border)}
+.badge.active{border-color:var(--fp-accent);color:var(--fp-accent)}
+.header{padding:22px 16px 14px}
+.crumbs{font-size:12px;color:var(--fp-muted);margin-bottom:6px}
+.crumbs a{color:var(--fp-accent);text-decoration:none}
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:var(--fp-gap);flex-wrap:wrap}
+.titlerow h1{margin:0;font-size:24px;display:inline}
+.titlerow .t{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.actions{display:flex;gap:8px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--fp-gap);padding:22px 16px 14px;margin:0}
+.facts div{display:flex;flex-direction:column-reverse}
+.facts dt{font-size:12px;color:var(--fp-muted)}
+.facts dd{margin:0;font-weight:600;font-size:16px}
+.secnav{display:flex;gap:4px;border-bottom:1px solid var(--fp-border);overflow-x:auto;position:sticky;top:0;background:var(--fp-bg);z-index:1}
+.secnav a{padding:8px 12px;color:var(--fp-muted);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent}
+.secnav a[aria-current]{color:var(--fp-fg);border-color:var(--fp-accent);font-weight:600}
+.sections{display:grid;grid-template-columns:1fr 1fr;gap:var(--fp-gap);padding:22px 16px 16px}
+.sections h2,.coll h2,.hist summary{font-size:15px;margin:0 0 6px}
+.sections p,.sections ul{margin:0;color:var(--fp-fg)}
+.sections ul{padding-left:18px}
+.sechead{display:flex;justify-content:space-between;align-items:baseline}
+.colls{display:flex;flex-direction:column;gap:var(--fp-gap);padding:22px 16px 16px}
+.coll .sechead{margin-bottom:6px}
+.rows{border:1px solid var(--fp-border);border-radius:var(--fp-radius);overflow:hidden}
+.row{display:grid;grid-template-columns:1fr 110px 110px 80px;align-items:center;gap:10px;padding:0 10px;height:40px;border-bottom:1px solid var(--fp-border)}
+.row:last-child{border-bottom:0}
+.row.head{background:var(--fp-surface-2);color:var(--fp-muted);font-size:12px;font-weight:600}
+.row .num{text-align:right}
+.inv .row{grid-template-columns:1fr 110px 110px}
+.hist{padding:22px 16px 14px}
+.hist summary{cursor:pointer;color:var(--fp-tier3)}
+.hist ol{margin:8px 0 0;padding:0;list-style:none;color:var(--fp-tier3);font-size:13px}
+.hist li{padding:4px 0;border-bottom:1px solid var(--fp-border)}
+.hist li:last-child{border-bottom:0}
+.hist time{color:var(--fp-muted);margin-right:8px}
+
+@media (max-width:640px){
+  .work{padding:8px}
+  .titlerow h1{font-size:20px}
+  .actions{width:100%}
+  .actions .btn.primary{flex:1}
+  .facts{grid-template-columns:1fr 1fr}
+  .sections{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"t s" "a e";height:auto;padding:8px 10px;gap:2px 10px}
+  .row.head{display:none}
+  .row .t1{grid-area:t;font-weight:600}.row .st{grid-area:s;text-align:right}
+  .row .as{grid-area:a;color:var(--fp-muted)}.row .num{grid-area:e;color:var(--fp-muted)}
+  .inv .row{grid-template-columns:1fr auto;grid-template-areas:"t s" "a e"}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="shell" data-region="shell" data-role="chrome"><i></i> Studio tracker <span>/ Projects</span></div>
+  <main class="work">
+    <header class="card header" data-region="header" data-tier="1">
+      <div class="crumbs"><a href="#">Projects</a> / Website relaunch</div>
+      <div class="titlerow">
+        <div class="t"><h1>Website relaunch</h1><span class="badge active">Active</span></div>
+        <div class="actions">
+          <button class="btn primary" type="button">Edit project</button>
+          <button class="btn" type="button" aria-label="More actions">⋯</button>
+        </div>
+      </div>
+    </header>
+
+    <dl class="card facts" aria-label="Key facts" data-region="facts" data-tier="2">
+      <div><dt>Client</dt><dd>Alder &amp; Finch</dd></div>
+      <div><dt>Owner</dt><dd>Jonas</dd></div>
+      <div><dt>Due date</dt><dd>Nov 28</dd></div>
+      <div><dt>Estimate</dt><dd>142 h</dd></div>
+    </dl>
+
+    <nav class="secnav" aria-label="Sections" data-region="section-nav" data-role="navigation">
+      <a href="#brief" aria-current="true">Brief</a>
+      <a href="#tasks">Tasks 8</a>
+      <a href="#invoices">Invoices 3</a>
+      <a href="#history">History</a>
+    </nav>
+
+    <section class="card sections" id="brief" data-region="sections" data-tier="2">
+      <div>
+        <div class="sechead"><h2>Brief</h2><button class="link" type="button">Edit brief</button></div>
+        <p>Replace the 2019 marketing site with a CMS-driven one. Keep the studio's case-study format, add a journal and a client login for approvals.</p>
+      </div>
+      <div>
+        <div class="sechead"><h2>Scope</h2><button class="link" type="button">Edit scope</button></div>
+        <ul><li>Homepage and five template types</li><li>Design system tokens for web</li><li>Accessibility review to AA</li><li>Content migration of 38 pages</li></ul>
+      </div>
+    </section>
+
+    <div class="colls" data-region="child-collections" data-tier="2">
+      <section class="coll card" id="tasks" style="padding:16px">
+        <div class="sechead"><h2>Tasks</h2><button class="btn" type="button">Create task</button></div>
+        <div class="rows" role="table" aria-label="Tasks">
+          <div class="row head" role="row"><span>Task</span><span>Assignee</span><span>Status</span><span class="num">Estimate</span></div>
+          <div class="row"><span class="t1">Sitemap &amp; content audit</span><span class="as">Jonas</span><span class="st">Done</span><span class="num">12 h</span></div>
+          <div class="row"><span class="t1">Wireframes</span><span class="as">Priya</span><span class="st">Done</span><span class="num">20 h</span></div>
+          <div class="row"><span class="t1">Design system tokens</span><span class="as">Priya</span><span class="st">In progress</span><span class="num">16 h</span></div>
+          <div class="row"><span class="t1">Homepage design</span><span class="as">Priya</span><span class="st">In progress</span><span class="num">18 h</span></div>
+          <div class="row"><span class="t1">Case study templates</span><span class="as">Mara</span><span class="st">In progress</span><span class="num">14 h</span></div>
+          <div class="row"><span class="t1">CMS setup</span><span class="as">Jonas</span><span class="st">To do</span><span class="num">24 h</span></div>
+          <div class="row"><span class="t1">Accessibility review</span><span class="as">Lena</span><span class="st">To do</span><span class="num">10 h</span></div>
+          <div class="row"><span class="t1">Launch checklist</span><span class="as">Jonas</span><span class="st">To do</span><span class="num">28 h</span></div>
+        </div>
+      </section>
+      <section class="coll card inv" id="invoices" style="padding:16px">
+        <div class="sechead"><h2>Invoices</h2><button class="btn" type="button">Create invoice</button></div>
+        <div class="rows" role="table" aria-label="Invoices">
+          <div class="row head" role="row"><span>Number</span><span>Status</span><span class="num">Amount</span></div>
+          <div class="row"><span class="t1">INV-1042</span><span class="st">Paid</span><span class="num">€4,800</span></div>
+          <div class="row"><span class="t1">INV-1057</span><span class="st">Sent</span><span class="num">€6,400</span></div>
+          <div class="row"><span class="t1">INV-1063</span><span class="st">Draft</span><span class="num">€3,200</span></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card hist" id="history" data-region="history" data-tier="3">
+      <details>
+        <summary>History (14 events)</summary>
+        <ol>
+          <li><time>Oct 21</time>Jonas changed status of "CMS setup" to To do</li>
+          <li><time>Oct 18</time>Priya completed "Wireframes"</li>
+          <li><time>Oct 9</time>Invoice INV-1057 sent to Alder &amp; Finch</li>
+          <li><time>Oct 2</time>Jonas changed due date from Nov 21 to Nov 28</li>
+          <li><time>Aug 14</time>Jonas created the project</li>
+        </ol>
+      </details>
+    </section>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — reader</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.45 var(--fp-font)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.app{display:flex;flex-direction:column;min-height:100%}
+.shell{height:32px;flex:none;display:flex;align-items:center;padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.work{flex:1;display:grid;grid-template-columns:210px 310px 1fr;gap:var(--fp-gap);padding:var(--fp-gap);min-height:0}
+.panel{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:var(--fp-gap);min-width:0}
+h2{margin:0 0 8px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fp-muted)}
+.group{margin-bottom:14px}
+.group label{display:flex;gap:8px;align-items:center;padding:3px 0}
+.select{display:block;width:100%;padding:6px 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);font:inherit}
+#f-toggle{display:none;font-weight:600}
+.mid{display:flex;flex-direction:column;gap:var(--fp-gap);min-width:0}
+.tree ul{list-style:none;margin:0;padding:0 0 0 14px}
+.tree>ul{padding:0}
+.tree li{padding:2px 0}
+.tree .node{color:var(--fp-fg)}
+.tree .cur{color:var(--fp-accent);font-weight:600}
+.tree .n{color:var(--fp-muted);font-size:12px}
+.list{flex:1;padding:4px}
+.row{display:block;width:100%;padding:8px;border-radius:var(--fp-radius);border:1px solid transparent}
+.row+.row{margin-top:2px}
+.row:hover{background:var(--fp-surface-2)}
+.row.sel{background:var(--fp-surface-2);border-color:var(--fp-accent)}
+.row .t{font-weight:600;display:block}
+.row .m{display:flex;gap:8px;color:var(--fp-muted);font-size:12px;margin-top:2px}
+.chip{border:1px solid var(--fp-border);border-radius:99px;padding:0 7px;font-size:11px}
+.reader{overflow:auto}
+.reader .head{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+#r-title{margin:0;font-size:22px;line-height:1.25;flex:1}
+#r-close{display:none;font-size:20px;line-height:1;padding:2px 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+#r-meta{color:var(--fp-muted);font-size:13px;margin:0 0 12px}
+.reader h3{font-size:15px;margin:16px 0 4px}
+.reader p{margin:0 0 8px;max-width:64ch}
+.info{display:inline-block;position:relative;margin-bottom:8px}
+.info summary{cursor:pointer;color:var(--fp-accent);font-size:13px;list-style:none}
+.info summary::-webkit-details-marker{display:none}
+.info dl{position:absolute;left:0;top:26px;z-index:2;margin:0;width:250px;padding:10px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-tier3)}
+.info dt{float:left;clear:left;width:100px;font-size:12px}
+.info dd{margin:0 0 3px 100px;font-size:12px}
+.hint{color:var(--fp-muted);font-size:12px;margin:0 0 6px}
+
+@media (max-width:959px){
+ .work{grid-template-columns:210px 1fr}
+ .reader{display:none;position:fixed;top:32px;right:0;bottom:0;width:min(560px,100%);z-index:5;border-radius:0;border-width:0 0 0 2px;border-color:var(--fp-accent)}
+ .app.reader-open .reader{display:block}
+ #r-close{display:block}
+}
+@media (max-width:640px){
+ .work{grid-template-columns:1fr}
+ #f-toggle{display:block;width:100%}
+ .fbody{display:none;margin-top:10px}
+ .app.filters-open .fbody{display:block}
+ .reader{width:100%;border-left-width:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="shell" data-region="shell" data-role="chrome">Design studio tracker — shell frame</div>
+ <div class="work">
+  <aside class="panel" data-region="filters" data-tier="2">
+   <button id="f-toggle" type="button">Filters · 2 applied ▾</button>
+   <div class="fbody">
+    <div class="group"><h2>Client</h2>
+     <select class="select" aria-label="Client"><option>All clients</option><option selected>Brightway Dental</option><option>Moss &amp; Co.</option></select></div>
+    <div class="group"><h2>Type</h2>
+     <label><input type="checkbox" checked> Brief</label>
+     <label><input type="checkbox" checked> Note</label></div>
+    <div class="group"><h2>Updated</h2>
+     <label><input type="radio" name="u" checked> Any time</label>
+     <label><input type="radio" name="u"> Last 30 days</label>
+     <label><input type="radio" name="u"> Last 7 days</label></div>
+    <p class="hint">8 of 8 documents</p>
+   </div>
+  </aside>
+
+  <section class="mid">
+   <nav class="panel tree" data-region="tree" data-role="navigation" aria-label="Clients and projects">
+    <h2>Clients and projects</h2>
+    <ul>
+     <li><span class="node">Brightway Dental <span class="n">2</span></span>
+      <ul><li><span class="cur">Website relaunch</span> <span class="n">2</span></li></ul></li>
+     <li><span class="node">Moss &amp; Co. <span class="n">2</span></span>
+      <ul><li>Packaging refresh <span class="n">2</span></li></ul></li>
+     <li><span class="node">Harbour Café <span class="n">2</span></span>
+      <ul><li>Menu redesign <span class="n">2</span></li></ul></li>
+     <li><span class="node">Lindqvist Architects <span class="n">2</span></span>
+      <ul><li>Identity <span class="n">2</span></li></ul></li>
+    </ul>
+   </nav>
+   <div class="panel list" data-region="list" data-tier="1">
+    <button class="row sel" type="button" data-doc data-title="Website relaunch — brief" data-meta="Brightway Dental · Website relaunch · Brief · Updated 14 Oct"><span class="t">Website relaunch — brief</span><span class="m"><span class="chip">Brief</span><span>14 Oct</span></span></button>
+    <button class="row" type="button" data-doc data-title="Kickoff meeting notes" data-meta="Brightway Dental · Website relaunch · Note · Updated 12 Oct"><span class="t">Kickoff meeting notes</span><span class="m"><span class="chip">Note</span><span>12 Oct</span></span></button>
+    <button class="row" type="button" data-doc data-title="Packaging refresh — brief" data-meta="Moss &amp; Co. · Packaging refresh · Brief · Updated 9 Oct"><span class="t">Packaging refresh — brief</span><span class="m"><span class="chip">Brief</span><span>9 Oct</span></span></button>
+    <button class="row" type="button" data-doc data-title="Dieline review notes" data-meta="Moss &amp; Co. · Packaging refresh · Note · Updated 8 Oct"><span class="t">Dieline review notes</span><span class="m"><span class="chip">Note</span><span>8 Oct</span></span></button>
+    <button class="row" type="button" data-doc data-title="Menu redesign — brief" data-meta="Harbour Café · Menu redesign · Brief · Updated 2 Oct"><span class="t">Menu redesign — brief</span><span class="m"><span class="chip">Brief</span><span>2 Oct</span></span></button>
+    <button class="row" type="button" data-doc data-title="Menu photo shoot notes" data-meta="Harbour Café · Menu redesign · Note · Updated 30 Sep"><span class="t">Menu photo shoot notes</span><span class="m"><span class="chip">Note</span><span>30 Sep</span></span></button>
+    <button class="row" type="button" data-doc data-title="Identity — brief" data-meta="Lindqvist Architects · Identity · Brief · Updated 25 Sep"><span class="t">Identity — brief</span><span class="m"><span class="chip">Brief</span><span>25 Sep</span></span></button>
+    <button class="row" type="button" data-doc data-title="Brand workshop notes" data-meta="Lindqvist Architects · Identity · Note · Updated 22 Sep"><span class="t">Brand workshop notes</span><span class="m"><span class="chip">Note</span><span>22 Sep</span></span></button>
+   </div>
+  </section>
+
+  <article class="panel reader" data-region="reader" data-tier="1">
+   <div class="head">
+    <h1 id="r-title">Website relaunch — brief</h1>
+    <button id="r-close" type="button" aria-label="Close reader">×</button>
+   </div>
+   <p id="r-meta">Brightway Dental · Website relaunch · Brief · Updated 14 Oct</p>
+   <details class="info">
+    <summary>Document info</summary>
+    <dl data-region="doc-info" data-tier="3">
+     <dt>Revision</dt><dd>4</dd>
+     <dt>Word count</dt><dd>612</dd>
+     <dt>Last edited by</dt><dd>Ana Reyes</dd>
+     <dt>Created</dt><dd>3 Sep</dd>
+    </dl>
+   </details>
+   <h3>Goal</h3>
+   <p>Replace the practice's five-year-old site with a calm, bookable-first site. Patients should find opening hours and book a check-up in under a minute on a phone.</p>
+   <h3>Scope</h3>
+   <p>Home, treatments (nine pages), team, prices, contact and a booking flow connected to the existing calendar. Copy is supplied by the client; photography is a separate task.</p>
+   <h3>Deliverables</h3>
+   <p>Sitemap and wireframes, two visual routes, a clickable prototype, the built site and a short editor handbook.</p>
+   <h3>Timeline</h3>
+   <p>Kick-off 12 Oct, first route 28 Oct, prototype 11 Nov, launch 12 Dec. Invoices follow the three milestones.</p>
+  </article>
+ </div>
+</div>
+<script>
+var app=document.querySelector('.app');
+document.querySelectorAll('[data-doc]').forEach(function(r){
+ r.addEventListener('click',function(){
+  document.querySelectorAll('[data-doc]').forEach(function(x){x.classList.remove('sel')});
+  r.classList.add('sel');
+  document.getElementById('r-title').textContent=r.dataset.title;
+  document.getElementById('r-meta').textContent=r.dataset.meta;
+  app.classList.add('reader-open');
+ });
+});
+document.getElementById('r-close').addEventListener('click',function(){app.classList.remove('reader-open')});
+document.getElementById('f-toggle').addEventListener('click',function(){app.classList.toggle('filters-open')});
+</script>
+</body>
+</html>

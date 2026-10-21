@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — shell-dock</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--fp-bg);color:var(--fp-fg);font:13px/1.35 var(--fp-font);overflow:hidden}
+button{font:inherit;color:inherit;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:3px 10px;height:26px;cursor:pointer}
+button.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+button.ghost{border-color:var(--fp-surface);background:none}
+kbd{font:600 10px/1 var(--fp-font);color:var(--fp-muted);border:1px solid var(--fp-border);border-radius:4px;padding:2px 4px;background:var(--fp-surface)}
+.ic{display:inline-block;width:12px;height:12px;border:1.5px solid currentColor;border-radius:3px;flex:none}
+.sp{flex:1}
+.win{display:grid;grid-template-rows:auto auto auto 1fr auto;height:100vh}
+/* title bar and toolbar */
+.title{display:flex;align-items:center;gap:10px;height:30px;padding:0 10px;background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);font-weight:600}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--fp-border);border:1px solid var(--fp-tier3)}
+.title span.t{flex:1;text-align:center;color:var(--fp-muted);font-weight:500;padding-right:90px}
+.tool{display:flex;align-items:center;gap:6px;height:36px;padding:0 10px;background:var(--fp-surface);border-bottom:1px solid var(--fp-border)}
+.tool .sep{width:1px;height:18px;background:var(--fp-border);margin:0 4px}
+.tool .find{display:flex;gap:8px;align-items:center;color:var(--fp-muted);min-width:180px;justify-content:space-between;margin-right:78px}
+.seg{display:inline-flex}
+.seg button{border-radius:0;margin-left:-1px}
+.seg button:first-child{border-radius:var(--fp-radius) 0 0 var(--fp-radius);margin-left:0}
+.seg button:last-child{border-radius:0 var(--fp-radius) var(--fp-radius) 0}
+.seg button.on{background:var(--fp-surface-2);border-color:var(--fp-accent)}
+.panesw{display:none;padding:6px 10px;background:var(--fp-surface);border-bottom:1px solid var(--fp-border)}
+.panesw .seg{width:100%}
+.panesw .seg button{flex:1}
+/* panes */
+.panes{display:flex;min-height:0}
+.pane{overflow:auto;min-width:0;background:var(--fp-surface)}
+.nav{width:240px;flex:none;display:flex;flex-direction:column;background:var(--fp-bg);padding:8px 4px}
+.split{width:5px;flex:none;background:var(--fp-border);cursor:col-resize}
+.group{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding:8px 8px 4px}
+.nav ul{list-style:none;margin:0;padding:0}
+.nav li a{display:flex;align-items:center;gap:8px;height:26px;padding:0 8px;border-radius:4px;color:var(--fp-fg);text-decoration:none}
+.nav li a:hover{background:var(--fp-surface-2)}
+.nav li a[aria-current]{background:var(--fp-surface-2);font-weight:600;box-shadow:inset 3px 0 0 var(--fp-accent)}
+.nav li a kbd{margin-left:auto}
+.tree{padding:0 0 0 4px}
+.tree li a{height:24px;color:var(--fp-muted)}
+.tree li.l2 a{padding-left:26px}
+.tree li a .ar{width:10px;color:var(--fp-tier3)}
+.list{flex:1;padding:0}
+.hd,.r{display:grid;grid-template-columns:2.2fr 1.6fr 1fr .9fr;gap:10px;align-items:center;height:32px;padding:0 12px}
+.hd{position:sticky;top:0;background:var(--fp-surface-2);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted);border-bottom:1px solid var(--fp-border);padding-top:14px;height:40px}
+.r{border-bottom:1px solid var(--fp-surface-2)}
+.r b{font-weight:600}
+.r .c{color:var(--fp-muted)}
+.r.sel{background:var(--fp-surface-2);box-shadow:inset 3px 0 0 var(--fp-accent)}
+.st::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--fp-accent);margin-right:6px}
+.st.dim::before{background:var(--fp-tier3)}
+.detail{width:300px;flex:none;padding:22px 14px 12px;display:flex;flex-direction:column;gap:8px}
+.detail h2{font-size:15px;margin:0}
+.detail dl{margin:0;display:grid;grid-template-columns:70px 1fr;gap:4px 8px}
+.detail dt{color:var(--fp-muted)}
+.detail dd{margin:0}
+.sub{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding-top:8px}
+.tasks{list-style:none;margin:0;padding:0}
+.tasks li{display:flex;gap:8px;height:28px;align-items:center;border-bottom:1px solid var(--fp-surface-2)}
+.tasks li span.e{margin-left:auto;color:var(--fp-muted)}
+details.more{border-top:1px dashed var(--fp-border);padding-top:8px;color:var(--fp-tier3)}
+details.more summary{cursor:pointer;padding-top:10px}
+details.more p{margin:6px 0 0}
+/* status bar */
+.status{display:flex;gap:16px;align-items:center;height:24px;padding:0 10px;background:var(--fp-surface-2);border-top:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px;padding-right:90px}
+.status .sp{flex:1}
+/* palette */
+.palette{display:none;position:fixed;top:12vh;left:50%;transform:translateX(-50%);width:min(520px,92vw);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:var(--fp-gap);z-index:40;box-shadow:0 0 0 100vmax var(--fp-surface-2)}
+.palette input{width:100%;font:inherit;padding:8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);margin:14px 0 6px;background:var(--fp-bg)}
+.palette .g{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding:8px 4px 4px}
+.palette .o{display:flex;gap:8px;padding:5px 4px;border-radius:4px}
+.palette .o kbd{margin-left:auto}
+.palette .o.hot{background:var(--fp-surface-2)}
+body.palette-open .palette{display:block}
+/* 768-991: tighter docks */
+@media (max-width:991px){
+ .nav{width:200px}
+ .detail{width:260px}
+ .tool .lbl{display:none}
+ .tool .find{margin-right:70px;min-width:120px}
+ .hd,.r{grid-template-columns:2fr 1.4fr 1fr}
+ .hd .c4,.r .c4{display:none}
+}
+/* narrow: one pane at a time */
+@media (max-width:767px){
+ .panesw{display:block}
+ .split{display:none}
+ .nav,.detail{display:none;width:auto;flex:1}
+ .list{display:block}
+ body[data-pane="nav"] .nav{display:flex}
+ body[data-pane="nav"] .list{display:none}
+ body[data-pane="detail"] .detail{display:flex}
+ body[data-pane="detail"] .list{display:none}
+ .tool .keep{display:none}
+ .tool .find{margin-right:0;min-width:0;flex:1}
+ .title span.t{text-align:left;padding-right:80px}
+ .win{grid-template-rows:auto auto auto 1fr auto}
+}
+@media (max-width:640px){
+ .hd,.r{grid-template-columns:1.6fr 1fr;padding:0 10px}
+ .hd .c2,.r .c2{display:none}
+ .status .opt{display:none}
+ .status{padding-right:80px}
+ .tool{gap:4px;padding:0 6px}
+}
+</style>
+</head>
+<body data-pane="list">
+<div class="win">
+  <header class="title" data-region="title-bar" data-role="chrome">
+    <span class="dots"><i></i><i></i><i></i></span>
+    <span class="t">Studio Tracker — Projects</span>
+  </header>
+
+  <div class="tool" data-region="toolbar" data-role="chrome">
+    <button class="primary">Create <span class="lbl">project</span></button>
+    <button class="keep"><span class="lbl">Duplicate</span></button>
+    <button class="keep"><span class="lbl">Archive</span></button>
+    <span class="sep keep"></span>
+    <span class="seg keep"><button class="on">List</button><button>Tree</button></span>
+    <span class="sp"></span>
+    <button class="find" data-toggle="palette-open" aria-label="Search and commands"><span>Search or run…</span><kbd>⌘K</kbd></button>
+  </div>
+
+  <div class="panesw">
+    <span class="seg"><button data-pane="nav">Navigate</button><button class="on" data-pane="list">List</button><button data-pane="detail">Detail</button></span>
+  </div>
+
+  <div class="panes">
+    <nav class="pane nav" data-region="nav-pane" data-role="navigation" aria-label="Primary">
+      <div class="group">Destinations</div>
+      <ul>
+        <li><a href="#"><span class="ic"></span>Overview<kbd>g o</kbd></a></li>
+        <li><a href="#" aria-current="page"><span class="ic"></span>Projects<kbd>g p</kbd></a></li>
+        <li><a href="#"><span class="ic"></span>Tasks<kbd>g t</kbd></a></li>
+        <li><a href="#"><span class="ic"></span>Clients<kbd>g c</kbd></a></li>
+        <li><a href="#"><span class="ic"></span>Invoices<kbd>g i</kbd></a></li>
+        <li><a href="#"><span class="ic"></span>Reports<kbd>g r</kbd></a></li>
+        <li><a href="#"><span class="ic"></span>Settings<kbd>g s</kbd></a></li>
+      </ul>
+      <div class="group">Projects by client</div>
+      <ul class="tree">
+        <li><a href="#"><span class="ar">▾</span>Northwind Coffee</a></li>
+        <li class="l2"><a href="#">Brand refresh</a></li>
+        <li class="l2"><a href="#">Campaign kit</a></li>
+        <li><a href="#"><span class="ar">▾</span>Alder &amp; Finch</a></li>
+        <li class="l2"><a href="#">Website relaunch</a></li>
+        <li class="l2"><a href="#">Pitch deck</a></li>
+        <li><a href="#"><span class="ar">▸</span>Pinecrest Foods</a></li>
+        <li><a href="#"><span class="ar">▸</span>Harbor Trust</a></li>
+      </ul>
+    </nav>
+    <div class="split" aria-hidden="true"></div>
+
+    <main class="pane list" data-region="list-pane" data-tier="1">
+      <div class="hd"><span>Project</span><span class="c2">Client</span><span>Status</span><span class="c4">Due</span></div>
+      <div class="r sel"><b>Brand refresh</b><span class="c c2">Northwind Coffee</span><span class="st">Active</span><span class="c c4">14 Nov</span></div>
+      <div class="r"><b>Website relaunch</b><span class="c c2">Alder &amp; Finch</span><span class="st">In review</span><span class="c c4">28 Nov</span></div>
+      <div class="r"><b>Packaging system</b><span class="c c2">Pinecrest Foods</span><span class="st">Active</span><span class="c c4">05 Dec</span></div>
+      <div class="r"><b>Annual report</b><span class="c c2">Harbor Trust</span><span class="st dim">Planned</span><span class="c c4">18 Dec</span></div>
+      <div class="r"><b>Wayfinding</b><span class="c c2">Lindqvist Clinic</span><span class="st dim">On hold</span><span class="c c4">09 Jan</span></div>
+      <div class="r"><b>Campaign kit</b><span class="c c2">Northwind Coffee</span><span class="st">Active</span><span class="c c4">21 Jan</span></div>
+      <div class="r"><b>App icon set</b><span class="c c2">Fernweh Travel</span><span class="st dim">Done</span><span class="c c4">30 Oct</span></div>
+      <div class="r"><b>Pitch deck</b><span class="c c2">Alder &amp; Finch</span><span class="st dim">Planned</span><span class="c c4">12 Feb</span></div>
+    </main>
+    <div class="split" aria-hidden="true"></div>
+
+    <aside class="pane detail" data-region="detail-pane" data-tier="2" aria-label="Detail">
+      <h2>Brand refresh</h2>
+      <dl>
+        <dt>Client</dt><dd>Northwind Coffee</dd>
+        <dt>Status</dt><dd>Active</dd>
+        <dt>Due</dt><dd>14 Nov</dd>
+        <dt>Owner</dt><dd>Mara Keller</dd>
+      </dl>
+      <div class="sub">Tasks</div>
+      <ul class="tasks">
+        <li>Moodboard<span class="e">6 h</span></li>
+        <li>Logo concepts<span class="e">16 h</span></li>
+        <li>Colour system<span class="e">8 h</span></li>
+      </ul>
+      <details class="more" data-region="more-details" data-tier="3">
+        <summary>More details</summary>
+        <p>Tier 3: budget, brief link, billing contact — on request only.</p>
+      </details>
+    </aside>
+  </div>
+
+  <footer class="status" data-region="status-bar" data-role="chrome">
+    <span>8 of 12 projects</span><span>1 selected</span><span class="sp"></span><span class="opt">Synced 2 min ago</span><span class="opt"><kbd>⌘K</kbd> commands</span>
+  </footer>
+</div>
+
+<div class="palette" data-region="palette" data-role="chrome" role="dialog" aria-label="Command palette">
+  <input placeholder="Type a command or search…" aria-label="Command palette">
+  <div class="g">Actions</div>
+  <div class="o hot">Create project <kbd>c</kbd></div>
+  <div class="o">Archive project <kbd>e</kbd></div>
+  <div class="g">Destinations</div>
+  <div class="o">Overview <kbd>g o</kbd></div>
+  <div class="o">Projects <kbd>g p</kbd></div>
+  <div class="o">Invoices <kbd>g i</kbd></div>
+  <div class="g">Objects</div>
+  <div class="o">Brand refresh — Northwind Coffee</div>
+</div>
+
+<script>
+document.addEventListener('click',function(e){
+  var p=e.target.closest('[data-pane]');
+  if(p&&p.tagName==='BUTTON'){document.body.dataset.pane=p.dataset.pane;document.querySelectorAll('.panesw button').forEach(function(b){b.classList.toggle('on',b===p)});return}
+  var t=e.target.closest('[data-toggle]');if(t){document.body.classList.toggle(t.dataset.toggle)}
+});
+document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.body.classList.toggle('palette-open')}if(e.key==='Escape'){document.body.classList.remove('palette-open')}});
+</script>
+</body>
+</html>

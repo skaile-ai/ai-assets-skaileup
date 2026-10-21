@@ -1723,6 +1723,177 @@ def test_a_table_row_outside_the_heuristics_section_is_not_an_id(tmp_path):
     assert errors(root) == []
 
 
+# -- the rulebook: floorplans -------------------------------------------------------
+
+FLOORPLAN_README = """\
+---
+id: list-report
+kind: screen
+summary: Scan and filter many objects of one kind
+posture: sovereign
+density: compact
+---
+
+# list-report — List report
+
+Serves scanning many objects; selected by `rulebook/rules.md § P1`.
+
+## Regions
+
+| region | role | default tier | holds |
+|---|---|---|---|
+| table | primary | 1 | rows |
+
+## Posture and density
+
+Sovereign, compact.
+
+## Responsive
+
+The table scrolls sideways.
+
+## Interaction constraints
+
+A drawer may triage; editing is a page.
+
+## Sketch
+
+```text
+[table]
+```
+
+## When not to use
+
+One object only: `object-page`.
+"""
+
+FLOORPLAN_PREVIEW = """\
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — list-report</title>
+<style>:root{--fp-bg:#f6f6f4}body{background:var(--fp-bg)}</style>
+<div data-region="table" data-tier="1">Rows</div>
+"""
+
+
+def write_floorplan(
+    root: Path,
+    fid: str = "list-report",
+    readme: str | None = FLOORPLAN_README,
+    preview: str | None = FLOORPLAN_PREVIEW,
+    cited: bool = True,
+) -> None:
+    """A floorplan directory; `None` leaves that file out. A cited floorplan is named in `rules.md`."""
+    directory = root / "rulebook" / "floorplans" / fid
+    directory.mkdir(parents=True, exist_ok=True)
+    if readme is not None:
+        (directory / "README.md").write_text(readme)
+    if preview is not None:
+        (directory / "preview.html").write_text(preview)
+    if cited:
+        rules = root / "rulebook" / "rules.md"
+        rules.write_text(rules.read_text() + f"\nFloorplans: `{fid}`.\n")
+
+
+def test_a_valid_floorplan_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root)
+    assert errors(root) == []
+
+
+def test_a_floorplan_without_a_preview(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, preview=None)
+    only(root, "has no `preview.html` — a floorplan without a preview cannot be reviewed")
+    assert "floorplan-shape" in errors(root)[0]
+
+
+def test_a_floorplan_id_must_equal_its_directory(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, readme=FLOORPLAN_README.replace("id: list-report", "id: report"))
+    only(root, "README `id` is 'report', but the directory is 'list-report'")
+
+
+@pytest.mark.parametrize(
+    "old, new, fragment",
+    [
+        ("kind: screen", "kind: page", "README `kind` is 'page'"),
+        ("posture: sovereign", "posture: modal", "README `posture` is 'modal'"),
+        ("density: compact", "density: dense", "README `density` is 'dense'"),
+    ],
+)
+def test_a_floorplan_enum_outside_its_vocabulary(tmp_path, old, new, fragment):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, readme=FLOORPLAN_README.replace(old, new))
+    only(root, fragment)
+
+
+def test_a_floorplan_missing_a_heading(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, readme=FLOORPLAN_README.replace("## Responsive", "## Folding"))
+    only(root, "README has no `## Responsive` section")
+
+
+def test_a_floorplan_summary_over_eighty_characters(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, readme=FLOORPLAN_README.replace("Scan and filter many objects of one kind", "x" * 81))
+    only(root, "README `summary` is 81 characters, over 80")
+
+
+def test_a_floorplan_readme_whose_frontmatter_does_not_parse(tmp_path):
+    """One failure, not five: an unquoted `: ` inside a value breaks the YAML, and the field checks are skipped."""
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    bad = FLOORPLAN_README.replace(
+        "summary: Scan and filter many objects of one kind", "summary: Scan many: filter one kind"
+    )
+    write_floorplan(root, readme=bad)
+    only(root, "README frontmatter does not parse as YAML — quote a value that contains `: `")
+
+
+def test_a_floorplan_readme_without_frontmatter(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, readme=FLOORPLAN_README.split("---\n", 2)[2])
+    only(root, "README has no frontmatter")
+
+
+def test_a_floorplan_preview_with_an_external_url(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, preview=FLOORPLAN_PREVIEW + '<a href="https://example.com">x</a>\n')
+    only(root, "`preview.html` contains `https://`")
+
+
+def test_a_floorplan_preview_without_the_neutral_variables(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, preview=FLOORPLAN_PREVIEW.replace("--fp-bg", "--bg"))
+    only(root, "`preview.html` does not define `--fp-bg`")
+
+
+def test_a_floorplan_cited_by_no_rule(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root, cited=False)
+    only(root, "is cited by no rule in rulebook/rules.md")
+    assert "floorplan-cited" in errors(root)[0]
+
+
+def test_a_skill_citing_a_floorplan_readme_resolves(tmp_path):
+    root = write_repo(tmp_path)
+    write_rulebook(root)
+    write_floorplan(root)
+    cite_rulebook(root, "spec-feature", "floorplans/list-report/README.md § Regions")
+    assert errors(root) == []
+
+
 # -- the tree: node frontmatter and location (T2) ---------------------------------
 
 def raw_node(root: Path, rel: str, text: str) -> None:

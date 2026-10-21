@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — shell-topbar</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--fp-bg);color:var(--fp-fg);font:15px/1.45 var(--fp-font);min-height:100vh}
+button{font:inherit;color:inherit;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:7px 12px;cursor:pointer}
+button.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+button.ghost{border-color:var(--fp-surface-2);background:none}
+kbd{font:600 10px/1 var(--fp-font);color:var(--fp-muted);border:1px solid var(--fp-border);border-radius:4px;padding:2px 4px;background:var(--fp-surface)}
+.ic{display:inline-block;width:14px;height:14px;border:1.5px solid currentColor;border-radius:4px;flex:none}
+.sp{flex:1}
+/* top bar */
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;height:56px;padding:0 20px;background:var(--fp-surface);border-bottom:1px solid var(--fp-border)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;margin-right:10px;white-space:nowrap}
+.brand .ic{background:var(--fp-accent);border-color:var(--fp-accent)}
+.menu-btn{display:none}
+.dest{display:flex;gap:2px;align-self:stretch;align-items:stretch}
+.dest a{display:flex;align-items:center;padding:0 10px;color:var(--fp-muted);text-decoration:none;border-bottom:2px solid var(--fp-surface)}
+.dest a:hover{color:var(--fp-fg)}
+.dest a[aria-current]{color:var(--fp-fg);font-weight:600;border-bottom-color:var(--fp-accent)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--fp-surface-2);border:1px solid var(--fp-border);font:600 11px/26px var(--fp-font);text-align:center;flex:none}
+.top .tail{display:flex;align-items:center;gap:10px;padding-right:62px}
+.top .find{color:var(--fp-muted);display:flex;gap:8px;align-items:center}
+/* page */
+.page{max-width:1080px;margin:0 auto;padding:0 20px 40px}
+.hdr{padding:22px 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hdr h1{font-size:22px;margin:0}
+.badge{font-size:12px;border:1px solid var(--fp-border);border-radius:99px;padding:1px 9px;color:var(--fp-muted);background:var(--fp-surface-2)}
+.work{position:relative}
+.list{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding-top:14px}
+.hd,.r{display:grid;grid-template-columns:2.2fr 1.6fr 1fr .9fr 36px 110px;gap:12px;align-items:center;padding:12px 16px}
+.hd{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted);border-bottom:1px solid var(--fp-border);padding-top:8px;padding-bottom:8px}
+.r{border-bottom:1px solid var(--fp-surface-2)}
+.r:last-child{border-bottom:0}
+.r b{font-weight:600}
+.r .c{color:var(--fp-muted)}
+.st::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--fp-accent);margin-right:6px}
+.st.dim::before{background:var(--fp-tier3)}
+.r button{font-size:12px;padding:3px 9px}
+.r.sel{background:var(--fp-surface-2)}
+/* peek */
+.peek{position:absolute;top:96px;right:150px;width:270px;background:var(--fp-surface);border:1px solid var(--fp-accent);border-radius:var(--fp-radius);padding:26px 14px 14px;display:flex;flex-direction:column;gap:8px;z-index:10}
+.peek h2{font-size:15px;margin:0}
+.peek dl{margin:0;display:grid;grid-template-columns:70px 1fr;gap:4px 8px;font-size:13px}
+.peek dt{color:var(--fp-muted)}
+.peek dd{margin:0}
+.peek .t3{color:var(--fp-tier3);border-top:1px dashed var(--fp-border);padding-top:8px;font-size:13px}
+body.peek-off .peek{display:none}
+/* palette */
+.palette{display:none;position:fixed;top:12vh;left:50%;transform:translateX(-50%);width:min(520px,92vw);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:var(--fp-gap);z-index:40;box-shadow:0 0 0 100vmax var(--fp-surface-2)}
+.palette input{width:100%;font:inherit;padding:8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);margin:14px 0 6px;background:var(--fp-bg)}
+.palette .g{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding:8px 4px 4px}
+.palette .o{display:flex;gap:8px;padding:6px 4px;border-radius:4px}
+.palette .o kbd{margin-left:auto}
+.palette .o.hot{background:var(--fp-surface-2)}
+body.palette-open .palette{display:block}
+/* folded below 960 */
+@media (max-width:959px){
+ .top{padding:0 12px;gap:8px}
+ .menu-btn{display:inline-block}
+ .brand{margin-right:0}
+ .dest{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-self:auto;background:var(--fp-surface);border-bottom:1px solid var(--fp-border);padding:6px 12px 10px}
+ .dest a{padding:12px 8px;border-bottom:1px solid var(--fp-surface-2)}
+ .dest a[aria-current]{border-left:3px solid var(--fp-accent);padding-left:10px;border-bottom-color:var(--fp-surface-2)}
+ body.menu-open .dest{display:flex}
+ .top .find kbd,.top .find .lbl{display:none}
+ .top .tail{padding-right:0}
+ .top .tail .av{display:none}
+ .peek{position:fixed;top:auto;left:0;right:0;bottom:0;width:auto;border-radius:var(--fp-radius) var(--fp-radius) 0 0}
+ .hd,.r{grid-template-columns:2fr 1fr 1fr 100px}
+ .hd .c2,.r .c2,.hd .c5,.r .c5{display:none}
+}
+@media (max-width:640px){
+ .page{padding:0 12px 220px}
+ .hdr{padding:14px 0 10px}
+ .hdr h1{font-size:19px;flex-basis:100%}
+ .hd,.r{grid-template-columns:1fr 78px 90px;padding:12px}
+ .hd .c4,.r .c4{display:none}
+ .mt,.x{display:none}
+}
+</style>
+</head>
+<body>
+<header class="top" data-region="top-bar" data-role="navigation">
+  <button class="menu-btn ghost" data-toggle="menu-open" aria-label="Open destinations">☰<span class="mt"> Menu</span></button>
+  <div class="brand"><span class="ic"></span>Studio Tracker</div>
+  <nav class="dest" data-region="destinations" data-role="navigation" aria-label="Primary">
+    <a href="#">Overview</a>
+    <a href="#" aria-current="page">Projects</a>
+    <a href="#">Tasks</a>
+    <a href="#">Clients</a>
+    <a href="#">Invoices</a>
+    <a href="#">Reports</a>
+    <a href="#">Settings</a>
+  </nav>
+  <span class="sp"></span>
+  <div class="tail">
+    <button class="find" data-toggle="palette-open" aria-label="Search"><span class="lbl">Search</span><kbd>⌘K</kbd><span class="ic" style="border-radius:50%"></span></button>
+    <button class="primary">Create<span class="x"> project</span></button>
+    <span class="av" title="Mara Keller">MK</span>
+  </div>
+</header>
+
+<div class="page">
+  <div class="hdr" data-region="page-header" data-role="chrome">
+    <h1>Projects</h1>
+    <span class="badge">12 active</span>
+    <span class="badge">2 overdue</span>
+    <span class="sp"></span>
+    <button>Export</button>
+  </div>
+
+  <main class="work" data-region="work-area" data-tier="1">
+    <div class="list">
+      <div class="hd"><span>Project</span><span class="c2">Client</span><span>Status</span><span class="c4">Due</span><span class="c5">Owner</span><span></span></div>
+      <div class="r sel"><b>Brand refresh</b><span class="c c2">Northwind Coffee</span><span class="st">Active</span><span class="c c4">14 Nov</span><span class="av c5">MK</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>Website relaunch</b><span class="c c2">Alder &amp; Finch</span><span class="st">In review</span><span class="c c4">28 Nov</span><span class="av c5">JB</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>Packaging system</b><span class="c c2">Pinecrest Foods</span><span class="st">Active</span><span class="c c4">05 Dec</span><span class="av c5">LS</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>Annual report</b><span class="c c2">Harbor Trust</span><span class="st dim">Planned</span><span class="c c4">18 Dec</span><span class="av c5">MK</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>Wayfinding</b><span class="c c2">Lindqvist Clinic</span><span class="st dim">On hold</span><span class="c c4">09 Jan</span><span class="av c5">TV</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>Campaign kit</b><span class="c c2">Northwind Coffee</span><span class="st">Active</span><span class="c c4">21 Jan</span><span class="av c5">LS</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>App icon set</b><span class="c c2">Fernweh Travel</span><span class="st dim">Done</span><span class="c c4">30 Oct</span><span class="av c5">JB</span><button data-toggle="peek-off">Peek</button></div>
+      <div class="r"><b>Pitch deck</b><span class="c c2">Alder &amp; Finch</span><span class="st dim">Planned</span><span class="c c4">12 Feb</span><span class="av c5">TV</span><button data-toggle="peek-off">Peek</button></div>
+    </div>
+
+    <aside class="peek" data-region="peek" data-tier="3" aria-label="Project peek">
+      <h2>Brand refresh</h2>
+      <dl>
+        <dt>Client</dt><dd>Northwind Coffee</dd>
+        <dt>Status</dt><dd>Active</dd>
+        <dt>Due</dt><dd>14 Nov</dd>
+        <dt>Owner</dt><dd>Mara Keller</dd>
+      </dl>
+      <div class="t3">Tier 3 detail: budget, brief link, billing contact — on request only.</div>
+      <div style="display:flex;gap:8px"><button class="primary">Open project</button><button data-toggle="peek-off">Close</button></div>
+    </aside>
+  </main>
+</div>
+
+<div class="palette" data-region="palette" data-role="chrome" role="dialog" aria-label="Command palette">
+  <input placeholder="Type a command or search…" aria-label="Command palette">
+  <div class="g">Actions</div>
+  <div class="o hot">Create project <kbd>c</kbd></div>
+  <div class="o">Create task <kbd>t</kbd></div>
+  <div class="g">Destinations</div>
+  <div class="o">Overview <kbd>g o</kbd></div>
+  <div class="o">Projects <kbd>g p</kbd></div>
+  <div class="o">Invoices <kbd>g i</kbd></div>
+  <div class="g">Objects</div>
+  <div class="o">Brand refresh — Northwind Coffee</div>
+</div>
+
+<script>
+document.addEventListener('click',function(e){var t=e.target.closest('[data-toggle]');if(t){document.body.classList.toggle(t.dataset.toggle)}});
+document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.body.classList.toggle('palette-open')}if(e.key==='Escape'){document.body.classList.remove('palette-open','menu-open')}});
+</script>
+</body>
+</html>

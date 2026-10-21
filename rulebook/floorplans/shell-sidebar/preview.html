@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — shell-sidebar</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+button{font:inherit;color:inherit;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:5px 10px;cursor:pointer}
+button.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+button.ghost{border-color:var(--fp-surface-2);background:none}
+kbd{font:600 10px/1 var(--fp-font);color:var(--fp-muted);border:1px solid var(--fp-border);border-radius:4px;padding:2px 4px;background:var(--fp-surface)}
+.ic{display:inline-block;width:14px;height:14px;border:1.5px solid currentColor;border-radius:4px;flex:none}
+.app{display:flex;min-height:100vh}
+/* sidebar */
+.sb{position:sticky;top:0;height:100vh;width:240px;flex:none;background:var(--fp-surface);border-right:1px solid var(--fp-border);display:flex;flex-direction:column;padding:var(--fp-gap);gap:var(--fp-gap);z-index:30}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;padding:2px 4px}
+.brand .ic{background:var(--fp-accent);border-color:var(--fp-accent)}
+.sb .find{display:flex;justify-content:space-between;align-items:center;text-align:left;color:var(--fp-muted);width:100%}
+.group{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding:6px 8px 2px}
+.sb ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.sb li a{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:var(--fp-radius);color:var(--fp-fg);text-decoration:none}
+.sb li a kbd{margin-left:auto}
+.sb li a[aria-current]{background:var(--fp-surface-2);font-weight:600;box-shadow:inset 3px 0 0 var(--fp-accent)}
+.sb li a:hover{background:var(--fp-surface-2)}
+.sb .grow{flex:1}
+.acct{display:flex;align-items:center;gap:8px;border-top:1px solid var(--fp-border);padding-top:var(--fp-gap)}
+.av{width:24px;height:24px;border-radius:50%;background:var(--fp-surface-2);border:1px solid var(--fp-border);font:600 10px/22px var(--fp-font);text-align:center;flex:none}
+.acct span.n{flex:1}
+/* panel */
+.panel{flex:1;min-width:0;display:flex;flex-direction:column}
+.hdr{background:var(--fp-surface);border-bottom:1px solid var(--fp-border);padding:var(--fp-gap) calc(var(--fp-gap)*1.5) 8px;display:flex;flex-direction:column;gap:8px}
+.hdr .row{display:flex;align-items:center;gap:10px;padding-right:90px}
+.hdr h1{font-size:18px;margin:0}
+.badge{font-size:11px;border:1px solid var(--fp-border);border-radius:99px;padding:1px 8px;color:var(--fp-muted);background:var(--fp-surface-2)}
+.sp{flex:1}
+.toggle{display:none}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{font-size:12px;border:1px solid var(--fp-border);border-radius:99px;padding:2px 10px;background:var(--fp-surface)}
+.chip.on{background:var(--fp-surface-2);border-color:var(--fp-accent)}
+.only-narrow{display:none}
+main.work{flex:1;padding:calc(var(--fp-gap)*1.5);background:var(--fp-bg);overflow:auto}
+.list{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding-top:14px}
+.hd,.r{display:grid;grid-template-columns:2.2fr 1.6fr 1fr .9fr 36px 90px;gap:10px;align-items:center;padding:8px 12px}
+.hd{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted);border-bottom:1px solid var(--fp-border)}
+.r{border-bottom:1px solid var(--fp-surface-2)}
+.r:last-child{border-bottom:0}
+.r b{font-weight:600}
+.r .c{color:var(--fp-muted)}
+.st{font-size:12px}
+.st::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--fp-accent);margin-right:6px}
+.st.dim::before{background:var(--fp-tier3)}
+.r button{font-size:12px;padding:2px 8px}
+.r.sel{background:var(--fp-surface-2)}
+/* slideover */
+.slide{width:300px;flex:none;background:var(--fp-surface);border-left:1px solid var(--fp-border);padding:var(--fp-gap) calc(var(--fp-gap)*1.25);display:flex;flex-direction:column;gap:var(--fp-gap);z-index:20}
+.slide h2{font-size:15px;margin:22px 0 0}
+.slide dl{margin:0;display:grid;grid-template-columns:90px 1fr;gap:6px 8px}
+.slide dt{color:var(--fp-muted)}
+.slide dd{margin:0}
+.t3{color:var(--fp-tier3);border-top:1px dashed var(--fp-border);padding-top:8px;font-size:13px}
+/* overlays */
+.scrim{display:none;position:fixed;inset:0;background:var(--fp-fg);opacity:.35;z-index:25}
+.pill{display:none;position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:99px;padding:4px 6px;gap:2px;z-index:15}
+.pill a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--fp-muted);text-decoration:none;padding:4px 10px;border-radius:99px}
+.pill a[aria-current]{background:var(--fp-surface-2);color:var(--fp-fg);font-weight:600}
+.palette{display:none;position:fixed;top:12vh;left:50%;transform:translateX(-50%);width:min(520px,92vw);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:var(--fp-gap);z-index:40;box-shadow:0 0 0 100vmax var(--fp-surface-2)}
+.palette input{width:100%;font:inherit;padding:8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);margin:14px 0 6px;background:var(--fp-bg)}
+.palette .g{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding:8px 4px 4px}
+.palette .o{display:flex;gap:8px;padding:6px 4px;border-radius:4px}
+.palette .o kbd{margin-left:auto}
+.palette .o.hot{background:var(--fp-surface-2)}
+body.palette-open .palette{display:block}
+@media (min-width:992px){.slide .close{display:none}}
+/* mid: rail */
+@media (max-width:991px){
+ .sb{width:60px;align-items:center;padding:var(--fp-gap) 8px}
+ .sb .t,.sb kbd,.sb .group,.sb .find span,.acct .n,.brand .t{display:none}
+ .sb li a{padding:8px}
+ .sb .find{justify-content:center;padding:6px}
+ .slide{display:none;position:fixed;top:0;right:0;bottom:0;box-shadow:0 0 0 1px var(--fp-border)}
+ body.slide-open .slide{display:flex}
+}
+/* narrow: drawer + pill */
+@media (max-width:767px){
+ .sb{position:fixed;top:0;left:0;bottom:0;width:260px;align-items:stretch;transform:translateX(-100%);transition:transform .15s}
+ .sb .t,.sb .group,.sb .find span,.acct .n,.brand .t{display:revert}
+ .sb kbd{display:inline-block}
+ .sb li a{padding:7px 8px}
+ .sb .find{justify-content:space-between}
+ body.drawer-open .sb{transform:none}
+ body.drawer-open .scrim{display:block}
+ .toggle{display:inline-block}
+ .pill{display:flex}
+ .only-narrow{display:inline-block}
+ .no-narrow{display:none}
+ main.work{padding-bottom:90px}
+ .slide{top:auto;left:0;right:0;width:auto;max-height:55vh;border-left:0;border-top:1px solid var(--fp-border)}
+}
+@media (max-width:640px){
+ .hdr{padding:8px 12px}
+ .hdr .row{padding-right:0}
+ .hdr .row .badge,.hdr .tools{display:none}
+ .hd,.r{grid-template-columns:1fr 64px 84px}
+ .hd .c2,.r .c2,.hd .c4,.r .c4,.hd .c5,.r .c5{display:none}
+ main.work{padding:12px 12px 90px}
+ .hdr h1{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sb" data-region="sidebar" data-role="navigation" aria-label="Primary">
+    <div class="brand"><span class="ic"></span><span class="t">Studio Tracker</span></div>
+    <button class="find" data-toggle="palette-open"><span>Search or run… </span><kbd>⌘K</kbd></button>
+    <nav class="grow">
+      <div class="group">Work</div>
+      <ul>
+        <li><a href="#"><span class="ic"></span><span class="t">Overview</span><kbd>g o</kbd></a></li>
+        <li><a href="#" aria-current="page"><span class="ic"></span><span class="t">Projects</span><kbd>g p</kbd></a></li>
+        <li><a href="#"><span class="ic"></span><span class="t">Tasks</span><kbd>g t</kbd></a></li>
+      </ul>
+      <div class="group">Business</div>
+      <ul>
+        <li><a href="#"><span class="ic"></span><span class="t">Clients</span><kbd>g c</kbd></a></li>
+        <li><a href="#"><span class="ic"></span><span class="t">Invoices</span><kbd>g i</kbd></a></li>
+        <li><a href="#"><span class="ic"></span><span class="t">Reports</span><kbd>g r</kbd></a></li>
+      </ul>
+      <div class="group">App</div>
+      <ul>
+        <li><a href="#"><span class="ic"></span><span class="t">Settings</span><kbd>g s</kbd></a></li>
+      </ul>
+    </nav>
+    <div class="acct"><span class="av">MK</span><span class="n">Mara Keller</span><button class="ghost no-narrow" title="Collapse sidebar" aria-label="Collapse sidebar">«</button></div>
+  </aside>
+
+  <div class="panel">
+    <header class="hdr" data-region="page-header" data-role="chrome">
+      <div class="row">
+        <button class="toggle ghost" data-toggle="drawer-open" aria-label="Open navigation">☰</button>
+        <h1>Projects</h1>
+        <span class="badge">12 active</span>
+        <span class="badge">2 overdue</span>
+        <span class="sp"></span>
+        <button class="ghost" aria-label="Search" data-toggle="palette-open">Search</button>
+        <button class="ghost no-narrow" aria-label="Notifications">Alerts</button>
+        <button class="primary">Create project</button>
+      </div>
+      <div class="tools">
+        <span class="chip on">All</span><span class="chip">Mine</span><span class="chip">Due this month</span>
+        <span class="sp"></span><span class="badge">8 of 12</span>
+      </div>
+    </header>
+
+    <main class="work" data-region="work-area" data-tier="1">
+      <div class="list">
+        <div class="hd"><span>Project</span><span class="c2">Client</span><span>Status</span><span class="c4">Due</span><span class="c5">Owner</span><span></span></div>
+        <div class="r sel"><b>Brand refresh</b><span class="c c2">Northwind Coffee</span><span class="st">Active</span><span class="c c4">14 Nov</span><span class="av c5">MK</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>Website relaunch</b><span class="c c2">Alder &amp; Finch</span><span class="st">In review</span><span class="c c4">28 Nov</span><span class="av c5">JB</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>Packaging system</b><span class="c c2">Pinecrest Foods</span><span class="st">Active</span><span class="c c4">05 Dec</span><span class="av c5">LS</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>Annual report</b><span class="c c2">Harbor Trust</span><span class="st dim">Planned</span><span class="c c4">18 Dec</span><span class="av c5">MK</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>Wayfinding</b><span class="c c2">Lindqvist Clinic</span><span class="st dim">On hold</span><span class="c c4">09 Jan</span><span class="av c5">TV</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>Campaign kit</b><span class="c c2">Northwind Coffee</span><span class="st">Active</span><span class="c c4">21 Jan</span><span class="av c5">LS</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>App icon set</b><span class="c c2">Fernweh Travel</span><span class="st dim">Done</span><span class="c c4">30 Oct</span><span class="av c5">JB</span><button data-toggle="slide-open">Quick view</button></div>
+        <div class="r"><b>Pitch deck</b><span class="c c2">Alder &amp; Finch</span><span class="st dim">Planned</span><span class="c c4">12 Feb</span><span class="av c5">TV</span><button data-toggle="slide-open">Quick view</button></div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="slide" data-region="slideover" data-tier="3" aria-label="Quick view">
+    <button class="ghost close" style="align-self:flex-end" data-toggle="slide-open" aria-label="Close quick view">Close</button>
+    <h2>Brand refresh</h2>
+    <dl>
+      <dt>Client</dt><dd>Northwind Coffee</dd>
+      <dt>Status</dt><dd>Active</dd>
+      <dt>Due</dt><dd>14 Nov</dd>
+      <dt>Owner</dt><dd>Mara Keller</dd>
+    </dl>
+    <div class="t3">Tier 3 detail: budget, brief link, billing contact — shown here on request only.</div>
+    <button class="primary" style="align-self:flex-start">Open project</button>
+  </aside>
+</div>
+
+<nav class="pill" data-region="bottom-pill" data-role="navigation" aria-label="Pinned">
+  <a href="#"><span class="ic"></span>Overview</a>
+  <a href="#" aria-current="page"><span class="ic"></span>Projects</a>
+  <a href="#"><span class="ic"></span>Tasks</a>
+  <a href="#"><span class="ic"></span>Invoices</a>
+  <a href="#" data-toggle="drawer-open"><span class="ic"></span>Menu</a>
+</nav>
+
+<div class="scrim" data-toggle="drawer-open"></div>
+
+<div class="palette" data-region="palette" data-role="chrome" role="dialog" aria-label="Command palette">
+  <input placeholder="Type a command or search…" aria-label="Command palette">
+  <div class="g">Actions</div>
+  <div class="o hot">Create project <kbd>c</kbd></div>
+  <div class="o">Create task <kbd>t</kbd></div>
+  <div class="g">Destinations</div>
+  <div class="o">Overview <kbd>g o</kbd></div>
+  <div class="o">Projects <kbd>g p</kbd></div>
+  <div class="o">Invoices <kbd>g i</kbd></div>
+  <div class="g">Objects</div>
+  <div class="o">Brand refresh — Northwind Coffee</div>
+</div>
+
+<script>
+document.addEventListener('click',function(e){var t=e.target.closest('[data-toggle]');if(t){document.body.classList.toggle(t.dataset.toggle)}});
+document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.body.classList.toggle('palette-open')}if(e.key==='Escape'){document.body.classList.remove('palette-open','drawer-open')}});
+</script>
+</body>
+</html>

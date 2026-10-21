@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — board</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+button{font:inherit;color:inherit;cursor:pointer}
+.sr{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.frame{max-width:1240px;margin:0 auto;padding:var(--fp-gap);display:flex;flex-direction:column;gap:var(--fp-gap)}
+.shell{display:flex;align-items:center;gap:var(--fp-gap);height:36px;padding:0 var(--fp-gap);background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-muted);font-size:12px}
+.shell b{color:var(--fp-fg)}
+.viewswitch{display:flex;align-items:center;gap:var(--fp-gap);padding:18px var(--fp-gap) 8px}
+.viewswitch h1{margin:0;font-size:18px;flex:1}
+.seg{display:inline-flex;border:1px solid var(--fp-border);border-radius:var(--fp-radius);overflow:hidden;background:var(--fp-surface)}
+.seg label{padding:6px 14px;cursor:pointer;color:var(--fp-muted)}
+.seg label+label{border-left:1px solid var(--fp-border)}
+.btn{padding:6px 12px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface)}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.filters{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:20px var(--fp-gap) 10px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.filters input{flex:1;min-width:140px;max-width:260px;padding:6px 10px;font:inherit;border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-fg)}
+.chip{padding:4px 10px;border:1px solid var(--fp-border);border-radius:99px;background:var(--fp-surface-2)}
+.chip.on{border-color:var(--fp-accent);color:var(--fp-accent)}
+.count{margin-left:auto;color:var(--fp-muted)}
+.clear{color:var(--fp-accent);border:0;background:none;text-decoration:underline;padding:0}
+.filters .narrow-only{display:none}
+.work{display:flex;gap:var(--fp-gap);align-items:flex-start}
+.items{flex:1;min-width:0;padding:22px var(--fp-gap) var(--fp-gap);background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.view{display:none}
+.board:has(#v-list:checked) .vlist,.board:has(#v-board:checked) .vboard,.board:has(#v-cal:checked) .vcal{display:block}
+.board:has(#v-list:checked) .l-list,.board:has(#v-board:checked) .l-board,.board:has(#v-cal:checked) .l-cal{background:var(--fp-accent);color:var(--fp-surface)}
+.cols{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:var(--fp-gap);overflow-x:auto}
+.col h2{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted);display:flex;justify-content:space-between}
+.card{display:block;width:100%;text-align:left;margin-bottom:8px;padding:10px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.card:hover,.card.sel{border-color:var(--fp-accent)}
+.card .t{font-weight:600}
+.card .f{display:flex;justify-content:space-between;align-items:center;margin-top:6px;color:var(--fp-muted);font-size:12px}
+.card .c{color:var(--fp-muted);font-size:12px}
+.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:99px;background:var(--fp-surface-2);border:1px solid var(--fp-border);font-size:10px;font-weight:600;color:var(--fp-fg)}
+.empty{padding:10px;color:var(--fp-muted);border:1px dashed var(--fp-border);border-radius:var(--fp-radius);font-size:12px}
+.list{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.lrow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) 100px 110px 40px;gap:8px;align-items:center;min-height:40px;padding:6px var(--fp-gap);border-top:1px solid var(--fp-border);width:100%;text-align:left;background:none;border-left:0;border-right:0;border-bottom:0}
+.lrow.h{border-top:0;color:var(--fp-muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em;background:var(--fp-surface-2)}
+.lrow:not(.h):hover{background:var(--fp-surface-2)}
+.lrow b{font-weight:600}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--fp-border);border:1px solid var(--fp-border);border-radius:var(--fp-radius);overflow:hidden}
+.cal .dow{padding:4px 6px;background:var(--fp-surface-2);color:var(--fp-muted);font-size:11px;text-transform:uppercase}
+.day{min-height:68px;padding:4px 6px;background:var(--fp-surface);font-size:11px;color:var(--fp-muted)}
+.day .chipc{display:block;margin-top:3px;padding:2px 6px;border-radius:4px;background:var(--fp-surface-2);border-left:3px solid var(--fp-accent);color:var(--fp-fg);font-size:12px;width:100%;text-align:left;border-top:0;border-right:0;border-bottom:0}
+.drawer{flex:0 0 320px;padding:26px var(--fp-gap) var(--fp-gap);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.drawer[hidden]{display:none}
+.drawer header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.drawer h2{margin:0;font-size:16px}
+.drawer .x{border:0;background:none;font-size:18px;line-height:1;padding:2px 6px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:12px 0}
+.facts dt{color:var(--fp-muted)}.facts dd{margin:0}
+.mini{list-style:none;margin:0 0 12px;padding:0;border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.mini li{display:flex;justify-content:space-between;padding:6px 10px;border-top:1px solid var(--fp-border)}
+.mini li:first-child{border-top:0}
+.mini span{color:var(--fp-muted)}
+.drawer select{padding:6px 8px;font:inherit;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);color:var(--fp-fg)}
+.drawer .moveto{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.drawer .actions{display:flex;gap:8px;margin-bottom:12px}
+.drawer details{border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:8px 10px;background:var(--fp-surface-2)}
+.drawer details dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;color:var(--fp-tier3);font-size:12px}
+.drawer details dd{margin:0}
+.drawer summary{cursor:pointer;font-weight:600}
+
+@media (max-width:960px){
+  .cols{grid-template-columns:repeat(5,200px)}
+  .drawer{flex-basis:280px}
+}
+@media (max-width:640px){
+  .frame{padding:8px;gap:8px}
+  .viewswitch{flex-wrap:wrap;padding-top:20px}
+  .viewswitch h1{flex-basis:100%}
+  .seg{flex:1}.seg label{flex:1;text-align:center}
+  .filters .opt{display:none}
+  .filters .narrow-only{display:inline-block}
+  .filters input{max-width:none}
+  .work{display:block}
+  .cols{grid-template-columns:repeat(5,82%);scroll-snap-type:x mandatory}
+  .col{scroll-snap-align:start}
+  .lrow{grid-template-columns:1fr auto;grid-template-rows:auto auto}
+  .lrow.h{display:none}
+  .lrow .c2,.lrow .c3{grid-column:1;color:var(--fp-muted);font-size:12px}
+  .lrow .c3{display:none}
+  .lrow .c4{grid-column:2;grid-row:1}
+  .lrow .c5{display:none}
+  .cal{display:block;background:none;border:0}
+  .cal .dow{display:none}
+  .day:not(.has){display:none}
+  .day{margin-bottom:4px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);min-height:0}
+  .drawer{position:fixed;left:0;right:0;bottom:0;z-index:5;max-height:68vh;overflow:auto;border-radius:12px 12px 0 0;box-shadow:0 -4px 0 var(--fp-border)}
+}
+</style>
+</head>
+<body>
+<div class="frame board">
+  <input class="sr" type="radio" name="view" id="v-list" aria-label="List">
+  <input class="sr" type="radio" name="view" id="v-board" aria-label="Board" checked>
+  <input class="sr" type="radio" name="view" id="v-cal" aria-label="Calendar">
+
+  <div class="shell" data-region="shell" data-role="chrome"><b>Studio tracker</b> · Projects</div>
+
+  <div class="viewswitch" data-region="view-switch" data-role="navigation">
+    <h1>Projects</h1>
+    <div class="seg" role="group" aria-label="View"><label class="l-list" for="v-list">List</label><label class="l-board" for="v-board">Board</label><label class="l-cal" for="v-cal">Calendar</label></div>
+    <button class="btn primary" type="button">New project</button>
+  </div>
+
+  <div class="filters" data-region="filter-bar" data-tier="2">
+    <input type="search" placeholder="Search projects" aria-label="Search projects">
+    <span class="chip on opt">Owner: anyone</span><span class="chip on opt">Due: before 15 Dec</span><span class="chip opt">Client: all</span>
+    <button class="btn narrow-only" type="button">Filters (1)</button>
+    <span class="count">7 of 8 projects · <button class="clear" type="button">Clear all</button></span>
+  </div>
+
+  <div class="work">
+    <div class="items" data-region="items" data-tier="1">
+
+      <div class="view vboard">
+        <div class="cols">
+          <div class="col"><h2>Planned <span>1</span></h2>
+            <button class="card" type="button"><div class="t">Annual report</div><div class="c">Tidewater Trust</div><div class="f"><span>Due 2 Dec</span><span class="av">MV</span></div></button>
+          </div>
+          <div class="col"><h2>In progress <span>2</span></h2>
+            <button class="card" type="button"><div class="t">Brand refresh</div><div class="c">Northwind Café</div><div class="f"><span>Due 28 Oct</span><span class="av">MV</span></div></button>
+            <button class="card" type="button"><div class="t">Packaging series</div><div class="c">Birch &amp; Co</div><div class="f"><span>Due 12 Nov</span><span class="av">LB</span></div></button>
+          </div>
+          <div class="col"><h2>Review <span>2</span></h2>
+            <button class="card" type="button"><div class="t">Website relaunch</div><div class="c">Halden Legal</div><div class="f"><span>Due 4 Nov</span><span class="av">JK</span></div></button>
+            <button class="card" type="button"><div class="t">Campaign film</div><div class="c">Lumen Energy</div><div class="f"><span>Due 6 Nov</span><span class="av">LB</span></div></button>
+          </div>
+          <div class="col"><h2>Blocked <span>1</span></h2>
+            <button class="card sel" type="button" data-open><div class="t">Wayfinding signage</div><div class="c">City Library</div><div class="f"><span>Due 30 Oct</span><span class="av">OH</span></div></button>
+          </div>
+          <div class="col"><h2>Done <span>1</span></h2>
+            <button class="card" type="button"><div class="t">App icon set</div><div class="c">Kite Mobile</div><div class="f"><span>Due 15 Oct</span><span class="av">JK</span></div></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view vlist">
+        <div class="list">
+          <div class="lrow h"><span>Project</span><span>Client</span><span>Due</span><span>Status</span><span>Owner</span></div>
+          <button class="lrow" type="button" data-open><b>Wayfinding signage</b><span class="c2">City Library</span><span class="c3">30 Oct</span><span class="c4">Blocked</span><span class="c5 av">OH</span></button>
+          <button class="lrow" type="button"><b>Brand refresh</b><span class="c2">Northwind Café</span><span class="c3">28 Oct</span><span class="c4">In progress</span><span class="c5 av">MV</span></button>
+          <button class="lrow" type="button"><b>Website relaunch</b><span class="c2">Halden Legal</span><span class="c3">4 Nov</span><span class="c4">Review</span><span class="c5 av">JK</span></button>
+          <button class="lrow" type="button"><b>Campaign film</b><span class="c2">Lumen Energy</span><span class="c3">6 Nov</span><span class="c4">Review</span><span class="c5 av">LB</span></button>
+          <button class="lrow" type="button"><b>Packaging series</b><span class="c2">Birch &amp; Co</span><span class="c3">12 Nov</span><span class="c4">In progress</span><span class="c5 av">LB</span></button>
+          <button class="lrow" type="button"><b>Annual report</b><span class="c2">Tidewater Trust</span><span class="c3">2 Dec</span><span class="c4">Planned</span><span class="c5 av">MV</span></button>
+          <button class="lrow" type="button"><b>App icon set</b><span class="c2">Kite Mobile</span><span class="c3">15 Oct</span><span class="c4">Done</span><span class="c5 av">JK</span></button>
+        </div>
+      </div>
+
+      <div class="view vcal">
+        <div class="cal">
+          <div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div><div class="dow">Sun</div>
+          <div class="day">12</div><div class="day">13</div><div class="day">14</div><div class="day has">15<button class="chipc" type="button">App icon set</button></div><div class="day">16</div><div class="day">17</div><div class="day">18</div>
+          <div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div>
+          <div class="day">26</div><div class="day">27</div><div class="day has">28<button class="chipc" type="button">Brand refresh</button></div><div class="day">29</div><div class="day has">30<button class="chipc" type="button" data-open>Wayfinding signage</button></div><div class="day">31</div><div class="day">1</div>
+          <div class="day">2</div><div class="day">3</div><div class="day has">4<button class="chipc" type="button">Website relaunch</button></div><div class="day">5</div><div class="day has">6<button class="chipc" type="button">Campaign film</button></div><div class="day">7</div><div class="day">8</div>
+          <div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day has">12<button class="chipc" type="button">Packaging series</button></div><div class="day">13</div><div class="day">14</div><div class="day">15</div>
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="drawer" id="drawer" data-region="card-drawer" data-tier="2" aria-label="Project details">
+      <header><div><h2>Wayfinding signage</h2><span class="c" style="color:var(--fp-muted)">City Library</span></div><button class="x" type="button" id="close" aria-label="Close details">×</button></header>
+      <dl class="facts"><dt>Status</dt><dd>Blocked</dd><dt>Due</dt><dd>30 Oct 2026</dd><dt>Owner</dt><dd>Omar Haddad</dd><dt>Estimate</dt><dd>64 h</dd></dl>
+      <ul class="mini"><li>Approve sign material <span>Omar</span></li><li>Send proofs to client <span>Lea</span></li><li>Install schedule <span>Mara</span></li></ul>
+      <div class="moveto"><label for="mv">Move to</label><select id="mv"><option>Blocked</option><option>In progress</option><option>Review</option><option>Done</option></select></div>
+      <div class="actions"><button class="btn primary" type="button">Open project</button><button class="btn" type="button">Edit…</button></div>
+      <details><summary>More details</summary><dl><dt>Budget code</dt><dd>WS-2026-014</dd><dt>Created by</dt><dd>Omar Haddad, 3 Sep</dd><dt>Last change</dt><dd>Blocked, 19 Oct</dd></dl></details>
+    </aside>
+  </div>
+</div>
+<script>
+var d=document.getElementById('drawer');
+document.getElementById('close').addEventListener('click',function(){d.hidden=true});
+document.querySelectorAll('[data-open]').forEach(function(e){e.addEventListener('click',function(){d.hidden=false})});
+</script>
+</body>
+</html>

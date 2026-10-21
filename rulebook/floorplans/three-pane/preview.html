@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — three-pane</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+button,input,select{font:inherit;color:inherit}
+.app{height:100vh;display:flex;flex-direction:column}
+.shell{flex:none;height:36px;display:flex;align-items:center;gap:var(--fp-gap);padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.shell i{width:14px;height:14px;border-radius:3px;background:var(--fp-accent);display:inline-block}
+.panes{flex:1;min-height:0;display:grid;grid-template-columns:230px 1fr 300px;gap:var(--fp-gap);padding:var(--fp-gap)}
+.card{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.btn{border:1px solid var(--fp-border);background:var(--fp-surface);border-radius:var(--fp-radius);padding:5px 10px;cursor:pointer}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface);font-weight:600}
+.link{background:none;border:0;color:var(--fp-accent);cursor:pointer;padding:0;text-decoration:underline}
+.badge{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;background:var(--fp-surface-2);border:1px solid var(--fp-border)}
+.rail{min-height:0;overflow:auto;padding:22px 8px 8px}
+.rail h2{margin:0 8px 6px;font-size:12px;color:var(--fp-muted);text-transform:uppercase;letter-spacing:.04em}
+.rail ul{list-style:none;margin:0;padding:0}
+.rail li{display:flex;align-items:center;gap:8px;padding:0 8px;height:36px;border-radius:var(--fp-radius);cursor:pointer}
+.rail li[aria-current]{background:var(--fp-surface-2);font-weight:600;box-shadow:inset 3px 0 0 var(--fp-accent)}
+.rail .ini{flex:none;width:22px;height:22px;border-radius:var(--fp-radius);background:var(--fp-surface-2);border:1px solid var(--fp-border);display:grid;place-items:center;font-size:11px;font-weight:600}
+.rail .meta{margin-left:auto;color:var(--fp-tier3);font-size:12px}
+.rail .grp{margin:8px 8px 2px;color:var(--fp-muted);font-size:12px}
+.mid{min-height:0;min-width:0;display:flex;flex-direction:column;gap:var(--fp-gap)}
+.toolbar{flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:20px var(--fp-gap) 10px}
+.toolbar h1{margin:0 auto 0 0;font-size:16px}
+.toolbar .sub{color:var(--fp-muted);font-weight:400;font-size:12px}
+.work{flex:1;min-height:0;overflow:auto;padding-top:18px}
+.row{display:grid;grid-template-columns:1fr 100px 130px 90px;align-items:center;gap:10px;padding:0 10px;height:40px;border-bottom:1px solid var(--fp-border)}
+.row.head{background:var(--fp-surface-2);color:var(--fp-muted);font-size:12px;font-weight:600;position:sticky;top:0}
+.row:last-child{border-bottom:0}
+.row input,.row select{border:1px solid transparent;background:transparent;border-radius:var(--fp-radius);padding:3px 6px;width:100%}
+.row input:hover,.row select:hover,.row input:focus,.row select:focus{border-color:var(--fp-border);background:var(--fp-surface)}
+.row input{text-align:right}
+.t1{font-weight:600}
+.status{flex:none;height:26px;display:flex;align-items:center;gap:16px;padding:0 var(--fp-gap);background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-muted);font-size:12px}
+.drawer{min-height:0;overflow:auto;padding:22px 14px 14px}
+.drawer h2{margin:0 0 8px;font-size:15px}
+.drawer h3{margin:14px 0 6px;font-size:12px;color:var(--fp-muted);text-transform:uppercase;letter-spacing:.04em}
+.drawer dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0}
+.drawer dt{color:var(--fp-muted)}
+.drawer dd{margin:0}
+.inv{list-style:none;margin:0;padding:0;border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.inv li{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:6px 10px;border-bottom:1px solid var(--fp-border)}
+.inv li:last-child{border-bottom:0}
+details{margin-top:12px;color:var(--fp-tier3)}
+details summary{cursor:pointer}
+.drawer .btn{margin-top:10px}
+.close{float:right}
+
+@media (min-width:641px){
+  .panes.rail-off{grid-template-columns:52px 1fr 300px}
+  .panes.rail-off .rail h2,.panes.rail-off .rail .grp,.panes.rail-off .rail .label,.panes.rail-off .rail .meta{display:none}
+  .panes.rail-off .rail li{justify-content:center;padding:0}
+  .panes.drawer-off{grid-template-columns:230px 1fr}
+  .panes.drawer-off.rail-off{grid-template-columns:52px 1fr}
+  .panes.drawer-off .drawer{display:none}
+  .only-narrow{display:none}
+}
+@media (max-width:640px){
+  .app{height:auto;min-height:100vh}
+  .panes{display:block;padding:8px}
+  .rail,.drawer{display:none;position:fixed;z-index:5;box-shadow:0 8px 24px var(--fp-border)}
+  .rail{top:36px;left:0;bottom:0;width:80%;border-radius:0}
+  .drawer{left:0;right:0;bottom:0;max-height:70vh;border-radius:var(--fp-radius) var(--fp-radius) 0 0}
+  .panes.rail-shown .rail,.panes.drawer-shown .drawer{display:block}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"t e" "a s";height:auto;padding:8px 10px;gap:4px 10px}
+  .row.head{display:none}
+  .row .t1{grid-area:t}.row .as{grid-area:a;color:var(--fp-muted)}.row .st{grid-area:s}.row .es{grid-area:e;width:80px}
+  .status{position:sticky;bottom:8px;margin-top:var(--fp-gap)}
+  .mid{gap:8px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="shell" data-region="shell" data-role="chrome"><i></i> Studio tracker <span>/ Task plans</span></div>
+  <div class="panes" id="panes">
+    <nav class="card rail" aria-label="Projects" data-region="source-rail" data-role="navigation">
+      <h2>Projects</h2>
+      <ul>
+        <li aria-current="true"><span class="ini">W</span><span class="label">Website relaunch</span><span class="meta">8</span></li>
+        <li><span class="ini">B</span><span class="label">Brand refresh</span><span class="meta">9</span></li>
+        <li><span class="ini">P</span><span class="label">Packaging series</span><span class="meta">6</span></li>
+        <li><span class="ini">A</span><span class="label">Annual report</span><span class="meta">7</span></li>
+        <li><span class="ini">F</span><span class="label">Product film</span><span class="meta">5</span></li>
+        <li><span class="ini">M</span><span class="label">Menu system</span><span class="meta">3</span></li>
+        <li><span class="ini">I</span><span class="label">App icons</span><span class="meta">4</span></li>
+      </ul>
+      <button class="btn only-narrow close" type="button" data-toggle="rail">Close</button>
+    </nav>
+
+    <div class="mid">
+      <section class="card toolbar" aria-label="Editor toolbar" data-region="editor-toolbar" data-tier="2">
+        <button class="btn" type="button" data-toggle="rail" aria-label="Toggle project list">☰ Projects</button>
+        <h1>Website relaunch <span class="sub">Task plan</span></h1>
+        <button class="btn primary" type="button">Create task</button>
+        <button class="btn" type="button" data-toggle="drawer">Client &amp; invoices</button>
+      </section>
+
+      <section class="card work" aria-label="Task plan" data-region="work-area" data-tier="1">
+        <div class="row head"><span>Task</span><span>Assignee</span><span>Status</span><span style="text-align:right">Estimate</span></div>
+        <div class="row"><span class="t1">Sitemap &amp; content audit</span><span class="as">Jonas</span><span class="st"><select aria-label="Status"><option>Done</option><option>In progress</option><option>To do</option></select></span><span class="es"><input aria-label="Estimate" value="12 h"></span></div>
+        <div class="row"><span class="t1">Wireframes</span><span class="as">Priya</span><span class="st"><select aria-label="Status"><option>Done</option><option>In progress</option><option>To do</option></select></span><span class="es"><input aria-label="Estimate" value="20 h"></span></div>
+        <div class="row"><span class="t1">Design system tokens</span><span class="as">Priya</span><span class="st"><select aria-label="Status"><option>In progress</option><option>Done</option><option>To do</option></select></span><span class="es"><input aria-label="Estimate" value="16 h"></span></div>
+        <div class="row"><span class="t1">Homepage design</span><span class="as">Priya</span><span class="st"><select aria-label="Status"><option>In progress</option><option>Done</option><option>To do</option></select></span><span class="es"><input aria-label="Estimate" value="18 h"></span></div>
+        <div class="row"><span class="t1">Case study templates</span><span class="as">Mara</span><span class="st"><select aria-label="Status"><option>In progress</option><option>Done</option><option>To do</option></select></span><span class="es"><input aria-label="Estimate" value="14 h"></span></div>
+        <div class="row"><span class="t1">CMS setup</span><span class="as">Jonas</span><span class="st"><select aria-label="Status"><option>To do</option><option>In progress</option><option>Done</option></select></span><span class="es"><input aria-label="Estimate" value="24 h"></span></div>
+        <div class="row"><span class="t1">Accessibility review</span><span class="as">Lena</span><span class="st"><select aria-label="Status"><option>To do</option><option>In progress</option><option>Done</option></select></span><span class="es"><input aria-label="Estimate" value="10 h"></span></div>
+        <div class="row"><span class="t1">Launch checklist</span><span class="as">Jonas</span><span class="st"><select aria-label="Status"><option>To do</option><option>In progress</option><option>Done</option></select></span><span class="es"><input aria-label="Estimate" value="28 h"></span></div>
+      </section>
+
+      <div class="status" data-region="status-line" data-role="chrome"><span>8 tasks · 142 h</span><span>All changes saved</span></div>
+    </div>
+
+    <aside class="card drawer" aria-label="Client and invoices" data-region="management-drawer" data-tier="2">
+      <button class="btn only-narrow close" type="button" data-toggle="drawer">Close</button>
+      <h2>Alder &amp; Finch</h2>
+      <dl><dt>Contact</dt><dd>Sven Alder</dd><dt>City</dt><dd>Hamburg</dd><dt>Projects</dt><dd>2</dd></dl>
+      <details><summary>Billing details</summary><dl style="margin-top:6px"><dt>VAT id</dt><dd>DE 318 224 907</dd><dt>Terms</dt><dd>14 days</dd></dl></details>
+      <h3>Invoices</h3>
+      <ul class="inv">
+        <li><span>INV-1042</span><span>€4,800</span><span class="badge">Paid</span></li>
+        <li><span>INV-1057</span><span>€6,400</span><span class="badge">Sent</span></li>
+        <li><span>INV-1063</span><span>€3,200</span><span class="badge">Draft</span></li>
+      </ul>
+      <button class="btn" type="button">Create invoice</button>
+    </aside>
+  </div>
+</div>
+<script>
+(function(){
+  var panes=document.getElementById('panes'),narrow=window.matchMedia('(max-width:640px)');
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-toggle]');
+    if(!b)return;
+    panes.classList.toggle(b.dataset.toggle+(narrow.matches?'-shown':'-off'));
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — master-detail</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+button,input{font:inherit;color:inherit}
+.app{height:100vh;display:flex;flex-direction:column}
+.shell{flex:none;height:36px;display:flex;align-items:center;gap:var(--fp-gap);padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.shell i{width:14px;height:14px;border-radius:3px;background:var(--fp-accent);display:inline-block}
+.work{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--fp-gap);padding:var(--fp-gap)}
+.card{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.btn{border:1px solid var(--fp-border);background:var(--fp-surface);border-radius:var(--fp-radius);padding:6px 12px;cursor:pointer}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface);font-weight:600}
+.link{background:none;border:0;color:var(--fp-accent);cursor:pointer;padding:0;text-decoration:underline}
+.badge{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;background:var(--fp-surface-2);border:1px solid var(--fp-border)}
+.badge.active{border-color:var(--fp-accent);color:var(--fp-accent)}
+.toolbar{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:20px var(--fp-gap) 10px}
+.toolbar input{border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:6px 10px;min-width:220px;background:var(--fp-surface)}
+.toolbar .count{margin-left:auto;color:var(--fp-muted);font-size:12px}
+.split{flex:1;min-height:0;display:grid;grid-template-columns:1fr 360px;gap:var(--fp-gap)}
+.left{min-height:0;display:flex;flex-direction:column;gap:var(--fp-gap)}
+.list{flex:1;min-height:0;overflow:auto;padding-top:18px}
+.tr{display:grid;grid-template-columns:1fr 100px 80px 80px;align-items:center;gap:10px;padding:0 10px;height:40px;border-bottom:1px solid var(--fp-border);cursor:pointer}
+.tr.head{position:sticky;top:0;background:var(--fp-surface-2);color:var(--fp-muted);font-size:12px;font-weight:600;cursor:default;z-index:1}
+.tr.group{background:var(--fp-surface-2);font-weight:600}
+.tr.group small{color:var(--fp-muted);font-weight:400}
+.tr.child .name{padding-left:22px}
+.tr[aria-selected=true]{background:var(--fp-surface);box-shadow:inset 3px 0 0 var(--fp-accent);font-weight:600}
+.tr:not(.head):not(.group):hover{background:var(--fp-bg)}
+.strip{flex:none;padding:20px var(--fp-gap) 10px;color:var(--fp-muted);font:12px/1.4 var(--fp-font);display:flex;gap:16px;flex-wrap:wrap}
+.strip code{color:var(--fp-fg)}
+.detail{min-height:0;overflow:auto;padding:22px 16px 16px}
+.detail .back{display:none;margin-bottom:8px}
+.detail h2{margin:0 0 4px;font-size:18px}
+.detail .meta{display:flex;gap:8px;align-items:center;color:var(--fp-muted);margin-bottom:12px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--fp-gap);margin:0 0 14px}
+.facts div{display:flex;flex-direction:column-reverse}
+.facts dt{font-size:12px;color:var(--fp-muted)}
+.facts dd{margin:0;font-weight:600}
+.detail h3{margin:14px 0 6px;font-size:13px;color:var(--fp-muted);text-transform:uppercase;letter-spacing:.04em}
+.next{list-style:none;margin:0;padding:0;border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.next li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--fp-border)}
+.next li:last-child{border-bottom:0}
+.next small{color:var(--fp-muted)}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+details{margin-top:14px;color:var(--fp-tier3)}
+details summary{cursor:pointer}
+details dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:8px 0 0}
+details dt{color:var(--fp-muted)}
+details dd{margin:0}
+
+@media (max-width:640px){
+  .app{height:auto;min-height:100vh}
+  .work{padding:8px}
+  .toolbar input{min-width:0;flex:1 1 100%}
+  .toolbar .count{margin-left:0}
+  .split{display:block}
+  .tr{grid-template-columns:1fr 90px;grid-template-areas:"n s" "d o";height:auto;padding:8px 10px;gap:2px 10px}
+  .tr.head{display:none}
+  .tr.group{grid-template-columns:1fr;grid-template-areas:"n"}
+  .tr > :nth-child(1){grid-area:n}.tr > :nth-child(2){grid-area:s;text-align:right}
+  .tr > :nth-child(3){grid-area:d;color:var(--fp-muted)}.tr > :nth-child(4){grid-area:o;text-align:right;color:var(--fp-muted)}
+  .detail{display:none}
+  .show-detail .left{display:none}
+  .show-detail .detail{display:block;padding-top:22px}
+  .detail .back{display:inline-block}
+  .strip{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="shell" data-region="shell" data-role="chrome"><i></i> Studio tracker <span>/ Projects by client</span></div>
+  <main class="work" id="work">
+    <section class="card toolbar" aria-label="Toolbar" data-region="toolbar" data-tier="2">
+      <input type="search" placeholder="Search projects" aria-label="Search projects">
+      <button class="btn" type="button">Status</button>
+      <button class="btn" type="button">Owner</button>
+      <button class="btn primary" type="button">Create project</button>
+      <span class="count">6 projects · 4 clients</span>
+    </section>
+
+    <div class="split" id="split">
+      <div class="left">
+        <section class="card list" role="treegrid" aria-label="Projects by client" data-region="list" data-tier="1">
+          <div class="tr head" role="row"><span>Name</span><span>Status</span><span>Due</span><span>Owner</span></div>
+          <div class="tr group" role="row" aria-expanded="true"><span>▾ Alder &amp; Finch <small>2</small></span></div>
+          <div class="tr child" role="row" aria-selected="true" tabindex="0" data-name="Website relaunch" data-status="Active" data-client="Alder &amp; Finch" data-owner="Jonas" data-due="Nov 28" data-id="af-0395"><span class="name">Website relaunch</span><span><span class="badge active">Active</span></span><span>Nov 28</span><span>Jonas</span></div>
+          <div class="tr child" role="row" aria-selected="false" tabindex="0" data-name="Journal launch" data-status="Draft" data-client="Alder &amp; Finch" data-owner="Mara" data-due="Jan 16" data-id="af-0451"><span class="name">Journal launch</span><span><span class="badge">Draft</span></span><span>Jan 16</span><span>Mara</span></div>
+          <div class="tr group" role="row" aria-expanded="true"><span>▾ Northwind Coffee <small>2</small></span></div>
+          <div class="tr child" role="row" aria-selected="false" tabindex="0" data-name="Brand refresh" data-status="Active" data-client="Northwind Coffee" data-owner="Mara" data-due="Nov 12" data-id="nw-0402"><span class="name">Brand refresh</span><span><span class="badge active">Active</span></span><span>Nov 12</span><span>Mara</span></div>
+          <div class="tr child" role="row" aria-selected="false" tabindex="0" data-name="Poster set" data-status="Done" data-client="Northwind Coffee" data-owner="Mara" data-due="Oct 18" data-id="nw-0377"><span class="name">Poster set</span><span><span class="badge">Done</span></span><span>Oct 18</span><span>Mara</span></div>
+          <div class="tr group" role="row" aria-expanded="true"><span>▾ Tidewater Foods <small>1</small></span></div>
+          <div class="tr child" role="row" aria-selected="false" tabindex="0" data-name="Packaging series" data-status="In review" data-client="Tidewater Foods" data-owner="Mara" data-due="Nov 4" data-id="tw-0417"><span class="name">Packaging series</span><span><span class="badge">In review</span></span><span>Nov 4</span><span>Mara</span></div>
+          <div class="tr group" role="row" aria-expanded="true"><span>▾ Kestrel Bank <small>1</small></span></div>
+          <div class="tr child" role="row" aria-selected="false" tabindex="0" data-name="Annual report" data-status="Active" data-client="Kestrel Bank" data-owner="Lena" data-due="Dec 15" data-id="kb-0412"><span class="name">Annual report</span><span><span class="badge active">Active</span></span><span>Dec 15</span><span>Lena</span></div>
+        </section>
+        <div class="strip card" data-region="activity-strip" data-tier="2">
+          <span>Selected <code id="url">?project=af-0395</code></span><span>No filters applied</span><span>Synced 14:02 · Priya completed "Wireframes"</span>
+        </div>
+      </div>
+
+      <aside class="card detail" id="detail" aria-label="Project details" data-region="detail" data-tier="2">
+        <button class="link back" type="button" id="back">‹ Back to projects</button>
+        <h2 id="d-name">Website relaunch</h2>
+        <div class="meta"><span class="badge active" id="d-status">Active</span><span id="d-client">Alder &amp; Finch</span></div>
+        <dl class="facts">
+          <div><dt>Owner</dt><dd id="d-owner">Jonas</dd></div>
+          <div><dt>Due date</dt><dd id="d-due">Nov 28</dd></div>
+          <div><dt>Open tasks</dt><dd>5 of 8</dd></div>
+        </dl>
+        <h3>Next tasks</h3>
+        <ul class="next">
+          <li><span>Design system tokens <small>Priya</small></span><button class="btn" type="button">Assign</button></li>
+          <li><span>Homepage design <small>Priya</small></span><button class="btn" type="button">Assign</button></li>
+          <li><span>CMS setup <small>unassigned</small></span><button class="btn" type="button">Assign</button></li>
+        </ul>
+        <div class="acts"><button class="btn primary" type="button">Open project</button><button class="btn" type="button">Edit project</button></div>
+        <details>
+          <summary>More details</summary>
+          <dl><dt>Budget code</dt><dd>AF-0395</dd><dt>Brief</dt><dd>Relaunch scope v4</dd><dt>Created</dt><dd>Jonas, Aug 14</dd></dl>
+        </details>
+      </aside>
+    </div>
+  </main>
+</div>
+<script>
+(function(){
+  var work=document.getElementById('work'),rows=document.querySelectorAll('.tr.child');
+  function pick(r){
+    rows.forEach(function(x){x.setAttribute('aria-selected',x===r?'true':'false');});
+    var d=r.dataset;
+    document.getElementById('d-name').textContent=d.name;
+    document.getElementById('d-status').textContent=d.status;
+    document.getElementById('d-client').textContent=d.client;
+    document.getElementById('d-owner').textContent=d.owner;
+    document.getElementById('d-due').textContent=d.due;
+    document.getElementById('url').textContent='?project='+d.id;
+    work.classList.add('show-detail');
+  }
+  rows.forEach(function(r){
+    r.addEventListener('click',function(){pick(r);});
+    r.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(r);}});
+  });
+  document.getElementById('back').addEventListener('click',function(){work.classList.remove('show-detail');});
+})();
+</script>
+</body>
+</html>

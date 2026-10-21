@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — settings</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+.sr{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.frame{max-width:1040px;margin:0 auto;padding:var(--fp-gap);display:flex;flex-direction:column;gap:var(--fp-gap)}
+.shell{display:flex;align-items:center;gap:var(--fp-gap);height:36px;padding:0 var(--fp-gap);background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-muted);font-size:12px}
+.shell b{color:var(--fp-fg)}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);grid-template-areas:"nav head" "nav body" "nav save";gap:var(--fp-gap);align-items:start}
+.nav{grid-area:nav;padding:var(--fp-gap);padding-top:22px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.nav label{display:block;padding:9px 10px;border-radius:var(--fp-radius);color:var(--fp-muted);cursor:pointer}
+.nav label:hover{background:var(--fp-surface-2)}
+.head{grid-area:head;padding:var(--fp-gap) 20px;padding-top:22px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.head h1{margin:0;font-size:18px}
+.head p{margin:2px 0 0;color:var(--fp-muted)}
+.body{grid-area:body;padding:var(--fp-gap) 20px 20px;padding-top:24px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);min-height:280px}
+.group{margin-bottom:20px;max-width:520px}
+.group h2{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted)}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;margin-bottom:4px;font-weight:600}
+.field input,.field select{width:100%;padding:8px 10px;font:inherit;color:var(--fp-fg);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.hint{color:var(--fp-muted);font-size:12px}
+details{border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:8px 10px;background:var(--fp-surface-2)}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:8px}
+details .field{color:var(--fp-tier3)}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:var(--fp-gap);min-height:40px;padding:6px 0;border-top:1px solid var(--fp-border)}
+.switch-row:first-of-type{border-top:0}
+.switch-row small{display:block;color:var(--fp-muted)}
+.saved{color:var(--fp-muted);font-size:12px;min-width:56px;text-align:right}
+.toggle{width:36px;height:20px;border-radius:99px;background:var(--fp-border);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:99px;background:var(--fp-surface)}
+.toggle.on{background:var(--fp-accent)}
+.toggle.on::after{left:18px}
+.reset{border:0;background:none;color:var(--fp-accent);text-decoration:underline;padding:0;font:inherit;cursor:pointer}
+.save{grid-area:save;display:flex;align-items:center;gap:8px;padding:var(--fp-gap);padding-top:18px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.save .sp{flex:1}
+.btn{padding:8px 16px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);color:var(--fp-fg);font:inherit;cursor:pointer}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.state{color:var(--fp-muted)}
+
+/* section state, CSS only */
+.at,.save-row{display:none}
+.set:has(#t1:checked) .at1,.set:has(#t2:checked) .at2,.set:has(#t3:checked) .at3{display:block}
+.set:has(#t1:checked) .save-row.at1,.set:has(#t2:checked) .save-row.at2,.set:has(#t3:checked) .save-row.at3{display:flex}
+.set:has(#t1:checked) .n1,.set:has(#t2:checked) .n2,.set:has(#t3:checked) .n3{background:var(--fp-surface-2);color:var(--fp-fg);font-weight:600;box-shadow:inset 3px 0 0 var(--fp-accent)}
+.save-row{align-items:center;gap:8px;width:100%}
+
+@media (max-width:960px){.layout{grid-template-columns:160px minmax(0,1fr)}}
+@media (max-width:640px){
+  .frame{padding:8px;gap:8px}
+  .layout{grid-template-columns:1fr;grid-template-areas:"nav" "head" "body" "save";gap:8px}
+  .nav{padding:20px 6px 0}
+  .nav ul{flex-direction:row;overflow-x:auto;gap:0}
+  .nav label{white-space:nowrap;border-radius:var(--fp-radius) var(--fp-radius) 0 0}
+  .set:has(#t1:checked) .n1,.set:has(#t2:checked) .n2,.set:has(#t3:checked) .n3{box-shadow:inset 0 -3px 0 var(--fp-accent)}
+  .head,.body{padding-left:12px;padding-right:12px}
+  .body{min-height:0}
+  .save{position:sticky;bottom:0;padding:10px 12px;padding-top:18px}
+  .save .btn.primary{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="frame set">
+  <input class="sr" type="radio" name="sec" id="t1" aria-label="Profile">
+  <input class="sr" type="radio" name="sec" id="t2" aria-label="Workspace" checked>
+  <input class="sr" type="radio" name="sec" id="t3" aria-label="Notifications">
+
+  <div class="shell" data-region="shell" data-role="chrome"><b>Studio tracker</b> · Settings</div>
+
+  <div class="layout">
+    <nav class="nav" data-region="section-nav" data-role="navigation" aria-label="Settings sections">
+      <ul>
+        <li><label class="n1" for="t1">Profile</label></li>
+        <li><label class="n2" for="t2">Workspace</label></li>
+        <li><label class="n3" for="t3">Notifications</label></li>
+      </ul>
+    </nav>
+
+    <header class="head" data-region="section-header" data-tier="2">
+      <div class="at at1"><h1>Profile</h1><p>Applies to you only.</p></div>
+      <div class="at at2"><h1>Workspace</h1><p>Applies to everyone in Studio Nordlicht.</p></div>
+      <div class="at at3"><h1>Notifications</h1><p>Applies to you only. Changes save as you make them.</p></div>
+    </header>
+
+    <section class="body" data-region="section-body" data-tier="1">
+      <div class="at at1">
+        <div class="group"><h2>Identity</h2>
+          <label class="field"><span>Name</span><input value="Mara Voss"></label>
+          <label class="field"><span>Email</span><input value="mara@nordlicht.example"></label>
+        </div>
+        <div class="group"><h2>Language</h2>
+          <label class="field"><span>Interface language</span><select><option>English</option><option>German</option></select></label>
+        </div>
+      </div>
+
+      <div class="at at2">
+        <div class="group"><h2>Studio</h2>
+          <label class="field"><span>Studio name</span><input value="Studio Nordlicht"></label>
+          <label class="field"><span>Default project owner</span><select><option>Mara Voss</option><option>Jonas Keller</option></select></label>
+        </div>
+        <div class="group"><h2>Defaults for new projects</h2>
+          <label class="field"><span>Payment terms</span><select><option>14 days net</option><option>30 days net</option></select></label>
+          <label class="field"><span>Hourly rate</span><input value="95 EUR"></label>
+          <details>
+            <summary>Advanced</summary>
+            <label class="field"><span>Invoice number prefix</span><input value="INV-"></label>
+            <label class="field"><span>Fiscal year starts</span><input value="1 January"></label>
+          </details>
+        </div>
+        <div class="group"><h2>Reset</h2>
+          <button class="reset" type="button">Reset workspace defaults to factory values</button>
+          <p class="hint">Resets only the “Defaults for new projects” group above; existing projects keep their values.</p>
+        </div>
+      </div>
+
+      <div class="at at3">
+        <div class="group"><h2>Email me when…</h2>
+          <div class="switch-row"><div>A task is assigned to me<small>Includes tasks reassigned to you</small></div><span class="saved">Saved</span><span class="toggle on" role="switch" aria-checked="true" tabindex="0"></span></div>
+          <div class="switch-row"><div>A project I own is due in 3 days</div><span class="saved">Saved</span><span class="toggle on" role="switch" aria-checked="true" tabindex="0"></span></div>
+          <div class="switch-row"><div>An invoice becomes overdue</div><span class="saved">Saved</span><span class="toggle on" role="switch" aria-checked="true" tabindex="0"></span></div>
+          <div class="switch-row"><div>A client comments</div><span class="saved">Saving…</span><span class="toggle" role="switch" aria-checked="false" tabindex="0"></span></div>
+        </div>
+        <button class="reset" type="button">Reset notifications to defaults</button>
+      </div>
+    </section>
+
+    <div class="save" data-region="save-bar" data-role="chrome">
+      <div class="save-row at1"><span class="sp"></span><button class="btn" type="button">Cancel</button><button class="btn primary" type="button">Save profile</button></div>
+      <div class="save-row at2"><span class="state">Unsaved changes in Workspace</span><span class="sp"></span><button class="btn" type="button">Cancel</button><button class="btn primary" type="button">Save workspace</button></div>
+      <div class="save-row at3"><span class="state">No Save needed here: each switch saves itself.</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

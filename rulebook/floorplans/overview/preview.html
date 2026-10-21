@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — overview</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+a{color:var(--fp-accent);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit;cursor:pointer}
+.frame{max-width:1120px;margin:0 auto;padding:var(--fp-gap);display:flex;flex-direction:column;gap:var(--fp-gap)}
+.shell{display:flex;align-items:center;gap:var(--fp-gap);height:36px;padding:0 var(--fp-gap);background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-muted);font-size:12px}
+.shell b{color:var(--fp-fg)}
+.header{display:flex;align-items:center;justify-content:space-between;gap:var(--fp-gap);padding:var(--fp-gap);padding-top:18px}
+.header h1{margin:0;font-size:20px}
+.header p{margin:2px 0 0;color:var(--fp-muted)}
+.btn{padding:6px 12px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface)}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--fp-gap);align-items:start}
+.attention,.recent{padding:var(--fp-gap);padding-top:20px;background:var(--fp-bg);border:1px dashed var(--fp-border);border-radius:var(--fp-radius)}
+.attention{display:grid;grid-template-columns:1fr 1fr;gap:var(--fp-gap)}
+.block{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:var(--fp-gap);position:relative}
+.block.span{grid-column:1/-1}
+.block h2{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted)}
+.row{display:flex;align-items:center;gap:8px;min-height:40px;padding:6px 0;border-top:1px solid var(--fp-border)}
+.row:first-of-type{border-top:0}
+.row .main{flex:1;min-width:0}
+.row .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .f{color:var(--fp-muted);font-size:12px}
+.status{display:inline-block;padding:1px 8px;border:1px solid var(--fp-border);border-radius:99px;background:var(--fp-surface-2);font-size:11px}
+.status.blocked{border-color:var(--fp-fg);font-weight:600}
+.status.review{border-color:var(--fp-accent);color:var(--fp-accent)}
+.more{display:block;margin-top:6px;font-size:12px}
+.info{border:0;background:none;color:var(--fp-tier3);padding:2px 6px;font-size:12px;text-decoration:underline}
+.recent h2{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted)}
+.feed{list-style:none;margin:0;padding:0;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.feed li{padding:8px var(--fp-gap);border-top:1px solid var(--fp-border)}
+.feed li:first-child{border-top:0}
+.feed span{display:block;color:var(--fp-muted);font-size:12px}
+.peek{position:absolute;left:var(--fp-gap);right:var(--fp-gap);top:92px;z-index:2;padding:var(--fp-gap);padding-top:18px;background:var(--fp-surface);border:1px solid var(--fp-tier3);border-radius:var(--fp-radius);color:var(--fp-tier3)}
+.peek[hidden]{display:none}
+.peek dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:12px}
+.peek dt{color:var(--fp-muted)}.peek dd{margin:0}
+@media (max-width:960px){.cols{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .frame{padding:8px}
+  .header{flex-direction:column;align-items:flex-start}
+  .attention{grid-template-columns:1fr}
+  .row{flex-wrap:wrap;min-height:56px}
+  .row .main{flex-basis:100%}
+  .peek{position:static;margin-top:8px}
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="shell" data-region="shell" data-role="chrome"><b>Studio tracker</b> · Search · Mara Voss</div>
+
+  <div class="header" data-region="header" data-tier="2">
+    <div><h1>Today</h1><p>Wednesday, 21 October</p></div>
+    <button class="btn primary" type="button">New project</button>
+  </div>
+
+  <div class="cols">
+    <div class="attention" data-region="attention" data-tier="1">
+      <section class="block" id="due">
+        <h2>Due this week</h2>
+        <div class="row"><div class="main"><div class="t">Wayfinding signage</div><div class="f">City Library · due 30 Oct</div></div><span class="status blocked">Blocked</span><button class="info" type="button" id="peek-btn" aria-expanded="true" aria-controls="peek">Details</button><a href="#">Open</a></div>
+        <div class="row"><div class="main"><div class="t">Brand refresh</div><div class="f">Northwind Café · due 28 Oct</div></div><span class="status">In progress</span><button class="info" type="button">Details</button><a href="#">Open</a></div>
+        <div class="row"><div class="main"><div class="t">Packaging series</div><div class="f">Birch &amp; Co · due 12 Nov</div></div><span class="status">In progress</span><button class="info" type="button">Details</button><a href="#">Open</a></div>
+        <a class="more" href="#">All projects due this week</a>
+        <div class="peek" id="peek" data-region="row-peek" data-tier="3">
+          <dl><dt>Budget code</dt><dd>WS-2026-014</dd><dt>Created by</dt><dd>Omar Haddad, 3 Sep</dd><dt>Last status change</dt><dd>Blocked, 19 Oct</dd></dl>
+        </div>
+      </section>
+
+      <section class="block" id="review">
+        <h2>Waiting on my review</h2>
+        <div class="row"><div class="main"><div class="t">Campaign film — rough cut</div><div class="f">Lumen Energy · asked by Lea</div></div><span class="status review">Review</span><a href="#">Review</a></div>
+        <div class="row"><div class="main"><div class="t">Website relaunch — homepage</div><div class="f">Halden Legal · asked by Jonas</div></div><span class="status review">Review</span><a href="#">Review</a></div>
+        <a class="more" href="#">All tasks in review</a>
+      </section>
+
+      <section class="block span" id="invoices">
+        <h2>Invoices to chase</h2>
+        <div class="row"><div class="main"><div class="t">INV-2041 · €4,800</div><div class="f">Birch &amp; Co · 9 days overdue</div></div><span class="status blocked">Overdue</span><a href="#">Send reminder</a></div>
+        <div class="row"><div class="main"><div class="t">INV-2037 · €2,150</div><div class="f">Kite Mobile · 3 days overdue</div></div><span class="status blocked">Overdue</span><a href="#">Send reminder</a></div>
+        <div class="row"><div class="main"><div class="t">INV-2044 · €6,300</div><div class="f">Tidewater Trust · sent, unpaid</div></div><span class="status">Sent</span><a href="#">Open</a></div>
+        <a class="more" href="#">All unpaid invoices</a>
+      </section>
+    </div>
+
+    <aside class="recent" data-region="recent" data-tier="2">
+      <h2>Since yesterday</h2>
+      <ul class="feed">
+        <li>Mara closed “Logo variants”<span>Brand refresh · 16:40</span></li>
+        <li>Omar added a task to Wayfinding<span>City Library · 14:05</span></li>
+        <li>Lea sent INV-2044<span>Tidewater Trust · 11:20</span></li>
+        <li>Jonas commented on Homepage<span>Halden Legal · 09:12</span></li>
+      </ul>
+    </aside>
+  </div>
+</div>
+<script>
+var b=document.getElementById('peek-btn'),p=document.getElementById('peek');
+b.addEventListener('click',function(){var o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o))});
+</script>
+</body>
+</html>

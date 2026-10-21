@@ -1273,6 +1273,111 @@ def check_rulebook_ids(repo: Path, rep: Report) -> None:
             first_seen[ident] = place
 
 
+# A floorplan is a layout a designer picks by id and judges by looking at it, so it ships as a
+# pair: the README says what it is, the preview shows it. The preview is one self-contained
+# file — an external reference would make it unreviewable offline and would leak a brand in.
+FLOORPLANS_DIR = "floorplans"
+FLOORPLAN_KINDS = ("shell", "screen")
+FLOORPLAN_POSTURES = ("sovereign", "transient", "auxiliary")
+FLOORPLAN_DENSITIES = ("compact", "default", "comfortable")
+FLOORPLAN_SUMMARY_MAX = 80
+FLOORPLAN_HEADINGS = (
+    "Regions",
+    "Posture and density",
+    "Responsive",
+    "Interaction constraints",
+    "Sketch",
+    "When not to use",
+)
+FLOORPLAN_PREVIEW_FORBIDDEN = (
+    ("http://", "`http://`"),
+    ("https://", "`https://`"),
+    ("<link", "`<link`"),
+    ("<script src", "`<script src`"),
+)
+
+
+def _floorplan_dirs(repo: Path) -> list[Path]:
+    root = repo / RULEBOOK_DIR / FLOORPLANS_DIR
+    return sorted(p for p in root.iterdir() if p.is_dir()) if root.is_dir() else []
+
+
+def check_floorplan_shape(repo: Path, rep: Report) -> None:
+    """Rule `floorplan-shape`: every directory under `rulebook/floorplans/` holds a `README.md`
+    whose frontmatter and headings match the floorplan contract (`rulebook/README.md § Adding or
+    retiring`) and a `preview.html` that is self-contained. A repo without floorplans has nothing
+    to check."""
+    for directory in _floorplan_dirs(repo):
+        where = f"{RULEBOOK_DIR}/{FLOORPLANS_DIR}/{directory.name}"
+        readme = directory / "README.md"
+        preview = directory / "preview.html"
+        if not readme.is_file():
+            rep.fail(where, "floorplan-shape", "has no `README.md` — the floorplan states no regions, posture or constraints")
+        else:
+            text = readme.read_text(encoding="utf-8")
+            m = FRONTMATTER_RE.match(text)
+            fm: dict | None = None
+            if not m:
+                rep.fail(where, "floorplan-shape", "README has no frontmatter — `id`, `kind`, `summary`, `posture` and `density` go between `---` lines at the top")
+                body = text
+            else:
+                body = text[m.end():]
+                try:
+                    loaded = yaml.safe_load(m.group(1))
+                except yaml.YAMLError:
+                    loaded = None
+                if isinstance(loaded, dict):
+                    fm = loaded
+                else:
+                    rep.fail(where, "floorplan-shape", "README frontmatter does not parse as YAML — quote a value that contains `: `")
+            if fm is not None:
+                if fm.get("id") != directory.name:
+                    rep.fail(where, "floorplan-shape", f"README `id` is {fm.get('id')!r}, but the directory is {directory.name!r} — a floorplan is cited by one name")
+                for key, allowed in (
+                    ("kind", FLOORPLAN_KINDS),
+                    ("posture", FLOORPLAN_POSTURES),
+                    ("density", FLOORPLAN_DENSITIES),
+                ):
+                    if fm.get(key) not in allowed:
+                        rep.fail(where, "floorplan-shape", f"README `{key}` is {fm.get(key)!r}, not one of {', '.join(allowed)}")
+                summary = fm.get("summary")
+                if not isinstance(summary, str) or not summary.strip():
+                    rep.fail(where, "floorplan-shape", "README has no `summary` — a picker lists floorplans by it")
+                elif len(summary) > FLOORPLAN_SUMMARY_MAX:
+                    rep.fail(where, "floorplan-shape", f"README `summary` is {len(summary)} characters, over {FLOORPLAN_SUMMARY_MAX}")
+            present = {h.strip() for h in re.findall(r"^##\s+(.+?)\s*$", body, re.MULTILINE)}
+            for heading in FLOORPLAN_HEADINGS:
+                if heading not in present:
+                    rep.fail(where, "floorplan-shape", f"README has no `## {heading}` section")
+        if not preview.is_file():
+            rep.fail(where, "floorplan-shape", "has no `preview.html` — a floorplan without a preview cannot be reviewed")
+            continue
+        html = preview.read_text(encoding="utf-8")
+        lowered = html.lower()
+        for needle, label in FLOORPLAN_PREVIEW_FORBIDDEN:
+            if needle in lowered:
+                rep.fail(where, "floorplan-shape", f"`preview.html` contains {label} — the preview is one self-contained file with nothing external")
+        if "--fp-bg" not in html:
+            rep.fail(where, "floorplan-shape", "`preview.html` does not define `--fp-bg` — the preview takes its colours from the neutral `--fp-*` variables")
+
+
+def check_floorplan_cited(repo: Path, rep: Report) -> None:
+    """Rule `floorplan-cited`: every floorplan id appears in backticks in `rulebook/rules.md`, so
+    no floorplan sits in the catalogue unreachable from a rule."""
+    directories = _floorplan_dirs(repo)
+    if not directories:
+        return
+    rules = repo / RULEBOOK_DIR / "rules.md"
+    text = rules.read_text(encoding="utf-8") if rules.is_file() else ""
+    for directory in directories:
+        if f"`{directory.name}`" not in text:
+            rep.fail(
+                f"{RULEBOOK_DIR}/{FLOORPLANS_DIR}/{directory.name}",
+                "floorplan-cited",
+                "is cited by no rule in rulebook/rules.md — name it in backticks in the rule that selects it (normally `P18`)",
+            )
+
+
 def check_old_contract_paths(repo: Path, rep: Report) -> None:
     """Rule `no-old-contract-path`: nothing under `skills/`, `tree/`, `templates/`, `docs/`
     (frozen ADRs excepted), `README.md` or `CLAUDE.md` names `contracts/<name>.md`."""
@@ -2384,6 +2489,8 @@ def run(repo: Path) -> Report:
     check_schemas(repo, nodes, skill_fms, skill_tree_refs, rep)
     check_citations(repo, rep)
     check_rulebook_ids(repo, rep)
+    check_floorplan_shape(repo, rep)
+    check_floorplan_cited(repo, rep)
     check_old_contract_paths(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)
     check_docs(repo, skill_names, rep)

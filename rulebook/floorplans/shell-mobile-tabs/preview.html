@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — shell-mobile-tabs</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--fp-surface-2);color:var(--fp-fg);font:15px/1.4 var(--fp-font)}
+button{font:inherit;color:inherit;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:8px 12px;min-height:40px;cursor:pointer}
+button.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+button.ghost{border-color:var(--fp-surface);background:none}
+.ic{display:inline-block;width:18px;height:18px;border:1.5px solid currentColor;border-radius:5px;flex:none}
+.sp{flex:1}
+.device{max-width:480px;min-height:100vh;margin:0 auto;display:flex;flex-direction:column;background:var(--fp-bg);border-left:1px solid var(--fp-border);border-right:1px solid var(--fp-border)}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;background:var(--fp-surface);border-bottom:1px solid var(--fp-border)}
+.top h1{font-size:18px;margin:0}
+.badge{font-size:11px;border:1px solid var(--fp-border);border-radius:99px;padding:1px 8px;color:var(--fp-muted);background:var(--fp-surface-2)}
+.top .tail{display:flex;gap:6px;align-items:center;padding-right:58px}
+/* work */
+.work{flex:1;padding:12px 12px 120px;display:flex;flex-direction:column;gap:8px}
+.chips{display:flex;gap:6px;overflow-x:auto}
+.chip{font-size:13px;border:1px solid var(--fp-border);border-radius:99px;padding:4px 12px;background:var(--fp-surface);white-space:nowrap}
+.chip.on{background:var(--fp-surface-2);border-color:var(--fp-accent)}
+.card{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;min-height:64px;align-items:center}
+.card b{font-weight:600}
+.card .m{color:var(--fp-muted);font-size:13px;grid-column:1}
+.card .st{grid-row:1;grid-column:2;font-size:13px}
+.card .st::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--fp-accent);margin-right:6px}
+.card .st.dim::before{background:var(--fp-tier3)}
+.card button{grid-row:2;grid-column:2;justify-self:end;font-size:12px;min-height:30px;padding:3px 10px}
+/* tab bar */
+.tabs{position:sticky;bottom:0;z-index:20;display:flex;background:var(--fp-surface);border-top:1px solid var(--fp-border);padding-bottom:env(safe-area-inset-bottom)}
+.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;min-height:56px;font-size:11px;color:var(--fp-muted);text-decoration:none}
+.tabs a[aria-current]{color:var(--fp-accent);font-weight:600;box-shadow:inset 0 2px 0 var(--fp-accent)}
+/* sheets */
+.sheet{display:none;position:fixed;bottom:56px;left:50%;transform:translateX(-50%);width:min(480px,100%);max-height:60vh;overflow:auto;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:12px 12px 0 0;padding:26px 16px 16px;z-index:15;flex-direction:column;gap:8px}
+.sheet::after{content:"";position:absolute;top:8px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:var(--fp-border)}
+.sheet h2{font-size:16px;margin:0}
+.sheet dl{margin:0;display:grid;grid-template-columns:80px 1fr;gap:4px 8px;font-size:14px}
+.sheet dt{color:var(--fp-muted)}
+.sheet dd{margin:0}
+.sheet .t3{color:var(--fp-tier3);border-top:1px dashed var(--fp-border);padding-top:8px;font-size:13px}
+.sheet a{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--fp-surface-2);color:var(--fp-fg);text-decoration:none;min-height:44px}
+body:not(.detail-off) #detail{display:flex}
+body.more-open #more{display:flex}
+body.more-open #detail{display:none}
+.scrim{display:none;position:fixed;inset:0;background:var(--fp-fg);opacity:.3;z-index:10}
+body.more-open .scrim{display:block}
+/* palette */
+.palette{display:none;position:fixed;inset:0;background:var(--fp-surface);z-index:40;padding:var(--fp-gap);overflow:auto}
+.palette .bar{display:flex;gap:8px;padding-right:90px;margin-top:6px}
+.palette input{flex:1;font:inherit;padding:10px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-bg)}
+.palette .g{font:600 10px/1 var(--fp-font);letter-spacing:.06em;text-transform:uppercase;color:var(--fp-muted);padding:16px 4px 4px}
+.palette .o{padding:12px 4px;border-bottom:1px solid var(--fp-surface-2)}
+body.palette-open .palette{display:block}
+@media (max-width:640px){
+ .device{border:0}
+ .top .badge{display:none}
+ .top .tail{padding-right:50px}
+}
+</style>
+</head>
+<body>
+<div class="device">
+  <header class="top" data-region="top-bar" data-role="chrome">
+    <h1>Projects</h1>
+    <span class="badge">12 active</span>
+    <span class="sp"></span>
+    <div class="tail">
+      <button class="ghost" data-toggle="palette-open" aria-label="Search">Search</button>
+      <button class="primary">Create</button>
+    </div>
+  </header>
+
+  <main class="work" data-region="work-area" data-tier="1">
+    <div class="chips"><span class="chip on">All</span><span class="chip">Mine</span><span class="chip">Due this month</span><span class="chip">On hold</span></div>
+    <div class="card"><b>Brand refresh</b><span class="st">Active</span><span class="m">Northwind Coffee · due 14 Nov</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>Website relaunch</b><span class="st">In review</span><span class="m">Alder &amp; Finch · due 28 Nov</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>Packaging system</b><span class="st">Active</span><span class="m">Pinecrest Foods · due 05 Dec</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>Annual report</b><span class="st dim">Planned</span><span class="m">Harbor Trust · due 18 Dec</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>Wayfinding</b><span class="st dim">On hold</span><span class="m">Lindqvist Clinic · due 09 Jan</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>Campaign kit</b><span class="st">Active</span><span class="m">Northwind Coffee · due 21 Jan</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>App icon set</b><span class="st dim">Done</span><span class="m">Fernweh Travel · due 30 Oct</span><button data-toggle="detail-off">Details</button></div>
+    <div class="card"><b>Pitch deck</b><span class="st dim">Planned</span><span class="m">Alder &amp; Finch · due 12 Feb</span><button data-toggle="detail-off">Details</button></div>
+  </main>
+
+  <aside class="sheet" id="detail" data-region="detail-sheet" data-tier="3" aria-label="Project details">
+    <h2>Brand refresh</h2>
+    <dl>
+      <dt>Client</dt><dd>Northwind Coffee</dd>
+      <dt>Status</dt><dd>Active</dd>
+      <dt>Due</dt><dd>14 Nov</dd>
+      <dt>Owner</dt><dd>Mara Keller</dd>
+    </dl>
+    <div class="t3">Tier 3 detail: budget, brief link, billing contact — on request only.</div>
+    <div style="display:flex;gap:8px"><button class="primary">Open project</button><button data-toggle="detail-off">Close</button></div>
+  </aside>
+
+  <div class="scrim" data-toggle="more-open"></div>
+  <nav class="sheet" id="more" data-region="more-sheet" data-role="navigation" aria-label="More destinations">
+    <a href="#"><span class="ic"></span>Clients</a>
+    <a href="#"><span class="ic"></span>Reports</a>
+    <a href="#"><span class="ic"></span>Settings</a>
+  </nav>
+
+  <nav class="tabs" data-region="tab-bar" data-role="navigation" aria-label="Primary">
+    <a href="#"><span class="ic"></span>Overview</a>
+    <a href="#" aria-current="page"><span class="ic"></span>Projects</a>
+    <a href="#"><span class="ic"></span>Tasks</a>
+    <a href="#"><span class="ic"></span>Invoices</a>
+    <a href="#" data-toggle="more-open"><span class="ic"></span>More</a>
+  </nav>
+</div>
+
+<div class="palette" data-region="palette" data-role="chrome" role="dialog" aria-label="Search and actions">
+  <div class="bar"><input placeholder="Search or run an action…" aria-label="Search"><button data-toggle="palette-open">Cancel</button></div>
+  <div class="g">Actions</div>
+  <div class="o">Create project</div>
+  <div class="o">Create task</div>
+  <div class="g">Destinations</div>
+  <div class="o">Overview</div>
+  <div class="o">Projects</div>
+  <div class="o">Clients</div>
+  <div class="g">Objects</div>
+  <div class="o">Brand refresh — Northwind Coffee</div>
+</div>
+
+<script>
+document.addEventListener('click',function(e){var t=e.target.closest('[data-toggle]');if(t){e.preventDefault();document.body.classList.toggle(t.dataset.toggle)}});
+document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.body.classList.toggle('palette-open')}if(e.key==='Escape'){document.body.classList.remove('palette-open','more-open')}});
+</script>
+</body>
+</html>

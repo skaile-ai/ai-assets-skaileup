@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — list-report</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.4 var(--fp-font)}
+button,input{font:inherit;color:inherit}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.shell{height:36px;display:flex;align-items:center;gap:var(--fp-gap);padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.shell i{width:14px;height:14px;border-radius:3px;background:var(--fp-accent);display:inline-block}
+.work{flex:1;max-width:1120px;width:100%;margin:0 auto;padding:var(--fp-gap);display:flex;flex-direction:column;gap:var(--fp-gap)}
+.card{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.page-header{display:flex;align-items:center;justify-content:space-between;gap:var(--fp-gap);padding:18px var(--fp-gap) 6px}
+.page-header h1{margin:0;font-size:22px}
+.page-header .sub{color:var(--fp-muted);font-size:12px}
+.btn{border:1px solid var(--fp-border);background:var(--fp-surface);border-radius:var(--fp-radius);padding:6px 12px;cursor:pointer}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface);font-weight:600}
+.views{display:flex;gap:4px;border-bottom:1px solid var(--fp-border);padding:0 4px;overflow-x:auto}
+.views a{padding:8px 12px;color:var(--fp-muted);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent}
+.views a[aria-current]{color:var(--fp-fg);border-color:var(--fp-accent);font-weight:600}
+.views small{color:var(--fp-tier3)}
+.overview{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--fp-gap);padding:22px var(--fp-gap) var(--fp-gap)}
+.tile{background:var(--fp-surface-2);border-radius:var(--fp-radius);padding:8px 12px;border:1px solid transparent;text-align:left;cursor:pointer}
+.tile b{display:block;font-size:22px}
+.tile span{color:var(--fp-muted);font-size:12px}
+.tile[aria-pressed=true]{border-color:var(--fp-accent);background:var(--fp-surface)}
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:22px var(--fp-gap) var(--fp-gap)}
+.filters input{border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:6px 10px;min-width:200px;background:var(--fp-surface)}
+.chip{border:1px solid var(--fp-border);border-radius:999px;padding:3px 10px;background:var(--fp-surface-2);font-size:12px}
+.chip.on{border-color:var(--fp-accent);color:var(--fp-accent);background:var(--fp-surface)}
+.count{margin-left:auto;color:var(--fp-muted);font-size:12px}
+.link{background:none;border:0;color:var(--fp-accent);cursor:pointer;padding:0;text-decoration:underline}
+.results{padding:18px 0 0;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;color:var(--fp-muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--fp-border);background:var(--fp-surface-2)}
+td{padding:0 10px;height:40px;border-bottom:1px solid var(--fp-border)}
+tr:last-child td{border-bottom:0}
+td.c-name{font-weight:600}
+td.c-tasks,th.num{text-align:right}
+.badge{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;background:var(--fp-surface-2);border:1px solid var(--fp-border)}
+.badge.active{border-color:var(--fp-accent);color:var(--fp-accent)}
+.peek-btn{border:1px solid var(--fp-border);background:var(--fp-surface);border-radius:var(--fp-radius);width:26px;height:26px;cursor:pointer;color:var(--fp-tier3)}
+.bulk{display:flex;align-items:center;gap:8px;padding:20px var(--fp-gap) var(--fp-gap);background:var(--fp-fg);color:var(--fp-surface);border-radius:var(--fp-radius)}
+.bulk .btn{background:transparent;color:var(--fp-surface);border-color:var(--fp-tier3)}
+.bulk .link{color:var(--fp-surface);margin-left:auto}
+.bulk::before{color:var(--fp-surface)}
+.peek{position:fixed;right:24px;top:230px;width:260px;padding:22px var(--fp-gap) var(--fp-gap);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);box-shadow:0 6px 20px var(--fp-border)}
+.peek[hidden]{display:none}
+.peek h2{margin:0 0 6px;font-size:14px}
+.peek dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px}
+.peek dt{color:var(--fp-muted)}
+.peek dd{margin:0;color:var(--fp-tier3)}
+.peek .foot{margin-top:10px;display:flex;justify-content:space-between}
+
+@media (max-width:640px){
+  .work{padding:8px;padding-bottom:70px}
+  .page-header .sub{display:none}
+  .overview{grid-template-columns:1fr 1fr}
+  .filters input{min-width:0;flex:1 1 100%}
+  .count{margin-left:0;flex:1 1 100%}
+  thead{display:none}
+  table,tbody{display:block}
+  tr{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"sel name status" ". client due" ". owner peek";gap:2px 10px;padding:10px;border-bottom:1px solid var(--fp-border)}
+  tr:last-child{border-bottom:0}
+  td{display:block;height:auto;padding:0;border:0}
+  td.c-sel{grid-area:sel}td.c-name{grid-area:name}td.c-status{grid-area:status;text-align:right}
+  td.c-client{grid-area:client;color:var(--fp-muted)}td.c-due{grid-area:due;text-align:right;color:var(--fp-muted)}
+  td.c-owner{grid-area:owner;color:var(--fp-muted)}td.c-peek{grid-area:peek;text-align:right}
+  td.c-tasks{display:none}
+  .bulk{position:fixed;left:8px;right:8px;bottom:8px;flex-wrap:wrap;z-index:2}
+  .bulk .link{margin-left:0}
+  .peek{left:8px;right:8px;top:auto;bottom:8px;width:auto;z-index:3}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="shell" data-region="shell" data-role="chrome"><i></i> Studio tracker <span>/ Projects</span></div>
+  <main class="work">
+    <header class="card page-header" data-region="page-header" data-tier="1">
+      <div><h1>Projects</h1><div class="sub">Everything the studio is working on, by client.</div></div>
+      <button class="btn primary" type="button">Create project</button>
+    </header>
+
+    <nav class="views" aria-label="Saved views" data-region="saved-views" data-role="navigation">
+      <a href="#" aria-current="page">All projects <small>10</small></a>
+      <a href="#">My projects <small>3</small></a>
+      <a href="#">Due in 14 days <small>3</small></a>
+      <a href="#">Needs review <small>2</small></a>
+    </nav>
+
+    <section class="card overview" aria-label="Overview" data-region="overview-strip" data-tier="2">
+      <button class="tile" type="button" aria-pressed="true"><b>5</b><span>Active</span></button>
+      <button class="tile" type="button" aria-pressed="true"><b>2</b><span>In review</span></button>
+      <button class="tile" type="button" aria-pressed="false"><b>3</b><span>Due in 14 days</span></button>
+      <button class="tile" type="button" aria-pressed="false"><b>1</b><span>On hold</span></button>
+    </section>
+
+    <section class="card filters" aria-label="Filters" data-region="filter-bar" data-tier="2">
+      <input type="search" placeholder="Search projects" aria-label="Search projects">
+      <span class="chip on">Status: Active, In review ×</span>
+      <span class="chip">Owner</span>
+      <span class="chip">Client</span>
+      <span class="chip">Due date</span>
+      <span class="count">Showing 7 of 10 · Sorted by due date · <button class="link" type="button">Clear all</button></span>
+    </section>
+
+    <section class="card results" data-region="results" data-tier="1">
+      <table>
+        <thead><tr><th></th><th>Project</th><th>Client</th><th>Status</th><th>Due ▲</th><th>Owner</th><th class="num">Open tasks</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select Packaging series" checked></td><td class="c-name">Packaging series</td><td class="c-client">Tidewater Foods</td><td class="c-status"><span class="badge">In review</span></td><td class="c-due">Nov 4</td><td class="c-owner">Mara</td><td class="c-tasks">6</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek Packaging series" aria-expanded="false" data-code="TW-0417" data-brief="Packaging brief v3" data-by="Mara, Sep 2">i</button></td></tr>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select Menu system" checked></td><td class="c-name">Menu system</td><td class="c-client">Bao &amp; Bun</td><td class="c-status"><span class="badge">In review</span></td><td class="c-due">Nov 8</td><td class="c-owner">Priya</td><td class="c-tasks">3</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek Menu system" aria-expanded="false" data-code="BB-0388" data-brief="Menu system brief" data-by="Priya, Sep 19">i</button></td></tr>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select Brand refresh"></td><td class="c-name">Brand refresh</td><td class="c-client">Northwind Coffee</td><td class="c-status"><span class="badge active">Active</span></td><td class="c-due">Nov 12</td><td class="c-owner">Mara</td><td class="c-tasks">9</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek Brand refresh" aria-expanded="false" data-code="NW-0402" data-brief="Brand refresh brief v2" data-by="Mara, Aug 28">i</button></td></tr>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select Product film"></td><td class="c-name">Product film</td><td class="c-client">Lumen Audio</td><td class="c-status"><span class="badge active">Active</span></td><td class="c-due">Nov 20</td><td class="c-owner">Priya</td><td class="c-tasks">5</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek Product film" aria-expanded="false" data-code="LA-0431" data-brief="Film storyboard" data-by="Priya, Oct 1">i</button></td></tr>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select Website relaunch"></td><td class="c-name">Website relaunch</td><td class="c-client">Alder &amp; Finch</td><td class="c-status"><span class="badge active">Active</span></td><td class="c-due">Nov 28</td><td class="c-owner">Jonas</td><td class="c-tasks">12</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek Website relaunch" aria-expanded="false" data-code="AF-0395" data-brief="Relaunch scope v4" data-by="Jonas, Aug 14">i</button></td></tr>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select App icons"></td><td class="c-name">App icons</td><td class="c-client">Pocketwise</td><td class="c-status"><span class="badge active">Active</span></td><td class="c-due">Dec 5</td><td class="c-owner">Jonas</td><td class="c-tasks">4</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek App icons" aria-expanded="false" data-code="PW-0440" data-brief="Icon grid spec" data-by="Jonas, Oct 9">i</button></td></tr>
+          <tr><td class="c-sel"><input type="checkbox" aria-label="Select Annual report"></td><td class="c-name">Annual report</td><td class="c-client">Kestrel Bank</td><td class="c-status"><span class="badge active">Active</span></td><td class="c-due">Dec 15</td><td class="c-owner">Lena</td><td class="c-tasks">7</td><td class="c-peek"><button class="peek-btn" type="button" aria-label="Peek Annual report" aria-expanded="false" data-code="KB-0412" data-brief="Annual report outline" data-by="Lena, Sep 5">i</button></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="bulk" role="toolbar" aria-label="Bulk actions" data-region="bulk-bar" data-tier="2">
+      <strong>2 selected</strong>
+      <button class="btn" type="button">Assign owner</button>
+      <button class="btn" type="button">Change status</button>
+      <button class="btn" type="button">Export</button>
+      <button class="link" type="button">Clear selection</button>
+    </div>
+  </main>
+
+  <aside class="peek" id="peek" hidden role="dialog" aria-label="Project details" data-region="peek" data-tier="3">
+    <h2 id="peek-title">Project</h2>
+    <dl>
+      <dt>Budget code</dt><dd id="peek-code"></dd>
+      <dt>Brief</dt><dd id="peek-brief"></dd>
+      <dt>Created</dt><dd id="peek-by"></dd>
+    </dl>
+    <div class="foot"><a href="#">Open project</a><button class="link" type="button" id="peek-close">Close</button></div>
+  </aside>
+</div>
+<script>
+(function(){
+  var peek=document.getElementById('peek'),open=null;
+  function close(){peek.hidden=true;if(open){open.setAttribute('aria-expanded','false');open=null;}}
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.peek-btn');
+    if(!b){if(!e.target.closest('#peek'))close();return;}
+    if(open===b){close();return;}
+    close();open=b;b.setAttribute('aria-expanded','true');
+    document.getElementById('peek-title').textContent=b.getAttribute('aria-label').replace('Peek ','');
+    document.getElementById('peek-code').textContent=b.dataset.code;
+    document.getElementById('peek-brief').textContent=b.dataset.brief;
+    document.getElementById('peek-by').textContent=b.dataset.by;
+    peek.hidden=false;
+  });
+  document.getElementById('peek-close').addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+</script>
+</body>
+</html>

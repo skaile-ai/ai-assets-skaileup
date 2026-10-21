@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — mode-editor</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:13px/1.4 var(--fp-font)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.app{display:flex;flex-direction:column;min-height:100vh}
+.shell{height:32px;flex:none;display:flex;align-items:center;padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.header{flex:none;display:flex;align-items:center;gap:var(--fp-gap);padding:8px var(--fp-gap);background:var(--fp-surface);border-bottom:1px solid var(--fp-border);flex-wrap:wrap}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);font-weight:600}
+.header h1{margin:0;font-size:16px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modes{display:inline-flex;border:1px solid var(--fp-border);border-radius:var(--fp-radius);overflow:hidden}
+.modes button{padding:6px 14px;background:var(--fp-surface);border-right:1px solid var(--fp-border)}
+.modes button:last-child{border-right:0}
+.modes button[aria-pressed="true"]{background:var(--fp-accent);color:var(--fp-surface);font-weight:600}
+.tools{display:inline-flex;gap:6px}
+.body{flex:1;display:grid;grid-template-columns:230px 1fr 280px;gap:var(--fp-gap);padding:var(--fp-gap);min-height:0}
+.panel{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:var(--fp-gap);min-width:0}
+h2{margin:0 0 8px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fp-muted)}
+.tree ul{list-style:none;margin:0;padding:0 0 0 14px}
+.tree>ul{padding:0}
+.tree li{padding:2px 0}
+.tree .cur{color:var(--fp-accent);font-weight:600}
+.tree .n{color:var(--fp-muted);font-size:12px}
+.scope{display:flex;align-items:center;gap:8px;padding:6px 10px;margin-bottom:var(--fp-gap);background:var(--fp-surface-2);border-left:3px solid var(--fp-accent);border-radius:var(--fp-radius)}
+.scope b{font-weight:600}
+.scope .sp{flex:1}
+.link{color:var(--fp-accent);font-weight:600}
+.pane{display:none}
+.app[data-mode="plan"] .p-plan,.app[data-mode="tasks"] .p-tasks,.app[data-mode="billing"] .p-billing{display:block}
+.field{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.field label{color:var(--fp-muted)}
+.input{padding:6px 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);min-width:0}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted);font-weight:600}
+th,td{padding:5px 8px;border-bottom:1px solid var(--fp-border);height:32px}
+td.num,th.num{text-align:right}
+.pill{border:1px solid var(--fp-border);border-radius:99px;padding:0 8px;font-size:11px;background:var(--fp-surface-2)}
+.res .big{font-size:20px;font-weight:600}
+.res .bar{height:6px;background:var(--fp-surface-2);border-radius:99px;margin:6px 0 12px}
+.res .bar i{display:block;height:100%;width:84%;background:var(--fp-accent);border-radius:99px}
+.res ul{margin:0;padding:0;list-style:none}
+.res li{padding:6px 0;border-top:1px solid var(--fp-border)}
+.res .w{color:var(--fp-muted)}
+.drawer{display:none;position:fixed;top:0;right:0;bottom:0;width:340px;z-index:8;background:var(--fp-surface);border:0;border-left:2px solid var(--fp-accent);border-radius:0;padding:var(--fp-gap);overflow:auto}
+.app.studio-open .drawer{display:block}
+.drawer .dh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.drawer .dh b{flex:1}
+.views{display:flex;border:1px solid var(--fp-border);border-radius:var(--fp-radius);overflow:hidden;margin-bottom:10px}
+.views button{flex:1;padding:5px 8px;text-align:center;border-right:1px solid var(--fp-border)}
+.views button:last-child{border-right:0}
+.views button[aria-pressed="true"]{background:var(--fp-surface-2);font-weight:600}
+.dv{display:none}
+.drawer[data-view="activity"] .v-activity,.drawer[data-view="comments"] .v-comments{display:block}
+.dv p{margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--fp-border);color:var(--fp-tier3)}
+.dv p b{color:var(--fp-fg)}
+#tree-toggle{display:none}
+
+@media (max-width:959px){
+ #tree-toggle{display:inline-flex}
+ .body{grid-template-columns:1fr}
+ .tree-panel{display:none;position:fixed;top:32px;left:0;bottom:0;width:min(300px,86vw);z-index:7;border-radius:0;border-width:0 2px 0 0;border-color:var(--fp-accent);overflow:auto}
+ .app.tree-open .tree-panel{display:block}
+}
+@media (max-width:640px){
+ .header h1{flex-basis:calc(100% - 140px)}
+ .modes{order:5;width:100%}
+ .modes button{flex:1;text-align:center;padding:8px 4px}
+ .field{grid-template-columns:1fr;gap:3px}
+ .drawer{top:auto;left:0;width:100%;height:75vh;border-left:0;border-top:2px solid var(--fp-accent)}
+ .hide-n{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app" data-mode="plan">
+ <div class="shell" data-region="shell" data-role="chrome">Design studio tracker — shell frame</div>
+
+ <header class="header" data-region="header" data-role="chrome">
+  <button class="ibtn" id="tree-toggle" type="button" aria-label="Toggle outline">☰</button>
+  <h1>Website relaunch — project plan</h1>
+  <div class="modes" id="modes" data-region="mode-menu" data-role="navigation" role="group" aria-label="Mode">
+   <button type="button" data-mode="plan" aria-pressed="true">Plan</button>
+   <button type="button" data-mode="tasks" aria-pressed="false">Tasks</button>
+   <button type="button" data-mode="billing" aria-pressed="false">Billing</button>
+  </div>
+  <div class="tools"><button class="ibtn" type="button" aria-label="Help">?</button><button class="ibtn" type="button" aria-label="Settings">⚙</button><button class="ibtn" type="button" aria-label="Account">AR</button></div>
+ </header>
+
+ <div class="body">
+  <nav class="panel tree tree-panel" data-region="tree" data-role="navigation" aria-label="Project outline">
+   <h2>Outline</h2>
+   <ul>
+    <li>1 Discovery <span class="n">3 tasks</span></li>
+    <li class="cur">2 Design <span class="n">4 tasks</span>
+     <ul><li>Wireframes</li><li>Visual route A</li><li>Visual route B</li><li>Prototype</li></ul></li>
+    <li>3 Build <span class="n">5 tasks</span></li>
+    <li>4 Launch <span class="n">2 tasks</span></li>
+   </ul>
+  </nav>
+
+  <main class="panel content" data-region="content" data-tier="1">
+   <div class="scope">
+    <span>Mode <b id="mode-name">Plan</b></span>
+    <span class="hide-n">· editing phase <b>2 Design</b></span>
+    <span class="sp"></span>
+    <button class="link" id="studio-open" type="button">Studio ▸</button>
+   </div>
+
+   <section class="pane p-plan">
+    <div class="field"><label>Phase name</label><div class="input">Design</div></div>
+    <div class="field"><label>Owner</label><div class="input">Ana Reyes</div></div>
+    <div class="field"><label>Due date</label><div class="input">28 Oct</div></div>
+    <div class="field"><label>Client</label><div class="input">Brightway Dental</div></div>
+    <div class="field"><label>Summary</label><div class="input">Two visual routes and a clickable prototype for the booking flow.</div></div>
+   </section>
+
+   <section class="pane p-tasks">
+    <table>
+     <tr><th>Task</th><th>Assignee</th><th>Status</th><th class="num">Estimate</th></tr>
+     <tr><td>Wireframes</td><td>Ana Reyes</td><td><span class="pill">Done</span></td><td class="num">16 h</td></tr>
+     <tr><td>Visual route A</td><td>Jon Park</td><td><span class="pill">In progress</span></td><td class="num">24 h</td></tr>
+     <tr><td>Visual route B</td><td>Jon Park</td><td><span class="pill">In progress</span></td><td class="num">24 h</td></tr>
+     <tr><td>Prototype</td><td>Ana Reyes</td><td><span class="pill">To do</span></td><td class="num">20 h</td></tr>
+     <tr><td>Design review</td><td>Mira Cole</td><td><span class="pill">To do</span></td><td class="num">6 h</td></tr>
+     <tr><td>Icon set</td><td>—</td><td><span class="pill">To do</span></td><td class="num">12 h</td></tr>
+    </table>
+   </section>
+
+   <section class="pane p-billing">
+    <table>
+     <tr><th>Invoice</th><th class="num">Amount</th><th>Status</th></tr>
+     <tr><td>INV-1038 · Kick-off</td><td class="num">€4,800</td><td><span class="pill">Paid</span></td></tr>
+     <tr><td>INV-1042 · First route</td><td class="num">€6,400</td><td><span class="pill">Overdue</span></td></tr>
+     <tr><td>INV-1047 · Prototype</td><td class="num">€6,400</td><td><span class="pill">Draft</span></td></tr>
+     <tr><td>INV-1051 · Launch</td><td class="num">€3,200</td><td><span class="pill">Draft</span></td></tr>
+    </table>
+   </section>
+  </main>
+
+  <aside class="panel res" data-region="results" data-tier="2">
+   <h2>Results</h2>
+   <div class="big">118 h <span class="w">of 140 h</span></div>
+   <div class="bar"><i></i></div>
+   <ul>
+    <li>Icon set has no assignee</li>
+    <li>INV-1042 is 9 days overdue</li>
+    <li class="w">Design phase ends 3 days before the client review</li>
+   </ul>
+  </aside>
+ </div>
+
+ <aside class="drawer" id="drawer" data-view="activity" data-region="studio-drawer" data-tier="3">
+  <div class="dh"><b>Studio</b><button class="ibtn" id="studio-close" type="button" aria-label="Close studio">×</button></div>
+  <div class="views" id="views"><button type="button" data-view="activity" aria-pressed="true">Activity</button><button type="button" data-view="comments" aria-pressed="false">Comments</button></div>
+  <div class="dv v-activity">
+   <p><b>Jon Park</b> moved Visual route A to In progress · today 09:12</p>
+   <p><b>Ana Reyes</b> finished Wireframes · yesterday</p>
+   <p><b>Mira Cole</b> changed the due date to 28 Oct · 14 Oct</p>
+  </div>
+  <div class="dv v-comments">
+   <p><b>Mira Cole</b> Client wants route B in a warmer palette.</p>
+   <p><b>Ana Reyes</b> Booking flow needs one more screen for cancellations.</p>
+  </div>
+ </aside>
+</div>
+<script>
+var app=document.querySelector('.app'),drawer=document.getElementById('drawer');
+document.querySelectorAll('#modes button').forEach(function(b){b.addEventListener('click',function(){
+ document.querySelectorAll('#modes button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+ app.dataset.mode=b.dataset.mode;
+ document.getElementById('mode-name').textContent=b.textContent;
+});});
+document.querySelectorAll('#views button').forEach(function(b){b.addEventListener('click',function(){
+ document.querySelectorAll('#views button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+ drawer.dataset.view=b.dataset.view;
+});});
+document.getElementById('tree-toggle').addEventListener('click',function(){app.classList.toggle('tree-open')});
+document.getElementById('studio-open').addEventListener('click',function(){app.classList.add('studio-open')});
+document.getElementById('studio-close').addEventListener('click',function(){app.classList.remove('studio-open')});
+</script>
+</body>
+</html>

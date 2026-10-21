@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — tabbed-tool</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:14px/1.45 var(--fp-font)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.shell{height:32px;flex:none;display:flex;align-items:center;gap:10px;padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.shell .sp{flex:1}
+.vbtn{padding:2px 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface)}
+.vbtn[aria-pressed="true"]{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.col{width:100%;max-width:880px;margin:0 auto;padding:var(--fp-gap)}
+.header{display:flex;align-items:center;gap:var(--fp-gap);padding:10px var(--fp-gap);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.header h1{margin:0;font-size:17px;flex:1}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);font-weight:600}
+.tabrow{display:flex;align-items:flex-end;gap:var(--fp-gap);margin-top:var(--fp-gap);border-bottom:1px solid var(--fp-border)}
+.tabs{display:flex;flex:1;gap:2px}
+.tabs button{padding:8px 16px;border:1px solid transparent;border-bottom:0;border-radius:var(--fp-radius) var(--fp-radius) 0 0;color:var(--fp-muted)}
+.tabs button[aria-selected="true"]{background:var(--fp-surface);border-color:var(--fp-border);color:var(--fp-fg);font-weight:600;margin-bottom:-1px;box-shadow:inset 0 2px 0 var(--fp-accent)}
+#f-open{display:none;margin-bottom:6px}
+.filter-row{display:flex;align-items:center;gap:var(--fp-gap);flex-wrap:wrap;padding:10px 0}
+.input{padding:6px 8px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);font:inherit;min-width:0}
+.chips{display:flex;gap:6px}
+.chip{padding:3px 10px;border:1px solid var(--fp-border);border-radius:99px;background:var(--fp-surface)}
+.chip[aria-pressed="true"]{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.count{margin-left:auto;color:var(--fp-muted);font-size:12px}
+.content{background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);padding:4px 0}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--fp-muted);font-weight:600}
+th,td{padding:0 12px;height:40px;border-bottom:1px solid var(--fp-border)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--fp-surface-2)}
+td.num,th.num{text-align:right}
+td b{font-weight:600}
+.pill{border:1px solid var(--fp-border);border-radius:99px;padding:0 8px;font-size:11px;background:var(--fp-surface-2)}
+.pane{display:none}
+.app[data-tab="projects"] .t-projects,.app[data-tab="tasks"] .t-tasks,.app[data-tab="invoices"] .t-invoices{display:block}
+.empty{display:none;text-align:center;padding:56px 16px}
+.empty b{display:block;font-size:16px;margin-bottom:4px}
+.empty p{margin:0 0 14px;color:var(--fp-muted)}
+.btn{padding:8px 14px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);font-weight:600}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.app[data-variant="empty"] .filter-row,.app[data-variant="empty"] .pane{display:none}
+.app[data-variant="empty"] .empty{display:block}
+.app[data-variant="empty"] #f-open{display:inline-flex}
+.scrim{display:none;position:fixed;inset:0;background:var(--fp-fg);opacity:.25;z-index:5}
+.app.detail-open .scrim,.app.filter-open .scrim{display:block}
+.sheet{display:none;position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);z-index:6;background:var(--fp-surface);border:0;border-left:2px solid var(--fp-accent);border-radius:0;padding:var(--fp-gap);overflow:auto}
+.app.detail-open .detail{display:block}
+.app.filter-open .fdrawer{display:block}
+.sheet .sh{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sheet .sh h2{flex:1;margin:0;font-size:17px}
+.facts{margin:0 0 12px}
+.facts div{display:flex;padding:6px 0;border-bottom:1px solid var(--fp-border)}
+.facts dt{width:110px;color:var(--fp-muted)}
+.facts dd{margin:0}
+.more summary{cursor:pointer;color:var(--fp-accent);font-weight:600}
+.more dl{margin:8px 0 0;padding:8px 10px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-tier3)}
+.more dt{float:left;clear:left;width:110px}
+.more dd{margin:0 0 2px 110px}
+.fgroup{margin-bottom:14px}
+.fgroup h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--fp-muted)}
+.fgroup .input{width:100%}
+
+@media (max-width:959px){
+ .tabs button{padding:8px 12px}
+}
+@media (max-width:640px){
+ .col{padding:8px}
+ .header h1{font-size:15px}
+ #f-open{display:inline-flex}
+ .filter-row .chips,.filter-row .sel,.filter-row .count{display:none}
+ .filter-row .input{flex:1}
+ .hide-n{display:none}
+ .sheet{top:auto;left:0;width:100%;border-left:0;border-top:2px solid var(--fp-accent)}
+ .detail{top:0;height:100%;border-top:0}
+ .fdrawer{height:70vh}
+}
+</style>
+</head>
+<body>
+<div class="app" data-tab="projects" data-variant="default">
+ <div class="shell" data-region="shell" data-role="chrome"><span class="hide-n">Design studio tracker — shell frame</span><span class="sp"></span><span>Variant</span><button class="vbtn" type="button" data-variant="default" aria-pressed="true">Default</button><button class="vbtn" type="button" data-variant="empty" aria-pressed="false">Empty state first</button></div>
+ <div class="col">
+  <header class="header" data-region="header" data-role="chrome"><h1>Studio overview</h1><button class="ibtn" type="button" aria-label="Settings">⚙</button></header>
+
+  <div class="tabrow">
+   <div class="tabs" id="tabs" role="tablist" data-region="tablist" data-role="navigation">
+    <button type="button" role="tab" data-tab="projects" aria-selected="true">Projects</button>
+    <button type="button" role="tab" data-tab="tasks" aria-selected="false">Tasks</button>
+    <button type="button" role="tab" data-tab="invoices" aria-selected="false">Invoices</button>
+   </div>
+   <button class="btn" id="f-open" type="button">Filters · 1</button>
+  </div>
+
+  <div class="filter-row" data-region="filter-row" data-tier="2">
+   <input class="input" type="search" placeholder="Search" aria-label="Search">
+   <select class="input sel" aria-label="Client"><option>All clients</option><option>Brightway Dental</option><option>Moss &amp; Co.</option></select>
+   <div class="chips"><button class="chip" type="button" aria-pressed="true">All</button><button class="chip" type="button" aria-pressed="false">Active</button><button class="chip" type="button" aria-pressed="false">On hold</button><button class="chip" type="button" aria-pressed="false">Done</button></div>
+   <span class="count">8 of 8</span>
+  </div>
+
+  <main class="content" data-region="content" data-tier="1">
+   <div class="empty"><b>Choose what to look at</b><p>Pick a client or a status to list its work.</p><button class="btn primary" id="f-open2" type="button">Open filters</button></div>
+
+   <div class="pane t-projects"><table><thead><tr><th>Project</th><th class="hide-n">Client</th><th>Status</th><th class="num">Due</th></tr></thead><tbody>
+    <tr data-detail data-title="Website relaunch" data-facts="Client:Brightway Dental;Status:Active;Due:12 Dec;Owner:Ana Reyes"><td><b>Website relaunch</b></td><td class="hide-n">Brightway Dental</td><td><span class="pill">Active</span></td><td class="num">12 Dec</td></tr>
+    <tr data-detail data-title="Packaging refresh" data-facts="Client:Moss &amp; Co.;Status:Active;Due:30 Nov;Owner:Jon Park"><td><b>Packaging refresh</b></td><td class="hide-n">Moss &amp; Co.</td><td><span class="pill">Active</span></td><td class="num">30 Nov</td></tr>
+    <tr data-detail data-title="Menu redesign" data-facts="Client:Harbour Café;Status:On hold;Due:20 Dec;Owner:Mira Cole"><td><b>Menu redesign</b></td><td class="hide-n">Harbour Café</td><td><span class="pill">On hold</span></td><td class="num">20 Dec</td></tr>
+    <tr data-detail data-title="Identity" data-facts="Client:Lindqvist Architects;Status:Active;Due:15 Jan;Owner:Ana Reyes"><td><b>Identity</b></td><td class="hide-n">Lindqvist Architects</td><td><span class="pill">Active</span></td><td class="num">15 Jan</td></tr>
+    <tr data-detail data-title="Annual report" data-facts="Client:Brightway Dental;Status:Done;Due:30 Sep;Owner:Jon Park"><td><b>Annual report</b></td><td class="hide-n">Brightway Dental</td><td><span class="pill">Done</span></td><td class="num">30 Sep</td></tr>
+    <tr data-detail data-title="Trade fair stand" data-facts="Client:Moss &amp; Co.;Status:Done;Due:14 Sep;Owner:Mira Cole"><td><b>Trade fair stand</b></td><td class="hide-n">Moss &amp; Co.</td><td><span class="pill">Done</span></td><td class="num">14 Sep</td></tr>
+    <tr data-detail data-title="Photo library" data-facts="Client:Harbour Café;Status:Active;Due:5 Nov;Owner:Jon Park"><td><b>Photo library</b></td><td class="hide-n">Harbour Café</td><td><span class="pill">Active</span></td><td class="num">5 Nov</td></tr>
+    <tr data-detail data-title="Signage concept" data-facts="Client:Lindqvist Architects;Status:On hold;Due:2 Feb;Owner:Ana Reyes"><td><b>Signage concept</b></td><td class="hide-n">Lindqvist Architects</td><td><span class="pill">On hold</span></td><td class="num">2 Feb</td></tr>
+   </tbody></table></div>
+
+   <div class="pane t-tasks"><table><thead><tr><th>Task</th><th class="hide-n">Assignee</th><th>Status</th><th class="num">Estimate</th></tr></thead><tbody>
+    <tr data-detail data-title="Wireframes" data-facts="Project:Website relaunch;Assignee:Ana Reyes;Status:Done;Estimate:16 h"><td><b>Wireframes</b></td><td class="hide-n">Ana Reyes</td><td><span class="pill">Done</span></td><td class="num">16 h</td></tr>
+    <tr data-detail data-title="Visual route A" data-facts="Project:Website relaunch;Assignee:Jon Park;Status:In progress;Estimate:24 h"><td><b>Visual route A</b></td><td class="hide-n">Jon Park</td><td><span class="pill">In progress</span></td><td class="num">24 h</td></tr>
+    <tr data-detail data-title="Dieline review" data-facts="Project:Packaging refresh;Assignee:Mira Cole;Status:To do;Estimate:6 h"><td><b>Dieline review</b></td><td class="hide-n">Mira Cole</td><td><span class="pill">To do</span></td><td class="num">6 h</td></tr>
+    <tr data-detail data-title="Menu layout draft" data-facts="Project:Menu redesign;Assignee:Jon Park;Status:To do;Estimate:18 h"><td><b>Menu layout draft</b></td><td class="hide-n">Jon Park</td><td><span class="pill">To do</span></td><td class="num">18 h</td></tr>
+    <tr data-detail data-title="Logo shortlist" data-facts="Project:Identity;Assignee:Ana Reyes;Status:In progress;Estimate:12 h"><td><b>Logo shortlist</b></td><td class="hide-n">Ana Reyes</td><td><span class="pill">In progress</span></td><td class="num">12 h</td></tr>
+    <tr data-detail data-title="Icon set" data-facts="Project:Website relaunch;Assignee:Unassigned;Status:To do;Estimate:12 h"><td><b>Icon set</b></td><td class="hide-n">—</td><td><span class="pill">To do</span></td><td class="num">12 h</td></tr>
+   </tbody></table></div>
+
+   <div class="pane t-invoices"><table><thead><tr><th>Invoice</th><th class="hide-n">Client</th><th>Status</th><th class="num">Amount</th></tr></thead><tbody>
+    <tr data-detail data-title="INV-1042" data-facts="Client:Brightway Dental;Status:Overdue;Amount:€6,400;Due:3 Oct"><td><b>INV-1042</b></td><td class="hide-n">Brightway Dental</td><td><span class="pill">Overdue</span></td><td class="num">€6,400</td></tr>
+    <tr data-detail data-title="INV-1047" data-facts="Client:Moss &amp; Co.;Status:Draft;Amount:€2,150;Due:15 Nov"><td><b>INV-1047</b></td><td class="hide-n">Moss &amp; Co.</td><td><span class="pill">Draft</span></td><td class="num">€2,150</td></tr>
+    <tr data-detail data-title="INV-1049" data-facts="Client:Harbour Café;Status:Draft;Amount:€980;Due:30 Nov"><td><b>INV-1049</b></td><td class="hide-n">Harbour Café</td><td><span class="pill">Draft</span></td><td class="num">€980</td></tr>
+    <tr data-detail data-title="INV-1051" data-facts="Client:Brightway Dental;Status:Draft;Amount:€3,200;Due:12 Dec"><td><b>INV-1051</b></td><td class="hide-n">Brightway Dental</td><td><span class="pill">Draft</span></td><td class="num">€3,200</td></tr>
+    <tr data-detail data-title="INV-1038" data-facts="Client:Lindqvist Architects;Status:Paid;Amount:€4,800;Due:20 Sep"><td><b>INV-1038</b></td><td class="hide-n">Lindqvist Architects</td><td><span class="pill">Paid</span></td><td class="num">€4,800</td></tr>
+    <tr data-detail data-title="INV-1036" data-facts="Client:Moss &amp; Co.;Status:Paid;Amount:€1,750;Due:2 Sep"><td><b>INV-1036</b></td><td class="hide-n">Moss &amp; Co.</td><td><span class="pill">Paid</span></td><td class="num">€1,750</td></tr>
+   </tbody></table></div>
+  </main>
+ </div>
+
+ <div class="scrim" id="scrim"></div>
+
+ <aside class="sheet detail" data-region="detail-overlay" data-tier="2" aria-label="Detail">
+  <div class="sh"><h2 id="d-title">Website relaunch</h2><button class="ibtn" id="d-close" type="button" aria-label="Close detail">×</button></div>
+  <dl class="facts" id="d-facts"></dl>
+  <details class="more">
+   <summary>More details</summary>
+   <dl data-region="detail-more" data-tier="3"><dt>Created</dt><dd>3 Sep</dd><dt>Budget code</dt><dd>BW-2026-07</dd><dt>Last edited by</dt><dd>Ana Reyes</dd></dl>
+  </details>
+ </aside>
+
+ <aside class="sheet fdrawer" data-region="filter-drawer" data-tier="2" aria-label="Filters">
+  <div class="sh"><h2>Filters</h2><button class="ibtn" id="f-close" type="button" aria-label="Close filters">×</button></div>
+  <div class="fgroup"><h3>Client</h3><select class="input" aria-label="Client"><option>All clients</option><option>Brightway Dental</option><option>Moss &amp; Co.</option><option>Harbour Café</option></select></div>
+  <div class="fgroup"><h3>Status</h3><div class="chips"><button class="chip" type="button" aria-pressed="true">All</button><button class="chip" type="button" aria-pressed="false">Active</button><button class="chip" type="button" aria-pressed="false">On hold</button><button class="chip" type="button" aria-pressed="false">Done</button></div></div>
+  <button class="btn primary" id="f-apply" type="button">Show results</button>
+ </aside>
+</div>
+<script>
+var app=document.querySelector('.app');
+function q(s){return document.querySelectorAll(s)}
+q('#tabs button').forEach(function(b){b.addEventListener('click',function(){
+ q('#tabs button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+ app.dataset.tab=b.dataset.tab;
+});});
+q('.shell [data-variant]').forEach(function(b){b.addEventListener('click',function(){
+ q('.shell [data-variant]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+ app.dataset.variant=b.dataset.variant;
+ app.classList.remove('filter-open','detail-open');
+});});
+q('[data-detail]').forEach(function(r){r.addEventListener('click',function(){
+ document.getElementById('d-title').textContent=r.dataset.title;
+ var dl=document.getElementById('d-facts');dl.textContent='';
+ r.dataset.facts.split(';').forEach(function(p){
+  var kv=p.split(':'),d=document.createElement('div'),t=document.createElement('dt'),v=document.createElement('dd');
+  t.textContent=kv[0];v.textContent=kv[1];d.appendChild(t);d.appendChild(v);dl.appendChild(d);
+ });
+ app.classList.add('detail-open');
+});});
+['f-open','f-open2'].forEach(function(id){document.getElementById(id).addEventListener('click',function(){app.classList.add('filter-open')})});
+document.getElementById('d-close').addEventListener('click',function(){app.classList.remove('detail-open')});
+document.getElementById('f-close').addEventListener('click',function(){app.classList.remove('filter-open')});
+document.getElementById('f-apply').addEventListener('click',function(){app.classList.remove('filter-open');app.dataset.variant='default';q('.shell [data-variant]').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.variant==='default')})});
+document.getElementById('scrim').addEventListener('click',function(){app.classList.remove('detail-open','filter-open')});
+</script>
+</body>
+</html>

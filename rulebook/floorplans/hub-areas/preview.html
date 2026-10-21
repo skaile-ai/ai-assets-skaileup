@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan preview — hub-areas</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif;}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:15px/1.45 var(--fp-font)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.shell{height:32px;display:flex;align-items:center;padding:0 var(--fp-gap);background:var(--fp-surface-2);border-bottom:1px solid var(--fp-border);color:var(--fp-muted);font-size:12px}
+.stage{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;padding:20px var(--fp-gap)}
+.col{width:340px;max-width:100%}
+.cap{margin:0 0 8px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--fp-muted)}
+.phone{display:flex;flex-direction:column;height:580px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:22px;overflow:hidden}
+.head{flex:none;display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--fp-border);background:var(--fp-surface)}
+.head b{flex:1;font-size:17px}
+.back{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid var(--fp-border);border-radius:50%}
+.scroll{flex:1;overflow:auto;padding:16px}
+.foot{flex:none;padding:12px 16px;border-top:1px solid var(--fp-border);background:var(--fp-surface);display:flex;gap:10px}
+.btn{flex:1;padding:12px 14px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);text-align:center;background:var(--fp-surface)}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface);font-weight:600}
+h1{margin:0 0 4px;font-size:20px}
+.sub{margin:0 0 16px;color:var(--fp-muted)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:var(--fp-gap)}
+.tile{display:flex;flex-direction:column;gap:10px;min-height:132px;padding:14px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface-2)}
+.tile svg{width:28px;height:28px;stroke:var(--fp-accent);fill:none;stroke-width:1.8}
+.tile b{font-size:15px}
+.tile span{color:var(--fp-muted);font-size:12px}
+.badge{display:inline-block;align-self:flex-start;border-radius:99px;padding:0 8px;background:var(--fp-accent);color:var(--fp-surface)!important;font-weight:600}
+.row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--fp-border)}
+.row .t{flex:1;min-width:0}
+.row .t b{display:block}
+.row .t span{color:var(--fp-muted);font-size:13px}
+.amt{font-weight:600}
+.pill{border:1px solid var(--fp-border);border-radius:99px;padding:0 8px;font-size:11px;background:var(--fp-surface-2)}
+.i{width:28px;height:28px;border:1px solid var(--fp-border);border-radius:50%;text-align:center;line-height:26px;color:var(--fp-accent);font-weight:600}
+.peek{display:none;margin:0 0 6px;padding:10px 12px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-tier3);font-size:13px}
+.peek.open{display:block}
+.peek dt{float:left;clear:left;width:92px}
+.peek dd{margin:0 0 2px 92px}
+.progress{display:flex;gap:4px;padding:0 16px 12px;background:var(--fp-surface)}
+.progress i{flex:1;height:4px;border-radius:99px;background:var(--fp-surface-2)}
+.progress i.on{background:var(--fp-accent)}
+.source{padding:12px;margin-bottom:16px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface-2)}
+.source div{display:flex;justify-content:space-between;padding:2px 0}
+.source span{color:var(--fp-muted)}
+.field label{display:block;margin-bottom:4px;color:var(--fp-muted);font-size:13px}
+.input{padding:12px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);font-size:17px}
+
+@media (max-width:640px){
+ .stage{gap:20px;padding:12px}
+ .col{width:100%}
+ .phone{height:auto;min-height:540px;border-radius:var(--fp-radius)}
+}
+</style>
+</head>
+<body>
+<div class="shell" data-region="shell" data-role="chrome">Design studio tracker — shell frame</div>
+<div class="stage">
+
+ <div class="col">
+  <p class="cap">1 · Hub</p>
+  <div class="phone">
+   <div class="scroll" data-region="hub-tiles" data-tier="1">
+    <h1>Good morning, Ana</h1>
+    <p class="sub">What do you want to do?</p>
+    <div class="tiles">
+     <button class="tile" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>Log time</b><span>Today: 3 h 30 m</span></button>
+     <button class="tile" type="button"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg><b>Check a project</b><span>4 active</span></button>
+     <button class="tile" type="button"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg><b>Send an invoice</b><span class="badge">1 overdue</span></button>
+     <button class="tile" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg><b>Add a client</b><span>12 clients</span></button>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <div class="col">
+  <p class="cap">2 · Area</p>
+  <div class="phone">
+   <div class="head" data-region="area-head" data-role="navigation"><button class="back" type="button" aria-label="Back to hub">‹</button><b>Send an invoice</b></div>
+   <div class="scroll" data-region="area-body" data-tier="1">
+    <div class="row"><div class="t"><b>INV-1042 · Brightway Dental</b><span>Website relaunch</span></div><span class="amt">€6,400</span><span class="pill">Overdue</span><button class="i" type="button" data-peek="p1" aria-label="Details for INV-1042">i</button></div>
+    <dl class="peek" id="p1" data-region="peek" data-tier="3"><dt>Due</dt><dd>3 Oct</dd><dt>Contact</dt><dd>Dr. Lena Okafor</dd><dt>City</dt><dd>Leeds</dd><dt>Sent</dt><dd>19 Sep</dd></dl>
+    <div class="row"><div class="t"><b>INV-1047 · Moss &amp; Co.</b><span>Packaging refresh</span></div><span class="amt">€2,150</span><span class="pill">Draft</span><button class="i" type="button" data-peek="p2" aria-label="Details for INV-1047">i</button></div>
+    <dl class="peek" id="p2" data-region="peek" data-tier="3"><dt>Due</dt><dd>15 Nov</dd><dt>Contact</dt><dd>Pia Moss</dd><dt>City</dt><dd>Rotterdam</dd><dt>Sent</dt><dd>not sent</dd></dl>
+    <div class="row"><div class="t"><b>INV-1049 · Harbour Café</b><span>Menu redesign</span></div><span class="amt">€980</span><span class="pill">Draft</span><button class="i" type="button" data-peek="p3" aria-label="Details for INV-1049">i</button></div>
+    <dl class="peek" id="p3" data-region="peek" data-tier="3"><dt>Due</dt><dd>30 Nov</dd><dt>Contact</dt><dd>Tom Ellery</dd><dt>City</dt><dd>Bristol</dd><dt>Sent</dt><dd>not sent</dd></dl>
+    <div class="row"><div class="t"><b>INV-1051 · Brightway Dental</b><span>Website relaunch</span></div><span class="amt">€3,200</span><span class="pill">Draft</span><button class="i" type="button" data-peek="p4" aria-label="Details for INV-1051">i</button></div>
+    <dl class="peek" id="p4" data-region="peek" data-tier="3"><dt>Due</dt><dd>12 Dec</dd><dt>Contact</dt><dd>Dr. Lena Okafor</dd><dt>City</dt><dd>Leeds</dd><dt>Sent</dt><dd>not sent</dd></dl>
+    <div class="row"><div class="t"><b>INV-1038 · Lindqvist Architects</b><span>Identity</span></div><span class="amt">€4,800</span><span class="pill">Paid</span><button class="i" type="button" data-peek="p5" aria-label="Details for INV-1038">i</button></div>
+    <dl class="peek" id="p5" data-region="peek" data-tier="3"><dt>Paid</dt><dd>20 Sep</dd><dt>Contact</dt><dd>Mats Lindqvist</dd><dt>City</dt><dd>Malmö</dd><dt>Sent</dt><dd>6 Sep</dd></dl>
+    <div class="row"><div class="t"><b>INV-1036 · Moss &amp; Co.</b><span>Packaging refresh</span></div><span class="amt">€1,750</span><span class="pill">Paid</span><button class="i" type="button" data-peek="p6" aria-label="Details for INV-1036">i</button></div>
+    <dl class="peek" id="p6" data-region="peek" data-tier="3"><dt>Paid</dt><dd>2 Sep</dd><dt>Contact</dt><dd>Pia Moss</dd><dt>City</dt><dd>Rotterdam</dd><dt>Sent</dt><dd>21 Aug</dd></dl>
+   </div>
+   <div class="foot" data-region="area-foot" data-tier="2"><button class="btn primary" type="button">Start: send an invoice</button></div>
+  </div>
+ </div>
+
+ <div class="col">
+  <p class="cap">3 · Guided walk</p>
+  <div class="phone">
+   <div class="head" data-region="walk-head" data-role="navigation"><button class="back" type="button" aria-label="Close walk">×</button><b>Send an invoice · step 2 of 3</b></div>
+   <div class="progress" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></div>
+   <div class="scroll" data-region="walk-step" data-tier="1">
+    <h1>Check the amount</h1>
+    <p class="sub">From the milestone you picked.</p>
+    <div class="source">
+     <div><span>Client</span><b>Moss &amp; Co.</b></div>
+     <div><span>Project</span><b>Packaging refresh</b></div>
+     <div><span>Milestone</span><b>Prototype approved</b></div>
+    </div>
+    <div class="field"><label>Amount</label><div class="input">€2,150.00</div></div>
+   </div>
+   <div class="foot" data-region="walk-foot" data-tier="2"><button class="btn" type="button">Back</button><button class="btn primary" type="button">Next: review</button></div>
+  </div>
+ </div>
+
+</div>
+<script>
+document.querySelectorAll('[data-peek]').forEach(function(b){b.addEventListener('click',function(){
+ document.getElementById(b.dataset.peek).classList.toggle('open');
+});});
+</script>
+</body>
+</html>
