@@ -64,3 +64,9 @@ The body has a `# <title>` line, then exactly these headings in this order. A st
 - `## Open`: one to three bullets, each starting `**Q1.**`, `**Q2.**` and so on: the questions a reviewer answers in a comment.
 
 Bodies use headings, paragraphs, `-` bullets, `1.` numbered lists, inline code, `**bold**` and `[text](https://…)` links, and nothing else: no tables, no images, no HTML.
+
+## Review comments
+
+The review dashboard is a throwaway Vite app in `.scratch/archetypes/` (gitignored, local to this checkout). Run `npm run dev` there to start it. That command validates the cards, regenerates the pages and serves them at `http://127.0.0.1:3041/`. Each archetype page shows the shell frame and every screen in journey order, with the rulebook preview at 1040 px and 390 px side by side. A comment made with the toolbar records the page route as its target. Its Context reads `<screen id> · Wide|Narrow · <px> — <floorplan>`, which names the screen and the width.
+
+Comments live in `.scratch/archetypes/.data/annotations`. Read them before folding a card into `rulebook/`, with `curl -s 'http://127.0.0.1:3041/__annotations?format=markdown'` while the dashboard runs. Answer each one with `POST /__annotations/resolve` and `{"ids":["<inboxId>"],"status":"implemented"|"rejected","resolution":"<why>"}`. The `annotations_list` tool does not see these comments. It reads `.data/annotations` at the repository root, while the dashboard writes under its own Vite root, so the curl listing is the reader of record.
