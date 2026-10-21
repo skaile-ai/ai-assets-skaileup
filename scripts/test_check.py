@@ -3373,67 +3373,6 @@ def test_check_concept_reports_a_screen_with_an_empty_floorplan(tmp_path):
     assert "07_screens/login.md" in problems[0] and "`floorplan` is empty" in problems[0]
 
 
-def _skill_dir(skills: Path, name: str, *, hard=(), soft=(), produces=()):
-    meta = {
-        "artifacts": {"produces": [{"id": f"a{i}", "path": p} for i, p in enumerate(produces)]},
-        "prerequisites": {"files": [{"path": p, "gate": "hard"} for p in hard]
-                          + [{"path": p, "gate": "soft"} for p in soft]},
-    }
-    (skills / name).mkdir(parents=True)
-    (skills / name / "SKILL.md").write_text(
-        f"---\nname: {name}\ndescription: d\nversion: '0.1.0'\nmetadata: {json.dumps(meta)}\n---\n", encoding="utf-8"
-    )
-
-
-def test_check_concept_reports_a_hard_gate_no_skill_produces(tmp_path):
-    module, _script = load_check_concept()
-    _skill_dir(tmp_path, "build-x", hard=["_concept/04_journeys/stories.yaml"])
-    _skill_dir(tmp_path, "concept-y", produces=["_concept/brief.md"])
-    problems = module.unproduced_hard_gates(tmp_path)
-    assert problems == [
-        "skills/build-x/SKILL.md: hard gate on _concept/04_journeys/stories.yaml — no skill produces it; "
-        "make the gate soft or add the skill that writes it"
-    ], problems
-
-
-def test_check_concept_accepts_hard_gates_a_skill_produces_or_the_project_owns(tmp_path):
-    module, _script = load_check_concept()
-    _skill_dir(tmp_path, "build-database", hard=["_concept/10_blueprint/datamodel/model.json"])
-    _skill_dir(tmp_path, "architecture-datamodel", produces=["_concept/10_blueprint/datamodel/"])
-    _skill_dir(tmp_path, "quality-interaction", hard=["APP-DESIGN.md"])
-    _skill_dir(tmp_path, "experience-interaction", produces=["APP-DESIGN.md"])
-    _skill_dir(tmp_path, "ops-review", soft=["_concept/11_build/trace.yaml"])
-    assert module.unproduced_hard_gates(tmp_path) == []
-
-
-def test_check_concept_counts_a_skill_as_its_own_producer(tmp_path):
-    """The same rule as `hard-gate-has-producer` in `scripts/check.py`, which counts every writer."""
-    module, _script = load_check_concept()
-    _skill_dir(tmp_path, "build-x", hard=["_concept/11_build/trace.yaml"], produces=["_concept/11_build/trace.yaml"])
-    _skill_dir(tmp_path, "other", produces=["_concept/brief.md"])
-    assert module.unproduced_hard_gates(tmp_path) == []
-
-
-def test_check_concept_matches_the_root_artifact_gate_exactly(tmp_path):
-    module, _script = load_check_concept()
-    _skill_dir(tmp_path, "quality-interaction", hard=["APP-DESIGN.md"])
-    _skill_dir(tmp_path, "root-file", produces=["_concept/<file>.md"])
-    assert len(module.unproduced_hard_gates(tmp_path)) == 1
-
-
-def test_check_concept_matches_a_placeholder_segment_of_a_produced_path(tmp_path):
-    module, _script = load_check_concept()
-    _skill_dir(tmp_path, "build-plan", hard=["_concept/05_features/auth/login.md"])
-    _skill_dir(tmp_path, "spec-feature", produces=["_concept/05_features/<featureset>/<feature>.md"])
-    assert module.unproduced_hard_gates(tmp_path) == []
-
-
-def test_check_concept_skips_the_producer_check_for_a_single_installed_skill(tmp_path):
-    module, _script = load_check_concept()
-    _skill_dir(tmp_path, "ops-review", hard=["_concept/brief.md"])
-    assert module.unproduced_hard_gates(tmp_path) == []
-
-
 def test_check_concept_usage_errors_exit_2(tmp_path):
     module, _script = load_check_concept()
     assert module.main(["check_concept.py"]) == 2

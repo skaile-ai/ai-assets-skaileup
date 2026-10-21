@@ -55,5 +55,5 @@ root prerequisite.
 - A user can ask for one screen, one glossary term or one decision on a repo with no
   `_concept/` and get a batch of questions, not "run X first".
 - Flow edges no longer carry correctness: removing a flow edge cannot unblock or block a skill.
-- `ops-review` reports gates nobody produces.
+- `scripts/check.py` fails a hard gate nobody produces (`hard-gate-has-producer`); `ops-review` stays on `_concept/` and does not repeat it.
 - Existing flows keep working as advisory recipes; no host change is assumed.

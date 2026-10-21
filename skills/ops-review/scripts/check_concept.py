@@ -26,8 +26,6 @@ Stdlib + PyYAML only. Checks:
                      promotes or rejects it
   8. open questions  every `## Open` row of `APP-DESIGN.md` and every `### Open` bullet of a screen spec
                      carries a recommendation; an `[open Qn]` entry has its row
-  9. hard gates      `unproduced_hard_gates()` — a `hard` gate in a sibling skill's frontmatter that no
-                     skill produces (run from `main` over the skills directory the script sits in)
 
 A screen whose `floorplan:` is missing or empty is reported under 2; the floorplan is the one fact the
 walkthrough and `quality-design` read it by.
@@ -398,52 +396,6 @@ def open_question_problems(concept: Path, root: Path, screens: list[Path]) -> li
     return out
 
 
-def _paths_overlap(a: str, b: str) -> bool:
-    """Equal, or one a directory prefix of the other; a `<placeholder>` segment matches any one."""
-    pa, pb = a.strip("/").split("/"), b.strip("/").split("/")
-    return all(x == y or ("<" in x and ">" in x) or ("<" in y and ">" in y) for x, y in zip(pa, pb))
-
-
-def unproduced_hard_gates(skills_dir: Path) -> list[str]:
-    """A `hard` gate in one skill's frontmatter that no skill produces: a skill that can never
-    open, reported as `skills/<name>/SKILL.md: …`. The rule is `scripts/check.py`'s
-    `hard-gate-has-producer`: a `_concept/` gate is placeholder-aware, `APP-DESIGN.md` matches
-    exactly, any other path is not checked."""
-    produced: dict[str, list[str]] = {}
-    gates: dict[str, list[str]] = {}
-    for skill in sorted(skills_dir.glob("*/SKILL.md")):
-        data, _ = frontmatter(skill)
-        meta = (data or {}).get("metadata") or {}
-        arts = meta.get("artifacts") or {}
-        produced[skill.parent.name] = listed_paths_raw(arts.get("produces"))
-        gates[skill.parent.name] = [
-            str(g["path"]) for g in (meta.get("prerequisites") or {}).get("files") or []
-            if isinstance(g, dict) and g.get("gate") == "hard" and isinstance(g.get("path"), str)
-        ]
-    if len(produced) < 2:
-        return []
-    written = [p for ps in produced.values() for p in ps]
-    out = []
-    for name, paths in gates.items():
-        for gate in paths:
-            if gate == "APP-DESIGN.md":
-                met = gate in written
-            elif gate.startswith("_concept/"):
-                met = any(p.startswith("_concept/") and _paths_overlap(gate, p) for p in written)
-            else:
-                continue
-            if not met:
-                out.append(f"skills/{name}/SKILL.md: hard gate on {gate} — no skill produces it; "
-                           "make the gate soft or add the skill that writes it")
-    return out
-
-
-def listed_paths_raw(value) -> list[str]:
-    """`path` of each `{ id, path }` entry, `_concept/` prefix kept."""
-    return [i["path"] for i in value if isinstance(i, dict) and isinstance(i.get("path"), str)] \
-        if isinstance(value, list) else []
-
-
 def report_id(cid, slug, defined, stories, owned, where, report):
     m = ID_RE.match(cid)
     if not m:
@@ -478,7 +430,6 @@ def main(argv: list[str]) -> int:
         return 2
     here = Path(__file__).resolve()
     problems = check(concept, here, stale_days=args.stale_days)
-    problems += unproduced_hard_gates(here.parents[2])
     print("\n".join(problems))
     return 1 if problems else 0
 

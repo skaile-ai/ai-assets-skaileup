@@ -38,13 +38,16 @@ The smoke found three defects, which are fixed in the commit that adds this file
 - **Glossary proposals.** A proposed glossary term could land in a project's `CONTEXT.md`. `tree/README.md § Ownership` now keeps project files outside `_concept/` as sources, and `tree/APP-DESIGN.md` step 8 names `_concept/glossary.md`.
 - **No owner file yet.** When the owner's file did not exist yet, the proposal had nowhere to go. The protocol now has the proposer create the owner's file holding only its proposed entries; scenario 1's re-run shows the stub `APP-DESIGN.md`.
 
-## Open decisions for the owner
+## Decisions settled after the smoke (2026-10-21)
 
-1. **The project's glossary versus `_concept/glossary.md`.** CLINICO's `CLAUDE.md:148` says "one root `CONTEXT.md` is the glossary". In scenario 4, `experience-interaction` quoted the node's `_concept/glossary.md` rule, then followed the project instruction and appended its proposed term to `CONTEXT.md`. Project instructions outrank the collection, so the nodes cannot win this. Decide whether the collection should adopt a project's declared glossary path, for example a `glossary:` key in `scope.yaml`, or leave it as is.
-2. **The hard-gate check in `ops-review` was kept.** The plan's line on ops-review asks for it, but the T7 ticket body omits it. It now behaves like `check.py`'s `hard-gate-has-producer`.
-3. **`mockup-feedback` is not an owner of screens.** It applies human-approved patches under `tree/07_screens/[screen].md § Patching (mockup-feedback)`. Making it an owner would force a `decisions.md` produce onto it.
-4. **`scope.yaml` takes proposed entries from seven skills.** The plan table listed none. The reason is recorded in ADR 0023: `depth` and `project_type` are asked lazily by the first skill that needs them.
-5. **`docs/handoffs/2026-10-21-handoff-app-design-research.md` is still untracked.** As its own caveat says, decide whether it belongs in version control.
+- **Hard-gate check:** removed from `ops-review`. The collection gate already has it as `hard-gate-has-producer`, and `ops` inspects `_concept/`.
+- **`mockup-feedback`:** stays a patcher, not an owner of screens (`tree/07_screens/[screen].md § Patching (mockup-feedback)`).
+- **`scope.yaml`:** keeps its seven proposers (ADR 0023).
+- **Local working files:** `.omp/` and `.scratch/` are ignored. The research handoff is not committed, because `rulebook/rules.md § Sources` carries its citations.
+
+## Open decision for the owner
+
+**The project's glossary versus `_concept/glossary.md`.** CLINICO's `CLAUDE.md:148` says "one root `CONTEXT.md` is the glossary". In scenario 4, `experience-interaction` quoted the node's `_concept/glossary.md` rule, then followed the project instruction and appended its proposed term to `CONTEXT.md`. Project instructions outrank the collection, so the nodes cannot win this. Four devBench repos keep both files (CLINICO, weiterbildungsplaner, KNOWLEDGE-WORK/kgs, SKAILEdev/platform). The recommended option is a split by kind: a `glossary:` path in `scope.yaml`, definitions in that file, and kind, axes and relations in `_concept/glossary.md` keyed by term id.
 
 ## Caveats
 
