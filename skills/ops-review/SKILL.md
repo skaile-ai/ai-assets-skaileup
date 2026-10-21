@@ -59,7 +59,7 @@ and naming is the node at its own path. This file sequences the checks and does 
    `rulebook/rules.md`: **P1**, an attribute whose editing behaviour two screens define separately (their own validation,
    labels or save path; one editor hosted on several screens is fine); **P4**, two editors of one object type; **P8**, two index
    screens of one type; **P13**, a label that is not a term in `glossary.md`. Each is a `warning` citing the rule, the
-   entry it breaks and both screen files. The fixer is `spec-feature` when the screen strays from a decision the file
+   entry it breaks and both screen files. The fixer is `experience-screen` when the screen strays from a decision the file
    makes, and `experience-interaction` when the file has no decision for it or two entries conflict. The code is
    `quality-interaction`'s; this step reads specs only.
 5. **Check for decay.** A screen no feature implements and a model no feature's `data_entities[]` lists are orphans; a
@@ -78,12 +78,12 @@ and naming is the node at its own path. This file sequences the checks and does 
 7. **Scan the other direction for orphan code.** Every file `git ls-files` reports under the source directories, minus
    the union of every feature's `code` in the trace, minus tests, build output, configuration, dotfiles and
    `_concept/`. What remains is code no feature claims: advisory, never deleted, a question for the user.
-8. **Name the fixing skill on every finding**, the script's included. A missing screen is `spec-feature`; a missing
+8. **Name the fixing skill on every finding**, the script's included. A missing screen is `experience-screen`; a missing
    shell is `experience-shell`; missing tokens are `design-brand`; a missing stack or model is `architecture-techstack`
    or `architecture-datamodel`; a retired path is the skill that now writes its replacement (`03_brand/tokens.json` →
    `design-brand`, `11_build/interaction.yaml` → `quality-interaction`, `comparable.md` → `concept-brief`); a missing
    glossary is `concept-glossary`; an unplanned feature is `build-plan`; an unfrozen slice or missing trace entry is
-   `build-implement` or `build-branch`; a feature with no featureset is `spec-featuresets`. A finding without a next
+   `build-implement` or `build-branch`; a feature with no featureset or roster row is `spec-feature`. A finding without a next
    command leaves the reader to triage it.
 9. **Show everything, then offer the repairs.** Rank findings by the severities of `tree/11_build/README.md § Verdicts`,
    `critical` and `high` being the blocking issues in its report format. Beyond the script's lines (step 1): a red

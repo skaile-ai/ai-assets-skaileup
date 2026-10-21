@@ -8,7 +8,7 @@ may_propose: []
 # _concept/02_grounding/research/competitors.md
 
 One analysis per comparable product. `concept-brief` cites it for the analysis behind a product
-named in `## Comparables`, and `spec-featuresets` treats a gap users complain about here as a
+named in `## Comparables`, and `spec-feature` treats a gap users complain about here as a
 candidate feature with evidence behind it.
 
 ## Format

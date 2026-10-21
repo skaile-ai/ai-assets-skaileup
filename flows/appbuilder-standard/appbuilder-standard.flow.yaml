@@ -4,8 +4,8 @@ name: Appbuilder Standard
 description: >-
   The full path for a multi-user app: discovery, the shared vocabulary and brand, journeys,
   then the data model and the app's interaction design before any feature is specified,
-  featuresets and behaviours, the per-feature spec loop that writes every screen, the app
-  shell, the blueprint, the mockup and feedback pass over those screens, the build against
+  behaviours, the per-feature spec loop that grows the featureset roster, the screens each
+  feature uses, the app shell, the blueprint, the mockup and feedback pass over those screens, the build against
   the codebase's standards, and the review gate (code, interaction patterns, concept) that
   ends in a release grade.
 meta:
@@ -33,9 +33,9 @@ requires:
   - skill:@skaile-ai/experience-journeys
   - skill:@skaile-ai/architecture-datamodel
   - skill:@skaile-ai/experience-interaction
-  - skill:@skaile-ai/spec-featuresets
   - skill:@skaile-ai/experience-behaviors
   - skill:@skaile-ai/spec-feature
+  - skill:@skaile-ai/experience-screen
   - skill:@skaile-ai/experience-shell
   - skill:@skaile-ai/architecture-techstack
   - skill:@skaile-ai/architecture-system
@@ -147,13 +147,6 @@ nodes:
       skill: experience-interaction
       label: Interaction
       phase: conceptualization
-  - id: featuresets
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: spec-featuresets
-      label: Featuresets
-      phase: conceptualization
   - id: behaviors
     type: skill
     parentNode: g-conceptualization
@@ -161,8 +154,9 @@ nodes:
       skill: experience-behaviors
       label: Behaviours
       phase: conceptualization
-  # spec-feature runs once per feature and writes that feature's screens; the graph
-  # below shows one iteration. The loop lives in the skill body.
+  # spec-feature runs once per feature and adds its roster row; experience-screen runs
+  # once per screen the features list. The graph below shows one iteration of each; the
+  # loops live in the skill bodies.
   - id: feature
     type: skill
     parentNode: g-conceptualization
@@ -170,8 +164,15 @@ nodes:
       skill: spec-feature
       label: Feature Spec
       phase: conceptualization
-  # shell follows the feature loop: it derives the app-shell navigation from the screens
-  # the spec-feature iterations wrote, so it cannot sit before them.
+  - id: screen
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-screen
+      label: Screens
+      phase: conceptualization
+  # shell follows the screen loop: it derives the app-shell navigation from the screens
+  # the experience-screen iterations wrote, so it cannot sit before them.
   - id: shell
     type: skill
     parentNode: g-conceptualization
@@ -318,10 +319,10 @@ edges:
   - { id: e-brand-journeys, source: brand, target: journeys, type: flow }
   - { id: e-journeys-datamodel, source: journeys, target: datamodel, type: flow }
   - { id: e-datamodel-interaction, source: datamodel, target: interaction, type: flow }
-  - { id: e-interaction-featuresets, source: interaction, target: featuresets, type: flow }
-  - { id: e-featuresets-behaviors, source: featuresets, target: behaviors, type: flow }
+  - { id: e-interaction-behaviors, source: interaction, target: behaviors, type: flow }
   - { id: e-behaviors-feature, source: behaviors, target: feature, type: flow }
-  - { id: e-feature-shell, source: feature, target: shell, type: flow }
+  - { id: e-feature-screen, source: feature, target: screen, type: flow }
+  - { id: e-screen-shell, source: screen, target: shell, type: flow }
   - { id: e-shell-techstack, source: shell, target: techstack, type: flow }
   - { id: e-techstack-system, source: techstack, target: system, type: flow }
   - { id: e-system-walkthrough, source: system, target: walkthrough, type: flow }

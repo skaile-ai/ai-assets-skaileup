@@ -39,8 +39,8 @@ reader may be a different session, host or person.
 `build-plan` cuts the feature, in this order:
 
 1. **Read the feature, then the code.** Load `_concept/05_features/<featureset>/<feature_slug>.md`
-   (`tree/05_features/[featureset]/[feature].md`), every screen under
-   `_concept/07_screens/<feature_slug>/`, and `_concept/10_blueprint/` for stack, architecture
+   (`tree/05_features/[featureset]/[feature].md`), every screen its `screens:` list names
+   (`_concept/07_screens/<screen>.md`, `tree/07_screens/[screen].md`), and `_concept/10_blueprint/` for stack, architecture
    and data model where they exist. Only the feature spec is required: without `techstack.md`
    the slices name no framework and the first one has to establish it, and without a data
    model every slice that touches storage carries its own schema decision. Where the project

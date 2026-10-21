@@ -73,10 +73,9 @@ _concept/                             the artifact tree, its ownership rule and 
 │       └── <feature>.md              one feature's permanent spec — scope line, permissions, acceptance criteria
 ├── 06_behaviors/                     optional state machines and rules, one file per featureset
 │   └── <featureset>.md               states, transitions and named constants for one featureset's entities
-├── 07_screens/                       the app shell and one spec per screen, with the elements block
-│   ├── shell.md                      the app frame — navigation, layout areas, breakpoints, shared patterns
-│   └── <feature_slug>/               the screen specs of one feature
-│       └── <screen>.md               one screen's spec — body sections, links to its feature, elements block
+├── 07_screens/                       the app shell and one flat spec per screen, with the elements block
+│   ├── shell.md                      the app frame — shell frame, navigation model, the one destination list
+│   └── <screen>.md                   one screen on its own — floorplan, region bindings, tier overrides, elements
 ├── 08_dossiers/                      the concept-side working record of each feature, frozen when its loop ends
 │   └── <feature_slug>/               the dossier directory of one feature
 │       └── index.md                  one feature's framing, grill answers and rejected options, frozen at the end
@@ -88,6 +87,10 @@ _concept/                             the artifact tree, its ownership rule and 
 │   │   ├── sessions/                 raw annotation sessions downloaded from the overlay, one file per round
 │   │   │   └── <sessionId>.json      raw annotation sessions downloaded from the overlay, one file per round
 │   │   └── triage/                   deterministic routing of each annotation to the file it belongs in
+│   ├── prototypes/                   early single-screen prototypes built from a floorplan preview and sample data
+│   │   └── <screen>/                 the prototype variants of one screen
+│   │       ├── a.html                one screen's early prototype — a floorplan preview with the screen's sample data
+│   │       └── b.html                one screen's early prototype — a floorplan preview with the screen's sample data
 │   ├── storybook/                    standalone Storybook of components, page compositions and journey click-dummies
 │   └── walkthrough/                  clickable site per screen and journey, plus the manifest mockup-annotate reads
 ├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, decisions, data model
@@ -125,7 +128,7 @@ The first level is numbered and contiguous, and nothing below it is: the prefix 
 
 - Filenames are lowercase and hyphenated (`design-inspiration.md`), and one artifact has exactly one path.
 - No two siblings differ only by singular and plural (`review.yaml` beside `reviews/`), because a path written from memory then silently reads nothing; a whole-tree fact and a per-thing collection carry unrelated names.
-- Directories under `05_features/` and `07_screens/` are slugs: lowercase, hyphenated, no spaces, no numeric prefix; `shell` is reserved under `07_screens/`.
+- Directories under `05_features/` are slugs: lowercase, hyphenated, no spaces, no numeric prefix. A screen is one flat file `07_screens/<screen>.md` whose stem is its `screen_id` (`^[a-z][a-z0-9-]{1,47}$`); `shell` is reserved there for the app frame.
 - `02_grounding/research/step/` subfolders are named for the dispatching skill's `name:`, character for character.
 - Term ids come from the glossary, not from features: the data model cites glossary ids rather than coin names, so a feature that invents a name splits one concept into two.
 

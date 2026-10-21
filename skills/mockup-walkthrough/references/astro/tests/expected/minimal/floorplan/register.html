@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floorplan wizard — Register</title>
+<style>
+:root{--fp-bg:#f6f6f4;--fp-surface:#ffffff;--fp-surface-2:#efefec;--fp-border:#d9d9d4;--fp-fg:#1f1f1d;--fp-muted:#6b6b66;--fp-accent:#3b5b8c;--fp-tier3:#8a8a84;--fp-radius:6px;--fp-gap:12px;--fp-font:system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-region]{position:relative}[data-region]::before{content:attr(data-region);position:absolute;top:2px;right:6px;font:600 10px/1 var(--fp-font);letter-spacing:.04em;text-transform:uppercase;color:var(--fp-muted);opacity:.75;pointer-events:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fp-bg);color:var(--fp-fg);font:15px/1.45 var(--fp-font)}
+a{color:var(--fp-accent)}
+.sr{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.frame{max-width:1040px;margin:0 auto;padding:var(--fp-gap);display:flex;flex-direction:column;gap:var(--fp-gap)}
+.shell{display:flex;align-items:center;gap:var(--fp-gap);height:36px;padding:0 var(--fp-gap);background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-muted);font-size:12px}
+.shell b{color:var(--fp-fg)}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr) 220px;grid-template-areas:"list body help" "list foot help";grid-template-rows:auto auto;gap:var(--fp-gap);align-items:start}
+.steplist{grid-area:list;padding:var(--fp-gap);padding-top:22px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.steps label{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:var(--fp-radius);cursor:pointer;color:var(--fp-muted)}
+.steps label:hover{background:var(--fp-surface-2)}
+.steps .n{display:inline-grid;place-items:center;width:24px;height:24px;border:1px solid var(--fp-border);border-radius:99px;font-size:12px;background:var(--fp-surface)}
+.stepline{display:none}
+.body{grid-area:body;min-height:340px;padding:var(--fp-gap) 20px 20px;padding-top:26px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.body h1{margin:0 0 4px;font-size:20px}
+.body .lead{margin:0 0 16px;color:var(--fp-muted)}
+.field{display:block;margin-bottom:14px;max-width:420px}
+.field span{display:block;margin-bottom:4px;font-size:13px;font-weight:600}
+.field input,.field select{width:100%;padding:9px 10px;font:inherit;color:var(--fp-fg);background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.help{grid-area:help;padding:var(--fp-gap);padding-top:22px;background:var(--fp-surface-2);border:1px solid var(--fp-border);border-radius:var(--fp-radius);color:var(--fp-muted);font-size:13px}
+.help p{margin:0 0 8px}
+.help b{color:var(--fp-fg)}
+.footer{grid-area:foot;padding:var(--fp-gap);padding-top:18px;background:var(--fp-surface);border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.foot-row{align-items:center;gap:8px}
+.foot-row .sp{flex:1}
+.btn{display:inline-flex;justify-content:center;padding:9px 16px;border:1px solid var(--fp-border);border-radius:var(--fp-radius);background:var(--fp-surface);color:var(--fp-fg);cursor:pointer;font:inherit}
+.btn.primary{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.sum{margin:0 0 12px;padding:0;list-style:none;border:1px solid var(--fp-border);border-radius:var(--fp-radius)}
+.sum li{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-top:1px solid var(--fp-border)}
+.sum li:first-child{border-top:0}
+.sum small{display:block;color:var(--fp-muted)}
+.sum label{color:var(--fp-accent);cursor:pointer;text-decoration:underline}
+.done-mark{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:99px;background:var(--fp-accent);color:var(--fp-surface);font-size:18px;margin-bottom:8px}
+.next-tasks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* step state, CSS only: one radio per step */
+.at,.foot-row{display:none}
+.wiz:has(#s1:checked) .at1,.wiz:has(#s2:checked) .at2,.wiz:has(#s3:checked) .at3,.wiz:has(#s4:checked) .at4,.wiz:has(#s5:checked) .at5,.wiz:has(#s6:checked) .at6{display:block}
+.wiz:has(#s1:checked) .foot-row.at1,.wiz:has(#s2:checked) .foot-row.at2,.wiz:has(#s3:checked) .foot-row.at3,.wiz:has(#s4:checked) .foot-row.at4,.wiz:has(#s5:checked) .foot-row.at5{display:flex}
+.wiz:has(#s6:checked) .footer{display:none}
+.wiz:has(#s1:checked) .l1,.wiz:has(#s2:checked) .l2,.wiz:has(#s3:checked) .l3,.wiz:has(#s4:checked) .l4,.wiz:has(#s5:checked) .l5{background:var(--fp-surface-2);color:var(--fp-fg);font-weight:600}
+.wiz:has(#s1:checked) .l1 .n,.wiz:has(#s2:checked) .l2 .n,.wiz:has(#s3:checked) .l3 .n,.wiz:has(#s4:checked) .l4 .n,.wiz:has(#s5:checked) .l5 .n{border-color:var(--fp-accent);color:var(--fp-accent)}
+.wiz:not(:has(#s1:checked)) .l1 .n,.wiz:not(:has(#s1:checked)):not(:has(#s2:checked)) .l2 .n,.wiz:not(:has(#s1:checked)):not(:has(#s2:checked)):not(:has(#s3:checked)) .l3 .n,.wiz:not(:has(#s1:checked)):not(:has(#s2:checked)):not(:has(#s3:checked)):not(:has(#s4:checked)) .l4 .n,.wiz:not(:has(#s1:checked)):not(:has(#s2:checked)):not(:has(#s3:checked)):not(:has(#s4:checked)):not(:has(#s5:checked)) .l5 .n{background:var(--fp-accent);border-color:var(--fp-accent);color:var(--fp-surface)}
+.wiz:has(#s6:checked) .layout{grid-template-columns:200px minmax(0,1fr)}
+.wiz:has(#s6:checked) .help{display:none}
+
+@media (max-width:960px){
+  .layout{grid-template-columns:180px minmax(0,1fr);grid-template-areas:"list body" "list help" "list foot"}
+}
+@media (max-width:640px){
+  .frame{padding:8px;gap:8px}
+  .layout,.wiz:has(#s6:checked) .layout{grid-template-columns:1fr;grid-template-areas:"list" "body" "help" "foot";gap:8px}
+  .steps{display:none}
+  .steplist{padding:10px 12px;padding-top:20px}
+  .stepline{display:block}
+  .stepline .at{font-weight:600}
+  .bar{display:block;height:6px;margin-top:8px;background:var(--fp-surface-2);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--fp-accent)}
+  .body{min-height:0;padding:20px 12px 12px;padding-top:24px}
+  .footer{position:sticky;bottom:0;padding:10px 12px;padding-top:18px}
+  .foot-row{flex-wrap:wrap}
+  .foot-row .primary{order:-1;flex-basis:100%}
+  .foot-row .sp{display:none}
+}
+</style>
+
+<style>.fp-fill{display:flex;flex-direction:column;gap:6px;padding:2px 0;font:12px/1.4 var(--fp-font);color:var(--fp-fg)}.fp-fill p,.fp-fill ul{margin:0}.fp-fill ul{padding-left:16px}.fp-bind{font-weight:600}.fp-bind span{font-weight:400;color:var(--fp-muted)}.fp-tier{color:var(--fp-tier3)}.fp-empty{color:var(--fp-muted);font-style:italic}.fp-shell{flex-direction:row;flex-wrap:wrap;gap:4px 12px}.fp-shell a{color:var(--fp-accent)}</style>
+</head>
+<body>
+<div class="frame wiz">
+  <input class="sr" type="radio" name="step" id="s1" aria-label="Step 1">
+  <input class="sr" type="radio" name="step" id="s2" aria-label="Step 2">
+  <input class="sr" type="radio" name="step" id="s3" aria-label="Step 3" checked>
+  <input class="sr" type="radio" name="step" id="s4" aria-label="Step 4">
+  <input class="sr" type="radio" name="step" id="s5" aria-label="Step 5">
+  <input class="sr" type="radio" name="step" id="s6" aria-label="Done">
+
+  <div class="shell" data-region="shell" data-role="chrome"><div class="fp-fill fp-shell"><a href="/screen/login" target="_top">Login</a><a href="/screen/register" target="_top">Register</a><a href="/screen/verify-email" target="_top">Verify email</a></div></div>
+
+  <div class="layout">
+    <nav class="steplist" data-region="step-list" data-role="navigation" aria-label="Steps"><div class="fp-fill"><p class="fp-bind"><strong>user</strong> <span>as chip</span></p></div></nav>
+
+    <section class="body" data-region="step-body" data-tier="1"><div class="fp-fill"><p class="fp-bind"><strong>user</strong> <span>as page</span></p><ul class="fp-els"><li>Account type <small>tabs</small></li></ul></div></section>
+
+    <aside class="help" data-region="step-help" data-tier="2"><div class="fp-fill"><ul class="fp-els"><li>Why join <small>list</small></li><li>Learn more about business accounts <small>link</small></li></ul></div></aside>
+
+    <div class="footer" data-region="footer" data-role="chrome"><div class="fp-fill"><ul class="fp-els"><li>Sign in instead <small>link</small></li></ul></div></div>
+  </div>
+</div>
+</body>
+</html>

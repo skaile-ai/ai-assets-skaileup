@@ -12,6 +12,8 @@ Stdlib + PyYAML only. Checks:
   2. frontmatter     `last_updated` (and `approved`, when present) is an ISO date on every
                      artifact markdown file, plus the fields its artifact type requires
   3. cross-links     a feature's `screens:` and a screen's `implements:` resolve, in both directions
+                     (a screen's `implements:` entry is a path or a `{path, status: proposed, …}`
+                     mapping; either one satisfies the link)
   4. data_entities   every name is an entity `id` in `10_blueprint/datamodel/model.json` (skipped without one)
   5. criterion ids   every `AC-…` a feature spec or ledger cites follows the id grammar and is
                      defined by `04_journeys/stories.yaml` (skipped without one), scoped to the
@@ -55,7 +57,7 @@ REQUIRED = {  # artifact path (or glob-ish key) -> fields beyond last_updated
     "10_blueprint/techstack.md": ["platform", "tech_stack_skill"],
     "10_blueprint/architecture.md": ["apps", "external_integrations"],
     "feature": ["priority", "permissions", "screens", "data_entities"],
-    "screen": ["implements"],
+    "screen": ["screen_id", "floorplan", "implements"],
     "ledger": ["feature", "feature_ref"],
 }
 # A story id never contains `-`; a feature slug may. Either way the id ends in `-<nn>`, so the
@@ -189,7 +191,8 @@ def check(concept: Path, here: Path) -> list[str]:
 
     # artifact classification
     features = sorted(p for p in (concept / "05_features").glob("*/*.md")) if (concept / "05_features").is_dir() else []
-    screens = sorted((concept / "07_screens").glob("*/*.md")) if (concept / "07_screens").is_dir() else []
+    screens = sorted(p for p in (concept / "07_screens").glob("*.md") if p.name != "shell.md") \
+        if (concept / "07_screens").is_dir() else []
     ledgers = sorted((concept / "11_build/acceptance-criteria").glob("*/*.ac.md")) \
         if (concept / "11_build/acceptance-criteria").is_dir() else []
     dossiers = sorted((concept / "08_dossiers").glob("*/index.md")) if (concept / "08_dossiers").is_dir() else []
@@ -220,6 +223,8 @@ def check(concept: Path, here: Path) -> list[str]:
             report(rel(p), "`status` must be open or frozen")
         if p not in dossiers and "status" in data:
             report(rel(p), "`status:` belongs to dossiers only — a stale template wrote it")
+        if kind.get(p) == "screen" and "screen_id" in data and data["screen_id"] != p.stem:
+            report(rel(p), f"`screen_id` {data['screen_id']!r} does not match the file name {p.stem!r}")
 
     # 3. cross-links
     for f in features:

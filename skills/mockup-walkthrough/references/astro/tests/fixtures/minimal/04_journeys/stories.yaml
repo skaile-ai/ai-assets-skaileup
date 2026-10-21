@@ -7,7 +7,7 @@
       "title": "User signs in",
       "description": "First-time user authenticates and lands on the home screen.",
       "screen_sequence": [
-        "07_screens/00_auth/login.md"
+        "07_screens/login.md"
       ]
     }
   ]

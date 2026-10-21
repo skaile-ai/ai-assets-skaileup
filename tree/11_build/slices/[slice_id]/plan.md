@@ -36,7 +36,7 @@ last_updated: 2026-10-16
 Scope: a signed-in user pays for their cart and sees the order confirmed.
 
 ## Rows
-- UI: `07_screens/checkout/payment.md` renders the cart total; submit calls `placeOrder`
+- UI: `07_screens/checkout-payment.md` renders the cart total; submit calls `placeOrder`
 - Logic: `placeOrder()` in `src/orders/place.ts`
 - Data: writes `order`, `order_item`
 

@@ -2,7 +2,7 @@
 path: _concept/10_blueprint/datamodel/
 summary: stack-neutral data model, naming rules and how it becomes a database
 owner: [architecture-datamodel]
-may_propose: [spec-feature]
+may_propose: [spec-feature, experience-screen]
 ---
 
 # _concept/10_blueprint/datamodel/

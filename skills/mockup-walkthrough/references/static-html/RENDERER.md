@@ -11,8 +11,8 @@ change a stakeholder already asked for reads as the tool ignoring the feedback r
 
 ## What this renderer does differently
 
-- **Hrefs are relative, with the extension** — `../<group>/<name>.html` from a screen page,
-  `journey/<id>.html` and `screen/<group>/<name>.html` from `index.html`. An unresolved target
+- **Hrefs are relative, with the extension** — `<screen>.html` from a screen page, `../journey/<id>.html`
+  and `../floorplan/<screen>.html` likewise, and `screen/<screen>.html` from `index.html`. An unresolved target
   renders `href="#"`. Relative hrefs are what make the site work from a `file://` path and from
   any directory it is later copied to.
 - **Everything runs at render time.** There is no build step and no pre-resolved data file, so
@@ -28,13 +28,15 @@ change a stakeholder already asked for reads as the tool ignoring the feedback r
 
 ## Page layout
 
-`index.html` sets `<body data-spec-index="true">` and lists screens grouped by `<group>` and
+`index.html` sets `<body data-spec-index="true">` and lists screens flat, in `screen_id` order, and
 journeys flat. Zero journeys renders the literal `No journeys defined` plus a `no_journeys`
 warning. A `<footer>` carries the generation timestamp.
 
-Each `screen/<group>/<name>.html` sets `<body data-spec-screen="<screen_id>">` and stacks:
+Each `screen/<screen>.html` sets `<body data-spec-screen="<screen_id>">` and stacks:
 the app nav as a `<nav class="app-nav">` between `<header>` and `<main>` (shell chrome, so it
-renders identically on every page); the explicit `elements[]` in declaration order inside
+renders identically on every page); the floorplan section (two `<iframe>`s onto
+`../floorplan/<screen>.html`) or the `.floorplan-notice`, per
+`tree/09_mockup/walkthrough/README.md § Floorplan frame`; the explicit `elements[]` in declaration order inside
 `<section class="elements">`; then the auto-slugged widgets, fenced in
 `<!-- auto-slugged --> … <!-- /auto-slugged -->` so derived content stays visibly distinct from
 authored content; then the spec reference panel; then a footer linking back to `index.html` and
@@ -75,9 +77,18 @@ Tags come from the contract's `kind` → DOM tag mapping. What this renderer set
 
 Beyond the token custom properties: `[data-spec-provisional="true"]` as a dashed outline (one
 attribute selector covers auto-slugged elements and the generated app nav alike, both being
-provisional by definition); `.app-nav` as a flex list with group labels; bordered
+provisional by definition); `.app-nav` as a flex list; bordered
 `.element table`; padded `.element select`; `nav.tabs` with a bottom-border active state; and
-`details.spec-panel` bordered and padded, with the native `<details>` collapse doing the work.
+`details.spec-panel` bordered and padded, with the native `<details>` collapse doing the work;
+`.floorplan-frames` as a wrapping flex row, `.floorplan iframe` bordered, and `.floorplan-notice`
+as a dashed amber box.
+
+## The frame files
+
+`floorplan/<screen>.html` files are standalone documents (the rulebook preview with its markup and
+`<style>` kept, scripts removed, regions filled) and carry no shell chrome of their own: the
+`shell` region lists the app nav links with `target="_top"`, so a click leaves the frame. The
+rulebook is read from the installed contract `<contracts>/app-design-rulebook/`; `validator.py --rulebook <dir>` takes the same path and defaults to that contract under the working directory, then to the `rulebook/` of the collection checkout.
 
 ## Zero-build is the invariant the validator checks
 

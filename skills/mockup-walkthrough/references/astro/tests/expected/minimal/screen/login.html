@@ -5,29 +5,34 @@
 <title>Login</title>
 <link rel="stylesheet" href="/_astro/style.css">
 </head>
-<body data-spec-screen="00_auth/login" class="bg-white text-gray-900 font-sans p-4">
+<body data-spec-screen="login" class="bg-white text-gray-900 font-sans p-4">
 <nav class="app-nav" data-spec-element="app-nav" data-spec-provisional="true">
-<div class="nav-group">
-<span class="nav-group-label">auth</span>
 <ul class="flex gap-4 list-none p-0">
-<li><a href="/screen/00_auth/login" data-spec-element="app-nav-1" data-spec-provisional="true">login</a></li>
-<li><a href="/screen/00_auth/register" data-spec-element="app-nav-2" data-spec-provisional="true">register</a></li>
-<li><a href="/screen/00_auth/verify_email" data-spec-element="app-nav-3" data-spec-provisional="true">verify email</a></li>
+<li><a href="/screen/login" data-spec-element="app-nav-1" data-spec-provisional="true">Login</a></li>
+<li><a href="/screen/register" data-spec-element="app-nav-2" data-spec-provisional="true">Register</a></li>
+<li><a href="/screen/verify-email" data-spec-element="app-nav-3" data-spec-provisional="true">Verify email</a></li>
 </ul>
-</div>
 </nav>
 <h1 class="text-2xl font-bold mb-4">Login</h1>
+<section class="floorplan mt-4">
+<h2 class="text-lg font-semibold mb-1">Floorplan: wizard</h2>
+<p class="floorplan-meta text-sm text-gray-500">wizard · transient · comfortable</p>
+<div class="floorplan-frames flex flex-wrap gap-4 items-start">
+<figure class="max-w-full overflow-x-auto"><figcaption class="text-sm text-gray-500">Wide (1040 px)</figcaption><iframe class="floorplan-frame wide border" src="/floorplan/login" title="Floorplan wizard, wide" width="1040" height="620"></iframe></figure>
+<figure class="max-w-full overflow-x-auto"><figcaption class="text-sm text-gray-500">Narrow (390 px)</figcaption><iframe class="floorplan-frame narrow border" src="/floorplan/login" title="Floorplan wizard, narrow" width="390" height="620"></iframe></figure>
+</div>
+</section>
 <main class="space-y-4">
 <div><input name="email-input" aria-label="Email" data-spec-element="email-input" class="border rounded px-2 py-1" /><span class="state-focus">Email [focus]</span><span class="state-error">Email [error]</span></div>
 <div><input name="password-input" aria-label="Password" data-spec-element="password-input" class="border rounded px-2 py-1" /><span class="state-focus">Password [focus]</span><span class="state-error">Password [error]</span></div>
 <div><button data-spec-element="submit-button" class="px-4 py-2 bg-primary text-white rounded">Sign in</button><span class="state-loading">Sign in [loading]</span><span class="state-disabled">Sign in [disabled]</span><span class="state-error">Sign in [error]</span></div>
-<div><a href="/screen/00_auth/register" data-spec-element="go-register" class="text-blue-600 underline">Create an account</a></div>
+<div><a href="/screen/register" data-spec-element="go-register" class="text-blue-600 underline">Create an account</a></div>
 <div>
 <table data-spec-element="recent-signins" class="border-collapse w-full">
 <thead><tr><th class="border px-2 py-1 text-left">Name</th><th class="border px-2 py-1 text-left">Email</th><th class="border px-2 py-1 text-left">Last sign-in</th></tr></thead>
 <tbody>
-<tr><td class="border px-2 py-1"><a href="/screen/00_auth/verify_email">Lena M.</a></td><td class="border px-2 py-1">lena@example.com</td><td class="border px-2 py-1">2026-07-05</td></tr>
-<tr><td class="border px-2 py-1"><a href="/screen/00_auth/verify_email">Tom B.</a></td><td class="border px-2 py-1">tom@example.com</td><td class="border px-2 py-1">2026-07-04</td></tr>
+<tr><td class="border px-2 py-1"><a href="/screen/verify-email">Lena M.</a></td><td class="border px-2 py-1">lena@example.com</td><td class="border px-2 py-1">2026-07-05</td></tr>
+<tr><td class="border px-2 py-1"><a href="/screen/verify-email">Tom B.</a></td><td class="border px-2 py-1">tom@example.com</td><td class="border px-2 py-1">2026-07-04</td></tr>
 </tbody>
 </table>
 <span class="state-loading">Recent sign-ins [loading]</span><span class="state-empty">Recent sign-ins [empty]</span>

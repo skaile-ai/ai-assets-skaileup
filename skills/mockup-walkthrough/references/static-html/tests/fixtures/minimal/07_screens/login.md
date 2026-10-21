@@ -1,34 +1,47 @@
 ---
+screen_id: login
+title: Login
 implements:
-  - 05_features/00_auth/login.md
-data_entities: [User]
-layout: 07_screens/shell.md
+  - 05_features/auth/login.md
+floorplan: wizard
+posture: transient
+density: comfortable
+regions:
+  step-body: { shows: user, representation: page }
+  step-help: { shows: user, representation: peek }
+tier_overrides:
+  - { object: user, attribute: email, tier: 1, region: step-body, reason: "identifies the account being signed in" }
 elements:
   - id: email-input
     kind: input
+    region: step-body
     label: "Email"
     states: [default, focus, error]
     data_entity: User
   - id: password-input
     kind: input
+    region: step-body
     label: "Password"
     states: [default, focus, error]
     data_entity: User
   - id: submit-button
     kind: button
+    region: footer
     label: "Sign in"
     states: [default, loading, disabled, error]
     data_entity: User
     acceptance_refs:
-      - 05_features/00_auth/login.md#AC-1
+      - 05_features/auth/login.md#AC-1
   - id: go-register
     kind: link
+    region: step-help
     label: "Create an account"
     states: [default]
-    target: 00_auth/register
+    target: register
     describes: "Click \"Create an account\" → opens the registration screen"
   - id: recent-signins
     kind: table
+    region: step-body
     label: "Recent sign-ins"
     states: [default, loading, empty]
     data_entity: User
@@ -36,9 +49,10 @@ elements:
     sample_rows:
       - ["Lena M.", "lena@example.com", "2026-07-05"]
       - ["Tom B.", "tom@example.com", "2026-07-04"]
-    row_target: 00_auth/verify_email
+    row_target: verify-email
   - id: filter-role
     kind: input
+    region: step-body
     label: "Role"
     states: [default]
     options: ["All", "Admin", "User"]

@@ -1,22 +1,22 @@
 ---
 path: [_concept/07_screens/]
-summary: the app shell and one spec per screen, with the elements block
+summary: the app shell and one flat spec per screen, with the elements block
 owner: []
 may_propose: []
 ---
 
 # _concept/07_screens/
 
-The app frame and every screen, one spec per screen. `shell.md` is the frame (`tree/07_screens/shell.md`, written by `experience-shell`); every other screen lives at `<feature_slug>/<screen>.md` (`tree/07_screens/[feature_slug]/[screen].md`, written by `spec-feature`, which is the only writer of screen specs and of their `elements:` blocks). `shell` is a reserved slug: no feature may take it. Directory names under here are slugs — lowercase, hyphenated, no spaces, no numeric prefix.
+The app frame and every screen, one spec per screen. `shell.md` is the frame (`tree/07_screens/shell.md`, written by `experience-shell`); every other screen is one flat file `<screen>.md` (`tree/07_screens/[screen].md`, written by `experience-screen`, the only writer of screen specs and of their `elements:` blocks), with no feature or other directory level above it. A screen's name is its `screen_id`: the filename stem, lowercase and hyphenated, `^[a-z][a-z0-9-]{1,47}$`, no numeric prefix. `shell` is a reserved name: no screen may take it. Features reference screens, never contain them.
 
 ## Contents
 
 - `shell.md` — the frame; format in `tree/07_screens/shell.md`.
-- `<feature_slug>/` — one directory per feature; see `tree/07_screens/[feature_slug]/README.md`.
+- `<screen>.md` — one file per screen; format in `tree/07_screens/[screen].md`.
 
 ## The `elements:` block
 
-The optional `elements:` key in a screen's frontmatter is the substance channel for what the screen renders: the walkthrough renderers emit stable HTML attributes per element so annotations survive regeneration, and the feedback skills anchor annotations to elements. `spec-feature` writes the block in every screen spec, covering every interactive or structural thing under `### UI Elements`, `### Actions` and `### Information Displayed`; `experience-shell` writes the `kind: nav` elements in `shell.md`. Nothing else writes it except the id promotion described in `tree/09_mockup/feedback/README.md`.
+The optional `elements:` key in a screen's frontmatter is the substance channel for what the screen renders: the walkthrough renderers emit stable HTML attributes per element so annotations survive regeneration, and the feedback skills anchor annotations to elements. `experience-screen` writes the block in every screen spec, covering every interactive or structural thing under `### UI Elements`, `### Actions` and `### Information Displayed`; `experience-shell` writes the `kind: nav` elements in `shell.md`. Nothing else writes it except the id promotion described in `tree/09_mockup/feedback/README.md`.
 
 An absent block and `elements: []` mean the same thing. The renderer's auto-slug fallback is a safety net, not the primary path: renderers never hard-fail on a missing or partial block, so the obligation is the author's, at authoring time — a screen without a block renders as an auto-slugged guess.
 
@@ -34,6 +34,8 @@ elements:                            # OPTIONAL — top-level frontmatter key
     data_entity: <EntityName>        # OPTIONAL — entity this element renders/edits
     acceptance_refs:                 # OPTIONAL — back-link to feature acceptance
       - <feature-path>#<criterion-id>
+    # ── placement ──
+    region: <region-id>              # OPTIONAL — a region id of the screen's floorplan
     # ── navigation — link | button | list | image | custom only ──
     target: <screen_id>[#<element-id>]   # OPTIONAL — navigation destination
     # ── content fidelity — kind-gated ──
@@ -57,6 +59,7 @@ elements:                            # OPTIONAL — top-level frontmatter key
 | `provisional` | bool | no | `true` if the id was auto-slugged and not yet promoted; `false` or absent once promoted |
 | `describes` | string | no | one-line prose describing the element's role on the screen |
 | `data_entity` | string | no | name of a `data_entities[]` entity this element renders or edits |
+| `region` | string | no | a region id from the `§ Regions` of the screen's `floorplan:`; the walkthrough places the element's label inside that region of the floorplan frame, and an element without it appears only in the flat element list. In `shell.md` it is a region id of the shell frame |
 | `acceptance_refs` | list of strings | no | each entry `<feature-path>#<criterion-id>`, mirroring `story_refs:` |
 | `target` | string | no | `screen_id` plus optional `#<element-id>`; valid only on `link`, `button`, `list`, `image`, `custom`; resolves against the rendered screen set, else the renderer records an `unresolved_target` warning |
 | `items` | list | no | valid only on `nav`, `tabs`, `list`; entry shape per kind, see Content fidelity |
@@ -69,7 +72,7 @@ elements:                            # OPTIONAL — top-level frontmatter key
 
 `target` (and a table's `row_target`) points an interactive element at another screen.
 
-- **Identity form.** A target is a `screen_id`: the path stem of a screen file under `07_screens/`, e.g. `11_intake/case_admission_form` for `07_screens/11_intake/case_admission_form.md` — the same identity as `data-spec-screen`, rendered filenames and `screens[].screen_id` in the walkthrough manifest. An optional `#<element-id>` fragment addresses an element on the target screen. A URL path (`/faelle`) or a bare filename is malformed.
+- **Identity form.** A target is a `screen_id`: the filename stem of a screen under `07_screens/`, e.g. `case-admission-form` for `07_screens/case-admission-form.md` — the same identity as `data-spec-screen`, rendered filenames and `screens[].screen_id` in the walkthrough manifest. An optional `#<element-id>` fragment addresses an element on the target screen. A URL path (`/faelle`), a bare filename or a path with a directory is malformed.
 - **Valid on** `kind: link | button | list | image | custom` — one element, one destination. A `table` carries `row_target` instead; `nav` and `tabs` carry per-entry destinations through `items[].target`. `target` on any other kind is a validation error.
 - **Resolution.** A target is resolvable iff `07_screens/<target-sans-fragment>.md` exists in the set of screens rendered in this walkthrough.
 - **Soft-fail.** Renderers never hard-fail on an unresolved target: they emit `href="#"` and record a `warnings[]` entry (`tree/09_mockup/walkthrough/README.md`). A `target` is optional — an interactive element without one renders inert, because not everything navigates.
@@ -82,7 +85,7 @@ Where a field below is declared, renderers render it as real content; fabricatio
 - **`items[]` entry shape by kind** — `nav`: `{id?, label, target, icon?}`, every entry needs a destination; `tabs`: `{id?, label, target?}`, an entry without `target` is an inert in-page tab; `list`: `{label, target?}` or a bare string as shorthand for `{label: <string>}` with no target.
 - **`table`.** `columns` is the header row. `sample_rows`, when present, renders verbatim. `columns` alone renders the header plus one skeleton row; there is no content to fabricate, so none is invented. `row_target` wraps every row's first cell in a link.
 - **`input` + `options`** renders a `<select>`.
-- **Authored, never invented.** `sample_rows` and `items` content is fixture data sourced from `seed.json` scenarios or the screen's own wireframe examples; renderers render exactly what is declared.
+- **Authored, never invented.** `sample_rows` and `items` content is fixture data sourced from `seed.json` scenarios or the screen's own `### Template Data`; renderers render exactly what is declared.
 
 ### ID rules
 
@@ -116,7 +119,7 @@ elements:
     states: [default, loading, disabled, error]
     data_entity: Case
     acceptance_refs: [05_features/intake/admission.md#AC-admission-02]
-    target: 11_intake/case_admission_form       # screen_id, optional "#<element-id>" fragment
+    target: case-admission-form                 # screen_id, optional "#<element-id>" fragment
     describes: "Click \"Aufnehmen\" on an Anmeldung row → opens the admission form"
   - id: cases-table
     kind: table
@@ -126,7 +129,7 @@ elements:
     sample_rows:                                # authored fixtures
       - ["Lena M.", "Teilstationär", "Aktiv"]
       - ["Tom B.", "Ambulant", "Aktiv"]
-    row_target: 11_intake/case_detail
+    row_target: case-detail
   - id: filter-area
     kind: input
     label: "Bereich"
@@ -137,7 +140,7 @@ elements:
     label: "Hauptnavigation"
     states: [default]
     items:
-      - { id: nav-tasks, label: "Aufgaben", target: 20_tasks/task_list, icon: "✓" }
+      - { id: nav-tasks, label: "Aufgaben", target: task-list, icon: "✓" }
 ```
 
 ## Checks

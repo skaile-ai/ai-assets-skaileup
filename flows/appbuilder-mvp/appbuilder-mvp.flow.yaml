@@ -3,7 +3,7 @@ version: "0.1.0"
 name: Appbuilder MVP
 description: >-
   The lean end-to-end path: scope, a brief and its glossary, the journeys that carry the
-  acceptance criteria, one featureset pass, a stack pick, then scaffold, plan and build.
+  acceptance criteria, one feature-spec pass that grows the featureset roster, a stack pick, then scaffold, plan and build.
   No design layer, no mockup and no data-modelling layer — the template supplies the ORM
   default and the schema grows inside the slice.
 meta:
@@ -26,7 +26,7 @@ requires:
   - skill:@skaile-ai/concept-brief
   - skill:@skaile-ai/concept-glossary
   - skill:@skaile-ai/experience-journeys
-  - skill:@skaile-ai/spec-featuresets
+  - skill:@skaile-ai/spec-feature
   - skill:@skaile-ai/architecture-techstack
   - skill:@skaile-ai/build-scaffold
   - skill:@skaile-ai/build-plan
@@ -96,12 +96,14 @@ nodes:
       skill: experience-journeys
       label: Journeys
       phase: conceptualization
-  - id: featuresets
+  # spec-feature runs once per feature and adds its roster row; the graph below shows
+  # one iteration. The loop lives in the skill body.
+  - id: feature
     type: skill
     parentNode: g-conceptualization
     data:
-      skill: spec-featuresets
-      label: Featuresets
+      skill: spec-feature
+      label: Feature Spec
       phase: conceptualization
   - id: techstack
     type: skill
@@ -147,8 +149,8 @@ edges:
   - { id: e-onboard-brief, source: onboard, target: brief, type: flow }
   - { id: e-brief-glossary, source: brief, target: glossary, type: flow }
   - { id: e-glossary-journeys, source: glossary, target: journeys, type: flow }
-  - { id: e-journeys-featuresets, source: journeys, target: featuresets, type: flow }
-  - { id: e-featuresets-techstack, source: featuresets, target: techstack, type: flow }
+  - { id: e-journeys-feature, source: journeys, target: feature, type: flow }
+  - { id: e-feature-techstack, source: feature, target: techstack, type: flow }
   - { id: e-techstack-scaffold, source: techstack, target: scaffold, type: flow }
   - { id: e-scaffold-plan, source: scaffold, target: plan, type: flow }
   - { id: e-plan-implement, source: plan, target: implement, type: flow }

@@ -11,7 +11,7 @@ One directory per feature, `<feature_slug>/`, holding `index.md` — the concept
 
 ## Freeze lifecycle
 
-A dossier is **frozen** when it is indexed and closed: it stops being working state and becomes the record of how the feature got specified. A feature dossier is opened at the start of the grill with `index.md` at `status: open`, appended to as the loop runs, and frozen by setting `status: frozen` once every spec and screen write has landed. Nothing in a dossier is deleted. A frozen `index.md` links forward to the canonical artifacts — the spec and its screens — and stands on its own.
+A dossier is **frozen** when it is indexed and closed: it stops being working state and becomes the record of how the feature got specified. A feature dossier is opened at the start of the grill with `index.md` at `status: open`, appended to as the loop runs, and frozen by setting `status: frozen` once the spec and its roster row have landed. Nothing in a dossier is deleted. A frozen `index.md` links forward to the canonical artifacts — the spec and the screens it lists — and stands on its own.
 
 A dossier that already exists is a resume, not a collision: load what is there, show what would change, and write after the user agrees. Overwriting one silently discards the reasoning it holds, which is the only thing a dossier is for.
 

@@ -10,6 +10,10 @@ export function getStaticPaths() {
 }
 
 const { screen } = Astro.props as any;
+const appNav = {
+  element_id: (specs as any).app_nav_id ?? 'app-nav',
+  items: (specs as any).app_nav.map((n: any) => ({ ...n, provisional: n.source === 'derived' })),
+};
 
 function provAttr(el: any): string {
   return el.provisional ? ' data-spec-provisional="true"' : '';
@@ -126,8 +130,24 @@ function renderElement(el: any): string {
 const nonProvisional = screen.elements.filter((el: any) => !el.provisional);
 const openPanel = nonProvisional.length === 0;
 ---
-<Shell title={screen.title || screen.screen_id} bodyAttrs={{ 'data-spec-screen': screen.screen_id }} appNav={screen.app_nav}>
+<Shell title={screen.title || screen.screen_id} bodyAttrs={{ 'data-spec-screen': screen.screen_id }} appNav={appNav}>
   <h1 class="text-2xl font-bold mb-4">{screen.title || screen.screen_id}</h1>
+  {screen.floorplan_html ? (
+    <section class="floorplan mt-4">
+      <h2 class="text-lg font-semibold mb-1">Floorplan: {screen.floorplan}</h2>
+      <p class="floorplan-meta text-sm text-gray-500">{screen.floorplan} · {screen.posture} · {screen.density}</p>
+      <div class="floorplan-frames flex flex-wrap gap-4 items-start">
+        {[['Wide', 'wide', 1040], ['Narrow', 'narrow', 390]].map(([label, cls, w]: any) => (
+          <figure class="max-w-full overflow-x-auto">
+            <figcaption class="text-sm text-gray-500">{label} ({w} px)</figcaption>
+            <iframe class={`floorplan-frame ${cls} border`} src={`/${screen.floorplan_html.replace(/\.html$/, '')}`} title={`Floorplan ${screen.floorplan}, ${cls}`} width={w} height="620"></iframe>
+          </figure>
+        ))}
+      </div>
+    </section>
+  ) : (
+    <p class="floorplan-notice" role="note">No floorplan: {screen.floorplan_notice}. Showing the single-column view.</p>
+  )}
   <main class="space-y-4">
     {screen.elements.map((el: any) => (
       <Fragment set:html={renderElement(el)} />

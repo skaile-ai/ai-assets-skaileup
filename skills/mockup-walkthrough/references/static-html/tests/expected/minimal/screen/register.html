@@ -12,7 +12,6 @@ body { font-family: system-ui, sans-serif; margin: 2rem; }
 .state { font-size: 0.75rem; color: #555; margin-left: 0.5rem; }
 [data-spec-provisional="true"] { outline: 1px dashed #999; outline-offset: 2px; }
 .app-nav { margin: 0.5rem 0 1rem; }
-.app-nav .nav-group-label { font-size: 0.85rem; text-transform: uppercase; color: #666; margin: 0.5rem 0 0.25rem; display: block; }
 .app-nav ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 1rem; flex-wrap: wrap; }
 .element table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
 .element table th, .element table td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; }
@@ -23,25 +22,35 @@ nav.tabs .tab { padding: 0.25rem 0.75rem; color: #555; }
 nav.tabs a.tab.active, nav.tabs span.tab.active { font-weight: 600; border-bottom: 2px solid var(--token-color-primary); color: #111; }
 details.spec-panel { margin-top: 1.5rem; border: 1px solid #ddd; border-radius: 4px; padding: 0.5rem 1rem; }
 details.spec-panel summary { cursor: pointer; font-weight: 600; }
+.floorplan-frames { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.floorplan figure { margin: 0; max-width: 100%; overflow-x: auto; }
+.floorplan figcaption, .floorplan-meta { font-size: 0.85rem; color: #555; }
+.floorplan iframe { border: 1px solid #ccc; background: #fff; }
+.floorplan-notice { margin: 1rem 0; padding: 0.5rem 1rem; border: 1px dashed #b45309; background: #fffbeb; }
 </style>
 </head>
-<body data-spec-screen="00_auth/register">
-<header><a href="../../index.html">&larr; Index</a></header>
+<body data-spec-screen="register">
+<header><a href="../index.html">&larr; Index</a></header>
 <nav class="app-nav" data-spec-element="app-nav" data-spec-provisional="true">
-<div class="nav-group">
-<span class="nav-group-label">auth</span>
 <ul>
-<li><a href="../00_auth/login.html" data-spec-element="app-nav-1" data-spec-provisional="true">login</a></li>
-<li><a href="../00_auth/register.html" data-spec-element="app-nav-2" data-spec-provisional="true">register</a></li>
-<li><a href="../00_auth/verify_email.html" data-spec-element="app-nav-3" data-spec-provisional="true">verify email</a></li>
+<li><a href="login.html" data-spec-element="app-nav-1" data-spec-provisional="true">Login</a></li>
+<li><a href="register.html" data-spec-element="app-nav-2" data-spec-provisional="true">Register</a></li>
+<li><a href="verify-email.html" data-spec-element="app-nav-3" data-spec-provisional="true">Verify email</a></li>
 </ul>
-</div>
 </nav>
 <main>
 <h1>Register</h1>
+<section class="floorplan">
+<h2>Floorplan: wizard</h2>
+<p class="floorplan-meta">wizard · transient · comfortable</p>
+<div class="floorplan-frames">
+<figure><figcaption>Wide (1040 px)</figcaption><iframe class="floorplan-frame wide" src="../floorplan/register.html" title="Floorplan wizard, wide" width="1040" height="620"></iframe></figure>
+<figure><figcaption>Narrow (390 px)</figcaption><iframe class="floorplan-frame narrow" src="../floorplan/register.html" title="Floorplan wizard, narrow" width="390" height="620"></iframe></figure>
+</div>
+</section>
 <section class="elements">
 <div class="element">
-<a data-spec-element="go-login" href="../00_auth/login.html">Sign in instead</a>
+<a data-spec-element="go-login" href="login.html">Sign in instead</a>
 </div>
 <div class="element">
 <nav class="tabs" data-spec-element="account-type-tabs">
@@ -51,7 +60,7 @@ details.spec-panel summary { cursor: pointer; font-weight: 600; }
 </div>
 <div class="element">
 <ul data-spec-element="signup-benefits">
-<li data-spec-element="see-your-login-screen" data-spec-provisional="true"><a href="../00_auth/login.html">See your login screen</a></li>
+<li data-spec-element="see-your-login-screen" data-spec-provisional="true"><a href="login.html">See your login screen</a></li>
 <li data-spec-element="get-onboarding-tips" data-spec-provisional="true">Get onboarding tips</li>
 </ul>
 </div>

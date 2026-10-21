@@ -16,7 +16,7 @@ metadata:
       - { id: behaviors, path: "_concept/06_behaviors/<featureset>.md" }
   prerequisites:
     files:
-      - { path: "_concept/05_features", gate: hard, min_entries: 1 }
+      - { path: "_concept/05_features", gate: soft }
       - { path: "_concept/02_grounding/research/behavioral-patterns.md", gate: soft }
       - { path: "_concept/glossary.md", gate: soft }
       - { path: "_concept/10_blueprint/datamodel", gate: soft }

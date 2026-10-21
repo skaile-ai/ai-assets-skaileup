@@ -1,8 +1,14 @@
 ---
+screen_id: verify-email
+title: Verify email
 implements:
-  - 05_features/00_auth/login.md
-data_entities: [User]
-layout: 07_screens/shell.md
+  - 05_features/auth/login.md
+floorplan: overview
+posture: sovereign
+density: default
+regions:
+  header: { shows: user, representation: page }
+  attention: { shows: user, representation: row }
 last_updated: 2026-07-06
 ---
 

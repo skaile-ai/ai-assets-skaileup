@@ -115,10 +115,7 @@ def good_tree(root: Path) -> None:
         body="## Format (the elements block)\n\nA screen lists its elements.\n",
     )
     write_node(root, "07_screens/shell.md", "_concept/07_screens/shell.md", summary="the app shell")
-    write_node(root, "07_screens/[feature_slug]/README.md", "_concept/07_screens/<feature_slug>/",
-               summary="screens of one feature")
-    write_node(root, "07_screens/[feature_slug]/[screen].md", "_concept/07_screens/<feature_slug>/<screen>.md",
-               summary="one spec per screen")
+    write_node(root, "07_screens/[screen].md", "_concept/07_screens/<screen>.md", summary="one spec per screen")
 
 
 def sync_owners(root: Path) -> None:
@@ -488,8 +485,8 @@ def test_root_artifact_node_listing_a_writer_that_produces_nothing_there(tmp_pat
         "_concept/README.md",  # the root README documents itself
         "_concept/07_screens/",
         "_concept/07_screens",  # a directory named without its slash
-        "_concept/07_screens/<feature_slug>/<screen>.md",
-        "_concept/07_screens/checkout/payment.md",  # a placeholder entry matches any one segment
+        "_concept/07_screens/<screen>.md",
+        "_concept/07_screens/checkout.md",  # a placeholder entry matches any one segment
         "_concept/07_screens/shell.md",
         "_concept/01_meta/extra.yaml",  # lies under a list-form directory entry
     ],
@@ -550,7 +547,7 @@ def test_required_artifact_produced_by_another_skill(tmp_path):
     assert errors(root) == []
 
 
-SCREENS = '    produces:\n      - { id: screens, path: "_concept/07_screens/<feature_slug>/<screen>.md" }\n'
+SCREENS = '    produces:\n      - { id: screens, path: "_concept/07_screens/<screen>.md" }\n'
 
 
 def set_gate(root: Path, skill: str, gate: str) -> None:
@@ -711,9 +708,9 @@ def test_hard_gate_on_the_entry_node_has_no_upstream(tmp_path):
 @pytest.mark.parametrize(
     "gate, written",
     [
-        ("_concept/07_screens", "_concept/07_screens/<feature_slug>/<screen>.md"),  # file under the gated directory
+        ("_concept/07_screens", "_concept/07_screens/<screen>.md"),  # file under the gated directory
         ("_concept/07_screens/shell.md", "_concept/07_screens/"),  # the directory holding the gated file
-        ("_concept/07_screens/checkout/pay.md", "_concept/07_screens/<feature_slug>/<screen>.md"),  # placeholders
+        ("_concept/07_screens/pay.md", "_concept/07_screens/<screen>.md"),  # placeholders
         ("_concept/07_screens/*", "_concept/07_screens/shell.md"),  # `*` matches one segment
         ("_concept/07_screens", "_concept/07_screens"),  # equal
     ],
@@ -725,10 +722,10 @@ def test_hard_gate_met_by_a_directory_prefix_match(tmp_path, gate, written):
 
 
 def test_hard_gate_on_a_sibling_path_is_not_met(tmp_path):
-    """Prefix matching is by whole segment: `shell.md` does not open a gate on `07_screens/checkout`."""
+    """Prefix matching is by whole segment: `shell.md` does not open a gate on `07_screens/checkout.md`."""
     root = gate_repo(
         tmp_path,
-        gate="_concept/07_screens/checkout",
+        gate="_concept/07_screens/checkout.md",
         writes='    produces:\n      - { id: shell, path: "_concept/07_screens/shell.md" }\n',
     )
     write_flow(root, gate_flow("zeta-producer", "spec-feature"))
@@ -1444,7 +1441,7 @@ def test_a_directory_produces_path_above_a_node_satisfies_its_writer(tmp_path):
     """A skill that writes `07_screens/` as a whole is the writer of what lies inside it."""
     root = write_repo(tmp_path, skills=("spec-feature", "zeta-producer"))
     set_produces(root, '    produces:\n      - { id: screens, path: "_concept/07_screens/" }\n', "zeta-producer")
-    edit_node(root, "07_screens/[feature_slug]/[screen].md", "owner: []", "owner: [zeta-producer]")
+    edit_node(root, "07_screens/[screen].md", "owner: []", "owner: [zeta-producer]")
     assert errors(root) == []
 
 
@@ -2020,13 +2017,13 @@ def test_directory_without_a_readme(tmp_path):
 
 
 def test_placeholder_directory_without_a_readme(tmp_path):
-    """`[feature_slug]/` is a directory like any other: it needs a node of its own."""
+    """`[kind]/` is a directory like any other: it needs a node of its own."""
     root = write_repo(tmp_path)
-    (root / "tree" / "07_screens" / "[feature_slug]" / "README.md").unlink()
+    write_node(root, "01_meta/[kind]/page.md", "_concept/01_meta/<kind>/page.md", summary="one page per kind")
     refresh_fence(root)
     only(root, "has no `README.md`")
     assert "dir-has-readme" in errors(root)[0]
-    assert "tree/07_screens/[feature_slug]/" in errors(root)[0]
+    assert "tree/01_meta/[kind]/" in errors(root)[0]
 
 
 # -- the tree: the generated listing (T5) ------------------------------------------
@@ -2047,7 +2044,6 @@ def test_render_tree_of_the_fixture(tmp_path):
         "│ └── scope.yaml flow and project type",
         "└── 07_screens/ the app shell and one spec per screen",
         "├── shell.md the app shell",
-        "└── <feature_slug>/ screens of one feature",
         "└── <screen>.md one spec per screen",
     ]
 
@@ -2147,10 +2143,10 @@ def test_resolve_literal_match():
 
 
 def test_resolve_placeholder_on_either_side():
-    nodes = nodes_of(("07_screens/[feature_slug]/[screen].md", "_concept/07_screens/<feature_slug>/<screen>.md"))
-    assert check.resolve(nodes, "_concept/07_screens/checkout/pay.md") is nodes[0]
-    assert check.resolve(nodes, "_concept/07_screens/<a>/<b>.md") is nodes[0]
-    assert check.resolve(nodes, "_concept/07_screens/checkout/pay.md/extra") is None
+    nodes = nodes_of(("07_screens/[screen].md", "_concept/07_screens/<screen>.md"))
+    assert check.resolve(nodes, "_concept/07_screens/pay.md") is nodes[0]
+    assert check.resolve(nodes, "_concept/07_screens/<a>.md") is nodes[0]
+    assert check.resolve(nodes, "_concept/07_screens/pay.md/extra") is None
 
 
 def test_resolve_prefers_the_literal_entry_over_the_placeholder_one():
@@ -2213,6 +2209,65 @@ def test_the_artifact_root_covers_nothing_but_itself():
     assert check.resolve(nodes, "_concept/") is nodes[0]
     assert check.resolve(nodes, "_concept/README.md") is nodes[0]
     assert check.resolve(nodes, "_concept/typo.md") is None
+
+
+# -- screens are flat: no second segment below 07_screens (ADR 0020) ----------------
+
+def flat_screens_errors(root: Path) -> list[str]:
+    return [e for e in errors(root) if "flat-screens" in e]
+
+
+def test_a_nested_node_path_fails_flat_screens(tmp_path):
+    root = write_repo(tmp_path)
+    edit_node(root, "07_screens/[screen].md", "_concept/07_screens/<screen>.md",
+              "_concept/07_screens/<feature_slug>/<screen>.md")
+    found = flat_screens_errors(root)
+    assert len(found) == 1, found
+    assert "tree/07_screens/[screen].md" in found[0]
+    assert "`_concept/07_screens/<feature_slug>/<screen>.md`" in found[0]
+    assert "screens are `_concept/07_screens/<screen>.md`" in found[0]
+
+
+def test_a_nested_produces_path_fails_flat_screens(tmp_path):
+    root = write_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: screens, path: "_concept/07_screens/inbox/list.md" }\n')
+    found = flat_screens_errors(root)
+    assert len(found) == 1, found
+    assert "skills/spec-feature" in found[0] and "`_concept/07_screens/inbox/list.md`" in found[0]
+
+
+def test_a_nested_prerequisite_path_fails_flat_screens(tmp_path):
+    root = write_repo(tmp_path)
+    skill = skill_file(root)
+    skill.write_text(skill.read_text().replace('path: "_concept/07_screens"', 'path: "_concept/07_screens/inbox/"'))
+    found = flat_screens_errors(root)
+    assert len(found) == 1, found
+    assert "`_concept/07_screens/inbox/`" in found[0]
+
+
+@pytest.mark.parametrize("rel", ["tree/brief.md", "skills/spec-feature/SKILL.md", "docs/guide.md", "README.md"])
+def test_a_nested_prose_citation_fails_flat_screens(tmp_path, rel):
+    root = write_repo(tmp_path)
+    append(root, rel, "\nOne spec per screen in `_concept/07_screens/<feature_slug>/<screen>.md`.\n")
+    found = flat_screens_errors(root)
+    assert len(found) == 1, found
+    assert rel.removesuffix("/SKILL.md") in found[0]
+
+
+def test_an_adr_may_name_the_nested_screen_path(tmp_path):
+    """ADRs record the decision, so they name the shape it replaced."""
+    root = write_repo(tmp_path)
+    append(root, "docs/adr/0020-screens.md", "Was `_concept/07_screens/<feature_slug>/<screen>.md`.\n")
+    assert flat_screens_errors(root) == []
+
+
+@pytest.mark.parametrize("path", ["_concept/07_screens/<screen>.md", "_concept/07_screens/shell.md", "_concept/07_screens/"])
+def test_a_flat_screen_path_passes_flat_screens(tmp_path, path):
+    root = write_repo(tmp_path)
+    set_produces(root, f'    produces:\n      - {{ id: screens, path: "{path}" }}\n')
+    append(root, "tree/brief.md", f"\nSee `{path}`.\n")
+    assert errors(root) == []
+
 
 
 # -- no path into the retired contracts folder (T8) -----------------------------
@@ -2720,12 +2775,14 @@ def concept_tree(root: Path) -> Path:
         ),
         "10_blueprint/datamodel/model.json": '{"version": "1.0", "entities": [{"id": "User", "display_name": "User", "fields": []}], "relationships": []}',
         "05_features/auth/login.md": (
-            "---\npriority: must-have\npermissions: {member: [view]}\nscreens:\n  - path: 07_screens/login/login.md\n"
+            "---\npriority: must-have\npermissions: {member: [view]}\nscreens:\n  - path: 07_screens/login.md\n"
             "data_entities: [User]\nlast_updated: 2026-09-05\n---\n\n## Criteria\n\n- AC-login-01\n"
         ),
-        "07_screens/login/login.md": (
-            "---\nimplements:\n  - 05_features/auth/login.md\nlast_updated: 2026-09-05\n---\n"
+        "07_screens/login.md": (
+            "---\nscreen_id: login\ntitle: Login\nimplements:\n  - 05_features/auth/login.md\nfloorplan: focused-task\n"
+            "posture: sovereign\ndensity: default\nregions: {}\nelements: []\nlast_updated: 2026-09-05\n---\n"
         ),
+        "07_screens/shell.md": "---\nelements: []\nlast_updated: 2026-09-05\n---\n",
         "11_build/acceptance-criteria/auth/login.ac.md": (
             "---\nfeature: login\nfeature_ref: _concept/05_features/auth/login.md\nlast_updated: 2026-09-05\n---\n\n"
             "# Criteria — Login\n\n"
@@ -2751,13 +2808,13 @@ def test_check_concept_reports_one_broken_screens_link(tmp_path):
     feature = concept / "05_features/auth/login.md"
     feature.write_text(
         feature.read_text().replace(
-            "  - path: 07_screens/login/login.md\n",
-            "  - path: 07_screens/login/login.md\n  - path: 07_screens/login/missing.md\n",
+            "  - path: 07_screens/login.md\n",
+            "  - path: 07_screens/login.md\n  - path: 07_screens/missing.md\n",
         )
     )
     problems = module.check(concept, script)
     assert len(problems) == 1, problems
-    assert "05_features/auth/login.md" in problems[0] and "07_screens/login/missing.md" in problems[0]
+    assert "05_features/auth/login.md" in problems[0] and "07_screens/missing.md" in problems[0]
 
 
 def test_check_concept_reports_the_retired_comparable_file_as_unowned(tmp_path):
@@ -2776,8 +2833,8 @@ def test_check_concept_accepts_a_hyphenated_feature_scope_but_not_a_hyphenated_s
     feature = old.with_name("password-reset.md")
     feature.write_text(old.read_text().replace("- AC-login-01\n", "- AC-login-01\n- AC-password-reset-01\n"))
     old.unlink()
-    (concept / "07_screens/login/login.md").write_text(
-        "---\nimplements:\n  - 05_features/auth/password-reset.md\nlast_updated: 2026-09-05\n---\n"
+    (concept / "07_screens/login.md").write_text(
+        (concept / "07_screens/login.md").read_text().replace("auth/login.md", "auth/password-reset.md")
     )
     ledger = concept / "11_build/acceptance-criteria/auth/login.ac.md"
     ledger.with_name("password-reset.ac.md").write_text(
@@ -2793,6 +2850,59 @@ def test_check_concept_accepts_a_hyphenated_feature_scope_but_not_a_hyphenated_s
     stories.write_text(stories.read_text().replace("AC-login-01", "AC-log-in-01"))
     problems = module.check(concept, script)
     assert any("'AC-log-in-01' is not AC-<story-id>-<nn>" in p for p in problems), problems
+
+
+def test_check_concept_accepts_a_proposed_implements_entry_for_the_cross_link(tmp_path):
+    """A screen's `implements:` entry is a string or a `{path, status: proposed, …}` mapping."""
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    screen = concept / "07_screens/login.md"
+    screen.write_text(screen.read_text().replace(
+        "  - 05_features/auth/login.md\n",
+        "  - { path: 05_features/auth/login.md, status: proposed, proposed_by: spec-feature, proposed_on: 2026-09-05 }\n",
+    ))
+    assert module.check(concept, script) == []
+
+
+def test_check_concept_reports_a_screen_that_the_feature_does_not_list(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    feature = concept / "05_features/auth/login.md"
+    feature.write_text(feature.read_text().replace("screens:\n  - path: 07_screens/login.md\n", "screens: []\n"))
+    problems = module.check(concept, script)
+    assert len(problems) == 1, problems
+    assert "05_features/auth/login.md" in problems[0] and "07_screens/login.md" in problems[0]
+
+
+def test_check_concept_takes_the_shell_for_no_screen(tmp_path):
+    """`07_screens/shell.md` carries `elements` only: no `screen_id`, `floorplan` or `implements`."""
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    assert (concept / "07_screens/shell.md").is_file()
+    assert module.check(concept, script) == []
+
+
+@pytest.mark.parametrize("field", ["screen_id", "floorplan", "implements"])
+def test_check_concept_reports_a_screen_frontmatter_field_that_is_missing(tmp_path, field):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    screen = concept / "07_screens/login.md"
+    kept = [ln for ln in screen.read_text().splitlines(keepends=True)
+            if not ln.startswith(f"{field}:") and ln != "  - 05_features/auth/login.md\n"]
+    screen.write_text("".join(kept))
+    problems = module.check(concept, script)
+    assert any(f"frontmatter lacks `{field}`" in p and "07_screens/login.md" in p for p in problems), problems
+
+
+def test_check_concept_reports_a_screen_id_that_differs_from_the_file_name(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    screen = concept / "07_screens/login.md"
+    screen.write_text(screen.read_text().replace("screen_id: login", "screen_id: sign-in"))
+    problems = module.check(concept, script)
+    assert len(problems) == 1, problems
+    assert "07_screens/login.md" in problems[0] and "screen_id" in problems[0] and "'sign-in'" in problems[0]
+
 
 
 @pytest.mark.parametrize(

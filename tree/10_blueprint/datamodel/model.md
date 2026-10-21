@@ -2,7 +2,7 @@
 path: [_concept/10_blueprint/datamodel/model.dbml, _concept/10_blueprint/datamodel/model.json]
 summary: model.json is authored, model.dbml generated — semantic types, relations
 owner: [architecture-datamodel]
-may_propose: [spec-feature]
+may_propose: [spec-feature, experience-screen]
 ---
 
 # _concept/10_blueprint/datamodel/model.dbml, model.json
@@ -13,7 +13,7 @@ The canonical, stack-neutral data model, in two forms: `model.json`, the one aut
 
 `model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` (JSON Schema 2020-12, lenient: the required keys are those the host's editor needs, plus `glossary_id`). Validate before writing. Top-level keys: `version` (`"1.0"`), `entities[]`, `relationships[]` and optional `enums[]`; `editor` (canvas viewport) is written by the editor, never by a skill. An entity carries `id` (PascalCase singular — the model name every other artifact cites), `glossary_id` (the kebab-case id of the glossary term it models — `Order line` → `order-line`; the name, definition and object axes live on that term, so the entity holds no copy of them), `display_name`, `fields[]` and the metadata below; a field carries a stable `id`, a snake_case `name` and a semantic `type` (the scalar types, `enum`, or `relation`).
 
-**Proposed entity.** A skill in `may_propose` (`spec-feature`) that needs an entity the model lacks appends it with `status: "proposed"`, `proposed_by`, `proposed_on` and `source` (`tree/README.md § Ownership`); `architecture-datamodel` promotes it by dropping the markers or rejects it with a record in `_concept/10_blueprint/decisions.md`. A proposed entity is never confirmed in `model.dbml` and carries no seed data until promoted.
+**Proposed entity.** A skill in `may_propose` (`spec-feature`, `experience-screen`) that needs an entity or field the model lacks appends it with `status: "proposed"`, `proposed_by`, `proposed_on` and `source` (`tree/README.md § Ownership`); `architecture-datamodel` promotes it by dropping the markers or rejects it with a record in `_concept/10_blueprint/decisions.md`. A proposed entity is never confirmed in `model.dbml` and carries no seed data until promoted.
 
 **Scalar types**
 

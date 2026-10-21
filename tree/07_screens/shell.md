@@ -1,48 +1,54 @@
 ---
 path: _concept/07_screens/shell.md
-summary: the app frame — navigation, layout areas, breakpoints, shared patterns
+summary: the app frame — shell frame, navigation model, the one destination list
 owner: [experience-shell]
-may_propose: []
+may_propose: [experience-screen]
 ---
 
 # _concept/07_screens/shell.md
 
-The frame every screen appears inside: navigation, layout areas, breakpoints, and the conventions screens are not each meant to re-decide. `experience-shell` writes exactly this one file and no screen spec. It normally runs after the feature loop, so the frame is drawn around screens that exist; in the reverse flow, where it runs before `spec-feature`, it is drawn around the screens the codebase already has. Where `APP-DESIGN.md` exists the frame follows its navigation and message/edit/modal decisions, read per `tree/APP-DESIGN.md § Reading it`. The walkthrough renders the `kind: nav` element below as the app nav on every screen page; without it the renderer derives a default nav, one link per screen grouped by feature directory, and flags it provisional.
+The frame every screen appears inside: which shell frame holds it, the navigation model it realises, the one destination list every navigation surface renders, and the conventions screens are not each meant to re-decide. `experience-shell` writes exactly this one file and no screen spec; it needs no feature and no screen to exist, so a frame can be drawn before, between or after the screens it holds. Where `APP-DESIGN.md` exists the frame follows its § Navigation model, § Objects and the message, edit and modal entries, read per `tree/APP-DESIGN.md § Reading it`. The walkthrough renders the `kind: nav` element below as the app nav on every screen page; without it the renderer derives a default nav, one ungrouped link per screen in `screen_id` order labelled by the screen's `title`, and flags it provisional.
 
 ## Format
 
-Frontmatter: `elements:` carries the `kind: nav` block (schema in `tree/07_screens/README.md`) and `last_updated` as in `tree/README.md § Frontmatter every markdown artifact carries`. Body sections, named exactly because the renderer's spec panel shows them:
-
-- `## Navigation` — the destinations, grouped by featureset, each by the screen id it already has, with prominence.
-- `## Layout Areas` — header, primary navigation, content region and anything persistent beside them: what each holds and what stays put while the content changes; a short ASCII sketch carries this faster than three paragraphs.
-- `## Responsive Behaviour` — the breakpoints, and what the navigation becomes below each.
-- `## Shared Patterns` — layout only: page-header composition, breadcrumb placement, which regions persist, and what the content region shows while loading. Empty, error, confirmation, message and editing patterns are not decided here: they cite the `APP-DESIGN.md` MSG, EDIT and MOD entries by id.
-- `## Proposed interaction patterns` — only when `APP-DESIGN.md` is absent: the empty, error, confirmation, message and editing patterns this frame needs, written as proposals for `experience-interaction`.
+Frontmatter, then body sections named exactly because the renderer's spec panel shows them:
 
 ```yaml
 ---
-elements:
+shell_frame: shell-sidebar       # a floorplan id of kind `shell`: shell-sidebar | shell-topbar | shell-mobile-tabs | shell-dock
+organization: hybrid             # object-led | task-led | hybrid — from APP-DESIGN.md § Navigation model
+primary_surface: sidebar         # sidebar | topbar | tabs | rail+drawer | bottom-tabs | none
+navigation: decided              # decided | provisional — provisional while the model is a fallback nobody decided
+elements:                        # the kind: nav block (schema: tree/07_screens/README.md)
   - id: app-nav
     kind: nav
     label: "Main navigation"
     states: [default]
     items:                       # same destinations, same order as ## Navigation
-      - { label: "Tasks", target: 20_tasks/task_list }
+      - { label: "Tasks", target: task-list }
 last_updated: YYYY-MM-DD
 ---
 ```
 
+- `## Navigation` — the one destination list: each destination by the `screen_id` it has or will have, its group, its badge source and its prominence (primary, or pinned for a narrow tab bar or pill). Under `navigation: provisional` its first line says so (`Provisional: grouped by feature set because no navigation model is decided — see APP-DESIGN.md § Open`), so the fallback is not mistaken for the design.
+- `## Layout Areas` — what the app puts into the regions of its `shell_frame` (its `§ Regions` in `rulebook/floorplans/<shell_frame>/README.md`): header actions, the persistent context line, what stays put while the content changes.
+- `## Responsive Behaviour` — the frame's own `§ Responsive` is the default; this section records only the breakpoints the app moves and what the navigation becomes below each.
+- `## Shared Patterns` — layout only: page-header composition, breadcrumb placement, which regions persist, and what the content region shows while loading. Empty, error, confirmation, message and editing patterns are not decided here: they cite the `APP-DESIGN.md` MSG, EDIT and MOD entries by id.
+- `## Proposed interaction patterns` — only when `APP-DESIGN.md` is absent: the empty, error, confirmation, message and editing patterns this frame needs, written as proposals for `experience-interaction`.
+
 ## Writing it
 
-1. **Read what the app is for and where its screens are.** `brief.md` for the hero flow, `05_features/featuresets.md` for the featuresets and their features, `04_journeys/` for the order users move through them, and `03_brand/brand.tokens.json` for the palette, type scale and spacing the frame is drawn in (format: `tree/03_brand/brand.tokens.md`) — reference brand values by name, because a hex invented here diverges from the tokens the renderers use. Read `APP-DESIGN.md` when it exists, per `tree/APP-DESIGN.md § Reading it`. The screens come from `07_screens/<feature_slug>/*.md`: each file's `id` and title are a candidate nav destination. Where `07_screens/` holds none (the reverse flow), take them from the screens recorded in `02_grounding/findings/screens.md` and say in `shell.md` which source each destination came from. With neither, stop and name the missing step — `spec-feature` or `concept-reverse` — because a nav drawn without screens behind it is a nav invented here.
-2. **Derive the navigation from those screens.** Every destination is a screen a spec or a finding names, under the screen id it already has; a destination nothing backs is dropped. Where `APP-DESIGN.md` exists, derive under its Navigation section (rule P12, `rulebook/rules.md § P12`): primary navigation lists core objects and the few workspaces its entries name, and supporting objects sit behind their parent. Without it, group by featureset and let the journey stage (`stories.yaml § stages`) decide prominence: hero and vital journeys earn primary navigation, hygiene flows sit behind a settings or admin entry. A nav with one item per screen is a menu of the file system rather than of the product.
-3. **Describe the layout areas** as the format above says.
-4. **Settle the responsive behaviour once, here** — decided anywhere else, it gets decided differently on every screen.
-5. **Write the shared patterns** every screen reuses, as layout only (see `## Format`). Empty, error, confirmation, message and editing patterns are cited by id from the `APP-DESIGN.md` MSG, EDIT and MOD entries (`tree/APP-DESIGN.md § Reading it`), never decided here. Without the file, record them under `## Proposed interaction patterns` and hand them to `experience-interaction` — a pattern this skill settles alone is the one every feature spec would otherwise make inconsistently.
-6. **Mirror the navigation into the `elements:` block.** `shell.md`'s own frontmatter carries a `kind: nav` element whose `items[]` are the destinations from step 2, in the same order, each with its `target`, shaped per `tree/07_screens/README.md § Content fidelity` — an unmirrored `## Navigation` section renders as a nav the user never designed. A target taken from the findings resolves once `spec-feature` writes that screen under the same id; until then it is reported as an unresolved target rather than a failure.
-7. **Show the frame to the user in their terms** — where things live, what is always on screen, what happens on a phone — and iterate until they approve. Then point at the next step: `spec-feature` in the reverse flow, where it writes every screen inside this frame, and the walkthrough otherwise.
+1. **Resolve the facts** (`tree/README.md § How a skill runs`, rule 1). Read, in any order and none required: `APP-DESIGN.md` for § Navigation model (`organization`, `primary_surface`) and § Objects; `_concept/glossary.md` for each object's `navigation` axis; `_concept/02_grounding/findings/routes.md` and `screens.md` for the destinations the code already has (where the code holds routes and the findings do not, run `concept-reverse` scoped to `routes`); the screens already written under `07_screens/` for their `screen_id` and `title`; `_concept/05_features/featuresets.md`, `04_journeys/stories.yaml` for the order users move through the app, and `03_brand/brand.tokens.json` for the palette, type scale and spacing the frame is drawn in (format: `tree/03_brand/brand.tokens.md`) — reference brand values by name, because a hex invented here diverges from the tokens the renderers use. What none of them settles goes into the batch of step 3.
+2. **Derive the destination list.** Under a decided navigation model (`rulebook/rules.md § P12`, `§ P22`) primary navigation lists the indexes of the objects whose `navigation` axis is `primary` and the few workspaces its NAV entries name; supporting objects sit behind their parent. Where there is no `APP-DESIGN.md`, take the destinations from the findings and the screens, and let the journey stage (`stories.yaml § stages`) decide prominence: hero and vital journeys earn primary navigation, hygiene flows sit behind a settings or admin entry. A destination names the `screen_id` that serves it; one whose screen is not written yet is listed for `experience-screen` in the completion summary and resolves as soon as that screen exists. A nav with one item per screen is a menu of the file system rather than of the product.
+3. **Decide what is open, in one batch** (`tree/README.md § How a skill runs`, rules 2 and 5): the organization and primary surface when no model is recorded, the groups, the badges, which entries are pinned for a narrow screen. Without a decided model the list is grouped by feature set when `featuresets.md` exists, else left ungrouped; the file records `navigation: provisional` and the visible line of `## Navigation`, and the completion summary names `experience-interaction` as the owner of the decision.
+4. **Choose the shell frame** with `rulebook/rules.md § P18` and the four `kind: shell` floorplan READMEs, following the primary surface (`rulebook/rules.md § P22`): `sidebar` and `rail+drawer` take `shell-sidebar`, `topbar` and `tabs` take `shell-topbar`, `bottom-tabs` takes `shell-mobile-tabs`, a desktop-native docked tool takes `shell-dock`. The choice is written once for the whole app; a frame that deviates from the model is an exception for `APP-DESIGN.md`, not a quiet override.
+5. **Write the sections** as the format says, settling the responsive behaviour once, here — decided on each screen it is decided differently on every one. Empty, error, confirmation, message and editing patterns are cited by id from the `APP-DESIGN.md` MSG, EDIT and MOD entries; without the file, record them under `## Proposed interaction patterns` — a pattern this skill settles alone is the one every screen would otherwise make inconsistently.
+6. **Mirror the destination list into `elements:`.** The frontmatter carries a `kind: nav` element whose `items[]` are the step-2 destinations, in the same order, each with its `target`, shaped per `tree/07_screens/README.md § Content fidelity` — an unmirrored `## Navigation` section renders as a nav the user never designed. A target whose screen is not written resolves once `experience-screen` writes it under that id; until then it is reported as an unresolved target, not a failure.
+7. **Show the frame to the user in their terms** — where things live, what is always on screen, what happens on a phone — and iterate until they approve; then write `approved:` per `tree/README.md § Frontmatter every markdown artifact carries`.
 
 ## Checks
 
-- `shell.md` has its navigation, layout areas, breakpoints and shared patterns.
-- Its `elements:` nav block lists the same destinations as `## Navigation`, in the same order.
+- `shell_frame` is a directory under `rulebook/floorplans/` whose README has `kind: shell`, and it matches `primary_surface` per `rulebook/rules.md § P22`.
+- `organization` and `primary_surface` equal `APP-DESIGN.md § Navigation model` when that section decides them; otherwise `navigation: provisional` and the visible line under `## Navigation` are both present.
+- The `elements:` nav block lists the same destinations as `## Navigation`, in the same order, with every `target` a `screen_id`.
+- No destination list exists elsewhere: sidebar, rail, drawer, tab bar and palette entries are all rendered from this one.

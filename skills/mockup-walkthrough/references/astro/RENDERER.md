@@ -14,8 +14,8 @@ nothing itself. static-html may resolve at render time because its templates run
 
 Three consequences, all astro-only:
 
-- **Hrefs are root-relative and extension-less** — `/screen/<group>/<name>`, `/journey/<id>`,
-  `/`. The build emits real `.html` files (`build.format: 'file'`), but the served URL is the
+- **Hrefs are root-relative and extension-less** — `/screen/<screen>`, `/floorplan/<screen>`,
+  `/journey/<id>`, `/`. The build emits real `.html` files (`build.format: 'file'`), but the served URL is the
   clean form.
 - **`provisional: true` sits on the element object**, and on every normalised `items[]` entry,
   rather than in a separate top-level `auto_slugged[]` array. The `auto_slugged` warning entry
@@ -34,14 +34,14 @@ the feedback round.
 1. **Detect the mode.** `astro.config.mjs` absent → **init**: copy `scaffold/` into the project
    and run `bun install`. Present → **update**: the scaffold is the user's, so leave
    `astro.config.mjs`, `tailwind.config.mjs` and every `.astro` file untouched, and check for
-   staleness — if `src/pages/screen/[...slug].astro` lacks the literal `el.href` or `spec-panel`,
+   staleness — if `src/pages/screen/[...slug].astro` lacks the literal `el.href`, `spec-panel` or `floorplan-frames`, or `src/pages/floorplan/[...slug].astro` is absent,
    record a `stale_scaffold` warning naming the fix (delete the scaffold to regenerate, or port
    the template changes by hand). Run the check before regenerating, so the warning describes
    the scaffold as it stood at the start of the run. It is a warning, not a failure; the build
    proceeds and ships whatever the stale template renders.
 2. **Write `src/data/specs.json` and `src/styles/global.css`** on every run, overwriting.
    Shape, and the `specs.json` → `manifest.json` projection: `specs-json.md`. `global.css` is
-   the Tailwind base plus one `--token-*` line per token of `03_brand/brand.tokens.json`,
+   the Tailwind base, a `.floorplan-notice` rule (dashed amber border, padded, so the no-floorplan notice is visible), plus one `--token-*` line per token of `03_brand/brand.tokens.json`,
    flattened per `tree/03_brand/brand.tokens.md § Flattening to CSS`, and a `.dark { … }` block
    from `brand.dark.tokens.json` when that file exists. On update runs, compare the `:root`
    token count against the CSS var count in the existing file's `:root` first; a mismatch means
@@ -51,6 +51,10 @@ the feedback round.
 4. **Write `manifest.json` from the in-memory model, not by serialising `specs.json`** — the
    two shapes differ, and `specs-json.md` lists the template-only fields the manifest must not
    carry.
+
+## Floorplan frames
+
+The frame document is built in the in-memory model like every other resolved value (the contract: `tree/09_mockup/walkthrough/README.md § Floorplan frame`) and handed to the templates as `floorplan_frame_html`; `src/pages/floorplan/[...slug].astro` emits it unchanged as `floorplan/<screen>.html`, and the screen page embeds it twice. The rulebook is read at generation time from the installed contract `<contracts>/app-design-rulebook/`; `validator.py --rulebook <dir>` takes the same path and defaults to the harness's `<contracts>/app-design-rulebook/` under the working directory, then to the `rulebook/` of the collection checkout.
 
 ## The astro config is load-bearing
 

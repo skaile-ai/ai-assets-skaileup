@@ -2,7 +2,7 @@
 path: APP-DESIGN.md
 summary: the app's interaction choices against the rulebook — objects, tiers, surfaces
 owner: [experience-interaction]
-may_propose: []
+may_propose: [experience-screen]
 ---
 
 # APP-DESIGN.md

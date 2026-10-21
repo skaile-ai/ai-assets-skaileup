@@ -41,7 +41,7 @@ graph carries the sequence and no prose restates it. Four ship:
 
 | Flow | For |
 |---|---|
-| [`appbuilder-mvp`](./flows/appbuilder-mvp/) | The lean end-to-end path — 9 skills, one featureset pass |
+| [`appbuilder-mvp`](./flows/appbuilder-mvp/) | The lean end-to-end path — 11 skills, one feature-spec pass |
 | [`appbuilder-standard`](./flows/appbuilder-standard/) | A multi-user app in full — 31 skills, discovery through review |
 | [`skaileup-concept-only`](./flows/skaileup-concept-only/) | The conceptualization half alone, to hand a specified product on |
 | [`skaileup-concept-reverse`](./flows/skaileup-concept-reverse/) | A concept built out of an existing repository |
@@ -63,11 +63,11 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [concept-reverse](skills/concept-reverse/) | Extracts a concept from an existing repository |
 | [design-brand](skills/design-brand/) | Discovers a visual direction and writes the project's brand |
 | [experience-journeys](skills/experience-journeys/) | Defines personas and the staged story map features derive from |
+| [experience-screen](skills/experience-screen/) | Writes one screen on its own: floorplan, posture, density, region bindings and an early prototype |
 | [experience-shell](skills/experience-shell/) | Specifies navigation, layout areas, breakpoints and shared screen patterns |
 | [experience-behaviors](skills/experience-behaviors/) | Writes state machines and rules for entity lifecycles |
 | [experience-interaction](skills/experience-interaction/) | Decides where information lives and how it is edited, saved and found, and writes APP-DESIGN.md |
-| [spec-featuresets](skills/spec-featuresets/) | Derives the feature roster and cuts it into featuresets |
-| [spec-feature](skills/spec-feature/) | Writes one feature's permanent spec and every screen it needs |
+| [spec-feature](skills/spec-feature/) | Writes one feature's permanent spec and its row in the featureset roster, and links the screens it uses |
 | [mockup-walkthrough](skills/mockup-walkthrough/) | Renders a clickable browser walkthrough, one page per screen and journey |
 | [mockup-storybook](skills/mockup-storybook/) | Builds Storybook stories, screen compositions and journey walkthroughs |
 | [mockup-annotate](skills/mockup-annotate/) | Injects the annotation overlay so stakeholders can comment on a walkthrough |

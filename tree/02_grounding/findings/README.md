@@ -12,7 +12,7 @@ evidence files from an existing repository; `concept-research` and `design-brand
 screenshots and page saves here, and nowhere else. The skills that own the artifacts seed their
 drafts from the evidence and show each graded value to the user as a proposal: `concept-brief`
 from `brief-seeds.md`, `design-brand` from `brand.md`, `architecture-techstack` from `stack.md`;
-`experience-journeys`, `spec-featuresets`, `experience-shell`, the `spec-feature` loop,
+`experience-journeys`, `experience-shell`, the `spec-feature` loop,
 `architecture-datamodel`, `architecture-system` and `quality-standards` read the rest as
 evidence; `experience-interaction` seeds `APP-DESIGN.md` from `interaction.md`, and `quality-interaction` reads it as the census to judge against. Findings are never artifacts and never decisions.
 
@@ -63,7 +63,7 @@ every findings file the run wrote (`tree/README.md § Frontmatter every markdown
    review while the brief seeds came from a package description is the failure this step exists
    to prevent.
 5. **Hand off**, naming what each skill now has to work from — the brief from `brief-seeds.md`,
-   the brand from `brand.md`, the stack from `stack.md`, the journeys and featuresets from
+   the brand from `brand.md`, the stack from `stack.md`, the journeys and the feature roster from
    `routes.md`, the screens from `screens.md`, the model from `datamodel.md`, the interaction census in `interaction.md` — and what the user
    should correct first, which is always the `needs_review` list. Once the user has accepted the
    report — corrections made, the `needs_review` list acknowledged — write `approved: <date>`

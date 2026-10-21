@@ -843,7 +843,7 @@ def _gate_segments(path: str) -> list[str]:
 
 def _paths_overlap(a: str, b: str) -> bool:
     """True when one path equals, contains or lies under the other. A `<...>` or `*` segment
-    matches any one segment, so a gate on `07_screens` meets `07_screens/<feature_slug>/<screen>.md`."""
+    matches any one segment, so a gate on `07_screens` meets `07_screens/<screen>.md`."""
     return all(_seg_eq(x, y) for x, y in zip(_gate_segments(a), _gate_segments(b)))
 
 
@@ -1395,6 +1395,34 @@ def check_old_contract_paths(repo: Path, rep: Report) -> None:
                 "no-old-contract-path",
                 f"names `{found}`, a cross-cutting contract file this collection no longer ships — "
                 f"cite the node under `tree/` that documents the part instead",
+            )
+
+
+# A screen is `_concept/07_screens/<screen>.md`, one segment below `07_screens/` (ADR 0020). The
+# match starts at the first segment and runs to the end of the path token, so `<feature_slug>/`
+# (a nested directory) and `<feature_slug>/<screen>.md` both name the nested shape.
+NESTED_SCREEN_PATH_RE = re.compile(r"_concept/07_screens/[^\s/`\"'),;|]+/[^\s`\"'),;|]*")
+
+
+def check_flat_screens(repo: Path, rep: Report) -> None:
+    """Rule `flat-screens`: no `_concept/07_screens/` path has a second segment below it. That
+    covers a node's `path:`, a skill's `produces` / `requires` / `prerequisites` path and a prose
+    citation, in `tree/`, `skills/`, `templates/`, `docs/` (ADRs excepted — they record the
+    decision and name the old shape on purpose), `README.md` and `CLAUDE.md`."""
+    files = [
+        *[repo / n for n in ("README.md", "CLAUDE.md") if (repo / n).is_file()],
+        *[p for p in _files(repo, "docs", (".md",)) if not p.relative_to(repo).as_posix().startswith("docs/adr/")],
+        *_files(repo, TREE_DIR, (".md", ".json")),
+        *_files(repo, "templates", (".md",)),
+        *_files(repo, "skills", (".md", ".py", ".yaml", ".yml")),
+    ]
+    for path in files:
+        for found in sorted(set(NESTED_SCREEN_PATH_RE.findall(path.read_text(encoding="utf-8")))):
+            rep.fail(
+                _where_of(repo, path),
+                "flat-screens",
+                f"names `{found}`, a nested screen path — screens are `_concept/07_screens/<screen>.md`, "
+                f"one file per screen directly under `07_screens/`",
             )
 
 
@@ -2492,6 +2520,7 @@ def run(repo: Path) -> Report:
     check_floorplan_shape(repo, rep)
     check_floorplan_cited(repo, rep)
     check_old_contract_paths(repo, rep)
+    check_flat_screens(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)
     check_docs(repo, skill_names, rep)
     return rep
