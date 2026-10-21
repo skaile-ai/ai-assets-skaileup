@@ -27,6 +27,16 @@ sources:
 
 A support or operations team member keeps this open all day: tickets arrive, and the job is to decide the next action on each one and move on. The queue is the daily surface; a ticket opens in full only when it needs a thread, attachments or history. Settings are visited rarely, to tune the queue and notifications.
 
+## Purpose
+
+Work arrives from outside and each item needs a quick decision, so the daily job is to work down a queue rather than to look up objects. That fact picks `master-detail` for the queue, where the person reads the selected row beside the list and takes the next one, and `overview` as the first screen, which answers "what needs me now" where an index would only list everything. `shell-sidebar` holds the frame because a team keeps several queues, saved views and settings in one grouped destination list. When the people instead look up, compare and edit known records that do not arrive as a stream, take `desktop-data-admin`, whose `list-report` index compares rows in a table. When the items move through stages that the person must see side by side, take `planning-board`.
+
+## Example apps
+
+- **Zendesk Support** — tickets are the objects; the agent's day runs in `queue`, and a ticket opens in `ticket` only when it needs its full thread.
+- **Linear Inbox** — issue notifications are the objects; the day runs in `queue`, reading each one beside the list, with `ticket` for the full issue.
+- **A hospital radiology referral desk** — incoming referrals are the objects; the coordinator triages them in `queue` and opens `ticket` for one that needs its attachments and history.
+
 ## Journey
 
 1. `home` → open "All tickets waiting on me" → `queue`

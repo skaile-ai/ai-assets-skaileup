@@ -26,6 +26,16 @@ sources:
 
 Someone with a phone in one hand does a handful of recurring jobs, such as logging time, checking an amount or sending an invoice, in a minute or two: pick the job from a hub, then walk through its steps. The hub is the app's one destination list and nothing frames it, so there is no navigation surface and no shell frame; `rulebook/rules.md § P22` maps `none` to the desktop dock and records a phone hub as an exception instead.
 
+## Purpose
+
+An app with a few recurring jobs that each take a minute or two: the phone opens on a hub of task tiles, an area lists what one job concerns, and a walk carries it to a completion state. The fact that picks the frame is that the users arrive with a job in mind and not an object to browse: with four to six destinations named as jobs, a tab bar or sidebar would only repeat the tiles, so the hub is the one destination list and no shell frame is drawn. The first screen is `hub-areas` rather than an overview because there is no queue of rows to answer "what needs me now" with; the tile is the answer. When people return to look at their own objects, such as orders or visits, take `mobile-companion`, whose bottom tabs keep those lists one tap away; when the app does one job only, take `simple-single-tool`, which has no hub to pick from.
+
+## Example apps
+
+- **Plumbing crew job app** — the jobs are logging time, photographing a fitted part and sending an invoice; the day runs from `hub` into `walk` for the invoice.
+- **Home-care visit app** — a carer picks one of five tiles, such as recording medication or noting a fall, and the daily work is the step-by-step `walk` that ends on a recorded visit.
+- **Personal tax-return helper** — the object is one return, split into jobs such as entering income or checking an amount; people choose a job on `hub` and complete it in `walk`.
+
 ## Journey
 
 1. `hub` → open a task tile, scan the rows of its area, press the area's primary action → `walk`

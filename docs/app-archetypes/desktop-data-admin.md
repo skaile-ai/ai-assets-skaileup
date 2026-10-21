@@ -27,6 +27,16 @@ sources:
 
 Back-office staff run an order system all day: they scan what needs attention, find and compare orders in a long list, work inside each order's page, and now and then create a complex order through a guided flow. They return to the same list and filters many times a day, so the list is compact and the view state survives every round trip.
 
+## Purpose
+
+Staff who work one primary kind of record all day: a long list of orders to filter, compare and act on, with each order holding child collections of its own. Two facts pick the frame and the first screen: the app has more than about five destinations used for sovereign work, so `shell-sidebar` fits better than a top bar, and staff open the app to see which orders are due or stuck, so the first screen is the `overview` of actionable rows rather than a dashboard of totals. Take `desktop-triage-inbox` instead when the day is spent clearing a queue one item at a time with the detail beside the list, and `desktop-analytics` when users mostly read aggregates and drill down only now and then.
+
+## Example apps
+
+- **Shopify admin** — orders and products are the objects; the day runs in `orders` and `order`, and `home` shows what needs attention first.
+- **Freight forwarder shipment desk** — a dispatcher filters the day's shipments in `orders` and works each booking's documents, charges and tracking in `order`.
+- **Municipal permit office** — building permits are the objects; a clerk checks applications in `orders` and creates a multi-party permit through `order-create`.
+
 ## Journey
 
 1. `home` → open "All orders due this week" → `orders`

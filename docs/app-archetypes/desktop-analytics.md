@@ -26,6 +26,16 @@ sources:
 
 A marketing analyst or campaign manager opens this app every morning to see how spend and results are moving, then follows one number down to the campaigns behind it. They compare campaigns in a table, study one campaign across several views, and read its full record when a figure needs explaining.
 
+## Purpose
+
+People who judge how something is going from figures first and read individual records second. The fact that picks the frame and the first screen is that the day starts from a number, not from a record: a sidebar holds the dashboards, the campaign index and settings as grouped destinations, and `home` is an `overview` so the first read is the ranked list of rows that need a decision, each block ending in a link into a filtered list. A `list-report` as the first screen would open on rows before the person knows which ones matter. When people mostly create and edit records and the figures are a side strip, take `desktop-data-admin`; when they work through a queue of items and clear it one by one, take `desktop-triage-inbox`.
+
+## Example apps
+
+- **Google Analytics** — traffic and conversions per property are the figures; the day starts in `home` and a question about one segment runs in `analysis`.
+- **Meta Ads Manager** — campaigns are the objects behind the spend figures; the work moves between `campaigns` and `campaign`.
+- **Hospital bed-occupancy monitor** — a plausible app for a hospital's operations team: ward occupancy and waiting admissions are the figures, and one ward's trend over the week is studied in `analysis`.
+
 ## Journey
 
 1. `home` → follow "View all campaigns" at the end of an attention block → `campaigns`

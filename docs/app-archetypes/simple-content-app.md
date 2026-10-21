@@ -25,6 +25,16 @@ sources:
 
 People who read a stream of documents each day — a client's briefs, a knowledge base, a news list — open this app to find one document, read it through and move to the next. They use it on a laptop or a phone, change a reading preference rarely, and leave again.
 
+## Purpose
+
+People read one document after another and almost never act on the documents themselves. Only two destinations exist, the reader and its settings, so `shell-topbar` carries them without a sidebar, and the first screen is `reader` because the daily task is reading with the list or tree beside the open document, not scanning a table of records. The pairing holds while the content is read-only and the destination list stays flat. When people instead work a queue and change each item's state, take `desktop-triage-inbox`; when the app does one job and no stream of documents (a calculator, a converter, a form), take `simple-single-tool`.
+
+## Example apps
+
+- **Feedly** — articles from followed sources are the objects; the day runs in `reader`, and reading preferences live in `settings`.
+- **Law-firm precedent library** — judgments and clauses grouped by client and matter are read one after another; the work happens in `reader`.
+- **Canteen recipe cards** — a kitchen team opens one recipe at a time from a category tree on a tablet or phone; `reader` carries the day.
+
 ## Journey
 
 1. `reader` → choose Settings in the top bar → `settings`

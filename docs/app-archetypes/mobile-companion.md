@@ -28,6 +28,16 @@ sources:
 
 A person who keeps a phone-sized view of things they already own, such as the parcels they expect, and opens it several times a day. They check what needs attention now, find one parcel, read where it stands, and rarely change a preference.
 
+## Purpose
+
+A mobile companion gives a person a phone-sized view of objects they already own, so that a glance answers where each one stands. The users open it many times a day for seconds at a time, and the data is one list of one kind of object, a few dozen items at most. That fact picks `shell-mobile-tabs` over a top bar with a menu, because three destinations fit within thumb reach and stay visible one level deeper, and it picks `overview` as the first screen because the first question is "what needs me now", not "where is everything". When the person mostly creates records on site and works a queue of them, take `mobile-field-capture`; when the person arrives with a task to finish rather than an object to check, take `mobile-guided-hub`.
+
+## Example apps
+
+- **DHL Paket app** — parcels are the objects; the day runs in `home` for what arrives today and in `parcel` for one shipment's tracking steps.
+- **Wise** — money transfers are the objects; a person opens `home` to see the transfer still in progress and `parcel` to read its status and fees.
+- **A public library's loans app** — loans and holds are the objects; `parcels` lists what is due, and `parcel` shows one item with its renewal action.
+
 ## Journey
 
 1. `home` → tap the Parcels tab → `parcels`

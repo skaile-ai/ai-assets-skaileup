@@ -26,6 +26,16 @@ sources:
 
 A small team or a solo planner opens the board every day to see where each task stands and to move it to the next stage, on a laptop at the desk or on a phone between meetings. A card opens a drawer for a quick look and a quick change, and the task's own page holds the sections, subtasks and history. Settings are visited rarely, to change the board's stages, notifications and account details.
 
+## Purpose
+
+The planning board is for a small team that moves one kind of item through a fixed run of stages and wants to see all of them at once, on a laptop or a phone. The shell is `shell-topbar` because the app has few flat destinations, the board and a rarely visited settings page, so a sidebar would hold one real entry. The first screen is the `board` rather than an `overview` because the people already know what needs them: the columns are the answer, and the next move is dragging a card to its next stage. When the work is a queue of items that each need a decision, one after another, take `desktop-triage-inbox`; when the team compares many records of several objects in tables and runs wizards to create them, take `desktop-data-admin`.
+
+## Example apps
+
+- **Trello** — cards are the objects and lists are the stages; the day runs in `board`, and a card's checklist and attachments live in `task`.
+- **Renovation job tracker** — a contractor moves each customer's job from quote to ordered, installed and signed off; the crew lead works in `board` and opens `task` for the material list.
+- **Newsroom story desk** — each story moves from pitch to edit to published; editors move stories in `board` and open `task` to read the draft's notes and history.
+
 ## Journey
 
 1. `board` → open a card, read it in the drawer, choose "Open" → `task`

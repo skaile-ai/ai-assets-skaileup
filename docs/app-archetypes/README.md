@@ -2,6 +2,14 @@
 
 An app archetype is a reusable composition a project starts from: a device and a data weight lead to one shell frame, the shell frame holds screen floorplans in journey order, and a short list records which defaults the archetype commonly bends. It is research, not a rule: an archetype is not a `_concept/` part, it is not shipped with the collection, and no skill reads it yet. Each card is reviewed in a throwaway dashboard before anything folds into `rulebook/`; the floorplans, shell frames and postures the cards name are the ones in [`rulebook/floorplans/`](../../rulebook/floorplans/) and the navigation model is the one in [`rulebook/rules.md`](../../rulebook/rules.md) (P18 picks the frame and the floorplans, P22 records the navigation model).
 
+## Why archetypes
+
+A project knows two facts about its app before it knows its screens: the device it runs on and how much data each session handles. Those two facts constrain the shell frame and the first screens more than anything learned later, yet every project re-derives that composition from `rulebook/rules.md` on its own. An archetype records one derivation once, with its sources, so a project starts from a reviewed composition and spends its design effort on what is particular to it. The ten together use every floorplan at least once, so reviewing the archetypes reviews the rulebook's floorplans in the company they keep in real apps.
+
+A card answers four questions in order: what the app is for and why this shape (`## Purpose`), which real apps have it (`## Example apps`), how a day runs through it (`## Journey`) and why each screen got its floorplan (`## Why these floorplans`). The rest is evidence (`## What the sources add`), the phone case (`## Narrow`) and what the reviewer decides (`## Open`).
+
+**Worked example.** Studio Tracker, the app the rulebook previews draw, is a desktop web app whose staff work a long list of projects all day: desktop and data-heavy, so the matrix gives `desktop-data-admin`. Its card says the shell is `shell-sidebar`, the day runs `home` → `orders` → `order`, creating an order is a `wizard` only when it takes more than one screen of fields, and `settings` is one sidebar entry. The project keeps that composition, renames the screens to its own objects (`projects`, `project`) and answers the card's `## Open` questions for its own case; what it does not do is choose between a sidebar and a top bar again.
+
 ## The matrix
 
 The device axis has two values, desktop and mobile; an archetype that works on both is listed under `both` and appears in both desktop and mobile review.
@@ -30,7 +38,7 @@ Across the ten cards every floorplan in `rulebook/floorplans/` appears at least 
 
 ## The card schema
 
-A card is `docs/app-archetypes/<id>.md`: YAML frontmatter between two `---` lines, then a markdown body of at most 60 lines. All frontmatter keys are required.
+A card is `docs/app-archetypes/<id>.md`: YAML frontmatter between two `---` lines, then a markdown body of at most 70 lines. All frontmatter keys are required.
 
 ```yaml
 ---
@@ -56,7 +64,9 @@ Allowed values: `posture` is sovereign, transient or auxiliary; `density` is com
 
 The body has a `# <title>` line, then exactly these headings in this order. A stub carries the single line `TODO` under each heading, and as the intro paragraph.
 
-- Intro: one paragraph between the title line and `## Journey`: who uses the app daily and for what, in two or three sentences.
+- Intro: one paragraph between the title line and `## Purpose`: who uses the app daily and for what, in two or three sentences.
+- `## Purpose`: one paragraph: what the composition is for, which fact about the users or the data picks the shell frame and the first screen, and which neighbouring archetype a project should take instead when that fact does not hold (named by id in backticks). Its first sentence is the archetype's line on the dashboard index, so it stands on its own and starts with the people or the app, not with "this composition".
+- `## Example apps`: three bullets, each a demo use case: a bold label naming a real product or a plausible app, then one sentence on its object or task and which screen carries the daily work, the screen id in backticks: ``- **Shopify admin** — orders and products are the objects; the day runs in `orders` and `order`.``
 - `## Journey`: a numbered list, one hop per line, screen ids in backticks and the arrow `→`: ``1. `home` → open an order → `order` ``. The last line ends on a completion state or on the sovereign screen.
 - `## Why these floorplans`: one bullet per screen, starting with the screen id in backticks and the floorplan in parentheses, then the task phrase from the P18 table in quotes and one clause why: ``- `orders` (list-report): "the index of one `navigation: primary` object" — rows are compared and acted on``.
 - `## What the sources add`: three to six bullets, each one fact that changes a choice and each ending with the source title in parentheses, exactly as written in `sources[].title`.
@@ -67,6 +77,6 @@ Bodies use headings, paragraphs, `-` bullets, `1.` numbered lists, inline code, 
 
 ## Review comments
 
-The review dashboard is a throwaway Vite app in `.scratch/archetypes/` (gitignored, local to this checkout). Run `npm run dev` there to start it. That command validates the cards, regenerates the pages and serves them at `http://127.0.0.1:3041/`. Each archetype page shows the shell frame and every screen in journey order, with the rulebook preview at 1040 px and 390 px side by side. A comment made with the toolbar records the page route as its target. Its Context reads `<screen id> · Wide|Narrow · <px> — <floorplan>`, which names the screen and the width.
+The review dashboard is a throwaway Vite app in `.scratch/archetypes/` (gitignored, local to this checkout). Run `npm run dev` there to start it. That command validates the cards, regenerates the pages and serves them at `http://127.0.0.1:3041/`. The index shows the matrix as tiles, each with the first sentence of its card's `## Purpose` and its floorplans in journey order, then the floorplan coverage table. An archetype page shows the facts, the purpose beside the example apps, the journey with a step strip that jumps to each screen, then the shell frame and every screen in journey order with the rulebook preview at 1040 px and 390 px, and closes with the sources, what they add, the narrow case and the open questions; the top bar links to the previous and next archetype. A comment made with the toolbar records the page route as its target. Its Context reads `<screen id> · Wide|Narrow · <px> — <floorplan>`, which names the screen and the width.
 
 Comments live in `.scratch/archetypes/.data/annotations`. Read them before folding a card into `rulebook/`, with `curl -s 'http://127.0.0.1:3041/__annotations?format=markdown'` while the dashboard runs. Answer each one with `POST /__annotations/resolve` and `{"ids":["<inboxId>"],"status":"implemented"|"rejected","resolution":"<why>"}`. The `annotations_list` tool does not see these comments. It reads `.data/annotations` at the repository root, while the dashboard writes under its own Vite root, so the curl listing is the reader of record.

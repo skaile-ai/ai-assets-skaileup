@@ -26,6 +26,16 @@ sources:
 
 A person who opens one small lookup tool most working days, on a laptop or a phone, to find something across a few views of the same data. The first run walks through a short setup once; after that the tool is the whole app, and its settings are a rare visit.
 
+## Purpose
+
+One dataset seen through a few sibling views, used on a laptop or a phone, with a short setup the first time. The fact that picks `shell-topbar` is that the app has one destination: a sidebar or a bottom tab bar would hold a single entry, so the top bar carries the brand, a search field and the settings link, and the work area gets the full width. The first screen is the `wizard` because the setup answers are independent, asked once and reused; from the second visit on the app opens on the `tabbed-tool`, whose tabs, shared filter row and overlay detail suit views of the same rows. When the data is content to read rather than look up across views, a project should take `simple-content-app` instead, whose first screen is a `reader`. When the work needs several docked panes at once on a desktop, `desktop-workbench` fits better than a single column with tabs.
+
+## Example apps
+
+- **Can I use** — browser features are the objects; the day runs in `tool`, where tabs switch between support, notes and known issues for one feature.
+- **Harbour tide and wind lookup** — a sailing club's lookup for one station's tide tables and wind forecasts; the first run picks the station in `setup` and the daily check runs in `tool`.
+- **Clinic drug reference** — drugs are the objects; staff open `tool` between patients to compare dosage, interactions and stock across tabs, and rarely visit `settings`.
+
 ## Journey
 
 1. `setup` → answer each step, review the summary and confirm → completion state that names what was set up, then "Open the tool" → `tool`

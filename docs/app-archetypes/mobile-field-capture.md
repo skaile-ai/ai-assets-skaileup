@@ -27,6 +27,16 @@ sources:
 
 A technician or inspector works through the day's assigned jobs on site, one hand free, in short sessions between locations. They open the app to see what is due next, read one job's facts and record findings as they go. The queue is long and data-heavy, but each visit shows one job and one question at a time.
 
+## Purpose
+
+People who carry a long queue of assigned records but handle one at a time, on site, on a phone. The queue of jobs is the one object that matters and it holds many items, so the shell is `shell-mobile-tabs` with three to five destinations in thumb reach, and the first screen is an `overview` that answers "what is due next" instead of showing totals or a grid of tiles. Take `mobile-companion` instead when the user mostly reads and checks a few records and rarely records anything; the tipping fact is whether each visit ends in a capture. Take `mobile-guided-hub` when there is no queue to work through, only a few task-led areas the user walks through in turn.
+
+## Example apps
+
+- **Dynamics 365 Field Service mobile** — bookings for service technicians are the objects; the day runs in `jobs` and `job`, with the status action fixed at the bottom of `job`.
+- **SafetyCulture inspections** — a safety inspector works through scheduled site inspections, and the daily work is the question-by-question checklist in `capture`.
+- **Park playground inspections** — a city parks crew visits assigned playgrounds, reads each site's history in `job` and records findings and photos in `capture`.
+
 ## Journey
 
 1. `home` → open "All jobs due today" → `jobs`

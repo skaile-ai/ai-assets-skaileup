@@ -25,6 +25,16 @@ sources:
 
 A person who spends the whole day on one workspace uses it: an editor or analyst who switches between several sources, reads each source's surroundings beside the work, and works one plan in a few modes. The app is one window with docked panes, a toolbar and a status bar, so there is no destination list to move through; the tree and the work are the content.
 
+## Purpose
+
+A desktop tool that holds one workspace open for long sessions, where the person edits several sources side by side and the tree of those sources is the content. That fact picks `shell-dock` with no primary surface: there is one workspace and no destination list to choose between, so panes, a toolbar and a status bar replace a sidebar. It also picks `three-pane` as the first screen, because a source rail, a work area and a drawer for each source's surroundings serve many sources without leaving the window. When the app has many objects of different kinds, each with its own index and page, take `desktop-data-admin`, where a sidebar lists the destinations. When the work is clearing a queue of incoming items one by one, take `desktop-triage-inbox`, whose first screen is the queue rather than the sources.
+
+## Example apps
+
+- **VS Code** — source files are the objects and the folder tree is the content; the day runs in `work`, with the explorer, the editor and the panel docked together.
+- **DaVinci Resolve** — one video project is edited as cut, colour and audio; the work happens in `editor`, where the mode menu switches between the views of one timeline.
+- **Zotero** — a researcher reads and annotates sources from many collections; the day runs in `work`, with the collection tree, the item list and the item pane.
+
 ## Journey
 
 1. `work` → open one source's plan for deeper editing → `editor`
