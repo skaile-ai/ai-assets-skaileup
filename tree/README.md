@@ -135,7 +135,7 @@ The first level is numbered and contiguous, and nothing below it is: the prefix 
 
 ## Ownership
 
-Read anything, in any order; write only the artifacts you own, through the owner node's contract. `02_grounding/` is readable by every skill. An artifact another skill owns takes only `proposed` entries, and only from a skill listed under that node's `may_propose`. `06_behaviors/` and `10_blueprint/architecture.md` are optional; a reader checks for existence before reading.
+Read anything, in any order; write only the artifacts you own, through the owner node's contract. `02_grounding/` is readable by every skill. An artifact another skill owns takes only `proposed` entries, and only from a skill listed under that node's `may_propose`. A project file outside `_concept/` other than `APP-DESIGN.md` (a `CONTEXT.md`, docs, ADRs) is a source to read and cite, and stays the project's own: a term or decision it lacks is proposed into the `_concept/` artifact that owns that kind of entry. `06_behaviors/` and `10_blueprint/architecture.md` are optional; a reader checks for existence before reading.
 
 A node's frontmatter carries two keys, both required:
 
