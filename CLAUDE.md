@@ -1,7 +1,7 @@
 # ai-assets-skaileup-tree
 
-The skaileup collection as a **mirror tree**: the same ~9 domains and 33 skills as
-[`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp), but the
+The skaileup collection as a **mirror tree**: the same ~9 domains as
+[`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp), 31 skills, but the
 instructions live in `tree/` — a directory that mirrors `_concept/` one node per part — and
 a skill is only the route through those nodes. `-mp` stays live and untouched; projects opt
 in via `skaile.yaml`.

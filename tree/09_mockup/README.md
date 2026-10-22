@@ -1,13 +1,13 @@
 ---
 path: _concept/09_mockup/
-summary: the reviewable prototype of the design and the feedback that edits the specs
+summary: the reviewable mockup of the design and the feedback that edits the specs
 owner: []
 may_propose: []
 ---
 
 # _concept/09_mockup/
 
-The prototype stakeholders review before the app exists, and the loop that carries what they say back into the specs. The prototype is derived from the specs and the data model; the specs stay the source of truth, and nothing under `09_mockup/` is read as input by a spec skill except `feedback/devlog.md`, which tells a re-render which edits to keep.
+The mockup stakeholders review before the app exists, and the loop that carries what they say back into the specs. The mockup is derived from the specs and the data model; the specs stay the source of truth, and nothing under `09_mockup/` is read as input by a spec skill except `feedback/devlog.md`, which tells whoever rewrites a story or an entity component from a changed spec which applied edits to keep.
 
 ## Contents
 

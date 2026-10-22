@@ -3,7 +3,7 @@
 // Reads `_concept/03_brand/brand.tokens.json` (and `brand.dark.tokens.json` when it exists),
 // flattens them to `--token-*` custom properties as `tree/03_brand/brand.tokens.md § Flattening
 // to CSS` says, and maps them onto the `--ui-*` variables Nuxt UI components read, so the
-// prototype wears the brand. Without a token file the output is a comment and Nuxt UI keeps
+// mockup wears the brand. Without a token file the output is a comment and Nuxt UI keeps
 // its defaults. `vite.config.ts` calls `writeTokens()` on every start; `npm run tokens` is the
 // manual form.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'

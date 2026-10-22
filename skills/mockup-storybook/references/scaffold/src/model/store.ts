@@ -1,4 +1,4 @@
-// The fake data layer of the prototype: seed rows in memory, writes that take a moment and can
+// The fake data layer of the mockup: seed rows in memory, writes that take a moment and can
 // be made to fail. No network, no persistence. Provided once per story by the preview decorator.
 import { inject, provide, reactive, ref, watch } from 'vue'
 import type { InjectionKey, Ref } from 'vue'

@@ -38,7 +38,7 @@ Run `npm run storybook`, open the toolbar's pointer icon at the bottom right, cl
 
 - A note on an element written in one of our own templates names it as `src/entities/Task/TaskEditor.vue:52:6`. A click on an element that a Nuxt UI component renders (a button, an input) names only the story's route, but the note's `vueComponents` still lists our components around it, which is what triage reads.
 - `GET http://localhost:6006/__annotations?format=markdown` lists the open notes while Storybook runs.
-- Close notes with `npx tsx scripts/resolve.ts --ids <inboxId>,<inboxId> --status implemented|rejected --resolution "<why>"` (`rejected` needs a reason). `mockup-feedback` calls this after it applies a patch.
+- Close notes with `npx tsx scripts/resolve.ts --ids <inboxId>,<inboxId> --status implemented|rejected --resolution "<why>"` (`rejected` needs a reason). `mockup-feedback`'s `apply.py` runs this after its commit, for the notes the applied patches answered.
 - The static build has no toolbar and no endpoint; annotate on `storybook dev`.
 - `.data/` is local state: keep it out of git.
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// The whole click-dummy. `start` is the route the app opens at, so a journey story starts at the
+// The whole app in one story. `start` is the route the app opens at, so a journey story starts at the
 // journey's first screen; the router is shared between stories, so it is reset on every mount.
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'

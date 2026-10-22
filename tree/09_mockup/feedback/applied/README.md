@@ -52,7 +52,7 @@ One resolution per note a checked patch answers, with a `state`:
 | `state` | Meaning | Extra keys |
 |---|---|---|
 | `resolved` | the note is closed in the inbox with `status` and `resolution` | none |
-| `pending` | every patch landed, but the prototype package is not installed or its `resolve.ts` failed | `command`, the exact command that closes the note; `error` when `resolve.ts` ran and failed |
+| `pending` | every patch landed, but the mockup package is not installed or its `resolve.ts` failed | `command`, the exact command that closes the note; `error` when `resolve.ts` ran and failed |
 | `open` | a patch listing the note was unchecked or failed, so the note stays open | `reason` |
 
 ## Writing it

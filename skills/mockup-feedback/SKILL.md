@@ -1,6 +1,6 @@
 ---
 name: mockup-feedback
-description: "Use when stakeholder notes left on the Storybook prototype need to land in the concept, or when the user says 'work through the feedback', 'apply the annotations', 'what did the reviewers say'. Routes each open note to the spec, data-model entity or glossary term it belongs in, authors a reviewable diff for it, and — after you approve the review file — applies the approved diffs in one commit and closes the notes."
+description: "Use when stakeholder notes left on the Storybook mockup need to land in the concept, or when the user says 'work through the feedback', 'apply the annotations', 'what did the reviewers say'. Routes each open note to the spec, data-model entity or glossary term it belongs in, authors a reviewable diff for it, and — after you approve the review file — applies the approved diffs in one commit and closes the notes."
 version: "0.2.0"
 metadata:
   requires:
@@ -8,7 +8,7 @@ metadata:
   artifacts:
     requires:
       # The notes sit in the annotation inbox, not in an artifact; the storybook id
-      # only says a prototype exists for people to annotate.
+      # only says a mockup exists for people to annotate.
       - { id: storybook }
       - { id: screens }
       - { id: datamodel }
@@ -21,7 +21,7 @@ metadata:
 
 # mockup-feedback
 
-One pass over the open notes of the project's annotation inbox: read, triage, patch, apply, resolve. It ends with edited screen specs, proposals in `model.ts` and the glossary, an audit trail, exactly one commit and the answered notes closed. The pass stops at the review file: nothing is written into the specs or the model until the user approves it, and a screen takes human-approved patches only (`tree/07_screens/[screen].md § Patching (mockup-feedback)`). It never edits the prototype; `mockup-storybook` builds a proposed field into the editor.
+One pass over the open notes of the project's annotation inbox: read, triage, patch, apply, resolve. It ends with edited screen specs, proposals in `model.ts` and the glossary, an audit trail, exactly one commit and the answered notes closed. The pass stops at the review file: nothing is written into the specs or the model until the user approves it, and a screen takes human-approved patches only (`tree/07_screens/[screen].md § Patching (mockup-feedback)`). It never edits the mockup; `mockup-storybook` builds a proposed field into the editor.
 
 ## Route
 

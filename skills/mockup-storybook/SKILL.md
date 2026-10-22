@@ -1,6 +1,6 @@
 ---
 name: mockup-storybook
-description: "Use when a screen, an entity editor or a journey should be seen and critiqued as a running prototype, or when the user says 'prototype this screen', 'build the storybook', 'click-dummy', 'try the editor for this entity'. Grows one Vue Storybook package layer by layer: floorplans, screens, entity editors, the whole app, journeys."
+description: "Use when a screen, an entity editor or a journey should be seen and critiqued as a running mockup, or when the user says 'prototype this screen', 'build the storybook', 'click-dummy', 'try the editor for this entity'. Grows one Vue Storybook package layer by layer: floorplans, screens, entity editors, the whole app, journeys."
 version: "0.1.0"
 metadata:
   requires:

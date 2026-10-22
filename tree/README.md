@@ -79,8 +79,8 @@ _concept/                                the artifact tree, its ownership rule a
 ├── 08_dossiers/                         the concept-side working record of each feature, frozen when its loop ends
 │   └── <feature_slug>/                  the dossier directory of one feature
 │       └── index.md                     one feature's framing, grill answers and rejected options, frozen at the end
-├── 09_mockup/                           the reviewable prototype of the design and the feedback that edits the specs
-│   ├── feedback/                        how open prototype notes become spec edits and model proposals
+├── 09_mockup/                           the reviewable mockup of the design and the feedback that edits the specs
+│   ├── feedback/                        how open mockup notes become spec edits and model proposals
 │   │   ├── devlog.md                    append-only log of feedback edits, read so a regeneration keeps them
 │   │   ├── applied/                     committed per-round record of patches landed, failed and notes closed
 │   │   ├── patches/                     proposed anchored patches and the review file a human approves

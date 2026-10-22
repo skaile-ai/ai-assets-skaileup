@@ -1,13 +1,13 @@
 ---
 path: _concept/09_mockup/feedback/
-summary: how open prototype notes become spec edits and model proposals
+summary: how open mockup notes become spec edits and model proposals
 owner: [mockup-feedback]
 may_propose: []
 ---
 
 # _concept/09_mockup/feedback/
 
-The one place a stakeholder's note on the prototype becomes an edit. The notes themselves are not stored here: they live in the project's annotation inbox, `<project>/.data/annotations/`, where the prototype's annotation toolbar writes them (`tree/09_mockup/storybook/README.md § Annotation`). `mockup-feedback` reads the open notes, routes each to the file it belongs in, authors one reviewable patch per note and, after a human approves the review file, applies the approved patches in one commit and closes the notes in the inbox. A wrong route here edits the specs, or the data model, that every downstream artifact is generated from.
+The one place a stakeholder's note on the mockup becomes an edit. The notes themselves are not stored here: they live in the project's annotation inbox, `<project>/.data/annotations/`, where the mockup's annotation toolbar writes them (`tree/09_mockup/storybook/README.md § Annotation`). `mockup-feedback` reads the open notes, routes each to the file it belongs in, authors one reviewable patch per note and, after a human approves the review file, applies the approved patches in one commit and closes the notes in the inbox. A wrong route here edits the specs, or the data model, that every downstream artifact is generated from.
 
 ## Contents
 
@@ -42,7 +42,7 @@ Open notes in `.data/annotations/items/` → `triage/<round>.json` → `patches/
 
 ### Filing feedback (mockup-feedback)
 
-One pass over the open notes: triage, patch, apply, resolve. It ends with edited specs, proposals in the model, an audit trail and exactly one commit. It never edits the prototype's code; `mockup-storybook` re-derives that from the changed specs and model. The pass stops in the middle: step 4 hands a human the review file and waits, everything before it is proposal and everything after is execution, and nothing is written into `_concept/` spec files until that approval. Patch and review-file formats: `tree/09_mockup/feedback/patches/README.md`.
+One pass over the open notes: triage, patch, apply, resolve. It ends with edited specs, proposals in the model, an audit trail and exactly one commit. It never edits the mockup's code; `mockup-storybook` re-derives that from the changed specs and model. The pass stops in the middle: step 4 hands a human the review file and waits, everything before it is proposal and everything after is execution, and nothing is written into `_concept/` spec files until that approval. Patch and review-file formats: `tree/09_mockup/feedback/patches/README.md`.
 
 1. **Read the open notes.** The `annotation-inbox` skill lists them from `<project>/.data/annotations/`; skim them so the round's size is known. No open note means nothing to file: say so and stop. `patches/` and the inbox's `.data/` are local state, so append `_concept/09_mockup/feedback/patches/` and `.data/` to the project `.gitignore` when absent. Several rounds' worth of notes are one round unless the user asks to split by story; merging is cheap, because every patch is traceable to its `inboxId`.
 2. **Triage, deterministic, no judgement.**
@@ -62,8 +62,8 @@ One pass over the open notes: triage, patch, apply, resolve. It ends with edited
        _concept/ _concept/09_mockup/feedback/
    ```
 
-   The script applies each checked patch best-effort; after `model.ts` changed it runs `gen.ts`, and when `gen.ts` rejects the file it restores `model.ts` and fails every proposal patch with the generator's message. It then writes `applied/<round>.json`, appends to `devlog.md`, makes one commit, and only then closes the answered notes through the prototype's `scripts/resolve.ts` (`tree/09_mockup/feedback/applied/README.md`). Exit 2 means every patch failed: nothing was written or committed; fix the diffs and re-run, no `--force` needed. Exit 1 is a pre-flight refusal it caught itself, or a failed commit, after which the tree is restored and no note is closed. Exit 0 may still carry failures, recorded per patch with their error.
-6. **Report** the applied and failed counts, the commit message, and the paths of `applied/<round>.json` and the devlog. Print each failure with its reason and the retry: edit the review file, uncheck what already landed, re-run with `--force`. Name every note whose resolution is `pending` with the command from `applied/<round>.json`: the prototype package is not installed, so the user runs that command once to close the notes. When the review file carried a `## Test impact` section, say that the changed specs affect test coverage and name the skill that regenerates it. When the round changed `model.ts`, name `mockup-storybook` as the skill that builds the new field into the editor.
+   The script applies each checked patch best-effort; after `model.ts` changed it runs `gen.ts`, and when `gen.ts` rejects the file it restores `model.ts` and fails every proposal patch with the generator's message. It then writes `applied/<round>.json`, appends to `devlog.md`, makes one commit, and only then closes the answered notes through the mockup package's `scripts/resolve.ts` (`tree/09_mockup/feedback/applied/README.md`). Exit 2 means every patch failed: nothing was written or committed; fix the diffs and re-run, no `--force` needed. Exit 1 is a pre-flight refusal it caught itself, or a failed commit, after which the tree is restored and no note is closed. Exit 0 may still carry failures, recorded per patch with their error.
+6. **Report** the applied and failed counts, the commit message, and the paths of `applied/<round>.json` and the devlog. Print each failure with its reason and the retry: edit the review file, uncheck what already landed, re-run with `--force`. Name every note whose resolution is `pending` with the command from `applied/<round>.json`: the mockup package is not installed, so the user runs that command once to close the notes. When the review file carried a `## Test impact` section, say that the changed specs affect test coverage and name the skill that regenerates it. When the round changed `model.ts`, name `mockup-storybook` as the skill that builds the new field into the editor.
 
 ## Checks
 

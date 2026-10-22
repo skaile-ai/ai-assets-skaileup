@@ -46,6 +46,7 @@ collapsed panel that does not prove the built UI realises the layout.
 - The shell is no longer gated on features; it reads the navigation model and the one
   destination list.
 - `mockup-walkthrough` can render the screen's floorplan geometry, wide and narrow, instead of
-  only the wireframe text.
+  only the wireframe text (since [ADR 0026](0026-the-mockup-stage-is-one-vue-storybook-package.md)
+  this is the screen's layout story in the Storybook package).
 - Existing `07_screens/<feature>/<screen>.md` trees are not migrated: the owner chose a clean
   slate, with no legacy path.
