@@ -1,0 +1,143 @@
+/* Shared base of the 16 floorplan components. Colours and radius come from Nuxt UI's --ui-* variables
+   (set by src/styles/tokens.css), never hard-coded. Layout breakpoints: wide >= 960px, narrow <= 640px
+   unless a floorplan's README states others. */
+[data-floorplan] {
+  --fp-bg: var(--ui-bg-muted);
+  --fp-surface: var(--ui-bg);
+  --fp-surface-2: var(--ui-bg-elevated);
+  --fp-border: var(--ui-border);
+  --fp-fg: var(--ui-text-highlighted);
+  --fp-muted: var(--ui-text-muted);
+  --fp-tier3: var(--ui-text-dimmed);
+  --fp-accent: var(--ui-primary);
+  --fp-on-accent: var(--ui-bg);
+  --fp-radius: var(--ui-radius);
+  --fp-gap: 12px;
+  position: relative;
+  background: var(--fp-bg);
+  color: var(--ui-text);
+  font-size: 14px;
+  line-height: 1.4;
+}
+[data-floorplan],
+[data-floorplan] *,
+[data-floorplan] *::before,
+[data-floorplan] *::after {
+  box-sizing: border-box;
+}
+[data-floorplan] button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* app-like floorplans fill the height they are given; page-like ones are at least that tall.
+   A shell sets --fp-h on its work area so a screen floorplan fits inside it. */
+[data-floorplan].fp-fill {
+  height: var(--fp-h, 100vh);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+[data-floorplan].fp-page {
+  min-height: var(--fp-h, 100vh);
+  display: flex;
+  flex-direction: column;
+}
+
+/* region building blocks */
+.fp-shell {
+  flex: none;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: var(--fp-gap);
+  padding: 0 var(--fp-gap);
+  background: var(--fp-surface-2);
+  border-bottom: 1px solid var(--fp-border);
+  color: var(--fp-muted);
+  font-size: 12px;
+}
+.fp-card {
+  background: var(--fp-surface);
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius);
+  padding: var(--fp-gap);
+  min-width: 0;
+}
+.fp-ph {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px dashed var(--fp-border);
+  border-radius: var(--fp-radius);
+  color: var(--fp-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.fp-btn {
+  border: 1px solid var(--fp-border);
+  background: var(--fp-surface);
+  border-radius: var(--fp-radius);
+  padding: 6px 12px;
+}
+.fp-btn.primary {
+  background: var(--fp-accent);
+  border-color: var(--fp-accent);
+  color: var(--fp-on-accent);
+  font-weight: 600;
+}
+.fp-ibtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius);
+  background: var(--fp-surface);
+  font-weight: 600;
+}
+.fp-sp {
+  flex: 1;
+}
+.fp-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--ui-bg-inverted);
+  opacity: 0.25;
+  z-index: 5;
+}
+
+/* navigation entries of the shell floorplans (NavLink.vue) */
+.fp-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: var(--fp-radius);
+  color: var(--fp-fg);
+  text-decoration: none;
+}
+.fp-nav.is-current {
+  background: var(--fp-surface-2);
+  font-weight: 600;
+}
+.fp-ic {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid currentColor;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}

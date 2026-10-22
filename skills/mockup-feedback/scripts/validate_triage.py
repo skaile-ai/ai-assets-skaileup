@@ -2,14 +2,14 @@
 """validator.py — structural validator for triage output.
 
 Usage:
-  python validator.py <triage-json> [<session-json>]
+  python validate_triage.py <triage-json> [<inbox-dir>]
 
 Checks:
-  - Every annotation in the session appears in exactly one of groups or unresolved.
-  - No annotation ID appears in both groups and unresolved.
-  - No annotation ID appears more than once across groups.
-  - All group file paths are non-empty strings.
-  - unresolved entries have annotationId + reason.
+  - Every open note of the inbox appears in exactly one of groups or unresolved.
+  - No inboxId appears in both groups and unresolved, or twice across groups.
+  - All group file paths are non-empty strings; `entity` is set exactly when the
+    file is the data model.
+  - unresolved entries have inboxId + reason.
 
 Exit codes: 0 PASS, 2 FAIL, 1 internal error.
 """
@@ -18,6 +18,8 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+
+MODEL_FILE = "10_blueprint/datamodel/model.ts"
 
 
 class Report:
@@ -35,7 +37,16 @@ class Report:
             print("FAIL", v)
 
 
-def validate(triage: dict, session: dict | None, r: Report) -> None:
+def open_item_ids(inbox: Path) -> set[str]:
+    ids: set[str] = set()
+    for path in sorted((inbox / "items").glob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if data.get("status", "open") == "open":
+            ids.add(data.get("inboxId", path.stem))
+    return ids
+
+
+def validate(triage: dict, inbox_ids: set[str] | None, r: Report) -> None:
     groups = triage.get("groups", [])
     unresolved = triage.get("unresolved", [])
 
@@ -43,58 +54,54 @@ def validate(triage: dict, session: dict | None, r: Report) -> None:
     for g in groups:
         if not g.get("file"):
             r.add("group has empty or missing 'file'")
-        for aid in g.get("annotations", []):
-            if aid in grouped_ids:
-                r.add(f"annotation {aid!r} appears in multiple groups")
-            grouped_ids.add(aid)
+        if (g.get("file") == MODEL_FILE) != bool(g.get("entity")):
+            r.add(f"group {g.get('file')!r}: 'entity' must be set exactly for {MODEL_FILE}")
+        if not g.get("items"):
+            r.add(f"group {g.get('file')!r} has no items")
+        for nid in g.get("items", []):
+            if nid in grouped_ids:
+                r.add(f"note {nid!r} appears in multiple groups")
+            grouped_ids.add(nid)
 
     unresolved_ids: set[str] = set()
     for u in unresolved:
-        aid = u.get("annotationId")
-        if not aid:
-            r.add("unresolved entry missing 'annotationId'")
+        nid = u.get("inboxId")
+        if not nid:
+            r.add("unresolved entry missing 'inboxId'")
         if not u.get("reason"):
-            r.add(f"unresolved entry {aid!r} missing 'reason'")
-        if aid in unresolved_ids:
-            r.add(f"annotation {aid!r} appears in unresolved more than once")
-        unresolved_ids.add(aid)
+            r.add(f"unresolved entry {nid!r} missing 'reason'")
+        if nid in unresolved_ids:
+            r.add(f"note {nid!r} appears in unresolved more than once")
+        unresolved_ids.add(nid)
 
     overlap = grouped_ids & unresolved_ids
     if overlap:
-        r.add(f"annotation(s) appear in both groups and unresolved: {overlap}")
+        r.add(f"note(s) appear in both groups and unresolved: {overlap}")
 
-    if session:
-        session_ids = {a.get("id") for a in session.get("annotations", [])}
+    if inbox_ids is not None:
         all_output = grouped_ids | unresolved_ids
-        missing = session_ids - all_output
-        extra = all_output - session_ids
+        missing = inbox_ids - all_output
+        extra = all_output - inbox_ids
         if missing:
-            r.add(f"annotations in session but missing from triage output: {missing}")
+            r.add(f"open notes in the inbox but missing from triage output: {missing}")
         if extra:
-            r.add(f"annotation IDs in triage output but not in session: {extra}")
+            r.add(f"note ids in triage output but not open in the inbox: {extra}")
 
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("Usage: python validator.py <triage-json> [<session-json>]", file=sys.stderr)
+        print("Usage: python validate_triage.py <triage-json> [<inbox-dir>]", file=sys.stderr)
         return 1
 
     try:
         triage = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+        inbox_ids = open_item_ids(Path(sys.argv[2])) if len(sys.argv) >= 3 else None
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
-    session = None
-    if len(sys.argv) >= 3:
-        try:
-            session = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
-        except Exception as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            return 1
-
     r = Report()
-    validate(triage, session, r)
+    validate(triage, inbox_ids, r)
 
     if r.ok():
         print(f"PASS  {sys.argv[1]}")

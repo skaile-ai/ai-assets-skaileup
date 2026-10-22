@@ -1,16 +1,40 @@
 {
-  "sessionId": "test-routing",
+  "roundId": "test-routing",
   "triagedAt": "__VOLATILE__",
   "groups": [
     {
+      "file": "10_blueprint/datamodel/model.ts",
+      "entity": "Task",
+      "items": [
+        "k3m9x2-1",
+        "p7q1z8-4"
+      ]
+    },
+    {
+      "file": "07_screens/inbox.md",
+      "items": [
+        "k3m9x2-2"
+      ]
+    },
+    {
       "file": "04_journeys/stories.yaml",
-      "annotations": ["ann-journey-1"]
+      "items": [
+        "p7q1z8-1"
+      ]
     }
   ],
   "unresolved": [
     {
-      "annotationId": "ann-feature-1",
-      "reason": "no specRef target (screen and journey both absent or null)"
+      "inboxId": "k3m9x2-3",
+      "reason": "no component: note targets route /iframe.html"
+    },
+    {
+      "inboxId": "p7q1z8-2",
+      "reason": "file not found: _concept/07_screens/ghost.md"
+    },
+    {
+      "inboxId": "p7q1z8-3",
+      "reason": "rulebook asset: src/floorplans/shell-sidebar.vue ships with mockup-storybook and has no concept file"
     }
   ]
 }

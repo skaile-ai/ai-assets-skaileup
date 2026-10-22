@@ -40,8 +40,8 @@ Frontmatter per `tree/02_grounding/findings/README.md` with `scope: brand` and t
    components is `inferred` and says so.
 3. A repository with no theme layer gets this file written with every field listed and
    `needs_review` throughout — a skeleton `design-brand` can report against beats an absence it
-   has to rediscover, and `design-brand` still writes `brand.tokens.json` itself, since both mockup
-   renderers hard-gate on that file. A palette assembled from taste when the repository
+   has to rediscover, and `design-brand` still writes `brand.tokens.json` itself, since the
+   Storybook package builds its styling from that file. A palette assembled from taste when the repository
    declares none is indistinguishable from a real one and gets built against.
 
 ## Checks

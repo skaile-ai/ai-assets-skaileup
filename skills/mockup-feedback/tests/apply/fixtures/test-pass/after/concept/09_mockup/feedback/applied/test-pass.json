@@ -1,9 +1,8 @@
 {
-  "sessionId": "test-pass",
+  "roundId": "test-pass",
   "appliedAt": "__VOLATILE__",
   "items": [
     {
-      "annotationId": "ann-c1",
       "patchId": "p-ann-c1-content",
       "target": {
         "file": "07_screens/01_user_auth/login.md",
@@ -11,18 +10,28 @@
         "category": "change"
       },
       "body": "this should be on the right",
-      "status": "applied"
+      "status": "applied",
+      "inboxId": "ann-c1"
     },
     {
-      "annotationId": "ann-c1",
-      "patchId": "p-ann-c1-promotion",
+      "patchId": "p-ann-c1-elements",
       "target": {
         "file": "07_screens/01_user_auth/login.md",
         "section": "frontmatter:elements",
         "category": null
       },
       "body": "this should be on the right",
-      "status": "applied"
+      "status": "applied",
+      "inboxId": "ann-c1"
+    }
+  ],
+  "resolutions": [
+    {
+      "id": "ann-c1",
+      "status": "implemented",
+      "resolution": "Button right-aligned.",
+      "state": "pending",
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids ann-c1 --status implemented --resolution 'Button right-aligned.'"
     }
   ]
 }

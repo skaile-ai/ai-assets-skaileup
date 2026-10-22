@@ -26,7 +26,7 @@ CONTEXT.md                 the collection's glossary — the words skills use wi
 ```
 
 No `NN_` prefixes anywhere, no domain folders: the domain is the first segment of the
-skill's name (`concept-brief`, `mockup-walkthrough`, `build-implement`). The nine
+skill's name (`concept-brief`, `mockup-storybook`, `build-implement`). The nine
 domains are **concept · design · experience · spec · mockup · architecture · build ·
 quality · ops**.
 
@@ -65,18 +65,16 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [concept-reverse](skills/concept-reverse/) | Extracts a concept from an existing repository |
 | [design-brand](skills/design-brand/) | Discovers a visual direction and writes the project's brand |
 | [experience-journeys](skills/experience-journeys/) | Defines personas and the staged story map features derive from |
-| [experience-screen](skills/experience-screen/) | Writes one screen on its own: floorplan, posture, density, region bindings and an early prototype |
+| [experience-screen](skills/experience-screen/) | Writes one screen on its own: floorplan, posture, density, region bindings and an early layout story |
 | [experience-shell](skills/experience-shell/) | Specifies navigation, layout areas, breakpoints and shared screen patterns |
 | [experience-behaviors](skills/experience-behaviors/) | Writes state machines and rules for entity lifecycles |
 | [experience-interaction](skills/experience-interaction/) | Decides where information lives and how it is edited, saved and found, and writes APP-DESIGN.md |
 | [spec-feature](skills/spec-feature/) | Writes one feature's permanent spec and its row in the featureset roster, and links the screens it uses |
-| [mockup-walkthrough](skills/mockup-walkthrough/) | Renders a clickable browser walkthrough, one page per screen and journey |
-| [mockup-storybook](skills/mockup-storybook/) | Builds Storybook stories, screen compositions and journey walkthroughs |
-| [mockup-annotate](skills/mockup-annotate/) | Injects the annotation overlay so stakeholders can comment on a walkthrough |
-| [mockup-feedback](skills/mockup-feedback/) | Routes stakeholder annotations back into the concept as reviewable diffs |
+| [mockup-storybook](skills/mockup-storybook/) | Grows one Vue Storybook package: floorplans, screens, entity editors, the whole app as a click-through and journey walks, annotatable by stakeholders |
+| [mockup-feedback](skills/mockup-feedback/) | Routes stakeholder notes from the annotation inbox back into the specs, data model and glossary as reviewable patches |
 | [architecture-techstack](skills/architecture-techstack/) | Chooses the technology stack and records its id |
 | [architecture-system](skills/architecture-system/) | Records custom modules, protocols and integrations beyond the stack |
-| [architecture-datamodel](skills/architecture-datamodel/) | Derives the stack-neutral data model and seed scenarios from feature specs |
+| [architecture-datamodel](skills/architecture-datamodel/) | Derives the stack-neutral data model, authored as TypeScript, and seed scenarios from feature specs |
 | [build-branch](skills/build-branch/) | Opens the build branch before slices and merges or discards it after |
 | [build-scaffold](skills/build-scaffold/) | Scaffolds, themes, wires auth and builds the shell of a running app |
 | [build-database](skills/build-database/) | Translates the data model into a migrated schema with seed scripts |

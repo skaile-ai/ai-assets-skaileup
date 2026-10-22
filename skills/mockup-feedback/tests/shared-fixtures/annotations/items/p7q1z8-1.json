@@ -1,0 +1,14 @@
+{
+  "inboxId": "p7q1z8-1",
+  "sessionId": "p7q1z8",
+  "origin": "http://localhost:6006",
+  "id": "1",
+  "comment": "A new user should land on the inbox right after signing in.",
+  "elementPath": "nav > a:nth-of-type(1)",
+  "vueComponents": "App > Shell > a:src/app/Shell.vue:21:8",
+  "url": "http://localhost:6006/iframe.html?id=journeys-user-signs-in--default&viewMode=story",
+  "timestamp": 1790000300000,
+  "target": { "kind": "element", "ref": "a:src/app/Shell.vue:21:8", "label": "Shell" },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:03:00.000Z"
+}

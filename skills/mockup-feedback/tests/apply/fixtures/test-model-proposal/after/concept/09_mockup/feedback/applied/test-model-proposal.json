@@ -1,0 +1,55 @@
+{
+  "roundId": "test-model-proposal",
+  "appliedAt": "2026-10-22T22:38:56Z",
+  "items": [
+    {
+      "inboxId": "k3m9x2-1",
+      "patchId": "p-k3m9x2-1-model",
+      "target": {
+        "file": "10_blueprint/datamodel/model.ts",
+        "section": "ts:entity/Task/fields",
+        "category": null
+      },
+      "body": "The editor needs an estimate field: how many hours the task will take.",
+      "status": "applied"
+    },
+    {
+      "inboxId": "k3m9x2-4",
+      "patchId": "p-k3m9x2-4-glossary",
+      "target": {
+        "file": "glossary.md",
+        "section": "before:## Relations",
+        "category": null
+      },
+      "body": "Tasks need comments from the team.",
+      "status": "applied"
+    },
+    {
+      "inboxId": "k3m9x2-4",
+      "patchId": "p-k3m9x2-4-model",
+      "target": {
+        "file": "10_blueprint/datamodel/model.ts",
+        "section": "ts:model/entities",
+        "category": null
+      },
+      "body": "Tasks need comments from the team.",
+      "status": "applied"
+    }
+  ],
+  "resolutions": [
+    {
+      "id": "k3m9x2-1",
+      "status": "implemented",
+      "resolution": "Task.estimate proposed in model.ts and shown in TaskEditor.",
+      "state": "pending",
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed in model.ts and shown in TaskEditor.'"
+    },
+    {
+      "id": "k3m9x2-4",
+      "status": "implemented",
+      "resolution": "Comment entity proposed in model.ts.",
+      "state": "pending",
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-4 --status implemented --resolution 'Comment entity proposed in model.ts.'"
+    }
+  ]
+}

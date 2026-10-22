@@ -1,0 +1,14 @@
+{
+  "inboxId": "k3m9x2-1",
+  "sessionId": "k3m9x2",
+  "origin": "http://localhost:6006",
+  "id": "1",
+  "comment": "The editor needs an estimate field: how many hours the task will take.",
+  "elementPath": "form > div:nth-of-type(4)",
+  "vueComponents": "App > TaskEditor > button:src/entities/Task/TaskEditor.vue:52:6",
+  "url": "http://localhost:6006/iframe.html?id=entities-task-taskeditor--default&viewMode=story",
+  "timestamp": 1790000000000,
+  "target": { "kind": "element", "ref": "button:src/entities/Task/TaskEditor.vue:52:6", "label": "TaskEditor" },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:00:00.000Z"
+}

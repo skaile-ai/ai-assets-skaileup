@@ -16,9 +16,9 @@ The app frame and every screen, one spec per screen. `shell.md` is the frame (`t
 
 ## The `elements:` block
 
-The optional `elements:` key in a screen's frontmatter is the substance channel for what the screen renders: the walkthrough renderers emit stable HTML attributes per element so annotations survive regeneration, and the feedback skills anchor annotations to elements. `experience-screen` writes the block in every screen spec, covering every interactive or structural thing under `### UI Elements`, `### Actions` and `### Information Displayed`; `experience-shell` writes the `kind: nav` elements in `shell.md`. Nothing else writes it except the id promotion described in `tree/09_mockup/feedback/README.md`.
+The optional `elements:` key in a screen's frontmatter is the substance channel for what the screen renders: `mockup-storybook` builds the screen's story from it, and a note left on that story is routed back to the screen spec. `experience-screen` writes the block in every screen spec, covering every interactive or structural thing under `### UI Elements`, `### Actions` and `### Information Displayed`; `experience-shell` writes the `kind: nav` elements in `shell.md`. Nothing else writes it except the id confirmation described in `tree/09_mockup/feedback/README.md`.
 
-An absent block and `elements: []` mean the same thing. The renderer's auto-slug fallback is a safety net, not the primary path: renderers never hard-fail on a missing or partial block, so the obligation is the author's, at authoring time — a screen without a block renders as an auto-slugged guess.
+An absent block and `elements: []` mean the same thing. A screen without a block gets a story built from its section prose alone, and the story shows only what the prose names, so the obligation to declare every element is the author's, at authoring time.
 
 ### Schema
 
@@ -54,44 +54,44 @@ elements:                            # OPTIONAL — top-level frontmatter key
 |---|---|---|---|
 | `id` | string | yes | kebab-case, matches `^[a-z][a-z0-9-]*[a-z0-9]$`, no `--`, unique within the screen |
 | `kind` | enum string | yes | one of the `kind` enum below |
-| `label` | string | yes | human-readable; the on-screen label and the auto-slug seed |
+| `label` | string | yes | human-readable; the on-screen label |
 | `states` | list of enum strings | yes | non-empty; each value is in the `states` enum below; should include `default` |
-| `provisional` | bool | no | `true` if the id was auto-slugged and not yet promoted; `false` or absent once promoted |
+| `provisional` | bool | no | `true` while the id is a first guess nobody has confirmed; `false` or absent once confirmed |
 | `describes` | string | no | one-line prose describing the element's role on the screen |
-| `data_entity` | string | no | name of a `data_entities[]` entity this element renders or edits |
-| `region` | string | no | a region id from the `§ Regions` of the screen's `floorplan:`; the walkthrough places the element's label inside that region of the floorplan frame, and an element without it appears only in the flat element list. In `shell.md` it is a region id of the shell frame |
+| `data_entity` | string | no | the id of a `model.ts` entity this element renders or edits |
+| `region` | string | no | a region id from the `§ Regions` of the screen's `floorplan:`; the screen story places the element inside that region of the floorplan, and an element without it goes to the floorplan's main region. In `shell.md` it is a region id of the shell frame |
 | `acceptance_refs` | list of strings | no | each entry `<feature-path>#<criterion-id>`, mirroring `story_refs:` |
-| `target` | string | no | `screen_id` plus optional `#<element-id>`; valid only on `link`, `button`, `list`, `image`, `custom`; resolves against the rendered screen set, else the renderer records an `unresolved_target` warning |
+| `target` | string | no | `screen_id` plus optional `#<element-id>`; valid only on `link`, `button`, `list`, `image`, `custom`; resolves against the screens that exist under `07_screens/`, else the story renders the element inert |
 | `items` | list | no | valid only on `nav`, `tabs`, `list`; entry shape per kind, see Content fidelity |
 | `columns` | list of strings | yes, iff `kind: table` | column headers in display order; valid only on `table` |
 | `sample_rows` | list of lists of strings | no | `table` only; each row's length equals `len(columns)`; authored fixture data |
 | `row_target` | string | no | `table` only; same grammar and resolution as `target`; wraps every row |
-| `options` | list of strings | no | `input` only; presence makes the renderer emit a `<select>` with one `<option>` per value |
+| `options` | list of strings | no | `input` only; presence makes the story render a select with one option per value |
 
 ### Navigation targets
 
 `target` (and a table's `row_target`) points an interactive element at another screen.
 
-- **Identity form.** A target is a `screen_id`: the filename stem of a screen under `07_screens/`, e.g. `case-admission-form` for `07_screens/case-admission-form.md` — the same identity as `data-spec-screen`, rendered filenames and `screens[].screen_id` in the walkthrough manifest. An optional `#<element-id>` fragment addresses an element on the target screen. A URL path (`/faelle`), a bare filename or a path with a directory is malformed.
+- **Identity form.** A target is a `screen_id`: the filename stem of a screen under `07_screens/`, e.g. `case-admission-form` for `07_screens/case-admission-form.md` — the same identity as the route of its component under `src/screens/` and the `data-screen` attribute in the Storybook package. An optional `#<element-id>` fragment addresses an element on the target screen. A URL path (`/faelle`), a bare filename or a path with a directory is malformed.
 - **Valid on** `kind: link | button | list | image | custom` — one element, one destination. A `table` carries `row_target` instead; `nav` and `tabs` carry per-entry destinations through `items[].target`. `target` on any other kind is a validation error.
-- **Resolution.** A target is resolvable iff `07_screens/<target-sans-fragment>.md` exists in the set of screens rendered in this walkthrough.
-- **Soft-fail.** Renderers never hard-fail on an unresolved target: they emit `href="#"` and record a `warnings[]` entry (`tree/09_mockup/walkthrough/README.md`). A `target` is optional — an interactive element without one renders inert, because not everything navigates.
+- **Resolution.** A target is resolvable iff `07_screens/<target-sans-fragment>.md` exists.
+- **Soft-fail.** An unresolved target renders as an inert element in the story and is listed in the screen step's report. A `target` is optional — an interactive element without one stays inert, because not everything navigates.
 
 ### Content fidelity
 
-Where a field below is declared, renderers render it as real content; fabrication stays reserved for what is genuinely undeclared.
+Where a field below is declared, the story renders it as real content; fabrication stays reserved for what is genuinely undeclared.
 
 - **`label` vs `describes`.** `label` is short, literal on-screen UI copy — what a user reads on the button, tab or nav item — and is never the action sentence. The action sentence (`Click "Aufnehmen" on an Anmeldung row → opens the admission form`) goes in `describes:`. This holds for every `label`, including entries inside `items[]`.
 - **`items[]` entry shape by kind** — `nav`: `{id?, label, target, icon?}`, every entry needs a destination; `tabs`: `{id?, label, target?}`, an entry without `target` is an inert in-page tab; `list`: `{label, target?}` or a bare string as shorthand for `{label: <string>}` with no target.
-- **`table`.** `columns` is the header row. `sample_rows`, when present, renders verbatim. `columns` alone renders the header plus one skeleton row; there is no content to fabricate, so none is invented. `row_target` wraps every row's first cell in a link.
-- **`input` + `options`** renders a `<select>`.
-- **Authored, never invented.** `sample_rows` and `items` content is fixture data sourced from `seed.json` scenarios or the screen's own `### Template Data`; renderers render exactly what is declared.
+- **`table`.** `columns` is the header row. `sample_rows`, when present, renders verbatim. `columns` alone renders the header plus one skeleton row; there is no content to fabricate, so none is invented. `row_target` makes every row's first cell navigate.
+- **`input` + `options`** renders a select.
+- **Authored, never invented.** `sample_rows` and `items` content is fixture data sourced from `seed.ts` scenarios or the screen's own `### Template Data`; the story renders exactly what is declared.
 
 ### ID rules
 
 - kebab-case: lowercase ASCII letters, digits, single hyphens; regex `^[a-z][a-z0-9-]*[a-z0-9]$`, no `--`.
 - Unique within a screen.
-- Stable across regenerations: once an id is promoted (written into `elements:` with `provisional: false` or omitted), regeneration preserves it, and renaming a promoted id breaks every annotation that references it.
+- Stable across edits: once an id is confirmed (written into `elements:` with `provisional: false` or omitted), later edits preserve it, and renaming a confirmed id breaks every story, play function and note that references it.
 
 ### `kind` enum
 
@@ -145,4 +145,4 @@ elements:
 
 ## Checks
 
-The renderers reject what they cannot render: a missing `id`, duplicate ids, a `kind` outside the enum, `target` or `items` or `columns` or `sample_rows` or `row_target` or `options` on a kind that does not take it, a malformed `screen_id`, a `sample_rows` row whose length differs from `len(columns)`, and an `items` entry that misses its kind's required fields. The validator is `skills/mockup-walkthrough/references/<renderer>/validator.py`, run as a step of `mockup-walkthrough`; no separate checker covers the block.
+A block holds when no element misses its `id`, no id repeats, every `kind` is in the enum, `target`, `items`, `columns`, `sample_rows`, `row_target` and `options` appear only on the kinds that take them, every `screen_id` is well formed, every `sample_rows` row has `len(columns)` cells, and every `items` entry carries its kind's required fields. No separate checker covers the block, so the author reads it back once before saving.

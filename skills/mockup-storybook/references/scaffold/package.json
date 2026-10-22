@@ -1,0 +1,39 @@
+{
+  "name": "mockup-storybook",
+  "private": true,
+  "type": "module",
+  "description": "The component mockup of this project: floorplans, screens, entity editors, the whole app and the journeys as Storybook stories over the project's data model.",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "storybook": "storybook dev --port 6006 --no-open",
+    "build-storybook": "storybook build",
+    "check": "storybook build --quiet && vue-tsc --noEmit && vitest run --project=storybook",
+    "tokens": "tsx scripts/gen-tokens.ts",
+    "resolve": "tsx scripts/resolve.ts"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^4.12.0",
+    "tailwindcss": "^4.3.3",
+    "vue": "^3.5.44",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@ecsplico/annotation-inbox": "^1.1.1",
+    "@storybook/addon-docs": "^10.6.3",
+    "@storybook/addon-vitest": "^10.6.3",
+    "@storybook/vue3-vite": "^10.6.3",
+    "@types/node": "^22.20.5",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vitest/browser-playwright": "^4.1.0",
+    "playwright": "^1.58.2",
+    "storybook": "^10.6.3",
+    "tsx": "^4.23.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.5",
+    "vite-plugin-vue-tracer": "^1.6.0",
+    "vitest": "^4.1.0",
+    "vue-tsc": "^3.3.13"
+  }
+}

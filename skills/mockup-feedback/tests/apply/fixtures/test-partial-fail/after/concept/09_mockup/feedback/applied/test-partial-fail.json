@@ -1,9 +1,8 @@
 {
-  "sessionId": "test-partial-fail",
+  "roundId": "test-partial-fail",
   "appliedAt": "__VOLATILE__",
   "items": [
     {
-      "annotationId": "ann-bad",
       "patchId": "p-bad",
       "target": {
         "file": "07_screens/01_user_auth/login.md",
@@ -12,10 +11,10 @@
       },
       "body": "change something",
       "status": "failed",
-      "error": "section not found: '## NONEXISTENT SECTION'"
+      "error": "section not found: '## NONEXISTENT SECTION'",
+      "inboxId": "ann-bad"
     },
     {
-      "annotationId": "ann-good",
       "patchId": "p-good",
       "target": {
         "file": "07_screens/01_user_auth/login.md",
@@ -23,7 +22,22 @@
         "category": "change"
       },
       "body": "right-align the button",
-      "status": "applied"
+      "status": "applied",
+      "inboxId": "ann-good"
+    }
+  ],
+  "resolutions": [
+    {
+      "id": "ann-bad",
+      "state": "open",
+      "reason": "patch not applied: p-bad"
+    },
+    {
+      "id": "ann-good",
+      "status": "implemented",
+      "resolution": "Button right-aligned.",
+      "state": "pending",
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids ann-good --status implemented --resolution 'Button right-aligned.'"
     }
   ]
 }

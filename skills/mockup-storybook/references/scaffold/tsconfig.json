@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@model/*": ["../../10_blueprint/datamodel/*"],
+      "#build/ui/*": ["./node_modules/.nuxt-ui/ui/*"]
+    }
+  },
+  "include": ["src/**/*", ".storybook/**/*", "scripts/**/*", "*.ts", "auto-imports.d.ts", "components.d.ts",
+    "../../10_blueprint/datamodel/model.ts", "../../10_blueprint/datamodel/seed.ts"]
+}

@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/03_brand/brand.tokens.json
 
-The brand in machine-readable form, written as W3C Design Tokens Community Group tokens so any token tool (Style Dictionary, Terrazzo, Figma plugins, Storybook addons) reads it without a converter. The walkthrough, `build-scaffold` and Storybook flatten it into `--token-*` CSS custom properties, and both mockup renderers hard-gate on it, so a missing token becomes a bland default in every rendered screen. Specs: [Format Module 2025.10](https://www.designtokens.org/tr/2025.10/format/), [Resolver Module 2025.10](https://www.designtokens.org/tr/2025.10/resolver/).
+The brand in machine-readable form, written as W3C Design Tokens Community Group tokens so any token tool (Style Dictionary, Terrazzo, Figma plugins, Storybook addons) reads it without a converter. `build-scaffold` and the Storybook package turn it into CSS custom properties, so a missing token becomes a bland default in every rendered screen. Specs: [Format Module 2025.10](https://www.designtokens.org/tr/2025.10/format/), [Resolver Module 2025.10](https://www.designtokens.org/tr/2025.10/resolver/).
 
 ## Format
 
@@ -61,7 +61,7 @@ A dark-only brand writes its dark palette into `brand.tokens.json` with `mode: d
 
 ## Flattening to CSS
 
-Renderers, scaffold and Storybook turn tokens into CSS: path segments joined with `-`, prefixed `--token-`; `$`-keys are never path segments. Colour → its `hex`, or `rgb(R G B / a)` when `alpha` is below 1 (R, G, B are `components` × 255, rounded; `a` is `alpha`); dimension → `<value><unit>`; fontFamily → the string, or the array joined with `, `; shadow → a CSS `box-shadow` string whose colours flatten by the same colour rule; an alias `{a.b}` → `var(--token-a-b)`. The base file goes in `:root`, the dark file's tokens in a `.dark { … }` block.
+The scaffold and the Storybook package turn tokens into CSS: path segments joined with `-`, prefixed `--token-`; `$`-keys are never path segments. Colour → its `hex`, or `rgb(R G B / a)` when `alpha` is below 1 (R, G, B are `components` × 255, rounded; `a` is `alpha`); dimension → `<value><unit>`; fontFamily → the string, or the array joined with `, `; shadow → a CSS `box-shadow` string whose colours flatten by the same colour rule; an alias `{a.b}` → `var(--token-a-b)`. The base file goes in `:root`, the dark file's tokens in a `.dark { … }` block.
 
 ```css
 :root  { --token-color-primary: #3366e6; --token-radius-base: 8px;

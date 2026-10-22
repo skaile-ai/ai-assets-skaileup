@@ -1,0 +1,14 @@
+{
+  "inboxId": "p7q1z8-2",
+  "sessionId": "p7q1z8",
+  "origin": "http://localhost:6006",
+  "id": "2",
+  "comment": "Show the archive screen in the nav.",
+  "elementPath": "nav",
+  "vueComponents": "App > ArchiveScreen > div:src/screens/ghost.vue:9:2",
+  "url": "http://localhost:6006/iframe.html?id=screens-ghost--default&viewMode=story",
+  "timestamp": 1790000400000,
+  "target": { "kind": "element", "ref": "div:src/screens/ghost.vue:9:2", "label": "ArchiveScreen" },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:04:00.000Z"
+}

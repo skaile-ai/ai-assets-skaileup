@@ -1,4 +1,4 @@
-# Review patches for session test-partial-fail (2 patches)
+# Review patches for round test-partial-fail (2 patches)
 
 ## 07_screens/01_user_auth/login.md
 

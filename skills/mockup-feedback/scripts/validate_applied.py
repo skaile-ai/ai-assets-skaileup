@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""validator.py — structural validator for apply output (applied/<sid>.json).
+"""validator.py — structural validator for apply output (applied/<round-id>.json).
 
 Usage:
-  python validator.py <applied-json> <patches-json> <review-md>
+  python validate_applied.py <applied-json> <patches-json> <review-md>
 
 Checks:
   1. Every checked patch ID in review.md has an item in applied JSON.
   2. No applied item references a patch ID not in patches JSON.
   3. Item status is 'applied' or 'failed'; failed items have 'error'.
-  4. sessionId matches between applied JSON and patches JSON.
+  4. roundId matches between applied JSON and patches JSON.
+  5. Every note a checked patch lists in resolves[] has one resolutions[] entry;
+     state is resolved | pending | open; pending carries the command to run,
+     open carries the reason.
 
 Exit codes: 0 PASS, 2 FAIL, 1 internal error.
 """
@@ -22,7 +25,7 @@ from pathlib import Path
 
 def main() -> int:
     if len(sys.argv) < 4:
-        print("Usage: python validator.py <applied-json> <patches-json> <review-md>", file=sys.stderr)
+        print("Usage: python validate_applied.py <applied-json> <patches-json> <review-md>", file=sys.stderr)
         return 1
 
     try:
@@ -35,23 +38,20 @@ def main() -> int:
 
     violations: list[str] = []
 
-    # session IDs match
-    if applied_data.get("sessionId") != patches_data.get("sessionId"):
+    if applied_data.get("roundId") != patches_data.get("roundId"):
         violations.append(
-            f"sessionId mismatch: applied={applied_data.get('sessionId')!r} "
-            f"patches={patches_data.get('sessionId')!r}"
+            f"roundId mismatch: applied={applied_data.get('roundId')!r} "
+            f"patches={patches_data.get('roundId')!r}"
         )
 
     patches_by_id = {p["id"]: p for p in patches_data.get("patches", [])}
     checked_ids = set(re.findall(r"- \[x\] \*\*([^*]+)\*\*", review_md))
     applied_by_pid = {item.get("patchId"): item for item in applied_data.get("items", [])}
 
-    # Every checked patch ID has an applied item
     for pid in checked_ids:
         if pid not in applied_by_pid:
             violations.append(f"checked patch {pid!r} has no corresponding item in applied JSON")
 
-    # No applied item references unknown patch ID; every item must have patchId
     for item in applied_data.get("items", []):
         pid = item.get("patchId")
         if not pid:
@@ -60,13 +60,37 @@ def main() -> int:
         if pid not in patches_by_id:
             violations.append(f"applied item references unknown patchId {pid!r}")
 
-    # Status validity
     for item in applied_data.get("items", []):
         status = item.get("status")
         if status not in ("applied", "failed"):
             violations.append(f"item {item.get('patchId')!r} has invalid status {status!r}")
         if status == "failed" and not item.get("error"):
             violations.append(f"failed item {item.get('patchId')!r} missing 'error' field")
+
+    # Resolutions
+    expected_ids = {
+        e["id"]
+        for pid in checked_ids if pid in patches_by_id
+        for e in patches_by_id[pid].get("resolves", [])
+    }
+    seen: set[str] = set()
+    for res in applied_data.get("resolutions", []):
+        nid, state = res.get("id"), res.get("state")
+        if nid in seen:
+            violations.append(f"note {nid!r} has more than one resolutions[] entry")
+        seen.add(nid)
+        if state not in ("resolved", "pending", "open"):
+            violations.append(f"resolution of {nid!r} has invalid state {state!r}")
+        if state == "pending" and not res.get("command"):
+            violations.append(f"pending resolution of {nid!r} missing 'command'")
+        if state == "open" and not res.get("reason"):
+            violations.append(f"open note {nid!r} missing 'reason'")
+        if state in ("resolved", "pending") and not str(res.get("resolution", "")).strip():
+            violations.append(f"resolution of {nid!r} missing 'resolution' text")
+    for nid in expected_ids - seen:
+        violations.append(f"note {nid!r} named in a checked patch has no resolutions[] entry")
+    for nid in seen - expected_ids:
+        violations.append(f"resolutions[] names note {nid!r} that no checked patch lists")
 
     if violations:
         for v in violations:

@@ -56,8 +56,8 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
 4. **Write one file per topic** from the returned findings, each following its own node. A
    competitor feature that could not be verified is written as not publicly available rather
    than filled in.
-5. **Always write `design-inspiration.md`.** `design-brand`, `experience-shell` and both
-   mockup renderers read it, and it is the file that most often goes unwritten because the
+5. **Always write `design-inspiration.md`.** `design-brand`, `experience-shell` and
+   `mockup-storybook` read it, and it is the file that most often goes unwritten because the
    competitor work ran long.
 6. **Catalogue the raw material** as rows in `_concept/02_grounding/findings/index.md` (format:
    `tree/02_grounding/findings/README.md`), with

@@ -1,0 +1,18 @@
+{
+  "inboxId": "p7q1z8-4",
+  "sessionId": "p7q1z8",
+  "origin": "http://localhost:6006",
+  "id": "4",
+  "comment": "The save button should say what it saves.",
+  "elementPath": "form > button",
+  "vueComponents": "StoryFrame (src/components/StoryFrame.vue) > App (node_modules/@nuxt/ui/dist/runtime/components/App.vue) > TaskEditor (src/entities/Task/TaskEditor.vue) > Form (node_modules/@nuxt/ui/dist/runtime/components/Form.vue) > Button (node_modules/@nuxt/ui/dist/runtime/components/Button.vue) > Primitive",
+  "url": "http://localhost:6006/iframe.html?id=entities-task-taskeditor--default&viewMode=story",
+  "timestamp": 1790000400000,
+  "target": {
+    "kind": "route",
+    "ref": "/iframe.html",
+    "label": "/iframe.html"
+  },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:04:00.000Z"
+}

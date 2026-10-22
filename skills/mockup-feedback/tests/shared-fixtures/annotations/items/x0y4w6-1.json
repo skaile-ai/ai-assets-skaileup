@@ -1,0 +1,17 @@
+{
+  "inboxId": "x0y4w6-1",
+  "sessionId": "x0y4w6",
+  "origin": "http://localhost:6006",
+  "id": "1",
+  "comment": "Title field label should say Name.",
+  "elementPath": "form > label",
+  "vueComponents": "App > TaskEditor > label:src/entities/Task/TaskEditor.vue:30:6",
+  "url": "http://localhost:6006/iframe.html?id=entities-task-taskeditor--default&viewMode=story",
+  "timestamp": 1789000000000,
+  "target": { "kind": "element", "ref": "label:src/entities/Task/TaskEditor.vue:30:6", "label": "TaskEditor" },
+  "status": "implemented",
+  "receivedAt": "2026-10-10T09:00:00.000Z",
+  "resolvedAt": "2026-10-11T09:00:00.000Z",
+  "resolution": "Label renamed.",
+  "resolvedBy": "agent"
+}

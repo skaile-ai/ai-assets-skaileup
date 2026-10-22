@@ -7,14 +7,14 @@ may_propose: []
 
 # _concept/02_grounding/onboarding/answers.json
 
-The record of what the user answered at onboarding intake: technology preferences with their confidence, the brand's location, the renderer and the seed inventory. `concept-onboard` owns it and every other skill reads it, and no skill reads the host's own files, so an intake answer missing here is asked again. It holds intake answers only: an answer given later lives at its semantic home — the name of a thing in the glossary, a role in the feature's permissions, a colour in the brand — and is never copied back here. The host saves each step's wizard input at `_concept/_grounding/<step>/user_input.json` and shows it as pre-collected input; `concept-onboard` merges those files into `answers.json` once.
+The record of what the user answered at onboarding intake: technology preferences with their confidence, the brand's location and the seed inventory. `concept-onboard` owns it and every other skill reads it, and no skill reads the host's own files, so an intake answer missing here is asked again. It holds intake answers only: an answer given later lives at its semantic home — the name of a thing in the glossary, a role in the feature's permissions, a colour in the brand — and is never copied back here. The host saves each step's wizard input at `_concept/_grounding/<step>/user_input.json` and shows it as pre-collected input; `concept-onboard` merges those files into `answers.json` once.
 
 ## Format
 
 A data file with no frontmatter, described by `tree/02_grounding/onboarding/onboarding-answers.schema.json` (open: every skill's input dialog may add field ids; `last_updated` required). Keys are the `id` values of the `inputs_optional` fields a
 dialog rendered (`framework`, `database`, `ui_library`, `auth`, `has_brand`, …), holding the raw
-value; six reserved keys sit beside them: `approved`, `last_updated`, `confidence`, `rationale`,
-`renderer`, `seeds`.
+value; five reserved keys sit beside them: `approved`, `last_updated`, `confidence`, `rationale`,
+`seeds`.
 
 ```json
 {
@@ -26,7 +26,6 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
   "brand_files": "assets/brand/",
   "confidence": { "framework": "locked", "database": "preferred" },
   "rationale": { "framework": "the team already ships Nuxt" },
-  "renderer": "static-html | astro",
   "seeds": [{ "path": "02_grounding/seeds/pitch.pdf", "seeds": "brief", "grade": "complete | partial | reference" }]
 }
 ```
@@ -35,8 +34,6 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
   better fit) or `open` (recommend from the project's signals), one per technology answer.
   `architecture-techstack` honours `locked` and may overrule `preferred`; without the word every
   answer reads as binding.
-- `renderer` is `static-html` (zero-build page set) or `astro` (built site); `mockup-walkthrough`
-  reads it from here at render time and nowhere else.
 - `seeds[].grade`: `complete` (a later skill adopts it and skips that ground), `partial` (a
   starting point with named gaps), `reference` (context only — code excerpts, competitor PDFs).
 - `approved:` is written only once the user has confirmed the seed table and the answers as read
@@ -60,13 +57,12 @@ value; six reserved keys sit beside them: `approved`, `last_updated`, `confidenc
    exist, are the recommended answers. Skip what the user has not decided rather than recording
    a null.
 5. Ask whether the project has a brand (logo, palette, typography, style guide) and where its
-   files are, because `design-brand` extracts from them instead of proposing. When the project will
-   render a walkthrough, ask which `renderer` it wants.
+   files are, because `design-brand` extracts from them instead of proposing.
 6. Scan `02_grounding/seeds/` and show a table of file → artifact it seeds → grade; let the user
    correct it before recording, because a misclassified seed is ignored or treated as truth.
    Read the files where they sit and leave them there.
 7. Validate the record against `tree/02_grounding/onboarding/onboarding-answers.schema.json` (dates as ISO text), then write the remaining answers: technology answers with `confidence` and any `rationale`, the
-   brand answer and file location, `renderer`, the `seeds` list. Set `last_updated`, carry
+   brand answer and file location, the `seeds` list. Set `last_updated`, carry
    `approved` forward on every write, and set a new `approved: <date>` once the user confirms.
    Report what was captured and which questions went out.
 

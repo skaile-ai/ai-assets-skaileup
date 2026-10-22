@@ -38,9 +38,7 @@ requires:
   - skill:@skaile-ai/experience-shell
   - skill:@skaile-ai/architecture-techstack
   - skill:@skaile-ai/architecture-system
-  - skill:@skaile-ai/mockup-walkthrough
   - skill:@skaile-ai/mockup-storybook
-  - skill:@skaile-ai/mockup-annotate
   - skill:@skaile-ai/mockup-feedback
   - skill:@skaile-ai/build-scaffold
   - skill:@skaile-ai/build-database
@@ -186,26 +184,12 @@ nodes:
       skill: architecture-system
       label: System
       phase: conceptualization
-  - id: walkthrough
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: mockup-walkthrough
-      label: Walkthrough
-      phase: conceptualization
   - id: storybook
     type: skill
     parentNode: g-conceptualization
     data:
       skill: mockup-storybook
       label: Storybook
-      phase: conceptualization
-  - id: annotate
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: mockup-annotate
-      label: Annotate
       phase: conceptualization
   - id: feedback
     type: skill
@@ -316,10 +300,8 @@ edges:
   - { id: e-screen-shell, source: screen, target: shell, type: flow }
   - { id: e-shell-techstack, source: shell, target: techstack, type: flow }
   - { id: e-techstack-system, source: techstack, target: system, type: flow }
-  - { id: e-system-walkthrough, source: system, target: walkthrough, type: flow }
-  - { id: e-walkthrough-storybook, source: walkthrough, target: storybook, type: flow }
-  - { id: e-storybook-annotate, source: storybook, target: annotate, type: flow }
-  - { id: e-annotate-feedback, source: annotate, target: feedback, type: flow }
+  - { id: e-system-storybook, source: system, target: storybook, type: flow }
+  - { id: e-storybook-feedback, source: storybook, target: feedback, type: flow }
   - { id: e-feedback-scaffold, source: feedback, target: scaffold, type: flow }
   - { id: e-scaffold-database, source: scaffold, target: database, type: flow }
   - { id: e-database-standards, source: database, target: standards, type: flow }

@@ -34,7 +34,7 @@ designs nothing: the vision is `concept-brief`'s, the sizing `skaileup`'s.
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Record the answers** — `tree/02_grounding/onboarding/answers.md`. Merge the host's saved step input, read `project_type` from `scope.yaml` (asked in the first batch when absent, per `tree/01_meta/scope.md`), collect technology preferences with their confidence, the brand and the renderer, inventory the seeds, validate against `tree/02_grounding/onboarding/onboarding-answers.schema.json`, stamp `approved:`.
+1. **Record the answers** — `tree/02_grounding/onboarding/answers.md`. Merge the host's saved step input, read `project_type` from `scope.yaml` (asked in the first batch when absent, per `tree/01_meta/scope.md`), collect technology preferences with their confidence and the brand, inventory the seeds, validate against `tree/02_grounding/onboarding/onboarding-answers.schema.json`, stamp `approved:`.
 2. **Route questions nobody in the room can answer** — `tree/02_grounding/onboarding/questions.md`.
 
 **Done when** `answers.json` exists and carries `approved:`, every seed under `02_grounding/seeds/` appears in its `seeds` list, and any question for someone outside the room is in `questions.md`.

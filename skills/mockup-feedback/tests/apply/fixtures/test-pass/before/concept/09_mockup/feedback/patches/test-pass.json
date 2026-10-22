@@ -1,26 +1,40 @@
 {
-  "sessionId": "test-pass",
+  "roundId": "test-pass",
   "proposedAt": "2026-05-09T14:35:00Z",
   "patches": [
     {
       "id": "p-ann-c1-content",
-      "annotationId": "ann-c1",
       "file": "07_screens/01_user_auth/login.md",
       "section": "## Layout",
       "kind": "content",
       "category": "change",
       "body": "this should be on the right",
-      "diff": "@@ ## Layout @@\n-- submit-button: centered below form\n+- submit-button: right-aligned below form\n"
+      "diff": "@@ ## Layout @@\n-- submit-button: centered below form\n+- submit-button: right-aligned below form\n",
+      "inboxId": "ann-c1",
+      "resolves": [
+        {
+          "id": "ann-c1",
+          "status": "implemented",
+          "resolution": "Button right-aligned."
+        }
+      ]
     },
     {
-      "id": "p-ann-c1-promotion",
-      "annotationId": "ann-c1",
+      "id": "p-ann-c1-elements",
       "file": "07_screens/01_user_auth/login.md",
       "section": "frontmatter:elements",
-      "kind": "provisional-promotion",
+      "kind": "content",
       "category": null,
       "body": "this should be on the right",
-      "diff": "@@ frontmatter:elements @@\n-  - id: submit-button\n-    kind: button\n-    label: Sign In\n-    states: [default, loading]\n-    provisional: true\n+  - id: submit-button\n+    kind: button\n+    label: Sign In\n+    states: [default, loading]\n+    provisional: false\n"
+      "diff": "@@ frontmatter:elements @@\n-  - id: submit-button\n-    kind: button\n-    label: Sign In\n-    states: [default, loading]\n-    provisional: true\n+  - id: submit-button\n+    kind: button\n+    label: Sign In\n+    states: [default, loading]\n+    provisional: false\n",
+      "inboxId": "ann-c1",
+      "resolves": [
+        {
+          "id": "ann-c1",
+          "status": "implemented",
+          "resolution": "Button right-aligned."
+        }
+      ]
     }
   ],
   "needs_manual": []

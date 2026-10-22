@@ -21,9 +21,11 @@ Stdlib + PyYAML only. Checks:
   6. ledger          `11_build/acceptance-criteria/<featureset>/<feature>.ac.md` rows are checkbox
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
                      `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
-  7. stale proposals every `proposed_on:` date (or `proposed by <skill>, <date>` marker) in an artifact
-                     that is older than `--stale-days` (default 14) is reported with the owner skill that
-                     promotes or rejects it
+  7. stale proposals every `proposed_on:` date (or `proposed by <skill>, <date>` marker, or the
+                     `proposed: { on: '<date>' }` marker of `model.ts`) in an artifact that is older than
+                     `--stale-days` (default 14) is reported with the owner skill that promotes or rejects
+                     it; once `10_blueprint/datamodel/model.ts` exists the generated `model.json` and
+                     `seed.json` are not scanned, so a proposal is reported once
   8. open questions  every `## Open` row of `APP-DESIGN.md` and every `### Open` bullet of a screen spec
                      carries a recommendation; an `[open Qn]` entry has its row
   9. glossary split  when the project keeps its own glossary (`01_meta/scope.yaml` key `glossary` names a
@@ -35,7 +37,7 @@ Stdlib + PyYAML only. Checks:
                      line. Mode `concept` (and an undecided `CONTEXT-MAP.md` root) checks none of this
 
 A screen whose `floorplan:` is missing or empty is reported under 2; the floorplan is the one fact the
-walkthrough and `quality-design` read it by.
+screen story and `quality-design` read it by.
 
 The tree's legal first-level entries are parsed from the fenced tree in `tree/README.md` (a
 ```text fence opening `_concept/` plus a summary column) when the script sits in the
@@ -83,7 +85,12 @@ ID_RE = re.compile(r"^AC-([a-z0-9][a-z0-9_-]*)-(\d{2})$")
 CITE_RE = re.compile(r"AC-[A-Za-z0-9_-]+")
 ROW_RE = re.compile(r"^- \[(PASS|FAIL| )\] (\S+)(?: — (.*))?$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
-PROPOSED_ON_RE = re.compile(r"proposed_on:\s*[\"']?(\d{4}-\d{2}-\d{2})")
+PROPOSED_ON_RE = re.compile(r"proposed_on\"?:[ \t]*[\"']?(\d{4}-\d{2}-\d{2})")
+# The authored data model marks a proposal as `proposed: { by: '<skill>', on: '<date>', source: '…' }`
+# (`tree/10_blueprint/datamodel/model.md § Format`); the marker may span lines, so it is matched on the whole text.
+PROPOSED_DSL_RE = re.compile(r"\bproposed:\s*\{[^{}]*?\bon:\s*[\"'](\d{4}-\d{2}-\d{2})[\"']")
+DATAMODEL_DIR = "10_blueprint/datamodel/"
+GENERATED_MODEL_FILES = ("model.json", "model.dbml", "seed.json")
 PROPOSED_BY_RE = re.compile(r"proposed by [a-z][a-z0-9-]*, (\d{4}-\d{2}-\d{2})")
 STALE_DAYS = 14
 # Parts that quote proposals without holding one: findings carry code evidence, the decision
@@ -349,9 +356,12 @@ def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int,
     """One line per `proposed` entry whose proposal date is more than `days` days old. In split mode
     `project_glossary` (a root-relative path) is scanned too, its owner `concept-glossary`."""
     out: list[str] = []
+    authored_model = (concept / DATAMODEL_DIR / "model.ts").is_file()
+    skip = PROPOSAL_SKIP + (tuple(DATAMODEL_DIR + n for n in GENERATED_MODEL_FILES) if authored_model else ())
     files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
-             if p.is_file() and p.suffix in (".md", ".yaml", ".yml", ".json")]
-    files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(PROPOSAL_SKIP)]
+             if p.is_file() and (p.suffix in (".md", ".yaml", ".yml", ".json")
+                                 or p == concept / DATAMODEL_DIR / "model.ts")]
+    files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(skip)]
     if (root / "APP-DESIGN.md").is_file():
         files.append(("APP-DESIGN.md", root / "APP-DESIGN.md"))
     if project_glossary and (root / project_glossary).is_file():
@@ -359,16 +369,18 @@ def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int,
     for shown, p in files:
         owner = "concept-glossary" if shown == project_glossary else \
             next((o for prefix, o in PROPOSAL_OWNERS if shown.startswith(prefix)), "its owner skill")
-        for n, line in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-            for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE):
-                for m in pattern.finditer(line):
-                    try:
-                        age = (today - datetime.date.fromisoformat(m.group(1))).days
-                    except ValueError:
-                        continue
-                    if age > days:
-                        out.append(f"{shown}:{n}: proposed entry from {m.group(1)} is {age} days old "
-                                   f"(limit {days}) — promote or reject it with {owner}")
+        text = p.read_text(encoding="utf-8", errors="replace")
+        hits = [(text.count("\n", 0, m.start()) + 1, m.group(1))
+                for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE, PROPOSED_DSL_RE)
+                for m in pattern.finditer(text)]
+        for n, date in sorted(hits):
+            try:
+                age = (today - datetime.date.fromisoformat(date)).days
+            except ValueError:
+                continue
+            if age > days:
+                out.append(f"{shown}:{n}: proposed entry from {date} is {age} days old "
+                           f"(limit {days}) — promote or reject it with {owner}")
     return out
 
 

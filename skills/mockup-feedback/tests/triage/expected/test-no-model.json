@@ -1,0 +1,40 @@
+{
+  "roundId": "test-no-model",
+  "triagedAt": "__VOLATILE__",
+  "groups": [
+    {
+      "file": "07_screens/inbox.md",
+      "items": [
+        "k3m9x2-2"
+      ]
+    },
+    {
+      "file": "04_journeys/stories.yaml",
+      "items": [
+        "p7q1z8-1"
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "inboxId": "k3m9x2-1",
+      "reason": "file not found: _concept/10_blueprint/datamodel/model.ts"
+    },
+    {
+      "inboxId": "k3m9x2-3",
+      "reason": "no component: note targets route /iframe.html"
+    },
+    {
+      "inboxId": "p7q1z8-2",
+      "reason": "file not found: _concept/07_screens/ghost.md"
+    },
+    {
+      "inboxId": "p7q1z8-4",
+      "reason": "file not found: _concept/10_blueprint/datamodel/model.ts"
+    },
+    {
+      "inboxId": "p7q1z8-3",
+      "reason": "rulebook asset: src/floorplans/shell-sidebar.vue ships with mockup-storybook and has no concept file"
+    }
+  ]
+}

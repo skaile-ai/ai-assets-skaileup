@@ -1,0 +1,14 @@
+{
+  "inboxId": "k3m9x2-2",
+  "sessionId": "k3m9x2",
+  "origin": "http://localhost:6006",
+  "id": "2",
+  "comment": "Put the filter bar above the list, not beside it.",
+  "elementPath": "main > section",
+  "vueComponents": "App > InboxScreen > div:_concept/09_mockup/storybook/src/screens/inbox.vue:14:4",
+  "url": "http://localhost:6006/iframe.html?id=screens-inbox--default&viewMode=story",
+  "timestamp": 1790000100000,
+  "target": { "kind": "element", "ref": "div:_concept/09_mockup/storybook/src/screens/inbox.vue:14:4", "label": "InboxScreen" },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:01:00.000Z"
+}

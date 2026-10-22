@@ -8,7 +8,7 @@ may_propose: []
 # _concept/02_grounding/research/design-inspiration.md
 
 The visual references the screens will be designed against. `design-brand`, `experience-shell`
-and both mockup renderers read it; it is the file that most often goes unwritten because the
+and `mockup-storybook` read it; it is the file that most often goes unwritten because the
 competitor work ran long, and without it brand and shell are designed from nothing.
 
 ## Format

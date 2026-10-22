@@ -13,7 +13,7 @@ metadata:
   prerequisites:
     files:
       # Hard: `model.json` is the machine-read model this skill translates; it cannot be derived from
-      # `model.dbml` (a generated render) or asked for field by field, and `architecture-datamodel` writes it.
+      # `model.dbml` (a generated render) or asked for field by field, and `architecture-datamodel` generates it from `model.ts`.
       - { path: "_concept/10_blueprint/datamodel/model.json", gate: hard }
       - { path: "_concept/10_blueprint/techstack.md", gate: soft }
 ---

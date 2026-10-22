@@ -142,13 +142,27 @@ Still design, not code.
 
 **Datamodel**:
 The *designed* schema — entities, fields, relations and seed scenarios in
-`10_blueprint/datamodel/`. A description of data, not any running store.
+`10_blueprint/datamodel/`. A description of data, not any running store. It is authored as
+TypeScript (`model.ts`, `seed.ts`); `model.json`, `model.dbml` and `seed.json` are generated
+from it and are what everything outside the mockup reads.
 _Avoid_: schema, data layer
 
 **Database**:
 The *materialised* datamodel — migrations applied and seed scenarios loaded in the built
 app. What `build-database` produces from what `architecture-datamodel` designed.
 _Avoid_: db, persistence, store
+
+**Mockup**:
+The one Vue Storybook package at `09_mockup/storybook/` that grows beside the specs: a story
+per floorplan, screen, entity component and journey, plus the whole app inside one story.
+The only surface a stakeholder reviews the design on.
+_Avoid_: prototype, walkthrough, click-dummy
+
+**Annotation**:
+A note a stakeholder leaves on a component of the running mockup. Stored in the project's
+annotation inbox (`.data/annotations/`), not in `_concept/`, and closed with a resolution once
+it has been acted on or rejected.
+_Avoid_: feedback session, comment
 
 **Implementation**:
 The build half — plans, slices, and the code itself.

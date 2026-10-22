@@ -1,0 +1,46 @@
+{
+  "roundId": "test-routing",
+  "proposedAt": "2026-10-23T10:05:00Z",
+  "patches": [
+    {
+      "id": "p-k3m9x2-1-model",
+      "inboxId": "k3m9x2-1",
+      "file": "10_blueprint/datamodel/model.ts",
+      "section": "ts:entity/Task/fields",
+      "kind": "model-proposal",
+      "category": null,
+      "body": "The editor needs an estimate field.",
+      "diff": "@@ ts:entity/Task/fields @@\n+    estimate: f.decimal({ required: false, proposed: { by: 'mockup-feedback', on: '2026-10-23', source: 'k3m9x2-1' } }),\n",
+      "resolves": [
+        {
+          "id": "k3m9x2-1",
+          "status": "implemented",
+          "resolution": "Task.estimate proposed in model.ts."
+        }
+      ]
+    },
+    {
+      "id": "p-k3m9x2-2-content",
+      "inboxId": "k3m9x2-2",
+      "file": "07_screens/inbox.md",
+      "section": "## Layout",
+      "kind": "content",
+      "category": "change",
+      "body": "Put the filter bar above the list, not beside it.",
+      "diff": "@@ ## Layout @@\n-- filter-bar: beside the task list\n+- filter-bar: above the task list\n",
+      "resolves": [
+        {
+          "id": "k3m9x2-2",
+          "status": "implemented",
+          "resolution": "Filter bar moved above the list."
+        }
+      ]
+    }
+  ],
+  "needs_manual": [
+    {
+      "inboxId": "p7q1z8-1",
+      "reason": "journey change: stories.yaml takes no patch"
+    }
+  ]
+}

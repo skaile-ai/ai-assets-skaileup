@@ -2412,7 +2412,7 @@ def test_a_bare_nested_screen_path_fails_flat_screens(tmp_path, rel):
 
 def test_a_flat_screen_with_an_anchor_passes_flat_screens(tmp_path):
     root = write_repo(tmp_path)
-    append(root, "tree/brief.md", '\n"source_anchor": "07_screens/login.md#elements/submit-button"; see `07_screens/` and `09_mockup/prototypes/<screen>/a.html`.\n')
+    append(root, "tree/brief.md", '\n"source_anchor": "07_screens/login.md#elements/submit-button"; see `07_screens/` and `09_mockup/storybook/src/screens/<screen>.vue`.\n')
     assert flat_screens_errors(root) == []
 
 
@@ -3368,6 +3368,31 @@ def test_check_concept_limit_is_a_parameter(tmp_path):
     assert module.check(concept, script, today=_today()) == []
     problems = module.check(concept, script, today=_today(), stale_days=5)
     assert len(problems) == 1 and "6 days old (limit 5)" in problems[0], problems
+
+
+def test_check_concept_reports_a_stale_proposal_once_from_model_ts_and_not_from_the_generated_json(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    datamodel = concept / "10_blueprint/datamodel"
+    (datamodel / "model.json").write_text(
+        '{"version": "1.0", "entities": [{"id": "User", "display_name": "User", "fields": [\n'
+        '{"id": "user_nick", "status": "proposed", "proposed_by": "mockup-feedback", "proposed_on": "2026-09-01", "source": "x"}]}],'
+        ' "relationships": []}',
+        encoding="utf-8",
+    )
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1 and problems[0].startswith("_concept/10_blueprint/datamodel/model.json:2:"), problems
+    assert "architecture-datamodel" in problems[0], problems
+    (datamodel / "model.ts").write_text(
+        "export const User = entity({\n  glossary: 'user',\n  fields: {\n"
+        "    nick: f.string({ proposed: { by: 'mockup-feedback', on: '2026-09-01', source: 'x' } }),\n"
+        "    mail: f.string({\n      proposed: {\n        by: 'mockup-feedback',\n        on: '2026-10-15',\n        source: 'y',\n      },\n    }),\n"
+        "  },\n})\n",
+        encoding="utf-8",
+    )
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1 and problems[0].startswith("_concept/10_blueprint/datamodel/model.ts:4:"), problems
+    assert "2026-09-01" in problems[0] and "architecture-datamodel" in problems[0], problems
 
 
 def test_check_concept_reports_stale_proposals_in_frontmatter_scope_and_app_design(tmp_path):

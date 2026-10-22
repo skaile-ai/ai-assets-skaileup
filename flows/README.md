@@ -37,7 +37,7 @@ architecture → build → quality. Node id = skill without its domain prefix, e
 
 |Flow|Order|
 |---|---|
-|`skaileup-greenfield`|onboard → research → brief → glossary → brand → journeys → datamodel → interaction → behaviors → feature → screen → shell → techstack → system → walkthrough → storybook → annotate → feedback → scaffold → database → standards → plan → implement → branch → test → e2e → review → interaction-check → ops-review → release|
+|`skaileup-greenfield`|onboard → research → brief → glossary → brand → journeys → datamodel → interaction → behaviors → feature → screen → shell → techstack → system → storybook → feedback → scaffold → database → standards → plan → implement → branch → test → e2e → review → interaction-check → ops-review → release|
 |`skaileup-reverse`|reverse → standards → brief → glossary → brand → journeys → datamodel → interaction → shell → feature → screen → techstack → system → interaction-check → ops-review|
 
 `screen` follows `feature` in both flows: `spec-feature` lists the screens a feature needs and

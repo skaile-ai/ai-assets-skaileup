@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/03_brand/
 
-What the product looks like and how it sounds. Every skill that renders anything reads `brand.tokens.json`, and both mockup renderers hard-gate on it, so this folder is what the visual half of the project stands on. Reads `brief.md`, the glossary (`tree/glossary.md § Where the words live`) and `02_grounding/`; `design-brand` writes every file here, and `identity.md` is the one home of the tone of voice and copy guidelines.
+What the product looks like and how it sounds. Every skill that renders anything reads `brand.tokens.json`, and the Storybook package builds its styling from it, so this folder is what the visual half of the project stands on. Reads `brief.md`, the glossary (`tree/glossary.md § Where the words live`) and `02_grounding/`; `design-brand` writes every file here, and `identity.md` is the one home of the tone of voice and copy guidelines.
 
 ## Contents
 
@@ -24,7 +24,7 @@ The brand procedure, run by `design-brand`.
 3. **Extract from any reference URL they give.** Open it, screenshot it into `02_grounding/findings/` with an index row (source, date, `step: design-brand`) as `tree/02_grounding/findings/README.md` describes, and read off the dominant colours, the type pairing, the density, the elevation and the corner radius. Show what you found and ask whether to take it as-is, adapt it, or go the other way — a reference URL is the user's taste stated more precisely than they can say it.
 4. **Propose a whole brand before writing anything:** the aesthetic and why it fits this product, each colour with the job it does rather than just its hex, the type choices justified against the direction, and the **memorable element** — the one thing that makes this app visually unmistakable (primary blue, grey secondary and Inter is the default any project gets and says nothing about this one). Iterate until the user approves in words.
 5. **Write the files** from the approved proposal: `identity.md` (`tree/03_brand/identity.md`), `brand.tokens.json` and, for a brand with a dark mode, `brand.dark.tokens.json` and `brand.resolver.json` (`tree/03_brand/brand.tokens.md`), `brandbook.html` (`tree/03_brand/brandbook.md`). The approval from step 4 is recorded in `identity.md` and in the token file in the same write, as `tree/03_brand/brand.tokens.md § Writing it` says.
-6. **Report the distinctive choices in a sentence or two** and name what reads the tokens: the screen specs, the walkthrough and the storybook.
+6. **Report the distinctive choices in a sentence or two** and name what reads the tokens: the screen specs and the Storybook package.
 
 ## Checks
 

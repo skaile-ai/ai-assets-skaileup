@@ -1,0 +1,199 @@
+{
+  "version": "1.0",
+  "entities": [
+    {
+      "id": "User",
+      "glossary_id": "user",
+      "display_name": "User",
+      "label_field": "display_name",
+      "key_field": "email",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "user_display_name",
+          "name": "display_name",
+          "type": "string",
+          "max_length": 80,
+          "faker": "faker.person.fullName"
+        },
+        {
+          "id": "user_email",
+          "name": "email",
+          "type": "email",
+          "unique": true,
+          "faker": "faker.internet.email"
+        },
+        {
+          "id": "user_avatar",
+          "name": "avatar",
+          "type": "image",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "Task",
+      "glossary_id": "task",
+      "display_name": "Task",
+      "label_field": "title",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "task_title",
+          "name": "title",
+          "type": "string",
+          "max_length": 120
+        },
+        {
+          "id": "task_status",
+          "name": "status",
+          "type": "enum",
+          "values": {
+            "Draft": "Initial state, not yet submitted",
+            "InReview": "Awaiting approval",
+            "Published": "Live and visible"
+          }
+        },
+        {
+          "id": "task_priority",
+          "name": "priority",
+          "type": "enum",
+          "default": "Normal",
+          "enum_id": "priority"
+        },
+        {
+          "id": "task_due_date",
+          "name": "due_date",
+          "type": "date",
+          "required": false
+        },
+        {
+          "id": "task_owner_id",
+          "name": "owner_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "User"
+        },
+        {
+          "id": "task_estimate",
+          "name": "estimate",
+          "type": "decimal",
+          "required": false,
+          "status": "proposed",
+          "proposed_by": "mockup-storybook",
+          "proposed_on": "2026-07-01",
+          "source": "TaskEditor needs an effort estimate"
+        }
+      ]
+    },
+    {
+      "id": "Tag",
+      "glossary_id": "tag",
+      "display_name": "Tag",
+      "label_field": "label",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "tag_label",
+          "name": "label",
+          "type": "string",
+          "unique": true,
+          "max_length": 40
+        }
+      ]
+    },
+    {
+      "id": "TaskTag",
+      "glossary_id": "task-tag",
+      "display_name": "Task tag",
+      "label_field": "task_id",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "task_tag_task_id",
+          "name": "task_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "Task"
+        },
+        {
+          "id": "task_tag_tag_id",
+          "name": "tag_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "Tag"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "task_owner",
+      "from": "Task",
+      "from_field": "owner_id",
+      "to": "User",
+      "type": "m2o",
+      "label": "Owner",
+      "inverse_label": "Tasks",
+      "on_delete": "cascade"
+    },
+    {
+      "id": "task_tags",
+      "from": "Task",
+      "from_field": "tags",
+      "to": "Tag",
+      "type": "m2m"
+    },
+    {
+      "id": "task_tag_task",
+      "from": "TaskTag",
+      "from_field": "task_id",
+      "to": "Task",
+      "type": "m2o",
+      "on_delete": "cascade"
+    },
+    {
+      "id": "task_tag_tag",
+      "from": "TaskTag",
+      "from_field": "tag_id",
+      "to": "Tag",
+      "type": "m2o",
+      "on_delete": "cascade"
+    }
+  ],
+  "enums": [
+    {
+      "id": "priority",
+      "values": [
+        {
+          "value": "Low",
+          "label": "Can wait"
+        },
+        {
+          "value": "Normal",
+          "label": "Default urgency"
+        },
+        {
+          "value": "High",
+          "label": "Needs attention today"
+        }
+      ]
+    }
+  ]
+}

@@ -59,11 +59,11 @@ A derive-or-ask step: read what exists → derive the rest from `_concept/02_gro
 - A directory README titles itself `# _concept/<dir>/`; its first `path:` entry is the
   directory with a trailing slash. `## Contents` lists the children that have no node of
   their own, one line each. `## Writing it` appears only when the directory is produced as a
-  whole (`findings/`, `walkthrough/`).
+  whole (`findings/`, `storybook/`).
 - **Named reference sections.** A node may carry additional `##` sections between
   `## Format` and `## Writing it`. Each holds reference material that other nodes or skills
   cite by `§` — for example `## Naming` (`10_blueprint/datamodel/README.md`), `## Verdicts`
-  (`11_build/README.md`), `## Manifest schema` (`09_mockup/walkthrough/README.md`). Name the
+  (`11_build/README.md`), `## Ownership` (`README.md`). Name the
   section for what it holds, so the `§` citation reads as a sentence. Procedure for a
   skill-specific use stays in `## Writing it`.
 - `owner` is exactly the set of skills whose `produces` resolve to this node, and every
@@ -98,7 +98,7 @@ every `Call the Skill tool with "…"` sentence and its absent-skill fallback, e
 "Done when".
 
 **Per rule, keep at most one consequence clause** — the one naming what breaks downstream
-("…or the walkthrough renders a bland default").
+("…or every rendered screen gets a bland default").
 
 **Drop:** a second example; history ("the old collection…", ticket numbers, ADR references
 inside nodes); Wrong/Right dialogue samples; text that restates another node; `MUST`/`NEVER`
@@ -109,7 +109,7 @@ keep it and note the node path and sentence for review.
 
 **Expected size:** nodes of 40–150 lines are typical. Verbatim schemas and the generated
 tree fence in `tree/README.md` are excluded from the count, so the nodes that carry them may
-run longer — `tree/README.md`, `tree/09_mockup/walkthrough/README.md`,
+run longer — `tree/README.md`,
 `tree/09_mockup/feedback/patches/README.md`, and `tree/07_screens/README.md` (the
 `elements:` block). `tree/APP-DESIGN.md` also runs long: its `## Format` holds the whole
 section catalogue of one artifact. A node over 150 lines after that

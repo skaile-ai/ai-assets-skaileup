@@ -1,100 +1,105 @@
 ---
 path: _concept/09_mockup/storybook/
-summary: standalone Storybook of components, page compositions and journey click-dummies
+summary: one Vue Storybook package — floorplans, screens, entities, the app, journeys
 owner: [mockup-storybook]
 may_propose: []
 ---
 
 # _concept/09_mockup/storybook/
 
-A standalone Storybook in three layers: custom components, full-page screen compositions, and one clickable click-dummy per user journey. It is a concept artifact, a surface for reviewing the design before the app exists. An app that wants its own Storybook gets it as ordinary build work behind the template's `## Storybook Config`; the two never share a directory. Nothing here is framework-specific except the six stack atoms step 1 resolves; layout, story titles, variant names and the page manifest are identical on every stack, and only the file extension moves (`story_extension`).
+The one surface stakeholders review before the app exists: a Vue 3, Vite and Storybook 10 package on Nuxt UI 4, copied from `skills/mockup-storybook/references/scaffold/` and grown in five story layers — floorplans, screens, entities, the whole app, journeys. It is a concept artifact: the specs and the data model stay the source of truth, and nothing here is read as input by a spec skill. The package grows incrementally and is critiqued component by component, so a field the editor needs but the model lacks surfaces as a proposal in `model.ts` while the editor is drawn, and a stakeholder's note lands on the Vue file it was made on. An app that wants its own Storybook gets it as ordinary build work; the two never share a directory.
 
 ## Format
 
-### Directory layout
+### Package layout
 
 ```
 _concept/09_mockup/storybook/
-├── package.json
-├── .storybook/{main,theme,preview}.<ts|js>
+├── package.json  tsconfig.json  vite.config.ts  vitest.config.ts  .gitignore  README.md
+├── .storybook/{main.ts, preview.ts}
+├── scripts/{inbox.ts, resolve.ts, gen-tokens.ts}
 └── src/
-    ├── styles/brand.css
-    ├── @types/{README.md, <entity>.<ts|js>, index.<ts|js>}
-    ├── components/{AppShell.<ext>, <ComponentName>.<ext>, index.<ts|js>}
-    ├── pages/{<Group>/<PageName>.<ext>, manifest.json}
-    └── stories/
-        ├── Components/<ComponentName>.stories.<ext>
-        ├── Pages/00 Layout/AppShell.stories.<ext>
-        ├── Pages/<NN Group>/<PageName>.stories.<ext>
-        └── Journeys/{Hero,Vital,Hygiene}/<FlowName>.stories.<ext>
+    ├── styles/{main.css, tokens.css}              tokens.css is generated from 03_brand
+    ├── floorplans/{<id>.vue, <id>.stories.ts, index.ts}     the 16 rulebook floorplans
+    ├── model/{store.ts, scenario.ts}              the in-memory store and the scenario list
+    ├── components/{Field.vue, Screen.vue}
+    ├── app/{App.vue, Shell.vue, routes.ts, nav.ts, router.ts, App.stories.ts}
+    ├── screens/<screen_id>.vue + <screen_id>.stories.ts      one per 07_screens/<screen_id>.md
+    ├── entities/<Entity>/{<Entity>Editor.vue, <Entity>Row.vue, *.stories.ts}
+    └── journeys/<journey_id>.stories.ts
 ```
 
-`AppShell` lives in `components/`, not `pages/`: pages render inside it, so it is a building block that happens to be page-shaped.
+Everything outside `src/screens/`, `src/entities/`, `src/journeys/` and `src/app/nav.ts` ships with the scaffold, the 16 floorplans included, and is never hand-edited in a project; those four are the project's own and are written by `mockup-storybook`. `tokens.css`, `storybook-static/`, `node_modules/` and the type files Nuxt UI generates are gitignored.
 
-### Group naming
+### Story layers
 
-A screen is a file directly under `07_screens/`, so its group is the featureset of the first feature in its `implements:` (`05_features/user-auth/login.md` → featureset `user-auth`); a screen with `implements: []` goes to the group `other`. The label is the slug in title case (`user-auth` → `User Auth`) and the sort key is the featureset's two-digit position in the `05_features/featuresets.md` roster (`01`), `99` for `other`. Page components go to `src/pages/user-auth/`; their stories go to `src/stories/Pages/01 User Auth/` (space, not underscore: Storybook renders the folder name in the sidebar).
+| Layer | Title | One story per | Shows |
+|---|---|---|---|
+| Floorplans | `Floorplans/<id>` | rulebook floorplan | the regions and the `§ Responsive` behaviour of `rulebook/floorplans/<id>/README.md`, with neutral placeholders |
+| Screens | `Screens/<screen_id>` | `07_screens/<screen_id>.md` | the screen's floorplan with its `regions:` filled from the seed |
+| Entities | `Entities/<Entity>/<Component>` | state of an editor or display component | one `model.ts` entity |
+| App | `App` | — | the whole click-dummy: shell, navigation and every screen over an in-memory router |
+| Journeys | `Journeys/<journey_id>` | journey of `04_journeys/stories.yaml` | the App story started at the journey's first screen, a `play` function walking its steps |
 
-### Story titles
+Each layer is built from the one below it: a screen composes a floorplan, entity components fill its regions, the App routes the screens, a journey drives the App. A layer whose inputs do not exist yet is absent, never faked.
 
-| Layer | Title |
+### Globals and state stories
+
+| Global | Values | Effect |
+|---|---|---|
+| `scenario` | the keys of `seed.scenarios`, starting on `populated`; `empty` alone when no seed exists | the store serves that scenario's rows |
+| `fail` | `off`, `on` | the store rejects writes after a latency |
+| viewport | `narrow` (390 px), `wide` (1280 px) | the two breakpoints of the floorplans' `§ Responsive` |
+
+An entity component gets one story per state: `Default`, `Empty` (`globals: { scenario: 'empty' }`), `Saving` (a `play` function submits and asserts the busy state), `Error` (`globals: { fail: 'on' }`) and `EdgeCases` (`globals: { scenario: 'edge_cases' }`). A screen story needs a state only for a situation its spec lists that these do not cover. The store is a `reactive()` object behind `provide` and `inject`: no network, no Pinia, and `save` is the only write.
+
+### The data model
+
+The package reads `_concept/10_blueprint/datamodel/model.ts` and `seed.ts` through the alias `@model` and has no generator of its own; the typed vocabulary and the generated files are in `tree/10_blueprint/datamodel/model.md § Format`. An entity component types its rows with `Infer<typeof Task>`, so a seed row or a field name that no longer fits the model fails `vue-tsc` and `tsc`. An empty project, with no model yet, still builds: the store falls back to the `empty` scenario.
+
+When a component needs a field the model lacks, append it to its entity in `model.ts` with `proposed: { by: 'mockup-storybook', on: '<date>', source: '<why the editor needs it>' }`, run `gen.ts`, and use the field. The marker stays until `architecture-datamodel` promotes or rejects it (`tree/README.md § Ownership`). `model.ts` is never absent for an editor: when it does not exist, `mockup-storybook` creates it by the copy step of `tree/10_blueprint/datamodel/model.md § Writing it`, with the entities the first editor needs, all marked proposed.
+
+### The one attribute
+
+`Screen.vue` renders a screen's root with `data-screen="<screen_id>"`. It is the only `data-` attribute the package emits: journey `play` functions assert `[data-screen="<next screen>"]` after each step. What a note points at comes from the component chain, not from attributes.
+
+## Annotation
+
+Notes come from `@ecsplico/annotation-inbox`, wired the way the host wires it: `VueTracer()` and an inbox middleware in `.storybook/main.ts`, `mountAnnotationToolbar()` in `.storybook/preview.ts`. A stakeholder clicks an element in a running `storybook dev`, writes the note, and it lands in `<project>/.data/annotations/items/<sessionId>-<n>.json`, where `<project>` is the directory holding `_concept/`. The static `storybook build` has no toolbar: the mount asks the dev server first and stays silent without one.
+
+An item carries what `mockup-feedback` reads (`tree/09_mockup/feedback/triage/README.md`):
+
+| Field | Holds |
 |---|---|
-| Components | `Components/<ComponentName>` |
-| App shell | `Pages/00 Layout/AppShell` |
-| Pages | `Pages/<NN> <GroupName>/<PageName>` |
-| Journeys | `Journeys/<Stage>/<JourneyLabel>` |
+| `inboxId` | `<sessionId>-<n>`, the id a resolution names |
+| `comment` | the stakeholder's text |
+| `target.kind`, `target.ref` | `element` with `<path>:<line>:<col>` of the Vue file under `src/`, for an element written in our own template; `route` for a click on what a Nuxt UI component renders (a `UButton`, a `UInput`) |
+| `vueComponents` | the component chain of the click; it names our component (`TaskEditor (src/entities/Task/TaskEditor.vue)`) even when `target.kind` is `route` |
+| `url` | the Storybook iframe URL; its `id=` is the story id (`entities-task-taskeditor--default`) |
+| `status` | `open`, `implemented` or `rejected` |
 
-Component stories carry the `autodocs` tag. Page and journey stories set `layout: 'fullscreen'`.
+`src/entities/<Entity>/` maps a note to an entity, `src/screens/<screen_id>.vue` to a screen spec, a story id starting `journeys-` to a journey, and `src/floorplans/` to the rulebook; an entity directory that is not a `model.ts` entity id breaks that mapping. `npm run resolve -- --ids <id,id> --status implemented|rejected --resolution "<why>"`, run in the package directory, closes notes through the same inbox; `rejected` needs a resolution. `.data/` is local state, gitignored in the project and never an artifact; any agent reads it with the `annotation-inbox` skill.
 
-### Named variants
+## What the host serves
 
-| Layer | Exports |
-|---|---|
-| Component | `Default`, `AllVariants`, plus `WithData` / `Empty` / `Loading` where the component supports them |
-| AppShell | `DesktopExpanded`, `DesktopCollapsed`, `Mobile` |
-| Page | one per state the screen spec lists (`Default`, `Populated`, `Empty`, `Loading`, `Error`, …), plus `Mobile` and `Tablet` |
-| Journey | a single `Interactive` story |
-
-A component that appears in several screens with different configurations gets one variant per configuration. Story data is realistic and domain-appropriate, drawn from `10_blueprint/datamodel/seed.json` scenarios where a data model exists and from the screen spec's own examples otherwise; lorem ipsum reads as an unfinished screen and hides the layout questions the review exists to answer.
-
-### `src/pages/manifest.json`
-
-One entry per screen spec, keyed by the spec's path relative to `_concept/`:
-
-```json
-{
-  "07_screens/login.md": {
-    "component": "user-auth/Login",
-    "import": "./src/pages/user-auth/Login",
-    "route": "/login"
-  }
-}
-```
-
-The journeys layer resolves each journey's walkthrough-manifest `screen_sequence` through this file (the story map's `candidate_screens` when no manifest exists); a screen missing from it falls back to matching on route or purpose against the screen specs.
-
-### The click-dummy pattern
-
-One `Interactive` story per journey, built only from existing page components and `AppShell`:
-
-- Track the current step in framework-local reactive state; render the matching page component as AppShell's content.
-- Wire the advance on **real** UI: a nav item, an action button, a link the screen spec already declares. The journey tests whether the design's own affordances carry a person through the flow, so an added Prev/Next control would answer the wrong question.
-- Highlight the active nav item for the current step and show a banner with the persona name, `Step N of M` and the step description.
-- When the reader clicks something that does not advance, add a `click-hint` class to the elements that do and drop it after about three seconds: a dead click with no feedback reads as a broken prototype.
-- Let the data reflect progression: after a "create project" step, the next screen shows that project.
-- Reuse the interfaces in `src/@types/`; keep per-step data inline in the story file.
+`storybook-static/`, the output of `npm run build-storybook`, uses relative asset paths and opens from a file or any static host. A host that shows prototypes serves that directory, and one that runs `npm run storybook` shows the live stories with the annotation toolbar.
 
 ## Writing it
 
-Where the screens come from: `mockup-walkthrough` already resolved the screen set and every journey's screen sequence into `_concept/09_mockup/walkthrough/<renderer>/manifest.json` (`<renderer>` is the subdirectory holding it; shape in `tree/09_mockup/walkthrough/README.md § Manifest schema`). Read it first and take `screens[]` (`screen_path`, `screen_id`, `elements[]`) and `journeys[]` (`journey_id`, `screen_sequence`) from it, so this skill and the walkthrough cannot disagree about what a screen or journey is. The manifest carries no state lists, persona or stage; those still come from the screen spec and from `stories.yaml`, found by `journeys[].source`. No manifest yet: read `07_screens/*.md` (flat; `shell.md` is not a screen) and `stories.yaml` directly, and say in the report that the walkthrough was not built first. With neither a manifest nor a screen spec there is nothing to compose: name `experience-screen` as the skill that writes the screens (from `_concept/02_grounding/findings/screens.md` when the code already holds them), and build the layers whose inputs exist.
+`mockup-storybook` runs the steps in order and skips a layer whose inputs do not exist, naming the missing input in its completion summary. Later runs add the layers whose inputs have appeared since. Nothing gates a step: a missing input is derived or asked for per `tree/README.md § How a skill runs`.
 
-1. **Resolve the stack and read its atoms by name.** `10_blueprint/techstack.md` names `tech_stack_skill`. Without it, take the stack from `_concept/02_grounding/findings/stack.md` or the project's own manifest (`concept-reverse` scoped `stack` fills the findings) and ask for what neither settles (`tree/README.md § How a skill runs`, rule 1); recording the choice in `techstack.md` is `architecture-techstack`'s. `templates/<that id>/TEMPLATE.md` carries `storybook_addon`, `story_format`, `story_extension`, `component_import`, `component_library`, `icon_library` and `package_manager` under `metadata.atoms`. Every template declares every atom with a value or an explicit `null`, and `null` is the answer, not a missing one: `component_library: null` means the stack ships none, so step 3's split puts every element on the custom side, and `icon_library: null` means inline the SVGs. Confirm the set with the user before scaffolding, because a wrong addon surfaces at the end of step 6 after every story is written against it. Carry the atoms as the only stack-shaped values in the run; every later step names an atom, not a framework.
-2. **Scaffold, when `_concept/09_mockup/storybook/package.json` is absent.** Write the project files listed in `skills/mockup-storybook/references/scaffold.md`: `package.json` on the resolved addon, `.storybook/main`, `theme` and `preview`, and `src/styles/brand.css`; then install with the resolved package manager and confirm `run build` passes before writing a single story. Every colour, font, radius and spacing value comes from `03_brand/brand.tokens.json` (flattened per `tree/03_brand/brand.tokens.md § Flattening to CSS`) and viewport presets come from `07_screens/shell.md`, so the prototype agrees with the brand it exists to show. Without tokens, take the stack's own defaults from the template's `## CSS Variables / Theming` section and tell the user which; without a shell spec, use phone, tablet and desktop widths. Already present: leave it alone and go to step 3, because the scaffold is the user's by then.
-3. **Build the components layer.** Take the deduplicated union of `elements[]` across the manifest's screens (the screen specs' `UI Elements` sections when there is no manifest). Split it against what the component library actually exports, read from the installed package's type declarations, into *library* elements (pages import them directly; no story) and *custom* elements (you build them). Show both lists and confirm the split before building. For each custom element write the component under `src/components/`, a minimal interface under `src/@types/` covering only the properties it renders, and a story under `src/stories/Components/`. Where `10_blueprint/datamodel/seed.json` exists, source the `WithData` and `Empty` variants from its `populated` and `empty` scenarios, so stories and later tests share one fixture. Finish with the `src/components/index` barrel, which step 4 imports from; an empty barrel with a comment is the right output when the library covered everything.
-4. **Build the pages layer.** `AppShell` first, from `07_screens/shell.md`, with nav items derived from the shell spec (from the screen files when there is none): it is the frame every page renders inside, so a page built before it gets composed twice. Then one page component and one story per manifest screen, with a named variant for every state the spec lists and `Mobile` / `Tablet` variants alongside. Close with `src/pages/manifest.json` mapping each screen spec path to its component and route; step 5 reads it to turn a `screen_sequence` into imports.
-5. **Build the journeys layer**, when the manifest lists journeys or `04_journeys/stories.yaml` exists. Journeys come from `journeys[]`: `screen_sequence` gives the steps and the story map at `source` gives stage, persona and step descriptions. One story per `hero`, `vital` and `hygiene` story map; `backlog` maps are out of scope by stage, and there is exactly one hero. Each is a single interactive story per § The click-dummy pattern: navigation happens through the real nav items and action buttons, because a walkthrough with its own navigation is no evidence the design's navigation works. Mark the hero flow as the default story. No `stories.yaml`: note the skipped layer in the project README, naming what to run.
-6. **Verify.** `run build` from the storybook directory, then count the story files per layer and report the three counts with the command that opens the result. A build that fails here is fixed here, since a Storybook nobody can start is not reviewable.
+1. **Resolve the facts.** Read what exists: `03_brand/brand.tokens.json`, `07_screens/*.md` and `shell.md`, `10_blueprint/datamodel/model.ts` and `seed.ts`, `04_journeys/stories.yaml`, and the package itself when it exists. Take the screen list from the files under `07_screens/` (`shell.md` is not a screen), the journey list from the non-`backlog` stories, and the entity list from the exports of `model.ts`. Resolve the rest per `tree/README.md § How a skill runs`.
+2. **Scaffold, when `_concept/09_mockup/storybook/package.json` is absent.** Copy `skills/mockup-storybook/references/scaffold/` into the directory unchanged, run `npm install` there and `npx playwright install chromium` once (the play functions run in it), then `npm run check`; confirm it passes before writing a story. A package that exists is left as it is: a stale copy is a question for the user, never an overwrite.
+3. **Bring tokens and the model in.** The package writes `src/styles/tokens.css` from `03_brand/brand.tokens.json` (and `brand.dark.tokens.json`) on every dev, build and test start, as the `--ui-*` variables of Nuxt UI (`tree/03_brand/brand.tokens.md § Flattening to CSS` fixes the flattening); `npm run tokens` is the manual form. Without brand tokens Nuxt UI's defaults stay and the summary says so. When `model.ts` is absent and step 5 will need entities, create it per § The data model.
+4. **Write a screen's layout story.** For each screen spec without a story, or the one named by the caller: `src/screens/<screen_id>.vue` places the screen's floorplan component (`floorplan:` in the spec) with `:chrome="!useInShell()"` so the shell is drawn once, fills each slot its `regions:` binds from the seed, leaves an unbound region as a neutral placeholder, and wraps the root in `Screen.vue`; `src/screens/<screen_id>.stories.ts` titles it `Screens/<screen_id>`. Open the story at `narrow` and `wide` before reporting it. Worked example: `skills/mockup-storybook/references/screen-story.md`.
+5. **Write the entity stories.** For each entity a screen binds in a region, or whose editor a screen's `### Actions` names: `src/entities/<Entity>/<Entity>Editor.vue` (a `UForm` of `Field` wrappers typed by `Infer`), `<Entity>Row.vue`, and one story per state. Every field the editor needs that the model lacks goes through § The data model as a proposal, and the completion summary lists each one. Worked example: `skills/mockup-storybook/references/entity-stories.md`.
+6. **Write the App and the journeys.** The routes need no edit: `routes.ts` globs `src/screens/*.vue`, one route `/<screen_id>` each. Write `src/app/nav.ts` — the shell floorplan id named by `shell_frame:` in `07_screens/shell.md` and the `kind: nav` items of that file, in order (empty entries list every screen). Then one `src/journeys/<journey_id>.stories.ts` per non-`backlog` journey: the App story with `args.start` at the route of its first screen and a `play` function that follows `steps[]` through the real navigation, asserting `[data-screen="<screen_id>"]` after each. Worked example: `skills/mockup-storybook/references/journey-story.md`.
+7. **Verify.** `npm run check` from the package directory builds, type-checks and runs the play functions; fix a failure here, since a Storybook nobody can start is not reviewable. Report the story count per layer and the command that opens the result.
 
 ## Checks
 
-`run build` passes; every screen spec has a page story, every custom component has a component story, and every non-backlog story map has a journey story.
+- `npm run check` exits 0 from `_concept/09_mockup/storybook/`.
+- Every `07_screens/<screen_id>.md` has a `Screens/<screen_id>` story, and every entity a screen binds has a directory under `src/entities/`.
+- Every non-`backlog` journey has a `Journeys/<journey_id>` story whose `play` function passes.
+- A field an editor uses is in `model.ts`, `proposed` when `architecture-datamodel` has not confirmed it.
+- No file under `floorplans/`, `components/`, `app/` (except `nav.ts`), `model/`, `scripts/` or `.storybook/` differs from the scaffold.

@@ -1,0 +1,31 @@
+{
+  "roundId": "test-routing",
+  "triagedAt": "2026-10-23T10:00:00Z",
+  "groups": [
+    {
+      "file": "10_blueprint/datamodel/model.ts",
+      "entity": "Task",
+      "items": [
+        "k3m9x2-1"
+      ]
+    },
+    {
+      "file": "07_screens/inbox.md",
+      "items": [
+        "k3m9x2-2"
+      ]
+    },
+    {
+      "file": "04_journeys/stories.yaml",
+      "items": [
+        "p7q1z8-1"
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "inboxId": "k3m9x2-3",
+      "reason": "no component: note targets route /iframe.html"
+    }
+  ]
+}

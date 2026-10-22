@@ -25,100 +25,99 @@ A node's `path:` entries are matched first, `<x>` matching any one segment; the 
 ## The tree
 
 ```text
-_concept/                             the artifact tree, its ownership rule and how a skill runs
-├── README.md                         the artifact tree, its ownership rule and how a skill runs
-├── brief.md                          the pitch, with its comparables — what the user said, no more
-├── glossary.md                       the ubiquitous language and its light ontology — terms, kinds, relations
-├── goals.md                          success criteria, KPIs, constraints and explicit non-goals
-├── 01_meta/                          project metadata — the sizing skills read when they need it
-│   └── scope.yaml                    flow, project type and depth — written when the first skill needs one
-├── 02_grounding/                     everything that came from outside the room, readable by every skill
-│   ├── findings/                     graded evidence and raw material from outside the room
-│   │   ├── brand.md                  colours, type, radius, spacing and mode the repository's theme carries
-│   │   ├── brief-seeds.md            pitch, audience, problem and comparables as the repository's docs state them
-│   │   ├── datamodel.md              entities, fields, relations and enums the schema declares
-│   │   ├── index.md                  catalogue of findings files and raw material, with the skill that took each
-│   │   ├── interaction.md            surfaces, editors, save models, messages, search as the code has them today
-│   │   ├── routes.md                 every route or endpoint, the file defining it, what a user does there
-│   │   ├── screens.md                page components behind the routes, with bindings, interactions and states
-│   │   └── stack.md                  the platform, frameworks, database and tooling the manifests declare
-│   ├── onboarding/                   the preferences, constraints and material a project arrives with
-│   │   ├── answers.json              the onboarding intake record — values, confidence, seed inventory, approval
-│   │   └── questions.md              open questions routed to someone who is not in the room
-│   ├── research/                     sourced findings per topic that other skills design against
-│   │   ├── audiences.md              personas with real job titles, tools, pain points and design implications
-│   │   ├── behavioral-patterns.md    state machines and lifecycles seen in the field
-│   │   ├── colors-fonts.md           palette and typography research for the domain
-│   │   ├── competitors.md            per-product analysis of comparable products
-│   │   ├── design-inspiration.md     layout, colour, typography and component references with sources
-│   │   ├── domain.md                 terminology, regulations, trends and workflows the domain already has
-│   │   ├── patterns.md               UX and architectural patterns for this domain
-│   │   └── step/                     research dispatched alongside one skill, in a folder named for that skill
+_concept/                                the artifact tree, its ownership rule and how a skill runs
+├── README.md                            the artifact tree, its ownership rule and how a skill runs
+├── brief.md                             the pitch, with its comparables — what the user said, no more
+├── glossary.md                          the ubiquitous language and its light ontology — terms, kinds, relations
+├── goals.md                             success criteria, KPIs, constraints and explicit non-goals
+├── 01_meta/                             project metadata — the sizing skills read when they need it
+│   └── scope.yaml                       flow, project type and depth — written when the first skill needs one
+├── 02_grounding/                        everything that came from outside the room, readable by every skill
+│   ├── findings/                        graded evidence and raw material from outside the room
+│   │   ├── brand.md                     colours, type, radius, spacing and mode the repository's theme carries
+│   │   ├── brief-seeds.md               pitch, audience, problem and comparables as the repository's docs state them
+│   │   ├── datamodel.md                 entities, fields, relations and enums the schema declares
+│   │   ├── index.md                     catalogue of findings files and raw material, with the skill that took each
+│   │   ├── interaction.md               surfaces, editors, save models, messages, search as the code has them today
+│   │   ├── routes.md                    every route or endpoint, the file defining it, what a user does there
+│   │   ├── screens.md                   page components behind the routes, with bindings, interactions and states
+│   │   └── stack.md                     the platform, frameworks, database and tooling the manifests declare
+│   ├── onboarding/                      the preferences, constraints and material a project arrives with
+│   │   ├── answers.json                 the onboarding intake record — values, confidence, seed inventory, approval
+│   │   └── questions.md                 open questions routed to someone who is not in the room
+│   ├── research/                        sourced findings per topic that other skills design against
+│   │   ├── audiences.md                 personas with real job titles, tools, pain points and design implications
+│   │   ├── behavioral-patterns.md       state machines and lifecycles seen in the field
+│   │   ├── colors-fonts.md              palette and typography research for the domain
+│   │   ├── competitors.md               per-product analysis of comparable products
+│   │   ├── design-inspiration.md        layout, colour, typography and component references with sources
+│   │   ├── domain.md                    terminology, regulations, trends and workflows the domain already has
+│   │   ├── patterns.md                  UX and architectural patterns for this domain
+│   │   └── step/                        research dispatched alongside one skill, in a folder named for that skill
 │   │       └── <skill-name>/
-│   ├── seeds/                        material the user dropped in; nothing generates it
-│   └── standards/                    conventions discovered in an existing codebase, one file per convention
-│       ├── index.yml                 fast matching of conventions by applies_to and keywords
+│   ├── seeds/                           material the user dropped in; nothing generates it
+│   └── standards/                       conventions discovered in an existing codebase, one file per convention
+│       ├── index.yml                    fast matching of conventions by applies_to and keywords
 │       └── <domain>/
-├── 03_brand/                         the visual identity folder and the procedure that fills it
-│   ├── brand.dark.tokens.json        brand as W3C design tokens, with optional dark overlay and resolver
-│   ├── brand.resolver.json           brand as W3C design tokens, with optional dark overlay and resolver
-│   ├── brand.tokens.json             brand as W3C design tokens, with optional dark overlay and resolver
-│   ├── brandbook.html                self-contained visual reference for the brand
-│   └── identity.md                   colours, fonts, tone of voice and copy guidelines
-├── 04_journeys/                      personas and the staged story map
-│   └── stories.yaml                  personas, story map by stage, EARS criteria with ids
-├── 05_features/                      the feature roster and one spec per feature, grouped into featuresets
-│   ├── featuresets.md                the roster of featuresets and the features in each, with priorities
-│   └── <featureset>/                 one featureset — a user purpose and its feature specs
-│       └── <feature>.md              one feature's permanent spec — scope line, permissions, acceptance criteria
-├── 06_behaviors/                     optional state machines and rules, one file per featureset
-│   └── <featureset>.md               states, transitions and named constants for one featureset's entities
-├── 07_screens/                       the app shell and one flat spec per screen, with the elements block
-│   ├── shell.md                      the app frame — shell frame, navigation model, the one destination list
-│   └── <screen>.md                   one screen on its own — floorplan, region bindings, tier overrides, elements
-├── 08_dossiers/                      the concept-side working record of each feature, frozen when its loop ends
-│   └── <feature_slug>/               the dossier directory of one feature
-│       └── index.md                  one feature's framing, grill answers and rejected options, frozen at the end
-├── 09_mockup/                        reviewable prototypes of the design and the feedback that edits the specs
-│   ├── feedback/                     stakeholder annotations, their triage, reviewed patches and the audit trail
-│   │   ├── devlog.md                 append-only log of feedback edits, read by renderers so re-renders keep them
-│   │   ├── applied/                  committed per-session record of which patches landed and which failed
-│   │   ├── patches/                  proposed section-anchored patches and the review file a human approves
-│   │   ├── sessions/                 raw annotation sessions downloaded from the overlay, one file per round
-│   │   │   └── <sessionId>.json      raw annotation sessions downloaded from the overlay, one file per round
-│   │   └── triage/                   deterministic routing of each annotation to the file it belongs in
-│   ├── prototypes/                   early single-screen prototypes built from a floorplan preview and sample data
-│   │   └── <screen>/                 the prototype variants of one screen
-│   │       ├── a.html                one screen's early prototype — a floorplan preview with the screen's sample data
-│   │       └── b.html                one screen's early prototype — a floorplan preview with the screen's sample data
-│   ├── storybook/                    standalone Storybook of components, page compositions and journey click-dummies
-│   └── walkthrough/                  clickable site per screen and journey, plus the manifest mockup-annotate reads
-├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, decisions, data model
-│   ├── architecture.md               C4 levels — system context, containers, components, deployment, risks
-│   ├── asyncapi.yaml                 AsyncAPI 3.1 contract of the channels the project publishes or consumes
-│   ├── decisions.md                  design-time decision records, append-only
-│   ├── openapi.yaml                  OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
-│   ├── techstack.md                  chosen technologies, resolved to one template id; no third-party services
-│   └── datamodel/                    stack-neutral data model, naming rules and how it becomes a database
-│       ├── model.dbml                model.json is authored, model.dbml generated — semantic types, relations
-│       ├── model.json                model.json is authored, model.dbml generated — semantic types, relations
-│       └── seed.json                 realistic seed scenarios for mockups, screen specs and E2E tests
-└── 11_build/                         slices, trace, criteria ledger, reviews, release verdict and decisions
-    ├── decisions.md                  build-time decision records, append-only
-    ├── design-candidates.md          evidenced candidates for a better design, found in the code
-    ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
-    ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
-    ├── trace.yaml                    feature to slices to commits to code, the one feature-to-commit join
-    ├── acceptance-criteria/          the criteria status ledger, one checkbox file per feature
+├── 03_brand/                            the visual identity folder and the procedure that fills it
+│   ├── brand.dark.tokens.json           brand as W3C design tokens, with optional dark overlay and resolver
+│   ├── brand.resolver.json              brand as W3C design tokens, with optional dark overlay and resolver
+│   ├── brand.tokens.json                brand as W3C design tokens, with optional dark overlay and resolver
+│   ├── brandbook.html                   self-contained visual reference for the brand
+│   └── identity.md                      colours, fonts, tone of voice and copy guidelines
+├── 04_journeys/                         personas and the staged story map
+│   └── stories.yaml                     personas, story map by stage, EARS criteria with ids
+├── 05_features/                         the feature roster and one spec per feature, grouped into featuresets
+│   ├── featuresets.md                   the roster of featuresets and the features in each, with priorities
+│   └── <featureset>/                    one featureset — a user purpose and its feature specs
+│       └── <feature>.md                 one feature's permanent spec — scope line, permissions, acceptance criteria
+├── 06_behaviors/                        optional state machines and rules, one file per featureset
+│   └── <featureset>.md                  states, transitions and named constants for one featureset's entities
+├── 07_screens/                          the app shell and one flat spec per screen, with the elements block
+│   ├── shell.md                         the app frame — shell frame, navigation model, the one destination list
+│   └── <screen>.md                      one screen on its own — floorplan, region bindings, tier overrides, elements
+├── 08_dossiers/                         the concept-side working record of each feature, frozen when its loop ends
+│   └── <feature_slug>/                  the dossier directory of one feature
+│       └── index.md                     one feature's framing, grill answers and rejected options, frozen at the end
+├── 09_mockup/                           the reviewable prototype of the design and the feedback that edits the specs
+│   ├── feedback/                        how open prototype notes become spec edits and model proposals
+│   │   ├── devlog.md                    append-only log of feedback edits, read so a regeneration keeps them
+│   │   ├── applied/                     committed per-round record of patches landed, failed and notes closed
+│   │   ├── patches/                     proposed anchored patches and the review file a human approves
+│   │   └── triage/                      deterministic routing of each open inbox note to the file it belongs in
+│   └── storybook/                       one Vue Storybook package — floorplans, screens, entities, the app, journeys
+├── 10_blueprint/                        how the app is built — stack, architecture, API contracts, decisions, data model
+│   ├── architecture.md                  C4 levels — system context, containers, components, deployment, risks
+│   ├── asyncapi.yaml                    AsyncAPI 3.1 contract of the channels the project publishes or consumes
+│   ├── decisions.md                     design-time decision records, append-only
+│   ├── openapi.yaml                     OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
+│   ├── techstack.md                     chosen technologies, resolved to one template id; no third-party services
+│   └── datamodel/                       stack-neutral data model, naming rules and how it becomes a database
+│       ├── datamodel-model.schema.json  tool files copied into the project — the model DSL, its generator, two schemas
+│       ├── datamodel-seed.schema.json   tool files copied into the project — the model DSL, its generator, two schemas
+│       ├── gen.ts                       tool files copied into the project — the model DSL, its generator, two schemas
+│       ├── model.dbml                   model.ts is authored; model.json and model.dbml are generated from it
+│       ├── model.json                   model.ts is authored; model.json and model.dbml are generated from it
+│       ├── model.ts                     model.ts is authored; model.json and model.dbml are generated from it
+│       ├── seed.json                    seed.ts is authored and typed against the model; seed.json is generated
+│       ├── seed.ts                      seed.ts is authored and typed against the model; seed.json is generated
+│       └── skaile-model.ts              tool files copied into the project — the model DSL, its generator, two schemas
+└── 11_build/                            slices, trace, criteria ledger, reviews, release verdict and decisions
+    ├── decisions.md                     build-time decision records, append-only
+    ├── design-candidates.md             evidenced candidates for a better design, found in the code
+    ├── interaction.sarif                SARIF 2.1.0 verdict of the code against APP-DESIGN.md
+    ├── release.yaml                     the whole-app release verdict: goals, seven scores, findings, improvements
+    ├── trace.yaml                       feature to slices to commits to code, the one feature-to-commit join
+    ├── acceptance-criteria/             the criteria status ledger, one checkbox file per feature
     │   └── <featureset>/
-    │       └── <feature_slug>.ac.md  the criteria status ledger, one checkbox file per feature
-    ├── reviews/                      one feature's code-review verdict and findings
-    │   └── <feature_slug>.yaml       one feature's code-review verdict and findings
-    └── slices/                       one dossier per vertical slice, cut from a frozen feature spec
-        └── <slice_id>/               one slice's dossier directory: plan, working state, frozen index
-            ├── index.md              the frozen slice record and its transient progress file
-            ├── plan.md               one slice's scope, rows, criteria by id, tests and carry-overs
-            └── progress.yaml         the frozen slice record and its transient progress file
+    │       └── <feature_slug>.ac.md     the criteria status ledger, one checkbox file per feature
+    ├── reviews/                         one feature's code-review verdict and findings
+    │   └── <feature_slug>.yaml          one feature's code-review verdict and findings
+    └── slices/                          one dossier per vertical slice, cut from a frozen feature spec
+        └── <slice_id>/                  one slice's dossier directory: plan, working state, frozen index
+            ├── index.md                 the frozen slice record and its transient progress file
+            ├── plan.md                  one slice's scope, rows, criteria by id, tests and carry-overs
+            └── progress.yaml            the frozen slice record and its transient progress file
 ```
 
 ## Numbering
@@ -170,7 +169,7 @@ Every skill binds these rules at its interviewing step by citing `tree/README.md
 3. **Match the user's specificity.** Infer depth from the material supplied; where it matters, ask per artifact how deep to go (`sketch · standard · exhaustive`) and say what each level produces; a user precise about roles and vague about layout gets precise role questions and a layout proposal.
 4. **Sort before asking.** Restate the user's input as a coherent draft (terms, objects, screens, rules) with gaps marked, then ask about the gaps — never a questionnaire first.
 5. **Show consequences before commitments** on data, feature and navigation choices: what the user sees, data and permission effects, affected artifacts, reversibility; for expensive choices compare genuinely different alternatives (design-it-twice).
-6. **Prototype when the choice is spatial.** A floorplan preview with sample data (neutral styling, two variants on request) before the screen is specified.
+6. **Show the layout when the choice is spatial.** A layout story with neutral placeholders (two floorplans on request, at the `narrow` and `wide` viewports) before the screen is specified.
 7. **Record at the semantic home**, as `proposed` when another skill owns it; open questions get stable ids.
 8. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps, named by demand: the skills that own what is still missing. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
 

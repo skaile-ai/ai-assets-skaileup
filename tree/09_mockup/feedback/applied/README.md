@@ -1,46 +1,64 @@
 ---
 path: _concept/09_mockup/feedback/applied/
-summary: committed per-session record of which patches landed and which failed
+summary: committed per-round record of patches landed, failed and notes closed
 owner: [mockup-feedback]
 may_propose: []
 ---
 
 # _concept/09_mockup/feedback/applied/
 
-`applied/<sid>.json`, written by `skills/mockup-feedback/scripts/apply.py` in the same commit as the spec edits and the devlog append. It is the durable record once `sessions/` rotates, and its presence marks the session as applied: `apply.py` refuses a second run for the same `<sid>` without `--force`.
+`applied/<round>.json`, written by `skills/mockup-feedback/scripts/apply.py` in the same commit as the file edits and the devlog append. It is the durable record once the notes leave the open list, and its presence marks the round as applied: `apply.py` refuses a second run for the same `<round>` without `--force`.
 
 ## Format
 
 ```json
 {
-  "sessionId": "<sid>",
+  "roundId": "<round>",
   "appliedAt": "<ISO-8601 UTC>",
   "items": [
     {
-      "annotationId": "ann-good",
-      "patchId": "p-good",
-      "target": { "file": "07_screens/login.md", "section": "## Layout", "category": "change" },
-      "body": "right-align the button",
+      "inboxId": "k3m9x2-1",
+      "patchId": "p-k3m9x2-1-model",
+      "target": { "file": "10_blueprint/datamodel/model.ts", "section": "ts:entity/Task/fields", "category": null },
+      "body": "The editor needs an estimate field.",
       "status": "applied"
     },
     {
-      "annotationId": "ann-bad",
-      "patchId": "p-bad",
-      "target": { "file": "07_screens/login.md", "section": "## NONEXISTENT SECTION", "category": "change" },
-      "body": "change something",
+      "inboxId": "k3m9x2-2",
+      "patchId": "p-k3m9x2-2-content",
+      "target": { "file": "07_screens/inbox.md", "section": "## NONEXISTENT SECTION", "category": "change" },
+      "body": "Put the filter bar above the list.",
       "status": "failed",
       "error": "section not found: '## NONEXISTENT SECTION'"
     }
+  ],
+  "resolutions": [
+    {
+      "id": "k3m9x2-1",
+      "status": "implemented",
+      "resolution": "Task.estimate proposed in model.ts.",
+      "state": "pending",
+      "command": "cd <package dir> && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed in model.ts.'"
+    },
+    { "id": "k3m9x2-2", "state": "open", "reason": "patch not applied: p-k3m9x2-2-content" }
   ]
 }
 ```
 
-One item per checked patch, applied and failed alike: annotation id, patch id, target `file` / `section` / `category`, the verbatim annotation `body`, `status` (`applied` | `failed`) and an `error` on failure. A derived patch has `category: null`.
+One item per checked patch, applied and failed alike: note id, patch id, target `file` / `section` / `category`, the verbatim note `body`, `status` (`applied` | `failed`) and an `error` on failure. A patch without a category has `category: null`.
+
+One resolution per note a checked patch answers, with a `state`:
+
+| `state` | Meaning | Extra keys |
+|---|---|---|
+| `resolved` | the note is closed in the inbox with `status` and `resolution` | none |
+| `pending` | every patch landed, but the prototype package is not installed or its `resolve.ts` failed | `command`, the exact command that closes the note; `error` when `resolve.ts` ran and failed |
+| `open` | a patch listing the note was unchecked or failed, so the note stays open | `reason` |
 
 ## Writing it
 
-Only `apply.py` writes this file (`tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)`, step 6). It applies each checked patch best-effort, writes this file, appends the devlog block and makes one commit `feedback: apply session <sid> (<n> applied, <m> failed)`. If the commit fails it restores the working tree and deletes this file. All-failed (exit 2) writes nothing.
+Only `apply.py` writes this file (`tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)`, step 5). It applies each checked patch best-effort, runs `gen.ts` when `model.ts` changed, writes this file with every answerable note `pending`, appends the devlog block and makes one commit `feedback: apply round <round> (<n> applied, <m> failed)`. Only after that commit does it close the notes through `_concept/09_mockup/storybook/scripts/resolve.ts`, run with the package's own `tsx`, and amend the commit with the `resolved` states, so a note is never closed for a change that is not in the history. If the commit fails it restores the working tree, deletes this file and closes no note. All-failed (exit 2) writes nothing. A `pending` resolution is closed later by running its `command` once; that edits the inbox, which is local state, not a file of this commit.
 
 ## Checks
 
-`python skills/mockup-feedback/scripts/validate_applied.py <applied-json> <patches-json> <review-md>` exits 0: every checked patch id in the review file has an item here, no item references a patch id absent from the patches JSON, every item's `status` is `applied` or `failed` (failed items carry an `error`), and `sessionId` matches the patches JSON. Every annotation of the session appears here, in `needs_manual`, or in the triage file's unresolved list.
+`python skills/mockup-feedback/scripts/validate_applied.py <applied-json> <patches-json> <review-md>` exits 0: every checked patch id in the review file has an item here, no item references a patch id absent from the patches JSON, every item's `status` is `applied` or `failed` (failed items carry an `error`), `roundId` matches the patches JSON, and every note a checked patch lists in `resolves[]` has one `resolutions[]` entry with a valid `state` (`pending` carries `command`, `open` carries `reason`). Every note of the round appears here, in `needs_manual`, or in the triage file's unresolved list.

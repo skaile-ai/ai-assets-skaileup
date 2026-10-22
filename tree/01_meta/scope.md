@@ -48,11 +48,11 @@ chosen_at: "2026-09-05T14:22:00Z"
 | project_type | never grows |
 |---|---|
 | web-app | — |
-| mobile-app | mockup-storybook |
-| library | journeys, screens, brand-identity, brand-tokens, behaviors, datamodel, build-database, mockup, mockup-storybook, app-design, interaction-review |
-| cli-tool | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook, app-design, interaction-review |
-| data-pipeline | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook, app-design, interaction-review |
-| api-service | journeys, screens, brand-identity, brand-tokens, behaviors, mockup, mockup-storybook, app-design, interaction-review |
+| mobile-app | — |
+| library | journeys, screens, brand-identity, brand-tokens, behaviors, datamodel, build-database, storybook, mockup-feedback, app-design, interaction-review |
+| cli-tool | journeys, screens, brand-identity, brand-tokens, behaviors, storybook, mockup-feedback, app-design, interaction-review |
+| data-pipeline | journeys, screens, brand-identity, brand-tokens, behaviors, storybook, mockup-feedback, app-design, interaction-review |
+| api-service | journeys, screens, brand-identity, brand-tokens, behaviors, storybook, mockup-feedback, app-design, interaction-review |
 
 A `hard` prerequisite on anything listed here would block a project that was never going to have it, so such a gate is `soft` and the step that reads it says what the skill does without the file.
 

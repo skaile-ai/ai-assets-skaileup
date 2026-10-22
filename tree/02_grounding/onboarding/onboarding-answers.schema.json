@@ -29,10 +29,6 @@
       "description": "The reason the user gave for a technology answer, keyed by answer id.",
       "additionalProperties": { "type": "string" }
     },
-    "renderer": {
-      "enum": ["static-html", "astro"],
-      "description": "Walkthrough renderer, read at render time."
-    },
     "seeds": {
       "type": "array",
       "description": "Inventory of 02_grounding/seeds/: every file there appears once.",

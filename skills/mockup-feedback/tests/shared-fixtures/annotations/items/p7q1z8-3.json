@@ -1,0 +1,14 @@
+{
+  "inboxId": "p7q1z8-3",
+  "sessionId": "p7q1z8",
+  "origin": "http://localhost:6006",
+  "id": "3",
+  "comment": "The sidebar is too wide.",
+  "elementPath": "aside",
+  "vueComponents": "App > Floorplan > aside:src/floorplans/shell-sidebar.vue:12:4",
+  "url": "http://localhost:6006/iframe.html?id=floorplans-shell-sidebar--default&viewMode=story",
+  "timestamp": 1790000500000,
+  "target": { "kind": "element", "ref": "aside:src/floorplans/shell-sidebar.vue:12:4", "label": "Floorplan" },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:05:00.000Z"
+}

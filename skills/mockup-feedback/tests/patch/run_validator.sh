@@ -1,35 +1,35 @@
 #!/usr/bin/env bash
-# run_validator.sh — structural validation for patch skill output.
+# run_validator.sh — structural validation of patch skill output (validate_patches.py).
+# This script does NOT run the LLM: it checks a patch set that is already written.
+# Run from anywhere; paths resolve relative to this file.
 #
-# IMPORTANT: This script does NOT run the LLM. It validates a patches output
-# that a human or agent has already produced. Run it AFTER the patch skill
-# has generated patches/<sid>.json and patches/<sid>.review.md.
-#
-# Usage (paths resolve relative to this file):
-#   bash tests/run_validator.sh <patches-json> <review-md> <triage-json> [<session-json>]
-#
-# For CI / batch mode, the agent should:
-#   1. Run the patch SKILL.md against each fixture triage JSON.
-#   2. Call this script on the output.
+# Ad hoc use:  bash tests/patch/run_validator.sh <patches-json> <review-md> <triage-json>
 set -e
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+VALIDATE="$SKILL_DIR/scripts/validate_patches.py"
+FX="$SKILL_DIR/tests/patch/fixtures/test-routing"
 
-if [ "$#" -lt 3 ]; then
-    echo "Usage: bash run_validator.sh <patches-json> <review-md> <triage-json> [<session-json>]"
-    exit 1
+if [ "$#" -ge 3 ]; then
+    python3 "$VALIDATE" "$3" "$1" "$2"
+    exit $?
 fi
 
-PATCHES="$1"
-REVIEW="$2"
-TRIAGE="$3"
-SESSION="${4:-}"
+echo "--- Test 1: a good patch set (model proposal + screen patch + needs_manual) passes ---"
+python3 "$VALIDATE" "$FX/triage.json" "$FX/patches.json" "$FX/review.md"
 
-echo "--- Structural validation: $(basename "$PATCHES") ---"
-if [ -n "$SESSION" ]; then
-    python3 "$SKILL_DIR/scripts/validate_patches.py" "$TRIAGE" "$PATCHES" "$REVIEW" "$SESSION"
-else
-    python3 "$SKILL_DIR/scripts/validate_patches.py" "$TRIAGE" "$PATCHES" "$REVIEW"
-fi
+echo ""
+echo "--- Test 2: missing resolves, a ts: anchor on a content patch, a blank resolution and a dropped note fail ---"
+set +e
+OUT=$(python3 "$VALIDATE" "$FX/triage.json" "$FX/patches-bad.json" "$FX/review.md")
+EC=$?
+set -e
+echo "$OUT"
+[ "$EC" -eq 2 ] || { echo "FAIL: expected exit 2, got $EC"; exit 1; }
+for needle in "missing resolves" "ts: anchors belong to model-proposal" "resolution must be non-empty" "p7q1z8-1"; do
+    echo "$OUT" | grep -q "$needle" || { echo "FAIL: expected a finding mentioning '$needle'"; exit 1; }
+done
+echo "OK: all four violations reported"
 
-echo "Patch validation passed."
+echo ""
+echo "All patch validator tests passed."

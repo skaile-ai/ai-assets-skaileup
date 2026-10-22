@@ -1,6 +1,6 @@
 ---
 name: experience-screen
-description: "Use when one screen needs specifying on its own — a screen already built in the code, a screen a feature needs, or a layout to try before anything is specified. Derives it from the findings or asks, picks the floorplan, posture and density, binds regions, records tier overrides and can prototype it early with sample data. Triggers on 'describe this screen', 'spec the inbox screen', 'which layout fits this', 'prototype this screen', 'try two layouts'."
+description: "Use when one screen needs specifying on its own — a screen already built in the code, a screen a feature needs, or a layout to try before anything is specified. Derives it from the findings or asks, picks the floorplan, posture and density, binds regions, records tier overrides and can show the layout early as a Storybook story. Triggers on 'describe this screen', 'spec the inbox screen', 'which layout fits this', 'show me this screen', 'try two layouts'."
 version: "0.1.0"
 metadata:
   requires:
@@ -14,7 +14,6 @@ metadata:
       - { id: app-design }
     produces:
       - { id: screens, path: "_concept/07_screens/<screen>.md" }
-      - { id: screen-prototypes, path: "_concept/09_mockup/prototypes/<screen>/a.html" }
       - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
   prerequisites:
     files:
@@ -37,7 +36,7 @@ Writes one screen at `07_screens/<screen>.md`, on its own: no feature, brief or 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Resolve, sort and ask** — `tree/07_screens/[screen].md § Writing it`, steps 1–3. One screen per run; a missing name is the first question. Missing glossary, model, features, shell or `APP-DESIGN.md` never stop the run: the facts come from `findings/screens.md` or a scoped `concept-reverse`, and the rest is batched.
-2. **Offer the early prototype** — `tree/09_mockup/prototypes/[screen]/a.md`. Offered before the spec is written, since the layout is a spatial choice (`tree/README.md § How a skill runs`, rule 6): a floorplan preview with the screen's sample data, a second variant on request. When the user declines, skip it; when they pick a variant, its floorplan and bindings carry into item 3.
+2. **Offer the layout story** — Call the Skill tool with "mockup-storybook" and run its step 4 (write the screen's layout story, `skills/mockup-storybook/SKILL.md`), then open the story at the `narrow` and `wide` viewports. Offered before the spec is written, since the layout is a spatial choice (`tree/README.md § How a skill runs`, rule 6): the chosen floorplan with neutral placeholders, a second floorplan on request. When the user declines, skip it; when they pick a floorplan, it and the bindings carry into item 3.
 3. **Choose the floorplan, bind regions, settle tiers** — `tree/07_screens/[screen].md § Writing it`, steps 4–6, with the floorplan READMEs of `rulebook/floorplans/` and `rulebook/rules.md § P18` and `§ P21`. Reads `APP-DESIGN.md` per `tree/APP-DESIGN.md § Reading it`; a missing term is filed as a proposed term per `tree/glossary.md § Where the words live`, and a missing attribute or screen default becomes a `proposed` entry at its owner (`tree/10_blueprint/datamodel/model.md`).
 4. **Write the screen and link it** — `tree/07_screens/[screen].md § Writing it`, steps 7–8, with the `elements:` block per `tree/07_screens/README.md` and the cross-link per `tree/05_features/README.md § Links in both directions`.
 5. **Show the screen in the user's terms** — what is where, what changes on a phone, which attribute sits behind which disclosure — and iterate to approval; then write `approved:` per `tree/README.md § Frontmatter every markdown artifact carries`.

@@ -1,144 +1,148 @@
 ---
-path: [_concept/10_blueprint/datamodel/model.dbml, _concept/10_blueprint/datamodel/model.json]
-summary: model.json is authored, model.dbml generated — semantic types, relations
+path: [_concept/10_blueprint/datamodel/model.ts, _concept/10_blueprint/datamodel/model.json, _concept/10_blueprint/datamodel/model.dbml]
+summary: model.ts is authored; model.json and model.dbml are generated from it
 owner: [architecture-datamodel]
-may_propose: [spec-feature, experience-screen]
+may_propose: [spec-feature, experience-screen, mockup-storybook, mockup-feedback]
 ---
 
-# _concept/10_blueprint/datamodel/model.dbml, model.json
+# _concept/10_blueprint/datamodel/model.ts, model.json, model.dbml
 
-The canonical, stack-neutral data model, in two forms: `model.json`, the one authored model (and the editor canvas's file), and `model.dbml`, generated from it to read. The skill renders `model.dbml` from `model.json` on every write and nobody edits it by hand. Both carry semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) always target the entity `id` in `model.json`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
+The canonical, stack-neutral data model. `model.ts` is the one authored file: TypeScript written with the DSL of `tree/10_blueprint/datamodel/skaile-model.md`, so the mockup package and the seed import its types and a row that no longer fits the model fails `tsc`. `gen.ts` runs it and writes `model.json`, the interchange file every other reader takes (`build-database`, the E2E tests, the host's canvas, which owns only its `editor` key), and `model.dbml`, rendered to read. Nobody edits the two generated files, because the next run overwrites them. All three carry semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) target the entity `id`, which is its export name in `model.ts`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
 
 ## Format
 
-`model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` (JSON Schema 2020-12, lenient: the required keys are those the host's editor needs, plus `glossary_id`). Validate before writing. Top-level keys: `version` (`"1.0"`), `entities[]`, `relationships[]` and optional `enums[]`; `editor` (canvas viewport) is written by the editor, never by a skill. An entity carries `id` (PascalCase singular — the model name every other artifact cites), `glossary_id` (the kebab-case id of the glossary term it models — `Order line` → `order-line`; the name, definition and object axes live on that term, so the entity holds no copy of them), `display_name`, `fields[]` and the metadata below; a field carries a stable `id`, a snake_case `name` and a semantic `type` (the scalar types, `enum`, or `relation`).
+`model.ts` has exactly this layout, because `mockup-feedback` appends to it as plain text:
 
-**Proposed entity.** A skill in `may_propose` (`spec-feature`, `experience-screen`) that needs an entity or field the model lacks appends it with `status: "proposed"`, `proposed_by`, `proposed_on` and `source` (`tree/README.md § Ownership`); `architecture-datamodel` promotes it by dropping the markers or rejects it with a record in `_concept/10_blueprint/decisions.md`. A proposed entity is never confirmed in `model.dbml` and carries no seed data until promoted.
+```ts
+import { defineModel, entity, f, sharedEnum } from './skaile-model'
 
-**Scalar types**
+export const Priority = sharedEnum({ Low: 'Can wait', High: 'Needs attention today' })
 
-| Type | Meaning | Example fields |
-|---|---|---|
-| `string` | Short text (≤ 255 chars) | name, title, slug, email, url |
-| `text` | Long plain text | description, bio, notes |
-| `richtext` | Formatted content (HTML/markdown) | article body, changelog |
-| `integer` | Whole number | count, sort_order, age |
-| `float` | Decimal number | rating, latitude |
-| `decimal` | Precise decimal (financial, scientific) | amount, balance, tax_rate |
-| `boolean` | True/false | is_active, is_published |
-| `date` | Date only (no time) | birth_date, due_date |
-| `datetime` | Date + time with timezone | created_at, published_at |
-| `json` | Arbitrary structured data | settings, metadata, preferences |
-| `uuid` | Unique identifier | id, external_id |
-| `password` | Secret (hashed at app layer) | password_hash |
-| `image` | Image file reference | avatar, cover_image |
-| `file` | Any file reference | attachment, document |
+export const User = entity({
+  glossary: 'user',
+  display: 'User',
+  label_field: 'display_name',
+  fields: {
+    display_name: f.string({ max_length: 80 }),
+    email: f.email({ unique: true }),
+  },
+})
 
-**Optionality.** Every field is required by default; mark an optional one `required: false`. The `?` suffix belongs to Prisma output and is never written in the model.
+export const Task = entity({
+  glossary: 'task',
+  display: 'Task',
+  label_field: 'title',
+  fields: {
+    title: f.string({ max_length: 120 }),
+    status: f.enum({ Draft: 'Initial state', Published: 'Live and visible' }),
+    priority: f.enumRef(Priority),
+    due_date: f.date({ required: false }),
+    owner_id: f.m2o(() => User, { on_delete: 'cascade' }),
+    estimate: f.decimal({ required: false, proposed: { by: 'mockup-storybook', on: '2026-07-01', source: 'TaskEditor needs an effort estimate' } }),
+  },
+})
 
-**Enum type.** Defined inline as an object mapping PascalCase values to descriptions. Inline enums stay as written below; a shared enum reused across models lives in the top-level `enums[]`, each `{ id, values: [{ value, label }] }`, and a field references it by `enum_id`. The translator generates the concrete enum (Prisma `enum`, SQL `CHECK`).
-
-```json
-{
-  "id": "task_status",
-  "name": "status",
-  "type": "enum",
-  "values": {
-    "Draft": "Initial state, not yet submitted",
-    "InReview": "Awaiting approval",
-    "Published": "Live and visible"
-  }
-}
+export const model = defineModel({
+  entities: {
+    User,
+    Task,
+  },
+  enums: {
+    priority: Priority,
+  },
+})
 ```
+
+- One `export const <EntityId> = entity({` per entity, at column 0. The id is PascalCase singular, the export name, the key in `entities` and the string every other artifact cites; `glossary` is the kebab-case id of the glossary term it models (`Order line` → `order-line`, so the id is `OrderLine`), and the name, definition and object axes live on that term, so the entity holds no copy of them.
+- Inside an entity: `  fields: {` (two spaces), exactly one field per line as `    <name>: f.<type>(...),` (four spaces, trailing comma), closed by `  },`. A field `name` is `lowercase_snake_case`; its `id` in `model.json` is derived as `<entity_snake>_<name>`.
+- `export const model = defineModel({` at column 0 with `  entities: {`, one `    <EntityId>,` per line, closed by `  },`; a shared enum adds `  enums: {` with `    <enum_id>: <ConstName>,` lines after it.
+- `model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` (JSON Schema 2020-12, lenient: the required keys are those the host's editor needs, plus `glossary_id`); `gen.ts` validates before it writes. Top-level keys: `version` (`"1.0"`), `entities[]`, `relationships[]` (derived from `m2o` and `m2m`), `enums[]` (the shared enums) and `editor` (the canvas viewport, carried over from the existing file).
+- Inside `skaile-model.ts` the types `Infer<typeof Task>` (a row), `Model` and `Seed` give the mockup and `seed.ts` their typing.
+
+**Scalar types**, one `f.<type>(options)` each; the row type is what `Infer` gives the field:
+
+| Type | Meaning | Row type | Example fields |
+|---|---|---|---|
+| `string` | Short text (≤ 255 chars) | `string` | name, title |
+| `text` | Long plain text | `string` | description, bio, notes |
+| `richtext` | Formatted content (HTML/markdown) | `string` | article body, changelog |
+| `integer` | Whole number | `number` | count, sort_order, age |
+| `float` | Decimal number | `number` | rating, latitude |
+| `decimal` | Precise decimal (financial, scientific) | `number` | amount, balance, tax_rate |
+| `boolean` | True/false | `boolean` | is_active, is_published |
+| `date` | Date only (no time), ISO `YYYY-MM-DD` | `string` | birth_date, due_date |
+| `datetime` | Date + time with timezone, ISO 8601 | `string` | published_at |
+| `json` | Arbitrary structured data | `unknown` | settings, metadata, preferences |
+| `uuid` | Unique identifier | `string` | external_id |
+| `slug` | URL-friendly unique string | `string` | slug |
+| `email` | Email address | `string` | email |
+| `url` | Web address | `string` | website |
+| `password` | Secret (hashed at app layer) | `string` | password_hash |
+| `image` | Image file reference | `string` | avatar, cover_image |
+| `file` | Any file reference | `string` | attachment, document |
+
+**Optionality.** Every field is required by default; mark an optional one `required: false`. Its row key is then `T | null` and may be omitted. The `?` suffix belongs to Prisma output and is never written in the model.
+
+**Enum type.** `f.enum({ Draft: 'Initial state' })` defines an inline enum, an object mapping PascalCase values to descriptions (the field's row type is the union of the values). An enum reused across entities is declared once with `sharedEnum({ ... })`, listed in `defineModel({ enums })` under its `snake_case` id, and referenced by `f.enumRef(<Const>)`. The translator generates the concrete enum (Prisma `enum`, SQL `CHECK`).
 
 **Relation types**
 
-| Type | Meaning | Example |
+| Type | DSL | Meaning | Example |
+|---|---|---|---|
+| `m2o` | `f.m2o(() => User, { on_delete? })` | Many-to-one, owning side | task.owner_id → User |
+| `o2m` | never declared | One-to-many, the inverse of an m2o; the translator generates it | user.tasks → Task[] |
+| `m2m` | `f.m2m(() => Tag, { through: 'TaskTag' })` | Many-to-many via an explicit junction entity | Task ↔ Tag |
+
+Declare `m2o` with the `_id` suffix on the owning side; its row value is the target's `id` and `model.json` gets one relation field plus one `relationships[]` entry (`on_delete`: `cascade | set_null | restrict`, `label`, `inverse` as `inverse_label`). `m2m` holds no column: the junction entity (`TaskTag`) has an `m2o` to both sides, and `through` names it by its id, which is how two entities refer to each other without a type cycle. A self-reference is `f.m2o('Task')` for the same reason.
+
+**Entity options**
+
+| Option | `model.json` key | Purpose |
 |---|---|---|
-| `m2o` | Many-to-one | task.assigned_to → User |
-| `o2m` | One-to-many (inverse of m2o) | user.tasks → Task[] |
-| `m2m` | Many-to-many | Task ↔ Tag (via junction model) |
+| `glossary` | `glossary_id` | The glossary term the entity models |
+| `display` | `display_name` | Human name of the entity |
+| `label_field` | `label_field` | Field used as display name in UI lists and dropdowns — set on every entity |
+| `key_field` | `key_field` | URL-friendly unique identifier — set when the entity has a human-readable unique slug |
+| `standard_fields` | `standard_fields` | Auto-generated fields; defaults to `["id", "created_at", "updated_at"]` for every entity |
+| `icon`, `color`, `position`, `from_features` | same | Canvas and traceability hints, all optional |
+| `proposed` | `status`, `proposed_by`, `proposed_on`, `source` | Marks the entity as proposed |
 
-Declare `m2o` with the `_id` suffix on the owning side, once in the entity's fields (`type: "relation"`, `relation_target` = the target entity `id`) and once in `relationships[]` (`from`, `from_field`, `to`, `type`, optional `on_delete`: `cascade | set_null | restrict`); never declare `o2m`, the translator generates it; give every `m2m` an explicit junction model (`TaskTag` with an `m2o` to both sides).
+`standard_fields` entries are injected by the translator, so they are not repeated in `fields`.
 
-**Model metadata**
+**Field options**, all optional:
 
-| Property | Purpose |
+| Option | Purpose |
 |---|---|
-| `label_field` | Field used as display name in UI lists and dropdowns — set on every model |
-| `key_field` | URL-friendly unique identifier (slug / readable URL) — set when the model has a human-readable unique slug |
-| `standard_fields` | Auto-generated fields to include; defaults to `["id", "created_at", "updated_at"]` for every model |
-| `faker` | Per-field hint for seed generation (e.g. `"faker.internet.email"`) |
+| `required` | Whether the field must have a value (default: `true`) |
+| `unique`, `readonly`, `indexed`, `primary` | Enforce uniqueness, prevent editing after creation, create a database index, mark as primary key |
+| `max_length` | Maximum character length (string fields) |
+| `default` | Value a new row starts with |
+| `placeholder` | UI hint text |
+| `faker` | Seed data generator hint (e.g. `'faker.internet.email'`) |
+| `description` | What the field holds, in the term's words |
+| `proposed` | Marks the field as proposed |
 
-`standard_fields` entries are injected by the translator, so they are not repeated in the model's fields list.
+An `m2o` field also takes `on_delete`, `label` and `inverse`.
 
-**Field properties**, all optional:
+**Proposed entity or field.** A skill in `may_propose` (`spec-feature`, `experience-screen`, `mockup-storybook`, `mockup-feedback`) that needs an entity or field the model lacks appends it to `model.ts` with `proposed: { by: '<skill>', on: '<YYYY-MM-DD>', source: '<evidence or the user's words>' }` (`tree/README.md § Ownership`), as an option of the field or the entity, then runs `gen.ts`; the generated entry carries `status: "proposed"`, `proposed_by`, `proposed_on` and `source`. `architecture-datamodel` promotes it by deleting the `proposed` option or rejects it with a record in `_concept/10_blueprint/decisions.md`. A proposed entity or field is never confirmed in `model.dbml`: it is left out there and named in the file's header comment; its seed rows are scratch data for the mockup until promotion.
 
-| Property | Type | Purpose |
-|---|---|---|
-| `required` | boolean | Whether the field must have a value (default: `true`) |
-| `unique` | boolean | Enforce uniqueness |
-| `readonly` | boolean | Prevent editing after creation |
-| `indexed` | boolean | Create a database index |
-| `max_length` | number | Maximum character length (string fields) |
-| `placeholder` | string | UI hint text |
-| `faker` | string | Seed data generator hint |
+**`model.dbml`** is rendered by `gen.ts`: one `Enum` per inline and shared enum, one `Table` per confirmed entity (`id uuid [pk]`, the fields with semantic type names, `created_at` and `updated_at` as `datetime`), one `Ref: <Entity>.<field> > <Target>.id [delete: …]` per `m2o`, and `[not null]`, `[null]`, `[unique]`, `[default: …]` and `[note: …]` settings from the field options.
 
 Stack-specific concerns (Prisma decorators, Directus system collections, PostXL `standardFields` casing) belong to the stack translator, not to the model; see `tree/10_blueprint/datamodel/README.md § Materialising the database`.
 
-**Example.** A minimal whole `model.json` that validates against the schema: entities identified by PascalCase `id`, an `m2o` field of `type: "relation"` whose `relation_target` is the referenced entity id and which is also listed once in `relationships[]` (owning side only), and the status enum inline.
+## Writing it
 
-```json
-{
-  "version": "1.0",
-  "entities": [
-    {
-      "id": "User",
-      "glossary_id": "user",
-      "display_name": "User",
-      "label_field": "display_name",
-      "key_field": "email",
-      "standard_fields": ["id", "created_at", "updated_at"],
-      "fields": [
-        { "id": "user_display_name", "name": "display_name", "type": "string", "max_length": 80, "faker": "faker.person.fullName" },
-        { "id": "user_email", "name": "email", "type": "string", "unique": true, "faker": "faker.internet.email" },
-        { "id": "user_avatar", "name": "avatar", "type": "image", "required": false }
-      ]
-    },
-    {
-      "id": "Task",
-      "glossary_id": "task",
-      "display_name": "Task",
-      "label_field": "title",
-      "standard_fields": ["id", "created_at", "updated_at"],
-      "fields": [
-        { "id": "task_title", "name": "title", "type": "string", "max_length": 120 },
-        {
-          "id": "task_status",
-          "name": "status",
-          "type": "enum",
-          "values": {
-            "Draft": "Initial state, not yet submitted",
-            "InReview": "Awaiting approval",
-            "Published": "Live and visible"
-          }
-        },
-        { "id": "task_due_date", "name": "due_date", "type": "date", "required": false },
-        { "id": "task_owner_id", "name": "owner_id", "type": "relation", "relation_target": "User", "indexed": true }
-      ]
-    }
-  ],
-  "relationships": [
-    { "id": "task_owner", "from": "Task", "from_field": "owner_id", "to": "User", "type": "m2o", "on_delete": "cascade" }
-  ]
-}
-```
+1. **Copy the tool files.** When `_concept/10_blueprint/datamodel/skaile-model.ts` is absent, or its first-line `// skaile-model <version>` differs from the skill's copy, copy `skaile-model.ts` and `gen.ts` from `skills/architecture-datamodel/references/dsl/` and the two schemas `tree/10_blueprint/datamodel/datamodel-model.schema.json` and `tree/10_blueprint/datamodel/datamodel-seed.schema.json` beside `model.ts`; `gen.ts` finds the schemas next to itself. Never edit the copies (`tree/10_blueprint/datamodel/skaile-model.md`).
+2. **Write `model.ts`** in the layout of `## Format`, from the approved model (`tree/10_blueprint/datamodel/README.md § Writing it`), applying `tree/10_blueprint/datamodel/README.md § Naming`. Every entity carries its `glossary`, `display` and `label_field`; an `m2m` gets a junction entity. A raw SQL type here survives into a migration that will not apply.
+3. **Run `npx tsx gen.ts`** in `_concept/10_blueprint/datamodel/`. It checks the mechanical rules of `## Checks`, validates `model.json` against the schema and writes `model.json` and `model.dbml` (and `seed.json` once `seed.ts` exists, `tree/10_blueprint/datamodel/seed.md`); on a violation it exits non-zero naming the file, the JSON path and the schema pointer and writes nothing. Fix `model.ts` and run it again.
+4. **A proposal by another skill** appends its field or entity per `## Format`, runs `gen.ts` and restores the file when `gen.ts` fails.
 
 ## Checks
 
-- `model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` before it is written.
-- Every entity has a `glossary_id` that exists in `_concept/glossary.md`, and its `id` is that term in PascalCase.
-- Every field type is a semantic type from the table above; no raw SQL or Prisma type appears.
-- Every entity sets `label_field` and declares `standard_fields`.
-- Every `m2m` has a junction model and no `o2m` is declared.
-- `model.dbml` is the render of the current `model.json`; where they diverge, a hand edit is the likely cause and `build-database` reports every disagreement rather than preferring one.
+- `gen.ts` exits 0, so `model.json` validates against `tree/10_blueprint/datamodel/datamodel-model.schema.json` and the seed validates against `tree/10_blueprint/datamodel/datamodel-seed.schema.json`.
+- Every entity has a `glossary` that exists in `_concept/glossary.md`, and its id is that term in PascalCase (`gen.ts` checks the second half).
+- Every field is an `f.*` of the tables above; no raw SQL or Prisma type appears.
+- Every entity sets `label_field` (naming one of its fields) and declares `standard_fields`.
+- Every `m2o` name ends in `_id` and targets an entity listed in `defineModel`; every `m2m` has a junction entity with an `m2o` to both sides and no `o2m` is declared.
+- Every shared enum is referenced by at least one field.
+- `model.json` and `model.dbml` are the render of the current `model.ts`; where they diverge, a hand edit is the likely cause and `build-database` reports every disagreement rather than preferring one.

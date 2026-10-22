@@ -1,16 +1,23 @@
 {
-  "sessionId": "test-all-fail",
+  "roundId": "test-all-fail",
   "proposedAt": "2026-05-09T14:37:00Z",
   "patches": [
     {
       "id": "p-fail-1",
-      "annotationId": "ann-fail-1",
       "file": "07_screens/01_user_auth/login.md",
       "section": "## GHOST SECTION",
       "kind": "content",
       "category": "change",
       "body": "ghost",
-      "diff": "@@ ## GHOST SECTION @@\n-- does not exist\n+- replacement\n"
+      "diff": "@@ ## GHOST SECTION @@\n-- does not exist\n+- replacement\n",
+      "inboxId": "ann-fail-1",
+      "resolves": [
+        {
+          "id": "ann-fail-1",
+          "status": "implemented",
+          "resolution": "Changed as asked."
+        }
+      ]
     }
   ],
   "needs_manual": []

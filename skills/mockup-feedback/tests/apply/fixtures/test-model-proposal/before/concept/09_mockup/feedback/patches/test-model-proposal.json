@@ -1,0 +1,46 @@
+{
+  "roundId": "test-model-proposal",
+  "proposedAt": "2026-10-23T10:00:00Z",
+  "patches": [
+    {
+      "id": "p-k3m9x2-1-model",
+      "inboxId": "k3m9x2-1",
+      "file": "10_blueprint/datamodel/model.ts",
+      "section": "ts:entity/Task/fields",
+      "kind": "model-proposal",
+      "category": null,
+      "body": "The editor needs an estimate field: how many hours the task will take.",
+      "diff": "@@ ts:entity/Task/fields @@\n+    estimate: f.decimal({ required: false, proposed: { by: 'mockup-feedback', on: '2026-10-23', source: 'k3m9x2-1' } }),\n",
+      "resolves": [
+        { "id": "k3m9x2-1", "status": "implemented", "resolution": "Task.estimate proposed in model.ts and shown in TaskEditor." }
+      ]
+    },
+    {
+      "id": "p-k3m9x2-4-model",
+      "inboxId": "k3m9x2-4",
+      "file": "10_blueprint/datamodel/model.ts",
+      "section": "ts:model/entities",
+      "kind": "model-proposal",
+      "category": null,
+      "body": "Tasks need comments from the team.",
+      "diff": "@@ ts:model/entities @@\n+export const Comment = entity({\n+  glossary: 'comment',\n+  display: 'Comment',\n+  label_field: 'body',\n+  proposed: { by: 'mockup-feedback', on: '2026-10-23', source: 'k3m9x2-4' },\n+  fields: {\n+    body: f.text(),\n+    task_id: f.m2o(() => Task, { on_delete: 'cascade' }),\n+  },\n+})\n",
+      "resolves": [
+        { "id": "k3m9x2-4", "status": "implemented", "resolution": "Comment entity proposed in model.ts." }
+      ]
+    },
+    {
+      "id": "p-k3m9x2-4-glossary",
+      "inboxId": "k3m9x2-4",
+      "file": "glossary.md",
+      "section": "before:## Relations",
+      "kind": "glossary-proposal",
+      "category": null,
+      "body": "Tasks need comments from the team.",
+      "diff": "@@ before:## Relations @@\n+**Comment** (`comment`):\n+- status: proposed\n+- proposed_by: mockup-feedback\n+- proposed_on: 2026-10-23\n+- source: \"Tasks need comments from the team.\" (k3m9x2-4)\n+- kind: object\n+\n",
+      "resolves": [
+        { "id": "k3m9x2-4", "status": "implemented", "resolution": "Comment entity proposed in model.ts." }
+      ]
+    }
+  ],
+  "needs_manual": []
+}

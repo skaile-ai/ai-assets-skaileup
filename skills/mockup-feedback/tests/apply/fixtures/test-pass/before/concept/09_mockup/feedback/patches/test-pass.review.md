@@ -1,4 +1,4 @@
-# Review patches for session test-pass (2 patches across 1 file)
+# Review patches for round test-pass (2 patches across 1 file)
 
 ## 07_screens/01_user_auth/login.md
 
@@ -9,7 +9,7 @@
   +- submit-button: right-aligned below form
   ```
 
-- [x] **p-ann-c1-promotion** · provisional ID promotion for `submit-button`
+- [x] **p-ann-c1-elements** · element entry change for `submit-button`
   ```diff
   @@ frontmatter:elements @@
   -  - id: submit-button
