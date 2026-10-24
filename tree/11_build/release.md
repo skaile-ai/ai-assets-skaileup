@@ -18,7 +18,9 @@ read what it was supposed to do.
 ## Format
 
 ```yaml
-verdict: pass | needs_iteration | fail
+verdict: pass | needs_iteration | fail | refused
+commit: <short sha of the tree that was graded>
+refusals: []                      # set when verdict is refused: { feature, reason, ids } per gap step 1 found
 goals:
   - { goal: <one line from the grading sheet>, status: achieved | partial | not_achieved, evidence: <what you did in the app> }
 design:                          # 0-10 each, scored per the rubrics below
@@ -38,7 +40,7 @@ last_updated: YYYY-MM-DD
 
 ## Writing it
 
-1. **Refuse on an incomplete trace or ledger.** Read `_concept/11_build/trace.yaml`, the build loop's machine-read record and this skill's one hard input (an empty trace means `build-implement` has recorded no slice, which the refusal says). Every feature under `_concept/05_features/` needs an entry with commits, and every slice in it a frozen dossier (its `index.md` exists); list each feature that falls short and refuse the release. Then read each feature's ledger under `_concept/11_build/acceptance-criteria/` (`tree/11_build/acceptance-criteria/README.md § Reading`): a `FAIL` or untested row is the same refusal, listed by criterion id with its evidence. Then read `_concept/11_build/reviews/*.yaml`; a feature still at `changes-requested` is the same refusal.
+1. **Refuse on an incomplete trace, ledger or verification.** Read `_concept/11_build/trace.yaml`, the build loop's machine-read record and this skill's one hard input (an empty trace means `build-implement` has recorded no slice, which the refusal says). Every feature under `_concept/05_features/` needs an entry with commits, and every slice in it a frozen dossier (its `index.md` exists) at `verification: complete`; a slice at `outstanding` is the same refusal, listed with its unrun manual checks and what each needs. Then read each feature's ledger under `_concept/11_build/acceptance-criteria/` (`tree/11_build/acceptance-criteria/README.md § Reading`): a `FAIL` or untested row is the same refusal, listed by criterion id with its evidence. Then read `_concept/11_build/reviews/*.yaml`; a feature still at `changes-requested` is the same refusal. A refusal is still written: `release.yaml` with `verdict: refused`, the commit and every gap in `refusals`, then steps 2-6 are skipped and step 8 reports the gaps with the skill that closes each. The file on disk is how the next reader tells a refused release from one nobody ran.
 2. **Extract the intent.** From `brief.md` and `goals.md`, list every goal, success metric, constraint and stated non-goal, one line each. Without `goals.md`, the brief's problem statement and hero flow are the goal set. Without `brief.md` too, derive the goal set from `_concept/02_grounding/findings/brief-seeds.md` (`concept-reverse` scoped `brief` fills it from the code) and ask the user to confirm or correct it, in one batch (`tree/README.md § How a skill runs`, rule 1); `concept-brief` writes the brief. This list is the grading sheet and is written down before the app is opened, so the app cannot supply it.
 3. **Walk the whole product, not the features.** Enter where a new user enters (`_concept/04_journeys/stories.yaml` says where people start) and pursue each goal from step 2 through the app in the order a person would, without jumping straight to a route. Each journey's own verdict is already in the ledger rows, so this walk does not re-run their steps; it catches what is only visible from the seams: a journey that works but leaves the user with no idea what to do next, two features that each pass and contradict each other, a dead end between them.
 4. **Score goal achievement.** For each goal from step 2, `achieved`, `partial` or `not_achieved`, with what you did in the app as the evidence. Criteria status comes from the ledger rows read in step 1; re-testing them here is duplicated work.
@@ -47,7 +49,7 @@ last_updated: YYYY-MM-DD
    - **Performance**, from the browser's own tooling: LCP, CLS and first interaction.
    - **Accessibility**, 0-100: every journey completable without a mouse, interactive elements labelled, text and controls meeting contrast against their real background.
    - **Mobile**, 0-100, at 375px: all content reachable, no horizontal scroll, touch targets at least 44px.
-7. **Write the verdict** to `_concept/11_build/release.yaml`: goals with their evidence, the seven scores, the blocking findings, and `improvement_priorities` ranked by impact on the goals. The verdict is read off `### Release thresholds` and not recomputed from impression.
+7. **Write the verdict** to `_concept/11_build/release.yaml`: the short sha of the tree you graded, goals with their evidence, the seven scores, the blocking findings, and `improvement_priorities` ranked by impact on the goals. The verdict is read off `### Release thresholds` and not recomputed from impression, and it covers that commit only: a later commit is ungraded until the skill runs again.
 8. **Report** the verdict, the goal tally, the seven scores on one line and the ranked improvements, each naming the skill that owns the fix so the verdict routes somewhere instead of ending the run.
 
 ### Design rubrics
@@ -112,9 +114,11 @@ The skill scores; this section decides what a score means. A **good** value leav
 | `pass` | goals, design average, accessibility and LCP are all outside the block band, and there is no blocking finding |
 | `needs_iteration` | any goal `not_achieved`, or design average, accessibility or LCP in the block band, or any blocking finding |
 | `fail` | most goals `not_achieved`, or LCP and CLS both in the block band |
+| `refused` | step 1 found a slice without a frozen dossier or at `verification: outstanding`, a `FAIL` or untested ledger row, or a review still at `changes-requested`; nothing is scored |
 
 CLS on its own, first interaction and Mobile (0–100) are reported and ranked in `improvement_priorities`; none of them moves the verdict alone.
 
 ## Checks
 
-- `release.yaml` is on disk, every goal in it carries evidence from the running app, every design score cites the elements behind it, and the verdict follows `### Release thresholds`.
+- `release.yaml` is on disk and names the commit it graded.
+- A `refused` verdict lists every gap step 1 found; any other verdict has every goal carrying evidence from the running app, every design score citing the elements behind it, and a verdict that follows `### Release thresholds`.

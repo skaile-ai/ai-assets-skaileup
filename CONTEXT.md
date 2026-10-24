@@ -346,7 +346,8 @@ _Avoid_: workspace, scratch, folder
 
 **Frozen**:
 A dossier that has been indexed and closed. It stops being working state and becomes
-documentation. Only dossiers freeze.
+documentation. Only dossiers freeze. Frozen says nothing about proof: a slice dossier's
+`verification` says whether its manual checks have all been run.
 
 **Seed scenario**:
 One named shape of sample data — empty, single user, populated, edge cases — each

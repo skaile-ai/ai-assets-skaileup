@@ -1,6 +1,6 @@
 ---
 name: build-implement
-description: "Use when a planned vertical slice is ready to build — implements it test-first, reviews it against its spec, then commits it and freezes its dossier. Triggers on 'build this slice', 'implement the next slice', 'land it'."
+description: "Use when a planned vertical slice is ready to build — implements it test-first, reviews it against its spec, then commits it and freezes its dossier — or when a frozen slice's outstanding manual check has been run. Triggers on 'build this slice', 'implement the next slice', 'land it', 'I tested it on the phone'."
 version: "0.1.0"
 metadata:
   requires:
@@ -44,6 +44,8 @@ Read `tree/README.md` once per session, then these nodes in order — each holds
 2. **Commit atomically** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 7): a user-approved decomposition and an explicit file list per commit.
 3. **Record the slice in the trace** — `tree/11_build/trace.md`, validated against `tree/11_build/trace.schema.json` before writing. Written once the last commit has landed.
 4. **Flip the ledger rows the gate exercised** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, stamped with the last commit's short sha.
-5. **Freeze the dossier** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 8).
+5. **Freeze the dossier** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 8), at `verification: outstanding` while a manual check is unrun.
 
-**Done when** the slice's commits are on the branch, `index.md` exists beside `plan.md`, and `trace.yaml` carries the slice's entry.
+A frozen slice at `outstanding` whose check the user has now run takes only step 9 of the same node.
+
+**Done when** the slice's commits are on the branch, `index.md` exists beside `plan.md` with every manual check recorded and `verification` set, and `trace.yaml` carries the slice's entry.

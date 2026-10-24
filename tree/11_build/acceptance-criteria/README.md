@@ -68,6 +68,8 @@ Create `_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md`
 
 After the last commit of a slice has landed, set only the rows the slice gate's checks exercised, each carrying its check as the pointer, `build-implement` as evaluator, the last commit's short sha and today's date. A criterion with no row, or no ledger file at all, is reported in the slice recap and the ledger is left alone: only `build-plan` creates rows (`§ Creating the ledger`), and a ledger written here would hold whatever happened to get tested.
 
+A manual check the gate left unrun keeps its rows untested. When its outcome arrives later (`tree/11_build/slices/[slice_id]/index.md § Writing it`, step 9), set the rows it exercised the same way, with the commit the check ran against.
+
 #### quality-e2e
 
 Drives the running application through **every story in `_concept/04_journeys/stories.yaml`**, one journey per story, and reports what a user can and cannot actually do. Where `quality-test` asserts against units, this asserts against the product: a journey's pass condition is its own criterion ids, observed in the browser. The tool is `agent-browser`. Screenshots are test output and live beside the tests in the codebase, and never under `_concept/`, which holds what the project decided and not what one run looked like.

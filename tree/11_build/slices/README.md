@@ -32,7 +32,9 @@ working state and becomes the record of how the slice got built. Nothing in it i
 except the transient `progress.yaml`, dropped by the freeze that makes it moot. A slice
 dossier with no `index.md` is work that was built and never committed, so `build-branch`
 refuses to close a branch while one exists. A frozen dossier must stand on its own: the next
-reader may be a different session, host or person.
+reader may be a different session, host or person. Frozen says the record is closed, not that
+the slice is proved: `verification` in `index.md` says that, and a slice frozen at
+`outstanding` still owes the manual checks its dossier lists.
 
 ## Writing it
 

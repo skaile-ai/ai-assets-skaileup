@@ -58,9 +58,9 @@ Read `tree/README.md` once per session. Stance, flag shape and severities are `t
    `11_build/slices/` dossiers whose `plan.md` frontmatter names the feature (`tree/11_build/slices/[slice_id]/plan.md`):
    a dossier the trace lacks is a slice that committed without recording itself, reported against `build-implement`. No
    trace at all is the finding when any slice dossier exists, and the missing step on a project that has built nothing.
-   Per row: whether every slice is frozen (its `index.md` exists), the commits and code the trace recorded, the ledger
+   Per row: whether every slice is frozen (its `index.md` exists) and verified (`verification: complete`), the commits and code the trace recorded, the ledger
    rows of the feature's criteria and their status (`tree/11_build/acceptance-criteria/README.md § Reading`), and
-   whether any doc page cites its source files. **Red** when a slice is unfrozen, commits or code are empty, or a
+   whether any doc page cites its source files. **Red** when a slice is unfrozen or `outstanding`, commits or code are empty, or a
    ledger row is `FAIL` or untested. **Amber** when the hard checks pass but the documentation does not. **Green**
    otherwise. `overall` is green exactly when no row is red; amber is surfaced, not blocking.
 7. **Scan the other direction for orphan code.** Every file `git ls-files` reports under the source directories, minus
