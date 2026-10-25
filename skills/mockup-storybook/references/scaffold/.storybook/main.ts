@@ -1,4 +1,4 @@
-import { annotationInbox } from '@ecsplico/annotation-inbox/vite'
+import { annotationInbox } from '@skaile/forge-annotation-inbox/vite'
 import type { StorybookConfig } from '@storybook/vue3-vite'
 import { VueTracer } from 'vite-plugin-vue-tracer'
 import { inboxEndpoint } from '../scripts/inbox.ts'

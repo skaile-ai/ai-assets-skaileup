@@ -6,8 +6,8 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
-import { INBOX_RESOLVE_ROUTE, openFileInbox } from '@ecsplico/annotation-inbox/inbox'
-import { handleInboxRequest } from '@ecsplico/annotation-inbox/server'
+import { INBOX_RESOLVE_ROUTE, openFileInbox } from '@skaile/forge-annotation-inbox/inbox'
+import { handleInboxRequest } from '@skaile/forge-annotation-inbox/server'
 
 const { values } = parseArgs({
   options: {

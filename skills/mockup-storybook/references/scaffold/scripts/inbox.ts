@@ -7,8 +7,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { INBOX_DIR, INBOX_ROUTE, openFileInbox } from '@ecsplico/annotation-inbox/inbox'
-import { DEV_PRINCIPAL, handleInboxRequest } from '@ecsplico/annotation-inbox/server'
+import { INBOX_DIR, INBOX_ROUTE, openFileInbox } from '@skaile/forge-annotation-inbox/inbox'
+import { DEV_PRINCIPAL, handleInboxRequest } from '@skaile/forge-annotation-inbox/server'
 import type { Plugin } from 'vite'
 
 /** `_concept/09_mockup/storybook/scripts` -> the directory that holds `_concept/`. */

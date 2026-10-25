@@ -1,4 +1,4 @@
-import { mountAnnotationToolbar } from '@ecsplico/annotation-inbox/mount'
+import { mountAnnotationToolbar } from '@skaile/forge-annotation-inbox/mount'
 import { setup } from '@storybook/vue3-vite'
 import type { Preview } from '@storybook/vue3-vite'
 import ui from '@nuxt/ui/vue-plugin'

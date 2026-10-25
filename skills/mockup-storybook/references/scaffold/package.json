@@ -20,7 +20,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@ecsplico/annotation-inbox": "^1.1.1",
+    "@skaile/forge-annotation-inbox": "^2.0.0",
     "@storybook/addon-docs": "^10.6.3",
     "@storybook/addon-vitest": "^10.6.3",
     "@storybook/vue3-vite": "^10.6.3",
