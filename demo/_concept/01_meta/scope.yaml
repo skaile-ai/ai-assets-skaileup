@@ -1,0 +1,17 @@
+flow: skaileup-greenfield
+project_type: web-app
+depth: standard
+glossary: concept
+reasoning: |
+  Four things a team manages (polls, votes, places, members) with two roles sharing
+  state, so the data is relational and the app is multi-user. Roughly four features,
+  no outside service: standard depth rather than sketch because of the voting rules.
+signals:
+  features_estimate: 4
+  multi_user: true
+  persistence: structured
+  integrations: []
+  existing_repo: false
+proposed:
+  - { key: depth, value: sketch, proposed_by: concept-research, proposed_on: "2026-10-23", source: "user: 'a quick pass is enough for the demo'" }
+chosen_at: "2026-10-24T09:30:00Z"

@@ -1,0 +1,89 @@
+version: "1.0"
+last_updated: 2026-10-24
+project: Lunch Roulette
+problem: "Choosing a lunch place takes a chat thread and ten minutes, and the loudest voice wins."
+success_metrics:
+  - "80 % of polls close with at least three votes"
+  - "Median time to the first vote under 10 minutes"
+stages:
+  hero: "The one journey that, if it fails, leaves the product with no reason to exist."
+  vital: "Other journeys that make the product usable day to day."
+  hygiene: "Operational flows the product cannot run without: the team's place list."
+  backlog: "Journeys deliberately out of this scope."
+personas:
+  - id: maria
+    name: Maria Schmidt
+    role: organizer
+    goals: ["Settle lunch for the team without a chat thread", "See the pick once and be done"]
+  - id: jean_luc
+    name: Jean-Luc Moreau
+    role: member
+    goals: ["Vote from the phone in under ten seconds", "Never be offered only meat"]
+journeys:
+  - id: run_a_lunch_poll
+    persona: maria
+    title: Run a lunch poll from opening to pick
+    stage: hero
+    steps:
+      - action: Maria opens a poll with a title, a deadline and at least two places
+        system_response: The poll is created open and appears at the top of the poll list
+        acceptance:
+          - { id: AC-run_a_lunch_poll-01, ears: "WHEN an organizer submits a title, a deadline in the future and at least two places, THE SYSTEM SHALL create an open poll and list it first in the polls list." }
+          - { id: AC-run_a_lunch_poll-02, ears: "IF an organizer submits fewer than two places, THEN THE SYSTEM SHALL refuse the poll and name the missing places beside the field." }
+      - action: The deadline passes
+        system_response: The poll closes and shows the pick
+        acceptance:
+          - { id: AC-run_a_lunch_poll-03, ears: "WHEN the deadline of an open poll passes, THE SYSTEM SHALL close the poll and show the place with the most votes as the pick." }
+          - { id: AC-run_a_lunch_poll-04, ears: "WHEN two or more places tie for the most votes at closing, THE SYSTEM SHALL draw one of them at random and show the draw to every member." }
+      - action: Maria closes a poll early when everybody has voted
+        system_response: The poll closes at once and shows the pick
+        acceptance:
+          - { id: AC-run_a_lunch_poll-05, ears: "WHEN the organizer closes an open poll, THE SYSTEM SHALL close it immediately and apply the same pick rule as at the deadline." }
+    candidate_features: [create-poll, draw-pick]
+    candidate_entities: [Poll, Place, Vote]
+    candidate_screens: [polls, poll]
+  - id: vote_on_places
+    persona: jean_luc
+    title: Vote for a place on the phone
+    stage: vital
+    steps:
+      - action: Jean-Luc opens the poll and taps a place
+        system_response: His vote is recorded and the counts update
+        acceptance:
+          - { id: AC-vote_on_places-01, ears: "WHEN a member selects a place in an open poll, THE SYSTEM SHALL record one vote for that member and update the counts for everyone." }
+      - action: He changes his mind and taps another place
+        system_response: His vote moves to the other place
+        acceptance:
+          - { id: AC-vote_on_places-02, ears: "WHEN a member selects another place in the same open poll, THE SYSTEM SHALL move the member's vote and keep exactly one vote per member." }
+          - { id: AC-vote_on_places-03, ears: "IF a poll is closed, THEN THE SYSTEM SHALL refuse a new or changed vote and keep the pick." }
+    candidate_features: [vote-on-place]
+    candidate_entities: [Vote, Member]
+    candidate_screens: [poll]
+  - id: manage_places
+    persona: maria
+    title: Keep the team's place list current
+    stage: hygiene
+    steps:
+      - action: Maria adds a place with its cuisine and the walk from the office
+        system_response: The place appears in the list and in every later poll
+        acceptance:
+          - { id: AC-manage_places-01, ears: "WHEN a member adds a place with a name, a cuisine and a walking time, THE SYSTEM SHALL list it and offer it in every later poll." }
+      - action: She archives a place the team no longer visits
+        system_response: The place leaves the list; past polls keep it
+        acceptance:
+          - { id: AC-manage_places-02, ears: "WHEN a member archives a place, THE SYSTEM SHALL hide it from new polls and keep it in closed polls that used it." }
+    candidate_features: [manage-places]
+    candidate_entities: [Place]
+    candidate_screens: [places]
+  - id: rate_places
+    persona: jean_luc
+    title: Rate a place after the visit
+    stage: backlog
+    steps:
+      - action: Jean-Luc gives the place a rating after lunch
+        system_response: The rating shows next to the place
+        acceptance:
+          - { id: AC-rate_places-01, ears: "WHEN a member rates a visited place, THE SYSTEM SHALL show the average rating next to the place." }
+    candidate_features: []
+    candidate_entities: [Place]
+    candidate_screens: []

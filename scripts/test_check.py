@@ -3698,5 +3698,429 @@ def test_check_concept_usage_errors_exit_2(tmp_path):
     assert module.main(["check_concept.py", str(tmp_path / "nope")]) == 2
 
 
+# -- demo (rules demo-node, demo-storybook, demo-frontmatter, demo-schema-covered, demo-schema,
+#    demo-produces, demo-produces-stale, demo-skaile-yaml) ---------------------------------------
+
+FRONTMATTER_SCHEMA = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:skaile:schema:frontmatter",
+    "type": "object",
+    "required": ["last_updated"],
+    "properties": {
+        "last_updated": {"$ref": "#/$defs/isoDate"},
+        "approved": {"$ref": "#/$defs/isoDate"},
+    },
+    "$defs": {"isoDate": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}},
+}
+
+DEMO_MD = "---\nlast_updated: 2026-10-27\n---\n\n# Demo\n"
+
+GLOSSARY_NODE_BODY = (
+    "## Where the words live\n\nSplit mode keeps the words in the project glossary, `CONTEXT.md`: no frontmatter, no ids.\n\n"
+    "## Writing it\n\nWrite the glossary.\n"
+)
+
+
+@pytest.fixture(autouse=True)
+def _no_demo_excuses(monkeypatch):
+    """The real `DEMO_NOT_SHIPPED` excuses paths the fixture skills never produce, which would all be
+    `demo-produces-stale`; every demo test starts from an empty list and adds what it needs."""
+    monkeypatch.setattr(check, "DEMO_NOT_SHIPPED", {})
+
+
+def demo_put(root: Path, rel: str, text: str = DEMO_MD) -> Path:
+    p = root / "demo" / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text, encoding="utf-8")
+    return p
+
+
+def demo_yaml(root: Path, **overrides) -> None:
+    """`demo/skaile.yaml` for the fixture collection: has the collection's url source, lists its one skill and
+    the tree contract. A key set to None is dropped."""
+    doc = {
+        "name": "demo",
+        "sources": [{"url": "https://github.com/skaile-ai/ai-assets-skaileup.git"}],
+        "dependencies": ["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts"],
+    }
+    doc.update(overrides)
+    demo_put(root, "skaile.yaml", yaml.safe_dump({k: v for k, v in doc.items() if v is not None}))
+
+
+def write_demo_repo(root: Path) -> Path:
+    """A clean fixture collection plus a clean demo: the universal frontmatter schema (cited), the
+    one `brief.md` the fixture skill produces, and a `skaile.yaml`."""
+    write_repo(root)
+    write_schema(root, FRONTMATTER_SCHEMA, "frontmatter")
+    cite_schema(root, "frontmatter", "README.md")
+    demo_put(root, "_concept/brief.md")
+    demo_put(root, "README.md", "# Demo\n\nNot concept content.\n")
+    demo_yaml(root)
+    return root
+
+
+def scope_schema(root: Path) -> None:
+    """A machine-file schema for `_concept/01_meta/scope.yaml`, which the fixture skill now produces too."""
+    set_produces(
+        root,
+        '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+        '      - { id: scope, path: "_concept/01_meta/scope.yaml" }\n',
+    )
+    write_schema(
+        root,
+        good_schema(
+            "scope",
+            **{
+                "x-artifact": "_concept/01_meta/scope.yaml",
+                "required": ["flow"],
+                "properties": {"flow": {"enum": ["greenfield"]}, "chosen": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}},
+                "additionalProperties": False,
+            },
+        ),
+        "01_meta/scope",
+    )
+    cite_schema(root, "01_meta/scope", "01_meta/scope.md")
+    refresh_fence(root)
+
+
+def test_demo_collection_without_demo_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    assert not (root / "demo").exists()
+    assert errors(root) == []
+
+
+def test_a_clean_demo_is_clean(tmp_path):
+    root = write_demo_repo(tmp_path)
+    assert errors(root) == []
+
+
+def test_demo_readme_and_skaile_yaml_are_not_concept_content(tmp_path):
+    root = write_demo_repo(tmp_path)
+    assert (root / "demo" / "README.md").is_file() and (root / "demo" / "skaile.yaml").is_file()
+    assert errors(root) == []
+
+
+def test_demo_file_no_node_documents(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/stray.txt", "x")
+    only(root, "demo/_concept/stray.txt: resolves to no node")
+    assert "demo-node" in errors(root)[0]
+
+
+def test_demo_dotfiles_are_left_out(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/.DS_Store", "x")
+    demo_put(root, "_concept/.cache/x.txt", "x")
+    assert errors(root) == []
+
+
+def test_demo_project_glossary_is_accepted_when_the_tree_names_it(tmp_path):
+    root = write_demo_repo(tmp_path)
+    add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body=GLOSSARY_NODE_BODY)
+    demo_put(root, "CONTEXT.md", "# Shop\n\nThe words.\n")
+    assert errors(root) == []
+
+
+def test_demo_project_glossary_the_tree_does_not_name(tmp_path):
+    root = write_demo_repo(tmp_path)
+    add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body="## Writing it\n\nWrite it.\n")
+    demo_put(root, "CONTEXT.md", "# Shop\n")
+    only(root, "demo/CONTEXT.md: is documented by no node")
+    assert "demo-node" in errors(root)[0]
+
+
+def test_demo_project_glossary_without_any_glossary_node(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "CONTEXT.md", "# Shop\n")
+    only(root, "demo/CONTEXT.md: is documented by no node")
+
+
+def test_demo_project_glossary_must_carry_frontmatter_when_the_tree_does_not_say_otherwise(tmp_path):
+    root = write_demo_repo(tmp_path)
+    body = "## Where the words live\n\nThe project glossary is `CONTEXT.md`.\n"
+    add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body=body)
+    demo_put(root, "CONTEXT.md", "# Shop\n")
+    only(root, "demo/CONTEXT.md: has no frontmatter")
+
+
+def test_demo_app_design_resolves_to_its_root_node(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "APP-DESIGN.md")
+    assert errors(root) == []
+
+
+def test_demo_app_design_updated_is_read_as_last_updated(tmp_path):
+    """The node names the date `updated:`; the file follows its node and still has to hold a valid date."""
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "APP-DESIGN.md", "---\nupdated: 2026-10-27\n---\n\n# App design\n")
+    assert errors(root) == []
+    demo_put(root, "APP-DESIGN.md", "---\nupdated: yesterday\n---\n\n# App design\n")
+    only(root, "demo/APP-DESIGN.md: frontmatter does not validate")
+
+
+def test_demo_concept_readme_is_the_fixed_pointer_without_frontmatter(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/README.md", "This tree is maintained by the collection.\n")
+    assert errors(root) == []
+
+
+def test_demo_storybook_package_is_not_allowed(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/09_mockup/storybook/package.json", "{}")
+    only(root, "demo/_concept/09_mockup/storybook/package.json: is inside the mockup package")
+    assert "demo-storybook" in errors(root)[0]
+
+
+def test_demo_markdown_without_frontmatter(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/brief.md", "# Brief\n")
+    only(root, "demo/_concept/brief.md: has no frontmatter")
+    assert "demo-frontmatter" in errors(root)[0]
+
+
+def test_demo_frontmatter_without_last_updated(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/brief.md", "---\ntitle: x\n---\n\n# Brief\n")
+    only(root, "'last_updated' is a required property")
+
+
+def test_demo_frontmatter_with_a_date_that_is_not_iso(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/brief.md", "---\nlast_updated: 27.10.2026\n---\n\n# Brief\n")
+    only(root, "last_updated: '27.10.2026' does not match")
+
+
+def test_demo_frontmatter_with_an_unquoted_yaml_date_is_turned_to_iso_text(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/brief.md", "---\nlast_updated: 2026-10-27\napproved: 2026-10-27\n---\n\n# Brief\n")
+    assert errors(root) == []
+
+
+def test_demo_frontmatter_that_is_not_yaml(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "_concept/brief.md", "---\nlast_updated: [\n---\n\n# Brief\n")
+    only(root, "frontmatter is not parseable YAML")
+
+
+def test_demo_frontmatter_without_the_schema_in_the_tree(tmp_path):
+    root = write_demo_repo(tmp_path)
+    (root / "tree" / "frontmatter.schema.json").unlink()
+    among(root, "cites `tree/frontmatter.schema.json`, which does not exist", "is missing or unreadable, so no demo file")
+
+
+def test_demo_missing_the_file_a_schema_describes(tmp_path):
+    root = write_demo_repo(tmp_path)
+    scope_schema(root)
+    among(root, "demo-schema-covered", "demo-produces")
+
+
+def test_demo_file_that_validates_against_its_schema(tmp_path):
+    root = write_demo_repo(tmp_path)
+    scope_schema(root)
+    demo_put(root, "_concept/01_meta/scope.yaml", "flow: greenfield\nchosen: 2026-10-27\n")
+    assert errors(root) == []
+
+
+def test_demo_file_that_fails_its_schema(tmp_path):
+    root = write_demo_repo(tmp_path)
+    scope_schema(root)
+    demo_put(root, "_concept/01_meta/scope.yaml", "flow: waterfall\nextra: 1\n")
+    errs = errors(root)
+    assert len(errs) == 1, errs
+    assert "demo/_concept/01_meta/scope.yaml: does not validate against `tree/01_meta/scope.schema.json`" in errs[0]
+    assert "flow: 'waterfall' is not one of" in errs[0] and "demo-schema" in errs[0]
+
+
+def test_demo_json_file_that_is_not_json(tmp_path):
+    root = write_demo_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: model, path: "_concept/10_blueprint/datamodel/model.json" }\n')
+    write_schema(root, good_schema("model", **{"x-artifact": "_concept/10_blueprint/datamodel/model.json"}), "10_blueprint/datamodel/model")
+    add_node(root, "10_blueprint/README.md", ["_concept/10_blueprint/"], summary="the blueprint")
+    add_node(root, "10_blueprint/datamodel/README.md", ["_concept/10_blueprint/datamodel/"], summary="the data model")
+    add_node(root, "10_blueprint/datamodel/model.md", "_concept/10_blueprint/datamodel/model.json", summary="the model")
+    sync_owners(root)
+    cite_schema(root, "10_blueprint/datamodel/model", "10_blueprint/datamodel/model.md")
+    demo_put(root, "_concept/10_blueprint/datamodel/model.json", "{ not json")
+    only(root, "demo/_concept/10_blueprint/datamodel/model.json: is not parseable")
+
+
+def test_demo_misses_a_path_a_skill_produces(tmp_path):
+    root = write_demo_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: goals, path: "_concept/goals.md" }\n')
+    add_node(root, "goals.md", "_concept/goals.md", summary="the goals")
+    sync_owners(root)
+    errs = errors(root)
+    assert len(errs) == 1, errs
+    assert "no file covers `_concept/goals.md`, written by spec-feature" in errs[0]
+    assert "DEMO_NOT_SHIPPED" in errs[0] and "demo-produces" in errs[0]
+
+
+def test_demo_not_shipped_excuses_a_produced_path(tmp_path, monkeypatch):
+    root = write_demo_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: goals, path: "_concept/goals.md" }\n')
+    add_node(root, "goals.md", "_concept/goals.md", summary="the goals")
+    sync_owners(root)
+    monkeypatch.setattr(check, "DEMO_NOT_SHIPPED", {"_concept/goals.md": "optional"})
+    assert errors(root) == []
+
+
+def test_demo_not_shipped_entry_no_skill_produces(tmp_path, monkeypatch):
+    root = write_demo_repo(tmp_path)
+    monkeypatch.setattr(check, "DEMO_NOT_SHIPPED", {"_concept/gone.md": "was optional"})
+    only(root, "DEMO_NOT_SHIPPED lists `_concept/gone.md`, which no skill produces any more")
+    assert "demo-produces-stale" in errors(root)[0]
+
+
+def test_demo_not_shipped_key_with_and_without_a_trailing_slash_meet(tmp_path, monkeypatch):
+    root = write_demo_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: screens, path: "_concept/07_screens" }\n')
+    monkeypatch.setattr(check, "DEMO_NOT_SHIPPED", {"_concept/07_screens/": "none"})
+    assert errors(root) == []
+
+
+def test_demo_file_under_a_produced_directory_covers_it(tmp_path):
+    root = write_demo_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: screens, path: "_concept/07_screens/" }\n')
+    only(root, "no file covers `_concept/07_screens/`")
+    demo_put(root, "_concept/07_screens/home.md")
+    assert errors(root) == []
+
+
+def test_demo_placeholder_path_needs_a_file_of_its_own(tmp_path):
+    """`07_screens/shell.md` is a literal `produces` path; it does not also stand in for `<screen>.md`."""
+    root = write_demo_repo(tmp_path)
+    set_produces(
+        root,
+        '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+        '      - { id: shell, path: "_concept/07_screens/shell.md" }\n'
+        '      - { id: screen, path: "_concept/07_screens/<screen>.md" }\n',
+    )
+    demo_put(root, "_concept/07_screens/shell.md")
+    only(root, "no file covers `_concept/07_screens/<screen>.md`")
+    demo_put(root, "_concept/07_screens/home.md")
+    assert errors(root) == []
+
+
+def test_demo_root_artifact_is_not_covered_by_a_file_inside_the_concept(tmp_path):
+    root = write_demo_repo(tmp_path)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: app-design, path: "APP-DESIGN.md" }\n')
+    only(root, "no file covers `APP-DESIGN.md`")
+    demo_put(root, "APP-DESIGN.md")
+    assert errors(root) == []
+
+
+def test_demo_without_a_skaile_yaml(tmp_path):
+    root = write_demo_repo(tmp_path)
+    (root / "demo" / "skaile.yaml").unlink()
+    only(root, "demo/skaile.yaml: does not exist")
+    assert "demo-skaile-yaml" in errors(root)[0]
+
+
+def test_demo_skaile_yaml_that_is_not_yaml(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "skaile.yaml", "sources: [\n")
+    only(root, "demo/skaile.yaml: is not parseable YAML")
+
+
+def test_demo_skaile_yaml_source_with_a_path_is_no_source(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, sources=[{"path": ".."}])
+    errs = errors(root)
+    assert any("`sources[0]` has no `url`" in e for e in errs), errs
+    assert any("no entry whose `url` is this collection" in e for e in errs), errs
+
+
+def test_demo_skaile_yaml_source_of_another_collection(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, sources=[{"url": "https://github.com/skaile-ai/ai-assets-skaileup-v1.git"}])
+    only(root, "no entry whose `url` is this collection")
+
+
+def test_demo_skaile_yaml_source_with_a_pin_is_fine(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, sources=[{"url": "https://github.com/skaile-ai/ai-assets-skaileup.git", "pin": "v0.1.0"}])
+    assert errors(root) == []
+
+
+def test_demo_skaile_yaml_source_with_an_unknown_key(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, sources=[{"url": "https://github.com/skaile-ai/ai-assets-skaileup.git", "path": ".."}])
+    only(root, "`sources[0]` has keys ['path']")
+
+
+def test_demo_skaile_yaml_without_sources(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, sources=None)
+    only(root, "has no `sources:` list")
+
+
+def test_demo_skaile_yaml_stale_skill_ref(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "skill:@skaile-ai/ghost", "contract:@skaile-ai/shared-contracts"])
+    only(root, "names 'skill:@skaile-ai/ghost', which is no skill of this collection")
+
+
+def test_demo_skaile_yaml_stale_flow_ref(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "flow:@skaile-ai/nothing", "contract:@skaile-ai/shared-contracts"])
+    only(root, "names 'flow:@skaile-ai/nothing', which is no flow of this collection")
+
+
+def test_demo_skaile_yaml_per_file_contract_ref(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts", "contract:@skaile-ai/brief"])
+    only(root, "names 'contract:@skaile-ai/brief', which is no contract of this collection")
+
+
+def test_demo_skaile_yaml_that_is_not_a_ref(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts", "spec-feature"])
+    only(root, "'spec-feature' is not a `kind:@publisher/name` ref")
+
+
+def test_demo_skaile_yaml_missing_a_skill(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=["contract:@skaile-ai/shared-contracts"])
+    only(root, "does not list skill:@skaile-ai/spec-feature")
+
+
+def test_demo_skaile_yaml_missing_the_tree_contract(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature"])
+    only(root, "does not list contract:@skaile-ai/shared-contracts")
+
+
+def test_demo_skaile_yaml_missing_the_rulebook_contract(tmp_path):
+    root = write_demo_repo(tmp_path)
+    write_rulebook(root)
+    only(root, "does not list contract:@skaile-ai/app-design-rulebook")
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts", "contract:@skaile-ai/app-design-rulebook"])
+    assert errors(root) == []
+
+
+def test_demo_skaile_yaml_missing_a_flow(tmp_path):
+    root = write_demo_repo(tmp_path)
+    write_flow(root, good_flow())
+    only(root, "does not list flow:@skaile-ai/tiny")
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts", "flow:@skaile-ai/tiny"])
+    assert errors(root) == []
+
+
+def test_demo_skaile_yaml_without_dependencies(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_yaml(root, dependencies=None)
+    errs = errors(root)
+    assert any("has no `dependencies:` list" in e for e in errs), errs
+
+
+def test_every_demo_rule_id_check_py_raises_has_a_fixture_here():
+    """A rule id in `check_demo` without a test above is the silent pass this file exists to close."""
+    source = (Path(check.__file__)).read_text(encoding="utf-8")
+    raised = set(re.findall(r'"(demo-[a-z-]+)"', source))
+    tested = (Path(__file__)).read_text(encoding="utf-8")
+    for rule in sorted(raised):
+        assert tested.count(f'"{rule}"') >= 1, f"rule {rule!r} has no fixture in test_check.py"
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

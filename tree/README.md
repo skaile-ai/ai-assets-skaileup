@@ -203,7 +203,7 @@ A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, def
 `skaileup` writes this fixed pointer into the project, once, the first time it creates `_concept/`, and nothing else:
 
 ```
-This tree is maintained by the skaileup-tree collection. Every path here has an instruction node at
+This tree is maintained by the skaileup collection. Every path here has an instruction node at
 `<contracts>/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`),
 where `<contracts>` is the agent harness's contract directory: `.omp/contracts`, `.claude/contracts`
 or `.codex/contracts`, whichever exists.

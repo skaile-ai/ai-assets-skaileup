@@ -1,4 +1,4 @@
-name: ai-assets-skaileup-tree
+name: ai-assets-skaileup
 description: skaileup skill collection as a mirror tree — one instruction node per _concept/ part, skills are routes
 agent-config:
   default:

@@ -1,17 +1,18 @@
-# ai-assets-skaileup-tree
+# ai-assets-skaileup
 
-[![ci](https://github.com/skaile-ai/ai-assets-skaileup-tree/actions/workflows/ci.yml/badge.svg)](https://github.com/skaile-ai/ai-assets-skaileup-tree/actions/workflows/ci.yml)
+[![ci](https://github.com/skaile-ai/ai-assets-skaileup/actions/workflows/ci.yml/badge.svg)](https://github.com/skaile-ai/ai-assets-skaileup/actions/workflows/ci.yml)
 
-The skaileup skill collection as a mirror tree. Same product domains and skills as
-[`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp) — design,
-spec, mockups, build, quality — with one shared vocabulary ([`CONTEXT.md`](./CONTEXT.md)) and
-a flat tree. What changes is where the instructions live: `tree/` mirrors the `_concept/`
+The skaileup skill collection as a mirror tree: product design, spec, mockups, build and
+quality in nine domains and 31 skills, with one shared vocabulary ([`CONTEXT.md`](./CONTEXT.md))
+and a flat tree. Where the instructions live is the point: `tree/` mirrors the `_concept/`
 artifact tree one node per part, holding that part's purpose, format, procedure and checks,
 and each `SKILL.md` is just the route of nodes it visits.
 
-This repo is built **in parallel** with `-mp` and the original
-[`ai-assets-skaileup`](https://github.com/skaile-ai/ai-assets-skaileup). Nothing is cut
-over: projects opt in by pointing `skaile.yaml` at `-tree`.
+This is **the one skaileup collection**. Its predecessors are archived and stay readable:
+[`ai-assets-skaileup-v1`](https://github.com/skaile-ai/ai-assets-skaileup-v1) (the
+`00_skaileup-orchestrator/…` layout) and
+[`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp). Projects take
+this collection by pointing a `sources:` entry of `skaile.yaml` at this repo.
 
 ## Layout
 
@@ -22,6 +23,7 @@ rulebook/                  app-design rules, defaults and floorplans that APP-DE
 flows/<id>/<id>.flow.yaml  advisory recipes over skills — recommended order lives here, not in the filesystem
 templates/                 tech-stack references an implementation skill reads
 docs/                      skill and node templates, decision records
+demo/                      Lunch Roulette, a complete example workspace; the gate validates it against the nodes
 CONTEXT.md                 the collection's glossary — the words skills use with each other
 ```
 
@@ -108,6 +110,7 @@ instruction layer, `docs/adr/` holds why the collection is shaped as it is, and
 `scripts/check.py` answers whether it still hangs together.
 
 **Green means `python scripts/check.py`** — it checks the collection and then runs its own
-fixtures, so one command is the whole gate. `python scripts/check.py --print-tree` prints the
+fixtures, so one command is the whole gate. It also validates [`demo/`](./demo/): a change to a
+node's format, a skill's `produces` or a schema updates the demo in the same PR, or the run is red. `python scripts/check.py --print-tree` prints the
 artifact tree generated from the nodes. The badge above is the same answer for anyone who
 did not run it.

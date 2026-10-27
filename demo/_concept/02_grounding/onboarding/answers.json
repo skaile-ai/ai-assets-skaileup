@@ -1,0 +1,22 @@
+{
+  "approved": "2026-10-24",
+  "last_updated": "2026-10-24",
+  "framework": "Nuxt 4",
+  "database": "PostgreSQL",
+  "ui_library": "Nuxt UI",
+  "auth": "email magic link",
+  "has_brand": false,
+  "hosting": "self-hosted, one container",
+  "confidence": {
+    "framework": "preferred",
+    "database": "locked",
+    "ui_library": "preferred",
+    "auth": "open"
+  },
+  "rationale": {
+    "framework": "the team already ships Nuxt",
+    "database": "the company runs one Postgres for every internal tool",
+    "auth": "no passwords for a lunch app"
+  },
+  "seeds": []
+}

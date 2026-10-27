@@ -89,6 +89,5 @@ root, not to `_concept/`.
 `server/utils/skill-produces.ts` (`isNodeFileComplete`) counts a node as done when every
 non-templated path in its skill's list exists, and joins `APP-DESIGN.md` to the project root.
 `artifact-contract.ts` and its `produced_by` read are gone. The `host_facts.py` row is now
-`host:node-done-from-produces`, anchored on the new read. The change was made on forge's
-`feat/cfc-concept-formats-cutover` branch; the row is correct for forge `main` once that
-branch is merged.
+`host:node-done-from-produces`, anchored on the new read. The change landed on forge `main`
+through skaile-forge PR #27 (merge `f67825d`).

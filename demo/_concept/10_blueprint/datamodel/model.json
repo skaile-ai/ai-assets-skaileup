@@ -1,0 +1,247 @@
+{
+  "version": "1.0",
+  "entities": [
+    {
+      "id": "Member",
+      "glossary_id": "member",
+      "display_name": "Member",
+      "label_field": "display_name",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "member_display_name",
+          "name": "display_name",
+          "type": "string",
+          "max_length": 80
+        },
+        {
+          "id": "member_email",
+          "name": "email",
+          "type": "email",
+          "unique": true
+        },
+        {
+          "id": "member_diet",
+          "name": "diet",
+          "type": "enum",
+          "values": {
+            "Any": "Eats everything",
+            "Vegetarian": "No meat or fish",
+            "Vegan": "No animal products"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Place",
+      "glossary_id": "place",
+      "display_name": "Place",
+      "label_field": "name",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "place_name",
+          "name": "name",
+          "type": "string",
+          "max_length": 100
+        },
+        {
+          "id": "place_cuisine",
+          "name": "cuisine",
+          "type": "enum",
+          "enum_id": "cuisine"
+        },
+        {
+          "id": "place_walking_minutes",
+          "name": "walking_minutes",
+          "type": "integer",
+          "description": "Minutes on foot from the office door"
+        },
+        {
+          "id": "place_website",
+          "name": "website",
+          "type": "url",
+          "required": false
+        },
+        {
+          "id": "place_price_level",
+          "name": "price_level",
+          "type": "integer",
+          "required": false,
+          "status": "proposed",
+          "proposed_by": "mockup-storybook",
+          "proposed_on": "2026-10-22",
+          "source": "PlaceCard needs a price hint next to the walking time"
+        }
+      ]
+    },
+    {
+      "id": "Poll",
+      "glossary_id": "poll",
+      "display_name": "Poll",
+      "label_field": "title",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "poll_title",
+          "name": "title",
+          "type": "string",
+          "max_length": 120
+        },
+        {
+          "id": "poll_status",
+          "name": "status",
+          "type": "enum",
+          "values": {
+            "Open": "Members can still vote",
+            "Closed": "Voting is over, a pick is made"
+          }
+        },
+        {
+          "id": "poll_closes_at",
+          "name": "closes_at",
+          "type": "datetime"
+        },
+        {
+          "id": "poll_organizer_id",
+          "name": "organizer_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "Member"
+        },
+        {
+          "id": "poll_pick_id",
+          "name": "pick_id",
+          "type": "relation",
+          "required": false,
+          "indexed": true,
+          "relation_target": "Place"
+        }
+      ]
+    },
+    {
+      "id": "Vote",
+      "glossary_id": "vote",
+      "display_name": "Vote",
+      "label_field": "reason",
+      "standard_fields": [
+        "id",
+        "created_at",
+        "updated_at"
+      ],
+      "fields": [
+        {
+          "id": "vote_reason",
+          "name": "reason",
+          "type": "string",
+          "required": false,
+          "max_length": 140
+        },
+        {
+          "id": "vote_poll_id",
+          "name": "poll_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "Poll"
+        },
+        {
+          "id": "vote_place_id",
+          "name": "place_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "Place"
+        },
+        {
+          "id": "vote_member_id",
+          "name": "member_id",
+          "type": "relation",
+          "indexed": true,
+          "relation_target": "Member"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "poll_organizer",
+      "from": "Poll",
+      "from_field": "organizer_id",
+      "to": "Member",
+      "type": "m2o",
+      "on_delete": "restrict"
+    },
+    {
+      "id": "poll_pick",
+      "from": "Poll",
+      "from_field": "pick_id",
+      "to": "Place",
+      "type": "m2o",
+      "label": "Pick",
+      "required": false,
+      "on_delete": "set_null"
+    },
+    {
+      "id": "vote_poll",
+      "from": "Vote",
+      "from_field": "poll_id",
+      "to": "Poll",
+      "type": "m2o",
+      "on_delete": "cascade"
+    },
+    {
+      "id": "vote_place",
+      "from": "Vote",
+      "from_field": "place_id",
+      "to": "Place",
+      "type": "m2o",
+      "on_delete": "cascade"
+    },
+    {
+      "id": "vote_member",
+      "from": "Vote",
+      "from_field": "member_id",
+      "to": "Member",
+      "type": "m2o",
+      "on_delete": "cascade"
+    }
+  ],
+  "enums": [
+    {
+      "id": "cuisine",
+      "values": [
+        {
+          "value": "Italian",
+          "label": "Pasta, pizza, risotto"
+        },
+        {
+          "value": "Asian",
+          "label": "Noodles, curry, sushi"
+        },
+        {
+          "value": "Mediterranean",
+          "label": "Mezze, grilled dishes, salads"
+        },
+        {
+          "value": "Local",
+          "label": "Regional home cooking"
+        },
+        {
+          "value": "Vegetarian",
+          "label": "Meat-free kitchen"
+        }
+      ]
+    }
+  ]
+}
