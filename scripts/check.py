@@ -22,6 +22,11 @@ The instruction layer is `tree/`, a mirror of `_concept/` with one node per part
 documents it, and `--print-tree` renders the artifact tree from the nodes' `path:` entries —
 the one copy of that tree, pasted into `tree/README.md` and checked for staleness.
 
+When `demo/` exists (a complete example workspace of a fictional app), `check_demo` holds it to the
+same tree: every file resolves to a node, markdown carries valid frontmatter, every machine file
+validates against its schema, every path a skill produces is in the demo or excused in
+`DEMO_NOT_SHIPPED`, and `demo/skaile.yaml` lists the whole collection. A repo without `demo/` skips it.
+
 About a dozen rules here are copies of facts in forge-concept and @skaile/workspaces.
 Each names its fact id and nothing else: `scripts/host_facts.py` owns the path, the
 signature and the date, and `scripts/verify_host.py` greps them against real checkouts.
@@ -2665,6 +2670,360 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
                 )
 
 
+# --------------------------------------------------------------------------
+# demo — a complete example workspace of a fictional app, held to the same tree
+# --------------------------------------------------------------------------
+
+# `demo/` is a workspace root of an invented app (`demo/_concept/…`, `demo/APP-DESIGN.md`,
+# `demo/CONTEXT.md`, `demo/skaile.yaml`, `demo/README.md`) that shows what the skills write. An
+# example nobody checks rots into the one place that contradicts the tree, so it is held to it.
+# A repo without `demo/` has nothing to check here.
+#
+# Rule ids: `demo-node` (every demo file resolves to a node of `tree/`), `demo-storybook` (the
+# demo ships no mockup package), `demo-frontmatter` (every demo markdown file carries valid
+# universal frontmatter), `demo-schema-covered` (every `x-artifact` schema has its file in the
+# demo), `demo-schema` (that file validates against the schema), `demo-produces` (every
+# `produces` path of every skill is covered by a demo file or listed in `DEMO_NOT_SHIPPED`),
+# `demo-produces-stale` (a `DEMO_NOT_SHIPPED` key that no skill produces any more),
+# `demo-skaile-yaml` (the demo's `skaile.yaml` has a url source for this collection and lists every skill, flow
+# and contract asset, and nothing that does not exist).
+DEMO_DIR = "demo"
+
+# The demo omits the mockup package: a full npm package, `demo/README.md` says so.
+DEMO_STORYBOOK = f"{ARTIFACT_ROOT}/09_mockup/storybook"
+
+# Project-root files the demo holds beside `_concept/`. `demo/README.md` and `demo/skaile.yaml` are
+# the workspace's own files, not concept content, and are not looked at as such.
+DEMO_ROOT_FILES = ("APP-DESIGN.md", "CONTEXT.md")
+DEMO_GLOSSARY_FILE = "CONTEXT.md"
+# `skaileup` writes `_concept/README.md` as one fixed pointer text (`tree/README.md § _concept/README.md`),
+# which carries no frontmatter, so the universal header is not asked of it.
+DEMO_NO_FRONTMATTER = (f"{ARTIFACT_ROOT}/README.md",)
+# `APP-DESIGN.md`'s own node names its date `updated:` (`tree/APP-DESIGN.md § Format`), not
+# `last_updated:`; the gate reads that one as the universal field, because the file follows its node.
+DEMO_APP_DESIGN_FILE = "APP-DESIGN.md"
+# A `sources:` entry of a workspace config: only these keys, `url` required.
+DEMO_SOURCE_KEYS = {"url", "pin", "publisher"}
+DEMO_COLLECTION_REPO = "ai-assets-skaileup"
+DEMO_GLOSSARY_NODE_PATH = f"{ARTIFACT_ROOT}/glossary.md"
+WORDS_HEADING_RE = re.compile(r"^## Where the words live[ \t]*$", re.MULTILINE)
+
+# `produces` paths the demo deliberately does not carry, with the reason. Every other path a skill
+# produces must be covered by a demo file. A key no skill produces any more is `demo-produces-stale`,
+# so this list cannot outlive the skills it excuses.
+DEMO_NOT_SHIPPED: dict[str, str] = {
+    "_concept/09_mockup/storybook/": "a full npm package; demo/README.md says so",
+    "_concept/09_mockup/feedback/": "needs a running Storybook inbox",
+    "_concept/02_grounding/research/step/<skill-name>/": "per-skill dispatch research, none in the demo",
+    "_concept/02_grounding/findings/": "reverse-engineering output; the demo is greenfield",
+    "_concept/02_grounding/standards/": "conventions of an existing codebase; none",
+    "_concept/02_grounding/research/colors-fonts.md": "optional research; the demo carries domain, competitors, audiences",
+    "_concept/02_grounding/research/design-inspiration.md": "optional research; the demo carries domain, competitors, audiences",
+    "_concept/02_grounding/research/patterns.md": "optional research; the demo carries domain, competitors, audiences",
+    "_concept/02_grounding/research/behavioral-patterns.md": "optional research; the demo carries domain, competitors, audiences",
+    "_concept/03_brand/brandbook.html": "generated visual reference",
+    "_concept/11_build/slices/<slice_id>/index.md": "slice dossiers; the demo's trace.yaml names slices without dossiers",
+    "_concept/11_build/slices/<slice_id>/plan.md": "slice dossiers; the demo's trace.yaml names slices without dossiers",
+    "_concept/11_build/release.yaml": "whole-app verdicts and scans; not in the demo",
+    "_concept/11_build/interaction.sarif": "whole-app verdicts and scans; not in the demo",
+    "_concept/11_build/design-candidates.md": "whole-app verdicts and scans; not in the demo",
+}
+
+
+def _demo_files(demo: Path) -> list[str]:
+    """Every concept file of the demo as a path relative to `demo/` (`_concept/…` or a root file),
+    dotfiles and dot-directories left out, in sorted order."""
+    found: list[str] = []
+    concept = demo / ARTIFACT_ROOT
+    if concept.is_dir():
+        for path in sorted(concept.rglob("*")):
+            rel = path.relative_to(demo).as_posix()
+            if path.is_file() and not any(part.startswith(".") for part in rel.split("/")):
+                found.append(rel)
+    found += [name for name in DEMO_ROOT_FILES if (demo / name).is_file()]
+    return found
+
+
+def _demo_in_storybook(rel: str) -> bool:
+    return rel.startswith(DEMO_STORYBOOK + "/")
+
+
+def _demo_glossary_rule(nodes: list[Node], repo: Path) -> tuple[bool, bool]:
+    """What `tree/glossary.md § Where the words live` says about the project glossary file:
+    `(the tree names CONTEXT.md as the project glossary, the tree says it carries no frontmatter)`."""
+    node = resolve(nodes, DEMO_GLOSSARY_NODE_PATH)
+    if node is None:
+        return False, False
+    text = (repo / TREE_DIR / node.rel).read_text(encoding="utf-8")
+    m = WORDS_HEADING_RE.search(text)
+    if not m:
+        return False, False
+    rest = text[m.end():]
+    nxt = re.search(r"^## ", rest, re.MULTILINE)
+    section = rest[: nxt.start()] if nxt else rest
+    return f"`{DEMO_GLOSSARY_FILE}`" in section, "no frontmatter" in section
+
+
+def _iso_text(doc):
+    """The document with YAML dates turned into ISO text, as `tree/README.md § Frontmatter every
+    markdown artifact carries` prescribes before validating."""
+    return json.loads(json.dumps(doc, default=str))
+
+
+def _schema_errors(schema: dict, doc, limit: int = 3) -> list[str]:
+    """The first `limit` validation errors of `doc`, each as `<json path>: <message>`. No `$ref`
+    in this collection leaves its own document, so nothing is fetched; formats are annotations
+    here, and the patterns that carry the date rules are enforced."""
+    validator = jsonschema.Draft202012Validator(schema)
+    out: list[str] = []
+    for err in sorted(validator.iter_errors(doc), key=lambda e: [str(p) for p in e.absolute_path]):
+        path = "/".join(str(p) for p in err.absolute_path) or "<root>"
+        out.append(f"{path}: {err.message[:120]}")
+        if len(out) == limit:
+            break
+    return out
+
+
+def _demo_covers(produced: str, rel: str, literal: set[str]) -> bool:
+    """True when the demo file `rel` covers the `produces` path `produced`: the file at the path or
+    under it, a `<placeholder>` segment matching any one segment. A file that a literal `produces`
+    path names exactly (`07_screens/shell.md`) never stands in for a placeholder path
+    (`07_screens/<screen>.md`): the placeholder path needs a file of its own."""
+    if produced.startswith(ARTIFACT_ROOT + "/") != rel.startswith(ARTIFACT_ROOT + "/"):
+        return False
+    if not _path_covers(produced, rel):
+        return False
+    if any(_is_placeholder(s) for s in _segs(produced)) and rel in literal:
+        return False
+    return True
+
+
+def _demo_check_skaile_yaml(repo: Path, demo: Path, skill_dirs: set[str], rep: Report) -> None:
+    where = f"{DEMO_DIR}/skaile.yaml"
+    path = demo / "skaile.yaml"
+    if not path.is_file():
+        rep.fail(where, "demo-skaile-yaml", "does not exist — the demo is not a workspace, so nothing can open it with the collection installed")
+        return
+    try:
+        doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        rep.fail(where, "demo-skaile-yaml", f"is not parseable YAML ({exc}) — the workspace would not load")
+        return
+    if not isinstance(doc, dict):
+        rep.fail(where, "demo-skaile-yaml", "does not contain a mapping — the workspace would not load")
+        return
+
+    # A source takes `url`, `pin` and `publisher` and nothing else (@skaile/workspaces `parseSourceEntries`
+    # rejects an entry without a url): a bare `path:` is no source. The demo names this collection.
+    sources = doc.get("sources")
+    if not isinstance(sources, list) or not sources:
+        rep.fail(where, "demo-skaile-yaml", "has no `sources:` list — the workspace would find no skill, flow or contract")
+    else:
+        for i, s in enumerate(sources):
+            if not isinstance(s, dict) or not isinstance(s.get("url"), str) or not s["url"].strip():
+                rep.fail(where, "demo-skaile-yaml", f"`sources[{i}]` has no `url` — the SDK rejects a source without one (a local `path:` is not a source)")
+            elif set(s) - DEMO_SOURCE_KEYS:
+                rep.fail(where, "demo-skaile-yaml", f"`sources[{i}]` has keys {sorted(set(s) - DEMO_SOURCE_KEYS)} — a source takes only {sorted(DEMO_SOURCE_KEYS)}")
+        if not any(isinstance(s, dict) and str(s.get("url", "")).removesuffix(".git").rstrip("/").endswith("/" + DEMO_COLLECTION_REPO) for s in sources):
+            rep.fail(
+                where,
+                "demo-skaile-yaml",
+                f"`sources:` has no entry whose `url` is this collection (`…/{DEMO_COLLECTION_REPO}`) — the demo would "
+                f"install the skills of some other collection",
+            )
+
+    flow_ids: set[str] = set()
+    flows_dir = repo / "flows"
+    for flow_file in sorted(flows_dir.glob("*/*.flow.yaml")) if flows_dir.is_dir() else []:
+        try:
+            flow = yaml.safe_load(flow_file.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError:
+            continue  # `check_flows` reports it
+        if isinstance(flow, dict) and isinstance(flow.get("id"), str):
+            flow_ids.add(flow["id"])
+    contract_assets = {
+        asset for folder, asset in ((TREE_DIR, CONTRACT_ASSET), (RULEBOOK_DIR, RULEBOOK_ASSET))
+        if (repo / folder / "CONTRACT.md").is_file()
+    }
+    known = {"skill": skill_dirs, "flow": flow_ids, "contract": contract_assets}
+
+    deps = doc.get("dependencies")
+    listed: dict[str, set[str]] = {"skill": set(), "flow": set(), "contract": set()}
+    if not isinstance(deps, list):
+        rep.fail(where, "demo-skaile-yaml", "has no `dependencies:` list — the workspace would deploy no skill, flow or contract")
+        deps = []
+    for ref in deps:
+        m = REF_RE.match(str(ref))
+        if not m:
+            rep.fail(where, "demo-skaile-yaml", f"`dependencies:` entry {ref!r} is not a `kind:@publisher/name` ref — the installer would skip it")
+            continue
+        kind, publisher, name, _version = m.groups()
+        if publisher != "skaile-ai" or name not in known[kind]:
+            rep.fail(
+                where,
+                "demo-skaile-yaml",
+                f"`dependencies:` names {ref!r}, which is no {kind} of this collection — a stale ref "
+                f"installs nothing and the workspace reports it missing",
+            )
+            continue
+        listed[kind].add(name)
+    for kind in ("skill", "flow", "contract"):
+        for missing in sorted(known[kind] - listed[kind]):
+            rep.fail(
+                where,
+                "demo-skaile-yaml",
+                f"`dependencies:` does not list {kind}:@skaile-ai/{missing} — the demo would run without it, "
+                f"because only a listed asset is deployed",
+            )
+
+
+def check_demo(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: Report) -> None:
+    """The demo workspace against the tree, the schemas and the skills' `produces` (rules above)."""
+    demo = repo / DEMO_DIR
+    if not demo.is_dir():
+        return
+    files = _demo_files(demo)
+
+    # demo-node / demo-storybook
+    glossary_named, glossary_no_frontmatter = _demo_glossary_rule(nodes, repo)
+    for rel in files:
+        where = f"{DEMO_DIR}/{rel}"
+        if _demo_in_storybook(rel):
+            rep.fail(
+                where,
+                "demo-storybook",
+                "is inside the mockup package, which the demo omits — it is a full npm package, and "
+                "shipping part of it would give the demo a build that cannot run",
+            )
+        elif rel == DEMO_GLOSSARY_FILE:
+            if not glossary_named:
+                rep.fail(
+                    where,
+                    "demo-node",
+                    f"is documented by no node — `{TREE_DIR}/glossary.md § Where the words live` does not "
+                    f"name `{DEMO_GLOSSARY_FILE}` as the project glossary, so the demo would carry a file "
+                    f"the instructions never mention",
+                )
+        elif resolve(nodes, rel) is None:
+            rep.fail(
+                where,
+                "demo-node",
+                f"resolves to no node of `{TREE_DIR}/` — the demo would show a file the instructions do "
+                f"not describe, because no skill is told to write it",
+            )
+
+    # demo-frontmatter
+    schema_path = repo / TREE_DIR / "frontmatter.schema.json"
+    fm_schema = None
+    if schema_path.is_file():
+        try:
+            fm_schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        except ValueError:
+            fm_schema = None  # `check_schemas` reports it
+    for rel in files:
+        if not rel.endswith(".md") or _demo_in_storybook(rel):
+            continue
+        if rel == DEMO_GLOSSARY_FILE and (not glossary_named or glossary_no_frontmatter):
+            continue
+        if rel in DEMO_NO_FRONTMATTER:
+            continue
+        where = f"{DEMO_DIR}/{rel}"
+        if fm_schema is None:
+            rep.fail(where, "demo-frontmatter", f"cannot be checked — `{TREE_DIR}/frontmatter.schema.json` is missing or unreadable, so no demo file is held to the universal frontmatter")
+            break
+        m = FRONTMATTER_RE.match((demo / rel).read_text(encoding="utf-8"))
+        if not m:
+            rep.fail(where, "demo-frontmatter", "has no frontmatter — every markdown artifact carries `last_updated`, because a file without it cannot say when it was last true")
+            continue
+        try:
+            doc = yaml.safe_load(m.group(1))
+        except yaml.YAMLError as exc:
+            rep.fail(where, "demo-frontmatter", f"frontmatter is not parseable YAML ({exc}) — its fields are read by nothing")
+            continue
+        if not isinstance(doc, dict):
+            rep.fail(where, "demo-frontmatter", "frontmatter is not a mapping — `last_updated` cannot be read from it")
+            continue
+        if rel == DEMO_APP_DESIGN_FILE and "last_updated" not in doc and "updated" in doc:
+            doc = {**doc, "last_updated": doc["updated"]}
+        problems = _schema_errors(fm_schema, _iso_text(doc))
+        if problems:
+            rep.fail(where, "demo-frontmatter", f"frontmatter does not validate against `{TREE_DIR}/frontmatter.schema.json` ({'; '.join(problems)}) — the demo would teach the wrong header")
+
+    # demo-schema-covered / demo-schema
+    tree_root = repo / TREE_DIR
+    schema_files = sorted(
+        p for p in tree_root.rglob(f"*{SCHEMA_SUFFIX}")
+        if not any(part.startswith(".") for part in p.relative_to(tree_root).parts)
+    ) if tree_root.is_dir() else []
+    for sp in schema_files:
+        try:
+            schema = json.loads(sp.read_text(encoding="utf-8"))
+        except ValueError:
+            continue  # `check_schemas` reports it
+        artifact = schema.get("x-artifact") if isinstance(schema, dict) else None
+        if not isinstance(artifact, str):
+            continue
+        schema_where = f"{TREE_DIR}/{sp.relative_to(tree_root).as_posix()}"
+        target = demo / artifact
+        if not target.is_file():
+            rep.fail(
+                f"{DEMO_DIR}/{artifact}",
+                "demo-schema-covered",
+                f"does not exist, but `{schema_where}` describes it — the demo would leave out the one file "
+                f"that shows the schema in use",
+            )
+            continue
+        suffix = target.suffix
+        if suffix not in (".json", ".yaml", ".yml"):
+            continue  # a markdown artifact's schema validates its frontmatter, covered above
+        try:
+            text = target.read_text(encoding="utf-8")
+            doc = json.loads(text) if suffix == ".json" else yaml.safe_load(text)
+        except (ValueError, yaml.YAMLError) as exc:
+            rep.fail(f"{DEMO_DIR}/{artifact}", "demo-schema", f"is not parseable ({exc}) — it cannot be validated against `{schema_where}`")
+            continue
+        problems = _schema_errors(schema, _iso_text(doc))
+        if problems:
+            rep.fail(
+                f"{DEMO_DIR}/{artifact}",
+                "demo-schema",
+                f"does not validate against `{schema_where}` ({'; '.join(problems)}) — the demo would teach "
+                f"a file the skills' own readers reject",
+            )
+
+    # demo-produces / demo-produces-stale
+    produced: dict[str, list[str]] = {}
+    for skill in sorted(skill_fms):
+        for _ident, path in _produced_entries(skill_fms[skill]):
+            produced.setdefault(path, []).append(skill)
+    literal = {p for p in produced if not any(_is_placeholder(s) for s in _segs(p))}
+    excused = {key.rstrip("/"): reason for key, reason in DEMO_NOT_SHIPPED.items()}
+    for path, writers in sorted(produced.items()):
+        if path.rstrip("/") in excused:
+            continue
+        if not any(_demo_covers(path, rel, literal) for rel in files if not _demo_in_storybook(rel)):
+            rep.fail(
+                DEMO_DIR + "/",
+                "demo-produces",
+                f"no file covers `{path}`, written by {', '.join(writers)} — add the file to `demo/`, or "
+                f"list the path in DEMO_NOT_SHIPPED in scripts/check.py with the reason it is left out, "
+                f"because the demo is meant to show every part a skill writes",
+            )
+    live = {p.rstrip("/") for p in produced}
+    for key in excused:
+        if key not in live:
+            rep.fail(
+                "scripts/check.py",
+                "demo-produces-stale",
+                f"DEMO_NOT_SHIPPED lists `{key}`, which no skill produces any more — delete the entry, "
+                f"because a list of exceptions that outlives its skills hides the next gap",
+            )
+
+    # demo-skaile-yaml
+    skill_dirs = {p.parent.name for p in (repo / "skills").glob("*/SKILL.md")} if (repo / "skills").is_dir() else set()
+    _demo_check_skaile_yaml(repo, demo, skill_dirs, rep)
+
+
 def run(repo: Path) -> Report:
     rep = Report()
     nodes = load_tree(repo)
@@ -2680,6 +3039,7 @@ def run(repo: Path) -> Report:
     check_flat_screens(repo, rep)
     check_flows(repo, skill_names, skill_tree_refs, skill_fms, rep)
     check_docs(repo, skill_names, rep)
+    check_demo(repo, nodes, skill_fms, rep)
     return rep
 
 

@@ -1,10 +1,10 @@
-# ai-assets-skaileup-tree
+# ai-assets-skaileup
 
-The skaileup collection as a **mirror tree**: the same ~9 domains as
-[`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp), 31 skills, but the
-instructions live in `tree/` — a directory that mirrors `_concept/` one node per part — and
-a skill is only the route through those nodes. `-mp` stays live and untouched; projects opt
-in via `skaile.yaml`.
+The skaileup collection as a **mirror tree**: ~9 domains, 31 skills, the instructions live in
+`tree/` — a directory that mirrors `_concept/` one node per part — and a skill is only the
+route through those nodes. This is the one skaileup collection; the earlier ones
+([`ai-assets-skaileup-v1`](https://github.com/skaile-ai/ai-assets-skaileup-v1),
+[`ai-assets-skaileup-mp`](https://github.com/skaile-ai/ai-assets-skaileup-mp)) are archived.
 
 ## The invariants
 
@@ -42,6 +42,13 @@ in via `skaile.yaml`.
   that is where the readers look, and neither failure raises ([ADR 0011](./docs/adr/0011-the-machine-layer-sits-under-metadata.md)).
 - **Flow nodes declare `data.phase`** rather than relying on forge-concept's name-prefix
   fallback.
+- **`demo/` is the worked example and moves with the nodes.** It is a complete workspace
+  (`demo/_concept/…`, `APP-DESIGN.md`, `CONTEXT.md`, `skaile.yaml`) for the fictional app Lunch
+  Roulette, and skaile-forge copies it into its dev workspace. A change to a node's `## Format`,
+  to a skill's `produces`, or to a schema updates `demo/` **in the same PR**; the gate enforces
+  it (`check_demo`: every demo file resolves to a node, markdown frontmatter and the data files
+  validate against the schemas, every produced path is covered or listed in `DEMO_NOT_SHIPPED`),
+  so a format change that leaves the demo behind is a red run, not a later surprise.
 - **Two `CONTRACT.md` manifests**: `tree/CONTRACT.md` (`shared-contracts`) and
   `rulebook/CONTRACT.md` (`app-design-rulebook`). `@skaile/workspaces` discovers each recursively
   and ships its whole directory as one asset; a third is rejected.
@@ -53,6 +60,9 @@ collection and then runs its own fixtures; nothing else needs running, and a run
 `--no-tests` is not a green one. This repo has no build and no runtime, so that script is
 the only thing that can tell you the collection still hangs together — forge-concept
 validates no flow at all and reports a missing skill as `satisfied: true`.
+
+The gate includes `demo/` (see the invariant above): to see what a format change breaks, run
+`python scripts/check.py --no-tests` and read the `demo-*` errors.
 
 `python scripts/check.py --print-tree` prints the artifact tree generated from the nodes'
 `path:` entries. Paste it into the fence in `tree/README.md` when a node is added or moved;

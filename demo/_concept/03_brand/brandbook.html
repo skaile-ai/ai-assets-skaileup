@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Lunch Roulette - brand book</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#e4572e;--secondary:#2f7d4f;--accent:#f2b134;--bg:#fff8ee;--surface:#ffffff;--text:#2b2118;--muted:#6f6256;--border:#e8dccb;--error:#c0392b;--success:#2f7d4f;--warning:#d68910;--radius:12px;--unit:8px;
+--sm:0 1px 2px rgba(43,33,24,.08);--md:0 4px 12px rgba(43,33,24,.12);--lg:0 12px 32px rgba(43,33,24,.18)}
+body{margin:0;padding:calc(var(--unit)*4);background:var(--bg);color:var(--text);font:16px/1.5 Inter,system-ui,sans-serif;max-width:860px}
+h1,h2{font-family:Fraunces,Georgia,serif;font-weight:600;margin:calc(var(--unit)*4) 0 var(--unit)}h1{font-size:28px}h2{font-size:20px}
+.sw{display:flex;flex-wrap:wrap;gap:var(--unit)}.sw div{width:120px;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;background:var(--surface);font-size:13px}
+.sw i{display:block;height:56px}.sw span{display:block;padding:var(--unit)}code{font-family:"JetBrains Mono",monospace;color:var(--muted)}
+.btn{display:inline-block;padding:var(--unit) calc(var(--unit)*2);border-radius:var(--radius);background:var(--primary);color:#fff;font-weight:600}
+.btn.alt{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.card{background:var(--surface);border-radius:var(--radius);padding:calc(var(--unit)*2);box-shadow:var(--md);margin:var(--unit) 0}
+.pick{display:inline-block;background:var(--accent);border-radius:999px;padding:4px 12px;font-weight:600}
+input{padding:var(--unit);border:1px solid var(--border);border-radius:var(--radius);font:inherit}
+nav{display:flex;gap:calc(var(--unit)*2);padding:var(--unit) 0;border-bottom:1px solid var(--border)}nav b{color:var(--primary)}
+</style></head><body>
+<h1>Lunch Roulette</h1><p>A warm, quick, slightly cheeky lunch companion. Mood: playful. Mode: light.</p>
+<h2>Colour</h2><div class="sw">
+<div><i style="background:#e4572e"></i><span>Tomato<br><code>#e4572e</code></span></div>
+<div><i style="background:#2f7d4f"></i><span>Basil<br><code>#2f7d4f</code></span></div>
+<div><i style="background:#f2b134"></i><span>Saffron<br><code>#f2b134</code></span></div>
+<div><i style="background:#fff8ee"></i><span>Cream<br><code>#fff8ee</code></span></div>
+<div><i style="background:#ffffff"></i><span>Linen<br><code>#ffffff</code></span></div>
+<div><i style="background:#2b2118"></i><span>Espresso<br><code>#2b2118</code></span></div>
+<div><i style="background:#6f6256"></i><span>Mocha<br><code>#6f6256</code></span></div>
+<div><i style="background:#e8dccb"></i><span>Oat<br><code>#e8dccb</code></span></div>
+<div><i style="background:#c0392b"></i><span>Error<br><code>#c0392b</code></span></div>
+<div><i style="background:#d68910"></i><span>Warning<br><code>#d68910</code></span></div>
+</div>
+<h2>Type</h2><p style="font:600 28px Fraunces,serif">Friday lunch</p><p>Body text in Inter, 16 px. Counts in <code>JetBrains Mono</code>.</p>
+<h2>Spacing and elevation</h2><p>8 px unit, 12 px radius. Shadows: sm for rows, md for the poll card, lg for the draw overlay.</p>
+<h2>Components</h2>
+<p><span class="btn">Open poll</span> <span class="btn alt">Cancel</span></p>
+<div class="card"><b>Friday lunch</b><br>3 votes - closes 12:30<br><span class="pick">Pick: Trattoria da Enzo</span></div>
+<p><input value="Team lunch after the release" aria-label="Poll title"></p>
+<nav><b>Polls</b><span>Places</span></nav>
+</body></html>

@@ -1,0 +1,22 @@
+feature: vote-on-place
+verdict: changes-requested
+commits: [b72d1f3, c0e88a5]
+files_reviewed: [server/api/polls/[id]/vote.put.ts, app/components/VoteList.vue]
+findings:
+  - id: F-1
+    severity: high
+    category: criteria
+    file: server/api/polls/[id]/vote.put.ts
+    line: 18
+    criterion: AC-vote_on_places-03
+    note: the route checks the poll's status before the lookup of the member's vote, but reads a cached poll, so a vote lands for a few seconds after the poll closed
+    resolution: read the poll status in the same transaction that writes the vote
+  - id: F-2
+    severity: low
+    category: accessibility
+    file: app/components/VoteList.vue
+    line: 41
+    criterion: ""
+    note: the vote buttons have no accessible name beyond the place's name
+    resolution: add an aria-label "Vote for <place>" to each button
+last_updated: 2026-10-26

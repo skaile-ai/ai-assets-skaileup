@@ -1,4 +1,4 @@
-# CONTEXT — skaileup-tree
+# CONTEXT — skaileup
 
 The ubiquitous language of this collection: the words its skills use to talk to each
 other, to the flow engine, and to forge-concept. Every skill uses the canonical term

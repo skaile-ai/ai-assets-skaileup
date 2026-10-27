@@ -1,0 +1,18 @@
+features:
+  create-poll:
+    featureset: polls
+    slices:
+      - { id: s01-create-poll, commits: [a1c4e90], code: [server/api/polls.post.ts, app/pages/polls/new.vue] }
+  vote-on-place:
+    featureset: polls
+    slices:
+      - { id: s02-vote, commits: [b72d1f3, c0e88a5], code: ["server/api/polls/[id]/vote.put.ts", app/components/VoteList.vue] }
+  draw-pick:
+    featureset: polls
+    slices:
+      - { id: s03-pick, commits: [d41b7c2], code: [server/plugins/poll-closer.ts, server/utils/pick.ts] }
+  manage-places:
+    featureset: places
+    slices:
+      - { id: s04-places, commits: [e90a3d6], code: [server/api/places.get.ts, server/api/places.post.ts, app/pages/places.vue] }
+last_updated: 2026-10-26

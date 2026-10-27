@@ -1,0 +1,55 @@
+# The demo workspace. skaile-forge copies everything in this folder except this file and
+# README.md into its dev workspace, and writes its own skaile.yaml there whose source is
+# the local checkout of the collection.
+name: lunch-roulette-demo
+description: Lunch Roulette - the demo concept of ai-assets-skaileup.
+sources:
+  # The collection itself, unpinned (its main branch).
+  - url: https://github.com/skaile-ai/ai-assets-skaileup.git
+dependencies:
+  # The two flows are the menu: a flow is the tier a user picks. Without
+  # explicit refs the canonical-identity install deploys nothing and the flow
+  # picker is empty.
+  - flow:@skaile-ai/skaileup-greenfield
+  - flow:@skaile-ai/skaileup-reverse
+  # The two reference assets the skills read: the instruction tree (one node per
+  # _concept/ part) and the app-design rulebook.
+  - contract:@skaile-ai/shared-contracts
+  - contract:@skaile-ai/app-design-rulebook
+  # Every skill of the collection. List them explicitly: a flow's `requires:`
+  # names its skills, but the workspace declares what it wants deployed, and a
+  # node whose skill is absent still runs, with a generic `Run skill <id>`
+  # prompt (run.post.ts), which leaves an empty-bodied pipeline. The list is the
+  # collection README's `## Skills` table; test/contract/collection.test.ts
+  # fails on a stale or missing entry.
+  - skill:@skaile-ai/architecture-datamodel
+  - skill:@skaile-ai/architecture-system
+  - skill:@skaile-ai/architecture-techstack
+  - skill:@skaile-ai/build-branch
+  - skill:@skaile-ai/build-database
+  - skill:@skaile-ai/build-implement
+  - skill:@skaile-ai/build-plan
+  - skill:@skaile-ai/build-scaffold
+  - skill:@skaile-ai/concept-brief
+  - skill:@skaile-ai/concept-glossary
+  - skill:@skaile-ai/concept-onboard
+  - skill:@skaile-ai/concept-research
+  - skill:@skaile-ai/concept-reverse
+  - skill:@skaile-ai/design-brand
+  - skill:@skaile-ai/experience-behaviors
+  - skill:@skaile-ai/experience-interaction
+  - skill:@skaile-ai/experience-journeys
+  - skill:@skaile-ai/experience-screen
+  - skill:@skaile-ai/experience-shell
+  - skill:@skaile-ai/mockup-feedback
+  - skill:@skaile-ai/mockup-storybook
+  - skill:@skaile-ai/ops-review
+  - skill:@skaile-ai/quality-design
+  - skill:@skaile-ai/quality-e2e
+  - skill:@skaile-ai/quality-interaction
+  - skill:@skaile-ai/quality-release
+  - skill:@skaile-ai/quality-review
+  - skill:@skaile-ai/quality-standards
+  - skill:@skaile-ai/quality-test
+  - skill:@skaile-ai/skaileup
+  - skill:@skaile-ai/spec-feature
