@@ -27,7 +27,7 @@ The body restates the lists as prose sections: the one outcome that would mean t
 ## Writing it
 
 1. **Turn the vision into goals** after the pitch in `_concept/brief.md` exists, at the same depth and in the same decision batch (`tree/README.md § How a skill runs`, rule 2). Write the draft without `approved:`.
-2. **Tie each criterion to the brief.** Every criterion traces to the brief's problem or hero flow, and each is a number, a threshold or a yes/no condition.
+2. **Tie each criterion to the brief.** Every criterion traces to the brief's problem or hero flow, or to a `## The result` line of `_concept/01_meta/expectations.md` where it exists (`tree/01_meta/expectations.md § Format`): a judged-by or quality-bar line becomes a criterion, a must-not-happen line a constraint or non-goal, each made settleable and followed by `(expectations)`; the user's wording and reasons stay in that file. Each criterion is a number, a threshold or a yes/no condition.
 3. **Write `TBD` for what the user never implied.** A deadline or budget the user did not give is `TBD`; an invented one gets planned around.
 4. **Leave approval to the brief's.** The goals are shown with the brief and approved by the same yes (`tree/brief.md § Approving both files`), which writes `approved:` here.
 

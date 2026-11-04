@@ -6,7 +6,10 @@ skills; you run `skaileup`, the router, yourself.
 
 ## Start of a session
 
-Read `_concept/README.md` and `_concept/01_meta/scope.yaml` where they exist.
+Read `_concept/README.md`, `_concept/01_meta/scope.yaml` and `_concept/01_meta/expectations.md`
+where they exist. When `expectations.md` is missing, run the expectations interview first, through
+the `skaileup` route (`tree/01_meta/expectations.md`). Apply its `## Working together` to every run
+you send, as `tree/01_meta/expectations.md § Reading it` says.
 
 ## Who runs a skill
 

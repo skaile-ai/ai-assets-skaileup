@@ -15,6 +15,9 @@ reviewed it. Spec 0.2 of `@skaile/workspaces` agents offers a way out: a compose
 hands a task to and which runs in a fresh context. Such a subagent cannot ask the user anything;
 only the session's own agent can.
 
+The user also asked for an expectations interview: what they will judge the result by, and how
+much the agents decide on their own in each domain.
+
 ## Decision
 
 **K1 — Eight agents; every skill belongs to one.** `skaileup-lead` is the session's agent. It
@@ -44,6 +47,14 @@ the lead puts that batch to the user unchanged and sends the run again with the 
 and the draft path. An approval is a decision batch like any other, so `approved:` is written only
 in the run that carries the user's yes. The lead never edits an artifact a delegate owns.
 
+**K3 — Expectations come first.** `tree/01_meta/expectations.md` is the one up-front interview,
+because every run the lead sends reads it: `## The result` holds what the user will judge the
+product by, `## Working together` the autonomy per domain (concept, design, architecture, specs,
+build, review), the review cadence, the check-ins and the language. `skaileup` writes it first
+when a project has none; a user who declines gets the recommended defaults, marked `default`.
+An autonomy value changes how the lead answers a delegate's batch, never what `approved:` means:
+it stays the user's yes.
+
 ## Options rejected
 
 - **One agent per skill, or per domain.** The domain prefix is the wrong seam: `experience-*` is
@@ -64,3 +75,6 @@ in the run that carries the user's yes. The lead never edits an artifact a deleg
   and an agent is installed through the workspace's `dependencies:`.
 - The demo's `skaile.yaml` lists the eight agents.
 - The forge concept template pins the collection tag and runs `skaileup-lead` as the space's agent.
+- The lead applies `## Working together` to every run it sends
+  (`tree/01_meta/expectations.md § Reading it`); `skaileup` 0.3.0 produces
+  `_concept/01_meta/expectations.md` and runs the interview first when it is absent.

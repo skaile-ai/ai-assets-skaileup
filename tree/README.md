@@ -30,7 +30,8 @@ _concept/                                the artifact tree, its ownership rule a
 ├── brief.md                             the pitch, with its comparables — what the user said, no more
 ├── glossary.md                          the ubiquitous language and its light ontology — terms, kinds, relations
 ├── goals.md                             success criteria, KPIs, constraints and explicit non-goals
-├── 01_meta/                             project metadata — the sizing skills read when they need it
+├── 01_meta/                             project metadata — the user's expectations and the project's sizing
+│   ├── expectations.md                  what the user judges the result by and how they want to work with the agents
 │   └── scope.yaml                       flow, project type and depth — written when the first skill needs one
 ├── 02_grounding/                        everything that came from outside the room, readable by every skill
 │   ├── findings/                        graded evidence and raw material from outside the room
@@ -229,7 +230,7 @@ A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, def
 
 | arc42 | `_concept/` home |
 |---|---|
-| 1 Introduction & Goals | `_concept/brief.md`, `_concept/goals.md` |
+| 1 Introduction & Goals | `_concept/brief.md`, `_concept/goals.md`, `_concept/01_meta/expectations.md` |
 | 2 Constraints | `_concept/goals.md` (constraints, non-goals) |
 | 3 Context & Scope | `_concept/10_blueprint/architecture.md`, section System context |
 | 4 Solution Strategy | `_concept/10_blueprint/techstack.md` |

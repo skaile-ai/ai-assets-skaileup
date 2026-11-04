@@ -271,6 +271,13 @@ A user-facing goal in a journey, staged by importance. Feeds features; is not on
 **Screen**:
 One specified view of the application. An artifact of its own: features reference screens,
 a screen belongs to no feature.
+**Expectations**:
+What the user will judge the result by (the quality bar, references liked and disliked, what
+must not happen) and how they want to work with the agents: who decides in each domain, how
+often they review, and in which language. Asked once per project and applied to every run the
+lead sends. Not **answers**, which onboarding collects about the product's material.
+_Avoid_: requirements, preferences, settings, briefing
+
 
 **Component**:
 A UI pattern shared across screens, specified once.
