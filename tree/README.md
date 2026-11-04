@@ -173,6 +173,50 @@ Every skill binds these rules at its interviewing step by citing `tree/README.md
 7. **Record at the semantic home**, as `proposed` when another skill owns it; open questions get stable ids.
 8. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps, named by demand: the skills that own what is still missing. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
 
+## Delegation
+
+One protocol for every hand-over of work to another agent context: the lead sending a skill run to the agent that owns the skill, and a skill sending a helper pass (a research topic, a detection pass) to a fresh context. Agents cite this section; nothing restates it.
+
+**The task goes verbatim.** The receiver holds only what the prompt carries and the files it reads, none of the conversation. Paste the full task: for a skill run, the whole `Run skill <id>` prompt as the host sent it, the skill body and any onboarding block included, never a summary and never a pointer to a plan file. A repeat run carries the user's answers verbatim and the path of the draft written so far.
+
+**The receiver ends with one status block**, and the sender acts on the status and collects the artifacts:
+
+```
+STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
+
+[If DONE_WITH_CONCERNS]  Concerns: <trade-offs, deviations, debt incurred>
+[If NEEDS_CONTEXT]       Missing:  <what is absent>
+                         Question: <single specific question for the user or the dispatching skill>
+[If BLOCKED]             Reason:   <what cannot be resolved>
+                         Route:    context | escalate-model | decompose
+```
+
+| Status | Meaning | Sender's action |
+|---|---|---|
+| `DONE` | All requirements met, tests pass | Accept output, advance flow |
+| `DONE_WITH_CONCERNS` | Implemented but with trade-offs or notes | Accept, log concerns in `_concept/11_build/decisions.md`, advance |
+| `NEEDS_CONTEXT` | Missing information or ambiguous requirement | Put the decision batch to the user unchanged; send again with the answers and the draft path |
+| `BLOCKED` | Cannot proceed — see route | Follow the route below |
+
+| Route | When to use | Sender's response |
+|---|---|---|
+| `context` | A specific question can unblock the task | Put the question to the user; re-dispatch with the answer |
+| `escalate-model` | Task exceeded model capability | Note in `_concept/11_build/decisions.md`; re-dispatch on a stronger model |
+| `decompose` | Task is too large to execute atomically | Break into smaller tasks; re-dispatch each |
+
+**The interview relay.** A delegate cannot reach the user in Claude Code or omp, so every user conversation stays with the lead.
+
+1. The receiver resolves facts (`tree/README.md § How a skill runs`, rule 1), writes or updates its draft on disk without `approved:`, and returns. When it needs the user it returns `NEEDS_CONTEXT` whose `Question:` is one decision batch formatted per rule 2 of that section, with the draft path under `Missing:`.
+2. The lead puts that batch to the user unchanged (no rewording, no options added or dropped) and sends the run again with the answers verbatim and the draft path.
+3. An approval is a decision batch like any other: the receiver writes `approved:` only in the run that carries the user's yes.
+4. The lead never edits an artifact a delegate owns. A host tool only the lead holds (a review hunk, an editor that opens a file) carries the delegate's change unchanged: the delegate returns the change, the lead submits it and passes the user's decision back.
+
+**Evidence another agent owns.** A receiver whose route needs `concept-reverse` or `concept-research` returns `NEEDS_CONTEXT` with `Missing: evidence pass — <skill> <scope>`; the lead sends the pass to the researcher and sends the run again with the findings' paths. A receiver that cannot start its own helper contexts runs its helper passes itself, one after another.
+
+**Parallel only when the write sets are disjoint.** Two receivers run at once only when no path one may write or propose into is one the other may (`owner:` and `may_propose:` of the nodes their routes visit).
+
+A partial result with no status leaves the sender guessing; a code makes it act.
+
 ## Beside the tree
 
 One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and is owned by `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `<contracts>/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`.

@@ -1,0 +1,13 @@
+spec_version: "0.2"
+name: skaileup-reviewer
+version: "0.1.0"
+description: "Reviews skaileup work it did not write: conventions, tests, code review, design and interaction conformance, the release grade and the health of _concept/. Never fixes and never talks to the user; returns a status block to the lead."
+composes:
+  - { kind: skill, ref: "skill:@skaile-ai/quality-standards" }
+  - { kind: skill, ref: "skill:@skaile-ai/quality-test" }
+  - { kind: skill, ref: "skill:@skaile-ai/quality-e2e" }
+  - { kind: skill, ref: "skill:@skaile-ai/quality-review" }
+  - { kind: skill, ref: "skill:@skaile-ai/quality-design" }
+  - { kind: skill, ref: "skill:@skaile-ai/quality-interaction" }
+  - { kind: skill, ref: "skill:@skaile-ai/quality-release" }
+  - { kind: skill, ref: "skill:@skaile-ai/ops-review" }

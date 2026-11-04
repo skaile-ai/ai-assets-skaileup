@@ -5,7 +5,8 @@ migration map (`.scratch/skaileup-mp/` in the old repo); these are the durable f
 here once the map ends. 0001–0016 are carried over from `ai-assets-skaileup-mp`; 0017 is
 where this variant departs from it; 0018–0023 are the app-design clean slate; 0024 splits the
 glossary by kind; 0025 adds archetypes as an optional declared default; 0026 replaces the
-mockup surfaces with one Vue Storybook package and authors the data model in TypeScript.
+mockup surfaces with one Vue Storybook package and authors the data model in TypeScript; 0027
+adds eight agents (a lead and seven delegates).
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -36,3 +37,4 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0024](./0024-the-glossary-splits-by-kind.md) | The glossary splits by kind when the project keeps its own: words in the project glossary, ontology in `_concept/glossary.md`; amends 0014 and 0022 |
 | [0025](./0025-archetypes-are-an-optional-declared-default.md) | Archetypes are an optional declared default: one table in `rulebook/archetypes.md`, `archetype:` in `APP-DESIGN.md`, cards stay research; extends 0015 and 0018 |
 | [0026](./0026-the-mockup-stage-is-one-vue-storybook-package.md) | The mockup stage is one Vue Storybook package; the data model is authored in TypeScript and generated to JSON; notes go through the annotation inbox; amends 0020 and 0022 |
+| [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; every skill belongs to one agent |

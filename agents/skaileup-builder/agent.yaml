@@ -1,0 +1,10 @@
+spec_version: "0.2"
+name: skaileup-builder
+version: "0.1.0"
+description: "Builds a skaileup app: the build branch, scaffold, database, slice plans and test-first slices, reusing one shared module per pattern record. Never talks to the user; returns a status block to the lead."
+composes:
+  - { kind: skill, ref: "skill:@skaile-ai/build-scaffold" }
+  - { kind: skill, ref: "skill:@skaile-ai/build-database" }
+  - { kind: skill, ref: "skill:@skaile-ai/build-plan" }
+  - { kind: skill, ref: "skill:@skaile-ai/build-implement" }
+  - { kind: skill, ref: "skill:@skaile-ai/build-branch" }

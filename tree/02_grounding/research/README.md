@@ -49,7 +49,7 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
    and override the answers where they differ. The user's own comparables go on the list before
    anything found. Present the plan as who and what will be investigated and let the user add
    or cut — research nobody asked for spends the same tokens as research that matters.
-3. **Dispatch one background agent per topic** (see § Subagent dispatch) and keep working while
+3. **Dispatch one background agent per topic** (`tree/README.md § Delegation`) and keep working while
    they read. Each is pointed at primary sources — official documentation, the product itself,
    first-party pricing and changelogs, the spec — follows every claim back to whoever owns it,
    and returns findings with a source against every factual claim.
@@ -65,39 +65,6 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
 7. **Report what changed the picture**, not what was collected: the competitor gap, the
    persona nobody had in mind, the regulation that constrains the data model; and point at the
    skills that should now be re-run or run for the first time.
-
-### Subagent dispatch
-
-When a flow node has `"subagent": true`, the dispatching skill creates a fresh agent context
-holding only the skill's `SKILL.md`, the tree nodes it cites and the input `_concept/` folders.
-The subagent gets the task text verbatim and nothing of the conversation — paste the full task
-into its prompt rather than pointing it at a plan file. It runs to completion and ends with
-this block, and the dispatching skill acts on the status and collects the output artifacts:
-
-```
-STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
-
-[If DONE_WITH_CONCERNS]  Concerns: <trade-offs, deviations, debt incurred>
-[If NEEDS_CONTEXT]       Missing:  <what is absent>
-                         Question: <single specific question for the user or the dispatching skill>
-[If BLOCKED]             Reason:   <what cannot be resolved>
-                         Route:    context | escalate-model | decompose
-```
-
-| Status | Meaning | Dispatching skill's action |
-|---|---|---|
-| `DONE` | All requirements met, tests pass | Accept output, advance flow |
-| `DONE_WITH_CONCERNS` | Implemented but with trade-offs or notes | Accept, log concerns in `_concept/11_build/decisions.md`, advance |
-| `NEEDS_CONTEXT` | Missing information or ambiguous requirement | Put the question to the user; resume when answered |
-| `BLOCKED` | Cannot proceed — see route | Follow the route below |
-
-| Route | When to use | Dispatching skill's response |
-|---|---|---|
-| `context` | A specific question can unblock the task | Put the question to the user; re-dispatch with the answer |
-| `escalate-model` | Task exceeded model capability | Note in `_concept/11_build/decisions.md`; re-dispatch on a higher-tier model |
-| `decompose` | Task is too large to execute atomically | Break into smaller tasks; re-dispatch each |
-
-A partial output with no status leaves the dispatching skill guessing; a code makes it act.
 
 ## Checks
 

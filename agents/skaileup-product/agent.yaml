@@ -1,0 +1,9 @@
+spec_version: "0.2"
+name: skaileup-product
+version: "0.1.0"
+description: "Shapes what a skaileup project is and for whom: onboarding answers, the brief, goals and first ideas, the glossary, personas and the staged story map. Never talks to the user; returns a status block to the lead."
+composes:
+  - { kind: skill, ref: "skill:@skaile-ai/concept-onboard" }
+  - { kind: skill, ref: "skill:@skaile-ai/concept-brief" }
+  - { kind: skill, ref: "skill:@skaile-ai/concept-glossary" }
+  - { kind: skill, ref: "skill:@skaile-ai/experience-journeys" }

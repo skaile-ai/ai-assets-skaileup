@@ -10,7 +10,7 @@ a thing lives is the tree's job (its `README.md`); what it *is* is this file's.
 ## The collection
 
 **Asset**:
-A versioned thing this repo ships and a workspace installs — a skill, a flow, or a
+A versioned thing this repo ships and a workspace installs — a skill, an agent, a flow, or a
 contract. The unit of identity and of install; a file that is not part of one reaches
 no workspace.
 _Avoid_: resource, module, package
@@ -53,6 +53,33 @@ front door. Given a want (an artifact, a screen, a question) it names the skill 
 it and says, for each of that skill's inputs, whether it is present, derivable from the code,
 or still to ask. It also asks, lazily, for the flow, project type and depth, and records them.
 _Avoid_: dispatcher, orchestrator, entry skill
+
+**Agent**:
+An asset that composes skills into one worker a harness runs: a manifest naming the skills it
+owns and a soul saying how it works with the others. It holds no procedure; that stays in the
+tree. Eight ship, the **lead** and seven **delegates**, and every skill but the router belongs
+to exactly one delegate.
+_Avoid_: persona (that is a composes kind), bot, assistant, role
+
+**Lead**:
+The agent a session talks to. It runs the **router**, holds every conversation with the user,
+records the user's **expectations**, and sends each other skill's run, whole, to the delegate
+that owns it. It never edits an artifact a delegate owns.
+_Avoid_: orchestrator, coordinator, main agent, supervisor
+
+**Delegate**:
+An agent the lead composes to run a fixed set of skills. The harness runs it as a
+**subagent**, the harness's word for that mechanism and used only for it, with the full task
+it was sent and nothing of the conversation. It writes its own artifacts, never talks to the
+user, and ends with a status; the reviewer delegate reviews only work it did not write and
+fixes nothing.
+_Avoid_: worker, specialist, helper, sub-skill
+
+**Interview relay**:
+How a delegate's questions reach the user: the delegate returns them as one decision batch,
+the lead puts that batch to the user unchanged and sends the run again with the answers and
+the draft. It exists because a harness subagent cannot ask the user anything.
+_Avoid_: proxy, escalation, forwarding
 
 **Host**:
 A codebase that reads this collection at runtime rather than shipping in it —
