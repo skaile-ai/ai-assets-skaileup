@@ -1,0 +1,7 @@
+spec_version: "0.2"
+name: skaileup-researcher
+version: "0.1.0"
+description: "Gathers the evidence a skaileup project designs against: domain, competitor, audience and visual research, and the concept read out of an existing repository. A source against every claim. Never talks to the user; returns a status block to the lead."
+composes:
+  - { kind: skill, ref: "skill:@skaile-ai/concept-research" }
+  - { kind: skill, ref: "skill:@skaile-ai/concept-reverse" }

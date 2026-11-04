@@ -1233,6 +1233,7 @@ def check_citations(repo: Path, rep: Report) -> None:
         *_files(repo, "templates", (".md",)),
         *_files(repo, "flows", (".md", ".yaml", ".yml")),
         *_files(repo, "skills", (".md",)),
+        *_files(repo, AGENTS_DIR, (".md",)),
     ]
     for path in files:
         _check_tree_citations(path.read_text(encoding="utf-8"), _where_of(repo, path), repo, rep)
@@ -2530,7 +2531,7 @@ def _check_gate_writers(
             )
 
 
-REF_RE = re.compile(r"^(skill|flow|contract):@([A-Za-z0-9_-]+)/([A-Za-z0-9_.-]+)(?:#(.+))?$")
+REF_RE = re.compile(r"^(skill|flow|contract|agent):@([A-Za-z0-9_-]+)/([A-Za-z0-9_.-]+)(?:#(.+))?$")
 
 
 def _check_requires(
@@ -2563,6 +2564,8 @@ def _check_requires(
         kind, _publisher, name, _version = m.groups()
         if kind == "skill":
             declared_skills.add(name)
+        elif kind == "agent":
+            rep.fail(where, "requires-no-agent", f"`requires:` lists agent {name!r}, but a flow node runs a skill, never an agent — an agent is installed through the workspace's `dependencies:`")
         elif kind == "flow":
             # A `flow:` ref only makes sense for a sub-flow node, a kind `-mp` no
             # longer ships — so it can only install a flow nothing here delegates to.
@@ -2609,6 +2612,124 @@ def _check_requires(
 # --------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------
+# agents
+# --------------------------------------------------------------------------
+
+# `agents/<name>/agent.yaml` (spec 0.2 of @skaile/workspaces `AgentManifestSchema`) and the `SOUL.md` the
+# runtime inlines as the agent's prompt. Rule ids: `agent-yaml`, `agent-name`, `agent-spec-version`,
+# `agent-fields`, `agent-soul`, `agent-deprecated-field`, `agent-ref-resolves`, `agent-binding`,
+# `agent-alias`, `agent-skill-composed-once`. A repo without `agents/` has nothing to check.
+AGENTS_DIR = "agents"
+AGENT_SPEC_VERSION = "0.2"
+AGENT_DELEGATE = "delegate"
+# `binding` values the agent schema takes, on kind `agent` only; `as` names a rendered file
+# (types/src/manifests/agent-composition.ts).
+AGENT_BINDINGS = (AGENT_DELEGATE, "run")
+AGENT_ALIAS_RE = re.compile(r"^[a-z][a-z0-9_-]*$")
+# Parsed but no longer read (`agentDeprecationDiagnostics`, types/src/manifests/agent-composition.ts).
+AGENT_DEPRECATED_FIELDS = ("skills", "abilities", "contracts", "persona", "rules", "knowledge", "requires", "dependencies")
+AGENT_DEPRECATED_METADATA = ("soul", "orchestrates", "routes_to", "knows")
+
+
+def _agent_dirs(repo: Path) -> list[Path]:
+    root = repo / AGENTS_DIR
+    return sorted(p for p in root.iterdir() if p.is_dir()) if root.is_dir() else []
+
+
+def agent_names(repo: Path) -> set[str]:
+    return {p.name for p in _agent_dirs(repo) if (p / "agent.yaml").is_file()}
+
+
+def check_agents(repo: Path, skill_names: set[str], rep: Report) -> None:
+    if not (repo / AGENTS_DIR).is_dir():
+        return
+    agents = agent_names(repo)
+    composed_by: dict[str, list[str]] = {}
+    for directory in _agent_dirs(repo):
+        where = f"{AGENTS_DIR}/{directory.name}"
+        manifest = directory / "agent.yaml"
+        if not manifest.is_file():
+            rep.fail(where, "agent-yaml", "has no `agent.yaml` — discovery finds no agent here")
+            continue
+        try:
+            doc = yaml.safe_load(manifest.read_text(encoding="utf-8"))
+        except yaml.YAMLError as exc:
+            rep.fail(where, "agent-yaml", f"`agent.yaml` is not parseable YAML ({exc}) — the agent would not install")
+            continue
+        if not isinstance(doc, dict):
+            rep.fail(where, "agent-yaml", "`agent.yaml` does not contain a mapping — the agent would not install")
+            continue
+        if doc.get("name") != directory.name:
+            rep.fail(where, "agent-name", f"`name:` is {doc.get('name')!r} but the directory is {directory.name!r} — an `agent:@skaile-ai/<name>` ref resolves through the name, and readers find the agent through the directory")
+        if doc.get("spec_version") != AGENT_SPEC_VERSION:
+            rep.fail(where, "agent-spec-version", f"`spec_version` is {doc.get('spec_version')!r}, not \"{AGENT_SPEC_VERSION}\" — write the quoted string; unquoted YAML reads a number, which the schema rejects")
+        for field in ("description", "version"):
+            value = doc.get(field)
+            if not isinstance(value, str) or not value.strip():
+                rep.fail(where, "agent-fields", f"has no `{field}:` — the lead and the installer read it")
+        soul = directory / "SOUL.md"
+        if not soul.is_file():
+            rep.fail(where, "agent-soul", "has no `SOUL.md` — the agent would run with no prompt of its own")
+        elif not soul.read_text(encoding="utf-8").strip():
+            rep.fail(where, "agent-soul", "`SOUL.md` is empty — the agent would run with no prompt of its own")
+        for field in AGENT_DEPRECATED_FIELDS:
+            if field in doc:
+                rep.fail(where, "agent-deprecated-field", f"carries `{field}`, which @skaile/workspaces parses but no longer reads — declare it under `composes:`")
+        if "extends" in doc:
+            rep.fail(where, "agent-deprecated-field", "carries `extends` — the runner's composition resolver does not follow it, only `skaile install` does, so the two build different agents; declare everything under `composes:`")
+        metadata = doc.get("metadata") if isinstance(doc.get("metadata"), dict) else {}
+        for key in AGENT_DEPRECATED_METADATA:
+            if key in metadata:
+                rep.fail(where, "agent-deprecated-field", f"carries `metadata.{key}`, which @skaile/workspaces parses but no longer reads — use `SOUL.md` or `composes:`")
+        composes = doc.get("composes") or []
+        if not isinstance(composes, list):
+            rep.fail(where, "agent-yaml", "`composes:` is not a list")
+            composes = []
+        rendered: dict[tuple[str, str], str] = {}
+        for i, item in enumerate(composes):
+            label = f"`composes[{i}]`"
+            if not isinstance(item, dict):
+                rep.fail(where, "agent-ref-resolves", f"{label} is not a map with `kind` and `ref`")
+                continue
+            kind, ref, binding, alias = item.get("kind"), str(item.get("ref", "")), item.get("binding"), item.get("as")
+            if binding is not None and binding not in AGENT_BINDINGS:
+                rep.fail(where, "agent-binding", f"{label} has `binding: {binding!r}`, which the schema rejects — it takes `delegate` or `run`")
+            elif binding is not None and kind != "agent":
+                rep.fail(where, "agent-binding", f"{label} binds a {kind!r} with `{binding}`, which the schema accepts only on kind `agent`")
+            if alias is not None and not (isinstance(alias, str) and AGENT_ALIAS_RE.match(alias)):
+                rep.fail(where, "agent-alias", f"{label} has `as: {alias!r}`, which does not match `[a-z][a-z0-9_-]*` — the alias names a rendered file, and the install rejects it")
+            m = REF_RE.match(ref)
+            name_rendered = alias if isinstance(alias, str) and alias else (m.group(3) if m and kind == "agent" else None)
+            if name_rendered is not None:
+                key = (str(kind), name_rendered)
+                if key in rendered:
+                    rep.fail(where, "agent-alias", f"{label} renders as {kind} {name_rendered!r}, as {rendered[key]} does — both would install to one file and one would be lost")
+                else:
+                    rendered[key] = label
+            if kind not in ("skill", "agent"):
+                continue
+            if not m or m.group(1) != kind:
+                rep.fail(where, "agent-ref-resolves", f"{label} ref {ref!r} is not a `{kind}:@skaile-ai/<name>` ref")
+                continue
+            _k, publisher, name, _v = m.groups()
+            if kind == "skill":
+                if publisher != "skaile-ai" or name not in skill_names:
+                    rep.fail(where, "agent-ref-resolves", f"{label} composes {ref!r}, which names no skill directory of this collection — the agent would run without it")
+                    continue
+                composed_by.setdefault(name, []).append(directory.name)
+            elif publisher != "skaile-ai" or name not in agents:
+                rep.fail(where, "agent-ref-resolves", f"{label} composes {ref!r}, which names no agent directory of this collection — the lead would have no delegate by that name")
+            elif binding is None or binding == "run":
+                rep.fail(where, "agent-binding", f"{label} binds agent {name!r} as {binding!r}, not `delegate` — only a delegate becomes a native subagent the lead can send a skill run to")
+    for skill in sorted(skill_names):
+        owners = composed_by.get(skill, [])
+        if not owners:
+            rep.fail(f"skills/{skill}", "agent-skill-composed-once", f"is composed by no agent under `{AGENTS_DIR}/` — no agent of a session runs it")
+        elif len(owners) > 1:
+            rep.fail(f"skills/{skill}", "agent-skill-composed-once", f"is composed by {len(owners)} agents ({', '.join(owners)}) — one agent owns each skill, so the lead has one place to send its run")
+
+
+# --------------------------------------------------------------------------
 # prose
 # --------------------------------------------------------------------------
 
@@ -2628,6 +2749,8 @@ def _check_requires(
 MD_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)")
 SKILL_PATH_RE = re.compile(r"(?<![A-Za-z0-9_./-])`?skills/([a-z0-9][a-z0-9-]*)")
 SKILLS_HEADING_RE = re.compile(r"^## Skills[ \t]*$", re.MULTILINE)
+AGENT_PATH_RE = re.compile(r"(?<![A-Za-z0-9_./-])`?agents/([a-z0-9][a-z0-9-]*)")
+AGENTS_HEADING_RE = re.compile(r"^## Agents[ \t]*$", re.MULTILINE)
 
 
 def _prose_files(repo: Path) -> list[Path]:
@@ -2642,6 +2765,7 @@ def _prose_files(repo: Path) -> list[Path]:
 
 
 def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
+    agents = agent_names(repo)
     for path in _prose_files(repo):
         where = path.relative_to(repo).as_posix()
         text = path.read_text(encoding="utf-8")
@@ -2669,6 +2793,17 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
                     f"does not list `skills/{name}` under `## Skills` — every skill is in the README index",
                 )
 
+        listed_agents = set(AGENT_PATH_RE.findall(text))
+        for name in sorted(listed_agents - agents):
+            rep.fail(where, "agent-path-resolves", f"names the path `agents/{name}`, which is not an agent in this collection")
+        if where == "README.md" and AGENTS_HEADING_RE.search(text):
+            for name in sorted(agents - listed_agents):
+                rep.house(
+                    "README.md",
+                    f"does not list `agents/{name}` under `## Agents` — every agent is in the README index",
+                    rule="readme-agent-index",
+                )
+
 
 # --------------------------------------------------------------------------
 # demo — a complete example workspace of a fictional app, held to the same tree
@@ -2685,8 +2820,8 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
 # demo), `demo-schema` (that file validates against the schema), `demo-produces` (every
 # `produces` path of every skill is covered by a demo file or listed in `DEMO_NOT_SHIPPED`),
 # `demo-produces-stale` (a `DEMO_NOT_SHIPPED` key that no skill produces any more),
-# `demo-skaile-yaml` (the demo's `skaile.yaml` has a url source for this collection and lists every skill, flow
-# and contract asset, and nothing that does not exist).
+# `demo-skaile-yaml` (the demo's `skaile.yaml` has a url source for this collection and lists every skill, flow,
+# contract asset and agent, and nothing that does not exist).
 DEMO_DIR = "demo"
 
 # The demo omits the mockup package: a full npm package, `demo/README.md` says so.
@@ -2845,10 +2980,10 @@ def _demo_check_skaile_yaml(repo: Path, demo: Path, skill_dirs: set[str], rep: R
         asset for folder, asset in ((TREE_DIR, CONTRACT_ASSET), (RULEBOOK_DIR, RULEBOOK_ASSET))
         if (repo / folder / "CONTRACT.md").is_file()
     }
-    known = {"skill": skill_dirs, "flow": flow_ids, "contract": contract_assets}
+    known = {"skill": skill_dirs, "flow": flow_ids, "contract": contract_assets, "agent": agent_names(repo)}
 
     deps = doc.get("dependencies")
-    listed: dict[str, set[str]] = {"skill": set(), "flow": set(), "contract": set()}
+    listed: dict[str, set[str]] = {"skill": set(), "flow": set(), "contract": set(), "agent": set()}
     if not isinstance(deps, list):
         rep.fail(where, "demo-skaile-yaml", "has no `dependencies:` list — the workspace would deploy no skill, flow or contract")
         deps = []
@@ -2867,7 +3002,7 @@ def _demo_check_skaile_yaml(repo: Path, demo: Path, skill_dirs: set[str], rep: R
             )
             continue
         listed[kind].add(name)
-    for kind in ("skill", "flow", "contract"):
+    for kind in ("skill", "flow", "contract", "agent"):
         for missing in sorted(known[kind] - listed[kind]):
             rep.fail(
                 where,
@@ -3028,6 +3163,7 @@ def run(repo: Path) -> Report:
     rep = Report()
     nodes = load_tree(repo)
     skill_names, skill_tree_refs, skill_fms = check_skills(repo, nodes, rep)
+    check_agents(repo, skill_names, rep)
     check_tree(repo, nodes, rep)
     check_schemas(repo, nodes, skill_fms, skill_tree_refs, rep)
     check_citations(repo, rep)
@@ -3127,10 +3263,11 @@ def main() -> int:
 
     skills = len(list((repo / "skills").glob("*/SKILL.md"))) if (repo / "skills").is_dir() else 0
     flows = len(list((repo / "flows").glob("*/*.flow.yaml"))) if (repo / "flows").is_dir() else 0
+    agents = len(agent_names(repo))
 
     print_report(rep)
 
-    print(f"\n{skills} skill(s) · {flows} flow(s) · {len(rep.errors)} error(s)")
+    print(f"\n{skills} skill(s) · {agents} agent(s) · {flows} flow(s) · {len(rep.errors)} error(s)")
 
     if args.no_tests:
         print("fixtures: skipped (--no-tests) — this run does not mean green")

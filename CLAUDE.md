@@ -1,6 +1,6 @@
 # ai-assets-skaileup
 
-The skaileup collection as a **mirror tree**: ~9 domains, 31 skills, the instructions live in
+The skaileup collection as a **mirror tree**: ~9 domains, 31 skills and 8 agents, the instructions live in
 `tree/` — a directory that mirrors `_concept/` one node per part — and a skill is only the
 route through those nodes. This is the one skaileup collection; the earlier ones
 ([`ai-assets-skaileup-v1`](https://github.com/skaile-ai/ai-assets-skaileup-v1),
@@ -12,6 +12,14 @@ route through those nodes. This is the one skaileup collection; the earlier ones
   character for character. That one string is the install path, the flow node's
   `data.skill`, and the grounding input path. No `NN_` prefixes, no domain folders — the
   domain is the name's first segment.
+- **`agents/<name>/`, eight of them.** `agent.yaml` is spec 0.2 of `@skaile/workspaces`
+  (`spec_version: "0.2"` quoted, `name` equal to the directory, `version`, `description`,
+  `composes:`) beside a non-empty `SOUL.md`. `skaileup-lead` is the session's agent: it composes
+  `skaileup` and the seven others as `binding: delegate`; each of the 31 skills is composed by
+  exactly one agent. No deprecated 0.1 field, no `extends`, every ref resolves, every `as:` is a
+  valid file name and unique in its agent: `check_agents` enforces these. By convention, and not
+  checked: no `model` (the host picks it), and a SOUL cites tree sections instead of restating
+  them; the dispatch protocol lives once, in `tree/README.md § Delegation`.
 - **Nine domains:** `concept · design · experience · spec · mockup · architecture ·
   build · quality · ops`. `quality` inspects `src/`; `ops` inspects `_concept/`.
 - **Names are `domain-skill`** — 2 segments by default, 3 for a real sub-cluster, never 4.

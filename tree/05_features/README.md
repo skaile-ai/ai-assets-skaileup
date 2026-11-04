@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/05_features/
 
-The product's features. `featuresets.md` is the roster and each `<featureset>/<feature>.md` is one feature's permanent spec; `spec-feature` writes both, one run per feature, and the run adds the feature's roster row. A featureset is the only grouping level: a feature belongs to exactly one and nothing sits between them. Implementation scaffolding, `experience-behaviors`, the seed and the ledger all read these files, so a rule stated here once is a rule nobody restates.
+The product's features. `featuresets.md` is the roster and each `<featureset>/<feature>.md` is one feature's permanent spec; `spec-feature` writes both, one run per feature, and the run adds the feature's roster row; `concept-brief` writes the roster's first ideas. A featureset is the only grouping level: a feature belongs to exactly one and nothing sits between them. Implementation scaffolding, `experience-behaviors`, the seed and the ledger all read these files, so a rule stated here once is a rule nobody restates.
 
 ## Contents
 

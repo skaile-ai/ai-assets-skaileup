@@ -4122,5 +4122,265 @@ def test_every_demo_rule_id_check_py_raises_has_a_fixture_here():
         assert tested.count(f'"{rule}"') >= 1, f"rule {rule!r} has no fixture in test_check.py"
 
 
+# -- agents (rules agent-yaml, agent-name, agent-spec-version, agent-fields, agent-soul,
+#    agent-deprecated-field, agent-ref-resolves, agent-binding, agent-alias,
+#    agent-skill-composed-once, agent-path-resolves, readme-agent-index, requires-no-agent) ------
+
+def write_agent(root, dirname, composes, soul="# Soul\n\nDoes the work.\n", **fields):
+    """`agents/<dirname>/agent.yaml` (spec 0.2) and its `SOUL.md`; `name:` defaults to the directory, a field set to None is dropped."""
+    d = root / "agents" / dirname
+    d.mkdir(parents=True, exist_ok=True)
+    doc = {"spec_version": "0.2", "name": dirname, "version": "0.1.0", "description": "An agent.", "composes": composes}
+    doc.update(fields)
+    (d / "agent.yaml").write_text(yaml.safe_dump({k: v for k, v in doc.items() if v is not None}, sort_keys=False))
+    if soul is not None:
+        (d / "SOUL.md").write_text(soul)
+    return d
+
+
+def skill_item(name="spec-feature"):
+    return {"kind": "skill", "ref": f"skill:@skaile-ai/{name}"}
+
+
+def delegate_item(name, binding="delegate"):
+    item = {"kind": "agent", "ref": f"agent:@skaile-ai/{name}", "as": name}
+    if binding is not None:
+        item["binding"] = binding
+    return item
+
+
+def agent_repo(root):
+    """`lead` composes `spec-feature` and delegates to `builder`, which composes `build-plan`."""
+    write_repo(root, skills=("spec-feature", "build-plan"))
+    write_agent(root, "lead", [skill_item(), delegate_item("builder")])
+    write_agent(root, "builder", [skill_item("build-plan")])
+    return root
+
+
+def test_a_clean_agent_set_is_clean(tmp_path):
+    root = agent_repo(tmp_path)
+    assert errors(root) == []
+
+
+def test_a_collection_without_agents_needs_no_composition(tmp_path):
+    root = write_repo(tmp_path, skills=("spec-feature", "build-plan"))
+    assert not (root / "agents").exists()
+    assert errors(root) == []
+
+
+def test_an_agent_directory_without_a_manifest(tmp_path):
+    root = agent_repo(tmp_path)
+    (root / "agents" / "stray").mkdir()
+    only(root, "agents/stray: has no `agent.yaml`")
+    assert "agent-yaml" in errors(root)[0]
+
+
+def test_agent_yaml_that_is_not_yaml(tmp_path):
+    root = agent_repo(tmp_path)
+    (root / "agents" / "builder" / "agent.yaml").write_text("composes: [\n")
+    among(root, "is not parseable YAML", "is composed by no agent")
+
+
+def test_agent_name_must_match_directory(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan")], name="build")
+    only(root, "`name:` is 'build' but the directory is 'builder'")
+    assert "agent-name" in errors(root)[0]
+
+
+def test_agent_spec_version_must_be_0_2(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan")], spec_version="0.1")
+    only(root, "`spec_version` is '0.1'")
+    assert "agent-spec-version" in errors(root)[0]
+
+
+def test_agent_spec_version_must_be_a_string(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan")], spec_version=0.2)
+    only(root, "`spec_version` is 0.2,")
+
+
+@pytest.mark.parametrize("field", ["description", "version"])
+def test_agent_without_a_required_field(tmp_path, field):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan")], **{field: None})
+    only(root, f"has no `{field}:`")
+    assert "agent-fields" in errors(root)[0]
+
+
+@pytest.mark.parametrize("soul", [None, "  \n"])
+def test_agent_without_a_soul(tmp_path, soul):
+    root = agent_repo(tmp_path)
+    (root / "agents" / "builder" / "SOUL.md").unlink()
+    if soul is not None:
+        (root / "agents" / "builder" / "SOUL.md").write_text(soul)
+    only(root, "SOUL.md")
+    assert "agent-soul" in errors(root)[0]
+
+
+@pytest.mark.parametrize("field", ["skills", "persona", "rules", "requires", "dependencies", "extends"])
+def test_agent_with_a_deprecated_field(tmp_path, field):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan")], **{field: ["x"]})
+    only(root, f"`{field}`")
+    assert "agent-deprecated-field" in errors(root)[0]
+
+
+@pytest.mark.parametrize("key", ["soul", "orchestrates", "routes_to", "knows"])
+def test_agent_with_a_deprecated_metadata_key(tmp_path, key):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan")], metadata={key: "x"})
+    only(root, f"`metadata.{key}`")
+
+
+def test_agent_composing_an_unknown_skill(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan"), skill_item("ghost")])
+    only(root, "'skill:@skaile-ai/ghost', which names no skill directory")
+    assert "agent-ref-resolves" in errors(root)[0]
+
+
+def test_agent_delegating_to_an_unknown_agent(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "lead", [skill_item(), delegate_item("builder"), delegate_item("ghost")])
+    only(root, "'agent:@skaile-ai/ghost', which names no agent directory")
+
+
+@pytest.mark.parametrize("binding", [None, "run"])
+def test_agent_composed_without_the_delegate_binding(tmp_path, binding):
+    root = agent_repo(tmp_path)
+    write_agent(root, "lead", [skill_item(), delegate_item("builder", binding)])
+    only(root, "not `delegate`")
+    assert "agent-binding" in errors(root)[0]
+
+
+def test_delegate_binding_on_a_skill(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [{**skill_item("build-plan"), "binding": "delegate"}])
+    only(root, "binds a 'skill' with `delegate`")
+
+
+def test_run_binding_on_a_skill(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [{**skill_item("build-plan"), "binding": "run"}])
+    only(root, "binds a 'skill' with `run`")
+    assert "agent-binding" in errors(root)[0]
+
+
+def test_binding_the_schema_does_not_know(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "lead", [skill_item(), delegate_item("builder", "fork")])
+    only(root, "has `binding: 'fork'`, which the schema rejects")
+    assert "agent-binding" in errors(root)[0]
+
+
+@pytest.mark.parametrize("alias", ["Builder", "1builder", "../builder"])
+def test_alias_that_is_no_file_name(tmp_path, alias):
+    root = agent_repo(tmp_path)
+    write_agent(root, "lead", [skill_item(), {**delegate_item("builder"), "as": alias}])
+    only(root, f"has `as: {alias!r}`, which does not match")
+    assert "agent-alias" in errors(root)[0]
+
+
+def test_two_delegates_under_one_alias(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "reviewer", [])
+    write_agent(root, "lead", [skill_item(), delegate_item("builder"), {**delegate_item("reviewer"), "as": "builder"}])
+    only(root, "`composes[2]` renders as agent 'builder', as `composes[1]` does")
+    assert "agent-alias" in errors(root)[0]
+
+
+def test_one_delegate_composed_twice(tmp_path):
+    root = agent_repo(tmp_path)
+    builder = {"kind": "agent", "ref": "agent:@skaile-ai/builder", "binding": "delegate"}
+    write_agent(root, "lead", [skill_item(), builder, builder])
+    only(root, "renders as agent 'builder'")
+
+
+def test_skill_composed_by_no_agent(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [])
+    only(root, "skills/build-plan: is composed by no agent")
+    assert "agent-skill-composed-once" in errors(root)[0]
+
+
+def test_skill_composed_by_two_agents(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [skill_item("build-plan"), skill_item()])
+    only(root, "is composed by 2 agents (builder, lead)")
+
+
+def test_agent_soul_citing_a_missing_node(tmp_path):
+    root = agent_repo(tmp_path)
+    (root / "agents" / "builder" / "SOUL.md").write_text("# builder\n\nFollow `tree/nothing.md`.\n")
+    only(root, "agents/builder/SOUL.md: cites `tree/nothing.md`, which does not exist")
+
+
+def test_readme_agent_index_missing_an_agent(tmp_path):
+    root = agent_repo(tmp_path)
+    doc(root, "README.md", "# Collection\n\n## Agents\n\n| agent | does |\n|---|---|\n| [lead](agents/lead/) | Leads |\n")
+    only(root, "does not list `agents/builder` under `## Agents`")
+    assert "readme-agent-index" in errors(root)[0]
+
+
+def test_readme_without_an_agents_heading_is_not_an_index(tmp_path):
+    root = agent_repo(tmp_path)
+    doc(root, "README.md", "# Collection\n\nThe lead is [lead](agents/lead/).\n")
+    assert errors(root) == []
+
+
+def test_dead_agent_path_in_docs(tmp_path):
+    root = agent_repo(tmp_path)
+    doc(root, "docs/guide.md", "# Guide\n\nThe lead lives in `agents/skaileup-lead/`.\n")
+    only(root, "names the path `agents/skaileup-lead`")
+    assert "agent-path-resolves" in errors(root)[0]
+
+
+def test_requires_may_not_name_an_agent(tmp_path):
+    root = write_repo(tmp_path)
+    flow = good_flow()
+    flow["requires"].append("agent:@skaile-ai/skaileup-lead")
+    write_flow(root, flow)
+    only(root, "`requires:` lists agent 'skaileup-lead'")
+    assert "requires-no-agent" in errors(root)[0]
+
+
+def test_demo_skaile_yaml_missing_an_agent(tmp_path):
+    root = write_demo_repo(tmp_path)
+    write_agent(root, "lead", [skill_item()])
+    only(root, "does not list agent:@skaile-ai/lead")
+
+
+def test_demo_skaile_yaml_stale_agent_ref(tmp_path):
+    root = write_demo_repo(tmp_path)
+    write_agent(root, "lead", [skill_item()])
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts", "agent:@skaile-ai/lead", "agent:@skaile-ai/ghost"])
+    only(root, "'agent:@skaile-ai/ghost', which is no agent of this collection")
+
+
+def test_demo_skaile_yaml_listing_its_agents_is_clean(tmp_path):
+    root = write_demo_repo(tmp_path)
+    write_agent(root, "lead", [skill_item()])
+    demo_yaml(root, dependencies=["skill:@skaile-ai/spec-feature", "contract:@skaile-ai/shared-contracts", "agent:@skaile-ai/lead"])
+    assert errors(root) == []
+
+
+def test_summary_counts_agents(tmp_path, monkeypatch, capsys):
+    root = agent_repo(tmp_path)
+    monkeypatch.setattr(sys, "argv", ["check.py", "--repo", str(root), "--no-tests"])
+    assert check.main() == 0
+    assert "2 skill(s) · 2 agent(s) · 0 flow(s) · 0 error(s)" in capsys.readouterr().out
+
+
+def test_every_agent_rule_id_check_py_raises_has_a_fixture_here():
+    """An agent rule id in `check.py` without a test above is the silent pass this file exists to close."""
+    source = (Path(check.__file__)).read_text(encoding="utf-8")
+    raised = set(re.findall(r'"(agent-[a-z-]+|readme-agent-index|requires-no-agent)"', source))
+    tested = (Path(__file__)).read_text(encoding="utf-8")
+    for rule in sorted(raised):
+        assert tested.count(f'"{rule}"') >= 1, f"rule {rule!r} has no fixture in test_check.py"
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

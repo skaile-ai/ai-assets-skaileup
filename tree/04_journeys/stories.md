@@ -80,7 +80,7 @@ Each criterion is one observable behaviour, specific ("the user sees 'Invalid em
 
 ### Registration
 
-Journeys register nothing by frontmatter: `spec-feature` discovers them by reading this file. It seeds each roster row from the journey's `candidate_features`, sets `story_refs` in the feature's frontmatter to the journey ids that motivated it, and may add, merge or split features beyond the hints — `story_refs` traces the origin. A `story_refs` entry that names an id not in this file is flagged by `ops-review`.
+Journeys register nothing by frontmatter: `spec-feature` discovers them by reading this file. It seeds each roster row from the journey's `candidate_features`, sets `story_refs` in the feature's frontmatter to the journey ids that motivated it, and may add, merge or split features beyond the hints — `story_refs` traces the origin. A `story_refs` entry that names an id not in this file is flagged by `ops-review`. A feature the user names in the interview that no journey's `candidate_features` carries is proposed as an idea in `_concept/05_features/featuresets.md` (`tree/05_features/featuresets.md § Ideas`).
 
 ## Writing it
 

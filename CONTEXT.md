@@ -10,7 +10,7 @@ a thing lives is the tree's job (its `README.md`); what it *is* is this file's.
 ## The collection
 
 **Asset**:
-A versioned thing this repo ships and a workspace installs — a skill, a flow, or a
+A versioned thing this repo ships and a workspace installs — a skill, an agent, a flow, or a
 contract. The unit of identity and of install; a file that is not part of one reaches
 no workspace.
 _Avoid_: resource, module, package
@@ -53,6 +53,34 @@ front door. Given a want (an artifact, a screen, a question) it names the skill 
 it and says, for each of that skill's inputs, whether it is present, derivable from the code,
 or still to ask. It also asks, lazily, for the flow, project type and depth, and records them.
 _Avoid_: dispatcher, orchestrator, entry skill
+
+**Agent**:
+An asset that composes skills into one worker a harness runs: a manifest naming the skills it
+owns and a soul saying how it works with the others. It holds no procedure; that stays in the
+tree. Eight ship, the **lead** and seven **delegates**, and every skill but the router belongs
+to exactly one delegate.
+_Avoid_: persona (that is a composes kind), bot, assistant, role
+
+**Lead**:
+The agent a session talks to. It runs the **router**, holds every conversation with the user,
+records the user's **expectations**, and sends each other skill's run, whole, to the delegate
+that owns it. It never edits an artifact a delegate owns.
+_Avoid_: orchestrator, coordinator, main agent, supervisor
+
+**Delegate**:
+An agent the lead composes to run a fixed set of skills. The harness runs it as a
+**subagent**, the harness's word for that mechanism and used only for it, with the full task
+it was sent and nothing of the conversation. It writes its own artifacts, never talks to the
+user, and ends with a status; the reviewer delegate reviews only work it did not write and
+fixes nothing.
+_Avoid_: worker, specialist, helper, sub-skill
+
+**Interview relay**:
+How a delegate's questions reach the user: the delegate returns them as one decision batch,
+the lead answers it with the autonomy the user's expectations set for that domain (where the
+user decides, it puts the batch to the user unchanged) and sends the run again with the answers
+and the draft. It exists because a harness subagent cannot ask the user anything.
+_Avoid_: proxy, escalation, forwarding
 
 **Host**:
 A codebase that reads this collection at runtime rather than shipping in it —
@@ -105,8 +133,8 @@ _Avoid_: project profile, project shape; onboarding profile (that is forge-conce
 **Depth**:
 How far a project, or one artifact, is worked out — a sketch, a standard pass, or an
 exhaustive one. Recorded once for the project and asked per artifact where it matters, with
-what each level produces said up front. Replaces the old meaning of *tier* as project size.
-_Avoid_: tier, size, level, scope (that is what is in the project, not how far each part goes)
+what each depth produces said up front. Replaces the old meaning of *tier* as project size.
+_Avoid_: tier, size, level (that is a decision record's reach), scope (that is what is in the project, not how far each part goes)
 
 **Template**:
 A tech-stack reference an implementation skill reads after the stack is chosen. Carries
@@ -207,9 +235,25 @@ An append-only note of a choice that was **hard to reverse**, **surprising witho
 context**, and a **real trade-off**. All three, or it is not one. One record per project,
 open to every authoring skill; each entry says what was decided, by whom, which options were
 rejected and what follows. A rejected scope decision, or a rejected **proposed entry**, is a
-decision record marked rejected, not a separate store. Recorded at the level it binds: the
-collection, the design, or the build.
+decision record marked rejected, not a separate store. Recorded where it was made (the
+collection, the design, or the build) and at the **level** it binds: the product, one
+featureset, or one feature.
 _Avoid_: ADR log, rationale, out-of-scope file
+
+**Level**:
+How far a **decision record** reaches: the product, one featureset, or one feature. A higher
+record binds every one below it; a lower choice that contradicts it is put to the user and,
+when accepted, becomes a new record at the higher level. Not a project's **depth**, an
+attribute's **tier**, or a feature's priority.
+_Avoid_: scope (that is what is in the project), layer, rank, tier
+
+**Pattern**:
+A **decision record** that generalises what several features share (the same entities,
+actions, screens or floorplans used the same way) into one rule a later feature follows, with
+the situation it applies to. Found by comparing a new feature with the existing ones before it
+is specified; in the build it is one shared module. Not a pattern research found in the field,
+which is evidence, and not a **floorplan**.
+_Avoid_: convention (that is a **standard**), template, base feature, abstraction
 
 **Owner**:
 The skill whose output an artifact is, and the only one that confirms what it holds. Anyone
@@ -228,15 +272,29 @@ _Avoid_: suggestion, draft entry, TODO
 A value a user supplied to a question. Onboarding collects answers; they are inputs,
 not decisions, and the decision gate does not apply to them.
 
+**Expectations**:
+What the user will judge the result by (the quality bar, references liked and disliked, what
+must not happen) and how they want to work with the agents: who decides in each domain, how
+often they review, and in which language. Asked once per project and applied to every run the
+lead sends. Not **answers**, which onboarding collects about the product's material.
+_Avoid_: requirements, preferences, settings, briefing
+
 ## The product being described
 
 **Feature**:
 One capability a user can exercise, specified once and referenced everywhere.
 
 **Featureset**:
-A named group of related features. The only grouping level — features belong to exactly
+A named group of related features. The only grouping — features belong to exactly
 one featureset, and nothing sits between them.
 _Avoid_: feature group, group, epic, module
+
+**Idea**:
+A candidate feature nobody has specified yet: an app idea from the brief or the user, a
+feature a deferred scope item names, a gap research found. Listed in the roster with its
+source and never with a priority; specifying it turns it into a **feature**, and
+declining it moves it to the cut list.
+_Avoid_: backlog item, wish, feature request (that is outside work, triaged first)
 
 **Story**:
 A user-facing goal in a journey, staged by importance. Feeds features; is not one.
@@ -308,7 +366,7 @@ How much an attribute of an object type matters to the person looking: primary (
 shown), secondary (shown, summarised) or tertiary (only on demand, in a peek or popover, never
 shown unasked). Set per object type and overridden sparingly per screen. Not a project's
 **depth**.
-_Avoid_: level, priority (that is a story's stage), rank
+_Avoid_: level (that is a decision record's reach), priority (that is a story's stage), rank
 
 **Interaction concept**:
 A named, reusable idea of how the app works — for example a saved view or a triage queue —

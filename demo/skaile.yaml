@@ -53,3 +53,14 @@ dependencies:
   - skill:@skaile-ai/quality-test
   - skill:@skaile-ai/skaileup
   - skill:@skaile-ai/spec-feature
+  # The eight agents: the lead, which a host runs as the session's agent, and its seven
+  # delegates. The workspace declares what it wants deployed, so all eight are listed;
+  # the list is the collection README's `## Agents` table.
+  - agent:@skaile-ai/skaileup-architect
+  - agent:@skaile-ai/skaileup-builder
+  - agent:@skaile-ai/skaileup-designer
+  - agent:@skaile-ai/skaileup-lead
+  - agent:@skaile-ai/skaileup-product
+  - agent:@skaile-ai/skaileup-researcher
+  - agent:@skaile-ai/skaileup-reviewer
+  - agent:@skaile-ai/skaileup-spec
