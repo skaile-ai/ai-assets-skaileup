@@ -133,7 +133,7 @@ _Avoid_: project profile, project shape; onboarding profile (that is forge-conce
 How far a project, or one artifact, is worked out — a sketch, a standard pass, or an
 exhaustive one. Recorded once for the project and asked per artifact where it matters, with
 what each level produces said up front. Replaces the old meaning of *tier* as project size.
-_Avoid_: tier, size, level, scope (that is what is in the project, not how far each part goes)
+_Avoid_: tier, size, level (that is a decision record's reach), scope (that is what is in the project, not how far each part goes)
 
 **Template**:
 A tech-stack reference an implementation skill reads after the stack is chosen. Carries
@@ -234,9 +234,25 @@ An append-only note of a choice that was **hard to reverse**, **surprising witho
 context**, and a **real trade-off**. All three, or it is not one. One record per project,
 open to every authoring skill; each entry says what was decided, by whom, which options were
 rejected and what follows. A rejected scope decision, or a rejected **proposed entry**, is a
-decision record marked rejected, not a separate store. Recorded at the level it binds: the
-collection, the design, or the build.
+decision record marked rejected, not a separate store. Recorded where it was made (the
+collection, the design, or the build) and at the **level** it binds: the product, one
+featureset, or one feature.
 _Avoid_: ADR log, rationale, out-of-scope file
+
+**Level**:
+How far a **decision record** reaches: the product, one featureset, or one feature. A higher
+record binds every one below it; a lower choice that contradicts it is put to the user and,
+when accepted, becomes a new record at the higher level. Not a project's **depth**, an
+attribute's **tier**, or a feature's priority.
+_Avoid_: scope (that is what is in the project), layer, rank, tier
+
+**Pattern**:
+A **decision record** that generalises what several features share (the same entities,
+actions, screens or floorplans used the same way) into one rule a later feature follows, with
+the situation it applies to. Found by comparing a new feature with the existing ones before it
+is specified; in the build it is one shared module. Not a pattern research found in the field,
+which is evidence, and not a **floorplan**.
+_Avoid_: convention (that is a **standard**), template, base feature, abstraction
 
 **Owner**:
 The skill whose output an artifact is, and the only one that confirms what it holds. Anyone
@@ -255,13 +271,20 @@ _Avoid_: suggestion, draft entry, TODO
 A value a user supplied to a question. Onboarding collects answers; they are inputs,
 not decisions, and the decision gate does not apply to them.
 
+**Expectations**:
+What the user will judge the result by (the quality bar, references liked and disliked, what
+must not happen) and how they want to work with the agents: who decides in each domain, how
+often they review, and in which language. Asked once per project and applied to every run the
+lead sends. Not **answers**, which onboarding collects about the product's material.
+_Avoid_: requirements, preferences, settings, briefing
+
 ## The product being described
 
 **Feature**:
 One capability a user can exercise, specified once and referenced everywhere.
 
 **Featureset**:
-A named group of related features. The only grouping level — features belong to exactly
+A named group of related features. The only grouping — features belong to exactly
 one featureset, and nothing sits between them.
 _Avoid_: feature group, group, epic, module
 
@@ -271,13 +294,6 @@ A user-facing goal in a journey, staged by importance. Feeds features; is not on
 **Screen**:
 One specified view of the application. An artifact of its own: features reference screens,
 a screen belongs to no feature.
-**Expectations**:
-What the user will judge the result by (the quality bar, references liked and disliked, what
-must not happen) and how they want to work with the agents: who decides in each domain, how
-often they review, and in which language. Asked once per project and applied to every run the
-lead sends. Not **answers**, which onboarding collects about the product's material.
-_Avoid_: requirements, preferences, settings, briefing
-
 
 **Component**:
 A UI pattern shared across screens, specified once.
@@ -342,7 +358,7 @@ How much an attribute of an object type matters to the person looking: primary (
 shown), secondary (shown, summarised) or tertiary (only on demand, in a peek or popover, never
 shown unasked). Set per object type and overridden sparingly per screen. Not a project's
 **depth**.
-_Avoid_: level, priority (that is a story's stage), rank
+_Avoid_: level (that is a decision record's reach), priority (that is a story's stage), rank
 
 **Interaction concept**:
 A named, reusable idea of how the app works — for example a saved view or a triage queue —

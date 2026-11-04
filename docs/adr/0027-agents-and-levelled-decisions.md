@@ -4,7 +4,8 @@
 
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends
-[ADR 0019](0019-scoped-fact-resolution.md): the lead routes by demand through `skaileup`.
+[ADR 0019](0019-scoped-fact-resolution.md): the lead routes by demand through `skaileup`. Amends
+[ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md): the record gains level and kind.
 
 ## Context
 
@@ -55,6 +56,18 @@ when a project has none; a user who declines gets the recommended defaults, mark
 An autonomy value changes how the lead answers a delegate's batch, never what `approved:` means:
 it stays the user's yes.
 
+**K4 — A decision record has a level.** Each record says how far it reaches: `product`,
+`featureset <slug>` or `feature <featureset>/<feature>`
+(`tree/10_blueprint/decisions.md § Levels`). A skill reads the records from the top down before
+asking, and a question a binding record answers is not asked. A lower choice never overrides a
+higher record: it goes to the user, and when accepted it becomes a new record at the higher level
+that supersedes the old one. The levels live in the one log, not in a second file.
+
+**K5 — A pattern is a decision record.** A record of `Kind: pattern` generalises what two or more
+features share into one rule, with an `Applies when` sentence a later feature is matched
+against; each feature that follows it lists its id in `follows:`, and in the build it is one
+shared module.
+
 ## Options rejected
 
 - **One agent per skill, or per domain.** The domain prefix is the wrong seam: `experience-*` is
@@ -64,6 +77,9 @@ it stays the user's yes.
   the user.
 - **The lead does everything with every skill loaded.** That is the one window this record
   replaces, and the code still reviews itself.
+- **A separate decision-tree file, or one file per level.** The drift ADR 0022 removed.
+- **Patterns as their own artifact.** Collides with `02_grounding/research/patterns.md`, and a
+  chosen pattern is a decision.
 
 ## Consequences
 
@@ -78,3 +94,4 @@ it stays the user's yes.
 - The lead applies `## Working together` to every run it sends
   (`tree/01_meta/expectations.md § Reading it`); `skaileup` 0.3.0 produces
   `_concept/01_meta/expectations.md` and runs the interview first when it is absent.
+- Records older than the level and kind fields read as `product`/`decision`; they are not edited.
