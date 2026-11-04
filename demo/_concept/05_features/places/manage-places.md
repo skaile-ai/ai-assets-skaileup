@@ -5,6 +5,7 @@ permissions:
   organizer: [create, read, update, delete]
   member: [create, read, update]
 story_refs: [manage_places]
+follows: []
 screens:
   - path: 07_screens/places.md
 data_entities: [Place]

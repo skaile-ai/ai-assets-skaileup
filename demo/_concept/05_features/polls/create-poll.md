@@ -5,6 +5,7 @@ permissions:
   organizer: [create, read, update]
   member: [read]
 story_refs: [run_a_lunch_poll]
+follows: []
 screens:
   - path: 07_screens/polls.md
   - path: 07_screens/poll.md

@@ -69,7 +69,7 @@ _concept/                                the artifact tree, its ownership rule a
 ├── 04_journeys/                         personas and the staged story map
 │   └── stories.yaml                     personas, story map by stage, EARS criteria with ids
 ├── 05_features/                         the feature roster and one spec per feature, grouped into featuresets
-│   ├── featuresets.md                   the roster of featuresets and the features in each, with priorities
+│   ├── featuresets.md                   the roster of featuresets, their features and priorities, and the open ideas
 │   └── <featureset>/                    one featureset — a user purpose and its feature specs
 │       └── <feature>.md                 one feature's permanent spec — scope line, permissions, acceptance criteria
 ├── 06_behaviors/                        optional state machines and rules, one file per featureset

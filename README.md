@@ -62,7 +62,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 |---|---|
 | [skaileup](skills/skaileup/) | Routes a want to the skill that produces it, marks each input present, derivable or to ask, and records the project's flow, type and depth |
 | [concept-onboard](skills/concept-onboard/) | Captures what the user already knows: tech preferences, brand, material |
-| [concept-brief](skills/concept-brief/) | Writes the pitch, goals and comparables everything downstream reads |
+| [concept-brief](skills/concept-brief/) | Writes the pitch, goals and comparables everything downstream reads, and the first feature ideas |
 | [concept-glossary](skills/concept-glossary/) | Pins the product's words — terms, definitions, words to avoid — right after the brief |
 | [concept-research](skills/concept-research/) | Grounds decisions in domain, competitor, audience and visual research |
 | [concept-reverse](skills/concept-reverse/) | Extracts a concept from an existing repository |

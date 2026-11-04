@@ -79,6 +79,13 @@ the slice is proved: `verification` in `index.md` says that, and a slice frozen 
    interaction decisions in `APP-DESIGN.md` reach the plan only through that verdict, never
    read directly (`tree/APP-DESIGN.md § Reading it`). Without the file, slice from the spec
    alone.
+
+   Each `pattern` record the feature lists in `follows:` (`tree/10_blueprint/decisions.md § Patterns`)
+   is one shared module. Search the existing plans `_concept/11_build/slices/*/plan.md` for its
+   `DR-<n>`. Where a plan already names the module, the slices that need it reuse it. Where none
+   does, the first slice of this feature that needs it creates it, and the feature's other slices
+   that need it are blocked by that slice. A second module for the same record is the duplicate
+   the pattern exists to prevent.
 3. **Sequence a wide refactor as expand–contract, not as a slice.** A wide refactor is one
    mechanical change (rename a column, retype a shared symbol) whose blast radius fans across
    the codebase, so no vertical slice can land green. Expand first: add the new form beside
@@ -108,3 +115,5 @@ the slice is proved: `verification` in `index.md` says that, and a slice frozen 
 - Every `blocked_by` names a slice that exists.
 - Every approved slice has a `plan.md`; the slice has `index.md` only after `build-implement`
   has landed every commit.
+- Every pattern in the feature's `follows:` is named by a row of one of its slices, and no two
+  plans create a module for the same record.

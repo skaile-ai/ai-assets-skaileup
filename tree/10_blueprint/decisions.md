@@ -1,7 +1,7 @@
 ---
 path: _concept/10_blueprint/decisions.md
 summary: design-time decision records, append-only
-owner: [architecture-datamodel, concept-glossary, experience-interaction, experience-screen, quality-design, skaileup, spec-feature]
+owner: [architecture-datamodel, concept-brief, concept-glossary, experience-interaction, experience-screen, quality-design, skaileup, spec-feature]
 may_propose: []
 ---
 

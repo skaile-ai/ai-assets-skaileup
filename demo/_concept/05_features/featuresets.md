@@ -24,6 +24,14 @@ The team keeps one list of Places that every Poll offers.
 ## Roles
 organizer, member
 
+## Ideas
+| idea | featureset | source | proposed_by |
+|---|---|---|---|
+| diet-filter | polls | `brief.md`: "a vegetarian never gets a steakhouse as the only choice" (2026-10-24) | concept-brief |
+| chat-share | polls | `competitors.md` Slack polls: "the vote happens where the team already talks" (2026-10-24) | concept-research |
+| deadline-reminders | notifications (new) | `create-poll.md` DEFER: "reminders before the deadline, to a later notification feature" (2026-10-25) | spec-feature |
+| vote-by-link | polls | `vote-on-place.md` DEFER: "voting by link without a login, to the next release" (2026-10-25) | spec-feature |
+
 ## Cut
 - place-ratings - backlog story `rate_places` only; the first release picks a place and stops
 - order-food - not a goal (`goals.md` non-goals)

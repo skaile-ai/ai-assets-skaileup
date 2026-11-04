@@ -288,6 +288,13 @@ A named group of related features. The only grouping — features belong to exac
 one featureset, and nothing sits between them.
 _Avoid_: feature group, group, epic, module
 
+**Idea**:
+A candidate feature nobody has specified yet: an app idea from the brief or the user, a
+feature a deferred scope item names, a gap research found. Listed in the roster with its
+source and never with a priority; specifying it turns it into a **feature**, and
+declining it moves it to the cut list.
+_Avoid_: backlog item, wish, feature request (that is outside work, triaged first)
+
 **Story**:
 A user-facing goal in a journey, staged by importance. Feeds features; is not one.
 

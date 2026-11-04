@@ -5,7 +5,8 @@
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends
 [ADR 0019](0019-scoped-fact-resolution.md): the lead routes by demand through `skaileup`. Amends
-[ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md): the record gains level and kind.
+[ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md): the record gains level and
+kind, and the roster takes proposals.
 
 ## Context
 
@@ -68,6 +69,21 @@ features share into one rule, with an `Applies when` sentence a later feature is
 against; each feature that follows it lists its id in `follows:`, and in the build it is one
 shared module.
 
+**K6 — The similarity check precedes the grill.** Before it grills, `spec-feature` compares a new
+feature with every spec, every idea in the roster and the `Applies when` of every `pattern` record,
+on the entities, actions, screens and floorplans they share
+(`tree/05_features/[featureset]/[feature].md § Writing it`, step 2). Each match goes to the user
+with three options: reuse the existing feature, generalise the shared part into a `pattern`
+record both specs follow, or keep them separate with a reason. The choice and its reason are
+recorded in the dossier's `## Similar features`, so the next comparison does not raise it again.
+
+**K7 — Ideas live in the roster.** A candidate feature nobody has specified is a row of
+`## Ideas` in `_concept/05_features/featuresets.md` (`tree/05_features/featuresets.md § Ideas`).
+`concept-brief` co-owns the roster and writes the first ideas, approved with the brief and goals;
+`spec-feature` moves a row into its featureset's table when it specifies it, or under `## Cut`
+when the user declines it, and a DEFER that names an unspecified feature adds an idea.
+`experience-journeys` and `concept-research` propose ideas.
+
 ## Options rejected
 
 - **One agent per skill, or per domain.** The domain prefix is the wrong seam: `experience-*` is
@@ -78,6 +94,7 @@ shared module.
 - **The lead does everything with every skill loaded.** That is the one window this record
   replaces, and the code still reviews itself.
 - **A separate decision-tree file, or one file per level.** The drift ADR 0022 removed.
+- **A separate ideas file.** A second list beside `## Cut`.
 - **Patterns as their own artifact.** Collides with `02_grounding/research/patterns.md`, and a
   chosen pattern is a decision.
 
@@ -95,3 +112,7 @@ shared module.
   (`tree/01_meta/expectations.md § Reading it`); `skaileup` 0.3.0 produces
   `_concept/01_meta/expectations.md` and runs the interview first when it is absent.
 - Records older than the level and kind fields read as `product`/`decision`; they are not edited.
+- `concept-brief` produces `_concept/05_features/featuresets.md` and
+  `_concept/10_blueprint/decisions.md` and is an owner of the decisions node, because every owner
+  of a node that takes proposals records the decisions it declines. Per
+  `host:node-done-from-produces`, forge marks `concept-brief` done only once `decisions.md` exists.
