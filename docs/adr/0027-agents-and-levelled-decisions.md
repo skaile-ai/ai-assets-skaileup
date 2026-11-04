@@ -44,10 +44,14 @@ The reviewer reviews only work it did not write and never fixes; a finding names
 owns the fix, and the lead sends the fix there.
 
 **K2 — The interview relay.** Delegates never talk to the user. A delegate resolves what tools
-settle, writes its draft without `approved:` and returns `NEEDS_CONTEXT` with one decision batch;
-the lead puts that batch to the user unchanged and sends the run again with the answers verbatim
-and the draft path. An approval is a decision batch like any other, so `approved:` is written only
-in the run that carries the user's yes. The lead never edits an artifact a delegate owns.
+settle, keeps its draft where its route keeps work in progress (or returns it in the status block
+when its node writes nothing before the yes) and returns `NEEDS_CONTEXT` with one decision batch.
+The lead answers the batch per the domain's autonomy (K3): under `user decides` it puts the batch
+to the user unchanged. It sends the run again with the answers verbatim and the draft. A skill run
+or evidence pass that another agent owns goes back to the lead the same way, never to the user,
+and the lead sends it to that agent. An approval is a decision batch like any other, so
+`approved:` is written only in the run that carries the user's yes. The lead never edits an
+artifact a delegate owns.
 
 **K3 — Expectations come first.** `tree/01_meta/expectations.md` is the one up-front interview,
 because every run the lead sends reads it: `## The result` holds what the user will judge the
@@ -102,12 +106,13 @@ when the user declines it, and a DEFER that names an unspecified feature adds an
 
 - `scripts/check.py` gains `check_agents` (rules `agent-yaml`, `agent-name`, `agent-spec-version`,
   `agent-fields`, `agent-soul`, `agent-deprecated-field`, `agent-ref-resolves`, `agent-binding`,
-  `agent-skill-composed-once`), cites the SOULs' tree citations, and holds the README `## Agents`
-  table to the `agents/` directories (`readme-agent-index`, `agent-path-resolves`).
+  `agent-alias`, `agent-skill-composed-once`), cites the SOULs' tree citations, and holds the
+  README `## Agents` table to the `agents/` directories (`readme-agent-index`, `agent-path-resolves`).
 - A flow's `requires:` rejects an `agent:` ref (`requires-no-agent`): a flow node runs a skill,
   and an agent is installed through the workspace's `dependencies:`.
 - The demo's `skaile.yaml` lists the eight agents.
-- The forge concept template pins the collection tag and runs `skaileup-lead` as the space's agent.
+- The companion change in skaile-forge (branch `feat/concept-lead-agent`) pins the collection tag
+  in the concept template and runs `skaileup-lead` as the space's agent.
 - The lead applies `## Working together` to every run it sends
   (`tree/01_meta/expectations.md § Reading it`); `skaileup` 0.3.0 produces
   `_concept/01_meta/expectations.md` and runs the interview first when it is absent.

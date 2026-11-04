@@ -77,8 +77,9 @@ _Avoid_: worker, specialist, helper, sub-skill
 
 **Interview relay**:
 How a delegate's questions reach the user: the delegate returns them as one decision batch,
-the lead puts that batch to the user unchanged and sends the run again with the answers and
-the draft. It exists because a harness subagent cannot ask the user anything.
+the lead answers it with the autonomy the user's expectations set for that domain (where the
+user decides, it puts the batch to the user unchanged) and sends the run again with the answers
+and the draft. It exists because a harness subagent cannot ask the user anything.
 _Avoid_: proxy, escalation, forwarding
 
 **Host**:
@@ -132,7 +133,7 @@ _Avoid_: project profile, project shape; onboarding profile (that is forge-conce
 **Depth**:
 How far a project, or one artifact, is worked out — a sketch, a standard pass, or an
 exhaustive one. Recorded once for the project and asked per artifact where it matters, with
-what each level produces said up front. Replaces the old meaning of *tier* as project size.
+what each depth produces said up front. Replaces the old meaning of *tier* as project size.
 _Avoid_: tier, size, level (that is a decision record's reach), scope (that is what is in the project, not how far each part goes)
 
 **Template**:

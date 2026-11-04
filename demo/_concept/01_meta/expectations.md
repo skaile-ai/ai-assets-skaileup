@@ -25,5 +25,5 @@ approved: 2026-10-23
 | review | agent decides and reports | default |
 
 - **Review cadence**: per phase (user, 2026-10-23)
-- **Check-ins**: after the brief and goals; after the feature specs; before the first build commit (default)
+- **Check-ins**: after the brief and goals; after the feature specs; before the first build commit (user, 2026-10-23)
 - **Language**: English, for the conversation and the artifacts (user, 2026-10-23)

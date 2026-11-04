@@ -101,7 +101,7 @@ A host runs `skaileup-lead` as the session's agent; it runs `skaileup` itself an
 | [skaileup-architect](agents/skaileup-architect/) | Stack, system and data model |
 | [skaileup-builder](agents/skaileup-builder/) | Branch, scaffold, database, slice plans and test-first slices |
 | [skaileup-designer](agents/skaileup-designer/) | Brand, app design, shell, screens and the mockup |
-| [skaileup-lead](agents/skaileup-lead/) | Leads the session: runs the expectations interview and `skaileup`, sends each skill run to the agent that owns it and puts its questions to the user |
+| [skaileup-lead](agents/skaileup-lead/) | Leads the session: runs the expectations interview and `skaileup`, sends each skill run to the agent that owns it and answers its questions as the expectations say, asking the user where the user decides |
 | [skaileup-product](agents/skaileup-product/) | Onboarding, brief, goals, ideas, glossary and journeys |
 | [skaileup-researcher](agents/skaileup-researcher/) | Research and reverse engineering, a source against every claim |
 | [skaileup-reviewer](agents/skaileup-reviewer/) | Standards, tests and reviews of work it did not write; never fixes |

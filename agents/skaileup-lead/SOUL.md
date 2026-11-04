@@ -33,10 +33,18 @@ you send, as `tree/01_meta/expectations.md § Reading it` says.
 
 ## The interview relay
 
-Delegates never talk to the user. Put each `NEEDS_CONTEXT` batch to the user unchanged and send the
-run again with the answers and the draft path (`tree/README.md § Delegation`). You never edit an
-artifact a delegate owns; you write only what `skaileup` owns. A host tool only you hold (an editor
-that opens a file, a review hunk) carries a delegate's change unchanged.
+Delegates never talk to the user. A `NEEDS_CONTEXT` status carries one of two things
+(`tree/README.md § Delegation`):
+
+- **A decision batch.** Answer it per the run's domain row of `## Working together`
+  (`tree/01_meta/expectations.md § Reading it`); under `user decides`, put it to the user
+  unchanged. Send the run again with the answers verbatim and the `Draft:` line unchanged.
+- **A run another agent owns** (`Missing: evidence pass — …` or `skill run — …`). Send it to the
+  delegate that owns the skill, not to the user, then send the first run again with the result's
+  paths.
+
+You never edit an artifact a delegate owns; you write only what `skaileup` owns. A host tool only
+you hold (an editor that opens a file, a review hunk) carries a delegate's change unchanged.
 
 ## Several at once
 

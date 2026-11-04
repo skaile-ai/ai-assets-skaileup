@@ -4123,8 +4123,8 @@ def test_every_demo_rule_id_check_py_raises_has_a_fixture_here():
 
 
 # -- agents (rules agent-yaml, agent-name, agent-spec-version, agent-fields, agent-soul,
-#    agent-deprecated-field, agent-ref-resolves, agent-binding, agent-skill-composed-once,
-#    agent-path-resolves, readme-agent-index, requires-no-agent) ----------------------------
+#    agent-deprecated-field, agent-ref-resolves, agent-binding, agent-alias,
+#    agent-skill-composed-once, agent-path-resolves, readme-agent-index, requires-no-agent) ------
 
 def write_agent(root, dirname, composes, soul="# Soul\n\nDoes the work.\n", **fields):
     """`agents/<dirname>/agent.yaml` (spec 0.2) and its `SOUL.md`; `name:` defaults to the directory, a field set to None is dropped."""
@@ -4259,6 +4259,43 @@ def test_delegate_binding_on_a_skill(tmp_path):
     root = agent_repo(tmp_path)
     write_agent(root, "builder", [{**skill_item("build-plan"), "binding": "delegate"}])
     only(root, "binds a 'skill' with `delegate`")
+
+
+def test_run_binding_on_a_skill(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "builder", [{**skill_item("build-plan"), "binding": "run"}])
+    only(root, "binds a 'skill' with `run`")
+    assert "agent-binding" in errors(root)[0]
+
+
+def test_binding_the_schema_does_not_know(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "lead", [skill_item(), delegate_item("builder", "fork")])
+    only(root, "has `binding: 'fork'`, which the schema rejects")
+    assert "agent-binding" in errors(root)[0]
+
+
+@pytest.mark.parametrize("alias", ["Builder", "1builder", "../builder"])
+def test_alias_that_is_no_file_name(tmp_path, alias):
+    root = agent_repo(tmp_path)
+    write_agent(root, "lead", [skill_item(), {**delegate_item("builder"), "as": alias}])
+    only(root, f"has `as: {alias!r}`, which does not match")
+    assert "agent-alias" in errors(root)[0]
+
+
+def test_two_delegates_under_one_alias(tmp_path):
+    root = agent_repo(tmp_path)
+    write_agent(root, "reviewer", [])
+    write_agent(root, "lead", [skill_item(), delegate_item("builder"), {**delegate_item("reviewer"), "as": "builder"}])
+    only(root, "`composes[2]` renders as agent 'builder', as `composes[1]` does")
+    assert "agent-alias" in errors(root)[0]
+
+
+def test_one_delegate_composed_twice(tmp_path):
+    root = agent_repo(tmp_path)
+    builder = {"kind": "agent", "ref": "agent:@skaile-ai/builder", "binding": "delegate"}
+    write_agent(root, "lead", [skill_item(), builder, builder])
+    only(root, "renders as agent 'builder'")
 
 
 def test_skill_composed_by_no_agent(tmp_path):

@@ -2618,10 +2618,14 @@ def _check_requires(
 # `agents/<name>/agent.yaml` (spec 0.2 of @skaile/workspaces `AgentManifestSchema`) and the `SOUL.md` the
 # runtime inlines as the agent's prompt. Rule ids: `agent-yaml`, `agent-name`, `agent-spec-version`,
 # `agent-fields`, `agent-soul`, `agent-deprecated-field`, `agent-ref-resolves`, `agent-binding`,
-# `agent-skill-composed-once`. A repo without `agents/` has nothing to check.
+# `agent-alias`, `agent-skill-composed-once`. A repo without `agents/` has nothing to check.
 AGENTS_DIR = "agents"
 AGENT_SPEC_VERSION = "0.2"
 AGENT_DELEGATE = "delegate"
+# `binding` values the agent schema takes, on kind `agent` only; `as` names a rendered file
+# (types/src/manifests/agent-composition.ts).
+AGENT_BINDINGS = (AGENT_DELEGATE, "run")
+AGENT_ALIAS_RE = re.compile(r"^[a-z][a-z0-9_-]*$")
 # Parsed but no longer read (`agentDeprecationDiagnostics`, types/src/manifests/agent-composition.ts).
 AGENT_DEPRECATED_FIELDS = ("skills", "abilities", "contracts", "persona", "rules", "knowledge", "requires", "dependencies")
 AGENT_DEPRECATED_METADATA = ("soul", "orchestrates", "routes_to", "knows")
@@ -2681,17 +2685,29 @@ def check_agents(repo: Path, skill_names: set[str], rep: Report) -> None:
         if not isinstance(composes, list):
             rep.fail(where, "agent-yaml", "`composes:` is not a list")
             composes = []
+        rendered: dict[tuple[str, str], str] = {}
         for i, item in enumerate(composes):
             label = f"`composes[{i}]`"
             if not isinstance(item, dict):
                 rep.fail(where, "agent-ref-resolves", f"{label} is not a map with `kind` and `ref`")
                 continue
-            kind, ref, binding = item.get("kind"), str(item.get("ref", "")), item.get("binding")
-            if binding == AGENT_DELEGATE and kind != "agent":
-                rep.fail(where, "agent-binding", f"{label} binds a {kind!r} with `delegate`, which the schema accepts only on kind `agent`")
+            kind, ref, binding, alias = item.get("kind"), str(item.get("ref", "")), item.get("binding"), item.get("as")
+            if binding is not None and binding not in AGENT_BINDINGS:
+                rep.fail(where, "agent-binding", f"{label} has `binding: {binding!r}`, which the schema rejects — it takes `delegate` or `run`")
+            elif binding is not None and kind != "agent":
+                rep.fail(where, "agent-binding", f"{label} binds a {kind!r} with `{binding}`, which the schema accepts only on kind `agent`")
+            if alias is not None and not (isinstance(alias, str) and AGENT_ALIAS_RE.match(alias)):
+                rep.fail(where, "agent-alias", f"{label} has `as: {alias!r}`, which does not match `[a-z][a-z0-9_-]*` — the alias names a rendered file, and the install rejects it")
+            m = REF_RE.match(ref)
+            name_rendered = alias if isinstance(alias, str) and alias else (m.group(3) if m and kind == "agent" else None)
+            if name_rendered is not None:
+                key = (str(kind), name_rendered)
+                if key in rendered:
+                    rep.fail(where, "agent-alias", f"{label} renders as {kind} {name_rendered!r}, as {rendered[key]} does — both would install to one file and one would be lost")
+                else:
+                    rendered[key] = label
             if kind not in ("skill", "agent"):
                 continue
-            m = REF_RE.match(ref)
             if not m or m.group(1) != kind:
                 rep.fail(where, "agent-ref-resolves", f"{label} ref {ref!r} is not a `{kind}:@skaile-ai/<name>` ref")
                 continue
@@ -2703,7 +2719,7 @@ def check_agents(repo: Path, skill_names: set[str], rep: Report) -> None:
                 composed_by.setdefault(name, []).append(directory.name)
             elif publisher != "skaile-ai" or name not in agents:
                 rep.fail(where, "agent-ref-resolves", f"{label} composes {ref!r}, which names no agent directory of this collection — the lead would have no delegate by that name")
-            elif binding != AGENT_DELEGATE:
+            elif binding is None or binding == "run":
                 rep.fail(where, "agent-binding", f"{label} binds agent {name!r} as {binding!r}, not `delegate` — only a delegate becomes a native subagent the lead can send a skill run to")
     for skill in sorted(skill_names):
         owners = composed_by.get(skill, [])

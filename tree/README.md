@@ -167,7 +167,7 @@ Every skill binds these rules at its interviewing step by citing `tree/README.md
 
 1. **Resolve facts, then ask.** Read existing artifacts in any order, and an optional one only after checking it exists; `_concept/` outranks the conversation, so a disagreement between them is a question for the user. Read the decision records that bind the work before asking (`tree/10_blueprint/decisions.md § Levels`): a question a binding record answers is not asked. Run `concept-reverse` scoped for evidence the code holds; mark inferred facts; batch only what tools cannot settle. A `hard`-gated input that is missing stops the skill in one sentence naming the missing path and the skill that produces it.
 2. **One decision batch per message.** At most 7 independently answerable questions on one topic; each with the recommendation first and a one-line consequence; an "accept all defaults" option; questions whose options depend on an unanswered one are deferred to the next batch; a status line precedes the batch. A technical term is explained in parentheses.
-3. **Match the user's specificity.** Infer depth from the material supplied; where it matters, ask per artifact how deep to go (`sketch · standard · exhaustive`) and say what each level produces; a user precise about roles and vague about layout gets precise role questions and a layout proposal.
+3. **Match the user's specificity.** Infer depth from the material supplied; where it matters, ask per artifact how deep to go (`sketch · standard · exhaustive`) and say what each depth produces; a user precise about roles and vague about layout gets precise role questions and a layout proposal.
 4. **Sort before asking.** Restate the user's input as a coherent draft (terms, objects, screens, rules) with gaps marked, then ask about the gaps — never a questionnaire first.
 5. **Show consequences before commitments** on data, feature and navigation choices: what the user sees, data and permission effects, affected artifacts, reversibility; for expensive choices compare genuinely different alternatives (design-it-twice).
 6. **Show the layout when the choice is spatial.** A layout story with neutral placeholders (two floorplans on request, at the `narrow` and `wide` viewports) before the screen is specified.
@@ -178,7 +178,7 @@ Every skill binds these rules at its interviewing step by citing `tree/README.md
 
 One protocol for every hand-over of work to another agent context: the lead sending a skill run to the agent that owns the skill, and a skill sending a helper pass (a research topic, a detection pass) to a fresh context. Agents cite this section; nothing restates it.
 
-**The task goes verbatim.** The receiver holds only what the prompt carries and the files it reads, none of the conversation. Paste the full task: for a skill run, the whole `Run skill <id>` prompt as the host sent it, the skill body and any onboarding block included, never a summary and never a pointer to a plan file. A repeat run carries the user's answers verbatim and the path of the draft written so far.
+**The task goes verbatim.** The receiver holds only what the prompt carries and the files it reads, none of the conversation. Paste the full task: for a skill run, the whole `Run skill <id>` prompt as the host sent it, the skill body and any onboarding block included, never a summary and never a pointer to a plan file. A repeat run carries the answers verbatim and the receiver's `Draft:` line unchanged.
 
 **The receiver ends with one status block**, and the sender acts on the status and collects the artifacts:
 
@@ -187,7 +187,8 @@ STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 
 [If DONE_WITH_CONCERNS]  Concerns: <trade-offs, deviations, debt incurred>
 [If NEEDS_CONTEXT]       Missing:  <what is absent>
-                         Question: <single specific question for the user or the dispatching skill>
+                         Question: <one decision batch, or none when Missing names a run another agent owns>
+                         Draft:    <the path of the draft, or the draft itself>
 [If BLOCKED]             Reason:   <what cannot be resolved>
                          Route:    context | escalate-model | decompose
 ```
@@ -195,24 +196,26 @@ STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 | Status | Meaning | Sender's action |
 |---|---|---|
 | `DONE` | All requirements met, tests pass | Accept output, advance flow |
-| `DONE_WITH_CONCERNS` | Implemented but with trade-offs or notes | Accept, log concerns in `_concept/11_build/decisions.md`, advance |
-| `NEEDS_CONTEXT` | Missing information or ambiguous requirement | Put the decision batch to the user unchanged; send again with the answers and the draft path |
+| `DONE_WITH_CONCERNS` | Implemented but with trade-offs or notes | Accept, name the concerns in the completion summary, advance |
+| `NEEDS_CONTEXT` | Missing information or ambiguous requirement | A decision batch: answer it per the interview relay, step 2. A run another agent owns: send it to that agent, never to the user (`Work another agent owns`). Then send the run again with the answers or the result's paths and the `Draft:` line |
 | `BLOCKED` | Cannot proceed — see route | Follow the route below |
 
 | Route | When to use | Sender's response |
 |---|---|---|
-| `context` | A specific question can unblock the task | Put the question to the user; re-dispatch with the answer |
-| `escalate-model` | Task exceeded model capability | Note in `_concept/11_build/decisions.md`; re-dispatch on a stronger model |
+| `context` | A specific question can unblock the task | Answer it as a decision batch (interview relay, step 2); re-dispatch with the answer |
+| `escalate-model` | Task exceeded model capability | Name it in the completion summary; re-dispatch on a stronger model |
 | `decompose` | Task is too large to execute atomically | Break into smaller tasks; re-dispatch each |
+
+**Concerns are written by the receiver.** A `build-*` run appends its concerns to `_concept/11_build/decisions.md` before it returns (`tree/11_build/decisions.md`); any other run records them where its route keeps reasons (a feature's dossier), or else only under `Concerns:`.
 
 **The interview relay.** A delegate cannot reach the user in Claude Code or omp, so every user conversation stays with the lead.
 
-1. The receiver resolves facts (`tree/README.md § How a skill runs`, rule 1), writes or updates its draft on disk without `approved:`, and returns. When it needs the user it returns `NEEDS_CONTEXT` whose `Question:` is one decision batch formatted per rule 2 of that section, with the draft path under `Missing:`.
-2. The lead puts that batch to the user unchanged (no rewording, no options added or dropped) and sends the run again with the answers verbatim and the draft path.
-3. An approval is a decision batch like any other: the receiver writes `approved:` only in the run that carries the user's yes.
+1. The receiver resolves facts (`tree/README.md § How a skill runs`, rule 1) and drafts. The draft stays where the route already keeps work in progress, a file that carries no `approved:` until the yes (the `open` feature dossier, a pending brief), and `Draft:` names its path. An artifact its node writes only after the yes is not written early: `Draft:` then holds the draft itself. When it needs a decision it returns `NEEDS_CONTEXT` whose `Question:` is one decision batch formatted per rule 2 of that section.
+2. The lead answers the batch per the run's domain row of `## Working together` in `_concept/01_meta/expectations.md` (`tree/01_meta/expectations.md § Reading it`): under `user decides` it puts the batch to the user unchanged (no rewording, no options added or dropped). It sends the run again with the answers verbatim and the `Draft:` line unchanged.
+3. An approval is a decision batch like any other: the receiver writes `approved:` only in the run that carries the user's own yes; an artifact the lead approved under `agent decides and reports` is written without it.
 4. The lead never edits an artifact a delegate owns. A host tool only the lead holds (a review hunk, an editor that opens a file) carries the delegate's change unchanged: the delegate returns the change, the lead submits it and passes the user's decision back.
 
-**Evidence another agent owns.** A receiver whose route needs `concept-reverse` or `concept-research` returns `NEEDS_CONTEXT` with `Missing: evidence pass — <skill> <scope>`; the lead sends the pass to the researcher and sends the run again with the findings' paths. A receiver that cannot start its own helper contexts runs its helper passes itself, one after another.
+**Work another agent owns.** A receiver whose route needs a skill another agent composes does not run it: it returns `NEEDS_CONTEXT` with no `Question:` and the run under `Missing:`, `evidence pass — <skill> <scope>` for `concept-reverse` or `concept-research` and `skill run — <skill> <args>` for any other (a `spec-feature` run that needs a new screen: `skill run — experience-screen <screen>`). The lead sends that run to the agent that owns the skill, then sends the original run again with the result's paths. A receiver that cannot start its own helper contexts runs its helper passes itself, one after another.
 
 **Parallel only when the write sets are disjoint.** Two receivers run at once only when no path one may write or propose into is one the other may (`owner:` and `may_propose:` of the nodes their routes visit).
 
