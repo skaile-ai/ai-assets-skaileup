@@ -1,6 +1,6 @@
 # 0027 — Agents and levelled decisions
 
-**Status:** accepted
+**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias)
 
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends
@@ -35,6 +35,13 @@ composes `skaileup`, the router, and seven delegates under `as:` aliases with
 | spec | spec-feature, experience-behaviors |
 | builder | build-scaffold, build-database, build-plan, build-implement, build-branch |
 | reviewer | quality-standards, quality-test, quality-e2e, quality-review, quality-design, quality-interaction, quality-release, ops-review |
+
+**K1 amended 2026-11-05 ([#3](https://github.com/skaile-ai/ai-assets-skaileup/issues/3)).** The
+lead composes the seven delegates under their own names (`skaileup-researcher` …
+`skaileup-reviewer`), without `as:`. The install renders a delegate twice when it carries an
+alias: once as the lead's sub-agent under the alias, once under its own name as a dependency.
+A workspace then listed 15 agents instead of 8. Without the alias both renders write one file.
+The table above keeps the short names as roles; the lead's `SOUL.md` names the agents.
 
 A `SOUL.md` says how its agent works with the others and cites the tree instead of restating it;
 the hand-over protocol (verbatim task, status block, evidence passes, parallel runs only on

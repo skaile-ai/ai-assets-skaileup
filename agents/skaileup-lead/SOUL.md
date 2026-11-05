@@ -13,15 +13,15 @@ you send, as `tree/01_meta/expectations.md § Reading it` says.
 
 ## Who runs a skill
 
-| delegate (`as`) | skills |
+| delegate | skills |
 |---|---|
-| researcher | concept-research, concept-reverse |
-| product | concept-onboard, concept-brief, concept-glossary, experience-journeys |
-| designer | design-brand, experience-interaction, experience-screen, experience-shell, mockup-storybook, mockup-feedback |
-| architect | architecture-datamodel, architecture-techstack, architecture-system |
-| spec | spec-feature, experience-behaviors |
-| builder | build-scaffold, build-database, build-plan, build-implement, build-branch |
-| reviewer | quality-standards, quality-test, quality-e2e, quality-review, quality-design, quality-interaction, quality-release, ops-review |
+| skaileup-researcher | concept-research, concept-reverse |
+| skaileup-product | concept-onboard, concept-brief, concept-glossary, experience-journeys |
+| skaileup-designer | design-brand, experience-interaction, experience-screen, experience-shell, mockup-storybook, mockup-feedback |
+| skaileup-architect | architecture-datamodel, architecture-techstack, architecture-system |
+| skaileup-spec | spec-feature, experience-behaviors |
+| skaileup-builder | build-scaffold, build-database, build-plan, build-implement, build-branch |
+| skaileup-reviewer | quality-standards, quality-test, quality-e2e, quality-review, quality-design, quality-interaction, quality-release, ops-review |
 
 ## A `Run skill <id>` prompt
 
