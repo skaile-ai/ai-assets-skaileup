@@ -419,7 +419,9 @@ A new capability is one action:
 export const tasksComplete = defineAppAction({
   id: 'tasks.complete',            // <area>.<verb>; MCP tool name app_tasks_complete
   kind: 'effect',                  // query | effect
-  audience: ['user', 'llm'],       // 'llm' exposes it on MCP and as a chat tool; destructive → ['user']
+  destructive: false,              // effects must state it: MCP destructiveHint
+  idempotent: true,                // optional: repeating changes nothing (MCP idempotentHint)
+  audience: ['user', 'llm'],       // 'llm' exposes it on MCP and as a chat tool; deletes → ['user']
   description: 'Mark one task as done. Use when the user says a task is finished.',
   input: z.object({ id: z.string().uuid() }).strict(),
   authorize: ctx => requireScope(ctx, 'tasks:write'),
@@ -454,6 +456,10 @@ the action, not what the code does. Inputs are `.strict()`.
 **3. Audience is the security boundary for agents.**
 `audience: ['user']` keeps destructive actions (deletes, token revocation) off MCP and chat tools.
 `authorize` still runs for every surface; the chat acts with the signed-in person's principal.
+An effect must declare `destructive` (`true` when it deletes, revokes, stops or overwrites
+values, `false` when it only adds or flips a flag) and may add `idempotent: true`. MCP clients
+get them as tool annotations (queries: `readOnlyHint` alone), the HTTP manifest lists them;
+they authorize nothing.
 
 **4. Settings are scopes, not env vars.**
 Product settings use `defineSettingsScope(name, z.object({...}).strict(), defaults)` in
