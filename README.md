@@ -73,7 +73,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [experience-behaviors](skills/experience-behaviors/) | Writes state machines and rules for entity lifecycles |
 | [experience-interaction](skills/experience-interaction/) | Decides where information lives and how it is edited, saved and found, and writes APP-DESIGN.md |
 | [spec-feature](skills/spec-feature/) | Writes one feature's permanent spec and its row in the featureset roster, and links the screens it uses |
-| [mockup-storybook](skills/mockup-storybook/) | Grows one Vue Storybook package: floorplans, screens, entity editors, the whole app as a click-through and journey walks, annotatable by stakeholders |
+| [mockup-storybook](skills/mockup-storybook/) | Grows one Vue Storybook package: floorplans, feature pages, screens, entity editors, the whole app as a click-through and journey walks, annotatable by stakeholders |
 | [mockup-feedback](skills/mockup-feedback/) | Routes stakeholder notes from the annotation inbox back into the specs, data model and glossary as reviewable patches |
 | [architecture-techstack](skills/architecture-techstack/) | Chooses the technology stack and records its id |
 | [architecture-system](skills/architecture-system/) | Records custom modules, protocols and integrations beyond the stack |

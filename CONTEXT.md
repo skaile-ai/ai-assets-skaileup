@@ -182,7 +182,8 @@ _Avoid_: db, persistence, store
 
 **Mockup**:
 The one Vue Storybook package at `09_mockup/storybook/` that grows beside the specs: a story
-per floorplan, screen, entity component and journey, plus the whole app inside one story.
+per floorplan, screen, entity component and journey, plus the whole app inside one story,
+and one page per feature, generated from the specs.
 The only surface a stakeholder reviews the design on.
 _Avoid_: prototype, walkthrough, click-dummy
 

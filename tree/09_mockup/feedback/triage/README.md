@@ -73,6 +73,7 @@ Run `python skills/mockup-feedback/scripts/triage.py <concept-root> <output-dir>
 - A source file `src/screens/<screen>.vue` → `07_screens/<screen>.md`, which must exist on disk.
 - A story id `entities-<entity>-…` or `screens-<screen>--…` routes the same way when no source file names one, for a note whose chain ended in a library component.
 - A story id starting `journeys-` → the whole of `04_journeys/stories.yaml`, where journeys live (the id identifies a journey within that file); the file must exist.
+- A story id `features-<featureset>-<feature>--…` → `05_features/<featureset>/<feature>.md`, matched by the slugged `<featureset>/<feature>` path; no match is unresolved, `feature not found: no _concept/05_features/*/*.md for story <id>`.
 - A source file under `src/floorplans/` → unresolved, `rulebook asset`: the floorplan ships with `mockup-storybook`, no concept file carries it.
 - Neither a source file nor a story id places the note → unresolved, `no component`. A click inside a library component (a Nuxt UI button) is a `target.kind: route` note without a source position of its own; the `vueComponents` chain still names our components, so it routes by the first rules. Paths under `node_modules/` are never ours and are skipped.
 

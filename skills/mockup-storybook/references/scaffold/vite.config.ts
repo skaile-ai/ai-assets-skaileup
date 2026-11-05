@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import ui from '@nuxt/ui/vite'
 import { defineConfig } from 'vite'
+import { conceptSources, writeConcept } from './scripts/gen-concept.ts'
 import { brandFiles, writeTokens } from './scripts/gen-tokens.ts'
 
 const packageDir = dirname(fileURLToPath(import.meta.url))
@@ -26,6 +27,21 @@ export default defineConfig({
         server.watcher.on('change', (file) => {
           if (brandFiles.includes(file)) writeTokens()
         })
+      },
+    },
+    {
+      // `src/generated/concept.json` and `src/features/` are written by `.storybook/main.ts` on
+      // start; this rewrites them when a feature spec, screen spec, dossier or the stories file
+      // changes, is added or is removed while `storybook dev` runs.
+      name: 'mockup:concept',
+      configureServer(server) {
+        server.watcher.add(conceptSources)
+        const regenerate = (file: string) => {
+          if (conceptSources.some((source) => file.startsWith(source))) writeConcept()
+        }
+        server.watcher.on('change', regenerate)
+        server.watcher.on('add', regenerate)
+        server.watcher.on('unlink', regenerate)
       },
     },
   ],

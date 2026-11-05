@@ -29,6 +29,7 @@ from urllib.parse import parse_qs, urlparse
 SCREEN_DIR = "07_screens"
 JOURNEYS_FILE = "04_journeys/stories.yaml"
 DATAMODEL_FILE = "10_blueprint/datamodel/model.ts"
+FEATURES_DIR = "05_features"
 
 # A source path inside a component chain or a target ref. The ref is
 # `<tag>:<path>:<line>:<col>`, so `:` ends the path; `[` `]` cover `[id].vue`.
@@ -123,6 +124,20 @@ def entity_from_story(concept_root: Path, sid: str) -> str | None:
     return None
 
 
+def feature_from_story(concept_root: Path, sid: str) -> str | None:
+    """`features-<featureset>-<feature>--<story>` -> the feature spec whose slugged path is the rest."""
+    prefix = sid.split("--")[0]
+    if not prefix.startswith("features-"):
+        return None
+    want = prefix[len("features-"):]
+    root = concept_root / FEATURES_DIR
+    for path in sorted(root.glob("*/*.md")) if root.is_dir() else []:
+        rel = path.relative_to(root)
+        if slug(rel.with_suffix("").as_posix()) == want:
+            return f"{FEATURES_DIR}/{rel.as_posix()}"
+    return None
+
+
 def resolve_item(item: dict, concept_root: Path) -> tuple[dict | None, str | None]:
     """Returns ({file[, entity]}, None) or (None, reason)."""
     sid = story_id(item)
@@ -144,6 +159,11 @@ def resolve_item(item: dict, concept_root: Path) -> tuple[dict | None, str | Non
         return route_screen(concept_root, screen)
     if sid.startswith("journeys-"):
         return route_journey(concept_root)
+    if sid.startswith("features-"):
+        feature = feature_from_story(concept_root, sid)
+        if feature:
+            return {"file": feature}, None
+        return None, f"feature not found: no _concept/{FEATURES_DIR}/*/*.md for story {sid}"
 
     for path in files:
         if FLOORPLAN_FILE.search(path):

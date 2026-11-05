@@ -7,7 +7,7 @@ may_propose: [experience-screen]
 
 # _concept/05_features/<featureset>/<feature>.md
 
-One feature, from a sentence to a spec somebody can build. It is the one record of who may do what and of what was considered in or out; `experience-behaviors`, the seed, scaffolding and the build ledger cite it, so none restates it. `spec-feature` writes it, one feature per run, and adds the feature's row to the roster in the same run; the flow draws that node once because iteration is not something a flow edge can express, so the repetition lives in the skill. It lists the screens the feature uses and calls `experience-screen` for one that does not exist yet; it writes no screen itself, since a screen is `experience-screen`'s artifact.
+One feature, from a sentence to a spec somebody can build. It is the one record of who may do what and of what was considered in or out; `experience-behaviors`, the seed, scaffolding, the build ledger and `mockup-storybook`'s feature page cite it, so none restates it. `spec-feature` writes it, one feature per run, and adds the feature's row to the roster in the same run; the flow draws that node once because iteration is not something a flow edge can express, so the repetition lives in the skill. It lists the screens the feature uses and calls `experience-screen` for one that does not exist yet; it writes no screen itself, since a screen is `experience-screen`'s artifact.
 
 ## Format
 

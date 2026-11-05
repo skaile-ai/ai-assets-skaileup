@@ -59,16 +59,18 @@ const selected = ref<string>()
 
 ## The story
 
-`src/screens/inbox.stories.ts`: `Default` shows the `populated` scenario (the toolbar's default), `Empty` the empty state the spec's `### Situations` lists. A situation the globals do not cover, such as a loading list, is one more story with its own args.
+`src/screens/inbox.stories.ts`: `Default` shows the `populated` scenario (the toolbar's default), `Empty` the empty state the spec's `### Situations` lists. A situation the globals do not cover, such as a loading list, is one more story with its own args. `parameters: { docs: screenDocs('inbox') }` puts the screen's `### Purpose` and the features it implements on its Docs page, generated from the specs, and it is the only line that binds a screen story to its features.
 
 ```ts
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
+import { screenDocs } from '../components/concept'
 import Inbox from './inbox.vue'
 
 const meta = {
   title: 'Screens/inbox',
   component: Inbox,
   tags: ['autodocs'],
+  parameters: { docs: screenDocs('inbox') },
 } satisfies Meta<typeof Inbox>
 
 export default meta

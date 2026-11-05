@@ -2,7 +2,7 @@
   "name": "mockup-storybook",
   "private": true,
   "type": "module",
-  "description": "The component mockup of this project: floorplans, screens, entity editors, the whole app and the journeys as Storybook stories over the project's data model.",
+  "description": "The component mockup of this project: floorplans, screens, entity editors, the whole app and the journeys as Storybook stories over the project's data model, and one generated page per feature.",
   "engines": {
     "node": ">=20.19"
   },
@@ -11,6 +11,7 @@
     "build-storybook": "storybook build",
     "check": "storybook build --quiet && vue-tsc --noEmit && vitest run --project=storybook",
     "tokens": "tsx scripts/gen-tokens.ts",
+    "concept": "tsx scripts/gen-concept.ts",
     "resolve": "tsx scripts/resolve.ts"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@skaile/forge-annotation-inbox": "^2.0.0",
     "@storybook/addon-docs": "^10.6.3",
+    "@storybook/addon-links": "^10.6.3",
     "@storybook/addon-vitest": "^10.6.3",
     "@storybook/vue3-vite": "^10.6.3",
     "@types/node": "^22.20.5",
@@ -34,6 +36,7 @@
     "vite": "^8.3.5",
     "vite-plugin-vue-tracer": "^1.6.0",
     "vitest": "^4.1.0",
-    "vue-tsc": "^3.3.13"
+    "vue-tsc": "^3.3.13",
+    "yaml": "^2.9.1"
   }
 }

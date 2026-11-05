@@ -3,3 +3,5 @@ storybook-static
 src/styles/tokens.css
 auto-imports.d.ts
 components.d.ts
+src/generated
+src/features

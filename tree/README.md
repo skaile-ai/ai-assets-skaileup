@@ -86,7 +86,7 @@ _concept/                                the artifact tree, its ownership rule a
 │   │   ├── applied/                     committed per-round record of patches landed, failed and notes closed
 │   │   ├── patches/                     proposed anchored patches and the review file a human approves
 │   │   └── triage/                      deterministic routing of each open inbox note to the file it belongs in
-│   └── storybook/                       one Vue Storybook package — floorplans, screens, entities, the app, journeys
+│   └── storybook/                       one Vue Storybook — features, floorplans, screens, entities, the app, journeys
 ├── 10_blueprint/                        how the app is built — stack, architecture, API contracts, decisions, data model
 │   ├── architecture.md                  C4 levels — system context, containers, components, deployment, risks
 │   ├── asyncapi.yaml                    AsyncAPI 3.1 contract of the channels the project publishes or consumes

@@ -6,7 +6,7 @@ here once the map ends. 0001–0016 are carried over from `ai-assets-skaileup-mp
 where this variant departs from it; 0018–0023 are the app-design clean slate; 0024 splits the
 glossary by kind; 0025 adds archetypes as an optional declared default; 0026 replaces the
 mockup surfaces with one Vue Storybook package and authors the data model in TypeScript; 0027
-adds eight agents (a lead and seven delegates) and gives decision records a level and a kind.
+adds eight agents (a lead and seven delegates) and gives decision records a level and a kind; 0028 adds generated feature pages to the mockup.
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -38,3 +38,4 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0025](./0025-archetypes-are-an-optional-declared-default.md) | Archetypes are an optional declared default: one table in `rulebook/archetypes.md`, `archetype:` in `APP-DESIGN.md`, cards stay research; extends 0015 and 0018 |
 | [0026](./0026-the-mockup-stage-is-one-vue-storybook-package.md) | The mockup stage is one Vue Storybook package; the data model is authored in TypeScript and generated to JSON; notes go through the annotation inbox; amends 0020 and 0022 |
 | [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; expectations first; decision records carry a level and a kind, patterns included; a similarity check before the grill; ideas in the roster; amends 0022 |
+| [0028](./0028-feature-pages-are-generated-from-the-specs.md) | Feature pages are generated from the specs: one `Features/<featureset>/<feature>` story per spec, screen stories bind via `screenDocs`, triage routes feature notes to the spec; amends 0026 |

@@ -33,6 +33,8 @@ const preview: Preview = {
   },
   parameters: {
     layout: 'padded',
+    // Inline literal: Storybook reads `storySort` statically.
+    options: { storySort: { order: ['Features', 'Journeys', 'App', 'Screens', 'Entities', 'Floorplans'] } },
     viewport: {
       options: {
         narrow: { name: 'Narrow 390', styles: { width: '390px', height: '844px' } },

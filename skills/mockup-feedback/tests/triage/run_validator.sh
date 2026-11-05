@@ -42,7 +42,7 @@ compare_triage() {
     echo "OK: $round triage matches expected"
 }
 
-echo "--- Test 1: entity note -> model.ts + entity, screen note -> its spec, journey note -> stories.yaml ---"
+echo "--- Test 1: entity note -> model.ts + entity, screen note -> its spec, journey note -> stories.yaml, feature-page note -> its feature spec ---"
 compare_triage "test-routing" "$CONCEPT_ROOT"
 
 echo ""

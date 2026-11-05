@@ -1,0 +1,14 @@
+{
+  "inboxId": "f2r8n1-1",
+  "sessionId": "f2r8n1",
+  "origin": "http://localhost:6006",
+  "id": "1",
+  "comment": "The outcome should say the task lands at the top of the inbox.",
+  "elementPath": "main > article > p",
+  "vueComponents": "StoryFrame (src/components/StoryFrame.vue) > App (node_modules/@nuxt/ui/dist/runtime/components/App.vue) > FeatureDoc (src/components/FeatureDoc.vue)",
+  "url": "http://localhost:6006/iframe.html?id=features-tasks-create-task--overview&viewMode=story",
+  "timestamp": 1790000600000,
+  "target": { "kind": "element", "ref": "p:_concept/09_mockup/storybook/src/components/FeatureDoc.vue:14:7", "label": "FeatureDoc" },
+  "status": "open",
+  "receivedAt": "2026-10-20T09:06:00.000Z"
+}
