@@ -5,7 +5,7 @@ metadata:
   type: template
   version: '0.1.0'
   atoms:
-    scaffold_command: 'bunx giget@latest gh:skaile-ai/skaile-app-template . --install'
+    scaffold_command: 'GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/skaile-app-template . --install'
     package_manager: 'bun'
     build_command: 'bun run build'
     env_setup_command: 'cp .env.example .env'
@@ -89,8 +89,10 @@ omp, the workspace agent) must be able to do everything a person can, with the s
 
 ```bash
 # 1. Copy the template into the empty project directory and install
-#    (the template is a runnable app, not a generator: no prompts)
-bunx giget@latest gh:skaile-ai/skaile-app-template . --install
+#    (the template is a runnable app, not a generator: no prompts).
+#    The repository is private: giget reads a GitHub token from GIGET_AUTH,
+#    e.g. GIGET_AUTH=$(gh auth token).
+GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/skaile-app-template . --install
 
 # 2. Optional: an env file (nothing is required locally; see .env.example)
 cp .env.example .env
