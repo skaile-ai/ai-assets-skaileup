@@ -120,7 +120,7 @@ if it were wanted. The sections read *"if it is installed, consult it"*. Nothing
 | `template-postxl` | React 19 + Vite (SPA) | `@postxl/ui-components` | NestJS + Prisma + PostgreSQL, Keycloak auth |
 | `template-nextjs-shadcn` | Next.js 15 App Router | shadcn/ui | Supabase (managed Postgres) |
 | `template-nextjs-radix` | Next.js 15 App Router | Radix UI primitives | Directus + PostgreSQL |
-| `template-nuxt-ui` | Nuxt 4 | `@nuxt/ui` v3 (Reka UI) | Directus + PostgreSQL |
+| `template-nuxt-ui` | Nuxt 4 | `@nuxt/ui` v4 (Reka UI) | Directus + PostgreSQL |
 | `template-nuxt-primevue` | Nuxt 4 | PrimeVue 4 | Directus + PostgreSQL |
 | `template-nuxt-minimal` | Nuxt 4 | none — Tailwind only | Nitro + Drizzle + SQLite |
 | `template-sveltekit-minimal` | SvelteKit 2 / Svelte 5 | none — Tailwind only | SvelteKit server + Drizzle + SQLite |

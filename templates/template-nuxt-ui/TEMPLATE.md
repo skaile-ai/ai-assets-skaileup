@@ -1,6 +1,6 @@
 ---
 name: template-nuxt-ui
-description: 'Tech-stack reference for Nuxt 4 + @nuxt/ui v3 (Reka UI) + Directus. Resolved by directory name from _concept/10_blueprint/techstack.md.'
+description: 'Tech-stack reference for Nuxt 4 + @nuxt/ui v4 (Reka UI) + Directus. Resolved by directory name from _concept/10_blueprint/techstack.md.'
 metadata:
   type: template
   version: '0.2.0'
@@ -40,14 +40,14 @@ metadata:
 
 ## Overview
 
-Full-stack SSR application built with Nuxt 4 (Vue 3) on the frontend, @nuxt/ui v3 as the component layer (built on Reka UI — the Vue port of Radix UI — with Tailwind CSS 4), and Directus as the headless CMS backend. This stack prioritizes design flexibility and custom branding: @nuxt/ui provides accessible, headless-style primitives that are fully customizable through Tailwind tokens. Best suited for design-forward consumer apps and custom-branded products where PrimeVue's opinionated styling would be a constraint.
+Full-stack SSR application built with Nuxt 4 (Vue 3) on the frontend, @nuxt/ui v4 as the component layer (built on Reka UI — the Vue port of Radix UI — with Tailwind CSS 4), and Directus as the headless CMS backend. This stack prioritizes design flexibility and custom branding: @nuxt/ui provides accessible, headless-style primitives that are fully customizable through Tailwind tokens. Best suited for design-forward consumer apps and custom-branded products where PrimeVue's opinionated styling would be a constraint.
 
 ## Identity
 
 | Field           | Value                                                                     |
 | --------------- | ------------------------------------------------------------------------- |
 | Frontend        | Nuxt 4 (Vue 3, Composition API), SSR                                      |
-| UI Library      | @nuxt/ui v3 (Reka UI + Tailwind CSS 4)                                    |
+| UI Library      | @nuxt/ui v4 (Reka UI + Tailwind CSS 4)                                    |
 | Backend         | Directus (headless CMS, auto-generated REST + GraphQL API)                |
 | Database        | PostgreSQL                                                                |
 | Auth            | Directus Auth (JWT, refresh tokens, roles, SSO via OAuth2/LDAP)           |
@@ -70,7 +70,7 @@ Full-stack SSR application built with Nuxt 4 (Vue 3) on the frontend, @nuxt/ui v
 # 1. Initialize Nuxt 4 project
 bunx nuxi@latest init . --packageManager bun
 
-# 2. Install @nuxt/ui v3 (includes Tailwind CSS 4 + Reka UI)
+# 2. Install @nuxt/ui v4 (includes Tailwind CSS 4 + Reka UI)
 bun add @nuxt/ui
 
 # 3. Install Directus SDK
@@ -129,7 +129,7 @@ contract, anti-patterns, and per-framework rationale.
 
 ## CSS Variables / Theming
 
-@nuxt/ui v3 uses Tailwind CSS 4's CSS-native configuration. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`; colours come out as hex, dark overrides from `brand.dark.tokens.json` land in a `.dark` block) and they reach @nuxt/ui through two mechanisms:
+@nuxt/ui v4 uses Tailwind CSS 4's CSS-native configuration. Brand values come from `_concept/03_brand/brand.tokens.json` (DTCG). The scaffold flattens them to `--token-*` custom properties (`tree/03_brand/brand.tokens.md § Flattening to CSS`; colours come out as hex, dark overrides from `brand.dark.tokens.json` land in a `.dark` block) and they reach @nuxt/ui through two mechanisms:
 
 **Level 1 — a custom `brand` palette built from `color.primary`:**
 
@@ -249,7 +249,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 ## App Shell
 
-@nuxt/ui v3 provides `UApp` as the root wrapper (provides toast, tooltip, and modal contexts), `UNavigationMenu` for nav, and `UDashboardLayout` / `USidebar` for admin-style shells.
+@nuxt/ui v4 provides `UApp` as the root wrapper (provides toast, tooltip, and modal contexts), `UNavigationMenu` for nav, and `UDashboardGroup` / `UDashboardSidebar` for admin-style shells.
 
 **Key files:**
 
@@ -302,7 +302,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 | Navigation         | `UNavigationMenu`       | auto-imported |
 | Card               | `UCard`                 | auto-imported |
 | Toast/Notification | `useToast()` + `UToast` | auto-imported |
-| Date Picker        | `UDatePicker` (v3)      | auto-imported |
+| Date Picker        | `UInputDate` + `UCalendar` | auto-imported |
 | Command Palette    | `UCommandPalette`       | auto-imported |
 | Breadcrumb         | `UBreadcrumb`           | auto-imported |
 | Tabs               | `UTabs`                 | auto-imported |
@@ -314,7 +314,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 All components are auto-imported by the `@nuxt/ui` Nuxt module — no manual imports needed.
 
-**Icons — `@iconify-json/lucide`.** @nuxt/ui v3 resolves icons through Nuxt Icon and defaults to
+**Icons — `@iconify-json/lucide`.** @nuxt/ui v4 resolves icons through Nuxt Icon and defaults to
 the Lucide collection, referenced by name (`i-lucide-check`) rather than imported. Install the
 collection so icons resolve offline instead of hitting the Iconify API at runtime.
 
@@ -438,7 +438,7 @@ any skill is gated on one being present.
 ## Key Implementation Patterns
 
 **1. `UApp` must wrap the entire application:**
-`useToast()`, `useModal()`, and `useOverlay()` composables only work inside a `<UApp>` context. Always place `<UApp>` in `app.vue` or the root layout — never nest multiple `<UApp>` instances.
+`useToast()` and `useOverlay()` composables only work inside a `<UApp>` context. Always place `<UApp>` in `app.vue` or the root layout — never nest multiple `<UApp>` instances.
 
 **2. Form validation via Zod + `UForm`:**
 @nuxt/ui's `UForm` accepts a `schema` prop with a Zod schema and automatically maps validation errors to field names. Always use Zod for form validation — do not use manual error state:
