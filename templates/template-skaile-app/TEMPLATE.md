@@ -256,13 +256,31 @@ more than its user.
 
 ## App Shell
 
-`app/layouts/default.vue` is a @nuxt/ui dashboard shell: `UDashboardGroup` with a collapsible
-`UDashboardSidebar` (app name, search, "New task" quick-create, `UNavigationMenu`, `UserMenu`
-footer), `UDashboardPanel` pages with `UDashboardNavbar`, and `UDashboardSearch` as the ⌘K
-command palette listing navigation and quick-create actions. `app/app.vue` wraps everything in
-`<UApp>`.
+`app/layouts/default.vue` is a @nuxt/ui dashboard shell: `UDashboardGroup unit="rem"
+storage="local" storage-key="skaile-app"` holding a collapsible, resizable left
+`UDashboardSidebar` with only the logo and the `UNavigationMenu`, the page, the right-hand drawers
+layers add, and `UDashboardSearch` as the ⌘K command palette (navigation and quick-create
+actions). Panel sizes and open state persist in localStorage under `skaile-app-sidebar-<id>`
+(`skaile-app-sidebar-default`, `skaile-app-sidebar-assistant`). `app/app.vue` wraps everything
+in `<UApp>` and mounts the one `ConfirmDialog`.
 
-**Navigation is data, not markup.** Sidebar and Settings entries come from `app.config.ts`:
+**One header, rendered per page.** Every page puts `<AppHeader title :badge :back>` (wraps
+`UDashboardNavbar`) in its `UDashboardPanel #header`. `back` is a route and shows the back arrow;
+the `#actions` slot holds the page's create button for its data type ("New task", "New
+project"). The global cluster on the right is the same everywhere: search (⌘K), the
+notifications bell (`NotificationsMenu`: unread chip, latest 10, mark one / mark all read), the
+header widgets layers push (the chat layer's assistant toggle), and the `UserMenu` avatar
+(Settings, Profile, API tokens, Appearance, sign out).
+
+**Assistant drawer (chat layer).** `ChatDrawer` is a right `UDashboardSidebar id="assistant"
+side="right"`, resizable 20–48rem (default 28rem), with a thread picker (switch, rename, delete),
+"New conversation" and close in its header; ⌘J, the palette or the header toggle open it, and
+on phones it is a slideover. There is no `/chat` page: `/chat/<id>` redirects to
+`/?assistant=<id>` and opens the drawer on that thread. Without the chat layer there is no toggle
+and no drawer.
+
+**Navigation is data, not markup.** Sidebar and Settings sub-nav entries come from
+`app.config.ts` (Settings itself is not a nav entry; it lives in the user menu):
 
 ```typescript
 export default defineAppConfig({
@@ -270,7 +288,6 @@ export default defineAppConfig({
     nav: [
       { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/', order: 10 },
       { label: 'Projects', icon: 'i-lucide-folder-kanban', to: '/projects', order: 20 },
-      { label: 'Settings', icon: 'i-lucide-settings', to: '/settings', order: 90 },
     ],
     settingsNav: [
       { label: 'General', icon: 'i-lucide-sliders-horizontal', to: '/settings', order: 10 },
@@ -280,26 +297,69 @@ export default defineAppConfig({
 ```
 
 A layer adds entries in its own `app.config.ts` (arrays concatenate, the shell sorts by
-`order`; core uses 10–90). A new screen is a page under `app/pages/` plus one `nav` entry —
-never an edit to the layout.
+`order`; core uses 10–90). A new screen is a page under `app/pages/` with an `<AppHeader>` plus
+one `nav` entry — never an edit to the layout.
+
+Everything else a layer adds to the shell goes through the runtime hook `app-shell:extend` with
+`{ commands, header, drawers, overlays }` (`app/types/app-shell.d.ts`): palette groups, header
+widgets, right-hand panels rendered after the page, and once-mounted overlays. The chat layer's
+plugin:
+
+```typescript
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.hook('app-shell:extend', (shell) => {
+    shell.commands.push({ id: 'assistant', label: 'Assistant', items: [/* Ask the assistant, ⌘J */] })
+    shell.header.push(AssistantToggle)  // in every AppHeader's global cluster
+    shell.drawers.push(ChatDrawer)      // UDashboardSidebar side="right" after the page
+  })
+})
+```
 
 **Key files:**
 
-- `app/layouts/default.vue` — the shell; `app/composables/useAppShell.ts` — sorted nav
-- `app/composables/useQuickCreate.ts` — the create modals the sidebar and palette open
+- `app/layouts/default.vue` — the shell; `app/composables/useAppShell.ts` — sorted nav;
+  `app/utils/appShell.ts` — injection key for the collected extension
+- `app/components/AppHeader.vue` — the per-page header; `UserMenu.vue`; `NotificationsMenu.vue`
+- `app/composables/useQuickCreate.ts` — the create modals the palette and page headers open
+- `app/components/form/FormModal.vue`, `form/SaveHint.vue`, `form/DiscardPrompt.vue`;
+  `app/composables/useFormDirty.ts`, `useDiscardGuard.ts`, `useLeaveGuard.ts`;
+  `app/utils/formMissing.ts`, `app/utils/formErrors.ts` — the forms kit
+- `app/composables/useConfirm.ts` + `app/components/ConfirmDialog.vue` — the one confirm dialog
 - `app/components/SchemaForm.vue` — renders any settings scope's JSON schema as a `UForm`
 - `app/pages/settings.vue` + `app/pages/settings/*` — the Settings sub-shell
+- `layers/chat/app/components/ChatDrawer.vue`, `AssistantToggle.vue`,
+  `composables/useAssistant.ts` — the assistant drawer
+
+### UI rules (APP-DESIGN.md)
+
+The template ships `APP-DESIGN.md` with the full rules; agents follow it. In short:
+
+- **Row actions:** a row's primary state change is a visible button (tasks: Complete / Reopen,
+  icon-only with `aria-label` and tooltip on narrow screens). The ⋮ menu holds only Edit, a
+  separator, then Delete last in the error color. Delete confirms.
+- **Forms:** `FormModal` wraps `UModal`. A mask click never closes it; the footer is
+  `[Delete] ··· [Cancel] [Save]`, Save is the only solid button and Enter submits. Closing with
+  unsaved input asks "Discard changes?" in place, in the footer. Save is disabled only while the
+  client schema fails, with `SaveHint` naming what is missing ("Missing: Title"); a server
+  refusal never disables it. A 400 naming a field lands on that field (`form.setErrors`),
+  anything else is a toast. Full-screen on phones. Settings pages ask before leaving unsaved
+  changes.
+- **Confirm:** `useConfirm().confirm({ title, description, confirmLabel, color })` resolves to a
+  boolean through the one `ConfirmDialog`; the accept label is the verb ("Delete task") in the
+  error color.
 
 ## Component Library
 
 | Generic UI concept | @nuxt/ui Component                         | Import        |
 | ------------------ | ------------------------------------------ | ------------- |
 | App shell          | `UDashboardGroup` / `UDashboardSidebar`    | auto-imported |
-| Page / Navbar      | `UDashboardPanel` / `UDashboardNavbar`     | auto-imported |
+| Page / Header      | `UDashboardPanel` / `AppHeader` (wraps `UDashboardNavbar`) | auto-imported |
 | Command Palette    | `UDashboardSearch` / `UCommandPalette`     | auto-imported |
 | Button             | `UButton`                                  | auto-imported |
 | DataTable          | `UTable`                                   | auto-imported |
-| Modal/Dialog       | `UModal`                                   | auto-imported |
+| Modal/Dialog       | `FormModal` (wraps `UModal`) for forms     | auto-imported |
+| Confirm            | `useConfirm()` + `ConfirmDialog`           | auto-imported |
+| Right drawer       | `UDashboardSidebar side="right"`           | auto-imported |
 | Slideover          | `USlideover`                               | auto-imported |
 | Form (wrapper)     | `UForm`                                    | auto-imported |
 | Form Field         | `UFormField`                               | auto-imported |
