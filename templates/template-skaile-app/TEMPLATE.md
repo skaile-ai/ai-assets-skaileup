@@ -110,7 +110,7 @@ What the scaffold already contains, so the foundation step does **not** re-creat
   (HTTP `/api/actions`, MCP `/mcp`), `app.baseURL` from `SKAILE_PREVIEW_BASE`, dev port 7400
 - `server/db/schema/*` (users, api_tokens, settings, user_preferences, projects, tasks, chat
   threads/messages, notifications), `server/db/migrations/`, `server/db/seed.ts`
-- the dashboard shell, Settings (General, API tokens, Profile), command palette, `<SchemaForm>`
+- the dashboard shell, Settings (General, AI, API tokens, Profile), command palette, `<SchemaForm>`
 - `bin/app.ts` CLI (citty), `Dockerfile`, `compose.yaml` (Postgres 17 + app), `/api/health`
 - `skaile.yaml` declaring the skaileup flow for coding agents
 
@@ -302,9 +302,9 @@ A layer adds entries in its own `app.config.ts` (arrays concatenate, the shell s
 one `nav` entry — never an edit to the layout.
 
 Everything else a layer adds to the shell goes through the runtime hook `app-shell:extend` with
-`{ commands, header, drawers, overlays }` (`app/types/app-shell.d.ts`): palette groups, header
-widgets, right-hand panels rendered after the page, and once-mounted overlays. The chat layer's
-plugin:
+`{ commands, header, drawers, overlays, settingsSections }` (`app/types/app-shell.d.ts`): palette
+groups, header widgets, right-hand panels rendered after the page, once-mounted overlays, and
+settings scopes shown as cards on a core settings page. The chat layer's plugin:
 
 ```typescript
 export default defineNuxtPlugin((nuxtApp) => {
@@ -312,6 +312,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     shell.commands.push({ id: 'assistant', label: 'Assistant', items: [/* Ask the assistant, ⌘J */] })
     shell.header.push(AssistantToggle)  // in every AppHeader's global cluster
     shell.drawers.push(ChatDrawer)      // UDashboardSidebar side="right" after the page
+    shell.settingsSections.push({ route: '/settings/ai', scope: 'assistant', title: 'Assistant' })
   })
 })
 ```
@@ -539,8 +540,8 @@ Operators: `eq ne gt gte lt lte in nin contains startsWith isNull notNull`. The 
 
 ### Bespoke actions: only for non-CRUD verbs
 
-Tokens (hashing), settings, me, notifications, chat, inbox, jobs and the workspace agent keep
-dedicated actions, and their tables are not exposed as entities. A new verb that is not
+Tokens (hashing), settings, AI (`ai.*`), me, notifications, chat, inbox, jobs and the workspace
+agent keep dedicated actions, and their tables are not exposed as entities. A new verb that is not
 create/read/update/delete is one action:
 
 ```typescript
@@ -610,10 +611,23 @@ they authorize nothing.
 **4. Settings are scopes, not env vars.**
 Product settings use `defineSettingsScope(name, z.object({...}).strict(), defaults)` in
 `server/utils/settings.ts`; `settings.get` / `settings.update` and `<SchemaForm>` render and save
-them, so they are reachable over every surface. Env (`runtimeConfig`) is for secrets and infra only.
+them, so they are reachable over every surface. A scope only an action may change declares
+`managedBy` (`settings.update` refuses it). Env (`runtimeConfig`) is for secrets and infra only.
 
 **5. Optional capabilities are layers.**
 `layers/<name>/` with its own `nuxt.config.ts`, `app/`, `server/`, `app.config.ts` nav entries and
 `registerActions(...)` plugin. Core never imports from a layer; deleting the folder must leave a
 working app. PGlite allows one process per data directory: run admin commands through
 `bun run cli actions ...` while the dev server holds it.
+
+**6. Models are roles, chosen in Settings › AI.**
+Which model answers is not a setting of the consumer. A layer declares a *model role*
+(`registerModelRole({ id, kind, label, description, enabled }, { status? })` in its server plugin:
+chat layer `assistant`, workspace-agent layer `agent`) and resolves it per use with
+`resolveRoleModel(id)`; owners assign `<provider>/<model>` per role in the core page
+`/settings/ai`, next to the provider registry and its keys (`.data/ai`, `AI_PROVIDER_<NAME>`), all
+through `ai.*` actions (audience `user`, never MCP or chat tools). An unassigned chat role falls
+back to `NUXT_AI_BASE_URL` / `NUXT_AI_API_KEY` / `NUXT_AI_MODEL`. The `decision`, `image`, `tts`
+and `stt` roles of `@skaile/forge-settings` exist and are switched off. Consumer knobs (the
+assistant's prompt addendum) are their own settings scope, shown on the AI page through
+`shell.settingsSections`.
