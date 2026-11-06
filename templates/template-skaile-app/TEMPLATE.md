@@ -9,7 +9,7 @@ metadata:
     package_manager: 'bun'
     build_command: 'bun run build'
     env_setup_command: 'cp .env.example .env'
-    project_structure: 'app/ · server/db/ · server/utils/actions/ · server/plugins/ · shared/ · bin/ · layers/ · test/'
+    project_structure: 'app/ · server/db/ (schema + model.ts) · server/utils/ (data.ts, actions/) · server/plugins/ · shared/ · bin/ · layers/ · test/'
     lint_command: 'bun run lint'
     type_check_command: 'bun run typecheck'
     seed_format: 'drizzle'
@@ -412,25 +412,110 @@ at runtime, and Drizzle types come from the schema (`typeof table.$inferSelect`)
 generated artefacts are migrations (`bun run db:generate`) and Nuxt's own `.nuxt/` types
 (`postinstall: nuxt prepare`).
 
-A new capability is one action:
+### Data: a new table is schema + `defineEntity`
+
+CRUD is generic. `@skaile/forge-data` derives a model from the Drizzle schema and exposes every
+annotated table through seven fixed actions (`server/utils/data.ts` wires model, backend and
+service and registers them in the core list). A new table is a Drizzle table in
+`server/db/schema/` plus one `defineEntity` in `server/db/model.ts`, added to `dataEntities`;
+no per-table action, no hand-written form fields. Domain rules (defaults, derived values,
+checks) go into hooks; derived counts and sort keys into `computed` (Drizzle `sql`).
 
 ```typescript
-// server/utils/actions/tasks.ts
-export const tasksComplete = defineAppAction({
-  id: 'tasks.complete',            // <area>.<verb>; MCP tool name app_tasks_complete
+// server/db/model.ts
+export const taskEntity = defineEntity(tasks, {
+  name: 'tasks', label: 'Task', labelField: 'title',
+  description: 'Work item inside a project. Complete it by setting status to done.', // read by agents
+  scope: 'tasks',                                   // → tasks:read / tasks:write
+  fields: {
+    id: { readOnly: true }, description: { long: true },
+    createdBy: { readOnly: true }, completedAt: { readOnly: true },
+  },
+  search: ['title', 'description'],
+  defaultSort: [{ field: 'createdAt', order: 'desc' }],
+  computed: {
+    priorityRank: { type: 'integer', hidden: true, sortable: true,
+      sql: t => sql`case ${t.priority} when 'high' then 3 when 'medium' then 2 else 1 end` },
+  },
+  ops: { delete: true },
+  hooks: {
+    async beforeCreate(values, ctx) {
+      values.priority ??= (await getSettings(appSettings, dbOf(ctx))).defaultTaskPriority
+      values.createdBy = actorUserId(ctx.principal as Principal)
+      values.completedAt = values.status === 'done' ? ctx.now.toISOString() : null
+    },
+    beforeUpdate(changes, current, ctx) {
+      if (changes.status === 'done') changes.completedAt ??= current.completedAt ?? ctx.now.toISOString()
+      else if (changes.status !== undefined) changes.completedAt = null
+    },
+  },
+})
+```
+
+Hidden fields stay unreachable through filter, sort, search and expand; `rowPolicy` restricts
+rows per principal; hooks throw `DataError('invalid' | 'not_found' | ...)`, mapped to 400/404/….
+
+| Action           | Kind   | Audience    | MCP tool              |
+| ---------------- | ------ | ----------- | --------------------- |
+| `data.describe`  | query  | user, llm   | `app_data_describe`   |
+| `data.list`      | query  | user, llm   | `app_data_list`       |
+| `data.get`       | query  | user, llm   | `app_data_get`        |
+| `data.aggregate` | query  | user, llm   | `app_data_aggregate`  |
+| `data.create`    | effect | user, llm   | `app_data_create`     |
+| `data.update`    | effect | user, llm   | `app_data_update`     |
+| `data.delete`    | effect | user only   | none: agents ask through `inbox.ask` |
+
+Every call names the `entity`; `values` are validated per entity. Lists return
+`{ items, total, limit, offset }` (`limit` ≤ 100), `expand: ['project']` adds `project: { id, label }`.
+The filter is flat: `where` is AND, `anyOf` an OR of AND groups, fields may be one to-one path deep.
+
+```bash
+bun run cli actions data.list --json '{"entity":"tasks","where":[{"field":"status","op":"ne","value":"done"},{"field":"dueAt","op":"lt","value":"2026-11-06T00:00:00Z"}],"sort":[{"field":"priorityRank","order":"desc"}],"expand":["project"]}'
+```
+
+Operators: `eq ne gt gte lt lte in nin contains startsWith isNull notNull`. The UI goes through
+`useData('tasks').list(q)`; the dashboard counts with `data.aggregate` (`groupBy: 'status'`).
+
+### Bespoke actions: only for non-CRUD verbs
+
+Tokens (hashing), settings, me, notifications, chat, inbox, jobs and the workspace agent keep
+dedicated actions, and their tables are not exposed as entities. A new verb that is not
+create/read/update/delete is one action:
+
+```typescript
+// server/utils/actions/<area>.ts
+export const reportsExport = defineAppAction({
+  id: 'reports.export',            // <area>.<verb>; MCP tool name app_reports_export
   kind: 'effect',                  // query | effect
   destructive: false,              // effects must state it: MCP destructiveHint
   idempotent: true,                // optional: repeating changes nothing (MCP idempotentHint)
   audience: ['user', 'llm'],       // 'llm' exposes it on MCP and as a chat tool; deletes → ['user']
-  description: 'Mark one task as done. Use when the user says a task is finished.',
-  input: z.object({ id: z.string().uuid() }).strict(),
-  authorize: ctx => requireScope(ctx, 'tasks:write'),
-  run: async ({ id }, ctx) => { /* … */ },
+  description: 'Export the project report as CSV. Use when the user asks for a report file.',
+  input: z.object({ projectId: z.string().uuid() }).strict(),
+  authorize: ctx => requireScope(ctx, 'projects:read'),
+  run: async ({ projectId }, ctx) => { /* … */ },
 })
 ```
 
 Add it to the core list in `server/utils/actions/core.ts` (a layer calls `registerActions([...])`
 in its own Nitro plugin) and it appears in the UI client, HTTP, MCP, CLI and chat at once.
+
+### Other workspaces: the `app-data` connector
+
+The in-app workspace agent reaches data through `/mcp`. Other SKAILE workspaces point at a
+running app with the `app-data` connector shipped in `@skaile/forge-data`; it calls
+`/api/actions/data.*` with an API token, so scopes, hooks and row policy stay in the app.
+
+```yaml
+# skaile.yaml
+plugins: ['@skaile/forge-data@^0.2.0']
+connectors:
+  - id: app
+    driver: app-data
+    access: read-write             # or read-only
+    options: { url: 'https://my-app.example.com' }
+    auth: pat:env:APP_TOKEN        # an API token created in the app (tokens.*)
+```
 
 ## Expert Skills
 
