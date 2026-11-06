@@ -258,7 +258,8 @@ more than its user.
 
 `app/layouts/default.vue` is a @nuxt/ui dashboard shell: `UDashboardGroup unit="rem"
 storage="local" storage-key="skaile-app"` holding a collapsible, resizable left
-`UDashboardSidebar` with only the logo and the `UNavigationMenu`, the page, the right-hand drawers
+`UDashboardSidebar` with only the logo, the `UNavigationMenu` and the `UserMenu` in its footer
+(Settings, Profile, API tokens, Appearance, sign out; avatar only when collapsed), the page, the right-hand drawers
 layers add, and `UDashboardSearch` as the ⌘K command palette (navigation and quick-create
 actions). Panel sizes and open state persist in localStorage under `skaile-app-sidebar-<id>`
 (`skaile-app-sidebar-default`, `skaile-app-sidebar-assistant`). `app/app.vue` wraps everything
@@ -268,14 +269,14 @@ in `<UApp>` and mounts the one `ConfirmDialog`.
 `UDashboardNavbar`) in its `UDashboardPanel #header`. `back` is a route and shows the back arrow;
 the `#actions` slot holds the page's create button for its data type ("New task", "New
 project"). The global cluster on the right is the same everywhere: search (⌘K), the
-notifications bell (`NotificationsMenu`: unread chip, latest 10, mark one / mark all read), the
-header widgets layers push (the chat layer's assistant toggle), and the `UserMenu` avatar
-(Settings, Profile, API tokens, Appearance, sign out).
+notifications bell (`NotificationsMenu`: unread chip, latest 10, mark one / mark all read), then
+the header widgets layers push; the chat layer's assistant toggle is the rightmost button.
 
 **Assistant drawer (chat layer).** `ChatDrawer` is a right `UDashboardSidebar id="assistant"
 side="right"`, resizable 20–48rem (default 28rem), with a thread picker (switch, rename, delete),
-"New conversation" and close in its header; ⌘J, the palette or the header toggle open it, and
-on phones it is a slideover. There is no `/chat` page: `/chat/<id>` redirects to
+"New conversation" and the assistant toggle as close button in its header: closed, the toggle is
+the header's rightmost button; open, the drawer shows it in the same top-right spot. ⌘J, the
+palette or the toggle open it, and on phones it is a slideover. There is no `/chat` page: `/chat/<id>` redirects to
 `/?assistant=<id>` and opens the drawer on that thread. Without the chat layer there is no toggle
 and no drawer.
 
@@ -319,7 +320,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 - `app/layouts/default.vue` — the shell; `app/composables/useAppShell.ts` — sorted nav;
   `app/utils/appShell.ts` — injection key for the collected extension
-- `app/components/AppHeader.vue` — the per-page header; `UserMenu.vue`; `NotificationsMenu.vue`
+- `app/components/AppHeader.vue` — the per-page header; `NotificationsMenu.vue`; `UserMenu.vue` (sidebar footer)
 - `app/composables/useQuickCreate.ts` — the create modals the palette and page headers open
 - `app/components/form/FormModal.vue`, `form/SaveHint.vue`, `form/DiscardPrompt.vue`;
   `app/composables/useFormDirty.ts`, `useDiscardGuard.ts`, `useLeaveGuard.ts`;
