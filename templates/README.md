@@ -41,7 +41,7 @@ Adding either is an edit to all eight templates plus this file, not a line in on
 
 Build and scaffold atoms:
 
-| atom | postxl | shadcn | radix | nuxt-ui | primevue | nuxt-min | sk-min | skaile-app |
+| atom | postxl | shadcn | radix | nuxt-ui | primevue | nuxt-min | sk-min | forge-app |
 |---|---|---|---|---|---|---|---|---|
 | `scaffold_command` | `postxl scaffold new <app-name>` | `npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*"` | `npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*"` | `bunx nuxi@latest init . --packageManager bun` | `bunx nuxi@latest init . --packageManager bun` | `bunx nuxi@latest init . --packageManager bun` | `bunx sv@latest create . --template minimal --types ts --no-add-ons` | `bunx giget@latest gh:skaile-ai/skaile-app-template . --install` |
 | `package_manager` | `pnpm` | `pnpm` | `pnpm` | `bun` | `bun` | `bun` | `bun` | `bun` |
@@ -54,7 +54,7 @@ Build and scaffold atoms:
 
 Mockup and Storybook atoms:
 
-| atom | postxl | shadcn | radix | nuxt-ui | primevue | nuxt-min | sk-min | skaile-app |
+| atom | postxl | shadcn | radix | nuxt-ui | primevue | nuxt-min | sk-min | forge-app |
 |---|---|---|---|---|---|---|---|---|
 | `storybook_addon` | `@storybook/react` | `@storybook/nextjs` | `@storybook/nextjs` | `@storybook/nuxt` | `@storybook/vue3` | `@storybook/vue3` | `@storybook/svelte` | `@storybook/nuxt` |
 | `story_format` | `CSF3` | `CSF3` | `CSF3` | `Vue SFC` | `Vue SFC` | `Vue SFC` | `Svelte CSF` | `Vue SFC` |
@@ -72,7 +72,7 @@ What each one means, and what `null` means for it:
 | `scaffold_command` | The command that creates the project in an empty directory | — (never null) |
 | `package_manager` | `pnpm` \| `bun` \| `npm` — the one the recipe's commands assume | — (never null) |
 | `build_command` | Production build, used as the scaffold's smoke test | — (never null) |
-| `env_setup_command` | The command that produces the app's local env file(s) | The scaffolder emits no `.env.example`, so there is nothing to run. The `.env` *contents* are recipe material under `## Scaffold Recipe`. `null` in the seven scaffolder-based stacks; `template-skaile-app` ships `.env.example` and fills it |
+| `env_setup_command` | The command that produces the app's local env file(s) | The scaffolder emits no `.env.example`, so there is nothing to run. The `.env` *contents* are recipe material under `## Scaffold Recipe`. `null` in the seven scaffolder-based stacks; `template-forge-app` ships `.env.example` and fills it |
 | `project_structure` | The source directories the scaffold is expected to produce, as one line | — (never null) |
 | `lint_command` | Lint the whole project | The scaffold recipe installs no linter. Adding one is the project's decision, not the template's |
 | `type_check_command` | Type-check without emitting | — (never null) |
@@ -124,7 +124,7 @@ if it were wanted. The sections read *"if it is installed, consult it"*. Nothing
 | `template-nuxt-primevue` | Nuxt 4 | PrimeVue 4 | Directus + PostgreSQL |
 | `template-nuxt-minimal` | Nuxt 4 | none — Tailwind only | Nitro + Drizzle + SQLite |
 | `template-sveltekit-minimal` | SvelteKit 2 / Svelte 5 | none — Tailwind only | SvelteKit server + Drizzle + SQLite |
-| `template-skaile-app` | Nuxt 4 | `@nuxt/ui` v4 (Reka UI) + `@skaile/brand` | Nitro server actions (HTTP, MCP, CLI) + Drizzle + PGlite / PostgreSQL |
+| `template-forge-app` | Nuxt 4 | `@nuxt/ui` v4 (Reka UI) + `@skaile/brand` | Nitro server actions (HTTP, MCP, CLI) + Drizzle + PGlite / PostgreSQL |
 
 ## `preview_compatibility.md`
 
