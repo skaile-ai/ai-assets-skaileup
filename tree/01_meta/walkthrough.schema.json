@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skaile:schema:walkthrough",
+  "title": "Concept walkthrough — the four concept stages and the user's decision on each",
+  "description": "Written only by skills/skaileup/scripts/walkthrough.py. It stores the user's stage decisions and their sources; which artifacts exist or carry approved: is computed, never stored (tree/01_meta/walkthrough.md § Format). Dates: validate after turning YAML dates into ISO text, per tree/README.md § Frontmatter every markdown artifact carries.",
+  "x-artifact": "_concept/01_meta/walkthrough.yaml",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["stages", "history"],
+  "properties": {
+    "stages": {
+      "type": "object",
+      "description": "One entry per stage, walked in the order frame, look, data, features.",
+      "additionalProperties": false,
+      "required": ["frame", "look", "data", "features"],
+      "properties": {
+        "frame": { "$ref": "#/$defs/stage" },
+        "look": { "$ref": "#/$defs/stage" },
+        "data": { "$ref": "#/$defs/stage" },
+        "features": { "$ref": "#/$defs/stage" }
+      }
+    },
+    "history": {
+      "type": "array",
+      "description": "Append-only log of the user's stage decisions.",
+      "items": { "$ref": "#/$defs/event" }
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "dr": {
+      "type": "string",
+      "description": "Id of a decision record in _concept/10_blueprint/decisions.md.",
+      "pattern": "^DR-[0-9]+$"
+    },
+    "stageName": {
+      "enum": ["frame", "look", "data", "features"]
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["open", "approved", "waived"] },
+        "approved": { "$ref": "#/$defs/date", "description": "The day the user said yes." },
+        "dr": { "$ref": "#/$defs/dr", "description": "The decision record behind a waive." },
+        "source": { "type": "string", "description": "Who decided and when, e.g. \"user, 2026-11-08\"." }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "approved" } }, "required": ["status"] },
+          "then": { "required": ["approved", "source"] }
+        },
+        {
+          "if": { "properties": { "status": { "const": "waived" } }, "required": ["status"] },
+          "then": { "required": ["dr", "source"] }
+        }
+      ]
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["on", "stage", "event"],
+      "properties": {
+        "on": { "$ref": "#/$defs/date" },
+        "stage": { "$ref": "#/$defs/stageName" },
+        "event": { "enum": ["approved", "waived", "reopened"] },
+        "reason": { "type": "string", "description": "The user's words that reopened the stage." },
+        "source": { "type": "string" },
+        "dr": { "$ref": "#/$defs/dr" }
+      }
+    }
+  }
+}

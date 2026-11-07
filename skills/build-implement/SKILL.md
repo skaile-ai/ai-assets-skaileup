@@ -1,7 +1,7 @@
 ---
 name: build-implement
 description: "Use when a planned vertical slice is ready to build — implements it test-first, reviews it against its spec, then commits it and freezes its dossier — or when a frozen slice's outstanding manual check has been run. Triggers on 'build this slice', 'implement the next slice', 'land it', 'I tested it on the phone'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -12,6 +12,7 @@ metadata:
       - { id: features }
       - { id: screens }
       - { id: standards }
+      - { id: walkthrough }
     produces:
       - { id: slice-index, path: "_concept/11_build/slices/<slice_id>/index.md" }
       - { id: acceptance-criteria, path: "_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md" }
@@ -21,6 +22,7 @@ metadata:
       # Hard: `plan.md` is the machine-read plan (feature, blocked_by, rows, criterion ids) the slice is
       # built from; it cannot be derived from the code or asked for field by field, and `build-plan` writes it.
       - { path: "_concept/11_build/slices", gate: hard, min_entries: 1 }
+      - { path: "_concept/01_meta/walkthrough.yaml", gate: soft }
       - { path: "_concept/05_features", gate: soft, min_entries: 1 }
       - { path: "_concept/11_build/acceptance-criteria", gate: soft }
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
@@ -40,11 +42,12 @@ missing one rather than improvising a test loop or a review.
 
 Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Load the slice, build and review it, run the gate, recap, propose the simplification** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (steps 1–6; step 2 holds the OpenAPI/AsyncAPI match). Call the Skill tool with "tdd" for each row. Call the Skill tool with "code-review" once the rows are done. Confirm the seams with the user before the first test.
-2. **Commit atomically** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 7): a user-approved decomposition and an explicit file list per commit.
-3. **Record the slice in the trace** — `tree/11_build/trace.md`, validated against `tree/11_build/trace.schema.json` before writing. Written once the last commit has landed.
-4. **Flip the ledger rows the gate exercised** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, stamped with the last commit's short sha.
-5. **Freeze the dossier** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 8), at `verification: outstanding` while a manual check is unrun.
+1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>` for the feature the slice's `plan.md` names. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
+2. **Load the slice, build and review it, run the gate, recap, propose the simplification** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (steps 1–6; step 2 holds the OpenAPI/AsyncAPI match). Call the Skill tool with "tdd" for each row. Call the Skill tool with "code-review" once the rows are done. Confirm the seams with the user before the first test.
+3. **Commit atomically** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 7): a user-approved decomposition and an explicit file list per commit.
+4. **Record the slice in the trace** — `tree/11_build/trace.md`, validated against `tree/11_build/trace.schema.json` before writing. Written once the last commit has landed.
+5. **Flip the ledger rows the gate exercised** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, stamped with the last commit's short sha.
+6. **Freeze the dossier** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 8), at `verification: outstanding` while a manual check is unrun.
 
 A frozen slice at `outstanding` whose check the user has now run takes only step 9 of the same node.
 

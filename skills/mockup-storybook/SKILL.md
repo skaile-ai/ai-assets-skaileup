@@ -1,7 +1,7 @@
 ---
 name: mockup-storybook
 description: "Use when a screen, an entity editor or a journey should be seen and critiqued as a running mockup, or when the user says 'prototype this screen', 'build the storybook', 'click-dummy', 'try the editor for this entity'. Grows one Vue Storybook package layer by layer: floorplans, screens, entity editors, the whole app, journeys, and a generated page per feature."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -34,8 +34,8 @@ Read `tree/README.md` once per session, then these nodes in order — each holds
 2. **Scaffold, when `package.json` is absent** — `tree/09_mockup/storybook/README.md § Writing it` step 2; the package layout is in `tree/09_mockup/storybook/README.md § Package layout`.
 3. **Bring the brand tokens, the data model and the concept index in** — `tree/09_mockup/storybook/README.md § Writing it` step 3 and `tree/09_mockup/storybook/README.md § Feature pages`; the model is `tree/10_blueprint/datamodel/model.md § Format` and `tree/10_blueprint/datamodel/model.md § Writing it`.
 4. **Write a screen's layout story** — `tree/09_mockup/storybook/README.md § Writing it` step 4, from the screen spec `tree/07_screens/[screen].md § Format`. `experience-screen` calls this step to show a layout before the screen is specified.
-5. **Write the entity stories, proposing the fields an editor needs** — `tree/09_mockup/storybook/README.md § Writing it` step 5, with the states from `tree/09_mockup/storybook/README.md § Globals and state stories` and the proposal move from `tree/09_mockup/storybook/README.md § The data model`.
-6. **Write the App and the journeys** — `tree/09_mockup/storybook/README.md § Writing it` step 6, from the shell `tree/07_screens/shell.md § Format` and the story map `tree/04_journeys/stories.md § Format`.
+5. **Write the entity stories, one set per object-map row, proposing the fields an editor needs** — `tree/09_mockup/storybook/README.md § Writing it` step 5, from the object map `tree/APP-DESIGN.md § Format` (`APP-DESIGN.md § Objects`), with the states from `tree/09_mockup/storybook/README.md § Globals and state stories` and the proposal move from `tree/09_mockup/storybook/README.md § The data model`.
+6. **Write the App, its pending destinations and the journeys** — `tree/09_mockup/storybook/README.md § Writing it` step 6, from the shell `tree/07_screens/shell.md § Format` and the story map `tree/04_journeys/stories.md § Format`; a nav item without a screen spec routes to `/pending/<item-slug>` (the look checkpoint).
 7. **Verify** — `tree/09_mockup/storybook/README.md § Writing it` step 7, and report the story count per layer.
 
 Worked examples for steps 4–6: `skills/mockup-storybook/references/screen-story.md`, `skills/mockup-storybook/references/entity-stories.md`, `skills/mockup-storybook/references/journey-story.md`; the generated feature page: `skills/mockup-storybook/references/feature-page.md`. Notes a stakeholder leaves on the running Storybook are read and applied by `mockup-feedback`.
