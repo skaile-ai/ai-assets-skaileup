@@ -1,5 +1,5 @@
 ---
-name: template-skaile-app
+name: template-forge-app
 description: 'Tech-stack reference for the SKAILE App Template: Nuxt 4 + @nuxt/ui v4 + one server-action catalogue (UI, HTTP, MCP, CLI, chat) + Drizzle on PGlite or Postgres. Resolved by directory name from _concept/10_blueprint/techstack.md.'
 metadata:
   type: template
