@@ -24,8 +24,9 @@ the one copy of that tree, pasted into `tree/README.md` and checked for stalenes
 
 When `demo/` exists (a complete example workspace of a fictional app), `check_demo` holds it to the
 same tree: every file resolves to a node, markdown carries valid frontmatter, every machine file
-validates against its schema, every path a skill produces is in the demo or excused in
-`DEMO_NOT_SHIPPED`, and `demo/skaile.yaml` lists the whole collection. A repo without `demo/` skips it.
+validates against its schema, the data model passes `@skaile/model check`, every path a skill
+produces is in the demo or excused in `DEMO_NOT_SHIPPED`, and `demo/skaile.yaml` lists the whole
+collection. A repo without `demo/` skips it.
 
 About a dozen rules here are copies of facts in forge-concept and @skaile/workspaces.
 Each names its fact id and nothing else: `scripts/host_facts.py` owns the path, the
@@ -52,6 +53,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import subprocess
 import unicodedata
 import sys
@@ -2817,7 +2819,8 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
 # Rule ids: `demo-node` (every demo file resolves to a node of `tree/`), `demo-storybook` (the
 # demo ships no mockup package), `demo-frontmatter` (every demo markdown file carries valid
 # universal frontmatter), `demo-schema-covered` (every `x-artifact` schema has its file in the
-# demo), `demo-schema` (that file validates against the schema), `demo-produces` (every
+# demo), `demo-schema` (that file validates against the schema), `demo-datamodel` (the data model
+# passes `@skaile/model check`), `demo-produces` (every
 # `produces` path of every skill is covered by a demo file or listed in `DEMO_NOT_SHIPPED`),
 # `demo-produces-stale` (a `DEMO_NOT_SHIPPED` key that no skill produces any more),
 # `demo-skaile-yaml` (the demo's `skaile.yaml` has a url source for this collection and lists every skill, flow,
@@ -2863,6 +2866,32 @@ DEMO_NOT_SHIPPED: dict[str, str] = {
     "_concept/11_build/interaction.sarif": "whole-app verdicts and scans; not in the demo",
     "_concept/11_build/design-candidates.md": "whole-app verdicts and scans; not in the demo",
 }
+
+# The data model is the one machine part whose schemas are not in `tree/`: the npm package
+# `@skaile/model` owns them together with the loader that checks them (ADR 0030), so the demo's
+# `model.yaml` and `seed.yaml` are held to `@skaile/model check`, run through `bunx` or `npx`.
+DEMO_DATAMODEL = f"{ARTIFACT_ROOT}/10_blueprint/datamodel"
+MODEL_TOOL = "@skaile/model"
+
+
+class ModelToolError(Exception):
+    """`@skaile/model check` could not be run at all; the message says why."""
+
+
+def model_tool_check(datamodel: Path) -> list[str]:
+    """The issues `bunx @skaile/model check <dir>` (`npx --yes` without Bun) prints for a datamodel
+    directory, one `file:path: message` line each; empty when the check passes."""
+    if shutil.which("bunx"):
+        runner = ["bunx"]
+    elif shutil.which("npx"):
+        runner = ["npx", "--yes"]
+    else:
+        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} check`")
+    r = subprocess.run([*runner, MODEL_TOOL, "check", str(datamodel)], capture_output=True, text=True)
+    if r.returncode == 0:
+        return []
+    issues = [line.strip() for line in (r.stderr or r.stdout).splitlines() if line.strip()]
+    return issues or [f"`{MODEL_TOOL} check` exited {r.returncode} without naming an issue"]
 
 
 def _demo_files(demo: Path) -> list[str]:
@@ -3124,6 +3153,24 @@ def check_demo(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: R
                 "demo-schema",
                 f"does not validate against `{schema_where}` ({'; '.join(problems)}) — the demo would teach "
                 f"a file the skills' own readers reject",
+            )
+
+    # demo-datamodel
+    if any(rel.startswith(DEMO_DATAMODEL + "/") for rel in files):
+        where = f"{DEMO_DIR}/{DEMO_DATAMODEL}/"
+        try:
+            issues = model_tool_check(demo / DEMO_DATAMODEL)
+        except ModelToolError as exc:
+            rep.fail(where, "demo-datamodel", f"cannot be checked — {exc}, so the demo's data model is held to nothing")
+            issues = []
+        for issue in issues:
+            file, sep, rest = issue.partition(":")
+            named = bool(sep) and "/" not in file and file.endswith((".yaml", ".yml"))
+            rep.fail(
+                f"{where}{file}" if named else where,
+                "demo-datamodel",
+                f"fails `{MODEL_TOOL} check` ({rest.strip() if named else issue}) — the demo would teach a "
+                f"model the skills' own checker rejects",
             )
 
     # demo-produces / demo-produces-stale

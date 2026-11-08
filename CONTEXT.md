@@ -170,10 +170,18 @@ Still design, not code.
 
 **Datamodel**:
 The *designed* schema — entities, fields, relations and seed scenarios in
-`10_blueprint/datamodel/`. A description of data, not any running store. It is authored as
-TypeScript (`model.ts`, `seed.ts`); `model.json`, `model.dbml` and `seed.json` are generated
-from it and are what everything outside the mockup reads.
+`10_blueprint/datamodel/`. A description of data, not any running store. It is authored as two
+YAML files, `model.yaml` (the model) and `seed.yaml` (its seed scenarios, each row checked
+against the model); nothing is generated from them into the concept, and every reader takes
+them through the **model checker**.
 _Avoid_: schema, data layer
+
+**Model checker**:
+The npm package `@skaile/model`, the one tool that reads the **datamodel**: it owns the format of
+its two files, checks them, prints them normalized for every other reader, gives the mockup its
+row types and migrates a project's datamodel from before the YAML files. A datamodel it rejects
+is not done.
+_Avoid_: generator, DSL, validator script
 
 **Database**:
 The *materialised* datamodel — migrations applied and seed scenarios loaded in the built
@@ -266,7 +274,8 @@ _Avoid_: writer, author, maintainer
 An entry a skill that does not own an artifact appends to it, marked as proposed with who
 proposed it, when, and the evidence or the user's words behind it. It adds and never edits a
 confirmed entry. The owner reviews it with the user and either promotes it or rejects it into
-the **decision record**.
+the **decision record**. In the **datamodel** it is an entity or field carrying a `proposed`
+key, promoted by deleting the key.
 _Avoid_: suggestion, draft entry, TODO
 
 **Answer**:

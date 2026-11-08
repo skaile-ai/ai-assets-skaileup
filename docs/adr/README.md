@@ -7,7 +7,8 @@ where this variant departs from it; 0018–0023 are the app-design clean slate; 
 glossary by kind; 0025 adds archetypes as an optional declared default; 0026 replaces the
 mockup surfaces with one Vue Storybook package and authors the data model in TypeScript; 0027
 adds eight agents (a lead and seven delegates) and gives decision records a level and a kind; 0028 adds generated feature pages to the mockup;
-0029 walks the concept top-down in four stages the build skills gate on.
+0029 walks the concept top-down in four stages the build skills gate on; 0030 replaces the TypeScript data model with two YAML
+files checked by the package `@skaile/model`.
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -41,3 +42,4 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; expectations first; decision records carry a level and a kind, patterns included; a similarity check before the grill; ideas in the roster; amends 0022 |
 | [0028](./0028-feature-pages-are-generated-from-the-specs.md) | Feature pages are generated from the specs: one `Features/<featureset>/<feature>` story per spec, screen stories bind via `screenDocs`, triage routes feature notes to the spec; amends 0026 |
 | [0029](./0029-the-concept-is-walked-top-down.md) | The concept is walked top-down: four stages (frame, look, data, features) each ending on the user's yes, one state file `_concept/01_meta/walkthrough.yaml`, the four build skills gate on it, no silent completion, `depth` thins and never removes; amends 0019 and 0023 for those four skills |
+| [0030](./0030-the-data-model-is-two-yaml-files-checked-by-skaile-model.md) | The data model is two authored YAML files, `model.yaml` and `seed.yaml`, nothing generated in `_concept/`; `@skaile/model` owns their schemas (an exception to 0016), loader, checks and CLI; layout is editor state; supersedes 0026 D2 |
