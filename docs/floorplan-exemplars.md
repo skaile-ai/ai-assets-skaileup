@@ -4,6 +4,8 @@ Where each floorplan in `rulebook/floorplans/` was seen in real code. A maintain
 
 **Using it.** Paths are relative to `~/devBench/` and written as plain inline code, because the projects sit outside this repo. To add a floorplan, find the nearest reference here (or in the image-tool families below), open the file, and copy the geometry — regions, what folds at 640 px, what becomes an overlay — not the styling. Then write the floorplan's `README.md` and `preview.html` per `rulebook/README.md § Adding or retiring`, and add its row to the table. A row marked **no strong exemplar** was derived from rules and from adjacent references; say so in the floorplan's README rather than implying field proof.
 
+**Outside `~/devBench/`.** For the rows marked **no strong exemplar**, [layout-pattern-sources.md](./layout-pattern-sources.md) lists external design-system floorplans, galleries of shipped apps and runnable templates.
+
 | floorplan id | reference implementation(s) | what to look at |
 |---|---|---|
 | `shell-sidebar` | `NUXT-TEMPLATE/layers/ui/dashboard/app/layouts/default.vue`; `NUXT-TEMPLATE/layers/ui/dashboard/app/components/layouts/AppSidebar.vue`; `perzentilen-rechner/_concept/07_screens/shell.md` | collapsible and resizable sidebar persisted per browser, panel with navbar and body, right settings slideover; the shell spec for how a project wrote the same frame down |
