@@ -477,7 +477,7 @@ create policy "Users can view own posts" on posts
 
 ## Seed
 
-`seed_format: sql`. Seed scripts are generated from `_concept/10_blueprint/datamodel/seed.json` — one file per scenario plus one entry point that takes the scenario name as its argument. The scenario set and the rules every scenario obeys are stack-neutral and live in `tree/10_blueprint/datamodel/seed.md`; what is stack-specific is the layout and the run command below.
+`seed_format: sql`. Seed scripts are generated from `_concept/10_blueprint/datamodel/seed.yaml`, read as JSON through `bunx @skaile/model json _concept/10_blueprint/datamodel` (its `seed.scenarios`) — one file per scenario plus one entry point that takes the scenario name as its argument. The scenario set and the rules every scenario obeys are stack-neutral and live in `tree/10_blueprint/datamodel/seed.md`; what is stack-specific is the layout and the run command below.
 
 | Path | What it is |
 |---|---|

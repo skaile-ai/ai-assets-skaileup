@@ -444,7 +444,7 @@ request awaits `dbReady()` first. Only the core owns the schema; layers add no t
 
 ## Seed
 
-`seed_format: drizzle`. Seed code is generated from `_concept/10_blueprint/datamodel/seed.json` —
+`seed_format: drizzle`. Seed code is generated from `_concept/10_blueprint/datamodel/seed.yaml`, read as JSON through `bunx @skaile/model json _concept/10_blueprint/datamodel` (its `seed.scenarios`) —
 one module per scenario plus one entry point that takes the scenario name. The scenario set and
 the rules every scenario obeys are stack-neutral and live in `tree/10_blueprint/datamodel/seed.md`;
 what is stack-specific is the layout and the run command below.

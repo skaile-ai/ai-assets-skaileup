@@ -88,7 +88,7 @@ cite a node for every `_concept/` format they read.
   followed by ` § ` and a `##`/`###` heading of that node — one citation per line, as in the
   example above; `scripts/check.py` resolves both the file and the heading.
 - **`hard` is for a machine-read format the skill can neither derive nor ask for** — the
-  data model `model.json` for `build-database`, `APP-DESIGN.md` for `quality-interaction`
+  data model `model.yaml` for `build-database`, `APP-DESIGN.md` for `quality-interaction`
   ([ADR 0019](./adr/0019-scoped-fact-resolution.md)). Every other input is `soft`, and the
   route step that reads it is a derive-or-ask step, so a missing input is never a stop.
   `scripts/check.py` rule `hard-gate-has-producer` fails a hard gate that no skill produces

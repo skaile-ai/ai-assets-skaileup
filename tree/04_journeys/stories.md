@@ -74,7 +74,7 @@ Variants: `WHILE <state>, THE SYSTEM SHALL <response>` (state-driven); `IF <unwa
 | `_concept/04_journeys/stories.yaml` | story-level criteria, state transitions, guard conditions |
 | `_concept/07_screens/<screen>.md` | one criterion per state — default, loading, error, empty, success — and per user action |
 | `_concept/06_behaviors/<featureset>.md` | `requires` guards become the WHEN clause, postconditions the SHALL |
-| `_concept/10_blueprint/datamodel/seed.json` | the concrete data a criterion is stated against |
+| `_concept/10_blueprint/datamodel/seed.yaml` | the concrete data a criterion is stated against |
 
 Each criterion is one observable behaviour, specific ("the user sees 'Invalid email or password'", not "an error"), stated against concrete values (seed names, exact routes, status codes), independently verifiable, and every error state a screen lists is one.
 

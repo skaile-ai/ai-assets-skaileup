@@ -76,7 +76,7 @@ not a question to ask twice.
    it everywhere: a separate test database (state survives inspection when a test fails), a
    transaction rolled back per test (fastest, and broken by any code that opens a transaction
    of its own), or truncate-and-reseed between tests (works anywhere, slowest). Feed every
-   case from a named scenario in `_concept/10_blueprint/datamodel/seed.json`
+   case from a named scenario in `_concept/10_blueprint/datamodel/seed.yaml` (read through `bunx @skaile/model json _concept/10_blueprint/datamodel`)
    (`tree/10_blueprint/datamodel/seed.md`); invented fixtures drift from the shape the app
    actually stores. Cover per endpoint: the happy path with a database assertion behind it,
    the field constraints the model declares, the auth rejection, and the cross-feature flows

@@ -584,7 +584,7 @@ Inject `PrismaService` into NestJS services. Never instantiate `PrismaClient` di
 
 ## Seed
 
-`seed_format: prisma`. Seed scripts are generated from `_concept/10_blueprint/datamodel/seed.json` — one file per scenario plus one entry point that takes the scenario name as its argument. The scenario set and the rules every scenario obeys are stack-neutral and live in `tree/10_blueprint/datamodel/seed.md`; what is stack-specific is the layout and the run command below.
+`seed_format: prisma`. Seed scripts are generated from `_concept/10_blueprint/datamodel/seed.yaml`, read as JSON through `bunx @skaile/model json _concept/10_blueprint/datamodel` (its `seed.scenarios`) — one file per scenario plus one entry point that takes the scenario name as its argument. The scenario set and the rules every scenario obeys are stack-neutral and live in `tree/10_blueprint/datamodel/seed.md`; what is stack-specific is the layout and the run command below.
 
 | Path | What it is |
 |---|---|
@@ -647,7 +647,7 @@ tree is clean, because generation rewrites files across both apps and an unrelat
 half-finished edit becomes indistinguishable from generator output.
 
 If the project-root `postxl-schema.json` disagrees with
-`_concept/10_blueprint/datamodel/model.json`, the concept is authoritative — unless the
+`_concept/10_blueprint/datamodel/model.yaml` (read through `bunx @skaile/model json`), the concept is authoritative — unless the
 divergence was deliberate, which only the user knows. Ask before overwriting either side, then
 diff the two schemas and report new models, modified fields and removed entities before running
 anything.

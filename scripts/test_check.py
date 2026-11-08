@@ -2906,13 +2906,23 @@ def test_verifier_expires_when_the_host_file_is_gone(tmp_path):
 
 # --- skills/ops-review/scripts/check_concept.py: the mechanical half of ops-review ---------
 
-def load_check_concept():
+def fake_datamodel_json(datamodel: Path) -> dict:
+    """Stands in for `bunx @skaile/model json`: entity ids are the keys of `entities` in model.yaml."""
+    raw = yaml.safe_load((datamodel / "model.yaml").read_text(encoding="utf-8")) or {}
+    entities = raw.get("entities")
+    model = {"entities": [{"id": k} for k in entities]} if isinstance(entities, dict) else {}
+    return {"model": model, "seed": None}
+
+
+def load_check_concept(fake_model_tool: bool = True):
     import importlib.util
 
     script = Path(__file__).resolve().parent.parent / "skills/ops-review/scripts/check_concept.py"
     spec = importlib.util.spec_from_file_location("check_concept", script)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    if fake_model_tool:
+        module.datamodel_json = fake_datamodel_json
     return module, script
 
 
@@ -2926,7 +2936,7 @@ def concept_tree(root: Path) -> Path:
             "version: '1.0'\nlast_updated: 2026-09-05\njourneys:\n  - id: login\n    steps:\n"
             "      - action: sign in\n        acceptance:\n          - { id: AC-login-01, ears: 'WHEN x, THE SYSTEM SHALL y' }\n"
         ),
-        "10_blueprint/datamodel/model.json": '{"version": "1.0", "entities": [{"id": "User", "display_name": "User", "fields": []}], "relationships": []}',
+        "10_blueprint/datamodel/model.yaml": "version: 1\nentities:\n  User:\n    fields:\n      name: string\n",
         "05_features/auth/login.md": (
             "---\npriority: must-have\npermissions: {member: [view]}\nscreens:\n  - path: 07_screens/login.md\n"
             "data_entities: [User]\nlast_updated: 2026-09-05\n---\n\n## Criteria\n\n- AC-login-01\n"
@@ -3072,32 +3082,39 @@ def test_check_concept_reports_the_retired_machine_files_as_unowned(tmp_path, re
     assert rel in problems[0] and "unowned" in problems[0]
 
 
-def test_check_concept_names_the_entity_ids_of_model_json():
-    """`data_entities[]` cites `entities[].id`; a file without an `entities[]` list names nothing
+def test_check_concept_names_the_entity_ids_of_the_model():
+    """`data_entities[]` cites `entities[].id`; a model without an `entities[]` list names nothing
     and is `None`, not an empty set that would fail every cited name."""
     module, _script = load_check_concept()
-    model = {"version": "1.0", "entities": [{"id": "User"}, {"id": "Order"}], "relationships": []}
+    model = {"version": 1, "entities": [{"id": "User"}, {"id": "Order"}], "relationships": []}
     assert module.model_names(model) == {"User", "Order"}
     assert module.model_names({"entities": []}) == set()
-    assert module.model_names({"models": [{"name": "User"}]}) is None
     assert module.model_names({"entities": {"id": "User"}}) is None
     assert module.model_names([]) is None
 
 
-def test_check_concept_reports_a_model_without_entities_once(tmp_path):
-    """The old `models` / `name` shape is one finding on `model.json`, not one per cited name."""
+def test_check_concept_reports_a_model_the_tool_rejects_once(tmp_path):
+    """A failing `@skaile/model json` is one finding on `model.yaml`, not one per cited name."""
     module, script = load_check_concept()
+
+    def failing(_datamodel):
+        raise module.ModelToolError("`@skaile/model json` failed: unknown enum")
+
+    module.datamodel_json = failing
     concept = concept_tree(tmp_path)
-    (concept / "10_blueprint/datamodel/model.json").write_text(
-        '{"models": [{"name": "User"}, {"name": "Order"}]}', encoding="utf-8"
-    )
     feature = concept / "05_features/auth/login.md"
     feature.write_text(feature.read_text().replace("[User]", "[User, Order]"), encoding="utf-8")
     problems = module.check(concept, script)
     assert problems == [
-        "_concept/10_blueprint/datamodel/model.json: no `entities[]` list "
-        "(format: tree/10_blueprint/datamodel/model.md)"
+        "_concept/10_blueprint/datamodel/model.yaml: `@skaile/model json` failed: unknown enum"
     ], problems
+
+
+def test_check_concept_says_when_no_runner_is_on_path(tmp_path, monkeypatch):
+    module, _script = load_check_concept(fake_model_tool=False)
+    monkeypatch.setattr(module.shutil, "which", lambda _name: None)
+    with pytest.raises(module.ModelToolError, match="neither `bunx`"):
+        module.datamodel_json(tmp_path)
 
 
 def test_check_concept_reads_the_real_trees_first_level_entries():
@@ -3370,29 +3387,22 @@ def test_check_concept_limit_is_a_parameter(tmp_path):
     assert len(problems) == 1 and "6 days old (limit 5)" in problems[0], problems
 
 
-def test_check_concept_reports_a_stale_proposal_once_from_model_ts_and_not_from_the_generated_json(tmp_path):
+def test_check_concept_reports_a_stale_proposal_in_model_yaml_in_flow_and_block_style(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    datamodel = concept / "10_blueprint/datamodel"
-    (datamodel / "model.json").write_text(
-        '{"version": "1.0", "entities": [{"id": "User", "display_name": "User", "fields": [\n'
-        '{"id": "user_nick", "status": "proposed", "proposed_by": "mockup-feedback", "proposed_on": "2026-09-01", "source": "x"}]}],'
-        ' "relationships": []}',
+    (concept / "10_blueprint/datamodel/model.yaml").write_text(
+        "version: 1\nentities:\n  User:\n    fields:\n"
+        "      nick: { type: string, proposed: { by: mockup-feedback, on: 2026-09-01, source: x } }\n"
+        "      mail:\n        type: string\n        proposed:\n          by: mockup-feedback\n"
+        "          on: '2026-09-02'\n          source: y\n"
+        "      fresh: { type: string, proposed: { by: mockup-feedback, on: 2026-10-15, source: z } }\n",
         encoding="utf-8",
     )
     problems = module.check(concept, script, today=_today())
-    assert len(problems) == 1 and problems[0].startswith("_concept/10_blueprint/datamodel/model.json:2:"), problems
-    assert "architecture-datamodel" in problems[0], problems
-    (datamodel / "model.ts").write_text(
-        "export const User = entity({\n  glossary: 'user',\n  fields: {\n"
-        "    nick: f.string({ proposed: { by: 'mockup-feedback', on: '2026-09-01', source: 'x' } }),\n"
-        "    mail: f.string({\n      proposed: {\n        by: 'mockup-feedback',\n        on: '2026-10-15',\n        source: 'y',\n      },\n    }),\n"
-        "  },\n})\n",
-        encoding="utf-8",
-    )
-    problems = module.check(concept, script, today=_today())
-    assert len(problems) == 1 and problems[0].startswith("_concept/10_blueprint/datamodel/model.ts:4:"), problems
-    assert "2026-09-01" in problems[0] and "architecture-datamodel" in problems[0], problems
+    assert len(problems) == 2, problems
+    assert problems[0].startswith("_concept/10_blueprint/datamodel/model.yaml:5:"), problems
+    assert problems[1].startswith("_concept/10_blueprint/datamodel/model.yaml:8:"), problems
+    assert "2026-09-02" in problems[1] and "architecture-datamodel" in problems[1], problems
 
 
 def test_check_concept_reports_stale_proposals_in_frontmatter_scope_and_app_design(tmp_path):
@@ -3933,15 +3943,92 @@ def test_demo_file_that_fails_its_schema(tmp_path):
 
 def test_demo_json_file_that_is_not_json(tmp_path):
     root = write_demo_repo(tmp_path)
-    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: model, path: "_concept/10_blueprint/datamodel/model.json" }\n')
-    write_schema(root, good_schema("model", **{"x-artifact": "_concept/10_blueprint/datamodel/model.json"}), "10_blueprint/datamodel/model")
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n      - { id: tokens, path: "_concept/03_brand/brand.tokens.json" }\n')
+    write_schema(root, good_schema("brand.tokens", **{"x-artifact": "_concept/03_brand/brand.tokens.json"}), "03_brand/brand.tokens")
+    add_node(root, "03_brand/README.md", ["_concept/03_brand/"], summary="the brand")
+    add_node(root, "03_brand/brand.tokens.md", "_concept/03_brand/brand.tokens.json", summary="the tokens")
+    sync_owners(root)
+    cite_schema(root, "03_brand/brand.tokens", "03_brand/brand.tokens.md")
+    demo_put(root, "_concept/03_brand/brand.tokens.json", "{ not json")
+    only(root, "demo/_concept/03_brand/brand.tokens.json: is not parseable")
+
+
+# A stand-in for `bunx` / `npx`: records its arguments, then fails the check when the seed names
+# the field `titel`, the way `@skaile/model check` reports a seed row against the model.
+FAKE_MODEL_RUNNER = (
+    "#!/bin/sh\n"
+    'echo "$0 $*" >> "$(dirname "$0")/calls.log"\n'
+    'dir="$(eval echo \\${$#})"\n'
+    'if grep -q titel "$dir/seed.yaml"; then\n'
+    '  echo \'seed.yaml:$.scenarios.populated.data.task[0].titel: Task has no field "titel" (line 9)\' >&2\n'
+    "  exit 1\n"
+    "fi\n"
+    'echo "ok: model.yaml 1 entities"\n'
+)
+
+
+def fake_model_runner(tmp_path: Path, monkeypatch, *names: str) -> Path:
+    """A `bin/` holding the fake runner under each name, and nothing else on PATH."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    for name in names:
+        exe = bin_dir / name
+        exe.write_text(FAKE_MODEL_RUNNER, encoding="utf-8")
+        exe.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{bin_dir}:/usr/bin:/bin")
+    return bin_dir
+
+
+def demo_datamodel_repo(root: Path, seed: str = "version: 1\nscenarios: {}\n") -> Path:
+    """A demo whose data model is the two YAML files, documented by the datamodel directory node."""
+    write_demo_repo(root)
     add_node(root, "10_blueprint/README.md", ["_concept/10_blueprint/"], summary="the blueprint")
     add_node(root, "10_blueprint/datamodel/README.md", ["_concept/10_blueprint/datamodel/"], summary="the data model")
-    add_node(root, "10_blueprint/datamodel/model.md", "_concept/10_blueprint/datamodel/model.json", summary="the model")
     sync_owners(root)
-    cite_schema(root, "10_blueprint/datamodel/model", "10_blueprint/datamodel/model.md")
-    demo_put(root, "_concept/10_blueprint/datamodel/model.json", "{ not json")
-    only(root, "demo/_concept/10_blueprint/datamodel/model.json: is not parseable")
+    demo_put(root, "_concept/10_blueprint/datamodel/model.yaml", "version: 1\nentities:\n  Task:\n    fields:\n      title: string\n")
+    demo_put(root, "_concept/10_blueprint/datamodel/seed.yaml", seed)
+    return root
+
+
+def test_demo_datamodel_that_passes_the_model_tool(tmp_path, monkeypatch):
+    bin_dir = fake_model_runner(tmp_path, monkeypatch, "bunx", "npx")
+    root = demo_datamodel_repo(tmp_path / "repo")
+    assert errors(root) == []
+    call = (bin_dir / "calls.log").read_text(encoding="utf-8").split()
+    assert call[0].endswith("/bunx") and call[1:3] == ["@skaile/model", "check"], call
+    assert call[3] == str(root / "demo/_concept/10_blueprint/datamodel"), call
+
+
+def test_demo_datamodel_runs_npx_without_bun(tmp_path, monkeypatch):
+    bin_dir = fake_model_runner(tmp_path, monkeypatch, "npx")
+    root = demo_datamodel_repo(tmp_path / "repo")
+    assert errors(root) == []
+    call = (bin_dir / "calls.log").read_text(encoding="utf-8").split()
+    assert call[0].endswith("/npx") and call[1:4] == ["--yes", "@skaile/model", "check"], call
+
+
+def test_demo_datamodel_the_model_tool_rejects(tmp_path, monkeypatch):
+    fake_model_runner(tmp_path, monkeypatch, "bunx")
+    root = demo_datamodel_repo(tmp_path / "repo", "version: 1\nscenarios:\n  populated:\n    data:\n      task:\n        - { id: t1, titel: x }\n")
+    errs = errors(root)
+    assert len(errs) == 1, errs
+    assert errs[0].startswith("demo/_concept/10_blueprint/datamodel/seed.yaml: fails `@skaile/model check` "), errs
+    assert '$.scenarios.populated.data.task[0].titel: Task has no field "titel" (line 9)' in errs[0]
+    assert "demo-datamodel" in errs[0]
+
+
+def test_demo_datamodel_without_a_runner_on_path(tmp_path, monkeypatch):
+    fake_model_runner(tmp_path, monkeypatch)
+    monkeypatch.setattr(check.shutil, "which", lambda _name: None)
+    root = demo_datamodel_repo(tmp_path / "repo")
+    only(root, "demo/_concept/10_blueprint/datamodel/: cannot be checked — neither `bunx` (Bun) nor `npx` (Node)")
+
+
+def test_demo_without_a_datamodel_runs_no_model_tool(tmp_path, monkeypatch):
+    bin_dir = fake_model_runner(tmp_path, monkeypatch, "bunx")
+    root = write_demo_repo(tmp_path / "repo")
+    assert errors(root) == []
+    assert not (bin_dir / "calls.log").exists()
 
 
 def test_demo_misses_a_path_a_skill_produces(tmp_path):

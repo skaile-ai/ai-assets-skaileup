@@ -121,7 +121,7 @@ def navigation_model(root: Path) -> str:
 
 
 def model_settled(root: Path) -> str:
-    text = read_text(root / "_concept/10_blueprint/datamodel/model.ts")
+    text = read_text(root / "_concept/10_blueprint/datamodel/model.yaml")
     if text is None:
         return MISSING
     return MARKERS if "proposed:" in text else OK
@@ -207,10 +207,10 @@ STAGES: list[Stage] = [
     Stage(
         "data",
         (
-            Check("`_concept/10_blueprint/datamodel/model.ts` and `model.json` exist",
+            Check("`_concept/10_blueprint/datamodel/model.yaml` and `seed.yaml` exist",
                   "architecture-datamodel",
-                  exists("_concept/10_blueprint/datamodel/model.ts", "_concept/10_blueprint/datamodel/model.json")),
-            Check("`model.ts` contains no `proposed:`", "architecture-datamodel", model_settled),
+                  exists("_concept/10_blueprint/datamodel/model.yaml", "_concept/10_blueprint/datamodel/seed.yaml")),
+            Check("`model.yaml` contains no `proposed:`", "architecture-datamodel", model_settled),
             Check("`APP-DESIGN.md` `## Objects` has ≥1 `OBJ-` row and neither `## Objects` nor "
                   "`## Information hierarchy` contains `[open Q` or `(proposed by`",
                   "experience-interaction", object_map),
