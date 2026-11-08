@@ -43,7 +43,7 @@ Build and scaffold atoms:
 
 | atom | postxl | shadcn | radix | nuxt-ui | primevue | nuxt-min | sk-min | forge-app |
 |---|---|---|---|---|---|---|---|---|
-| `scaffold_command` | `postxl scaffold new <app-name>` | `npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*"` | `npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*"` | `bunx nuxi@latest init . --packageManager bun` | `bunx nuxi@latest init . --packageManager bun` | `bunx nuxi@latest init . --packageManager bun` | `bunx sv@latest create . --template minimal --types ts --no-add-ons` | `bunx giget@latest gh:skaile-ai/skaile-app-template . --install` |
+| `scaffold_command` | `postxl scaffold new <app-name>` | `npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*"` | `npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*"` | `bunx nuxi@latest init . --packageManager bun` | `bunx nuxi@latest init . --packageManager bun` | `bunx nuxi@latest init . --packageManager bun` | `bunx sv@latest create . --template minimal --types ts --no-add-ons` | `GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/forge-app-template . --install` |
 | `package_manager` | `pnpm` | `pnpm` | `pnpm` | `bun` | `bun` | `bun` | `bun` | `bun` |
 | `build_command` | `pnpm run build` | `pnpm build` | `pnpm build` | `bun run build` | `bun run build` | `bun run build` | `bun run build` | `bun run build` |
 | `env_setup_command` | `null` | `null` | `null` | `null` | `null` | `null` | `null` | `cp .env.example .env` |

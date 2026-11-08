@@ -1,11 +1,11 @@
 ---
 name: template-forge-app
-description: 'Tech-stack reference for the SKAILE App Template: Nuxt 4 + @nuxt/ui v4 + one server-action catalogue (UI, HTTP, MCP, CLI, chat) + Drizzle on PGlite or Postgres. Resolved by directory name from _concept/10_blueprint/techstack.md.'
+description: 'Tech-stack reference for the Forge App Template: Nuxt 4 + @nuxt/ui v4 + one server-action catalogue (UI, HTTP, MCP, CLI, chat) + Drizzle on PGlite or Postgres. Resolved by directory name from _concept/10_blueprint/techstack.md.'
 metadata:
   type: template
   version: '0.1.0'
   atoms:
-    scaffold_command: 'GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/skaile-app-template . --install'
+    scaffold_command: 'GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/forge-app-template . --install'
     package_manager: 'bun'
     build_command: 'bun run build'
     env_setup_command: 'cp .env.example .env'
@@ -41,7 +41,7 @@ metadata:
     - 'data-driven'
 ---
 
-# Tech Stack: SKAILE App Template (Nuxt 4 + @nuxt/ui + server actions + Drizzle)
+# Tech Stack: Forge App Template (Nuxt 4 + @nuxt/ui + server actions + Drizzle)
 
 ## Overview
 
@@ -92,7 +92,7 @@ omp, the workspace agent) must be able to do everything a person can, with the s
 #    (the template is a runnable app, not a generator: no prompts).
 #    The repository is private: giget reads a GitHub token from GIGET_AUTH,
 #    e.g. GIGET_AUTH=$(gh auth token).
-GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/skaile-app-template . --install
+GIGET_AUTH=$(gh auth token) bunx giget@latest gh:skaile-ai/forge-app-template . --install
 
 # 2. Optional: an env file (nothing is required locally; see .env.example)
 cp .env.example .env
