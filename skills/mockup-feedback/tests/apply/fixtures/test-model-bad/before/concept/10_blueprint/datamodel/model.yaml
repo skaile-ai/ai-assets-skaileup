@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://cdn.jsdelivr.net/npm/@skaile/model@1/schema/model.schema.json
+version: 1
+entities:
+  User:
+    glossary: user
+    display: User
+    label_field: display_name
+    fields:
+      display_name: { type: string, max_length: 80 }
+      email: { type: email, unique: true }
+  Task:
+    glossary: task
+    display: Task
+    label_field: title
+    fields:
+      title: { type: string, max_length: 120 }
+      status: { type: enum, values: { Draft: Initial state, Published: Live and visible } }
+      due_date: { type: date, required: false }
+      owner_id: { type: m2o, to: User, on_delete: cascade }

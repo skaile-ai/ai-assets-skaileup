@@ -5,12 +5,12 @@
     {
       "id": "p-k3m9x2-1-model",
       "inboxId": "k3m9x2-1",
-      "file": "10_blueprint/datamodel/model.ts",
-      "section": "ts:entity/Task/fields",
+      "file": "10_blueprint/datamodel/model.yaml",
+      "section": "yaml:entity/Task/fields",
       "kind": "model-proposal",
       "category": null,
       "body": "The editor needs an estimate field.",
-      "diff": "@@ ts:entity/Task/fields @@\n+    estimate: f.decimal({ required: false, proposed: { by: 'mockup-feedback', on: '2026-10-23', source: 'k3m9x2-1' } }),\n"
+      "diff": "@@ yaml:entity/Task/fields @@\n+      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }\n"
     },
     {
       "id": "p-k3m9x2-2-content",
@@ -20,7 +20,7 @@
       "kind": "content",
       "category": "change",
       "body": "Put the filter bar above the list, not beside it.",
-      "diff": "@@ ts:model/entities @@\n-- filter-bar: beside the task list\n+- filter-bar: above the task list\n",
+      "diff": "@@ yaml:model/entities @@\n-- filter-bar: beside the task list\n+- filter-bar: above the task list\n",
       "resolves": [
         {
           "id": "k3m9x2-2",

@@ -19,14 +19,14 @@ echo "--- Test 1: a good patch set (model proposal + screen patch + needs_manual
 python3 "$VALIDATE" "$FX/triage.json" "$FX/patches.json" "$FX/review.md"
 
 echo ""
-echo "--- Test 2: missing resolves, a ts: anchor on a content patch, a blank resolution and a dropped note fail ---"
+echo "--- Test 2: missing resolves, a yaml: anchor on a content patch, a blank resolution and a dropped note fail ---"
 set +e
 OUT=$(python3 "$VALIDATE" "$FX/triage.json" "$FX/patches-bad.json" "$FX/review.md")
 EC=$?
 set -e
 echo "$OUT"
 [ "$EC" -eq 2 ] || { echo "FAIL: expected exit 2, got $EC"; exit 1; }
-for needle in "missing resolves" "ts: anchors belong to model-proposal" "resolution must be non-empty" "p7q1z8-1"; do
+for needle in "missing resolves" "yaml: anchors belong to model-proposal" "resolution must be non-empty" "p7q1z8-1"; do
     echo "$OUT" | grep -q "$needle" || { echo "FAIL: expected a finding mentioning '$needle'"; exit 1; }
 done
 echo "OK: all four violations reported"

@@ -19,7 +19,7 @@ import json
 import sys
 from pathlib import Path
 
-MODEL_FILE = "10_blueprint/datamodel/model.ts"
+MODEL_FILE = "10_blueprint/datamodel/model.yaml"
 
 
 class Report:

@@ -5,3 +5,4 @@ auto-imports.d.ts
 components.d.ts
 src/generated
 src/features
+.skaile-model/

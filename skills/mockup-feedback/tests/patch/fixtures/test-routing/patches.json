@@ -5,17 +5,17 @@
     {
       "id": "p-k3m9x2-1-model",
       "inboxId": "k3m9x2-1",
-      "file": "10_blueprint/datamodel/model.ts",
-      "section": "ts:entity/Task/fields",
+      "file": "10_blueprint/datamodel/model.yaml",
+      "section": "yaml:entity/Task/fields",
       "kind": "model-proposal",
       "category": null,
       "body": "The editor needs an estimate field.",
-      "diff": "@@ ts:entity/Task/fields @@\n+    estimate: f.decimal({ required: false, proposed: { by: 'mockup-feedback', on: '2026-10-23', source: 'k3m9x2-1' } }),\n",
+      "diff": "@@ yaml:entity/Task/fields @@\n+      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }\n",
       "resolves": [
         {
           "id": "k3m9x2-1",
           "status": "implemented",
-          "resolution": "Task.estimate proposed in model.ts."
+          "resolution": "Task.estimate proposed in model.yaml."
         }
       ]
     },
