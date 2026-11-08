@@ -42,11 +42,11 @@ compare_triage() {
     echo "OK: $round triage matches expected"
 }
 
-echo "--- Test 1: entity note -> model.ts + entity, screen note -> its spec, journey note -> stories.yaml, feature-page note -> its feature spec ---"
+echo "--- Test 1: entity note -> model.yaml + entity, screen note -> its spec, journey note -> stories.yaml, feature-page note -> its feature spec ---"
 compare_triage "test-routing" "$CONCEPT_ROOT"
 
 echo ""
-echo "--- Test 2: without model.ts the entity note is unresolved ---"
+echo "--- Test 2: without model.yaml the entity note is unresolved ---"
 NO_MODEL="$TMP_OUT/concept-no-model"
 cp -r "$CONCEPT_ROOT" "$NO_MODEL"
 rm -rf "$NO_MODEL/10_blueprint"

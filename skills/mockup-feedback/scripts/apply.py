@@ -2,7 +2,7 @@
 """apply.py — mockup-feedback-apply deterministic patcher.
 
 Parses the review.md checklist, applies the approved patches to _concept/ files
-(best-effort), regenerates the data-model files when model.ts changed, resolves
+(best-effort), checks model.yaml with `@skaile/model` when it changed, resolves
 the answered notes in the annotation inbox, appends the devlog, writes
 applied/<round-id>.json and creates one git commit.
 
@@ -13,10 +13,10 @@ Anchors a diff header may carry (`@@ <anchor> @@`):
   ## Heading             markdown section; removes match a consecutive block, no removes append
   frontmatter:elements   removes/adds inside the file's YAML frontmatter
   before:## Heading      adds inserted right above that heading line
-  ts:entity/<Id>/fields  adds only: field lines inserted before the closing `  },` of that
-                         entity's `fields: {` block in model.ts
-  ts:model/entities      adds only: one new `export const <Id> = entity({ … })` block, inserted
-                         above `export const model = defineModel({`, plus its `    <Id>,` line
+  yaml:entity/<Id>/fields  adds only: one-line field entries `      <name>: { … }`, inserted
+                           after the last line of that entity's `    fields:` block in model.yaml
+  yaml:model/entities      adds only: one new entity block starting `  <Id>:`, inserted after
+                           the last line of the top-level `entities:` block in model.yaml
 
 Exit codes:
   0  success (at least one patch applied)
@@ -29,15 +29,15 @@ import datetime
 import json
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 DATAMODEL_DIR = "10_blueprint/datamodel"
-MODEL_FILE = f"{DATAMODEL_DIR}/model.ts"
-GENERATED = ("model.json", "model.dbml", "seed.json")
+MODEL_FILE = f"{DATAMODEL_DIR}/model.yaml"
 PACKAGE_DIR = "09_mockup/storybook"
-PROPOSAL_BY = "by: 'mockup-feedback'"
+PROPOSAL_BY = "by: mockup-feedback"
 
 
 # ── Diff application ──────────────────────────────────────────────────────────
@@ -59,9 +59,9 @@ def apply_diff(file_content: str, diff_text: str) -> tuple[str, str | None]:
         return _patch_frontmatter(file_content, removes, adds)
     if anchor.startswith("before:"):
         return _insert_before(file_content, anchor[len("before:"):].strip(), removes, adds)
-    if anchor.startswith("ts:entity/") and anchor.endswith("/fields"):
-        return _add_entity_fields(file_content, anchor[len("ts:entity/"):-len("/fields")], removes, adds)
-    if anchor == "ts:model/entities":
+    if anchor.startswith("yaml:entity/") and anchor.endswith("/fields"):
+        return _add_entity_fields(file_content, anchor[len("yaml:entity/"):-len("/fields")], removes, adds)
+    if anchor == "yaml:model/entities":
         return _add_entity(file_content, removes, adds)
     return _patch_section(file_content, anchor, removes, adds)
 
@@ -158,19 +158,47 @@ def _insert_before(content: str, heading: str, removes: list[str], adds: list[st
     return content, f"heading not found: {heading!r}"
 
 
-# ── model.ts anchors (layout fixed by tree/10_blueprint/datamodel/model.md) ───
+# ── model.yaml anchors (format fixed by tree/10_blueprint/datamodel/model.md) ─
 
-def _block_close(lines: list[str], start: int, closer: str) -> int | None:
+def _indent(line: str) -> int:
+    return len(line) - len(line.lstrip(" "))
+
+
+def _block_end(lines: list[str], start: int, indent: int) -> int:
+    """Index after the last content line of the block opened at `start`: every following line
+    indented deeper than `indent`, blank and comment lines included only when content follows."""
+    end = start + 1
     for i in range(start + 1, len(lines)):
-        if lines[i].rstrip("\n") == closer:
-            return i
-    return None
+        text = lines[i].strip()
+        if not text or text.startswith("#"):
+            continue
+        if _indent(lines[i]) <= indent:
+            break
+        end = i + 1
+    return end
+
+
+def _entities_block(lines: list[str]) -> int | None:
+    return next((i for i, l in enumerate(lines) if l.rstrip() == "entities:"), None)
+
+
+def _entity_at(lines: list[str], ents_at: int, entity: str) -> int | None:
+    end = _block_end(lines, ents_at, 0)
+    return next((i for i in range(ents_at + 1, end) if re.match(rf"^  {re.escape(entity)}:\s*(#.*)?$", lines[i])), None)
 
 
 def _check_proposal(text: str, what: str) -> str | None:
     if "proposed: {" not in text or PROPOSAL_BY not in text:
-        return f"{what} lacks the proposal marker `proposed: {{ {PROPOSAL_BY}, on: '<date>', source: '<inboxId>' }}`"
+        return f"{what} lacks the proposal marker `proposed: {{ {PROPOSAL_BY}, on: <date>, source: <inboxId> }}`"
     return None
+
+
+def _with_newline(lines: list[str], at: int) -> list[str]:
+    """`lines[:at]` with a final newline, so text inserted after the file's last line stays apart."""
+    head = lines[:at]
+    if head and not head[-1].endswith("\n"):
+        head[-1] += "\n"
+    return head
 
 
 def _add_entity_fields(content: str, entity: str, removes: list[str], adds: list[str]) -> tuple[str, str | None]:
@@ -179,33 +207,33 @@ def _add_entity_fields(content: str, entity: str, removes: list[str], adds: list
     if not adds:
         return content, "model proposal has no add lines"
     for line in adds:
-        if not re.match(r"^    \w+: f\.\w+\(.*\),$", line):
-            return content, f"field line does not match `    <name>: f.<type>(...),`: {line!r}"
+        if not re.match(r"^      \w+: \{.*\}$", line):
+            return content, f"field line does not match `      <name>: {{ type: …, proposed: {{ … }} }}`: {line!r}"
         err = _check_proposal(line, "field line")
         if err:
             return content, err
 
     lines = content.splitlines(keepends=True)
-    start = next((i for i, l in enumerate(lines) if l.rstrip("\n") == f"export const {entity} = entity({{"), None)
+    ents_at = _entities_block(lines)
+    if ents_at is None:
+        return content, "top-level `entities:` block not found in model.yaml"
+    start = _entity_at(lines, ents_at, entity)
     if start is None:
-        return content, f"entity not found in model.ts: {entity}"
-    end = _block_close(lines, start, "})")
-    fields_at = next((i for i in range(start + 1, end if end is not None else len(lines))
-                      if lines[i].rstrip("\n") == "  fields: {"), None)
+        return content, f"entity not found in model.yaml: {entity}"
+    end = _block_end(lines, start, 2)
+    fields_at = next((i for i in range(start + 1, end) if lines[i].rstrip() == "    fields:"), None)
     if fields_at is None:
-        return content, f"`  fields: {{` block not found in entity {entity}"
-    close = _block_close(lines, fields_at, "  },")
-    if close is None:
-        return content, f"closing `  }},` of fields block not found in entity {entity}"
+        return content, f"block `    fields:` not found in entity {entity}"
+    close = _block_end(lines, fields_at, 4)
 
-    existing = {m.group(1) for l in lines[fields_at + 1:close] if (m := re.match(r"^    (\w+):", l))}
+    existing = {m.group(1) for l in lines[fields_at + 1:close] if (m := re.match(r"^      (\w+):", l))}
     for line in adds:
-        name = re.match(r"^    (\w+):", line).group(1)  # type: ignore[union-attr]
+        name = re.match(r"^      (\w+):", line).group(1)  # type: ignore[union-attr]
         if name in existing:
             return content, f"field already exists in {entity}: {name}"
         existing.add(name)
 
-    new_lines = lines[:close] + [a + "\n" for a in adds] + lines[close:]
+    new_lines = _with_newline(lines, close) + [a + "\n" for a in adds] + lines[close:]
     return "".join(new_lines), None
 
 
@@ -217,34 +245,25 @@ def _add_entity(content: str, removes: list[str], adds: list[str]) -> tuple[str,
         block.pop()
     if not block:
         return content, "model proposal has no add lines"
-    m = re.match(r"^export const (\w+) = entity\(\{$", block[0])
-    if not m or block[-1] != "})":
-        return content, "entity block must start `export const <Id> = entity({` and end `})`"
+    m = re.match(r"^  (\w+):$", block[0])
+    if not m or any(l.strip() and _indent(l) <= 2 for l in block[1:]):
+        return content, "entity block must start `  <Id>:` and indent every further line deeper"
     entity = m.group(1)
+    if not any(re.match(r"^    proposed: \{", l) for l in block[1:]):
+        return content, "entity block lacks its entity-level `    proposed: { … }` line"
     err = _check_proposal("\n".join(block), "entity block")
     if err:
         return content, err
 
     lines = content.splitlines(keepends=True)
-    if any(l.startswith(f"export const {entity} =") for l in lines):
-        return content, f"entity already exists in model.ts: {entity}"
-    model_at = next((i for i, l in enumerate(lines) if l.rstrip("\n") == "export const model = defineModel({"), None)
-    if model_at is None:
-        return content, "`export const model = defineModel({` not found in model.ts"
-    ents_at = next((i for i in range(model_at + 1, len(lines)) if lines[i].rstrip("\n") == "  entities: {"), None)
+    ents_at = _entities_block(lines)
     if ents_at is None:
-        return content, "`  entities: {` block not found in model.ts"
-    ents_close = _block_close(lines, ents_at, "  },")
-    if ents_close is None:
-        return content, "closing `  },` of entities block not found in model.ts"
+        return content, "top-level `entities:` block not found in model.yaml"
+    if _entity_at(lines, ents_at, entity) is not None:
+        return content, f"entity already exists in model.yaml: {entity}"
+    close = _block_end(lines, ents_at, 0)
 
-    new_lines = (
-        lines[:model_at]
-        + [b + "\n" for b in block] + ["\n"]
-        + lines[model_at:ents_close]
-        + [f"    {entity},\n"]
-        + lines[ents_close:]
-    )
+    new_lines = _with_newline(lines, close) + [b + "\n" for b in block] + lines[close:]
     return "".join(new_lines), None
 
 
@@ -254,31 +273,42 @@ def parse_checked_ids(review_md: str) -> set[str]:
     return set(re.findall(r"- \[x\] \*\*([^*]+)\*\*", review_md))
 
 
-# ── Data-model regeneration ───────────────────────────────────────────────────
+# ── Data-model check ─────────────────────────────────────────────────────────
 
-def _tsx_command(package_dir: Path) -> list[str]:
-    local = package_dir / "node_modules" / ".bin" / "tsx"
-    return [str(local.resolve())] if local.is_file() else ["npx", "--yes", "tsx"]
+MODEL_TOOL = "@skaile/model@1"
+MODEL_TOOL_TIMEOUT = 180
 
 
-def run_gen(datamodel_dir: Path, package_dir: Path) -> str | None:
-    """Run gen.ts in the datamodel directory. Returns an error text, or None on success."""
-    if not (datamodel_dir / "gen.ts").is_file():
-        return (
-            f"gen.ts not found in {datamodel_dir}; copy it from "
-            "skills/architecture-datamodel/references/dsl/"
-        )
+class ModelToolError(Exception):
+    """`@skaile/model` could not be run at all; the message says why."""
+
+
+def run_model_tool(command: str, datamodel: Path) -> subprocess.CompletedProcess:
+    """`bunx @skaile/model@1 <command> <dir>` (`npx --yes` without Bun), run to the end; raises
+    `ModelToolError` when neither runner is on PATH or the run outlasts `MODEL_TOOL_TIMEOUT` seconds."""
+    if shutil.which("bunx"):
+        runner = ["bunx"]
+    elif shutil.which("npx"):
+        runner = ["npx", "--yes"]
+    else:
+        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} {command}`")
     try:
-        result = subprocess.run(
-            _tsx_command(package_dir) + ["gen.ts"],
-            cwd=datamodel_dir, capture_output=True, text=True, timeout=180,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return f"gen.ts could not run: {exc}"
+        return subprocess.run([*runner, MODEL_TOOL, command, str(datamodel)],
+                              capture_output=True, text=True, timeout=MODEL_TOOL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise ModelToolError(f"`{MODEL_TOOL} {command}` did not finish within {MODEL_TOOL_TIMEOUT} s") from None
+
+
+def run_check(datamodel_dir: Path) -> str | None:
+    """Run `@skaile/model@1 check` on the datamodel directory. Returns its output on failure, else None."""
+    try:
+        result = run_model_tool("check", datamodel_dir)
+    except ModelToolError as exc:
+        return f"{MODEL_TOOL} check could not run: {exc}"
     if result.returncode == 0:
         return None
-    tail = [l.strip() for l in (result.stderr or result.stdout).splitlines() if l.strip()][-3:]
-    return " | ".join(tail)[:400] or f"gen.ts exited {result.returncode}"
+    out = "\n".join(l.rstrip() for l in (result.stdout + result.stderr).splitlines() if l.strip())
+    return out or f"{MODEL_TOOL} check exited {result.returncode}"
 
 
 # ── Note resolution ───────────────────────────────────────────────────────────
@@ -530,7 +560,7 @@ def main() -> int:
     if dry_run:
         print(
             f"DRY-RUN: {n_applied} would be applied, {n_failed} would fail "
-            "(gen.ts and note resolution not run)"
+            "(model check and note resolution not run)"
         )
         return 0
 
@@ -553,30 +583,29 @@ def main() -> int:
             else:
                 path.write_bytes(data)
 
-    # model.ts first: gen.ts must accept it, otherwise the proposals fail and the file is left as it was.
+    # model.yaml first: `@skaile/model check` must accept it, otherwise the proposals fail and the
+    # file is restored byte for byte.
     datamodel_dir = concept_root / DATAMODEL_DIR
-    package_dir   = concept_root / PACKAGE_DIR
     model_ids = {i["patchId"] for i in applied_items if i["status"] == "applied" and i["target"]["file"] == MODEL_FILE}
-    gen_ran = False
+    checked_model = False
     if model_ids:
-        for name in GENERATED:
-            track(datamodel_dir / name)
         write_text(concept_root / MODEL_FILE, file_contents[MODEL_FILE])  # type: ignore[arg-type]
-        gen_err = run_gen(datamodel_dir, package_dir)
-        if gen_err:
+        check_err = run_check(datamodel_dir)
+        if check_err:
             restore_all()
             before.clear()
             file_contents[MODEL_FILE] = originals[MODEL_FILE]
+            print(f"@skaile/model check rejected model.yaml; restored it:\n{check_err}", file=sys.stderr)
             for item in applied_items:
                 if item["patchId"] in model_ids:
                     item["status"] = "failed"
-                    item["error"] = f"gen.ts rejected model.ts: {gen_err}"
+                    item["error"] = f"@skaile/model check rejected model.yaml: {check_err}"
                     n_applied -= 1
                     n_failed += 1
             if n_applied == 0:
                 return short_circuit()
         else:
-            gen_ran = True
+            checked_model = True
 
     # Remaining edited files
     files_with_applied = {
@@ -629,8 +658,8 @@ def main() -> int:
         subprocess.run(["git", "commit", "-q", "--amend", "--no-edit"], check=False, capture_output=True)
 
     print(f"Applied {n_applied} patch(es), {n_failed} failed; round {rid!r} committed")
-    if gen_ran:
-        print("gen.ts regenerated model.json, model.dbml and seed.json")
+    if checked_model:
+        print("@skaile/model check accepted model.yaml")
     for r in sorted(resolutions, key=lambda r: r["id"]):
         if r["state"] == "resolved":
             print(f"RESOLVED note {r['id']}: {r['status']}")

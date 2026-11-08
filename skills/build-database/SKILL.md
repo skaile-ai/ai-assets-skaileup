@@ -13,9 +13,9 @@ metadata:
     produces: []
   prerequisites:
     files:
-      # Hard: `model.json` is the machine-read model this skill translates; it cannot be derived from
-      # `model.dbml` (a generated render) or asked for field by field, and `architecture-datamodel` generates it from `model.ts`.
-      - { path: "_concept/10_blueprint/datamodel/model.json", gate: hard }
+      # Hard: `model.yaml` is the model this skill translates; it cannot be asked for field by field,
+      # and `architecture-datamodel` writes it.
+      - { path: "_concept/10_blueprint/datamodel/model.yaml", gate: hard }
       - { path: "_concept/10_blueprint/techstack.md", gate: soft }
       - { path: "_concept/01_meta/walkthrough.yaml", gate: soft }
 ---
@@ -31,17 +31,17 @@ Without `techstack.md` the target is derived or asked (step 3), so the only hard
 ## Steps
 
 1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate build`. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
-2. **Cross-check the model's two halves.** `model.json` is present (the gate); `model.dbml`, when present, is authoritative for structure and `model.json` for relationship and enum metadata. Name every disagreement to the user rather than preferring one — a divergence is somebody's hand edit, and the wrong pick propagates into schema and seeds at once.
+2. **Load the model through its checker.** From the project root run `bunx @skaile/model@1 json _concept/10_blueprint/datamodel` (`npx @skaile/model@1 json …` without Bun): it validates `model.yaml` and `seed.yaml` and prints the normalized `{ model, seed }` every later step reads. A non-zero exit stops this skill with the printed issues and names `architecture-datamodel` to fix them — a model the checker rejects propagates into schema and seeds at once.
 3. **Resolve the target from the template, deriving or asking when the stack is unrecorded** (`tree/README.md § How a skill runs`, rule 1). `_concept/10_blueprint/techstack.md` names `tech_stack_skill`; without it read `_concept/02_grounding/findings/stack.md` (`concept-reverse` scoped `stack` fills it from the code), then ask for the template in one batch with whatever else is open. That template's `## Migration / ORM` gives the schema file, its location and the migrate commands, and its `seed_format` atom (`prisma`, `drizzle` or `sql`) selects the layout described in its `## Seed`. Where a `prog-expert-<orm>` skill is installed, consult it for idiomatic patterns; nothing here waits on one.
 4. **Translate every semantic type** through the translation table in `tree/10_blueprint/datamodel/README.md § Materialising the database`; a semantic type left in the output fails at the migration tool.
-5. **Apply the conventions the model leaves out**, from the same section: expand `standard_fields`, snake_case the columns, take `on_delete` from `model.json` (SET NULL where unset), give every `m2m` its junction table with the two foreign keys, and generate `o2m` from its `m2o`.
+5. **Apply the conventions the model leaves out**, from the same section: expand `standard_fields`, snake_case the columns, take `on_delete` from the model (SET NULL where unset), give every `m2m` its junction table with the two foreign keys, and generate `o2m` from its `m2o`.
 6. **Validate the schema six ways, then migrate** — the six checks in the same section. Run the migrate command, confirming first when the target is anything but a local development database.
 7. **Build the insert order before writing a seed.** Walk the relationships into a dependency graph: entities with no foreign keys first, then each entity after everything it points at. The reverse is the cleanup order; deleting parents first leaves dangling references that make a re-seed fail on its second run.
-8. **Generate the seeds at the paths `## Seed` names.** One file per scenario in `_concept/10_blueprint/datamodel/seed.json` (`tree/10_blueprint/datamodel/seed.md`) — `empty`, `single_user`, `populated`, `edge_cases`, and any the model added — plus one entry point that takes the scenario name and defaults to `populated`. The entry point clears in reverse dependency order, then inserts. A file per scenario keeps scenarios switchable mid-session.
+8. **Generate the seeds at the paths `## Seed` names.** One file per scenario of the loaded seed (`_concept/10_blueprint/datamodel/seed.yaml`, `tree/10_blueprint/datamodel/seed.md`) — `empty`, `single_user`, `populated`, `edge_cases`, and any the model added — plus one entry point that takes the scenario name and defaults to `populated`. The entry point clears in reverse dependency order, then inserts. A file per scenario keeps scenarios switchable mid-session.
 9. **Validate the seeds six ways.**
-   - Every id from `seed.json` is preserved, since the relations resolve through it.
+   - Every id from `seed.yaml` is preserved, since the relations resolve through it.
    - Every foreign key value exists as a primary key.
-   - Every enum value matches `model.json`.
+   - Every enum value matches `model.yaml`.
    - Required fields are populated in every scenario.
    - `empty` actively clears all data rather than inserting nothing.
    - `edge_cases` reaches the database intact — special characters, hundred-character strings and null optionals are its point, and a column that silently truncates them is the finding.

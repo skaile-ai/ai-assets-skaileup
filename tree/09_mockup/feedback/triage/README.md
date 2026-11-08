@@ -56,7 +56,7 @@ An instance, showing the value shapes the schema leaves open (`triagedAt` is ISO
   "roundId": "r-20261020T090000Z",
   "triagedAt": "2026-10-20T09:00:00Z",
   "groups": [
-    { "file": "10_blueprint/datamodel/model.ts", "entity": "Task", "items": ["k3m9x2-1"] },
+    { "file": "10_blueprint/datamodel/model.yaml", "entity": "Task", "items": ["k3m9x2-1"] },
     { "file": "07_screens/inbox.md", "items": ["k3m9x2-2"] }
   ],
   "unresolved": [
@@ -69,7 +69,7 @@ An instance, showing the value shapes the schema leaves open (`triagedAt` is ISO
 
 Run `python skills/mockup-feedback/scripts/triage.py <concept-root> <output-dir> [--inbox <dir>] [--round <id>]` (exit 0 even with unresolved notes; exit 1 on bad arguments or a missing inbox directory). It reads every `items/*.json` of the inbox whose `status` is `open`; the default inbox is `.data/annotations` beside `_concept/`. A note is routed by the first rule that matches, reading the source files the note names (the `target.ref` first, then the `vueComponents` chain from the innermost component out) and the story id in `url` (its `id=` query parameter):
 
-- A source file under `src/entities/<Entity>/` → `10_blueprint/datamodel/model.ts` with `entity: <Entity>`; the file must exist and declare `export const <Entity>`, else the note is unresolved (`file not found` or `entity not found`).
+- A source file under `src/entities/<Entity>/` → `10_blueprint/datamodel/model.yaml` with `entity: <Entity>`; the file must exist and declare `<Entity>` under its `entities:` key, else the note is unresolved (`file not found` or `entity not found`).
 - A source file `src/screens/<screen>.vue` → `07_screens/<screen>.md`, which must exist on disk.
 - A story id `entities-<entity>-…` or `screens-<screen>--…` routes the same way when no source file names one, for a note whose chain ended in a library component.
 - A story id starting `journeys-` → the whole of `04_journeys/stories.yaml`, where journeys live (the id identifies a journey within that file); the file must exist.
@@ -81,4 +81,4 @@ Every other source file is unresolved too (`no concept file for <path>`). The ro
 
 ## Checks
 
-`python skills/mockup-feedback/scripts/validate_triage.py <triage-json> [<inbox-dir>]` exits 0: every open note of the inbox appears in exactly one of `groups` or `unresolved`, none twice, group `file` values are non-empty strings, a group on `model.ts` names its `entity`, unresolved entries carry `inboxId` and `reason`.
+`python skills/mockup-feedback/scripts/validate_triage.py <triage-json> [<inbox-dir>]` exits 0: every open note of the inbox appears in exactly one of `groups` or `unresolved`, none twice, group `file` values are non-empty strings, a group on `model.yaml` names its `entity`, unresolved entries carry `inboxId` and `reason`.

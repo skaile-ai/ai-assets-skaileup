@@ -19,8 +19,7 @@ One screen, `inbox`, laid out in the `master-detail` floorplan. Both files ran g
 // Screen `inbox` (_concept/07_screens/inbox.md): floorplan master-detail. The task list is the
 // master, the editor of the selected task the detail, the toolbar holds the one create action.
 import { ref } from 'vue'
-import type { Task } from '@model/model'
-import type { Infer } from '@model/skaile-model'
+import type { TaskRow as Task } from '@model/types'
 import Screen from '../components/Screen.vue'
 import { useInShell } from '../components/shell-context'
 import MasterDetail from '../floorplans/master-detail.vue'
@@ -28,7 +27,7 @@ import TaskEditor from '../entities/Task/TaskEditor.vue'
 import TaskRow from '../entities/Task/TaskRow.vue'
 import { useStore } from '../model/store'
 
-const tasks = useStore().rows<Infer<typeof Task>>('task')
+const tasks = useStore().rows<Task>('task')
 const inShell = useInShell()
 const selected = ref<string>()
 </script>

@@ -1,6 +1,6 @@
 # 0016 — Published formats where one exists
 
-**Status:** accepted
+**Status:** accepted; amended by [0030](0030-the-data-model-is-two-yaml-files-checked-by-skaile-model.md) (the data model's schemas are owned by `@skaile/model`, not `tree/`)
 
 Supersedes the `11_build/interaction.yaml` path in [ADR 0015](0015-interaction-decisions-live-in-app-design.md);
 the rest of that record stands.

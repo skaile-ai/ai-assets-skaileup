@@ -3,7 +3,7 @@
   "triagedAt": "__VOLATILE__",
   "groups": [
     {
-      "file": "10_blueprint/datamodel/model.ts",
+      "file": "10_blueprint/datamodel/model.yaml",
       "entity": "Task",
       "items": [
         "k3m9x2-1",

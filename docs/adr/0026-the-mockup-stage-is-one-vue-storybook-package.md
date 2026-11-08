@@ -1,6 +1,6 @@
 # 0026 — The mockup stage is one Vue Storybook package
 
-**Status:** accepted
+**Status:** accepted; D2 superseded by [0030](0030-the-data-model-is-two-yaml-files-checked-by-skaile-model.md) (the data model is two YAML files checked by `@skaile/model`)
 
 Replaces the four mockup surfaces of `_concept/09_mockup/` — early prototypes, the walkthrough
 site, the template-resolved Storybook and the annotation overlay — with one package.

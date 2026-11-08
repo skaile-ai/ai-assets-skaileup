@@ -28,7 +28,7 @@ from urllib.parse import parse_qs, urlparse
 
 SCREEN_DIR = "07_screens"
 JOURNEYS_FILE = "04_journeys/stories.yaml"
-DATAMODEL_FILE = "10_blueprint/datamodel/model.ts"
+DATAMODEL_FILE = "10_blueprint/datamodel/model.yaml"
 FEATURES_DIR = "05_features"
 
 # A source path inside a component chain or a target ref. The ref is
@@ -65,12 +65,25 @@ def story_id(item: dict) -> str:
         return ""
 
 
-def entity_exists(concept_root: Path, entity: str) -> bool:
+def entity_ids(concept_root: Path) -> list[str]:
+    """The entity ids of model.yaml: the two-space keys of its top-level `entities:` block."""
     model = concept_root / DATAMODEL_FILE
     if not model.is_file():
-        return False
-    pattern = re.compile(rf"^export const {re.escape(entity)}\s*=", re.MULTILINE)
-    return bool(pattern.search(model.read_text(encoding="utf-8")))
+        return []
+    ids: list[str] = []
+    inside = False
+    for line in model.read_text(encoding="utf-8").splitlines():
+        if line and not line[0].isspace() and not line.startswith("#"):
+            inside = line.rstrip() == "entities:"
+            continue
+        m = re.match(r"^  (\w+):", line)
+        if inside and m:
+            ids.append(m.group(1))
+    return ids
+
+
+def entity_exists(concept_root: Path, entity: str) -> bool:
+    return entity in entity_ids(concept_root)
 
 
 def route_entity(concept_root: Path, entity: str) -> tuple[dict | None, str | None]:
@@ -114,11 +127,7 @@ def entity_from_story(concept_root: Path, sid: str) -> str | None:
     if not prefix.startswith("entities-"):
         return None
     rest = prefix[len("entities-"):]
-    model = concept_root / DATAMODEL_FILE
-    if not model.is_file():
-        return None
-    ids = re.findall(r"^export const (\w+)\s*=\s*entity\(", model.read_text(encoding="utf-8"), re.MULTILINE)
-    for entity in sorted(ids, key=lambda e: -len(slug(e))):
+    for entity in sorted(entity_ids(concept_root), key=lambda e: -len(slug(e))):
         if rest == slug(entity) or rest.startswith(slug(entity) + "-"):
             return entity
     return None

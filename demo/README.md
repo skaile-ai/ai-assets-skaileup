@@ -19,10 +19,10 @@ slice dossiers, `release.yaml`, `interaction.sarif`) are left out too; `DEMO_NOT
 `scripts/check.py` lists each with its reason.
 
 **Keeping it true:** `python scripts/check.py` validates the demo. Every file maps to a node of
-`tree/`, markdown frontmatter follows `tree/frontmatter.schema.json`, and `model.json`,
-`seed.json`, `scope.yaml`, `stories.yaml`, `trace.yaml` and the brand tokens validate against
-their schemas. A change to a node's format, a skill's `produces` or a schema updates this folder
-in the same PR.
+`tree/`, markdown frontmatter follows `tree/frontmatter.schema.json`, `scope.yaml`,
+`stories.yaml`, `trace.yaml` and the brand tokens validate against their schemas, and the data
+model's `model.yaml` and `seed.yaml` pass `bunx @skaile/model@1 check`. A change to a node's
+format, a skill's `produces` or a schema updates this folder in the same PR.
 
 **Used by skaile-forge:** its dev launcher copies everything here except `README.md` and
 `skaile.yaml` into its dev workspace and writes its own `skaile.yaml`, whose source is the

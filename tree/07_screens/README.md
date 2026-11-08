@@ -58,7 +58,7 @@ elements:                            # OPTIONAL — top-level frontmatter key
 | `states` | list of enum strings | yes | non-empty; each value is in the `states` enum below; should include `default` |
 | `provisional` | bool | no | `true` while the id is a first guess nobody has confirmed; `false` or absent once confirmed |
 | `describes` | string | no | one-line prose describing the element's role on the screen |
-| `data_entity` | string | no | the id of a `model.ts` entity this element renders or edits |
+| `data_entity` | string | no | the id of a `model.yaml` entity this element renders or edits |
 | `region` | string | no | a region id from the `§ Regions` of the screen's `floorplan:`; the screen story places the element inside that region of the floorplan, and an element without it goes to the floorplan's main region. In `shell.md` it is a region id of the shell frame |
 | `acceptance_refs` | list of strings | no | each entry `<feature-path>#<criterion-id>`, mirroring `story_refs:` |
 | `target` | string | no | `screen_id` plus optional `#<element-id>`; valid only on `link`, `button`, `list`, `image`, `custom`; resolves against the screens that exist under `07_screens/`, else the story renders the element inert |
@@ -85,7 +85,7 @@ Where a field below is declared, the story renders it as real content; fabricati
 - **`items[]` entry shape by kind** — `nav`: `{id?, label, target, icon?}`, every entry needs a destination; `tabs`: `{id?, label, target?}`, an entry without `target` is an inert in-page tab; `list`: `{label, target?}` or a bare string as shorthand for `{label: <string>}` with no target.
 - **`table`.** `columns` is the header row. `sample_rows`, when present, renders verbatim. `columns` alone renders the header plus one skeleton row; there is no content to fabricate, so none is invented. `row_target` makes every row's first cell navigate.
 - **`input` + `options`** renders a select.
-- **Authored, never invented.** `sample_rows` and `items` content is fixture data sourced from `seed.ts` scenarios or the screen's own `### Template Data`; the story renders exactly what is declared.
+- **Authored, never invented.** `sample_rows` and `items` content is fixture data sourced from `seed.yaml` scenarios or the screen's own `### Template Data`; the story renders exactly what is declared.
 
 ### ID rules
 

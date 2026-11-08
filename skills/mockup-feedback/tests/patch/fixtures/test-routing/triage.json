@@ -3,7 +3,7 @@
   "triagedAt": "2026-10-23T10:00:00Z",
   "groups": [
     {
-      "file": "10_blueprint/datamodel/model.ts",
+      "file": "10_blueprint/datamodel/model.yaml",
       "entity": "Task",
       "items": [
         "k3m9x2-1"

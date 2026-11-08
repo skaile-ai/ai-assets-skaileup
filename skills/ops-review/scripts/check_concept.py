@@ -14,7 +14,9 @@ Stdlib + PyYAML only. Checks:
   3. cross-links     a feature's `screens:` and a screen's `implements:` resolve, in both directions
                      (a screen's `implements:` entry is a path or a `{path, status: proposed, …}`
                      mapping; either one satisfies the link)
-  4. data_entities   every name is an entity `id` in `10_blueprint/datamodel/model.json` (skipped without one)
+  4. data_entities   every name is an entity `id` of `10_blueprint/datamodel/model.yaml` (skipped without one),
+                     read through `bunx @skaile/model@1 json` (or `npx`); a model the tool rejects, or a
+                     machine with neither runner, is one line on `model.yaml`
   5. criterion ids   every `AC-…` a feature spec or ledger cites follows the id grammar and is
                      defined by `04_journeys/stories.yaml` (skipped without one), scoped to the
                      feature's own slug, or scoped to another feature whose spec carries it
@@ -22,10 +24,9 @@ Stdlib + PyYAML only. Checks:
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
                      `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
   7. stale proposals every `proposed_on:` date (or `proposed by <skill>, <date>` marker, or the
-                     `proposed: { on: '<date>' }` marker of `model.ts`) in an artifact that is older than
-                     `--stale-days` (default 14) is reported with the owner skill that promotes or rejects
-                     it; once `10_blueprint/datamodel/model.ts` exists the generated `model.json` and
-                     `seed.json` are not scanned, so a proposal is reported once
+                     `proposed: { on: <date> }` key of `model.yaml`, flow or block style) in an artifact
+                     that is older than `--stale-days` (default 14) is reported with the owner skill that
+                     promotes or rejects it
   8. open questions  every `## Open` row of `APP-DESIGN.md` and every `### Open` bullet of a screen spec
                      carries a recommendation; an `[open Qn]` entry has its row
   9. glossary split  when the project keeps its own glossary (`01_meta/scope.yaml` key `glossary` names a
@@ -52,6 +53,8 @@ import argparse
 import datetime
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -86,11 +89,13 @@ CITE_RE = re.compile(r"AC-[A-Za-z0-9_-]+")
 ROW_RE = re.compile(r"^- \[(PASS|FAIL| )\] (\S+)(?: — (.*))?$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
 PROPOSED_ON_RE = re.compile(r"proposed_on\"?:[ \t]*[\"']?(\d{4}-\d{2}-\d{2})")
-# The authored data model marks a proposal as `proposed: { by: '<skill>', on: '<date>', source: '…' }`
-# (`tree/10_blueprint/datamodel/model.md § Format`); the marker may span lines, so it is matched on the whole text.
-PROPOSED_DSL_RE = re.compile(r"\bproposed:\s*\{[^{}]*?\bon:\s*[\"'](\d{4}-\d{2}-\d{2})[\"']")
+# The data model marks a proposal as `proposed: { by: <skill>, on: <date>, source: … }`
+# (`tree/10_blueprint/datamodel/model.md § Format`), in flow or block style; the key may span lines,
+# so it is matched on the whole text.
+PROPOSED_YAML_RE = re.compile(
+    r"\bproposed:(?:\s*\{[^{}]*?\bon:|[ \t]*\n(?:[ \t]+[^\n]*\n)*?[ \t]+on:)[ \t]*[\"']?(\d{4}-\d{2}-\d{2})"
+)
 DATAMODEL_DIR = "10_blueprint/datamodel/"
-GENERATED_MODEL_FILES = ("model.json", "model.dbml", "seed.json")
 PROPOSED_BY_RE = re.compile(r"proposed by [a-z][a-z0-9-]*, (\d{4}-\d{2}-\d{2})")
 STALE_DAYS = 14
 # Parts that quote proposals without holding one: findings carry code evidence, the decision
@@ -150,11 +155,46 @@ def is_date(v) -> bool:
         return False
 
 
-def model_names(model) -> set[str] | None:
-    """Entity ids of a model.json: the model names `data_entities[]` cites.
+MODEL_TOOL = "@skaile/model@1"
+MODEL_TOOL_TIMEOUT = 180
 
-    None when the file has no `entities[]` list (the old `models` / `name` shape): the caller
-    reports that once rather than a finding per cited name."""
+
+class ModelToolError(Exception):
+    """`@skaile/model` could not be run or rejected the model; the message says which."""
+
+
+def run_model_tool(command: str, datamodel: Path) -> subprocess.CompletedProcess:
+    """`bunx @skaile/model@1 <command> <dir>` (`npx --yes` without Bun), run to the end; raises
+    `ModelToolError` when neither runner is on PATH or the run outlasts `MODEL_TOOL_TIMEOUT` seconds."""
+    if shutil.which("bunx"):
+        runner = ["bunx"]
+    elif shutil.which("npx"):
+        runner = ["npx", "--yes"]
+    else:
+        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} {command}`")
+    try:
+        return subprocess.run([*runner, MODEL_TOOL, command, str(datamodel)],
+                              capture_output=True, text=True, timeout=MODEL_TOOL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise ModelToolError(f"`{MODEL_TOOL} {command}` did not finish within {MODEL_TOOL_TIMEOUT} s") from None
+
+
+def datamodel_json(datamodel: Path) -> dict:
+    """`{model, seed}` of a datamodel directory, from `@skaile/model@1 json <dir>`."""
+    r = run_model_tool("json", datamodel)
+    if r.returncode != 0:
+        raise ModelToolError(f"`{MODEL_TOOL} json` failed: {(r.stderr or r.stdout).strip()}")
+    try:
+        return json.loads(r.stdout)
+    except json.JSONDecodeError as e:
+        raise ModelToolError(f"`{MODEL_TOOL} json` printed no JSON ({e.msg})") from e
+
+
+def model_names(model) -> set[str] | None:
+    """Entity ids of a normalized `DataModel`: the model names `data_entities[]` cites.
+
+    None when it has no `entities[]` list: the caller reports that once rather than a finding
+    per cited name."""
     entities = model.get("entities") if isinstance(model, dict) else None
     if not isinstance(entities, list):
         return None
@@ -220,14 +260,14 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
 
     # models, stories
     model = None
-    mj = concept / "10_blueprint/datamodel/model.json"
-    if mj.is_file():
+    my = concept / DATAMODEL_DIR / "model.yaml"
+    if my.is_file():
         try:
-            model = model_names(json.loads(mj.read_text()))
+            model = model_names(datamodel_json(my.parent).get("model"))
             if model is None:
-                report(rel(mj), "no `entities[]` list (format: tree/10_blueprint/datamodel/model.md)")
-        except json.JSONDecodeError as e:
-            report(rel(mj), f"not valid JSON ({e.msg})")
+                report(rel(my), "no `entities` (format: tree/10_blueprint/datamodel/model.md)")
+        except ModelToolError as e:
+            report(rel(my), str(e))
     defined = stories = None
     sy = concept / "04_journeys/stories.yaml"
     if sy.is_file():
@@ -298,7 +338,7 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
             names = fm.get(p, {}).get("data_entities") or []
             for name in names if isinstance(names, list) else [names]:
                 if name not in model:
-                    report(rel(p), f"data_entities: {name} is not a model in model.json")
+                    report(rel(p), f"data_entities: {name} is not a model in model.yaml")
 
     # 5. criterion ids cited by feature specs
     cited: dict[Path, set[str]] = {}
@@ -356,12 +396,9 @@ def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int,
     """One line per `proposed` entry whose proposal date is more than `days` days old. In split mode
     `project_glossary` (a root-relative path) is scanned too, its owner `concept-glossary`."""
     out: list[str] = []
-    authored_model = (concept / DATAMODEL_DIR / "model.ts").is_file()
-    skip = PROPOSAL_SKIP + (tuple(DATAMODEL_DIR + n for n in GENERATED_MODEL_FILES) if authored_model else ())
     files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
-             if p.is_file() and (p.suffix in (".md", ".yaml", ".yml", ".json")
-                                 or p == concept / DATAMODEL_DIR / "model.ts")]
-    files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(skip)]
+             if p.is_file() and p.suffix in (".md", ".yaml", ".yml", ".json")]
+    files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(PROPOSAL_SKIP)]
     if (root / "APP-DESIGN.md").is_file():
         files.append(("APP-DESIGN.md", root / "APP-DESIGN.md"))
     if project_glossary and (root / project_glossary).is_file():
@@ -371,7 +408,7 @@ def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int,
             next((o for prefix, o in PROPOSAL_OWNERS if shown.startswith(prefix)), "its owner skill")
         text = p.read_text(encoding="utf-8", errors="replace")
         hits = [(text.count("\n", 0, m.start()) + 1, m.group(1))
-                for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE, PROPOSED_DSL_RE)
+                for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE, PROPOSED_YAML_RE)
                 for m in pattern.finditer(text)]
         for n, date in sorted(hits):
             try:

@@ -19,7 +19,7 @@ Committed, append-only. `apply.py` adds one block per applied round. Whoever reg
 
 - p-k3m9x2-2-content applied (change): 'Put the filter bar above the list, not beside it.'
 
-### 10_blueprint/datamodel/model.ts
+### 10_blueprint/datamodel/model.yaml
 
 - p-k3m9x2-1-model applied (model-proposal): 'The editor needs an estimate field.'
 ```

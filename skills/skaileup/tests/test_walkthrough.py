@@ -81,8 +81,8 @@ def project(root: Path, stages=("frame", "look", "data"), brief_approved: bool =
         write(root, "_concept/07_screens/shell.md", md(navigation="decided"))
         write(root, "_concept/09_mockup/storybook/src/app/nav.ts", "export const nav = []\n")
     if "data" in stages:
-        write(root, "_concept/10_blueprint/datamodel/model.ts", "export const model = {}\n")
-        write(root, "_concept/10_blueprint/datamodel/model.json", "{}\n")
+        write(root, "_concept/10_blueprint/datamodel/model.yaml", "version: 1\nentities: {}\n")
+        write(root, "_concept/10_blueprint/datamodel/seed.yaml", "version: 1\nscenarios: {}\n")
         (root / "_concept/09_mockup/storybook/src/entities/poll").mkdir(parents=True)
     return root
 

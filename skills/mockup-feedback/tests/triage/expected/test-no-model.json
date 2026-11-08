@@ -24,7 +24,7 @@
   "unresolved": [
     {
       "inboxId": "k3m9x2-1",
-      "reason": "file not found: _concept/10_blueprint/datamodel/model.ts"
+      "reason": "file not found: _concept/10_blueprint/datamodel/model.yaml"
     },
     {
       "inboxId": "k3m9x2-3",
@@ -36,7 +36,7 @@
     },
     {
       "inboxId": "p7q1z8-4",
-      "reason": "file not found: _concept/10_blueprint/datamodel/model.ts"
+      "reason": "file not found: _concept/10_blueprint/datamodel/model.yaml"
     },
     {
       "inboxId": "p7q1z8-3",

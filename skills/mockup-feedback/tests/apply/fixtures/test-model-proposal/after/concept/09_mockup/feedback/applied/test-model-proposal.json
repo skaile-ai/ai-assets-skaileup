@@ -6,8 +6,8 @@
       "inboxId": "k3m9x2-1",
       "patchId": "p-k3m9x2-1-model",
       "target": {
-        "file": "10_blueprint/datamodel/model.ts",
-        "section": "ts:entity/Task/fields",
+        "file": "10_blueprint/datamodel/model.yaml",
+        "section": "yaml:entity/Task/fields",
         "category": null
       },
       "body": "The editor needs an estimate field: how many hours the task will take.",
@@ -28,8 +28,8 @@
       "inboxId": "k3m9x2-4",
       "patchId": "p-k3m9x2-4-model",
       "target": {
-        "file": "10_blueprint/datamodel/model.ts",
-        "section": "ts:model/entities",
+        "file": "10_blueprint/datamodel/model.yaml",
+        "section": "yaml:model/entities",
         "category": null
       },
       "body": "Tasks need comments from the team.",
@@ -40,16 +40,16 @@
     {
       "id": "k3m9x2-1",
       "status": "implemented",
-      "resolution": "Task.estimate proposed in model.ts and shown in TaskEditor.",
+      "resolution": "Task.estimate proposed in model.yaml and shown in TaskEditor.",
       "state": "pending",
-      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed in model.ts and shown in TaskEditor.'"
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed in model.yaml and shown in TaskEditor.'"
     },
     {
       "id": "k3m9x2-4",
       "status": "implemented",
-      "resolution": "Comment entity proposed in model.ts.",
+      "resolution": "Comment entity proposed in model.yaml.",
       "state": "pending",
-      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-4 --status implemented --resolution 'Comment entity proposed in model.ts.'"
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-4 --status implemented --resolution 'Comment entity proposed in model.yaml.'"
     }
   ]
 }

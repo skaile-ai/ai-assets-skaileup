@@ -11,7 +11,7 @@ Checks:
   2. A content / create-section patch edits the file its note was triaged to; a
      model-proposal patch edits the data model; a glossary-proposal patch any file.
   3. Every diff starts with a valid @@ anchor header, and the anchor family fits
-     the patch kind (ts: for model-proposal only).
+     the patch kind (yaml: for model-proposal only).
   4. Every patch carries resolves[]: its own inboxId, status implemented|rejected,
      a non-empty resolution; one note carries one resolution across patches.
   5. Every patches[] entry has a - [x] checklist item in review.md.
@@ -30,10 +30,10 @@ import re
 import sys
 from pathlib import Path
 
-MODEL_FILE = "10_blueprint/datamodel/model.ts"
+MODEL_FILE = "10_blueprint/datamodel/model.yaml"
 KINDS = {"content", "create-section", "model-proposal", "glossary-proposal"}
 ANCHOR = re.compile(
-    r"^@@ (?:#{2,6} \S.*|frontmatter:\S+|before:#{1,6} \S.*|ts:entity/\w+/fields|ts:model/entities) @@$"
+    r"^@@ (?:#{2,6} \S.*|frontmatter:\S+|before:#{1,6} \S.*|yaml:entity/\w+/fields|yaml:model/entities) @@$"
 )
 
 
@@ -120,9 +120,9 @@ def validate(triage: dict, patches_data: dict, review_md: str, r: Report) -> Non
         if not ANCHOR.match(first_line):
             r.add(f"patch {p['id']!r}: diff missing valid @@ anchor header")
             continue
-        is_ts = first_line.startswith("@@ ts:")
-        if (p.get("kind") == "model-proposal") != is_ts:
-            r.add(f"patch {p['id']!r}: ts: anchors belong to model-proposal patches only")
+        is_yaml = first_line.startswith("@@ yaml:")
+        if (p.get("kind") == "model-proposal") != is_yaml:
+            r.add(f"patch {p['id']!r}: yaml: anchors belong to model-proposal patches only")
 
     # 4. resolves[]
     resolution_of: dict[str, tuple[str, str]] = {}
@@ -170,7 +170,7 @@ def validate(triage: dict, patches_data: dict, review_md: str, r: Report) -> Non
             if not marked:
                 r.add(f"patch {p['id']!r}: no added line carries `proposed: {{ by, on, source }}`")
             for l in marked:
-                m = re.search(r"proposed: \{ by: 'mockup-feedback', on: '\d{4}-\d{2}-\d{2}', source: '([^']+)' \}", l)
+                m = re.search(r"proposed: \{ by: mockup-feedback, on: \d{4}-\d{2}-\d{2}, source: ([^\s,{}]+) \}", l)
                 if not m:
                     r.add(f"patch {p['id']!r}: malformed proposal marker in {l.strip()!r}")
                 elif m.group(1) not in sources:
