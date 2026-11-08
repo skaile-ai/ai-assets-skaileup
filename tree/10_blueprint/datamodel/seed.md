@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/10_blueprint/datamodel/seed.yaml
 
-Realistic sample data organised as named scenarios, so each consumer picks the state it needs. Mockups render it, screen specs quote it and the E2E tests run against it, so a thin `populated` scenario shows up as a design nobody could review. `seed.yaml` is authored and checked against `model.yaml` by `bunx @skaile/model check` (`tree/10_blueprint/datamodel/README.md § Format`): a row with a field the model does not have, a missing required field or an undeclared enum value is an error naming the row, which is how a model error surfaces early. It is a file of its own beside the model because its rows outnumber the model's lines many times over. `build-database` wires it into the project's seed script in the layout the template's `## Seed` section gives, reading it through `bunx @skaile/model json`; nothing writes back into it.
+Realistic sample data organised as named scenarios, so each consumer picks the state it needs. Mockups render it, screen specs quote it and the E2E tests run against it, so a thin `populated` scenario shows up as a design nobody could review. `seed.yaml` is authored and checked against `model.yaml` by `bunx @skaile/model@1 check` (`tree/10_blueprint/datamodel/README.md § Format`): a row with a field the model does not have, a missing required field or an undeclared enum value is an error naming the row, which is how a model error surfaces early. It is a file of its own beside the model because its rows outnumber the model's lines many times over. `build-database` wires it into the project's seed script in the layout the template's `## Seed` section gives, reading it through `bunx @skaile/model@1 json`; nothing writes back into it.
 
 ## Format
 
@@ -68,18 +68,18 @@ Further scenarios (`permissions` and others) are optional, follow feature needs,
 
 ## Writing it
 
-Write `seed.yaml` after the model is approved and `model.yaml` checks, with all four standard scenarios plus `permissions` when the journeys name distinct roles. Generate values that are realistic and varied, with entity keys and field names following `tree/10_blueprint/datamodel/README.md § Naming`. Run `bunx @skaile/model check _concept/10_blueprint/datamodel` (`npx @skaile/model check …` without Bun); an issue on a row names the scenario, the entity, the row and the field to fix in `seed.yaml` or to add to `model.yaml` (as a proposal when this skill does not own the model). Run it again until it prints `ok`.
+Write `seed.yaml` after the model is approved and `model.yaml` checks, with all four standard scenarios plus `permissions` when the journeys name distinct roles. Generate values that are realistic and varied, with entity keys and field names following `tree/10_blueprint/datamodel/README.md § Naming`. Run `bunx @skaile/model@1 check _concept/10_blueprint/datamodel` (`npx @skaile/model@1 check …` without Bun); an issue on a row names the scenario, the entity, the row and the field to fix in `seed.yaml` or to add to `model.yaml` (as a proposal when this skill does not own the model). Run it again until it prints `ok`.
 
 Readers by scenario:
 
 - `mockup-storybook` renders each screen in `populated` as the hero view, `empty` for empty-state design and `edge_cases` to verify layout; the scenario keys are its toolbar.
 - `spec-feature` references `populated` in a screen's `## Template Data` section and mentions `empty` and `edge_cases` in `## States`.
 - `quality-e2e` uses `empty` for onboarding and first-use flows, `populated` for core journeys, `edge_cases` for validation and layout stress, `permissions` for role-based access.
-- `build-database` generates one runnable script per scenario from the seed `bunx @skaile/model json` prints.
+- `build-database` generates one runnable script per scenario from the seed `bunx @skaile/model@1 json` prints.
 
 ## Checks
 
-`bunx @skaile/model check` prints `ok`, which covers:
+`bunx @skaile/model@1 check` prints `ok`, which covers:
 
 - The file validates against the package's `seed.schema.json`, and all four standard scenarios exist.
 - Each entity key names an entity of `model.yaml`; every row has a unique `id`, no undeclared field and every required one (not null).

@@ -36,7 +36,7 @@ What `apply.py` does with these:
 - A heading anchor matches a heading line **exactly**: `@@ ## Layout @@` needs a literal `## Layout` line in the file.
 - Removed lines exist in that section as a **consecutive block**, matched exactly; the first mismatch fails that patch and only that patch.
 - There are no context lines; a line starting with neither `-` nor `+` is ignored.
-- A `yaml:` anchor names an entity `model.yaml` declares (a new entity must not exist yet), else the patch fails; after the file is written `bunx @skaile/model check` runs, and a rejection restores the file byte for byte and fails every `yaml:` patch of the round with the check's output.
+- A `yaml:` anchor names an entity `model.yaml` declares (a new entity must not exist yet), else the patch fails; after the file is written `bunx @skaile/model@1 check` runs, and a rejection restores the file byte for byte and fails every `yaml:` patch of the round with the check's output.
 
 ### Kinds
 

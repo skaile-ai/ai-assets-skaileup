@@ -2907,7 +2907,7 @@ def test_verifier_expires_when_the_host_file_is_gone(tmp_path):
 # --- skills/ops-review/scripts/check_concept.py: the mechanical half of ops-review ---------
 
 def fake_datamodel_json(datamodel: Path) -> dict:
-    """Stands in for `bunx @skaile/model json`: entity ids are the keys of `entities` in model.yaml."""
+    """Stands in for `bunx @skaile/model@1 json`: entity ids are the keys of `entities` in model.yaml."""
     raw = yaml.safe_load((datamodel / "model.yaml").read_text(encoding="utf-8")) or {}
     entities = raw.get("entities")
     model = {"entities": [{"id": k} for k in entities]} if isinstance(entities, dict) else {}
@@ -3995,7 +3995,7 @@ def test_demo_datamodel_that_passes_the_model_tool(tmp_path, monkeypatch):
     root = demo_datamodel_repo(tmp_path / "repo")
     assert errors(root) == []
     call = (bin_dir / "calls.log").read_text(encoding="utf-8").split()
-    assert call[0].endswith("/bunx") and call[1:3] == ["@skaile/model", "check"], call
+    assert call[0].endswith("/bunx") and call[1:3] == ["@skaile/model@1", "check"], call
     assert call[3] == str(root / "demo/_concept/10_blueprint/datamodel"), call
 
 
@@ -4004,7 +4004,22 @@ def test_demo_datamodel_runs_npx_without_bun(tmp_path, monkeypatch):
     root = demo_datamodel_repo(tmp_path / "repo")
     assert errors(root) == []
     call = (bin_dir / "calls.log").read_text(encoding="utf-8").split()
-    assert call[0].endswith("/npx") and call[1:4] == ["--yes", "@skaile/model", "check"], call
+    assert call[0].endswith("/npx") and call[1:4] == ["--yes", "@skaile/model@1", "check"], call
+
+
+def test_demo_datamodel_when_the_model_tool_times_out(tmp_path, monkeypatch):
+    fake_model_runner(tmp_path, monkeypatch, "bunx")
+    real_run = check.subprocess.run
+
+    def timing_out(cmd, **kwargs):
+        if check.MODEL_TOOL not in cmd:
+            return real_run(cmd, **kwargs)
+        assert kwargs["timeout"] == check.MODEL_TOOL_TIMEOUT
+        raise check.subprocess.TimeoutExpired(cmd, kwargs["timeout"])
+
+    monkeypatch.setattr(check.subprocess, "run", timing_out)
+    root = demo_datamodel_repo(tmp_path / "repo")
+    only(root, "demo/_concept/10_blueprint/datamodel/: cannot be checked — `@skaile/model@1 check` did not finish within 180 s")
 
 
 def test_demo_datamodel_the_model_tool_rejects(tmp_path, monkeypatch):
@@ -4012,7 +4027,7 @@ def test_demo_datamodel_the_model_tool_rejects(tmp_path, monkeypatch):
     root = demo_datamodel_repo(tmp_path / "repo", "version: 1\nscenarios:\n  populated:\n    data:\n      task:\n        - { id: t1, titel: x }\n")
     errs = errors(root)
     assert len(errs) == 1, errs
-    assert errs[0].startswith("demo/_concept/10_blueprint/datamodel/seed.yaml: fails `@skaile/model check` "), errs
+    assert errs[0].startswith("demo/_concept/10_blueprint/datamodel/seed.yaml: fails `@skaile/model@1 check` "), errs
     assert '$.scenarios.populated.data.task[0].titel: Task has no field "titel" (line 9)' in errs[0]
     assert "demo-datamodel" in errs[0]
 

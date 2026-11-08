@@ -275,25 +275,40 @@ def parse_checked_ids(review_md: str) -> set[str]:
 
 # ── Data-model check ─────────────────────────────────────────────────────────
 
-def _model_cli() -> list[str]:
+MODEL_TOOL = "@skaile/model@1"
+MODEL_TOOL_TIMEOUT = 180
+
+
+class ModelToolError(Exception):
+    """`@skaile/model` could not be run at all; the message says why."""
+
+
+def run_model_tool(command: str, datamodel: Path) -> subprocess.CompletedProcess:
+    """`bunx @skaile/model@1 <command> <dir>` (`npx --yes` without Bun), run to the end; raises
+    `ModelToolError` when neither runner is on PATH or the run outlasts `MODEL_TOOL_TIMEOUT` seconds."""
     if shutil.which("bunx"):
-        return ["bunx", "@skaile/model"]
-    return ["npx", "--yes", "@skaile/model"]
+        runner = ["bunx"]
+    elif shutil.which("npx"):
+        runner = ["npx", "--yes"]
+    else:
+        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} {command}`")
+    try:
+        return subprocess.run([*runner, MODEL_TOOL, command, str(datamodel)],
+                              capture_output=True, text=True, timeout=MODEL_TOOL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise ModelToolError(f"`{MODEL_TOOL} {command}` did not finish within {MODEL_TOOL_TIMEOUT} s") from None
 
 
 def run_check(datamodel_dir: Path) -> str | None:
-    """Run `@skaile/model check` on the datamodel directory. Returns its output on failure, else None."""
+    """Run `@skaile/model@1 check` on the datamodel directory. Returns its output on failure, else None."""
     try:
-        result = subprocess.run(
-            _model_cli() + ["check", str(datamodel_dir)],
-            capture_output=True, text=True, timeout=180,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return f"@skaile/model check could not run: {exc}"
+        result = run_model_tool("check", datamodel_dir)
+    except ModelToolError as exc:
+        return f"{MODEL_TOOL} check could not run: {exc}"
     if result.returncode == 0:
         return None
     out = "\n".join(l.rstrip() for l in (result.stdout + result.stderr).splitlines() if l.strip())
-    return out or f"@skaile/model check exited {result.returncode}"
+    return out or f"{MODEL_TOOL} check exited {result.returncode}"
 
 
 # ── Note resolution ───────────────────────────────────────────────────────────

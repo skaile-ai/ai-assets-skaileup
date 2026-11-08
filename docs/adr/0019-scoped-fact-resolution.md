@@ -1,6 +1,6 @@
 # 0019 — Skills resolve facts, not files
 
-**Status:** accepted
+**Status:** accepted; amended by [0029](0029-the-concept-is-walked-top-down.md) (the four build skills gate on the walkthrough) and [0030](0030-the-data-model-is-two-yaml-files-checked-by-skaile-model.md) (`build-database` gates on `model.yaml`, not `model.json`)
 
 Supersedes the chronological read-direction table in `tree/README.md` (replaced by an
 ownership rule, [ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md)). Amends

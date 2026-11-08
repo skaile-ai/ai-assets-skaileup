@@ -20,9 +20,9 @@ The npm package `@skaile/model` owns the format of both files (ADR 0030) and is 
   # yaml-language-server: $schema=https://cdn.jsdelivr.net/npm/@skaile/model@1/schema/model.schema.json
   ```
   `seed.yaml` starts with the same line ending in `seed.schema.json`.
-- **Check.** `bunx @skaile/model check _concept/10_blueprint/datamodel` (`npx @skaile/model check …` without Bun; Node 20 or later) validates both files: the schema, then everything a schema cannot say (`tree/10_blueprint/datamodel/model.md § Checks`, `tree/10_blueprint/datamodel/seed.md § Checks`). It prints `ok` with counts, or one `file:path: message (line n)` per issue and exits 1. Every write to either file ends with it.
-- **Read.** `bunx @skaile/model json _concept/10_blueprint/datamodel` prints the normalized `{ "model": …, "seed": … }` — entities with their fields, the derived `relationships[]`, the shared `enums[]`, the scenarios — and exits 1 with the issues when the files do not check. Readers that need data (`build-database`, the tests, Python scripts) take it from there; TypeScript code imports `loadModel` and `loadSeed` from `@skaile/model`. `bunx @skaile/model types --out <file>` writes the row types (`TaskRow`, one union type per shared enum); the mockup package gets them from the package's Vite plugin (`tree/09_mockup/storybook/README.md`).
-- **Migrate.** A project from before ADR 0030 holds `model.ts` and `seed.ts`, the JSON and DBML generated from them and four tool files. `bunx @skaile/model migrate _concept/10_blueprint/datamodel` converts the generated JSON into the two YAML files, checks them and deletes the nine legacy files; it changes nothing when `model.yaml` already exists or the JSON is older than its TypeScript source. Canvas layout (the `editor` block, entity positions) is not carried over: it is the host's state, not the model's.
+- **Check.** `bunx @skaile/model@1 check _concept/10_blueprint/datamodel` (`npx @skaile/model@1 check …` without Bun; Node 20 or later) validates both files: the schema, then everything a schema cannot say (`tree/10_blueprint/datamodel/model.md § Checks`, `tree/10_blueprint/datamodel/seed.md § Checks`). It prints `ok` with counts, or one `file:path: message (line n)` per issue and exits 1. Every write to either file ends with it.
+- **Read.** `bunx @skaile/model@1 json _concept/10_blueprint/datamodel` prints the normalized `{ "model": …, "seed": … }` — entities with their fields, the derived `relationships[]`, the shared `enums[]`, the scenarios — and exits 1 with the issues when the files do not check. Readers that need data (`build-database`, the tests, Python scripts) take it from there; TypeScript code imports `loadModel` and `loadSeed` from `@skaile/model`. `bunx @skaile/model@1 types --out <file>` writes the row types (`TaskRow`, one union type per shared enum); the mockup package gets them from the package's Vite plugin (`tree/09_mockup/storybook/README.md`).
+- **Migrate.** A project from before ADR 0030 holds `model.ts` and `seed.ts`, the JSON and DBML generated from them and four tool files. `bunx @skaile/model@1 migrate _concept/10_blueprint/datamodel` converts the generated JSON into the two YAML files, checks them and deletes the nine legacy files; it changes nothing when `model.yaml` already exists or the JSON is older than its TypeScript source. Canvas layout (the `editor` block, entity positions) is not carried over: it is the host's state, not the model's.
 
 ## Naming
 
@@ -63,7 +63,7 @@ Entity names come from the glossary (`tree/glossary.md § Where the words live`)
 
    For an expensive choice — inheritance versus composition, the tenant model, soft versus hard delete across the whole model — **design it twice**: sketch three genuinely different models (in parallel, one subagent per sketch where the harness has subagents), compare them on the five columns, and let the user pick. The losers go to `_concept/10_blueprint/decisions.md` as the *options rejected* of one record (`tree/10_blueprint/decisions.md`).
 5. **Approve in plain language** — what the app keeps track of and how those things relate, in the user's words, counts underneath. Write nothing before the user says yes; a model features, screens and seeds are about to name is cheapest to change while it is still a paragraph.
-6. **Write `model.yaml`, then run the check** per `tree/10_blueprint/datamodel/model.md § Writing it` (`bunx @skaile/model check`, `## Format`); apply `## Naming`. An `m2m` gets an explicit junction model; a raw SQL type here survives into a migration that will not apply.
+6. **Write `model.yaml`, then run the check** per `tree/10_blueprint/datamodel/model.md § Writing it` (`bunx @skaile/model@1 check`, `## Format`); apply `## Naming`. An `m2m` gets an explicit junction model; a raw SQL type here survives into a migration that will not apply.
 7. **Write `seed.yaml`, then run the check again** per `tree/10_blueprint/datamodel/seed.md § Writing it`, with all four standard scenarios plus `permissions` when the journeys name distinct roles.
 8. **A stack export is `build-database`'s.** When the user asks for a stack-specific schema, `build-database` writes it against these files rather than replacing them.
 
@@ -116,7 +116,7 @@ The file lives where the chosen template's `## Migration / ORM` section says; it
 
 ## Checks
 
-- `model.yaml` and `seed.yaml` are the only files in `_concept/10_blueprint/datamodel/`, `bunx @skaile/model check` prints `ok` for them, and the model is approved.
+- `model.yaml` and `seed.yaml` are the only files in `_concept/10_blueprint/datamodel/`, `bunx @skaile/model@1 check` prints `ok` for them, and the model is approved.
 - Every entity's `glossary` (stated or defaulted) is a term in `_concept/glossary.md` (a `proposed` term counts), and every enum vocabulary is a term there.
 - `seed.yaml` carries all four standard scenarios.
 - The mechanical rules in `## Naming` hold; a violation is a finding in the audit report.

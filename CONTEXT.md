@@ -173,15 +173,8 @@ The *designed* schema — entities, fields, relations and seed scenarios in
 `10_blueprint/datamodel/`. A description of data, not any running store. It is authored as two
 YAML files, `model.yaml` (the model) and `seed.yaml` (its seed scenarios, each row checked
 against the model); nothing is generated from them into the concept, and every reader takes
-them through the **model checker**.
+them through the npm package `@skaile/model`.
 _Avoid_: schema, data layer
-
-**Model checker**:
-The npm package `@skaile/model`, the one tool that reads the **datamodel**: it owns the format of
-its two files, checks them, prints them normalized for every other reader, gives the mockup its
-row types and migrates a project's datamodel from before the YAML files. A datamodel it rejects
-is not done.
-_Avoid_: generator, DSL, validator script
 
 **Database**:
 The *materialised* datamodel — migrations applied and seed scenarios loaded in the built

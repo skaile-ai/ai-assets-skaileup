@@ -2869,25 +2869,38 @@ DEMO_NOT_SHIPPED: dict[str, str] = {
 
 # The data model is the one machine part whose schemas are not in `tree/`: the npm package
 # `@skaile/model` owns them together with the loader that checks them (ADR 0030), so the demo's
-# `model.yaml` and `seed.yaml` are held to `@skaile/model check`, run through `bunx` or `npx`.
+# `model.yaml` and `seed.yaml` are held to `@skaile/model@1 check`, run through `bunx` or `npx`.
+# The same runner pattern sits in `skills/ops-review/scripts/check_concept.py` and
+# `skills/mockup-feedback/scripts/apply.py` (skills ship standalone and cannot import it).
 DEMO_DATAMODEL = f"{ARTIFACT_ROOT}/10_blueprint/datamodel"
-MODEL_TOOL = "@skaile/model"
+MODEL_TOOL = "@skaile/model@1"
+MODEL_TOOL_TIMEOUT = 180
 
 
 class ModelToolError(Exception):
-    """`@skaile/model check` could not be run at all; the message says why."""
+    """`@skaile/model` could not be run at all; the message says why."""
 
 
-def model_tool_check(datamodel: Path) -> list[str]:
-    """The issues `bunx @skaile/model check <dir>` (`npx --yes` without Bun) prints for a datamodel
-    directory, one `file:path: message` line each; empty when the check passes."""
+def run_model_tool(command: str, datamodel: Path) -> subprocess.CompletedProcess:
+    """`bunx @skaile/model@1 <command> <dir>` (`npx --yes` without Bun), run to the end; raises
+    `ModelToolError` when neither runner is on PATH or the run outlasts `MODEL_TOOL_TIMEOUT` seconds."""
     if shutil.which("bunx"):
         runner = ["bunx"]
     elif shutil.which("npx"):
         runner = ["npx", "--yes"]
     else:
-        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} check`")
-    r = subprocess.run([*runner, MODEL_TOOL, "check", str(datamodel)], capture_output=True, text=True)
+        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} {command}`")
+    try:
+        return subprocess.run([*runner, MODEL_TOOL, command, str(datamodel)],
+                              capture_output=True, text=True, timeout=MODEL_TOOL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise ModelToolError(f"`{MODEL_TOOL} {command}` did not finish within {MODEL_TOOL_TIMEOUT} s") from None
+
+
+def model_tool_check(datamodel: Path) -> list[str]:
+    """The issues `@skaile/model@1 check <dir>` prints for a datamodel directory, one
+    `file:path: message` line each; empty when the check passes."""
+    r = run_model_tool("check", datamodel)
     if r.returncode == 0:
         return []
     issues = [line.strip() for line in (r.stderr or r.stdout).splitlines() if line.strip()]

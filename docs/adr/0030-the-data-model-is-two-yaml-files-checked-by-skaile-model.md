@@ -3,7 +3,9 @@
 **Status:** accepted
 
 Amends [ADR 0016](0016-published-formats-where-one-exists.md) decision 2 for the data model only:
-its two schemas are owned by the npm package `@skaile/model`, not by `tree/`. Supersedes
+its two schemas are owned by the npm package `@skaile/model`, not by `tree/`. Amends
+[ADR 0019](0019-scoped-fact-resolution.md) in its one data-model gate: `build-database` now gates
+on `model.yaml`, read through `@skaile/model@1 json`, where 0019 names `model.json`. Supersedes
 [ADR 0026](0026-the-mockup-stage-is-one-vue-storybook-package.md) D2 (the data model authored in
 TypeScript and generated to JSON); the rest of 0026 stands. The proposal mechanism of
 [ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md) is unchanged: a proposed entry
@@ -37,7 +39,7 @@ type `m2o` and the loader derives the relationship and its inverse. Format:
 Schemas, the loader (`loadModel`, `loadSeed`) returning the normalized model and seed every reader
 used to take from `model.json` and `seed.json`, every check `gen.ts` ran, the CLI
 (`check`, `json`, `types`, `migrate`) and a Vite plugin that serves the model to the mockup
-package and writes its row types. A reader that needs data runs `bunx @skaile/model json`
+package and writes its row types. A reader that needs data runs `bunx @skaile/model@1 json`
 (`npx` without Bun) or imports the loader; nothing can be stale, because nothing is generated.
 
 **3. The datamodel schemas live in the package, not in `tree/` — the exception to ADR 0016.**
@@ -49,13 +51,13 @@ by URL in their first line
 (`# yaml-language-server: $schema=https://cdn.jsdelivr.net/npm/@skaile/model@1/schema/model.schema.json`,
 `seed.schema.json` for the seed), which editors with YAML-schema support use to complete and flag
 while the file is typed. `tree/10_blueprint/datamodel/` names the package and the URL and holds no
-schema file; `check.py` holds the demo's two files to `bunx @skaile/model check`.
+schema file; `check.py` holds the demo's two files to `bunx @skaile/model@1 check`.
 
 **4. Layout is editor state.** The entity `position` and the `editor` block (canvas viewport) of
 the old `model.json` are dropped. Where the cards sit is the host's state per user (forge keeps
 it in its own database), not a fact of the model.
 
-**5. Old projects migrate with one command.** `bunx @skaile/model migrate` turns an existing
+**5. Old projects migrate with one command.** `bunx @skaile/model@1 migrate` turns an existing
 `model.json` + `seed.json` into `model.yaml` + `seed.yaml`, checks them and deletes the nine
 legacy files. `architecture-datamodel` runs it when it finds `model.ts` or `model.json` without
 `model.yaml`.
@@ -91,7 +93,7 @@ and the YAML itself is the readable form.
   `@skaile/model` version; the URL pins the major version (`@1`), so files written for 1.x keep
   validating in editors until a 2.0 says otherwise.
 - **`check.py` validates the demo through the package.** The demo's `model.yaml` and `seed.yaml`
-  pass `bunx @skaile/model check` (or `npx`); a machine with neither runner fails the rule with a
+  pass `bunx @skaile/model@1 check` (or `npx`); a machine with neither runner fails the rule with a
   message saying so, rather than skipping it.
 - **Layout resets once.** A model whose `model.json` carried positions shows its cards on a grid
   until the user arranges them; the host keeps that arrangement from then on.

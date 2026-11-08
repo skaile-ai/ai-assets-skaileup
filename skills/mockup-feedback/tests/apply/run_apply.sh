@@ -163,7 +163,7 @@ EXPECTED_NORM=$(normalize_applied < "$FIXTURES/test-model-proposal/after/concept
     || { echo "FAIL: applied JSON differs"; diff <(echo "$EXPECTED_NORM") <(echo "$ACTUAL_NORM"); exit 1; }
 
 # The loaded model carries the proposal markers (field and entity)
-bunx @skaile/model json "$TMP4/concept/10_blueprint/datamodel" | python3 -c '
+bunx @skaile/model@1 json "$TMP4/concept/10_blueprint/datamodel" | python3 -c '
 import json, sys
 m = json.load(sys.stdin)["model"]
 ents = {e["id"]: e for e in m["entities"]}

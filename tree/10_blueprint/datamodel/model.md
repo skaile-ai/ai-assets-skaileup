@@ -7,7 +7,7 @@ may_propose: [spec-feature, experience-screen, mockup-storybook, mockup-feedback
 
 # _concept/10_blueprint/datamodel/model.yaml
 
-The canonical, stack-neutral data model, and the one file that holds it: entities, fields, enums, relations and proposed entries. Nothing is generated from it into `_concept/`; every reader takes it through `@skaile/model` (`tree/10_blueprint/datamodel/README.md § Format`): `build-database` and the tests through `bunx @skaile/model json`, the host's canvas through `loadModel`, the mockup package through the package's Vite plugin, whose row types make a component that uses a field the model no longer has fail `vue-tsc`. The file carries semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) target the entity id, its key under `entities:`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
+The canonical, stack-neutral data model, and the one file that holds it: entities, fields, enums, relations and proposed entries. Nothing is generated from it into `_concept/`; every reader takes it through `@skaile/model` (`tree/10_blueprint/datamodel/README.md § Format`): `build-database` and the tests through `bunx @skaile/model@1 json`, the host's canvas through `loadModel`, the mockup package through the package's Vite plugin, whose row types make a component that uses a field the model no longer has fail `vue-tsc`. The file carries semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) target the entity id, its key under `entities:`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
 
 ## Format
 
@@ -46,7 +46,7 @@ entities:
 - A field is `<name>: <type>` — a bare type name is a required field with no other options, for scalar types only — or `<name>: { type: <type>, <option>: … }`; a long options object may be written as a block, as `status` and `estimate` are above. A field `name` is `lowercase_snake_case`; its id in the normalized model is `<entity_snake>_<name>`.
 - `id`, `created_at` and `updated_at` are standard fields: never declared under `fields:`.
 - Keys are snake_case and the schema rejects an unknown one, naming the allowed keys, so a misspelt option is an error rather than a silent no-op.
-- `bunx @skaile/model json` prints the normalized model: `entities[]` (with `glossary_id`, `display_name`, `standard_fields` and `fields[]` filled in), `relationships[]` derived from every `m2o` and `m2m`, and `enums[]`, the shared enums with `{ value, label }` entries. Readers rely on that shape, never on the file's own layout.
+- `bunx @skaile/model@1 json` prints the normalized model: `entities[]` (with `glossary_id`, `display_name`, `standard_fields` and `fields[]` filled in), `relationships[]` derived from every `m2o` and `m2m`, and `enums[]`, the shared enums with `{ value, label }` entries. Readers rely on that shape, never on the file's own layout.
 
 **Scalar types**, one `type` each; the row type is what the package's row types give the field:
 
@@ -120,14 +120,14 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
 
 ## Writing it
 
-1. **Migrate a pre-YAML model first.** When `_concept/10_blueprint/datamodel/` holds `model.ts` or `model.json` and no `model.yaml`, run `bunx @skaile/model migrate _concept/10_blueprint/datamodel` (`tree/10_blueprint/datamodel/README.md § Format`) and continue on the files it writes. When it refuses because the TypeScript has no JSON or is newer than it, run the project's own generator in that directory (`npx tsx gen.ts`, still there until the migration deletes it), then `migrate` again. Any other refusal names what it cannot carry over; report it and stop.
+1. **Migrate a pre-YAML model first.** When `_concept/10_blueprint/datamodel/` holds `model.ts` or `model.json` and no `model.yaml`, run `bunx @skaile/model@1 migrate _concept/10_blueprint/datamodel` (`tree/10_blueprint/datamodel/README.md § Format`) and continue on the files it writes. When it refuses because the TypeScript has no JSON or is newer than it, run the project's own generator in that directory (`npx tsx gen.ts`, still there until the migration deletes it), then `migrate` again. Any other refusal names what it cannot carry over; report it and stop.
 2. **Write `model.yaml`** in the layout of `## Format`, from the approved model (`tree/10_blueprint/datamodel/README.md § Writing it`), applying `tree/10_blueprint/datamodel/README.md § Naming`. Every entity carries its `label_field`, and `glossary` where the term's slug is not the kebab-case of the id; an `m2m` gets a junction entity. A raw SQL type here survives into a migration that will not apply.
-3. **Run `bunx @skaile/model check _concept/10_blueprint/datamodel`** (`npx @skaile/model check …` without Bun). Each issue names the file, the JSON path and the line; fix `model.yaml` and run it again until it prints `ok`.
+3. **Run `bunx @skaile/model@1 check _concept/10_blueprint/datamodel`** (`npx @skaile/model@1 check …` without Bun). Each issue names the file, the JSON path and the line; fix `model.yaml` and run it again until it prints `ok`.
 4. **A proposal by another skill** adds its field or entity per `## Format`, runs the check and restores the file when the check fails.
 
 ## Checks
 
-`bunx @skaile/model check` prints `ok`, which covers:
+`bunx @skaile/model@1 check` prints `ok`, which covers:
 
 - The file validates against the package's `model.schema.json`: known keys only, a known `type` per field, options that apply to that type.
 - Every entity's id is the PascalCase form of its `glossary`; `label_field` and `key_field` name a field of the entity.

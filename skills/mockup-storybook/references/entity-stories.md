@@ -57,7 +57,7 @@ scenarios:
       task: [{ id: t1, title: An unreasonably long task title An unreasonably long task title An unreasonably long task title, status: Draft, owner_id: u1 }]
 ```
 
-`npx @skaile/model check` in `_concept/10_blueprint/datamodel/` validates both files: the model, and every seed row against it (unknown fields, enum values, relation ids that resolve inside their scenario).
+`npx @skaile/model@1 check` in `_concept/10_blueprint/datamodel/` validates both files: the model, and every seed row against it (unknown fields, enum values, relation ids that resolve inside their scenario).
 
 ## Rules the files follow
 
@@ -222,7 +222,7 @@ export const LongTitle: Story = {
 
 ## The proposal move
 
-The editor above needs an effort estimate and the model has none. Add one field to `Task` in `model.yaml`, after the last field under `fields:`, then run `npx @skaile/model check` in `_concept/10_blueprint/datamodel/`:
+The editor above needs an effort estimate and the model has none. Add one field to `Task` in `model.yaml`, after the last field under `fields:`, then run `npx @skaile/model@1 check` in `_concept/10_blueprint/datamodel/`:
 
 ```yaml
       estimate:
@@ -231,4 +231,4 @@ The editor above needs an effort estimate and the model has none. Add one field 
         proposed: { by: mockup-storybook, on: 2026-10-23, source: TaskEditor needs an effort estimate }
 ```
 
-The `proposed:` key is how `architecture-datamodel` and the owner see it (`npx @skaile/model json` lists it as `task_estimate` with `"status": "proposed"`, `proposed_by`, `proposed_on` and `source`). The plugin rewrites `TaskRow` with `estimate`; then add `<Field v-model:row="draft" name="estimate" type="decimal" label="Estimate" />` to the editor. A field that is not in `model.yaml` fails `vue-tsc` at the `Field`; a seed row that misspells a field fails `npx @skaile/model check`. A whole new entity is added the same way: one more key under `entities:` with its `fields:` and an entity-level `proposed: { by, on, source }`.
+The `proposed:` key is how `architecture-datamodel` and the owner see it (`npx @skaile/model@1 json` lists it as `task_estimate` with `"status": "proposed"`, `proposed_by`, `proposed_on` and `source`). The plugin rewrites `TaskRow` with `estimate`; then add `<Field v-model:row="draft" name="estimate" type="decimal" label="Estimate" />` to the editor. A field that is not in `model.yaml` fails `vue-tsc` at the `Field`; a seed row that misspells a field fails `npx @skaile/model@1 check`. A whole new entity is added the same way: one more key under `entities:` with its `fields:` and an entity-level `proposed: { by, on, source }`.

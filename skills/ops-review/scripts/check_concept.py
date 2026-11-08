@@ -15,7 +15,7 @@ Stdlib + PyYAML only. Checks:
                      (a screen's `implements:` entry is a path or a `{path, status: proposed, …}`
                      mapping; either one satisfies the link)
   4. data_entities   every name is an entity `id` of `10_blueprint/datamodel/model.yaml` (skipped without one),
-                     read through `bunx @skaile/model json` (or `npx`); a model the tool rejects, or a
+                     read through `bunx @skaile/model@1 json` (or `npx`); a model the tool rejects, or a
                      machine with neither runner, is one line on `model.yaml`
   5. criterion ids   every `AC-…` a feature spec or ledger cites follows the id grammar and is
                      defined by `04_journeys/stories.yaml` (skipped without one), scoped to the
@@ -155,26 +155,39 @@ def is_date(v) -> bool:
         return False
 
 
+MODEL_TOOL = "@skaile/model@1"
+MODEL_TOOL_TIMEOUT = 180
+
+
 class ModelToolError(Exception):
-    """`@skaile/model json` could not be run or rejected the model; the message says which."""
+    """`@skaile/model` could not be run or rejected the model; the message says which."""
 
 
-def datamodel_json(datamodel: Path) -> dict:
-    """`{model, seed}` of a datamodel directory, from `bunx @skaile/model json <dir>` (`npx` without Bun)."""
+def run_model_tool(command: str, datamodel: Path) -> subprocess.CompletedProcess:
+    """`bunx @skaile/model@1 <command> <dir>` (`npx --yes` without Bun), run to the end; raises
+    `ModelToolError` when neither runner is on PATH or the run outlasts `MODEL_TOOL_TIMEOUT` seconds."""
     if shutil.which("bunx"):
         runner = ["bunx"]
     elif shutil.which("npx"):
         runner = ["npx", "--yes"]
     else:
-        raise ModelToolError("cannot read the model: neither `bunx` (Bun) nor `npx` (Node) is on PATH "
-                             "to run `@skaile/model json`")
-    r = subprocess.run([*runner, "@skaile/model", "json", str(datamodel)], capture_output=True, text=True)
+        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} {command}`")
+    try:
+        return subprocess.run([*runner, MODEL_TOOL, command, str(datamodel)],
+                              capture_output=True, text=True, timeout=MODEL_TOOL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise ModelToolError(f"`{MODEL_TOOL} {command}` did not finish within {MODEL_TOOL_TIMEOUT} s") from None
+
+
+def datamodel_json(datamodel: Path) -> dict:
+    """`{model, seed}` of a datamodel directory, from `@skaile/model@1 json <dir>`."""
+    r = run_model_tool("json", datamodel)
     if r.returncode != 0:
-        raise ModelToolError(f"`@skaile/model json` failed: {(r.stderr or r.stdout).strip()}")
+        raise ModelToolError(f"`{MODEL_TOOL} json` failed: {(r.stderr or r.stdout).strip()}")
     try:
         return json.loads(r.stdout)
     except json.JSONDecodeError as e:
-        raise ModelToolError(f"`@skaile/model json` printed no JSON ({e.msg})") from e
+        raise ModelToolError(f"`{MODEL_TOOL} json` printed no JSON ({e.msg})") from e
 
 
 def model_names(model) -> set[str] | None:
