@@ -30,3 +30,5 @@ jobs:
         run: python scripts/check.py --no-tests
       - name: test the checker
         run: pytest scripts/test_check.py -q
+      - name: test the walkthrough script
+        run: pytest skills/skaileup/tests -q

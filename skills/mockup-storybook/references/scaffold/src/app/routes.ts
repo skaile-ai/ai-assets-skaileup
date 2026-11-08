@@ -1,6 +1,8 @@
 // One route per screen component, built from `src/screens/*.vue`: adding a screen needs no edit here.
+// A nav entry whose screen is not written yet points at `/pending/<item-slug>` (`PendingDestination.vue`).
 import type { Component } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
+import { nav } from './nav'
 
 const screens = import.meta.glob<{ default: Component }>('../screens/*.vue')
 
@@ -20,7 +22,10 @@ export const routes: RouteRecordRaw[] = [
     component: screens[`../screens/${id}.vue`]!,
     meta: { screen: id },
   })),
+  { path: '/pending/:slug', name: 'pending', component: () => import('./PendingDestination.vue') },
   first
     ? { path: '/', redirect: `/${first}` }
-    : { path: '/:pathMatch(.*)*', component: { render: () => 'No screens yet: add src/screens/<screen_id>.vue.' } },
+    : nav[0]
+      ? { path: '/', redirect: nav[0].to }
+      : { path: '/:pathMatch(.*)*', component: { render: () => 'No screens yet: add src/screens/<screen_id>.vue.' } },
 ]

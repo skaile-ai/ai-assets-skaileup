@@ -2,12 +2,14 @@ id: skaileup-greenfield
 version: "0.1.0"
 name: Skaileup Greenfield
 description: >-
-  The full path for a new app: discovery, the shared vocabulary and brand, journeys, then the data model
-  and the app's interaction design before any feature is specified, behaviours, the per-feature spec loop
-  that grows the featureset roster, the screens each feature uses, the app shell, the blueprint, the mockup
-  and feedback pass over those screens, the build against the codebase's standards, and the review gate
-  (code, interaction patterns, concept) that ends in a release grade. An advisory order: any skill also runs
-  on its own, from the middle of a project, when the router names it.
+  The full path for a new app, walked top-down in four stages the user approves one by one: frame
+  (discovery, brief, the shared vocabulary, journeys), look (brand, the navigation model, the app shell,
+  then a Storybook of the empty app frame), data (the data model and how each object is represented,
+  then a Storybook of the entity stories), features (behaviours, the per-feature spec loop that grows the
+  featureset roster, the screens each feature uses, then the Storybook of screens and journeys and its
+  feedback pass). After them the blueprint, the build against the codebase's standards, and the review
+  gate (code, interaction patterns, concept) that ends in a release grade. An advisory order: any skill
+  also runs on its own, from the middle of a project, when the router names it.
 meta:
   icon: i-heroicons-squares-2x2
   onboarding:
@@ -62,20 +64,20 @@ nodes:
   - id: g-conceptualization
     type: group
     position: { x: 0, y: 0 }
-    style: { width: 3680, height: 240 }
+    style: { width: 4000, height: 240 }
     data:
       label: Conceptualization
       phase: conceptualization
   - id: g-implementation
     type: group
-    position: { x: 3720, y: 0 }
+    position: { x: 4040, y: 0 }
     style: { width: 1280, height: 240 }
     data:
       label: Implementation
       phase: implementation
   - id: g-review
     type: group
-    position: { x: 5040, y: 0 }
+    position: { x: 5360, y: 0 }
     style: { width: 1280, height: 240 }
     data:
       label: Review
@@ -109,13 +111,6 @@ nodes:
       skill: concept-glossary
       label: Glossary
       phase: conceptualization
-  - id: brand
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: design-brand
-      label: Brand
-      phase: conceptualization
   - id: journeys
     type: skill
     parentNode: g-conceptualization
@@ -123,12 +118,14 @@ nodes:
       skill: experience-journeys
       label: Journeys
       phase: conceptualization
-  - id: datamodel
+  # Stage look: brand, the navigation model (experience-interaction's first batch), the
+  # shell, then the Storybook App frame with one pending page per destination.
+  - id: brand
     type: skill
     parentNode: g-conceptualization
     data:
-      skill: architecture-datamodel
-      label: Data Model
+      skill: design-brand
+      label: Brand
       phase: conceptualization
   - id: interaction
     type: skill
@@ -137,6 +134,40 @@ nodes:
       skill: experience-interaction
       label: Interaction
       phase: conceptualization
+  # the shell takes its destinations from journeys and the glossary's `navigation: primary`
+  # objects (`tree/07_screens/shell.md § Writing it` step 2); screens refine it later.
+  - id: shell
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: experience-shell
+      label: App Shell
+      phase: conceptualization
+  - id: storybook-look
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-storybook
+      label: Storybook · look
+      phase: conceptualization
+  # Stage data: the data model, then the entity stories for every object-map row
+  # (experience-interaction's objects batch runs again here through skaileup's walk).
+  - id: datamodel
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: architecture-datamodel
+      label: Data Model
+      phase: conceptualization
+  - id: storybook-data
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-storybook
+      label: Storybook · data
+      phase: conceptualization
+  # Stage features: behaviours, the spec loop, the screens, then the Storybook of screens,
+  # App and journeys and its feedback pass.
   - id: behaviors
     type: skill
     parentNode: g-conceptualization
@@ -161,15 +192,21 @@ nodes:
       skill: experience-screen
       label: Screens
       phase: conceptualization
-  # shell follows the screen loop: it derives the app-shell navigation from the screens
-  # the experience-screen iterations wrote, so it cannot sit before them.
-  - id: shell
+  - id: storybook
     type: skill
     parentNode: g-conceptualization
     data:
-      skill: experience-shell
-      label: App Shell
+      skill: mockup-storybook
+      label: Storybook · features
       phase: conceptualization
+  - id: feedback
+    type: skill
+    parentNode: g-conceptualization
+    data:
+      skill: mockup-feedback
+      label: Feedback
+      phase: conceptualization
+  # The blueprint follows the approved concept.
   - id: techstack
     type: skill
     parentNode: g-conceptualization
@@ -183,20 +220,6 @@ nodes:
     data:
       skill: architecture-system
       label: System
-      phase: conceptualization
-  - id: storybook
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: mockup-storybook
-      label: Storybook
-      phase: conceptualization
-  - id: feedback
-    type: skill
-    parentNode: g-conceptualization
-    data:
-      skill: mockup-feedback
-      label: Feedback
       phase: conceptualization
 
   - id: scaffold
@@ -290,19 +313,21 @@ edges:
   - { id: e-onboard-research, source: onboard, target: research, type: flow }
   - { id: e-research-brief, source: research, target: brief, type: flow }
   - { id: e-brief-glossary, source: brief, target: glossary, type: flow }
-  - { id: e-glossary-brand, source: glossary, target: brand, type: flow }
-  - { id: e-brand-journeys, source: brand, target: journeys, type: flow }
-  - { id: e-journeys-datamodel, source: journeys, target: datamodel, type: flow }
-  - { id: e-datamodel-interaction, source: datamodel, target: interaction, type: flow }
-  - { id: e-interaction-behaviors, source: interaction, target: behaviors, type: flow }
+  - { id: e-glossary-journeys, source: glossary, target: journeys, type: flow }
+  - { id: e-journeys-brand, source: journeys, target: brand, type: flow }
+  - { id: e-brand-interaction, source: brand, target: interaction, type: flow }
+  - { id: e-interaction-shell, source: interaction, target: shell, type: flow }
+  - { id: e-shell-storybook-look, source: shell, target: storybook-look, type: flow }
+  - { id: e-storybook-look-datamodel, source: storybook-look, target: datamodel, type: flow }
+  - { id: e-datamodel-storybook-data, source: datamodel, target: storybook-data, type: flow }
+  - { id: e-storybook-data-behaviors, source: storybook-data, target: behaviors, type: flow }
   - { id: e-behaviors-feature, source: behaviors, target: feature, type: flow }
   - { id: e-feature-screen, source: feature, target: screen, type: flow }
-  - { id: e-screen-shell, source: screen, target: shell, type: flow }
-  - { id: e-shell-techstack, source: shell, target: techstack, type: flow }
-  - { id: e-techstack-system, source: techstack, target: system, type: flow }
-  - { id: e-system-storybook, source: system, target: storybook, type: flow }
+  - { id: e-screen-storybook, source: screen, target: storybook, type: flow }
   - { id: e-storybook-feedback, source: storybook, target: feedback, type: flow }
-  - { id: e-feedback-scaffold, source: feedback, target: scaffold, type: flow }
+  - { id: e-feedback-techstack, source: feedback, target: techstack, type: flow }
+  - { id: e-techstack-system, source: techstack, target: system, type: flow }
+  - { id: e-system-scaffold, source: system, target: scaffold, type: flow }
   - { id: e-scaffold-database, source: scaffold, target: database, type: flow }
   - { id: e-database-standards, source: database, target: standards, type: flow }
   - { id: e-standards-plan, source: standards, target: plan, type: flow }

@@ -1,0 +1,8 @@
+# Written by walkthrough.py (skaileup) only — tree/01_meta/walkthrough.md
+stages:
+  frame: { status: approved, approved: "2026-11-08", source: "user, 2026-11-08" }
+  look: { status: open }
+  data: { status: open }
+  features: { status: open }
+history:   # append-only
+  - { "on": "2026-11-08", stage: frame, event: approved, source: "user, 2026-11-08" }

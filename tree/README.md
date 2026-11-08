@@ -32,7 +32,8 @@ _concept/                                the artifact tree, its ownership rule a
 ├── goals.md                             success criteria, KPIs, constraints and explicit non-goals
 ├── 01_meta/                             project metadata — the user's expectations and the project's sizing
 │   ├── expectations.md                  what the user judges the result by and how they want to work with the agents
-│   └── scope.yaml                       flow, project type and depth — written when the first skill needs one
+│   ├── scope.yaml                       flow, project type and depth — written when the first skill needs one
+│   └── walkthrough.yaml                 the four concept stages and the user's yes on each — what the build waits for
 ├── 02_grounding/                        everything that came from outside the room, readable by every skill
 │   ├── findings/                        graded evidence and raw material from outside the room
 │   │   ├── brand.md                     colours, type, radius, spacing and mode the repository's theme carries
@@ -215,6 +216,8 @@ STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 3. An approval is a decision batch like any other: the receiver writes `approved:` only in the run that carries the user's own yes; an artifact the lead approved under `agent decides and reports` is written without it.
 4. The lead never edits an artifact a delegate owns. A host tool only the lead holds (a review hunk, an editor that opens a file) carries the delegate's change unchanged: the delegate returns the change, the lead submits it and passes the user's decision back.
 
+**Hosts without the skaileup agents.** Where the `skaileup-lead` and its delegates are not installed, the session agent is the lead and the relay above applies unchanged. It sends a skill run to a generic subagent with the verbatim `Run skill <id>` prompt, the status-block contract of this section and the sentence "You cannot reach the user: return NEEDS_CONTEXT with a decision batch for every choice the user owns; never close one with your recommendation." A plan written by the session agent answers no skill's decision batch in advance.
+
 **Work another agent owns.** A receiver whose route needs a skill another agent composes does not run it: it returns `NEEDS_CONTEXT` with no `Question:` and the run under `Missing:`, `evidence pass — <skill> <scope>` for `concept-reverse` or `concept-research` and `skill run — <skill> <args>` for any other (a `spec-feature` run that needs a new screen: `skill run — experience-screen <screen>`). The lead sends that run to the agent that owns the skill, then sends the original run again with the result's paths. A receiver that cannot start its own helper contexts runs its helper passes itself, one after another.
 
 **Parallel only when the write sets are disjoint.** Two receivers run at once only when no path one may write or propose into is one the other may (`owner:` and `may_propose:` of the nodes their routes visit).
@@ -223,7 +226,7 @@ A partial result with no status leaves the sender guessing; a code makes it act.
 
 ## Beside the tree
 
-One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and is owned by `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `<contracts>/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`.
+One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and is owned by `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `<contracts>/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`. The one exception: `skaileup` writes the marked walkthrough section (`<!-- skaileup:walkthrough -->` … `<!-- /skaileup:walkthrough -->`) into the project's agent file — `AGENTS.md`, else `CLAUDE.md` — through `walkthrough.py guard --write` (`tree/01_meta/walkthrough.md`), and nothing else in it.
 
 A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, defaults, floorplans), holds the application-design rules skills cite. It is not a `_concept/` part and has no node here.
 
