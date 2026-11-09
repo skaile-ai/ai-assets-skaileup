@@ -1,11 +1,10 @@
 name: ai-assets-skaileup
-description: skaileup skill collection as a mirror tree — one instruction node per _concept/ part, skills are routes
+description: skaileup skill collection as a mirror tree — one instruction node
+  per _concept/ part, skills are routes
 agent-config:
   default:
-    agent: claude-code
-    provider: anthropic
-    model: claude-sonnet-4-6
-    driver: claude-sdk
+    model: anthropic/claude-sonnet-4-6
+    harness: claude-sdk
     max_turns: 200
 
 # No `assets:` block, deliberately. Newer @skaile/workspaces throws on those keys, and the
