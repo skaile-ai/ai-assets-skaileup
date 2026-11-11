@@ -4,7 +4,7 @@ updated: 2026-10-25
 approved: 2026-10-25
 rulebook: rulebook/rules.md
 defaults: DF1–DF15 except DF8
-companions: { glossary: _concept/glossary.md, visual: _concept/03_brand/identity.md, shell: _concept/07_screens/shell.md, decisions: _concept/10_blueprint/decisions.md }
+companions: { glossary: _concept/glossary.md, visual: _concept/03_brand/identity.md, shell: _concept/07_screens/shell.md, decisions: docs/adr/ }
 ---
 # App design – Lunch Roulette
 ## Context

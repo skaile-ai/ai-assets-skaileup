@@ -11,7 +11,10 @@ has something real on every page.
   promoted entries (a data-model field, a screen's `implements:` link, two roster ideas and the
   `APP-DESIGN.md` rule MSG-2), and two rejected ones: a scope `depth` and weighted votes for a
   feature spec, each with its reason.
-- `APP-DESIGN.md` and `CONTEXT.md` sit beside `_concept/`.
+- `APP-DESIGN.md` and the decision log `docs/adr/` (three records, one of them a `pattern` two
+  features follow) sit beside `_concept/`. The words live in the root `GLOSSARY.md`
+  (split mode, the default: `scope.yaml` names no `glossary`), and `_concept/glossary.md` holds
+  only the ontology of the same terms.
 - `skaile.yaml` is a valid workspace config: a `url` source for this collection (unpinned, so its
   `main`) and every flow, contract and skill as a dependency.
 

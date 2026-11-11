@@ -7,15 +7,14 @@ may_propose: [experience-screen, quality-design]
 
 # APP-DESIGN.md
 
-`APP-DESIGN.md` sits at the project root — the directory holding `_concept/` — the one project-root artifact. It is the per-app record of choices against the rulebook (`rulebook/rules.md`): which rules, defaults and heuristics the app adopts, adapts or declines, and what the rulebook leaves to the app — navigation model, object map, information tiers, screen defaults, surfaces, saving, messages, finding. `experience-interaction` owns it, every screen, shell and feature skill reads it, and `quality-interaction` checks the source against it. A missing or contradictory entry is re-decided differently in every screen.
+`APP-DESIGN.md` sits at the project root — the directory holding `_concept/` — beside `docs/adr/` (`tree/protocol/beside-the-tree.md`). It is the per-app record of choices against the rulebook (`rulebook/rules.md`): which rules, defaults and heuristics the app adopts, adapts or declines, and what the rulebook leaves to the app — navigation model, object map, information tiers, screen defaults, surfaces, saving, messages, finding. `experience-interaction` owns it, every screen, shell and feature skill reads it, and `quality-interaction` checks the source against it. A missing or contradictory entry is re-decided differently in every screen.
 
 It holds *decisions*; findings, plans and questions stay in the output of the run that raised them, and rules stay in the rulebook, cited by id, never copied. It repeats none of its neighbours:
 
 - the glossary (`tree/glossary.md § Where the words live`) — what things are called (the nouns); `_concept/glossary.md` — each object's axes (`navigation`, `lifecycle`, `origin`, `operations`);
 - `_concept/03_brand/identity.md` — how it looks and sounds;
 - `_concept/07_screens/shell.md` — the shell frame and the concrete destination list;
-- `_concept/10_blueprint/decisions.md` — the records of choices that had rejected options;
-- `docs/adr/` — decisions of architecture.
+- `docs/adr/` — the records of hard-to-reverse choices that had rejected options (`tree/docs/adr/README.md`).
 
 `build-scaffold` writes a line in the project's root `AGENTS.md` that points coding agents here, creating the file when it creates the project. In a project that existed before scaffolding the skills leave `CLAUDE.md` and `AGENTS.md` alone, and the plan says the link is missing.
 
@@ -28,7 +27,7 @@ updated: YYYY-MM-DD
 approved: YYYY-MM-DD
 rulebook: rulebook/rules.md
 defaults: DF1–DF15 except DF8
-companions: { glossary: _concept/glossary.md, visual: _concept/03_brand/identity.md, shell: _concept/07_screens/shell.md, decisions: _concept/10_blueprint/decisions.md }
+companions: { glossary: _concept/glossary.md, visual: _concept/03_brand/identity.md, shell: _concept/07_screens/shell.md, decisions: docs/adr/ }
 ---
 # App design – <name>
 ## Context
@@ -155,7 +154,7 @@ How a reader applies what it reads:
 5. **Decide in batches** (rule 2). What remains after the bundle goes in batches by topic: the `rulebook/defaults.md § Decisions, not defaults` choices; the navigation model, primary surface and archetype, decided together because the archetype's row fixes the other two unless a NAV entry names the departure; the heuristics to adopt (`rulebook/rules.md § Heuristics`); then the per-object calls (home, hosts, tiers) in the order that changes a screen's surface first. Run by a delegate, the batch returns as `NEEDS_CONTEXT` (`tree/protocol/delegation.md § Delegation`); an entry the user defers is written `[open Qn]` with a stand-alone § Open row and keeps its stage open (`tree/01_meta/walkthrough.md`).
 6. **Write after every batch**: create the file in the shape of § Format, or update it in place, leaving decided entries as written — flipping one needs the user's answer. Each write adds one § Changelog line and sets `updated:`. A rejected rule or accepted deviation goes to § Exceptions only on the user's answer. When the user says yes to the file in words, set `approved:` in the same write; an edit after that leaves it at its last value until the user says yes again.
 7. **Refine in place.** On an existing `APP-DESIGN.md`, a request about one entry changes that entry alone and adds a § Changelog line; no interview reruns. A re-entry after a code check reads `_concept/11_build/interaction.sarif` (`tree/11_build/interaction.md § Format`): each proposed exception and each question in it is asked in the next batch as a new `Qn`; a yes to an exception enters § Exceptions, no answer becomes the § Open row `keep as exception?`. The verdict file is `quality-interaction`'s and stays as it is.
-8. **Carry gaps and trade-offs to their homes.** A term the glossary lacks is written into this run's proposal file (`tree/glossary.md § Format`, *Proposal entry*; `tree/proposals/README.md § Writing it`), and the step carries on with it. A substantive choice with rejected options — hard to reverse, surprising without context — becomes a decision record (`tree/10_blueprint/decisions.md § Writing it`) and the entry cites its `DR-<n>`.
+8. **Carry gaps and trade-offs to their homes.** A term the glossary lacks is written into this run's proposal file (`tree/glossary.md § Format`, *Proposal entry*; `tree/proposals/README.md § Writing it`), and the step carries on with it. A substantive choice with rejected options — hard to reverse, surprising without context — is written into the same file as a decision record (`tree/docs/adr/README.md § Writing it`), and the entry cites it as `adr:<slug>`.
 9. **Settle the pending proposal entries.** On every run, list the pending entries targeting `APP-DESIGN.md` (payload, proposer, source) and settle them per `tree/proposals/README.md § Writing it`, in confirm-or-reject batches with a recommendation each (rule 2). A confirmed entry is promoted: its `payload` is written under the heading its anchor names, with the section's next free id and its `Rules:` citation, and counts as decided; a confirmed question row is asked as any `Q<n>`. The entry gets `status: promoted`, `settled_by: experience-interaction` and `settled_on`; a rejected one gets `status: rejected` and the user's reason, which keeps it from being proposed again. When the file does not exist yet, the first write of step 6 creates it around the promoted entries. Each promotion adds a § Changelog line.
 
 The completion summary (`tree/protocol/running.md § How a skill runs`, rule 8) says which entries a re-entry changed, so the screens that read them are re-checked.

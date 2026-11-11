@@ -1,6 +1,6 @@
 # 0024 — The glossary splits by kind when the project keeps its own
 
-**Status:** accepted; G4 and G5 amended by [0031](0031-proposals-are-files-per-run.md) (a proposed term is an entry of a proposal file targeting `_concept/glossary.md`; no marker lines are written into the project glossary, and a rejection takes no decision record)
+**Status:** accepted; G4 and G5 amended by [0031](0031-proposals-are-files-per-run.md) (a proposed term is an entry of a proposal file targeting `_concept/glossary.md`; no marker lines are written into the project glossary, and a rejection takes no decision record); G1 and G6 amended by [0033](0033-glossary-md-is-the-default-project-glossary.md) (the project glossary is a root `GLOSSARY.md` by default, `CONTEXT.md` is its legacy name, and a project with neither gets a new `GLOSSARY.md` in split mode)
 
 Amends [ADR 0014](0014-the-glossary-is-a-root-file.md): the glossary is no longer only a root
 file of `_concept/`; in split mode its words live in a file outside `_concept/`. Amends

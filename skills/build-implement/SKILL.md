@@ -5,6 +5,8 @@ version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
+    - skill:@mattpocock/tdd#^0.1
+    - skill:@mattpocock/code-review#^0.1
   artifacts:
     requires:
       - { id: slice-plan }
@@ -17,6 +19,7 @@ metadata:
       - { id: slice-index, path: "_concept/11_build/slices/<slice_id>/index.md" }
       - { id: acceptance-criteria, path: "_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md" }
       - { id: trace, path: "_concept/11_build/trace.yaml" }
+      - { id: proposals, path: "_concept/proposals/<date>-build-implement-<scope>.yaml" }
   prerequisites:
     files:
       # Hard: `plan.md` is the machine-read plan (feature, blocked_by, rows, criterion ids) the slice is
@@ -43,7 +46,7 @@ missing one rather than improvising a test loop or a review.
 Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>` for the feature the slice's `plan.md` names. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
-2. **Load the slice, build and review it, run the gate, recap, propose the simplification** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (steps 1–6; step 2 holds the OpenAPI/AsyncAPI match). Call the Skill tool with "tdd" for each row. Call the Skill tool with "code-review" once the rows are done. Confirm the seams with the user before the first test.
+2. **Load the slice, build and review it, run the gate, recap, propose the simplification** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (steps 1–6; step 2 holds the OpenAPI/AsyncAPI match). Call the Skill tool with "tdd" for each row. Call the Skill tool with "code-review" once the rows are done. Confirm the seams with the user before the first test. A hard-to-reverse choice made while building is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`); other concerns go to the spec's parent issue (`tree/protocol/delegation.md § Delegation`).
 3. **Commit atomically** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 7): a user-approved decomposition and an explicit file list per commit.
 4. **Record the slice in the trace** — `tree/11_build/trace.md`, validated against `tree/11_build/trace.schema.json` before writing. Written once the last commit has landed.
 5. **Flip the ledger rows the gate exercised** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, stamped with the last commit's short sha.

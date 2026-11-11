@@ -214,33 +214,36 @@ vocabulary does not drift; any authoring skill may propose a term. Distinct from
 
 **Project glossary**:
 The file outside `_concept/` that holds a project's words — term, definition and what to avoid
-saying — when the project keeps its own, usually the root `CONTEXT.md` that the
-`domain-modeling` skill tends. It stays the project's: this collection adds definitions to it and
+saying — in the format of the `domain-modeling` skill, which tends it: the root `GLOSSARY.md`
+unless the project names another, `CONTEXT.md` where a project still keeps upstream's legacy name.
+A project that has none gets one. It stays the project's: this collection adds definitions to it and
 rearranges nothing already there. What the words mean lives here; what kind of thing each one is
 lives in the **glossary**.
-_Avoid_: external glossary, words file, context file, CONTEXT.md (that is one project's name for it)
+_Avoid_: external glossary, words file, context file, GLOSSARY.md or CONTEXT.md (those are file names for it)
 
 **Split mode**:
-The way a project keeps its glossary when it has a **project glossary**: the words live there,
+The way a project keeps its glossary by default: the words live in the **project glossary**,
 and the **glossary** holds only the ontology around them. Each term has its home for definition
 and another for kind, so neither file repeats the other.
 _Avoid_: dual glossary, hybrid mode, linked glossary
 
 **Concept mode**:
-The way a project keeps its glossary when it has no **project glossary**, or declares that it
-wants none: the **glossary** holds words and ontology together, as one file. Not the **concept**,
-which is the design half of a project.
+The way a project keeps its glossary when it declares that it wants no **project glossary**: the
+**glossary** holds words and ontology together, as one file. Not the **concept**, which is the
+design half of a project.
 _Avoid_: default mode, single-file mode, standalone glossary
 
 **Decision record**:
-An append-only note of a choice that was **hard to reverse**, **surprising without
-context**, and a **real trade-off**. All three, or it is not one. One record per project,
-open to every authoring skill; each entry says what was decided, by whom, which options were
-rejected and what follows. A rejected scope decision is a decision record marked rejected, not
-a separate store; a rejected **proposed entry** is not one, its reason stays in its **proposal
-file**. Recorded where it was made (the collection, the design, or the build) and at the
-**level** it binds: the product, one featureset, or one feature.
-_Avoid_: ADR log, rationale, out-of-scope file
+A note of a choice that was **hard to reverse**, **surprising without context**, and a **real
+trade-off**. All three, or it is not one. One file per decision, in one folder per project,
+named by a short slug that is its reference; each says what was decided, by which skill, which
+options were rejected and what follows. Never edited once written: a change of mind is a new
+record that supersedes the old. Every authoring skill may propose one; the front door alone
+numbers and writes it. A rejected scope decision is a decision record marked rejected, not a
+separate store; a rejected **proposed entry** is not one, its reason stays in its **proposal
+file**; a build concern that is no hard choice is not one either, it goes to the spec's issue.
+Recorded at the **level** it binds: the product, one featureset, or one feature.
+_Avoid_: decision log entry, DR, rationale, out-of-scope file
 
 **Level**:
 How far a **decision record** reaches: the product, one featureset, or one feature. A higher

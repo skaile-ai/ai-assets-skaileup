@@ -1,6 +1,6 @@
 # 0029 — The concept is walked top-down
 
-**Status:** accepted; W4 amended by [0031](0031-proposals-are-files-per-run.md) (a stage's artifacts are unconfirmed while a proposal entry targeting them is pending, not while they hold `(proposed by` markers)
+**Status:** accepted; W4 amended by [0031](0031-proposals-are-files-per-run.md) (a stage's artifacts are unconfirmed while a proposal entry targeting them is pending, not while they hold `(proposed by` markers); W5 amended by [0032](0032-one-decision-log-under-docs-adr.md) (the waive is backed by an ADR under `docs/adr/`, cited `adr:<slug>`)
 
 Amends [ADR 0019](0019-scoped-fact-resolution.md) ("hard gates only for machine-read formats")
 and [ADR 0023](0023-two-advisory-flows.md) ("order is advisory") for four skills only:

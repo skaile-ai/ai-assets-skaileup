@@ -1,6 +1,6 @@
 # 0031 — Proposals are files, one per run
 
-**Status:** accepted
+**Status:** accepted; amended by [0032](0032-one-decision-log-under-docs-adr.md) (the decision record of 0022 is the folder `docs/adr/`; an ADR-grade decision is a proposal entry with `target: docs/adr/`, promoted by `skaileup`)
 
 Amends [ADR 0022](0022-shared-artifact-contracts-and-proposed-entries.md): a proposed entry is no
 longer appended to the owner's artifact, and a rejection no longer goes into the decision record.

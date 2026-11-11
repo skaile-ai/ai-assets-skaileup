@@ -11,7 +11,6 @@ metadata:
       - { id: scope }
     produces:
       - { id: app-design, path: "APP-DESIGN.md" }
-      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
       - { id: proposals, path: "_concept/proposals/<date>-experience-interaction-<scope>.yaml" }
   prerequisites:
     files:
@@ -37,6 +36,6 @@ Read `tree/protocol/running.md`, `tree/protocol/ownership.md` and `tree/protocol
 3. **Ask the depth** — step 4 of `tree/APP-DESIGN.md § Writing it` (`sketch · standard · exhaustive`, rule 3 of `tree/protocol/running.md § How a skill runs`). `depth` in `scope.yaml` (`tree/01_meta/scope.md`) is the recommendation when present; an answer given where it is absent is written as a `key:depth` entry into the run's proposal file (`tree/proposals/README.md § Writing it`).
 4. **Decide in batches, write after each** — `rulebook/rules.md`, steps 5–6 of `tree/APP-DESIGN.md § Writing it` and `tree/APP-DESIGN.md § Format`. Run by a delegate, the batch returns as `NEEDS_CONTEXT` (`tree/protocol/delegation.md § Delegation`); an entry the user defers is written `[open Qn]` and keeps its stage open (`tree/01_meta/walkthrough.md`).
 5. **Refine, fold in a code check, settle proposals** — step 7 of `tree/APP-DESIGN.md § Writing it` and `tree/11_build/interaction.md § Format` for the `interaction.sarif` fields; step 9 and `tree/proposals/README.md § Writing it` to settle the pending entries `experience-screen` and `quality-design` proposed, each promoted or rejected with its reason. The verdict file is `quality-interaction`'s and stays as it is; an exception enters the file only on the user's answer.
-6. **Carry gaps and trade-offs home** — step 8 of `tree/APP-DESIGN.md § Writing it`: a missing term is written into the run's proposal file (`tree/proposals/README.md § Writing it`), a choice with rejected options goes to `tree/10_blueprint/decisions.md § Format`. Name the entries a re-entry changed so the screens that read them are re-checked.
+6. **Carry gaps and trade-offs home** — step 8 of `tree/APP-DESIGN.md § Writing it`: a missing term is written into the run's proposal file (`tree/proposals/README.md § Writing it`), and so is a choice with rejected options, as a decision record (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`). Name the entries a re-entry changed so the screens that read them are re-checked.
 
 **Done when** `tree/APP-DESIGN.md § Checks` holds: every section present, every decided entry citing a rule, heuristic or default id or listed as an exception, every non-`none` object in the object map, every tier-3 attribute behind a peek, popover or named disclosure or an exception, every open question with a stable id and a recommendation, no pending proposal entry targeting `APP-DESIGN.md`, the file written after the last batch, `approved:` set or Open saying why not.

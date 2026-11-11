@@ -15,7 +15,6 @@ metadata:
       - { id: techstack }
     produces:
       - { id: datamodel, path: "_concept/10_blueprint/datamodel/" }
-      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
       - { id: proposals, path: "_concept/proposals/<date>-architecture-datamodel-<scope>.yaml" }
   prerequisites:
     files:
@@ -37,7 +36,7 @@ Derives the data model from what exists and writes it as two YAML files — `mod
 Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Resolve the facts, settle the vocabulary, ask the gaps** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 1–3, applying `tree/10_blueprint/datamodel/README.md § Naming` to every entity, field, enum and relation. Derive-or-ask per `tree/protocol/running.md § How a skill runs`: what the code already holds comes from `concept-reverse` scoped `datamodel`; a concept with no glossary term is written into the run's proposal file (`tree/proposals/README.md § Writing it`) (`tree/glossary.md § Format`, *Proposal entry*) and modelling carries on.
-2. **Compare consequences, design the expensive choices twice, approve** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 4–5. Rejected alternatives and the reason go to `_concept/10_blueprint/decisions.md` as the *options rejected* of one record (`tree/10_blueprint/decisions.md`).
+2. **Compare consequences, design the expensive choices twice, approve** — `tree/10_blueprint/datamodel/README.md § Writing it`, steps 4–5. The choice and its rejected alternatives become one decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`).
 3. **Migrate an old model, write `model.yaml`, check it** — `tree/10_blueprint/datamodel/model.md § Writing it`: a project with `model.ts` or `model.json` and no `model.yaml` runs `bunx @skaile/model@1 migrate _concept/10_blueprint/datamodel` first; the format, the `$schema` line and the commands are in `tree/10_blueprint/datamodel/README.md § Format`; every entity models its glossary term, and `bunx @skaile/model@1 check _concept/10_blueprint/datamodel` (`npx` without Bun) runs after every write until it prints `ok`.
 4. **Write `seed.yaml` with all four scenarios, check again** — `tree/10_blueprint/datamodel/seed.md § Writing it`: the same check validates every row against the model; then step 8 of the README's `## Writing it` (a stack export is `build-database`'s).
 

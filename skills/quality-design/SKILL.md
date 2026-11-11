@@ -6,6 +6,7 @@ metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
     - contract:@skaile-ai/app-design-rulebook
+    - skill:@mattpocock/grilling#^0.1
   artifacts:
     requires:
       - { id: app-design }
@@ -15,7 +16,6 @@ metadata:
       - { id: grounding-findings }
     produces:
       - { id: design-candidates, path: "_concept/11_build/design-candidates.md" }
-      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }
       - { id: proposals, path: "_concept/proposals/<date>-quality-design-<scope>.yaml" }
   prerequisites:
     files:
@@ -42,7 +42,7 @@ Read `tree/protocol/running.md`, `tree/protocol/ownership.md` and `tree/protocol
 4. **Ask which candidate to pursue** — step 5 of `tree/11_build/design-candidates.md § Writing it`; one batch per rule 2, one candidate per run.
 5. **Grill the candidate** — step 6 of `tree/11_build/design-candidates.md § Writing it`. Call the Skill tool with "grilling"; when it is absent, run the same questions inline as one batch.
 6. **Design it twice (optional)** — step 7 of `tree/11_build/design-candidates.md § Writing it`; three parallel alternatives and a consequence table, when the user agrees.
-7. **Land the result** — step 8 of `tree/11_build/design-candidates.md § Writing it` and `tree/11_build/design-candidates.md § Landing proposals`: entries of the run's proposal file (`tree/proposals/README.md § Writing it`) in each owner's payload shape (`tree/glossary.md § Format`, `tree/APP-DESIGN.md § Format`, `tree/07_screens/[screen].md § Format`) and the record per `tree/10_blueprint/decisions.md § Format`.
+7. **Land the result** — step 8 of `tree/11_build/design-candidates.md § Writing it` and `tree/11_build/design-candidates.md § Landing proposals`: entries of the run's proposal file (`tree/proposals/README.md § Writing it`) in each owner's payload shape (`tree/glossary.md § Format`, `tree/APP-DESIGN.md § Format`, `tree/07_screens/[screen].md § Format`) and the decision record per `tree/docs/adr/README.md § Format` (target `docs/adr/`, anchor `adr:<slug>`).
 8. **Report** — step 9 of `tree/11_build/design-candidates.md § Writing it`; claims measured or inferred per rule 8, next steps named by demand.
 
-**Done when** `tree/11_build/design-candidates.md § Checks` holds: the report parses, every candidate cites a `file:line` that passes the citation check, the picked candidate carries its `DR-<n>`, and every landed proposal is an entry of the run's proposal file naming its `DC-<n>`.
+**Done when** `tree/11_build/design-candidates.md § Checks` holds: the report parses, every candidate cites a `file:line` that passes the citation check, the picked candidate carries its `adr:<slug>`, and every landed proposal is an entry of the run's proposal file naming its `DC-<n>`.

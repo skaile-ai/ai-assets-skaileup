@@ -1,6 +1,6 @@
 # 0023 — Two advisory flows
 
-**Status:** accepted
+**Status:** accepted; the `decisions.md` paragraph amended by [0032](0032-one-decision-log-under-docs-adr.md) (decisions are files under `docs/adr/`, owned by `skaileup`; authoring skills propose them)
 
 Supersedes the tier-as-flow part of [ADR 0002](0002-flat-tree-and-nine-domains.md) and
 [ADR 0007](0007-one-numbered-artifact-tree.md): the statements that order lives in the flow

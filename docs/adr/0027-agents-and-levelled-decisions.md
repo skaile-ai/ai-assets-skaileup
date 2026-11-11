@@ -1,6 +1,6 @@
 # 0027 — Agents and levelled decisions
 
-**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias); K7 amended by [0031](0031-proposals-are-files-per-run.md) (`concept-brief` is the roster's sole owner; `spec-feature` proposes its roster moves)
+**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias); K7 amended by [0031](0031-proposals-are-files-per-run.md) (`concept-brief` is the roster's sole owner; `spec-feature` proposes its roster moves); K4 and K5 amended by [0032](0032-one-decision-log-under-docs-adr.md) (a record is a file under `docs/adr/`, cited by slug `adr:<slug>`; levels, kinds and patterns unchanged)
 
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends
@@ -70,7 +70,7 @@ it stays the user's yes.
 
 **K4 — A decision record has a level.** Each record says how far it reaches: `product`,
 `featureset <slug>` or `feature <featureset>/<feature>`
-(`tree/10_blueprint/decisions.md § Levels`). A skill reads the records from the top down before
+(`tree/docs/adr/README.md § Levels`). A skill reads the records from the top down before
 asking, and a question a binding record answers is not asked. A lower choice never overrides a
 higher record: it goes to the user, and when accepted it becomes a new record at the higher level
 that supersedes the old one. The levels live in the one log, not in a second file.

@@ -140,7 +140,7 @@ def sync_owners(root: Path) -> None:
     for skill in sorted(p for p in skills.iterdir() if (p / "SKILL.md").is_file()) if skills.is_dir() else []:
         fm, _body = check.split_frontmatter((skill / "SKILL.md").read_text())
         for _ident, path in check._produced_entries(fm):
-            if not (path.startswith("_concept/") or path in check.PROJECT_ROOT_ARTIFACTS):
+            if not (path.startswith("_concept/") or check.root_artifact(path) is not None):
                 continue
             hit = check.resolve(nodes, path)
             if hit is not None and skill.name not in owners[hit.rel]:
@@ -456,7 +456,7 @@ def test_produces_path_at_the_named_project_root(tmp_path):
 def test_produces_path_at_the_project_root_that_is_not_named(tmp_path):
     root = write_repo(tmp_path)
     set_produces(root, '    produces:\n      - { id: app-design, path: "NOTES.md" }\n')
-    only(root, "is not one of the named project-root artifacts (APP-DESIGN.md)")
+    only(root, "is not one of the named project-root artifacts")
 
 
 def test_produces_the_project_root_artifact_with_no_node(tmp_path):
@@ -1016,14 +1016,65 @@ def test_bare_slash_command_for_a_model_invoked_skill(tmp_path):
     only(root, "mentions `/tdd` as a slash command")
 
 
+def declare(root: Path, skill: str, *refs: str) -> None:
+    """Add `refs` to the skill's `metadata.requires`, after the contract it already declares."""
+    p = skill_file(root, skill)
+    contract = '    - "contract:@skaile-ai/shared-contracts"\n'
+    p.write_text(p.read_text().replace(contract, contract + "".join(f'    - "{r}"\n' for r in refs), 1))
+
+
 def test_the_three_call_shapes_are_legal(tmp_path):
     root = write_repo(tmp_path)
     body(
         root,
         "spec-feature",
         'Call the Skill tool with "tdd". Then, call the Skill tool twice, for "tdd" and '
-        '"code-review". Before that, tell the user to run `/triage`.',
+        '"code-review". Step 4 calls the Skill tool with "grilling". Before that, tell the user to run `/triage`.',
     )
+    declare(root, "spec-feature", "skill:@mattpocock/tdd#^0.1", "skill:@mattpocock/code-review#^0.1",
+            "skill:@mattpocock/grilling#^0.1", "skill:@mattpocock/triage#^0.1")
+    assert errors(root) == []
+
+
+# -- skills: declaring the external skills they call --------------------------
+
+def test_an_undeclared_external_call(tmp_path):
+    """The installer walks `metadata.requires`; a call it does not list finds nothing installed."""
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", 'Call the Skill tool with "domain-modeling".')
+    only(root, "uses the external skill 'domain-modeling' but does not declare `skill:@mattpocock/domain-modeling#<range>`")
+    assert "external-skill-declared" in errors(root)[0]
+
+
+def test_an_undeclared_user_skill_named_as_a_slash_command(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Tell the user to run `/triage`.")
+    only(root, "uses the external skill 'triage'")
+
+
+def test_a_declared_external_skill_the_body_never_calls(tmp_path):
+    root = write_repo(tmp_path)
+    declare(root, "spec-feature", "skill:@mattpocock/grilling#^0.1")
+    only(root, "declares `skill:@mattpocock/grilling` in `metadata.requires`, but its body never calls it")
+
+
+def test_a_declared_external_skill_without_a_range(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", 'Call the Skill tool with "tdd".')
+    declare(root, "spec-feature", "skill:@mattpocock/tdd")
+    only(root, "without a `#<range>`")
+
+
+def test_a_declared_ref_to_no_known_external_skill(tmp_path):
+    root = write_repo(tmp_path)
+    declare(root, "spec-feature", "skill:@mattpocock/nonesuch#^0.1")
+    only(root, "which is no external skill in EXTERNAL_SKILLS")
+
+
+def test_a_declared_external_call_is_clean(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", 'For the words, call the Skill tool with "domain-modeling".')
+    declare(root, "spec-feature", "skill:@mattpocock/domain-modeling#^0.1")
     assert errors(root) == []
 
 
@@ -2178,15 +2229,6 @@ def test_node_with_a_known_proposer_is_clean(tmp_path):
     assert errors(root) == []
 
 
-def test_owner_of_a_node_with_proposers_needs_no_decisions(tmp_path):
-    """A rejection stays in the proposal file, so the owner need not produce the decision log."""
-    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
-    proposes(root)
-    edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
-    assert "decisions" not in skill_file(root, "spec-feature").read_text()
-    assert errors(root) == []
-
-
 def test_proposer_without_a_proposal_file(tmp_path):
     root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
     proposals_node(root)
@@ -3261,6 +3303,35 @@ def test_a_name_that_is_not_a_root_artifact_gets_no_exemption(tmp_path):
     among(root, "does not start with '_concept/'", "'NOTES.md' is not lowercase")
 
 
+def test_resolve_a_project_root_directory_through_its_node():
+    nodes = nodes_of(("docs/adr/README.md", ["docs/adr/", "docs/adr/<NNNN>-<slug>.md"]))
+    assert check.resolve(nodes, "docs/adr/0001-one-container.md") is nodes[0]
+    assert check.root_artifact("docs/adr/0001-one-container.md") == "docs/adr/"
+    assert check.root_artifact("docs/notes.md") is None
+
+
+def test_a_root_directory_node_is_clean_at_its_place(tmp_path):
+    """`tree/docs/` holds only the node of `docs/adr/`; it needs no README of its own."""
+    root = write_repo(tmp_path)
+    add_node(root, "docs/adr/README.md", ["docs/adr/", "docs/adr/<NNNN>-<slug>.md"], summary="the decision records")
+    assert errors(root) == []
+    assert not any("adr" in line for line in check.render_tree(check.load_tree(root)))
+
+
+def test_a_root_directory_node_elsewhere_is_misplaced(tmp_path):
+    root = write_repo(tmp_path)
+    add_node(root, "01_meta/adr.md", ["docs/adr/", "docs/adr/<NNNN>-<slug>.md"], summary="the decision records")
+    assert any("so the node belongs at `tree/docs/adr/README.md`" in e for e in errors(root)), errors(root)
+
+
+def test_a_skill_producing_a_decision_record(tmp_path):
+    root = write_repo(tmp_path)
+    add_node(root, "docs/adr/README.md", ["docs/adr/", "docs/adr/<NNNN>-<slug>.md"], summary="the decision records")
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+                       '      - { id: adr, path: "docs/adr/<NNNN>-<slug>.md" }\n')
+    assert errors(root) == []
+
+
 def test_the_listing_leaves_out_the_project_root_artifact(tmp_path):
     root = write_repo(tmp_path)
     assert not any("APP-DESIGN" in line for line in check.render_tree(check.load_tree(root)))
@@ -3580,14 +3651,59 @@ def test_check_concept_reports_inline_proposal_markers_in_owner_artifacts(tmp_pa
     assert all("inline proposal; move it to a proposal file" in p for p in problems), problems
 
 
-def test_check_concept_skips_decision_records_and_the_candidate_report(tmp_path):
+def test_check_concept_reports_a_leftover_decision_log_once(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    for rel in ("10_blueprint/decisions.md", "11_build/design-candidates.md"):
+    for rel in ("10_blueprint/decisions.md", "11_build/decisions.md"):
         path = concept / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("- proposed_on: 2026-01-01 (proposed by spec-feature, 2026-01-01)\n", encoding="utf-8")
+        path.write_text("# Decisions\n\n## DR-1 — x\n- proposed_on: 2026-01-01 (proposed by spec-feature)\n",
+                        encoding="utf-8")
+    problems = module.check(concept, script, today=_today())
+    assert problems == [f"_concept/{rel}: {module.DECISIONS_MOVED}"
+                        for rel in ("10_blueprint/decisions.md", "11_build/decisions.md")], problems
+    assert "decision log moved to docs/adr/ (ADR 0032)" in problems[0]
+
+
+def test_check_concept_skips_the_candidate_report(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    path = concept / "11_build/design-candidates.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("- proposed_on: 2026-01-01 (proposed by spec-feature, 2026-01-01)\n", encoding="utf-8")
     assert module.check(concept, script, today=_today()) == []
+
+
+def adr_feature(concept: Path, follows: str) -> None:
+    path = concept / "05_features/polls/draw-pick.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(f"---\nlast_updated: 2026-09-05\nfollows: {follows}\n---\n\n# Draw\n", encoding="utf-8")
+
+
+def test_check_concept_resolves_adr_references(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    adr = tmp_path / "docs/adr"
+    adr.mkdir(parents=True)
+    (adr / "0001-live-poll-state.md").write_text("---\nstatus: accepted\n---\n# Live\n", encoding="utf-8")
+    (adr / "0002-old-draw.md").write_text("---\nstatus: superseded by ADR-0003\n---\n# Old\n", encoding="utf-8")
+    (adr / "0003-bare.md").write_text("# Bare\n\nNo frontmatter reads as accepted.\n", encoding="utf-8")
+    write_proposal(concept, "spec-feature", "2026-10-20", "polls-draw-pick", [
+        {"id": "p1", "target": "docs/adr/", "anchor": "adr:tie-draw", "payload": "---\nstatus: proposed\n---\n# Tie\n",
+         "source": "grill", "status": "proposed"}])
+
+    def adr_problems() -> list[str]:
+        return [p for p in module.check(concept, script, today=_today())
+                if p.startswith("_concept/05_features/polls/draw-pick.md: ") and ("adr:" in p or "decision reference" in p)]
+
+    adr_feature(concept, "[adr:live-poll-state, adr:bare, adr:tie-draw]")
+    assert adr_problems() == []
+    adr_feature(concept, "[adr:old-draw, adr:missing, DR-3]")
+    problems = adr_problems()
+    assert len(problems) == 3, problems
+    assert any("adr:old-draw names a record that is superseded by ADR-0003" in p for p in problems), problems
+    assert any("adr:missing names no record in docs/adr/" in p for p in problems), problems
+    assert any("'DR-3' is not a decision reference" in p for p in problems), problems
 
 
 APP_DESIGN_OPEN = (
@@ -3654,7 +3770,7 @@ PROJECT_GLOSSARY = (
 )
 
 
-def split_ontology(*entries: str, words: str = "CONTEXT.md") -> str:
+def split_ontology(*entries: str, words: str = "GLOSSARY.md") -> str:
     return (
         GLOSSARY_FRONT + "# Glossary — Shop\n\n"
         f"Words: `{words}` (split mode, `tree/glossary.md § Where the words live`).\n\n"
@@ -3668,7 +3784,7 @@ TRANSFER_ENTRY = "**Überweisung** (`ueberweisung`):\n- kind: entity\n"
 
 def split_tree(root: Path, project_glossary: str = PROJECT_GLOSSARY, *entries: str) -> Path:
     concept = concept_tree(root)
-    (root / "CONTEXT.md").write_text(project_glossary, encoding="utf-8")
+    (root / "GLOSSARY.md").write_text(project_glossary, encoding="utf-8")
     (concept / "glossary.md").write_text(
         split_ontology(*(entries or (ORDER_ENTRY, TRANSFER_ENTRY))), encoding="utf-8")
     return concept
@@ -3695,7 +3811,7 @@ def test_check_concept_split_mode_reports_an_entry_with_no_term(tmp_path):
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
     assert problems[0].startswith("_concept/glossary.md:"), problems
-    assert "entry `invoice` has no term in CONTEXT.md" in problems[0], problems
+    assert "entry `invoice` has no term in GLOSSARY.md" in problems[0], problems
     assert "renamed or removed; concept-glossary settles it" in problems[0], problems
 
 
@@ -3706,7 +3822,7 @@ def test_check_concept_split_mode_reports_a_definition_left_in_the_concept_gloss
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
     assert "entry `order` carries a definition or _Avoid_ line" in problems[0], problems
-    assert "the words live in CONTEXT.md" in problems[0], problems
+    assert "the words live in GLOSSARY.md" in problems[0], problems
 
 
 def test_check_concept_split_mode_reports_an_avoid_line_once_per_entry(tmp_path):
@@ -3722,13 +3838,13 @@ def test_check_concept_split_mode_reports_a_confirmed_term_with_no_entry(tmp_pat
     concept = split_tree(tmp_path, PROJECT_GLOSSARY, ORDER_ENTRY)
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
-    assert problems[0].startswith("CONTEXT.md:"), problems
+    assert problems[0].startswith("GLOSSARY.md:"), problems
     assert "term `ueberweisung` has no entry in _concept/glossary.md" in problems[0], problems
     assert "concept-glossary adds its kind" in problems[0], problems
 
 
 def backorder_term(status: str = "proposed") -> dict:
-    return {"id": "p1", "target": "CONTEXT.md", "anchor": "term:Backorder",
+    return {"id": "p1", "target": "GLOSSARY.md", "anchor": "term:Backorder",
             "payload": "**Backorder**:\nAn Order line the stock cannot fill yet.\n_Avoid_: waitlist\n",
             "source": "spec", "status": status}
 
@@ -3747,7 +3863,7 @@ def test_check_concept_split_mode_reports_a_stale_proposal_for_the_project_gloss
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
     assert problems[0].startswith("_concept/proposals/2026-09-01-spec-feature-shop-order.yaml:"), problems
-    assert "for CONTEXT.md" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0], problems
+    assert "for GLOSSARY.md" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0], problems
 
 
 def test_check_concept_split_mode_ignores_terms_inside_fenced_code(tmp_path):
@@ -3769,7 +3885,7 @@ def test_check_concept_split_mode_reports_two_terms_that_share_an_id_once(tmp_pa
         tmp_path, PROJECT_GLOSSARY + "\n## Billing\n\n**Order**:\nA payment request.\n_Avoid_: bill\n")
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
-    assert problems[0].startswith("CONTEXT.md:"), problems
+    assert problems[0].startswith("GLOSSARY.md:"), problems
     assert "term `order` repeats the id of line 7 — concept-glossary qualifies one" in problems[0], problems
 
 
@@ -3783,7 +3899,7 @@ def test_check_concept_split_mode_reports_an_inline_proposal_in_the_project_glos
     )
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 2, problems
-    assert any(p.startswith("CONTEXT.md:") and "inline proposal; move it to a proposal file" in p
+    assert any(p.startswith("GLOSSARY.md:") and "inline proposal; move it to a proposal file" in p
                for p in problems), problems
     assert any("term `backorder` has no entry in _concept/glossary.md" in p for p in problems), problems
 
@@ -3808,7 +3924,7 @@ def test_check_concept_split_mode_takes_a_pending_glossary_path_and_reads_that_f
     module, script = load_check_concept()
     concept = split_tree(tmp_path)
     (tmp_path / "docs").mkdir()
-    (tmp_path / "CONTEXT.md").rename(tmp_path / "docs/glossary.md")
+    (tmp_path / "GLOSSARY.md").rename(tmp_path / "docs/glossary.md")
 
     def glossary_key(path: str) -> dict:
         return {"id": "p1", "target": "_concept/01_meta/scope.yaml", "anchor": "key:glossary",
@@ -3828,10 +3944,10 @@ def test_check_concept_split_mode_lets_a_confirmed_key_win_over_a_root_context_f
     assert problems == ["_concept/01_meta/scope.yaml: glossary names docs/glossary.md, which does not exist"], problems
 
 
-def test_check_concept_concept_mode_keeps_the_full_entry_beside_a_root_context_file(tmp_path):
+def test_check_concept_concept_mode_keeps_the_full_entry_beside_a_root_glossary_file(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    (tmp_path / "CONTEXT.md").write_text(PROJECT_GLOSSARY, encoding="utf-8")
+    (tmp_path / "GLOSSARY.md").write_text(PROJECT_GLOSSARY, encoding="utf-8")
     (concept / "01_meta").mkdir()
     (concept / "01_meta/scope.yaml").write_text("glossary: concept\n", encoding="utf-8")
     (concept / "glossary.md").write_text(
@@ -3839,13 +3955,42 @@ def test_check_concept_concept_mode_keeps_the_full_entry_beside_a_root_context_f
     assert module.check(concept, script, today=_today()) == []
 
 
-def test_check_concept_leaves_an_undecided_context_map_root_to_concept_mode(tmp_path):
+@pytest.mark.parametrize("name", ["GLOSSARY-MAP.md", "CONTEXT-MAP.md"])
+def test_check_concept_leaves_an_undecided_map_root_alone_under_either_name(tmp_path, name):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    (tmp_path / "CONTEXT-MAP.md").write_text("# Context map\n\n- [Shop](./shop/CONTEXT.md)\n", encoding="utf-8")
+    (tmp_path / name).write_text("# Glossary map\n\n- [Shop](./shop/GLOSSARY.md)\n", encoding="utf-8")
     (concept / "glossary.md").write_text(
         GLOSSARY_FRONT + "**Invoice** (`invoice`):\nA bill.\n_Avoid_: receipt\n- kind: entity\n", encoding="utf-8")
+    assert module.glossary_target(concept) == (None, False)
     assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_reads_a_legacy_context_file_as_the_project_glossary(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path, PROJECT_GLOSSARY, ORDER_ENTRY)
+    (tmp_path / "GLOSSARY.md").rename(tmp_path / "CONTEXT.md")
+    assert module.glossary_target(concept) == ("CONTEXT.md", False)
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1 and problems[0].startswith("CONTEXT.md:"), problems
+    assert "term `ueberweisung` has no entry" in problems[0], problems
+
+
+def test_check_concept_prefers_glossary_md_over_a_legacy_context_file(tmp_path):
+    module, script = load_check_concept()
+    concept = split_tree(tmp_path)
+    (tmp_path / "CONTEXT.md").write_text("# Old\n\n**Stale**:\nnot read.\n", encoding="utf-8")
+    assert module.glossary_target(concept) == ("GLOSSARY.md", False)
+    assert module.check(concept, script, today=_today()) == []
+
+
+def test_check_concept_defaults_to_a_glossary_md_not_yet_written(tmp_path):
+    """No key and no root glossary: split mode with a `GLOSSARY.md` still to come, which is no finding."""
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    assert module.glossary_target(concept) == ("GLOSSARY.md", False)
+    assert module.check(concept, script, today=_today()) == []
+
 
 
 def test_check_concept_usage_errors_exit_2(tmp_path):
@@ -3872,7 +4017,7 @@ FRONTMATTER_SCHEMA = {
 DEMO_MD = "---\nlast_updated: 2026-10-27\n---\n\n# Demo\n"
 
 GLOSSARY_NODE_BODY = (
-    "## Where the words live\n\nSplit mode keeps the words in the project glossary, `CONTEXT.md`: no frontmatter, no ids.\n\n"
+    "## Where the words live\n\nSplit mode keeps the words in the project glossary, `GLOSSARY.md`: no frontmatter, no ids.\n\n"
     "## Writing it\n\nWrite the glossary.\n"
 )
 
@@ -3973,30 +4118,30 @@ def test_demo_dotfiles_are_left_out(tmp_path):
 def test_demo_project_glossary_is_accepted_when_the_tree_names_it(tmp_path):
     root = write_demo_repo(tmp_path)
     add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body=GLOSSARY_NODE_BODY)
-    demo_put(root, "CONTEXT.md", "# Shop\n\nThe words.\n")
+    demo_put(root, "GLOSSARY.md", "# Shop\n\nThe words.\n")
     assert errors(root) == []
 
 
 def test_demo_project_glossary_the_tree_does_not_name(tmp_path):
     root = write_demo_repo(tmp_path)
     add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body="## Writing it\n\nWrite it.\n")
-    demo_put(root, "CONTEXT.md", "# Shop\n")
-    only(root, "demo/CONTEXT.md: is documented by no node")
+    demo_put(root, "GLOSSARY.md", "# Shop\n")
+    only(root, "demo/GLOSSARY.md: is documented by no node")
     assert "demo-node" in errors(root)[0]
 
 
 def test_demo_project_glossary_without_any_glossary_node(tmp_path):
     root = write_demo_repo(tmp_path)
-    demo_put(root, "CONTEXT.md", "# Shop\n")
-    only(root, "demo/CONTEXT.md: is documented by no node")
+    demo_put(root, "GLOSSARY.md", "# Shop\n")
+    only(root, "demo/GLOSSARY.md: is documented by no node")
 
 
 def test_demo_project_glossary_must_carry_frontmatter_when_the_tree_does_not_say_otherwise(tmp_path):
     root = write_demo_repo(tmp_path)
-    body = "## Where the words live\n\nThe project glossary is `CONTEXT.md`.\n"
+    body = "## Where the words live\n\nThe project glossary is `GLOSSARY.md`.\n"
     add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body=body)
-    demo_put(root, "CONTEXT.md", "# Shop\n")
-    only(root, "demo/CONTEXT.md: has no frontmatter")
+    demo_put(root, "GLOSSARY.md", "# Shop\n")
+    only(root, "demo/GLOSSARY.md: has no frontmatter")
 
 
 def test_demo_app_design_resolves_to_its_root_node(tmp_path):
@@ -4012,6 +4157,24 @@ def test_demo_app_design_updated_is_read_as_last_updated(tmp_path):
     assert errors(root) == []
     demo_put(root, "APP-DESIGN.md", "---\nupdated: yesterday\n---\n\n# App design\n")
     only(root, "demo/APP-DESIGN.md: frontmatter does not validate")
+
+
+ADR_RECORD = "---\nstatus: accepted\ndate: 2026-10-24\nby: spec-feature\nlevel: product\nkind: decision\n---\n\n# One container\n\nWhy.\n"
+
+
+def test_demo_decision_records_resolve_and_date_reads_as_last_updated(tmp_path):
+    root = write_demo_repo(tmp_path)
+    add_node(root, "docs/adr/README.md", ["docs/adr/", "docs/adr/<NNNN>-<slug>.md"], summary="the decision records")
+    demo_put(root, "docs/adr/0001-one-container.md", ADR_RECORD)
+    assert errors(root) == []
+    demo_put(root, "docs/adr/0001-one-container.md", ADR_RECORD.replace("2026-10-24", "last week"))
+    only(root, "demo/docs/adr/0001-one-container.md: frontmatter does not validate")
+
+
+def test_demo_decision_records_need_their_node(tmp_path):
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "docs/adr/0001-one-container.md", ADR_RECORD)
+    only(root, "demo/docs/adr/0001-one-container.md: resolves to no node")
 
 
 def test_demo_concept_readme_is_the_fixed_pointer_without_frontmatter(tmp_path):

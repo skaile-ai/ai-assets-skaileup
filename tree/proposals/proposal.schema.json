@@ -43,7 +43,7 @@
         },
         "target": {
           "type": "string",
-          "description": "Project-relative path of the owner's artifact: under _concept/, APP-DESIGN.md, or the project glossary.",
+          "description": "Project-relative path of the owner's artifact: under _concept/, APP-DESIGN.md, docs/adr/ (a decision record), or the project glossary.",
           "minLength": 1,
           "not": { "pattern": "^(/|\\.\\./)" }
         },

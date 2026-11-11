@@ -5,7 +5,7 @@ permissions:
   organizer: [read, update]
   member: [read]
 story_refs: [run_a_lunch_poll]
-follows: [DR-2, DR-3]
+follows: [adr:a-tie-is-settled-by-a-visible-draw, adr:poll-state-reaches-every-member-live]
 screens:
   - path: 07_screens/poll.md
 data_entities: [Poll, Vote, Place]

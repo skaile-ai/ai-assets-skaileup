@@ -32,10 +32,10 @@
       "format": "date",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
     },
-    "dr": {
+    "adr": {
       "type": "string",
-      "description": "Id of a decision record in _concept/10_blueprint/decisions.md.",
-      "pattern": "^DR-[0-9]+$"
+      "description": "Reference to a decision record by slug, resolved to docs/adr/<NNNN>-<slug>.md or a pending proposal entry with target docs/adr/ and anchor adr:<slug> (tree/docs/adr/README.md § Format).",
+      "pattern": "^adr:[a-z0-9]+(-[a-z0-9]+)*$"
     },
     "stageName": {
       "enum": ["frame", "look", "data", "features"]
@@ -47,7 +47,7 @@
       "properties": {
         "status": { "enum": ["open", "approved", "waived"] },
         "approved": { "$ref": "#/$defs/date", "description": "The day the user said yes." },
-        "dr": { "$ref": "#/$defs/dr", "description": "The decision record behind a waive." },
+        "adr": { "$ref": "#/$defs/adr", "description": "The decision record behind a waive." },
         "source": { "type": "string", "description": "Who decided and when, e.g. \"user, 2026-11-08\"." }
       },
       "allOf": [
@@ -57,7 +57,7 @@
         },
         {
           "if": { "properties": { "status": { "const": "waived" } }, "required": ["status"] },
-          "then": { "required": ["dr", "source"] }
+          "then": { "required": ["adr", "source"] }
         }
       ]
     },
@@ -71,7 +71,7 @@
         "event": { "enum": ["approved", "waived", "reopened"] },
         "reason": { "type": "string", "description": "The user's words that reopened the stage." },
         "source": { "type": "string" },
-        "dr": { "$ref": "#/$defs/dr" }
+        "adr": { "$ref": "#/$defs/adr" }
       }
     }
   }

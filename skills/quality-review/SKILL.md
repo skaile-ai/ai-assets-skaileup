@@ -5,6 +5,8 @@ version: "0.1.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
+    - skill:@mattpocock/code-review#^0.1
+    - skill:@mattpocock/diagnosing-bugs#^0.1
   artifacts:
     requires:
       - { id: features }

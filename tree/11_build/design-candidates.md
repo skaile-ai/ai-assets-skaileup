@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/11_build/design-candidates.md
 
-The report `quality-design` leaves after scanning the running code: each candidate is a place where the adopted design, or the absence of one, costs users something — with the `file:line` that shows it and the concept that would replace it. The user reads it to pick one candidate to pursue; the owning artifacts take the result, so the report is a working list and never a design store: it holds no decision that `APP-DESIGN.md`, the glossary, a screen spec or `_concept/10_blueprint/decisions.md` does not also hold once the user has decided. A candidate without a measured `file:line` is a guess and misleads the grill.
+The report `quality-design` leaves after scanning the running code: each candidate is a place where the adopted design, or the absence of one, costs users something — with the `file:line` that shows it and the concept that would replace it. The user reads it to pick one candidate to pursue; the owning artifacts take the result, so the report is a working list and never a design store: it holds no decision that `APP-DESIGN.md`, the glossary, a screen spec or a record in `docs/adr/` does not also hold once the user has decided. A candidate without a measured `file:line` is a guess and misleads the grill.
 
 ## Format
 
@@ -50,7 +50,7 @@ intent: [APP-DESIGN.md, rulebook/rules.md, _concept/glossary.md]
 | `Affects` | entry ids of `APP-DESIGN.md`, glossary terms, screen ids and features the change touches |
 | `Strength` | the strongest rulebook grade (`standard · field · heuristic · owner`, `rulebook/README.md § Strength grades`) among the rules that back it, with the rule ids; `owner` when only the app's own entry backs it |
 | `Uncertainty` | what the scan could not see (dynamic routes, unread regions, a consumer outside the repo); `none known` is allowed only after a search that is named |
-| `Status` | `open` · `selected` · `accepted DR-<n>` · `rejected DR-<n>` |
+| `Status` | `open` · `selected` · `accepted adr:<slug>` · `rejected adr:<slug>` |
 
 ## Detection
 
@@ -66,14 +66,14 @@ Each kind has one detection pass, a subagent task that returns `file:line` lists
 
 ## Landing proposals
 
-The owner's node holds the entry shape; `quality-design` writes every proposal into its run's proposal file (`tree/proposals/README.md § Writing it`), never into the owner's artifact. Each entry names its source `DC-<n>` in `source` and adds without editing a confirmed entry; the completion summary names the owner who settles it. The decision record is the one exception: `quality-design` owns its records in `decisions.md` and appends them directly.
+The owner's node holds the entry shape; `quality-design` writes every proposal into its run's proposal file (`tree/proposals/README.md § Writing it`), never into the owner's artifact. Each entry names its source `DC-<n>` in `source` and adds without editing a confirmed entry; the completion summary names the owner who settles it. The decision record goes the same way: an entry targeting `docs/adr/`, which `skaileup` promotes.
 
 | owner artifact | proposal |
 |---|---|
 | the glossary (`target: _concept/glossary.md`) | a term entry per `tree/glossary.md § Format`, *Proposal entry*: both terms of a split, or the winning term of a rename (the losing word goes under `_Avoid_` when the owner promotes it) |
 | `APP-DESIGN.md` | a `section:Open` row `Q<n>` per `tree/APP-DESIGN.md § Format`, *Proposal entry*: question naming `DC-<n>`, the alternatives as options, and the recommendation |
 | `_concept/07_screens/<screen>.md` | a `section:Open` bullet `Q-<screen_id>-?` per `tree/07_screens/[screen].md § Format`, with the recommendation and a one-line consequence; the owner assigns the number; a merge lands on the surviving screen |
-| `_concept/10_blueprint/decisions.md` | a record `By: quality-design` per `tree/10_blueprint/decisions.md § Format`, written directly; **Decision** states the chosen concept, **Options rejected** the design-it-twice losers and the status quo, **Refs** `DC-<n>`, the evidence lines and the proposal entry ids (`<file-stem>#p<n>`) |
+| `docs/adr/` | anchor `adr:<slug>`; a record `by: quality-design` per `tree/docs/adr/README.md § Format`: the body states the chosen concept, `## Considered Options` the design-it-twice losers and the status quo, `refs` `DC-<n>`, the evidence lines and the proposal entry ids (`<file-stem>#p<n>`) |
 
 ## Writing it
 
@@ -84,13 +84,13 @@ The owner's node holds the entry shape; `quality-design` writes every proposal i
 5. **Ask which candidate** in one decision batch (`tree/protocol/running.md § How a skill runs`, rule 2): the question is which one to pursue, options are the candidates plus `none, stop here`. One candidate is pursued per run; mark it `selected`.
 6. **Grill the candidate.** Call the Skill tool with "grilling" on the selected candidate: its purpose, the "and" in it, the task that suffers, what users see after, data and permission effects, the entries it affects, reversibility. When the skill is absent, ask the same as one decision batch (rule 2).
 7. **Design it twice** when the grill leaves the after-concept open or the change is hard to reverse, and the user agrees: three subagents each design a different after-concept (for instance minimal interface, most flexible, tuned to the commonest task), then compare them with the status quo as one consequence table (user-visible · data/permission · affected artifacts · reversibility) per rule 5, and ask which wins.
-8. **Land the result** per `## Landing proposals`: the proposals for the artifacts the decision touches, and one decision record whether the candidate was accepted or rejected (a rejection with `Status: rejected`, so it is not offered again). Set the candidate's `Status` to `accepted DR-<n>` or `rejected DR-<n>`. Application code stays untouched.
-9. **Completion summary** (rule 8): the report path with candidate counts per kind, the proposals landed and where, the record id, the unread regions, and next steps by demand — `experience-interaction`, `concept-glossary` and `experience-screen` promote what landed in their artifacts, `build-plan` plans the code change once the design is promoted.
+8. **Land the result** per `## Landing proposals`: the proposals for the artifacts the decision touches, and one decision record whether the candidate was accepted or rejected (a rejection with `status: rejected`, so it is not offered again). Set the candidate's `Status` to `accepted adr:<slug>` or `rejected adr:<slug>`. Application code stays untouched.
+9. **Completion summary** (rule 8): the report path with candidate counts per kind, the proposals landed and where, the record's `adr:<slug>`, the unread regions, and next steps by demand — `experience-interaction`, `concept-glossary` and `experience-screen` promote what landed in their artifacts, `skaileup` promotes the record, `build-plan` plans the code change once the design is promoted.
 
 ## Checks
 
 - The file has `last_updated`, `source_sha` and `intent`; every candidate has all eight fields and a unique `DC-<n>`.
 - Every `Evidence` line passes the citation check; no candidate lacks friction.
-- At most one candidate is `selected` or decided per run, and a decided one cites its `DR-<n>` and a record exists.
-- Every proposal landed is an entry of this run's proposal file with `source` naming its `DC-<n>`, and no confirmed entry, owner artifact other than `decisions.md`, or application file changed.
+- At most one candidate is `selected` or decided per run, and a decided one cites its `adr:<slug>`, which resolves to a record or a pending entry of this run's proposal file.
+- Every proposal landed is an entry of this run's proposal file with `source` naming its `DC-<n>`, and no confirmed entry, owner artifact or application file changed.
 - The unread regions are named under `## Not examined`.

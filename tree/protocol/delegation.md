@@ -32,7 +32,7 @@ STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 | `escalate-model` | Task exceeded model capability | Name it in the completion summary; re-dispatch on a stronger model |
 | `decompose` | Task is too large to execute atomically | Break into smaller tasks; re-dispatch each |
 
-**Concerns are written by the receiver.** A `build-*` run appends its concerns to `_concept/11_build/decisions.md` before it returns (`tree/11_build/decisions.md`); any other run records them where its route keeps reasons (a feature's dossier), or else only under `Concerns:`.
+**Concerns are written by the receiver.** A `build-*` run posts its concerns as one comment on the parent issue of the spec it built (the spec's tracker issue) before it returns, and repeats them under `Concerns:`; without a tracker issue, `Concerns:` is their only place. Any other run records them where its route keeps reasons (a feature's dossier), or else only under `Concerns:`. A concern that is itself an ADR-grade choice — it passes the three-test gate of `tree/docs/adr/README.md § Writing it` — is also written into the run's proposal file as a decision record; the rest never becomes one.
 
 **The interview relay.** A delegate cannot reach the user in Claude Code or omp, so every user conversation stays with the lead.
 

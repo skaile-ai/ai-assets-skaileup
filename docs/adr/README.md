@@ -9,7 +9,8 @@ mockup surfaces with one Vue Storybook package and authors the data model in Typ
 adds eight agents (a lead and seven delegates) and gives decision records a level and a kind; 0028 adds generated feature pages to the mockup;
 0029 walks the concept top-down in four stages the build skills gate on; 0030 replaces the TypeScript data model with two YAML
 files checked by the package `@skaile/model`; 0031 moves proposed entries out of the owners'
-artifacts into one proposal file per run.
+artifacts into one proposal file per run; 0032 moves the decision logs to one ADR file per
+decision under `docs/adr/`; 0033 makes `GLOSSARY.md` the default project glossary.
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -36,13 +37,16 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0019](./0019-scoped-fact-resolution.md) | Skills resolve facts, not files; hard gates only for machine-read formats; demand-driven router; amended by 0029 and 0030 |
 | [0020](./0020-screens-are-independent-artifacts.md) | Screens are independent artifacts under `07_screens/` |
 | [0021](./0021-the-glossary-carries-the-light-ontology.md) | The glossary carries the light ontology — supersedes 0014's "words only" |
-| [0022](./0022-shared-artifact-contracts-and-proposed-entries.md) | `owner` + `may_propose`, proposed entries, one decision record; amended by 0024 and 0031 |
-| [0023](./0023-two-advisory-flows.md) | Two advisory flows; tier becomes `depth`; supersedes the tier-as-flow part of 0002/0007 |
-| [0024](./0024-the-glossary-splits-by-kind.md) | The glossary splits by kind when the project keeps its own: words in the project glossary, ontology in `_concept/glossary.md`; amends 0014 and 0022; G4 and G5 amended by 0031 |
+| [0022](./0022-shared-artifact-contracts-and-proposed-entries.md) | `owner` + `may_propose`, proposed entries, one decision record; amended by 0024, 0031 and 0032 |
+| [0023](./0023-two-advisory-flows.md) | Two advisory flows; tier becomes `depth`; supersedes the tier-as-flow part of 0002/0007; its `decisions.md` paragraph amended by 0032 |
+| [0024](./0024-the-glossary-splits-by-kind.md) | The glossary splits by kind when the project keeps its own: words in the project glossary, ontology in `_concept/glossary.md`; amends 0014 and 0022; G4 and G5 amended by 0031; amended by 0033 |
 | [0025](./0025-archetypes-are-an-optional-declared-default.md) | Archetypes are an optional declared default: one table in `rulebook/archetypes.md`, `archetype:` in `APP-DESIGN.md`, cards stay research; extends 0015 and 0018 |
 | [0026](./0026-the-mockup-stage-is-one-vue-storybook-package.md) | The mockup stage is one Vue Storybook package; the data model is authored in TypeScript and generated to JSON; notes go through the annotation inbox; amends 0020 and 0022; D2 superseded by 0030 |
-| [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; expectations first; decision records carry a level and a kind, patterns included; a similarity check before the grill; ideas in the roster; amends 0022; K7 amended by 0031 |
+| [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; expectations first; decision records carry a level and a kind, patterns included; a similarity check before the grill; ideas in the roster; amends 0022; K7 amended by 0031; K4 and K5 amended by 0032 |
 | [0028](./0028-feature-pages-are-generated-from-the-specs.md) | Feature pages are generated from the specs: one `Features/<featureset>/<feature>` story per spec, screen stories bind via `screenDocs`, triage routes feature notes to the spec; amends 0026 |
-| [0029](./0029-the-concept-is-walked-top-down.md) | The concept is walked top-down: four stages (frame, look, data, features) each ending on the user's yes, one state file `_concept/01_meta/walkthrough.yaml`, the four build skills gate on it, no silent completion, `depth` thins and never removes; amends 0019 and 0023 for those four skills; W4 amended by 0031 |
+| [0029](./0029-the-concept-is-walked-top-down.md) | The concept is walked top-down: four stages (frame, look, data, features) each ending on the user's yes, one state file `_concept/01_meta/walkthrough.yaml`, the four build skills gate on it, no silent completion, `depth` thins and never removes; amends 0019 and 0023 for those four skills; W4 amended by 0031; W5 amended by 0032 |
 | [0030](./0030-the-data-model-is-two-yaml-files-checked-by-skaile-model.md) | The data model is two authored YAML files, `model.yaml` and `seed.yaml`, nothing generated in `_concept/`; `@skaile/model` owns their schemas (an exception to 0016), loader, checks and CLI; layout is editor state; amends 0016, 0019 and 0026 (supersedes its D2); its inline `proposed:` key amended by 0031 |
-| [0031](./0031-proposals-are-files-per-run.md) | Proposals are files, one per run: `_concept/proposals/<date>-<skill>-<scope>.yaml`, entries name `target`, `anchor`, `payload`; only the target's owner settles; no proposal markers in owner artifacts; rejections stay in the file; parallel runs need disjoint owned paths; amends 0022, 0024 G4, 0027 K7, 0029 W4 and 0030 |
+| [0031](./0031-proposals-are-files-per-run.md) | Proposals are files, one per run: `_concept/proposals/<date>-<skill>-<scope>.yaml`, entries name `target`, `anchor`, `payload`; only the target's owner settles; no proposal markers in owner artifacts; rejections stay in the file; parallel runs need disjoint owned paths; amends 0022, 0024 G4, 0027 K7, 0029 W4 and 0030; amended by 0032 |
+| [0032](./0032-one-decision-log-under-docs-adr.md) | One decision log under `docs/adr/`: one file per decision, cited by slug `adr:<slug>`, owned by `skaileup`, which numbers and writes it; every other skill proposes it; levels, kinds and patterns unchanged; build concerns go to the spec's parent issue; supersedes both `decisions.md` logs; amends 0022, 0023, 0027 K4/K5, 0029 W5 and 0031 |
+| [0033](./0033-glossary-md-is-the-default-project-glossary.md) | `GLOSSARY.md` is the default project glossary; amends 0024 |
+| [0034](./0034-the-tree-protocol-lives-beside-it.md) | The tree's cross-cutting protocol lives beside it in `tree/protocol/` (ownership, running, delegation, beside the tree); routes cite only the files they use; amends 0017 |

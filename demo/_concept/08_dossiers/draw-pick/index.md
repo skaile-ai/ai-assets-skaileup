@@ -10,7 +10,7 @@ The product is named after this feature. A tie among the most-voted Places is co
 
 ## Similar features
 Compared before the grill with every spec and idea in the roster on entities, actions, screens and floorplans; no pattern record existed yet.
-- `vote-on-place` - shares Poll, Vote and the `poll` screen; both change what every Member sees on an open Poll. Generalised: `DR-3`, a `featureset polls` pattern; `vote-on-place.md` lists it in `follows:` in this run's write set.
+- `vote-on-place` - shares Poll, Vote and the `poll` screen; both change what every Member sees on an open Poll. Generalised: pattern `adr:poll-state-reaches-every-member-live` at `featureset polls`; `vote-on-place.md` lists it in `follows:` in this run's write set.
 - `create-poll` - shares Poll and the `poll` screen. Kept separate: it opens a Poll on an Organizer's action; this one closes it at the deadline with no actor.
 - idea `deadline-reminders` - shares the deadline. Kept separate: it notifies before the deadline; this one decides at it.
 
@@ -26,4 +26,4 @@ A Poll with no Votes closes without a Pick. Rejected: drawing among all Places, 
 ## Links forward
 - Spec: [`05_features/polls/draw-pick.md`](../../05_features/polls/draw-pick.md) and its `## Scope`
 - Screens: [`07_screens/poll.md`](../../07_screens/poll.md)
-- Decisions: `DR-2`, `DR-3` in [`10_blueprint/decisions.md`](../../10_blueprint/decisions.md)
+- Decisions: `adr:a-tie-is-settled-by-a-visible-draw`, `adr:poll-state-reaches-every-member-live` in [`docs/adr/`](../../../docs/adr/)

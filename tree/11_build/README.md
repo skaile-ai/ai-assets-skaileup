@@ -1,6 +1,6 @@
 ---
 path: _concept/11_build/
-summary: slices, trace, criteria ledger, reviews, release verdict and decisions
+summary: slices, trace, criteria ledger, reviews and release verdict
 owner: []
 may_propose: []
 ---
@@ -20,7 +20,6 @@ is decided.
 | `reviews/<feature_slug>.yaml` | one feature's code-review verdict | `quality-review` |
 | `release.yaml` | the whole-app release verdict | `quality-release` |
 | `interaction.sarif` | the app-wide interaction conformance verdict, SARIF 2.1.0 | `quality-interaction` (`tree/11_build/interaction.md`) |
-| `decisions.md` | build-time decision records | grown inline during the build |
 
 ## Verdicts
 

@@ -58,8 +58,8 @@ the slice is proved: `verification` in `index.md` says that, and a slice frozen 
    exists, match its entries on `applies_to: build-plan` and the feature's keywords and load
    the hits, so seams and names follow the conventions the code already has. Slice titles use
    the glossary's terms (`tree/glossary.md § Where the words live`) and respect the
-   decision records in the area they touch (`_concept/10_blueprint/decisions.md`; format
-   `tree/10_blueprint/decisions.md`), because a plan in different words than the code
+   decision records in the area they touch (`docs/adr/` with the pending entries targeting it;
+   format `tree/docs/adr/README.md`), because a plan in different words than the code
    is one the implementer has to translate. Look for prefactoring that makes the change easy
    first; it becomes the slice everything else is blocked by.
 2. **Cut vertical slices.** Each slice is a narrow but complete path through every layer the
@@ -80,9 +80,9 @@ the slice is proved: `verification` in `index.md` says that, and a slice frozen 
    read directly (`tree/APP-DESIGN.md § Reading it`). Without the file, slice from the spec
    alone.
 
-   Each `pattern` record the feature lists in `follows:` (`tree/10_blueprint/decisions.md § Patterns`)
+   Each `pattern` record the feature lists in `follows:` (`tree/docs/adr/README.md § Patterns`)
    is one shared module. Search the existing plans `_concept/11_build/slices/*/plan.md` for its
-   `DR-<n>`. Where a plan already names the module, the slices that need it reuse it. Where none
+   `adr:<slug>`. Where a plan already names the module, the slices that need it reuse it. Where none
    does, the first slice of this feature that needs it creates it, and the feature's other slices
    that need it are blocked by that slice. A second module for the same record is the duplicate
    the pattern exists to prevent.

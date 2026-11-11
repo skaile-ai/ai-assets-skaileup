@@ -19,7 +19,7 @@ Frontmatter: `feature` (the feature file, `_concept/05_features/<featureset>/<fe
 Body, in this order:
 
 1. **Scope**: one line.
-2. **Rows**: the UI / logic / data rows the slice crosses, each citing the screen file (when the feature has screens), the symbol and the entity by name. Where the project grows no screens the UI row names the endpoint, command or public function. A row that creates or reuses a pattern's shared module names the module and its record, `(DR-<n>)`.
+2. **Rows**: the UI / logic / data rows the slice crosses, each citing the screen file (when the feature has screens), the symbol and the entity by name. Where the project grows no screens the UI row names the endpoint, command or public function. A row that creates or reuses a pattern's shared module names the module and its record, `(adr:<slug>)`.
 3. **Criteria**: the acceptance criteria this slice satisfies, by id only (`AC-<story-id>-<nn>`, per `tree/04_journeys/stories.md`). The text lives in the spec and `stories.yaml`; a second copy goes stale.
 4. **Checks**: the manual checks (questions for the user) and the automated tests that prove the slice, each test tagged `[unit]`, `[integration]` or `[e2e]` by the smallest reliable seam.
 5. **Carry-overs**: what the slice deliberately leaves open.
@@ -38,7 +38,7 @@ Scope: a signed-in user pays for their cart and sees the order confirmed.
 ## Rows
 - UI: `07_screens/checkout-payment.md` renders the cart total; submit calls `placeOrder`
 - Logic: `placeOrder()` in `src/orders/place.ts`
-- Logic: `formatMoney()` in `src/shared/money.ts` (DR-7, reused)
+- Logic: `formatMoney()` in `src/shared/money.ts` (adr:money-is-formatted-once, reused)
 - Data: writes `order`, `order_item`
 
 ## Criteria
@@ -63,4 +63,4 @@ Written by `build-plan` after the user approved the breakdown (`tree/11_build/sl
 - Every criterion id appears by id and not by text.
 - Every row names its symbol and entity.
 - Every test carries a level tag.
-- A row that creates or reuses a pattern's module names its `DR-<n>`.
+- A row that creates or reuses a pattern's module names its `adr:<slug>`.

@@ -35,7 +35,7 @@
     },
     "glossary": {
       "type": "string",
-      "description": "Where the words live (tree/glossary.md § Where the words live): `concept` keeps every definition in _concept/glossary.md; any other value is the project-relative path of the project glossary, with no leading / and no .. segment. Absent reads as CONTEXT.md when the project root has one, else concept.",
+      "description": "Where the words live (tree/glossary.md § Where the words live): `concept` keeps every definition in _concept/glossary.md; any other value is the project-relative path of the project glossary, with no leading / and no .. segment. Absent resolves per tree/glossary.md § Where the words live: root GLOSSARY.md (legacy CONTEXT.md), else a new root GLOSSARY.md.",
       "pattern": "^(?!/)(?!(.*/)?\\.\\.(/|$)).+$"
     },
     "reasoning": {

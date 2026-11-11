@@ -88,17 +88,15 @@ _concept/                             the artifact tree and how to read it
 │   │   ├── patches/                  proposed anchored patches and the review file a human approves
 │   │   └── triage/                   deterministic routing of each open inbox note to the file it belongs in
 │   └── storybook/                    one Vue Storybook — features, floorplans, screens, entities, the app, journeys
-├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, decisions, data model
+├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, data model
 │   ├── architecture.md               C4 levels — system context, containers, components, deployment, risks
 │   ├── asyncapi.yaml                 AsyncAPI 3.1 contract of the channels the project publishes or consumes
-│   ├── decisions.md                  design-time decision records, append-only
 │   ├── openapi.yaml                  OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
 │   ├── techstack.md                  chosen technologies, resolved to one template id; no third-party services
 │   └── datamodel/                    stack-neutral data model, naming rules and how it becomes a database
 │       ├── model.yaml                the authored data model; checked and read through @skaile/model
 │       └── seed.yaml                 named scenarios of sample data, every row checked against model.yaml
-├── 11_build/                         slices, trace, criteria ledger, reviews, release verdict and decisions
-│   ├── decisions.md                  build-time decision records, append-only
+├── 11_build/                         slices, trace, criteria ledger, reviews and release verdict
 │   ├── design-candidates.md          evidenced candidates for a better design, found in the code
 │   ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
 │   ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
@@ -154,7 +152,7 @@ The skill holding an artifact's approval step writes `approved:` in the same wri
 | 6 Runtime View | `_concept/06_behaviors/`, `_concept/04_journeys/` |
 | 7 Deployment View | `_concept/10_blueprint/architecture.md`, section Deployment |
 | 8 Crosscutting Concepts | `APP-DESIGN.md`, `_concept/07_screens/shell.md` |
-| 9 Architecture Decisions | `_concept/10_blueprint/decisions.md`, `_concept/11_build/decisions.md` |
+| 9 Architecture Decisions | `docs/adr/` at the project root (`tree/docs/adr/README.md`) |
 | 10 Quality Requirements | `_concept/goals.md`, `_concept/11_build/release.yaml` |
 | 11 Risks & Technical Debt | `_concept/10_blueprint/architecture.md`, section Risks and technical debt |
 | 12 Glossary | `_concept/glossary.md` |
@@ -166,7 +164,7 @@ How skills work on the tree lives beside it in `protocol/`, cited by file and se
 - `tree/protocol/ownership.md` — who writes what, and the proposed entry.
 - `tree/protocol/running.md` — how a skill runs: the route as todo list and rules 1–8.
 - `tree/protocol/delegation.md` — handing work to another agent context: the status block and the interview relay.
-- `tree/protocol/beside-the-tree.md` — `APP-DESIGN.md` and the rulebook, the assets outside `_concept/`.
+- `tree/protocol/beside-the-tree.md` — `APP-DESIGN.md`, `docs/adr/` and the rulebook, the assets outside `_concept/`.
 
 ## _concept/README.md
 
@@ -179,8 +177,8 @@ where `<contracts>` is the agent harness's contract directory: `.agents/contract
 pi, dsh) or `.claude/contracts` (Claude Code), whichever exists.
 Read the folder README and the node before editing a file here; the node says who owns it and who may propose into it,
 its format, and what reads it.
-The one artifact outside this tree, APP-DESIGN.md at the project root, has its node at
-`<contracts>/shared-contracts/APP-DESIGN.md`.
+The two artifacts outside this tree, APP-DESIGN.md and docs/adr/ at the project root, have their
+nodes at `<contracts>/shared-contracts/APP-DESIGN.md` and `<contracts>/shared-contracts/docs/adr/README.md`.
 ```
 
 ## Checks

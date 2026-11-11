@@ -71,16 +71,18 @@ part's node.
   `name`, `description` and `version` stay at the root: those readers normalise both.
 - **A declared path is joined to the *project* root** (`resolver/src/validator.ts:81`), not to
   `_concept/`, so every concept path carries the prefix. `scripts/check.py` enforces both
-  halves: a path either starts with `_concept/` and resolves to a node, or is the named
+  halves: a path either starts with `_concept/` and resolves to a node, or is a named
   project-root artifact in `PROJECT_ROOT_ARTIFACTS`.
 - **A skill declares what it writes** (ADR 0013). `metadata.artifacts.produces` is a list of
   `{ id, path }`, mandatory on every skill: `id` is the kebab-case artifact id other skills
   name in `artifacts.requires` (every required id must be produced by some skill), and
   `path` starts with `_concept/` and resolves to a node that lists the skill under `owner`.
-  A skill that writes nothing under `_concept/` says `produces: []`. The only path allowed
-  outside `_concept/` is the named project-root artifact `APP-DESIGN.md`
-  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md), the
-  `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`), whose node is `tree/APP-DESIGN.md`.
+  A skill that writes nothing under `_concept/` says `produces: []`. The only paths allowed
+  outside `_concept/` are the named project-root artifacts `APP-DESIGN.md`
+  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md)) and
+  `docs/adr/<NNNN>-<slug>.md` ([ADR 0032](./adr/0032-one-decision-log-under-docs-adr.md)),
+  the `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`, whose nodes are `tree/APP-DESIGN.md`
+  and `tree/docs/adr/README.md`.
   `scripts/check.py` enforces it in both directions; the host's node done-state read is
   `host:node-done-from-produces`: a node is done when every non-templated path in the list
   exists.

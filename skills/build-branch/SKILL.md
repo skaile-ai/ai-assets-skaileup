@@ -8,7 +8,8 @@ metadata:
   artifacts:
     requires:
       - { id: brief }
-    produces: []
+    produces:
+      - { id: proposals, path: "_concept/proposals/<date>-build-branch-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/brief.md", gate: soft }
@@ -63,6 +64,11 @@ dossiers are `tree/11_build/slices/README.md`'s.
    spec is the intent the resolution preserves.
 9. **Remove the worktree** on every ending, and report the branch's final state: merged and
    deleted, open with a PR URL, kept, or discarded.
+
+A choice either end makes that passes the three-test gate (a base branch other than the
+default, history rewritten on purpose) is a decision record in the run's proposal file
+(`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`); the
+ending itself is a git state and takes none.
 
 **Done when** the branch exists and is checked out (opening), or the user's chosen ending has
 run and the worktree is gone (closing).

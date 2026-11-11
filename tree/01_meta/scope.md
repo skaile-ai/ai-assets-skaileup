@@ -15,7 +15,7 @@ The project's recorded sizing, grown one key at a time: a key is written when th
 flow: skaileup-greenfield
 project_type: web-app
 depth: standard
-glossary: CONTEXT.md        # only to override the default; absent reads as in the table
+glossary: docs/GLOSSARY.md   # only to override the default; absent reads as in the table
 reasoning: |
   Nine user-facing capabilities with two roles sharing state and one relational
   schema — standard depth rather than sketch on both counts.
@@ -37,9 +37,9 @@ A proposal for this file (`tree/proposals/README.md`) has the anchor `key:<key>`
 | `flow` | `skaileup-greenfield` · `skaileup-reverse` | no recipe chosen; nothing waits on it |
 | `project_type` | the rows of `## Project types` | `web-app` |
 | `depth` | `sketch` · `standard` · `exhaustive` | `standard` |
-| `glossary` | a project-relative path (no leading `/`, no `..`) · `concept` | `CONTEXT.md` when the project root has one, else `concept` |
+| `glossary` | a project-relative path (no leading `/`, no `..`) · `concept` | `GLOSSARY.md` at the project root (legacy `CONTEXT.md` when only that exists; `tree/glossary.md § Where the words live`) |
 
-`flow` names the recipe in `flows/`, which orders skills and sizes nothing. `depth` is the project-wide default for how far each artifact goes — `sketch` the thinnest version that still lets the next artifact be written, `standard` the version a team can build from, `exhaustive` every case and consequence stated; a skill states in its node what each level changes, and may ask a deeper or shallower one for a single artifact (`tree/protocol/running.md § How a skill runs`, rule 3). `depth` thins what each stage writes and never removes a stage or its checkpoint; skipping one is a waive in `walkthrough.yaml` backed by a decision record (`tree/01_meta/walkthrough.md`). `glossary` names the project glossary — the file outside `_concept/` that holds the definitions — or `concept` for every word in `_concept/glossary.md`; every skill resolves it the same way (`tree/glossary.md § Where the words live`).
+`flow` names the recipe in `flows/`, which orders skills and sizes nothing. `depth` is the project-wide default for how far each artifact goes — `sketch` the thinnest version that still lets the next artifact be written, `standard` the version a team can build from, `exhaustive` every case and consequence stated; a skill states in its node what each level changes, and may ask a deeper or shallower one for a single artifact (`tree/protocol/running.md § How a skill runs`, rule 3). `depth` thins what each stage writes and never removes a stage or its checkpoint; skipping one is a waive in `walkthrough.yaml` backed by a decision record in `docs/adr/` (`tree/01_meta/walkthrough.md`). `glossary` names the project glossary — the file outside `_concept/` that holds the definitions — or `concept` for every word in `_concept/glossary.md`; every skill resolves it the same way (`tree/glossary.md § Where the words live`).
 
 ## Project types
 
@@ -58,7 +58,7 @@ A `hard` prerequisite on anything listed here would block a project that was nev
 
 ## Asking a missing key
 
-A skill that needs `project_type` or `depth`, finds the key absent and asks it in its own batch, writes the answer as one entry with anchor `key:<key>` into its run's proposal file (`tree/proposals/README.md § Writing it`) and works with that value at once. While the key is absent, the latest pending proposal entry with anchor `key:<key>` (greatest `proposed_on`, the later file name breaking a tie) is its value. `skaileup` settles each entry per `## Writing it`: promoting writes the key, rejecting sets the entry's status and reason. `glossary` is asked by `concept-glossary` alone, and only when the key is absent, the project root has no `CONTEXT.md` and holds a `CONTEXT-MAP.md` — a map names several contexts and does not say which one this `_concept/` describes; every other absence reads as the default and asks nothing.
+A skill that needs `project_type` or `depth`, finds the key absent and asks it in its own batch, writes the answer as one entry with anchor `key:<key>` into its run's proposal file (`tree/proposals/README.md § Writing it`) and works with that value at once. While the key is absent, the latest pending proposal entry with anchor `key:<key>` (greatest `proposed_on`, the later file name breaking a tie) is its value. `skaileup` settles each entry per `## Writing it`: promoting writes the key, rejecting sets the entry's status and reason. `glossary` is asked by `concept-glossary` alone, and only when the key is absent, the project root has neither `GLOSSARY.md` nor `CONTEXT.md` and holds a `GLOSSARY-MAP.md` or `CONTEXT-MAP.md` — a map names several contexts and does not say which one this `_concept/` describes; every other absence reads as the default and asks nothing.
 
 ## Routing a want
 

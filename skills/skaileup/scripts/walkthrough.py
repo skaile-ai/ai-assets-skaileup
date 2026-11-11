@@ -12,7 +12,7 @@ Commands
   status                              one row per stage: stored status, each check, the next skill
   next                                the next skill and the check it fixes, or `build: all stages settled`
   approve <stage> --source "<text>"   record the user's yes; exit 2 listing every blocker
-  waive <stage> --dr DR-<n> --source "<text>"
+  waive <stage> --adr adr:<slug> --source "<text>"
                                       record a waive backed by a decision record; exit 2 without one
   reopen <stage> --reason "<text>"    set the stage and every later one `open`
   gate build                          exit 0 iff frame, look and data are approved or waived, else 3
@@ -36,13 +36,13 @@ from typing import Callable
 yaml = None  # PyYAML, imported in main() so a missing install prints its own message
 
 STATE = "_concept/01_meta/walkthrough.yaml"
-DECISIONS = "_concept/10_blueprint/decisions.md"
+ADR_DIR = "docs/adr"
 APP_DESIGN = "APP-DESIGN.md"
 STORYBOOK = "_concept/09_mockup/storybook/src"
 STATUSES = ("open", "approved", "waived")
 PROPOSALS = "_concept/proposals"
 MODEL = "_concept/10_blueprint/datamodel/model.yaml"
-DR_RE = re.compile(r"^DR-[0-9]+$")
+ADR_REF_RE = re.compile(r"^adr:([a-z0-9]+(?:-[a-z0-9]+)*)$")
 
 OK, MISSING, UNAPPROVED, MARKERS = "ok", "missing", "unapproved", "open markers"
 
@@ -107,6 +107,46 @@ def pending_targets(root: Path) -> set[str]:
             if isinstance(entry, dict) and entry.get("status") == "proposed" and isinstance(entry.get("target"), str):
                 out.add(entry["target"].strip().removeprefix("./"))
     return out
+
+
+def pending_anchors(root: Path, target: str) -> set[str]:
+    """Anchors of every `proposed` entry in `_concept/proposals/*.yaml` whose target is `target`
+    (a trailing `/` ignored)."""
+    out: set[str] = set()
+    folder = root / PROPOSALS
+    for path in sorted(folder.glob("*.yaml")) if folder.is_dir() else []:
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except yaml.YAMLError:
+            continue
+        entries = data.get("entries") if isinstance(data, dict) else None
+        for entry in entries if isinstance(entries, list) else []:
+            if (isinstance(entry, dict) and entry.get("status") == "proposed"
+                    and str(entry.get("target", "")).strip().removeprefix("./").rstrip("/") == target
+                    and isinstance(entry.get("anchor"), str)):
+                out.add(entry["anchor"].strip())
+    return out
+
+
+def adr_problem(root: Path, ref: str) -> str | None:
+    """Why `ref` does not resolve per `tree/docs/adr/README.md § Format`, *Referencing*: to a record
+    `docs/adr/<NNNN>-<slug>.md` neither rejected nor superseded, else to a pending proposal entry with
+    `target: docs/adr/` and `anchor: adr:<slug>`; None when it does."""
+    m = ADR_REF_RE.match(ref)
+    if not m:
+        return f"--adr {ref!r} is not a decision reference (adr:<slug>)"
+    records = sorted(p for p in (root / ADR_DIR).glob(f"[0-9][0-9][0-9][0-9]-{m.group(1)}.md")) \
+        if (root / ADR_DIR).is_dir() else []
+    if records:
+        fm = frontmatter(read_text(records[0]) or "") or {}
+        status = str(fm.get("status") or "accepted").strip()
+        if status == "rejected" or status.startswith("superseded"):
+            return f"{ref} names {ADR_DIR}/{records[0].name}, which is {status} — record the user's decision anew"
+        return None
+    if ref in pending_anchors(root, ADR_DIR):
+        return None
+    return (f"{ref} names no record in {ADR_DIR}/ and no pending proposal entry — record the user's "
+            f"decision first (tree/docs/adr/README.md)")
 
 
 # --------------------------------------------------------------------------
@@ -330,8 +370,8 @@ def fresh() -> dict:
 
 
 PLAIN_KEYS = {"status", "stage", "event"}  # enum tokens, written unquoted
-STAGE_KEYS = ("status", "approved", "dr", "source")
-EVENT_KEYS = ("on", "stage", "event", "reason", "source", "dr")
+STAGE_KEYS = ("status", "approved", "adr", "source")
+EVENT_KEYS = ("on", "stage", "event", "reason", "source", "adr")
 
 
 def flow_map(entry: dict, keys: tuple[str, ...]) -> str:
@@ -384,7 +424,7 @@ def cmd_status(root: Path, _args) -> int:
     for stage in STAGES:
         status = state["stages"][stage.name]["status"] if state else "open"
         entry = state["stages"][stage.name] if state else {}
-        detail = entry.get("approved") or entry.get("dr") or ""
+        detail = entry.get("approved") or entry.get("adr") or ""
         if settled(state, stage.name):
             nxt = "-"
         else:
@@ -435,17 +475,15 @@ def cmd_approve(root: Path, args) -> int:
 
 def cmd_waive(root: Path, args) -> int:
     state = require_state(root)
-    if not DR_RE.match(args.dr):
-        raise Refused(f"--dr {args.dr!r} is not a decision record id (DR-<n>)")
-    decisions = read_text(root / DECISIONS) or ""
-    if not re.search(rf"\b{re.escape(args.dr)}(?![0-9])", decisions):
-        raise Refused(f"{args.dr} does not occur in {DECISIONS} — record the user's decision there first")
+    problem = adr_problem(root, args.adr)
+    if problem:
+        raise Refused(problem)
     on = today()
-    state["stages"][args.stage] = {"status": "waived", "dr": args.dr, "source": args.source}
+    state["stages"][args.stage] = {"status": "waived", "adr": args.adr, "source": args.source}
     state["history"].append({"on": on, "stage": args.stage, "event": "waived",
-                             "source": args.source, "dr": args.dr})
+                             "source": args.source, "adr": args.adr})
     save(root, state)
-    print(f"waived {args.stage} ({args.dr}, {args.source})")
+    print(f"waived {args.stage} ({args.adr}, {args.source})")
     return 0
 
 
@@ -580,7 +618,7 @@ def parser() -> argparse.ArgumentParser:
     a.set_defaults(run=cmd_approve)
     w = sub.add_parser("waive", parents=[common])
     w.add_argument("stage", choices=STAGE_NAMES)
-    w.add_argument("--dr", required=True, help="the decision record, DR-<n>")
+    w.add_argument("--adr", required=True, help="the decision record, adr:<slug>")
     w.add_argument("--source", required=True)
     w.set_defaults(run=cmd_waive)
     r = sub.add_parser("reopen", parents=[common])

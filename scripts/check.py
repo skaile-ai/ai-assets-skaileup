@@ -92,25 +92,46 @@ def _is_protocol(rel: str) -> bool:
 GROUNDING_USER_INPUT = "_grounding/<step>/user_input.json"
 ONBOARD_NODE = "02_grounding/onboarding/answers.md"
 
-# The project-root files a skill may declare in `produces` or gate on (SRC ADR 0015). Every other
-# path has to sit under `_concept/` and resolve in the tree — the restriction catches the dominant
-# defect class here, a *concept* path written against a superseded tree (ADR 0007 renamed the whole
-# first level), which would otherwise pass as "some project-root file". A root artifact still
-# resolves through the tree: its node is `tree/<artifact>`, which lists the name literally in
-# `path:`. A hard gate on one is held to the upstream-writer rule in `_check_gate_writers` (exact
-# match). The tree listing (`--print-tree`) shows `_concept/` only; `tree/protocol/beside-the-tree.md §
-# Beside the tree` documents these.
-PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md"}
+# The project-root artifacts a skill may declare in `produces` or gate on (SRC ADR 0015): the file
+# `APP-DESIGN.md` and the decision log `docs/adr/` (ADR 0032), a directory whose records lie below
+# it. Every other path has to sit under `_concept/` and resolve in the tree — the restriction
+# catches the dominant defect class here, a *concept* path written against a superseded tree
+# (ADR 0007 renamed the whole first level), which would otherwise pass as "some project-root file".
+# A root artifact still resolves through the tree: its node is `tree/<file>` for a file and
+# `tree/<dir>/README.md` for a directory, which lists the path literally in `path:`. A hard gate on
+# one is held to the upstream-writer rule in `_check_gate_writers`. The tree listing
+# (`--print-tree`) shows `_concept/` only; `tree/protocol/beside-the-tree.md § Beside the tree`
+# documents these.
+PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md", "docs/adr/"}
+
+
+def root_artifact(path: str) -> str | None:
+    """The entry of PROJECT_ROOT_ARTIFACTS that `path` names or lies under: a file artifact by its
+    exact path, a directory artifact (`docs/adr/`) for itself and every path below it."""
+    path = path.lstrip("/")
+    for art in PROJECT_ROOT_ARTIFACTS:
+        if path == art or (art.endswith("/") and (path == art.rstrip("/") or path.startswith(art))):
+            return art
+    return None
+
+
+def root_artifact_node(art: str) -> str:
+    """The node of a project-root artifact, relative to `tree/`."""
+    return art + "README.md" if art.endswith("/") else art
+
 
 # Skills this collection calls but does not ship (migration map, premise 6). Axis is
 # the upstream frontmatter: "user" = disable-model-invocation: true, reachable only by
-# the human; "model" = reachable through the Skill tool.
+# the human; "model" = reachable through the Skill tool. Each is published as
+# `skill:@mattpocock/<name>`, and a skill that uses one declares it (`external-skill-declared`).
 EXTERNAL_SKILLS: dict[str, str] = {
     "grilling": "model", "tdd": "model", "code-review": "model",
-    "diagnosing-bugs": "model", "triage": "user",
+    "diagnosing-bugs": "model", "domain-modeling": "model", "triage": "user",
 }
-# Mid-sentence calls are lower-case ("…, call the Skill tool with …"); match both.
-SKILL_TOOL_CALL_RE = re.compile(r'[Cc]all the Skill tool (?:with|twice, for) "([a-z][a-z0-9-]*)"(?: and "([a-z][a-z0-9-]*)")?')
+EXTERNAL_PUBLISHER = "mattpocock"
+# Mid-sentence calls are lower-case ("…, call the Skill tool with …"), and a step that hands to one
+# reads "Step 3 calls the Skill tool with …"; match all three.
+SKILL_TOOL_CALL_RE = re.compile(r'[Cc]alls? the Skill tool (?:with|twice, for) "([a-z][a-z0-9-]*)"(?: and "([a-z][a-z0-9-]*)")?')
 BARE_SLASH_SKILL_RE = re.compile(r'(?<=[\s`(])/([a-z][a-z0-9-]*)\b(?![/.])')
 
 # forge-concept's lane vocabulary (`host:phase-lane-vocabulary`). An invalid value is
@@ -590,15 +611,16 @@ def _check_node(node: Node, skill_dirs: set[str], rep: Report) -> None:
     concept_dir = f"{ARTIFACT_ROOT}/" + "".join(f"{_placeholder_dir(p)}/" for p in parts[:-1])
     dir_segs = _segs(concept_dir)
     for entry in node.entries:
-        if entry in PROJECT_ROOT_ARTIFACTS:
-            # the project-root artifact's node is `tree/<artifact>`; the prefix and directory
-            # rules below are about `_concept/` parts and do not bind it
-            if node.rel != entry:
+        art = root_artifact(entry)
+        if art is not None:
+            # the project-root artifact's node is `tree/<file>` or `tree/<dir>/README.md`; the
+            # prefix and directory rules below are about `_concept/` parts and do not bind it
+            if node.rel != root_artifact_node(art):
                 rep.fail(
                     where,
                     "node-location",
                     f"`path:` names the project-root artifact {entry!r}, so the node belongs at "
-                    f"`{TREE_DIR}/{entry}`, not {where}",
+                    f"`{TREE_DIR}/{root_artifact_node(art)}`, not {where}",
                 )
             continue
         if not entry.startswith(f"{ARTIFACT_ROOT}/"):
@@ -608,7 +630,9 @@ def _check_node(node: Node, skill_dirs: set[str], rep: Report) -> None:
         if len(es) < len(dir_segs) or not all(_seg_eq(a, b) for a, b in zip(dir_segs, es)):
             rep.fail(where, "node-frontmatter", f"`path:` entry {entry!r} is not under the node's directory {concept_dir!r}")
     first = node.entries[0]
-    if node.is_readme:
+    if root_artifact(first) is not None:
+        pass  # located by the root-artifact rule above
+    elif node.is_readme:
         if first != concept_dir:
             rep.fail(where, "node-frontmatter", f"a README's first `path:` entry is its directory {concept_dir!r}, not {first!r}")
     elif first.startswith(f"{ARTIFACT_ROOT}/") and node.rel not in _location_candidates(first):
@@ -656,11 +680,17 @@ def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
     for node in nodes:
         _check_node(node, skill_dirs, rep)
 
+    # `tree/docs/` only holds the node of the root directory `docs/adr/`: the project's `docs/` is
+    # no artifact, so it has no node of its own
+    root_parents = {
+        "/".join(_segs(art)[:i]) for art in PROJECT_ROOT_ARTIFACTS if art.endswith("/")
+        for i in range(1, len(_segs(art)))
+    }
     for path in sorted(tree_root.rglob("*")):
         rel = path.relative_to(tree_root).as_posix()
         if _is_protocol(rel) or any(part.startswith(".") for part in rel.split("/")):
             continue
-        if path.is_dir() and not (path / "README.md").is_file():
+        if path.is_dir() and not (path / "README.md").is_file() and rel not in root_parents:
             rep.fail(
                 f"{TREE_DIR}/{rel}/",
                 "dir-has-readme",
@@ -753,7 +783,7 @@ def _check_produces(fm: dict, where: str, nodes: list[Node], rep: Report) -> set
     Returns the ids it declares well-formed. The list is mandatory (`[]` for a skill that
     writes nothing under `_concept/`), each entry names a kebab-case `id` and a `path` that
     starts with `_concept/` and resolves to a node of the tree (ADR 0013, ADR 0017), or names a
-    project-root artifact in PROJECT_ROOT_ARTIFACTS, which resolves to the node `tree/<artifact>`."""
+    project-root artifact in PROJECT_ROOT_ARTIFACTS, which resolves to that artifact's own node."""
     block = _artifacts_block(fm)
     produces = block.get("produces") if block is not None else None
     if not isinstance(produces, list):
@@ -786,13 +816,14 @@ def _check_produces(fm: dict, where: str, nodes: list[Node], rep: Report) -> set
             rep.error(where, f"{label} id {ident!r} is not kebab-case — it is the id other skills name in `artifacts.requires`")
         else:
             ids.add(ident)
-        if path in PROJECT_ROOT_ARTIFACTS:
+        art = root_artifact(path)
+        if art is not None:
             if nodes and resolve(nodes, path) is None:
                 rep.fail(
                     where,
                     "produces-path-resolves",
                     f"{label} path {path!r} resolves to no node of `{TREE_DIR}/` — the node is "
-                    f"`{TREE_DIR}/{path}`, whose `path:` lists it",
+                    f"`{TREE_DIR}/{root_artifact_node(art)}`, whose `path:` lists it",
                 )
             continue
         if not path.startswith(ARTIFACT_ROOT + "/"):
@@ -845,6 +876,16 @@ def _paths_overlap(a: str, b: str) -> bool:
     """True when one path equals, contains or lies under the other. A `<...>` or `*` segment
     matches any one segment, so a gate on `07_screens` meets `07_screens/<screen>.md`."""
     return all(_seg_eq(x, y) for x, y in zip(_gate_segments(a), _gate_segments(b)))
+
+
+def _gate_met(gate: str, path: str) -> bool:
+    """True when the produced `path` meets the prerequisite `gate`: a `_concept/` gate by
+    `_paths_overlap`, a project-root file by its exact path, and the root directory `docs/adr/`
+    by any path at or below it."""
+    art = root_artifact(gate)
+    if art is not None:
+        return root_artifact(path) == art and (path == gate or (art.endswith("/") and _paths_overlap(gate, path)))
+    return path.startswith(ARTIFACT_ROOT + "/") and _paths_overlap(gate, path)
 
 
 PROJECT_TYPES_NODE = "01_meta/scope.md"
@@ -964,19 +1005,16 @@ def _check_hard_gates_have_producer(skills: list[tuple[str, dict]], rep: Report)
     A hard gate on a file nobody produces can never open, and the host reports `satisfied: true` or
     blocks forever without raising. Matching is placeholder-aware (`_paths_overlap`): a gate on
     `07_screens` meets a skill that writes `07_screens/<screen>.md`. A project-root artifact
-    (PROJECT_ROOT_ARTIFACTS) must be written under that exact path."""
+    (PROJECT_ROOT_ARTIFACTS) is matched by `_gate_met`."""
     written = [path for _, fm in skills for _, path in _produced_entries(fm)]
     for skill, fm in skills:
         for item in _prerequisite_items(fm):
             if item.get("gate") != "hard":
                 continue
             gate = str(item["path"]).lstrip("/")
-            if gate in PROJECT_ROOT_ARTIFACTS:
-                met = gate in written
-            elif gate.startswith(ARTIFACT_ROOT + "/"):
-                met = any(p.startswith(ARTIFACT_ROOT + "/") and _paths_overlap(gate, p) for p in written)
-            else:
+            if root_artifact(gate) is None and not gate.startswith(ARTIFACT_ROOT + "/"):
                 continue  # a path outside the concept is reported by the prefix rule
+            met = any(_gate_met(gate, p) for p in written)
             if not met:
                 rep.fail(
                     f"skills/{skill}",
@@ -1091,7 +1129,7 @@ def check_schemas(
                 )
             continue
         if not isinstance(artifact, str) or not (
-            artifact.startswith(ARTIFACT_ROOT + "/") or artifact in PROJECT_ROOT_ARTIFACTS
+            artifact.startswith(ARTIFACT_ROOT + "/") or root_artifact(artifact) is not None
         ):
             rep.fail(
                 where,
@@ -1727,7 +1765,7 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
     fms = dict(skill_fms)
     for skill, fm in skill_fms:
         for _ident, path in _produced_entries(fm):
-            if not (path.startswith(ARTIFACT_ROOT + "/") or path in PROJECT_ROOT_ARTIFACTS):
+            if not (path.startswith(ARTIFACT_ROOT + "/") or root_artifact(path) is not None):
                 continue
             node = resolve(nodes, path)
             if node is not None and skill not in node.owner:
@@ -1746,7 +1784,7 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
                 continue  # an unknown skill is `node-frontmatter`'s report
             ok = False
             for _ident, p in _produced_entries(fms[owner]):
-                if not (p.startswith(ARTIFACT_ROOT + "/") or p in PROJECT_ROOT_ARTIFACTS):
+                if not (p.startswith(ARTIFACT_ROOT + "/") or root_artifact(p) is not None):
                     continue
                 ps = _segs(p)
                 if (
@@ -1893,7 +1931,7 @@ def check_skills(
         #    outside the concept is legal only as a root artifact (PROJECT_ROOT_ARTIFACTS), which
         #    has a node like any `_concept/` part and is resolved too.
         for entry in _prerequisite_paths(fm):
-            if not entry.startswith(ARTIFACT_ROOT + "/") and entry not in PROJECT_ROOT_ARTIFACTS:
+            if not entry.startswith(ARTIFACT_ROOT + "/") and root_artifact(entry) is None:
                 rep.error(
                     where,
                     f"prerequisite path {entry!r} does not start with {ARTIFACT_ROOT + '/'!r} and is not "
@@ -1922,6 +1960,7 @@ def check_skills(
         if isinstance(declared, list):
             _check_route_shape(produces_empty, body, where, rep)
 
+        _check_external_declared(fm, body, where, rep)
         bodies.append((where, body))
 
     # 7a. every artifact id a skill requires is produced by some skill — a second pass, as
@@ -1982,6 +2021,61 @@ def _check_skill_calls(body: str, where: str, names: set[str], rep: Report) -> N
                 f"Call the Skill tool with \"{name}\"",
                 rule="bare-slash-skill",
             )
+
+
+def _external_uses(body: str) -> set[str]:
+    """The external skills a body uses: a model-axis one through a Skill-tool call, a user-axis one
+    by telling the user to run `/<name>`. A Skill-tool call to a user-axis one is `skill-call-target`'s
+    finding, not a use."""
+    called = {n for pair in SKILL_TOOL_CALL_RE.findall(re.sub(r"\n[ \t]*", " ", body)) for n in pair if n}
+    used = {n for n in called if EXTERNAL_SKILLS.get(n) == "model"}
+    used |= {n for n in BARE_SLASH_SKILL_RE.findall(body) if EXTERNAL_SKILLS.get(n) == "user"}
+    return used
+
+
+def _check_external_declared(fm: dict, body: str, where: str, rep: Report) -> None:
+    """Rule `external-skill-declared`: a skill that uses an external skill declares
+    `skill:@mattpocock/<name>#<range>` in `metadata.requires`, and declares no external skill its
+    body never uses. The installer walks `metadata.requires`, so an undeclared one is never
+    installed and a declared one nobody calls is installed for nothing."""
+    metadata = fm.get("metadata") if isinstance(fm.get("metadata"), dict) else {}
+    requires = metadata.get("requires") if isinstance(metadata.get("requires"), list) else []
+    declared: set[str] = set()
+    for ref in requires:
+        m = REF_RE.match(str(ref))
+        if not m or m.group(1) != "skill" or m.group(2) != EXTERNAL_PUBLISHER:
+            continue
+        name, version = m.group(3), m.group(4)
+        declared.add(name)
+        if name not in EXTERNAL_SKILLS:
+            rep.fail(
+                where,
+                "external-skill-declared",
+                f"declares {ref!r} in `metadata.requires`, which is no external skill in EXTERNAL_SKILLS "
+                f"— a ref the collection does not know installs a skill nothing calls",
+            )
+        if not version:
+            rep.fail(
+                where,
+                "external-skill-declared",
+                f"declares {ref!r} in `metadata.requires` without a `#<range>` — the installer would "
+                f"take whatever version is latest, and an upstream rewrite would change this skill unseen",
+            )
+    used = _external_uses(body)
+    for name in sorted(used - declared):
+        rep.fail(
+            where,
+            "external-skill-declared",
+            f"uses the external skill {name!r} but does not declare `skill:@{EXTERNAL_PUBLISHER}/{name}#<range>` "
+            f"in `metadata.requires` — the installer would not install it, and the call would find nothing",
+        )
+    for name in sorted((declared & EXTERNAL_SKILLS.keys()) - used):
+        rep.fail(
+            where,
+            "external-skill-declared",
+            f"declares `skill:@{EXTERNAL_PUBLISHER}/{name}` in `metadata.requires`, but its body never "
+            f"calls it — the installer would install a dependency that reaches no reader",
+        )
 
 
 def _prerequisite_items(fm: dict) -> list[dict]:
@@ -2511,7 +2605,7 @@ def _check_gate_writers(
     excluded — a node later in the run, or on a branch that never reaches it, writes too late.
     A writer's `produces[].path` meets the gate when the two are equal or one is a directory
     prefix of the other, a placeholder segment matching any one. A project-root artifact named in
-    PROJECT_ROOT_ARTIFACTS is matched by exact path; other paths outside `_concept/` (the named
+    PROJECT_ROOT_ARTIFACTS is matched by `_gate_met`; other paths outside `_concept/` (the named
     project-root gates) are the project's, not a node's, and are not held to this.
     A node unreachable from `entry` is reported by `_check_reachability` and skipped here."""
     entry = flow.get("entry")
@@ -2564,12 +2658,13 @@ def _check_gate_writers(
             if item.get("gate") != "hard":
                 continue
             gate = str(item["path"]).lstrip("/")
-            root_artifact = gate in PROJECT_ROOT_ARTIFACTS
-            if not gate.startswith(ARTIFACT_ROOT + "/") and not root_artifact:
+            if root_artifact(gate) is not None:
+                met = any(_gate_met(gate, path) for path in written)
+            elif gate.startswith(ARTIFACT_ROOT + "/"):
+                met = any(_paths_overlap(gate, path) for path in written)
+            else:
                 continue
-            if any(
-                path == gate if root_artifact else _paths_overlap(gate, path) for path in written
-            ):
+            if met:
                 continue
             rep.error(
                 where,
@@ -2860,8 +2955,9 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
 # --------------------------------------------------------------------------
 
 # `demo/` is a workspace root of an invented app (`demo/_concept/…`, `demo/APP-DESIGN.md`,
-# `demo/CONTEXT.md`, `demo/skaile.yaml`, `demo/README.md`) that shows what the skills write. An
-# example nobody checks rots into the one place that contradicts the tree, so it is held to it.
+# `demo/GLOSSARY.md`, `demo/docs/adr/…`, `demo/skaile.yaml`, `demo/README.md`) that shows what the
+# skills write. An example nobody checks rots into the one place that contradicts the tree, so it
+# is held to it.
 # A repo without `demo/` has nothing to check here.
 #
 # Rule ids: `demo-node` (every demo file resolves to a node of `tree/`), `demo-storybook` (the
@@ -2879,16 +2975,21 @@ DEMO_DIR = "demo"
 # The demo omits the mockup package: a full npm package, `demo/README.md` says so.
 DEMO_STORYBOOK = f"{ARTIFACT_ROOT}/09_mockup/storybook"
 
-# Project-root files the demo holds beside `_concept/`. `demo/README.md` and `demo/skaile.yaml` are
-# the workspace's own files, not concept content, and are not looked at as such.
-DEMO_ROOT_FILES = ("APP-DESIGN.md", "CONTEXT.md")
-DEMO_GLOSSARY_FILE = "CONTEXT.md"
+# Project-root files the demo holds beside `_concept/`, and the project-root directories whose files
+# it holds (`docs/adr/`, ADR 0032). `demo/README.md` and `demo/skaile.yaml` are the workspace's own
+# files, not concept content, and are not looked at as such.
+DEMO_ROOT_FILES = ("APP-DESIGN.md", "GLOSSARY.md")
+DEMO_ROOT_DIRS = tuple(sorted(art for art in PROJECT_ROOT_ARTIFACTS if art.endswith("/")))
+# The project glossary, split mode's default (`tree/glossary.md § Where the words live`, ADR 0033).
+DEMO_GLOSSARY_FILE = "GLOSSARY.md"
 # `skaileup` writes `_concept/README.md` as one fixed pointer text (`tree/README.md § _concept/README.md`),
 # which carries no frontmatter, so the universal header is not asked of it.
 DEMO_NO_FRONTMATTER = (f"{ARTIFACT_ROOT}/README.md",)
-# `APP-DESIGN.md`'s own node names its date `updated:` (`tree/APP-DESIGN.md § Format`), not
-# `last_updated:`; the gate reads that one as the universal field, because the file follows its node.
+# `APP-DESIGN.md`'s own node names its date `updated:` (`tree/APP-DESIGN.md § Format`), and a decision
+# record's (`tree/docs/adr/README.md § Format`) names it `date:`, not `last_updated:`; the gate reads
+# that one as the universal field, because the file follows its node.
 DEMO_APP_DESIGN_FILE = "APP-DESIGN.md"
+DEMO_ADR_DIR = "docs/adr/"
 # A `sources:` entry of a workspace config: only these keys, `url` required.
 DEMO_SOURCE_KEYS = {"url", "pin", "publisher"}
 DEMO_COLLECTION_REPO = "ai-assets-skaileup"
@@ -2967,6 +3068,12 @@ def _demo_files(demo: Path) -> list[str]:
             if path.is_file() and not any(part.startswith(".") for part in rel.split("/")):
                 found.append(rel)
     found += [name for name in DEMO_ROOT_FILES if (demo / name).is_file()]
+    for rel_dir in DEMO_ROOT_DIRS:
+        if (demo / rel_dir).is_dir():
+            found += sorted(
+                p.relative_to(demo).as_posix() for p in (demo / rel_dir).rglob("*")
+                if p.is_file() and not any(part.startswith(".") for part in p.relative_to(demo).parts)
+            )
     return found
 
 
@@ -2976,7 +3083,7 @@ def _demo_in_storybook(rel: str) -> bool:
 
 def _demo_glossary_rule(nodes: list[Node], repo: Path) -> tuple[bool, bool]:
     """What `tree/glossary.md § Where the words live` says about the project glossary file:
-    `(the tree names CONTEXT.md as the project glossary, the tree says it carries no frontmatter)`."""
+    `(the tree names GLOSSARY.md as the project glossary, the tree says it carries no frontmatter)`."""
     node = resolve(nodes, DEMO_GLOSSARY_NODE_PATH)
     if node is None:
         return False, False
@@ -3171,6 +3278,8 @@ def check_demo(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: R
             continue
         if rel == DEMO_APP_DESIGN_FILE and "last_updated" not in doc and "updated" in doc:
             doc = {**doc, "last_updated": doc["updated"]}
+        elif rel.startswith(DEMO_ADR_DIR) and "last_updated" not in doc and "date" in doc:
+            doc = {**doc, "last_updated": doc["date"]}
         problems = _schema_errors(fm_schema, _iso_text(doc))
         if problems:
             rep.fail(where, "demo-frontmatter", f"frontmatter does not validate against `{TREE_DIR}/frontmatter.schema.json` ({'; '.join(problems)}) — the demo would teach the wrong header")

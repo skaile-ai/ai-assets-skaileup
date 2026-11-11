@@ -73,7 +73,7 @@ An idea is a candidate feature nobody has specified: an app idea from the brief 
 - `spec-feature` proposes a `move: idea` entry for a feature its grill names that the run does not specify, a DEFER included, and a `move: table` or `move: cut` entry for the feature it acts on: `table` when it specifies the idea, `cut` with the reason when the user declines it.
 - `experience-journeys` proposes a feature the user named that no journey's `candidate_features` carries; `concept-research` proposes a gap users complain about in `_concept/02_grounding/research/competitors.md`. Both are `move: idea` entries.
 
-A declined idea that clears the decisions gate is also appended to `_concept/10_blueprint/decisions.md` with `Status: rejected` (`tree/10_blueprint/decisions.md`), by the run in which the user declined it. A rejected proposal entry is not such a decision and gets no record: its `reason` is the record.
+A declined idea that clears the three-test gate is also proposed as a decision record with `status: rejected` (`tree/docs/adr/README.md § Writing it`), by the run in which the user declined it. A rejected proposal entry is not such a decision and gets no record: its `reason` is the record.
 
 ## Writing it
 

@@ -5,7 +5,7 @@ permissions:
   organizer: [create, read, update]
   member: [create, read, update]
 story_refs: [vote_on_places, run_a_lunch_poll]
-follows: [DR-3]
+follows: [adr:poll-state-reaches-every-member-live]
 screens:
   - path: 07_screens/poll.md
 data_entities: [Vote, Poll, Member]

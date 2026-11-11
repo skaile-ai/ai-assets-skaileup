@@ -1,7 +1,6 @@
 flow: skaileup-greenfield
 project_type: web-app
 depth: standard
-glossary: concept
 reasoning: |
   Four things a team manages (polls, votes, places, members) with two roles sharing
   state, so the data is relational and the app is multi-user. Roughly four features,

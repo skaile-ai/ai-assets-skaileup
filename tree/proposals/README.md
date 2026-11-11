@@ -1,7 +1,7 @@
 ---
 path: [_concept/proposals/, _concept/proposals/<date>-<skill>-<scope>.yaml]
 summary: one file per run that proposes entries to artifacts other skills own
-owner: [architecture-datamodel, architecture-system, architecture-techstack, concept-brief, concept-glossary, concept-onboard, concept-research, concept-reverse, experience-behaviors, experience-interaction, experience-journeys, experience-screen, experience-shell, mockup-feedback, mockup-storybook, quality-design, quality-test, spec-feature]
+owner: [architecture-datamodel, architecture-system, architecture-techstack, build-branch, build-database, build-implement, build-plan, build-scaffold, concept-brief, concept-glossary, concept-onboard, concept-research, concept-reverse, experience-behaviors, experience-interaction, experience-journeys, experience-screen, experience-shell, mockup-feedback, mockup-storybook, quality-design, quality-test, spec-feature]
 may_propose: []
 ---
 
@@ -29,7 +29,7 @@ entries:
     reason: ""                     # required when rejected
 ```
 
-`target` resolves to its node like any `_concept/` path. A glossary entry targets `_concept/glossary.md` in either glossary mode (`concept-glossary` moves the words into the project glossary when it promotes); a `CONTEXT.md` target resolves to `tree/glossary.md` as well, `APP-DESIGN.md` to `tree/APP-DESIGN.md`. An entry with `status: promoted` or `rejected` carries `settled_by` and `settled_on`; a rejected one carries a non-empty `reason`.
+`target` resolves to its node like any `_concept/` path. A glossary entry targets `_concept/glossary.md` in either glossary mode (`concept-glossary` moves the words into the project glossary when it promotes); a `GLOSSARY.md` (or legacy `CONTEXT.md`) target resolves to `tree/glossary.md` as well, `APP-DESIGN.md` to `tree/APP-DESIGN.md`, and `docs/adr/` to `tree/docs/adr/README.md` (a decision record, anchor `adr:<slug>`). An entry with `status: promoted` or `rejected` carries `settled_by` and `settled_on`; a rejected one carries a non-empty `reason`.
 
 ## Writing it
 
