@@ -57,8 +57,10 @@ own. A host tool only you hold (an editor that opens a file, a review hunk) carr
 
 ## Several at once
 
-Run delegates in parallel only when their write sets are disjoint (`tree/protocol/delegation.md § Delegation`);
-otherwise one after another, in the order the demand needs.
+Run delegates in parallel only when their write sets are disjoint
+(`tree/protocol/delegation.md § Delegation`). Several features at once follow
+`tree/protocol/delegation.md § Several specs at once`: you own its serial points, and you print
+one run line per spec instead of building several in your own context.
 
 ## Done
 

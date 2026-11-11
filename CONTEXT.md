@@ -428,6 +428,12 @@ The one branch all of a spec's tickets merge into, whose draft pull request clos
 issue.
 _Avoid_: feature branch, spec branch
 
+**Serial point**:
+One of the four places where specs moving in parallel wait for each other: the promotion pass,
+the proposal gate, a shared pattern's module, and the data model's migrations. Everything else
+about several specs runs side by side.
+_Avoid_: lock, sync point, barrier
+
 **Dossier**:
 The working directory for one feature's concept work — the notes, framing and decisions made
 along the way, kept as documentation once done. The build keeps no dossier: its tickets and

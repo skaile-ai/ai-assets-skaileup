@@ -44,7 +44,7 @@ last_updated: YYYY-MM-DD
 |---|---|
 | `build-plan` | creates the file: one row per criterion id in the spec, every one untested and naming its ticket |
 | `quality-e2e` | evaluates the rows a journey covered, end to end in the browser |
-| `quality-review` | evaluates the rows it re-checks against the running app |
+| `quality-review` | evaluates every row whose ticket is closed, untested and `PASS` alike, against the running app |
 | `quality-release` | reads the rows and does not re-walk journeys |
 | `ops-review` | reads the rows: any `FAIL` or untested row makes the feature's coverage row red |
 
@@ -75,9 +75,17 @@ Drives the running application through **every story in `_concept/04_journeys/st
 7. **Stop the dev server and close the browser session**, whatever the outcome; a server left running is the next run's port conflict.
 8. **Report** per journey: pass or fail, the failing criterion id, the screenshots, the console errors, and any record the database did not hold. The pass or fail cites the ledger rows it was written to and is not a second verdict. Group the failures by feature so the reader knows which spec to reopen.
 
-### Reading (quality-review, ops-review)
+### Flipping rows (quality-review)
 
-`quality-review` re-checks the ledger of the feature under review: for every row marked `PASS`, exercise the criterion against the running app and not the code that claims it, because static inspection is how a `PASS` row survives with nothing behind it. Overwrite each row it re-checked with its result and its own evidence, per the rules above (`FAIL` beats an earlier `PASS` at the same commit). A row that fails is a `high` finding carrying its criterion id; rows it did not exercise stay as they were.
+`quality-review` evaluates the ledger of the feature under review. List the spec's tickets (`gh api repos/{owner}/{repo}/issues/<n>/sub_issues`, `<n>` the spec's `tracker.issue`) and take every row whose ticket is closed, untested and `PASS` alike: a closed ticket claims its criteria are built, and an untested row behind it is a claim nobody checked.
+
+1. **Exercise each such criterion against the running app** and not the code that claims it, because static inspection is how a `PASS` row survives with nothing behind it. Read the criterion's text from the feature spec; copy it into neither the ledger nor the review.
+2. **Overwrite the row** with `PASS` or `FAIL` and the evidence `<pointer> · quality-review · <commit> · <date> · #<ticket>`, the commit being the integration branch's head under review, per the rules above (`FAIL` beats an earlier `PASS` at the same commit).
+3. **Report every `FAIL` as a `high` finding** in the review, `category: criteria`, carrying its criterion id.
+
+A row whose ticket is still open stays exactly as it was, and so does a row the run could not exercise; the report names both by criterion id.
+
+### Reading (ops-review, quality-release)
 
 `ops-review` and `quality-release` only read. They take each feature's status from its ledger and do not walk journeys again: a `FAIL` or untested row makes the feature's coverage row red in `ops-review` and is what blocks the release in `quality-release`.
 
@@ -87,3 +95,4 @@ Drives the running application through **every story in `_concept/04_journeys/st
 - Every `PASS`/`FAIL` row carries `<pointer> · <evaluator> · <commit> · <date> · #<ticket>`; every untested row carries the id and `#<ticket>` alone.
 - Every row's ticket is a sub-issue of the spec's parent issue, and each criterion id is claimed by exactly one ticket.
 - After a `quality-e2e` run: every story (or derived path) has a pass or a fail with a criterion id behind it, the rows evaluated carry that verdict and its evidence, and no dev server or browser session is left alive.
+- After a `quality-review` run: no row whose ticket is closed is untested unless the report names it as not exercised, and every `FAIL` row it set is a `high` finding in the review.

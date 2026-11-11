@@ -46,9 +46,10 @@ context, never in a delegate: `implement-spec` starts subagents, and a delegate 
    root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>`.
    A non-zero exit stops this skill with the script's message and names `skaileup` to continue
    the walk; a missing `walkthrough.yaml` is the same stop.
-2. **Check no proposal is pending against the spec.** An entry in `_concept/proposals/`
-   (`tree/proposals/README.md § Format`) at `status: proposed` whose `target` is this spec, a
-   screen it names or `_concept/10_blueprint/datamodel/model.yaml` stops this skill, naming the
+2. **Check no proposal is pending against the spec** (serial point 2 of
+   `tree/protocol/delegation.md § Several specs at once`). A pending entry in
+   `_concept/proposals/` (`tree/proposals/README.md § Format`) targeting this spec, a screen it
+   names, a model entity it names or a glossary term it names stops this skill, naming the
    target's owner (the `owner:` of its node) to settle it first: a build against an artifact
    about to change is built against the wrong thing.
 3. **Resolve the parent issue.** The spec's frontmatter `tracker.issue`
@@ -71,7 +72,9 @@ context, never in a delegate: `implement-spec` starts subagents, and a delegate 
    parent and tickets are closed with `gh issue close` when the PR merges. Each implementer
    subagent calls the Skill tool with "tdd" for its ticket, with the pointers of step 4. Leave
    out `implement-spec`'s own code review: `quality-review` reviews the integration branch from
-   a context that did not write it.
+   a context that did not write it. Before the PR is marked ready, the integration branch
+   rebases on its base, and integration branches merge into that base one at a time (serial
+   point 4 of `tree/protocol/delegation.md § Several specs at once`).
 6. **Record what the build decided.** A hard-to-reverse choice made while building is a
    decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target
    `docs/adr/`, anchor `adr:<slug>`); other concerns are one comment on the parent issue

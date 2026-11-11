@@ -1,6 +1,6 @@
 # 0036 — build-plan and build-implement are adapters on to-tickets and implement-spec
 
-**Status:** accepted
+**Status:** accepted; amended by [0037](0037-parallel-specs-serialise-at-four-points.md) (a wider proposal gate; specs build in parallel and serialise at four points)
 
 Amends [ADR 0006](0006-the-slice-loop-composes.md) (the slice loop), [ADR 0012](0012-foreign-skills-and-the-two-libraries.md)
 (two more foreign skills, both `user-followed`) and [ADR 0027](0027-agents-and-levelled-decisions.md)

@@ -1,6 +1,6 @@
 # 0027 — Agents and levelled decisions
 
-**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias); K7 amended by [0031](0031-proposals-are-files-per-run.md) (`concept-brief` is the roster's sole owner; `spec-feature` proposes its roster moves); K4 and K5 amended by [0032](0032-one-decision-log-under-docs-adr.md) (a record is a file under `docs/adr/`, cited by slug `adr:<slug>`; levels, kinds and patterns unchanged); K1 amended by [0036](0036-build-adapters-on-to-tickets-and-implement-spec.md) (the lead composes `build-implement`, which `skaileup-builder` no longer does)
+**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias); K7 amended by [0031](0031-proposals-are-files-per-run.md) (`concept-brief` is the roster's sole owner; `spec-feature` proposes its roster moves); K4 and K5 amended by [0032](0032-one-decision-log-under-docs-adr.md) (a record is a file under `docs/adr/`, cited by slug `adr:<slug>`; levels, kinds and patterns unchanged); K1 amended by [0036](0036-build-adapters-on-to-tickets-and-implement-spec.md) (the lead composes `build-implement`, which `skaileup-builder` no longer does); K1 and K5 amended by [0037](0037-parallel-specs-serialise-at-four-points.md) (several specs run at once and serialise at four points)
 
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends

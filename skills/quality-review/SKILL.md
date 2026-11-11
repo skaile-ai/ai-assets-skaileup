@@ -1,6 +1,6 @@
 ---
 name: quality-review
-description: "Use when a feature's spec is built and its code needs an adversarial review before it ships — resolves the fixed point from the pull request of the spec's parent issue and the spec from the feature file, runs `code-review`, and adds the security, accessibility and acceptance-criteria axes. Triggers on 'review this feature', 'code review the login feature', 'is this ready to ship'."
+description: "Use when a feature's spec is built and its code needs an adversarial review before it ships — resolves the spec and its parent issue, takes the fixed point from the integration branch `spec/<featureset>-<feature>`, runs `code-review`, adds the security, accessibility and acceptance-criteria axes, and flips the ledger rows whose ticket is closed. Triggers on 'review this feature', 'code review the login feature', 'is this ready to ship'."
 version: "0.1.0"
 metadata:
   requires:
@@ -31,9 +31,10 @@ it otherwise asks a human for, plus the security, accessibility and criteria axe
 
 Read `tree/protocol/running.md` (the todo list, rules 1, 2 and 8) once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Take the evaluator's stance** — `tree/11_build/README.md § Verdicts`. The verdict file and the re-checked ledger rows are the only things this skill writes.
-2. **Resolve the fixed point (parent issue's PR, else git, else ask), build, run `code-review`, add the security and accessibility axes** — `tree/11_build/reviews/README.md § Writing it` (steps 1–4). Call the Skill tool with "code-review" from a context that did not write the code, and call the Skill tool with "diagnosing-bugs" on a red build; where either is not installed the node names the fallback.
-3. **Re-check the ledger rows marked `PASS` against the running app** — `tree/11_build/acceptance-criteria/README.md § Reading`.
-4. **Write the verdict, report by axis** — `tree/11_build/reviews/README.md § Writing it` (steps 6–7). On `changes-requested`, call the Skill tool with "diagnosing-bugs" against the findings.
+1. **Take the evaluator's stance** — `tree/11_build/README.md § Verdicts`. The verdict file and the flipped ledger rows are the only things this skill writes.
+2. **Resolve the spec, its parent issue and the fixed point** (`git merge-base origin/main spec/<featureset>-<feature>`, else the parent issue's PR base, else ask) — `tree/11_build/reviews/README.md § Writing it` (step 1).
+3. **Build, call the Skill tool with "code-review", add the security and accessibility axes** — `tree/11_build/reviews/README.md § Writing it` (steps 2–4). Hand `code-review` the fixed point and the spec (feature file path plus the parent issue and its sub-issues), from a context that did not write the code; call the Skill tool with "diagnosing-bugs" on a red build. Where either is not installed the node names the fallback.
+4. **Add the acceptance-criteria axis: flip every ledger row whose ticket is closed against the running app** — `tree/11_build/acceptance-criteria/README.md § Flipping rows (quality-review)`.
+5. **Write the verdict, report by axis** — `tree/11_build/reviews/README.md § Writing it` (steps 6–7). On `changes-requested`, call the Skill tool with "diagnosing-bugs" against the findings.
 
-**Done when** `11_build/reviews/<feature_slug>.yaml` is on disk, every finding in it carries a file, a line and a resolution, and the verdict is `approved` only where no finding is `critical` or `high`.
+**Done when** `11_build/reviews/<feature_slug>.yaml` is on disk with its `fixed_point`, `branch` and `parent_issue`, every finding in it carries a file, a line and a resolution, every ledger row whose ticket is closed carries this run's verdict or is named as not exercised, and the verdict is `approved` only where no finding is `critical` or `high`.

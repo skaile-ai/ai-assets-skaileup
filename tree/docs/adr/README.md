@@ -54,7 +54,7 @@ A landed record is never edited. To change your mind, write a new record that na
 
 ## Patterns
 
-A record of `kind: pattern` generalises what two or more features share (the same entities, actions, screens or floorplans used the same way) into one rule later features follow. `spec-feature` proposes it when its similarity check generalises a match (`tree/05_features/[featureset]/[feature].md § Writing it`): at `featureset` level when every feature it covers sits in one featureset, else at `product`. `applies_when` is the sentence a later run matches a new feature against; each feature that follows the record lists `adr:<slug>` in `follows:`. In the build, a pattern is one shared module: the first ticket that needs it builds it and names `adr:<slug>`, and every later ticket reuses it (`build-plan` cuts them so).
+A record of `kind: pattern` generalises what two or more features share (the same entities, actions, screens or floorplans used the same way) into one rule later features follow. `spec-feature` proposes it when its similarity check generalises a match (`tree/05_features/[featureset]/[feature].md § Writing it`): at `featureset` level when every feature it covers sits in one featureset, else at `product`. `applies_when` is the sentence a later run matches a new feature against; each feature that follows the record lists `adr:<slug>` in `follows:`. In the build, a pattern is one shared module with one ticket, "Shared module for adr:<slug>", which every later spec following the record is blocked by (`tree/protocol/delegation.md § Several specs at once`, serial point 3; `build-plan` cuts them so).
 
 ## Writing it
 
