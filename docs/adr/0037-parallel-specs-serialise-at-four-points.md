@@ -22,7 +22,12 @@ them and would have kept several `implement-spec` frontiers in its own context.
 
 1. **Parallel per feature, across features.** `spec-feature`, `experience-behaviors`,
    `experience-screen`, `build-plan`, `build-implement` and `quality-review` run at once for
-   different features; each run owns disjoint paths and writes its own proposal file.
+   different features; each run owns disjoint paths and writes its own proposal file. Two
+   `build-plan` runs whose specs share a `follows:` pattern or a `data_entities` entry run one
+   after another instead: run at once, neither sees the other's tickets, so both would create
+   the shared-module ticket and neither could tell which schema ticket is earlier. The
+   two-spec smoke of #27 hit this with `polls/draw-pick` and `places/manage-places` (both name
+   `Place`).
 2. **Serial point 1 — the promotion pass.** After each parallel wave, every owner with pending
    entries settles them in one run; different owners in parallel, one owner never twice at once;
    `skaileup`'s ADR promotion is part of the pass.
@@ -36,6 +41,7 @@ them and would have kept several `implement-spec` frontiers in its own context.
    native link across parents.
 5. **Serial point 4 — data model migrations.** `architecture-datamodel` promotes model changes
    one run at a time; a spec's schema ticket is `blocked-by` the schema ticket of every earlier
+   (parent issue opened first)
    open spec on the same entity; integration branches merge into their base one at a time, each
    rebased on it before its PR is marked ready.
 6. **One `implement-spec` per spec.** Each spec builds in its own session and worktree; the
@@ -61,3 +67,6 @@ SOUL, `build-plan`, `build-implement`, `tree/docs/adr/README.md § Patterns` and
   that ticket closes.
 - A glossary or model proposal from one spec's run can hold up another spec's plan until the
   promotion pass settles it.
+- `build-plan` joins the proposers of `model.yaml` and of the feature spec: both smoke runs of
+  #27 met a model field or a criterion id the spec lacked and had nowhere to put it but a
+  comment. A gap it proposes holds the build through serial point 2 until its owner settles it.

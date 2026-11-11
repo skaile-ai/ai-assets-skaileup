@@ -53,7 +53,7 @@ Read `tree/protocol/running.md` once per session, then these nodes in order — 
    - each `pattern` in the spec's `follows:` (`tree/docs/adr/README.md § Patterns`) is one shared module, ticketed and linked per serial point 3 of `tree/protocol/delegation.md § Several specs at once`;
    - a schema ticket is `blocked-by` the schema ticket of every earlier open spec touching the same entity, per serial point 4 of that section.
 
-   A cut that passes the three-test gate (a wide refactor sequenced expand–contract, a shared module placed against the obvious seam) is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`).
+   A cut that passes the three-test gate (a wide refactor sequenced expand–contract, a shared module placed against the obvious seam) is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`). A gap the cut finds is proposed in the same file and its ticket left `blocked-by` nothing new, since the proposal gate holds the build: an entity or field the model lacks (`tree/10_blueprint/datamodel/model.md § Format`, *Proposal entry*), an IN item with no criterion id (`tree/05_features/[featureset]/[feature].md § Format`, *Proposal entry*).
 5. **Create the criteria ledger** — `tree/11_build/acceptance-criteria/README.md § Creating the ledger`. Every row untested, one per criterion id the spec carries, each naming its ticket.
 
 **Done when** the parent issue exists with one sub-issue per approved ticket, every criterion id in the spec is claimed by exactly one ticket, the spec carries `tracker.issue`, and the ledger holds one untested row per criterion naming its ticket.

@@ -2,7 +2,7 @@
 path: _concept/05_features/<featureset>/<feature>.md
 summary: one feature's permanent spec — scope line, permissions, acceptance criteria
 owner: [spec-feature]
-may_propose: [experience-screen]
+may_propose: [experience-screen, build-plan]
 ---
 
 # _concept/05_features/<featureset>/<feature>.md
@@ -32,7 +32,7 @@ last_updated: YYYY-MM-DD
 
 `permissions:` takes its roles from `_concept/05_features/featuresets.md`'s vocabulary and is the only place grants are written (`tree/05_features/README.md § Permissions`). Body, in order: `## Scope` — the IN / OUT / DEFER line with a one-line rationale per item; the acceptance criteria. `data_entities` is the one feature↔entity join, each name copied from the models in `_concept/10_blueprint/datamodel/model.yaml` (format: `tree/10_blueprint/datamodel/model.md`); `screens:` holds plain entries only, and with `story_refs` follows `tree/05_features/README.md § Links in both directions`. `follows:` lists, as `adr:<slug>` (`tree/docs/adr/README.md § Format`, *Referencing*), every `pattern` record the feature follows and every `featureset` or `feature` level record that shaped it (`tree/docs/adr/README.md § Levels`); a `product` record binds every feature and is not listed. `build-plan` reads it to find the shared module of each pattern.
 
-**Proposal entry** (`tree/proposals/README.md`). `experience-screen` writes into its run's proposal file, never into this spec. The `anchor` is `screens` with the payload `{ path: 07_screens/<screen>.md }`, the entry the screen's side of the link needs, or `section:<heading>` with a markdown string to add under that `##` heading (an acceptance criterion an error state of the screen implies, under the criteria heading). A pending `screens` entry counts for the cross-link until `spec-feature` settles it (`## Writing it`, step 8).
+**Proposal entry** (`tree/proposals/README.md`). `experience-screen` and `build-plan` write into their run's proposal file, never into this spec. The `anchor` is `screens` with the payload `{ path: 07_screens/<screen>.md }`, the entry the screen's side of the link needs, or `section:<heading>` with a markdown string to add under that `##` heading (an acceptance criterion an error state of the screen implies, under the criteria heading; from `build-plan`, a criterion for an IN item that has none, because a ticket claims ids and never prose). A pending `screens` entry counts for the cross-link until `spec-feature` settles it (`## Writing it`, step 8).
 
 Criteria are cited by id (`AC-<story-id>-<nn>`), never retyped; the id grammar and the table of sources to derive them from are in `tree/04_journeys/stories.md`. A criterion the grill adds that no story carries takes `AC-<feature_slug>-<nn>`.
 

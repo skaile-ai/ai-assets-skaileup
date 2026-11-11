@@ -2,7 +2,7 @@
 path: _concept/10_blueprint/datamodel/model.yaml
 summary: the authored data model; checked and read through @skaile/model
 owner: [architecture-datamodel]
-may_propose: [spec-feature, experience-screen, mockup-storybook, mockup-feedback]
+may_propose: [spec-feature, experience-screen, mockup-storybook, mockup-feedback, build-plan]
 ---
 
 # _concept/10_blueprint/datamodel/model.yaml
@@ -109,7 +109,7 @@ Where the cards of an entity sit on a canvas is the host's state, not a key of t
 
 An `m2o` field also takes `to`, `on_delete`, `label` and `inverse`; an `m2m` takes `to`, `through`, `label` and `inverse`. An option that does not apply to the field's type is an error.
 
-**Proposal entry** (`tree/proposals/README.md`). A skill in `may_propose` (`spec-feature`, `experience-screen`, `mockup-storybook`, `mockup-feedback`) that needs an entity or field the model lacks writes it into its run's proposal file, never into `model.yaml`. The `anchor` is `entities.<Entity>` for a new entity, with the entity's mapping as `payload` (`{ label_field: title, fields: { title: { type: string } } }`), or `entities.<Entity>.fields.<field>` for a new field, with the field's mapping as `payload` (`{ type: decimal, required: false }`); a payload is written in this format and would pass the check once placed. `source` is the evidence or the user's words. A proposal adds and never edits an existing entity or field. Until `architecture-datamodel` promotes it (`tree/10_blueprint/datamodel/README.md § Writing it`, step 8), the entity or field is not in the model: a reader that needs it names the pending entry, and no seed row or mockup component uses it.
+**Proposal entry** (`tree/proposals/README.md`). A skill in `may_propose` (`spec-feature`, `experience-screen`, `mockup-storybook`, `mockup-feedback`, `build-plan`) that needs an entity or field the model lacks writes it into its run's proposal file, never into `model.yaml`. The `anchor` is `entities.<Entity>` for a new entity, with the entity's mapping as `payload` (`{ label_field: title, fields: { title: { type: string } } }`), or `entities.<Entity>.fields.<field>` for a new field, with the field's mapping as `payload` (`{ type: decimal, required: false }`); a payload is written in this format and would pass the check once placed. `source` is the evidence or the user's words. A proposal adds and never edits an existing entity or field. Until `architecture-datamodel` promotes it (`tree/10_blueprint/datamodel/README.md § Writing it`, step 8), the entity or field is not in the model: a reader that needs it names the pending entry, and no seed row or mockup component uses it.
 
 Stack-specific concerns (Prisma decorators, Directus system collections, PostXL `standardFields` casing) belong to the stack translator, not to the model; see `tree/10_blueprint/datamodel/README.md § Materialising the database`.
 
