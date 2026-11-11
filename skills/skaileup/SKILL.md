@@ -5,7 +5,7 @@ version: "0.4.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
-    - skill:@mattpocock/setup-matt-pocock-skills#^0.1
+    - skill:@mattpocock/setup-matt-pocock-skills#0.1.0
   artifacts:
     produces:
       - { id: expectations, path: "_concept/01_meta/expectations.md" }

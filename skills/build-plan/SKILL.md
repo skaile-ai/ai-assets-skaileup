@@ -5,7 +5,7 @@ version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
-    - skill:@mattpocock/to-tickets#^0.1
+    - skill:@mattpocock/to-tickets#0.1.0
   artifacts:
     requires:
       - { id: features }

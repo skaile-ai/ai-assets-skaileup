@@ -140,7 +140,8 @@ part's node.
     call to one is an error, and so is the phrase for a `model` skill.
 
   Every external skill a skill uses is declared in its `metadata.requires` as
-  `skill:@mattpocock/<name>#^0.1`, and every one declared is used (`scripts/check.py` rule
+  `skill:@mattpocock/<name>#0.1.0`, an exact store version because skaile resolves no caret
+  range in `requires`, and every one declared is used (`scripts/check.py` rule
   `external-skill-declared`). A hard dependency says in the same step what happens when the
   skill is absent.
 - **`## Depth Behavior`, `## Standalone Mode`, `## Context Budget`** describe how the

@@ -5,7 +5,7 @@ version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
-    - skill:@mattpocock/grilling#^0.1
+    - skill:@mattpocock/grilling#0.1.0
   artifacts:
     requires:
       - { id: scope }

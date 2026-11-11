@@ -42,7 +42,7 @@ cannot call them, yet an agent, not the human, is meant to run them.
    ``Read the installed `<name>` skill and follow it`` (optionally `, with <inputs>`); a
    Skill-tool call to one is an error, and so is the phrase for a `model` skill. The phrase
    counts as a use for `external-skill-declared`, and every external skill a skill uses is
-   declared in `metadata.requires` as `skill:@mattpocock/<name>#^0.1`.
+   declared in `metadata.requires` as `skill:@mattpocock/<name>#0.1.0`.
 
 ## Options rejected
 
@@ -59,6 +59,6 @@ cannot call them, yet an agent, not the human, is meant to run them.
 
 - `PROJECT_ROOT_ARTIFACTS` in `scripts/check.py` holds three entries; `tree/README.md`'s
   `_concept/README.md` pointer names three nodes.
-- `skaileup` requires `skill:@mattpocock/setup-matt-pocock-skills#^0.1`; a project without it
+- `skaileup` requires `skill:@mattpocock/setup-matt-pocock-skills#0.1.0`; a project without it
   installed still gets the section, written into a file of its own.
 - `docs/skill-template.md` documents the three axes and the phrase.

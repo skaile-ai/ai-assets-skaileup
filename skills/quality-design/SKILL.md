@@ -6,7 +6,7 @@ metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
     - contract:@skaile-ai/app-design-rulebook
-    - skill:@mattpocock/grilling#^0.1
+    - skill:@mattpocock/grilling#0.1.0
   artifacts:
     requires:
       - { id: app-design }

@@ -49,7 +49,8 @@ derivation.
 
 **H4 — External skills are declared.** Every external skill a route calls with the Skill tool, or
 tells the user to run, is listed in `metadata.requires` as `skill:@mattpocock/<name>#<range>`
-(today `#^0.1`), so installing a skill installs what its route calls. `check.py` rule
+(today the exact `#0.1.0`: skaile's resolver finds no store version for a caret range such as
+`#^0.1`), so installing a skill installs what its route calls. `check.py` rule
 `external-skill-declared` fails a call with no declaration, a declaration the body never names and
 a declaration with no range.
 
@@ -67,7 +68,7 @@ a declaration with no range.
 
 - `tree/glossary.md § Where the words live` carries H1 and H2; `scope.md` and `scope.schema.json`
   describe the new default.
-- `concept-glossary` requires `skill:@mattpocock/domain-modeling#^0.1`; `domain-modeling` joins the
+- `concept-glossary` requires `skill:@mattpocock/domain-modeling#0.1.0`; `domain-modeling` joins the
   external skills `check.py` knows.
 - A project with no glossary now gets a root `GLOSSARY.md` on its first `concept-glossary` run; one
   that wants everything in `_concept/` sets `glossary: concept`.
