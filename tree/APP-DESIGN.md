@@ -16,7 +16,7 @@ It holds *decisions*; findings, plans and questions stay in the output of the ru
 - `_concept/07_screens/shell.md` — the shell frame and the concrete destination list;
 - `docs/adr/` — the records of hard-to-reverse choices that had rejected options (`tree/docs/adr/README.md`).
 
-`build-scaffold` writes a line in the project's root `AGENTS.md` that points coding agents here, creating the file when it creates the project. In a project that existed before scaffolding the skills leave `CLAUDE.md` and `AGENTS.md` alone, and the plan says the link is missing.
+Coding agents find it through the **Interaction rules** bullet `skaileup` writes into `docs/agents/domain.md § skaileup artifacts` (`tree/docs/agents/domain.md`). No skill writes a pointer to it into `CLAUDE.md` or `AGENTS.md`.
 
 ## Format
 

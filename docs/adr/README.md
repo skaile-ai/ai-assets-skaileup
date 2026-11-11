@@ -10,7 +10,9 @@ adds eight agents (a lead and seven delegates) and gives decision records a leve
 0029 walks the concept top-down in four stages the build skills gate on; 0030 replaces the TypeScript data model with two YAML
 files checked by the package `@skaile/model`; 0031 moves proposed entries out of the owners'
 artifacts into one proposal file per run; 0032 moves the decision logs to one ADR file per
-decision under `docs/adr/`; 0033 makes `GLOSSARY.md` the default project glossary.
+decision under `docs/adr/`; 0033 makes `GLOSSARY.md` the default project glossary; 0034 moves the
+tree's protocol into `tree/protocol/`; 0035 has skaileup write a guidance section the upstream
+skills read.
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -28,7 +30,7 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0009](./0009-stack-knowledge-lives-in-templates.md) | Stack-specific knowledge lives in a template, not a skill |
 | [0010](./0010-no-plan-file-and-no-status-file.md) | The build side keeps no plan file and no status file |
 | [0011](./0011-the-machine-layer-sits-under-metadata.md) | The machine layer sits under `metadata:`; paths carry `_concept/` |
-| [0012](./0012-foreign-skills-and-the-two-libraries.md) | Five foreign skills stay global, called one gate-checked way; what came from pstack and Pocock |
+| [0012](./0012-foreign-skills-and-the-two-libraries.md) | Five foreign skills stay global, called one gate-checked way; what came from pstack and Pocock; amended by 0035 |
 | [0013](./0013-a-skill-declares-what-it-produces.md) | A skill declares what it produces; no registry is generated |
 | [0014](./0014-the-glossary-is-a-root-file.md) | The glossary is a root file; `comparable.md` folds into the brief |
 | [0016](./0016-published-formats-where-one-exists.md) | Published formats where one exists: DTCG tokens, JSON Schema for machine files, SARIF, OpenAPI/AsyncAPI, MADR, C4; amended by 0030 |
@@ -49,4 +51,5 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0031](./0031-proposals-are-files-per-run.md) | Proposals are files, one per run: `_concept/proposals/<date>-<skill>-<scope>.yaml`, entries name `target`, `anchor`, `payload`; only the target's owner settles; no proposal markers in owner artifacts; rejections stay in the file; parallel runs need disjoint owned paths; amends 0022, 0024 G4, 0027 K7, 0029 W4 and 0030; amended by 0032 |
 | [0032](./0032-one-decision-log-under-docs-adr.md) | One decision log under `docs/adr/`: one file per decision, cited by slug `adr:<slug>`, owned by `skaileup`, which numbers and writes it; every other skill proposes it; levels, kinds and patterns unchanged; build concerns go to the spec's parent issue; supersedes both `decisions.md` logs; amends 0022, 0023, 0027 K4/K5, 0029 W5 and 0031 |
 | [0033](./0033-glossary-md-is-the-default-project-glossary.md) | `GLOSSARY.md` is the default project glossary; amends 0024 |
-| [0034](./0034-the-tree-protocol-lives-beside-it.md) | The tree's cross-cutting protocol lives beside it in `tree/protocol/` (ownership, running, delegation, beside the tree); routes cite only the files they use; amends 0017 |
+| [0034](./0034-the-tree-protocol-lives-beside-it.md) | The tree's cross-cutting protocol lives beside it in `tree/protocol/` (ownership, running, delegation, beside the tree); routes cite only the files they use; amends 0017; amended by 0035 |
+| [0035](./0035-skaileup-writes-a-guidance-section-for-upstream-skills.md) | skaileup writes the `## skaileup artifacts` section of `docs/agents/domain.md`, a third root artifact, on the first build-side demand after running upstream `setup-matt-pocock-skills`; `build-scaffold` writes no `AGENTS.md` pointer; external skills gain the `user-followed` axis; amends 0012 and 0034 |

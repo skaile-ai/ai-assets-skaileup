@@ -93,8 +93,10 @@ GROUNDING_USER_INPUT = "_grounding/<step>/user_input.json"
 ONBOARD_NODE = "02_grounding/onboarding/answers.md"
 
 # The project-root artifacts a skill may declare in `produces` or gate on (SRC ADR 0015): the file
-# `APP-DESIGN.md` and the decision log `docs/adr/` (ADR 0032), a directory whose records lie below
-# it. Every other path has to sit under `_concept/` and resolve in the tree — the restriction
+# `APP-DESIGN.md`, the decision log `docs/adr/` (ADR 0032), a directory whose records lie below
+# it, and the agent guidance `docs/agents/domain.md` (ADR 0035), whose `## skaileup artifacts`
+# section points unmodified upstream skills at the concept. Every other path has to sit under
+# `_concept/` and resolve in the tree — the restriction
 # catches the dominant defect class here, a *concept* path written against a superseded tree
 # (ADR 0007 renamed the whole first level), which would otherwise pass as "some project-root file".
 # A root artifact still resolves through the tree: its node is `tree/<file>` for a file and
@@ -102,7 +104,7 @@ ONBOARD_NODE = "02_grounding/onboarding/answers.md"
 # one is held to the upstream-writer rule in `_check_gate_writers`. The tree listing
 # (`--print-tree`) shows `_concept/` only; `tree/protocol/beside-the-tree.md § Beside the tree`
 # documents these.
-PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md", "docs/adr/"}
+PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md", "docs/adr/", "docs/agents/domain.md"}
 
 
 def root_artifact(path: str) -> str | None:
@@ -122,17 +124,23 @@ def root_artifact_node(art: str) -> str:
 
 # Skills this collection calls but does not ship (migration map, premise 6). Axis is
 # the upstream frontmatter: "user" = disable-model-invocation: true, reachable only by
-# the human; "model" = reachable through the Skill tool. Each is published as
+# the human; "model" = reachable through the Skill tool; "user-followed" =
+# disable-model-invocation: true too, but a route reaches it by reading the installed skill
+# and following it (USER_FOLLOWED_RE), never through the Skill tool (ADR 0035). Each is published as
 # `skill:@mattpocock/<name>`, and a skill that uses one declares it (`external-skill-declared`).
 EXTERNAL_SKILLS: dict[str, str] = {
     "grilling": "model", "tdd": "model", "code-review": "model",
     "diagnosing-bugs": "model", "domain-modeling": "model", "triage": "user",
+    "setup-matt-pocock-skills": "user-followed", "to-tickets": "user-followed",
+    "implement-spec": "user-followed",
 }
 EXTERNAL_PUBLISHER = "mattpocock"
 # Mid-sentence calls are lower-case ("…, call the Skill tool with …"), and a step that hands to one
 # reads "Step 3 calls the Skill tool with …"; match all three.
 SKILL_TOOL_CALL_RE = re.compile(r'[Cc]alls? the Skill tool (?:with|twice, for) "([a-z][a-z0-9-]*)"(?: and "([a-z][a-z0-9-]*)")?')
 BARE_SLASH_SKILL_RE = re.compile(r'(?<=[\s`(])/([a-z][a-z0-9-]*)\b(?![/.])')
+# The one way a route reaches a user-followed skill: "Read the installed `<name>` skill and follow it".
+USER_FOLLOWED_RE = re.compile(r'[Rr]ead the installed `([a-z][a-z0-9-]*)` skill and follow it')
 
 # forge-concept's lane vocabulary (`host:phase-lane-vocabulary`). An invalid value is
 # silently swallowed there, which is why it is checked here.
@@ -680,10 +688,10 @@ def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
     for node in nodes:
         _check_node(node, skill_dirs, rep)
 
-    # `tree/docs/` only holds the node of the root directory `docs/adr/`: the project's `docs/` is
-    # no artifact, so it has no node of its own
+    # `tree/docs/` and `tree/docs/agents/` only hold the nodes of the root artifacts `docs/adr/` and
+    # `docs/agents/domain.md`: the project's `docs/` is no artifact, so it has no node of its own
     root_parents = {
-        "/".join(_segs(art)[:i]) for art in PROJECT_ROOT_ARTIFACTS if art.endswith("/")
+        "/".join(_segs(art)[:i]) for art in PROJECT_ROOT_ARTIFACTS
         for i in range(1, len(_segs(art)))
     }
     for path in sorted(tree_root.rglob("*")):
@@ -699,7 +707,7 @@ def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
             )
         if path.is_file() and (
             path.name in ("README.md", "CONTRACT.md")
-            or (path.parent == tree_root and path.name in PROJECT_ROOT_ARTIFACTS)
+            or rel in PROJECT_ROOT_ARTIFACTS
         ):
             continue
         if not NODE_NAME_RE.match(path.name):
@@ -1992,10 +2000,12 @@ def check_skills(
 
 
 def _check_skill_calls(body: str, where: str, names: set[str], rep: Report) -> None:
-    """An operative call reads `Call the Skill tool with "<name>"`, and a user-invoked
-    skill is an instruction to the human, never a Skill-tool call."""
+    """An operative call reads `Call the Skill tool with "<name>"`, a user-invoked skill is an
+    instruction to the human, and a user-followed skill is read and followed
+    (`Read the installed `<name>` skill and follow it`) — never a Skill-tool call."""
     # A call wraps like any sentence; read it with the line breaks folded to spaces.
-    called = {n for pair in SKILL_TOOL_CALL_RE.findall(re.sub(r"\n[ \t]*", " ", body)) for n in pair if n}
+    folded = re.sub(r"\n[ \t]*", " ", body)
+    called = {n for pair in SKILL_TOOL_CALL_RE.findall(folded) for n in pair if n}
     for name in sorted(called):
         if name in names or EXTERNAL_SKILLS.get(name) == "model":
             continue
@@ -2006,6 +2016,13 @@ def _check_skill_calls(body: str, where: str, names: set[str], rep: Report) -> N
                 f"as an instruction to the human: tell the user to run `/{name}`",
                 rule="skill-call-target",
             )
+        elif EXTERNAL_SKILLS.get(name) == "user-followed":
+            rep.house(
+                where,
+                f"calls the Skill tool with {name!r}, which cannot be model-invoked upstream — read "
+                f"the installed skill and follow it: Read the installed `{name}` skill and follow it",
+                rule="skill-call-target",
+            )
         else:
             rep.house(
                 where,
@@ -2013,6 +2030,22 @@ def _check_skill_calls(body: str, where: str, names: set[str], rep: Report) -> N
                 f"nor an external skill in EXTERNAL_SKILLS",
                 rule="skill-call-target",
             )
+    for name in sorted(set(USER_FOLLOWED_RE.findall(folded))):
+        axis = EXTERNAL_SKILLS.get(name)
+        if axis == "user-followed":
+            continue
+        if name in names or axis == "model":
+            fix = f"call the Skill tool with \"{name}\""
+        elif axis == "user":
+            fix = f"tell the user to run `/{name}`"
+        else:
+            fix = "name a user-followed skill in EXTERNAL_SKILLS"
+        rep.house(
+            where,
+            f"reads the installed {name!r} skill and follows it, but only a user-followed skill is "
+            f"reached that way — {fix}",
+            rule="skill-call-target",
+        )
     for name in sorted(set(BARE_SLASH_SKILL_RE.findall(body))):
         if name in names or EXTERNAL_SKILLS.get(name) == "model":
             rep.house(
@@ -2025,11 +2058,13 @@ def _check_skill_calls(body: str, where: str, names: set[str], rep: Report) -> N
 
 def _external_uses(body: str) -> set[str]:
     """The external skills a body uses: a model-axis one through a Skill-tool call, a user-axis one
-    by telling the user to run `/<name>`. A Skill-tool call to a user-axis one is `skill-call-target`'s
-    finding, not a use."""
-    called = {n for pair in SKILL_TOOL_CALL_RE.findall(re.sub(r"\n[ \t]*", " ", body)) for n in pair if n}
+    by telling the user to run `/<name>`, a user-followed one by reading the installed skill and
+    following it. A call in the wrong shape is `skill-call-target`'s finding, not a use."""
+    folded = re.sub(r"\n[ \t]*", " ", body)
+    called = {n for pair in SKILL_TOOL_CALL_RE.findall(folded) for n in pair if n}
     used = {n for n in called if EXTERNAL_SKILLS.get(n) == "model"}
     used |= {n for n in BARE_SLASH_SKILL_RE.findall(body) if EXTERNAL_SKILLS.get(n) == "user"}
+    used |= {n for n in USER_FOLLOWED_RE.findall(folded) if EXTERNAL_SKILLS.get(n) == "user-followed"}
     return used
 
 
@@ -2975,16 +3010,20 @@ DEMO_DIR = "demo"
 # The demo omits the mockup package: a full npm package, `demo/README.md` says so.
 DEMO_STORYBOOK = f"{ARTIFACT_ROOT}/09_mockup/storybook"
 
-# Project-root files the demo holds beside `_concept/`, and the project-root directories whose files
-# it holds (`docs/adr/`, ADR 0032). `demo/README.md` and `demo/skaile.yaml` are the workspace's own
-# files, not concept content, and are not looked at as such.
-DEMO_ROOT_FILES = ("APP-DESIGN.md", "GLOSSARY.md")
-DEMO_ROOT_DIRS = tuple(sorted(art for art in PROJECT_ROOT_ARTIFACTS if art.endswith("/")))
 # The project glossary, split mode's default (`tree/glossary.md § Where the words live`, ADR 0033).
 DEMO_GLOSSARY_FILE = "GLOSSARY.md"
+# Project-root files the demo holds beside `_concept/` (the file root artifacts and the project
+# glossary), and the project-root directories whose files it holds (`docs/adr/`, ADR 0032).
+# `demo/README.md` and `demo/skaile.yaml` are the workspace's own files, not concept content, and
+# are not looked at as such.
+DEMO_ROOT_FILES = (*sorted(art for art in PROJECT_ROOT_ARTIFACTS if not art.endswith("/")), DEMO_GLOSSARY_FILE)
+DEMO_ROOT_DIRS = tuple(sorted(art for art in PROJECT_ROOT_ARTIFACTS if art.endswith("/")))
+# The agent guidance `docs/agents/domain.md` is upstream `setup-matt-pocock-skills`'s file, which
+# carries no frontmatter; skaileup owns only its `## skaileup artifacts` section (ADR 0035).
+DEMO_AGENT_GUIDANCE_FILE = "docs/agents/domain.md"
 # `skaileup` writes `_concept/README.md` as one fixed pointer text (`tree/README.md § _concept/README.md`),
-# which carries no frontmatter, so the universal header is not asked of it.
-DEMO_NO_FRONTMATTER = (f"{ARTIFACT_ROOT}/README.md",)
+# which carries no frontmatter, so the universal header is not asked of it; nor of the agent guidance.
+DEMO_NO_FRONTMATTER = (f"{ARTIFACT_ROOT}/README.md", DEMO_AGENT_GUIDANCE_FILE)
 # `APP-DESIGN.md`'s own node names its date `updated:` (`tree/APP-DESIGN.md § Format`), and a decision
 # record's (`tree/docs/adr/README.md § Format`) names it `date:`, not `last_updated:`; the gate reads
 # that one as the universal field, because the file follows its node.

@@ -30,8 +30,9 @@ route through those nodes. This is the one skaileup collection; the earlier ones
   by the filesystem.
 - **The tree mirrors `_concept/` and holds all instruction.** Every `_concept/` part has one
   node under `tree/`: directory `X/` → `X/README.md`, file `X/name.ext` → `X/name.md`,
-  placeholder `<x>` → `[x]`; the two project-root artifacts, `APP-DESIGN.md` and `docs/adr/`,
-  have the nodes `tree/APP-DESIGN.md` and `tree/docs/adr/README.md`. Purpose, format, procedure and checks live in
+  placeholder `<x>` → `[x]`; the three project-root artifacts, `APP-DESIGN.md`, `docs/adr/` and
+  `docs/agents/domain.md` (whose `## skaileup artifacts` section is skaileup's), have the nodes
+  `tree/APP-DESIGN.md`, `tree/docs/adr/README.md` and `tree/docs/agents/domain.md`. Purpose, format, procedure and checks live in
   that node and nowhere else; the one cross-cutting asset is `rulebook/` — the app-design
   rules, defaults and floorplans, a second contract
   ([ADR 0018](./docs/adr/0018-the-rulebook-is-a-second-contract-asset.md)). Resolution rules:

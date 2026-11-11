@@ -32,6 +32,9 @@ other want.
   body and any onboarding block included, never a summary (`tree/protocol/delegation.md § Delegation`).
 - A want that names no skill: run `skaileup` here to find the producer, then send that skill's run
   to its owner.
+- A want whose next skill is build-side (`build-*`, `quality-review`, `quality-test`): first run
+  `skaileup` here to write its guidance section in `docs/agents/domain.md`, which is `skaileup`'s,
+  before the first build-side run (`tree/docs/agents/domain.md § Writing it`).
 
 ## The interview relay
 

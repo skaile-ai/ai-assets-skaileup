@@ -164,7 +164,7 @@ How skills work on the tree lives beside it in `protocol/`, cited by file and se
 - `tree/protocol/ownership.md` — who writes what, and the proposed entry.
 - `tree/protocol/running.md` — how a skill runs: the route as todo list and rules 1–8.
 - `tree/protocol/delegation.md` — handing work to another agent context: the status block and the interview relay.
-- `tree/protocol/beside-the-tree.md` — `APP-DESIGN.md`, `docs/adr/` and the rulebook, the assets outside `_concept/`.
+- `tree/protocol/beside-the-tree.md` — `APP-DESIGN.md`, `docs/adr/`, `docs/agents/domain.md` and the rulebook, the assets outside `_concept/`.
 
 ## _concept/README.md
 
@@ -177,8 +177,9 @@ where `<contracts>` is the agent harness's contract directory: `.agents/contract
 pi, dsh) or `.claude/contracts` (Claude Code), whichever exists.
 Read the folder README and the node before editing a file here; the node says who owns it and who may propose into it,
 its format, and what reads it.
-The two artifacts outside this tree, APP-DESIGN.md and docs/adr/ at the project root, have their
-nodes at `<contracts>/shared-contracts/APP-DESIGN.md` and `<contracts>/shared-contracts/docs/adr/README.md`.
+The three artifacts outside this tree, APP-DESIGN.md, docs/adr/ and docs/agents/domain.md at the project
+root, have their nodes at `<contracts>/shared-contracts/APP-DESIGN.md`,
+`<contracts>/shared-contracts/docs/adr/README.md` and `<contracts>/shared-contracts/docs/agents/domain.md`.
 ```
 
 ## Checks

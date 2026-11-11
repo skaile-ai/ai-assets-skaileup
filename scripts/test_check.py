@@ -1078,6 +1078,36 @@ def test_a_declared_external_call_is_clean(tmp_path):
     assert errors(root) == []
 
 
+# -- skills: user-followed external skills -----------------------------------
+
+def test_a_declared_user_followed_skill_read_and_followed_is_clean(tmp_path):
+    """`to-tickets` cannot be model-invoked; the phrase is how a route reaches it, and it counts as a use."""
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Read the installed `to-tickets` skill and follow it, with the spec as its parent.")
+    declare(root, "spec-feature", "skill:@mattpocock/to-tickets#^0.1")
+    assert errors(root) == []
+
+
+def test_an_undeclared_user_followed_skill_read_and_followed(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Read the installed `setup-matt-pocock-skills` skill and follow it.")
+    only(root, "uses the external skill 'setup-matt-pocock-skills' but does not declare")
+    assert "external-skill-declared" in errors(root)[0]
+
+
+def test_skill_tool_call_naming_a_user_followed_skill(tmp_path):
+    """A Skill-tool call to it finds nothing callable, and is no use either: the declaration is unused."""
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", 'Call the Skill tool with "implement-spec".')
+    only(root, "cannot be model-invoked upstream")
+
+
+def test_reading_and_following_a_model_skill(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Read the installed `tdd` skill and follow it.")
+    only(root, "only a user-followed skill is reached that way — call the Skill tool with \"tdd\"")
+
+
 # -- flows: identity and presentation ---------------------------------------
 
 def test_flow_id_must_match_directory_and_stem(tmp_path):
@@ -3332,6 +3362,32 @@ def test_a_skill_producing_a_decision_record(tmp_path):
     assert errors(root) == []
 
 
+def test_a_nested_root_file_node_is_clean_at_its_place(tmp_path):
+    """`docs/agents/domain.md` is a root file two directories down: its node sits at
+    `tree/docs/agents/domain.md`, and neither `tree/docs/` nor `tree/docs/agents/` needs a README."""
+    root = write_repo(tmp_path)
+    add_node(root, "docs/agents/domain.md", "docs/agents/domain.md", summary="the agent guidance")
+    assert errors(root) == []
+    assert check.resolve(check.load_tree(root), "docs/agents/domain.md") is not None
+    assert check.root_artifact("docs/agents/other.md") is None
+    assert not any("agents" in line for line in check.render_tree(check.load_tree(root)))
+
+
+def test_a_skill_producing_the_agent_guidance(tmp_path):
+    root = write_repo(tmp_path)
+    add_node(root, "docs/agents/domain.md", "docs/agents/domain.md", summary="the agent guidance",
+             owner=["spec-feature"])
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
+                       '      - { id: agent-guidance, path: "docs/agents/domain.md" }\n')
+    assert errors(root) == []
+
+
+def test_the_agent_guidance_node_elsewhere_is_misplaced(tmp_path):
+    root = write_repo(tmp_path)
+    add_node(root, "01_meta/domain.md", "docs/agents/domain.md", summary="the agent guidance")
+    assert any("so the node belongs at `tree/docs/agents/domain.md`" in e for e in errors(root)), errors(root)
+
+
 def test_the_listing_leaves_out_the_project_root_artifact(tmp_path):
     root = write_repo(tmp_path)
     assert not any("APP-DESIGN" in line for line in check.render_tree(check.load_tree(root)))
@@ -4142,6 +4198,18 @@ def test_demo_project_glossary_must_carry_frontmatter_when_the_tree_does_not_say
     add_node(root, "glossary.md", "_concept/glossary.md", summary="the glossary", body=body)
     demo_put(root, "GLOSSARY.md", "# Shop\n")
     only(root, "demo/GLOSSARY.md: has no frontmatter")
+
+
+GUIDANCE = "# Domain Docs\n\n## skaileup artifacts\n\n- **Glossary**: `GLOSSARY.md`.\n"
+
+
+def test_demo_agent_guidance_resolves_without_frontmatter(tmp_path):
+    """`docs/agents/domain.md` is upstream's file and carries no frontmatter; it still needs its node."""
+    root = write_demo_repo(tmp_path)
+    demo_put(root, "docs/agents/domain.md", GUIDANCE)
+    only(root, "demo/docs/agents/domain.md: resolves to no node")
+    add_node(root, "docs/agents/domain.md", "docs/agents/domain.md", summary="the agent guidance")
+    assert errors(root) == []
 
 
 def test_demo_app_design_resolves_to_its_root_node(tmp_path):

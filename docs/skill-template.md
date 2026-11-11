@@ -79,10 +79,11 @@ part's node.
   `path` starts with `_concept/` and resolves to a node that lists the skill under `owner`.
   A skill that writes nothing under `_concept/` says `produces: []`. The only paths allowed
   outside `_concept/` are the named project-root artifacts `APP-DESIGN.md`
-  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md)) and
-  `docs/adr/<NNNN>-<slug>.md` ([ADR 0032](./adr/0032-one-decision-log-under-docs-adr.md)),
-  the `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`, whose nodes are `tree/APP-DESIGN.md`
-  and `tree/docs/adr/README.md`.
+  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md)),
+  `docs/adr/<NNNN>-<slug>.md` ([ADR 0032](./adr/0032-one-decision-log-under-docs-adr.md)) and
+  `docs/agents/domain.md` ([ADR 0035](./adr/0035-skaileup-writes-a-guidance-section-for-upstream-skills.md)),
+  the `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`, whose nodes are `tree/APP-DESIGN.md`,
+  `tree/docs/adr/README.md` and `tree/docs/agents/domain.md`.
   `scripts/check.py` enforces it in both directions; the host's node done-state read is
   `host:node-done-from-produces`: a node is done when every non-templated path in the list
   exists.
@@ -124,13 +125,24 @@ part's node.
   READS/WRITES path list (the frontmatter and the nodes have it), no CHECKLIST (the node's
   `## Checks` has it), no Context Budget table.
 - **Constraints are stated positively, at the step they bind.** No `MUST`/`NEVER` block.
-- **Calling a skill the collection does not ship.** An operative call reads
-  `Call the Skill tool with "<name>"`; two skills are
-  `call the Skill tool twice, for "<a>" and "<b>"` (one skill per call, never "with a and
-  b"); a user-invoked skill is an instruction to the human (`tell the user to run
-  `/<name>``) and never a Skill-tool call; the allowed names are `EXTERNAL_SKILLS` in
-  `scripts/check.py`; a hard dependency says in the same step what happens when the skill
-  is absent.
+- **Calling a skill the collection does not ship.** The allowed names are `EXTERNAL_SKILLS` in
+  `scripts/check.py`, each on one of three axes taken from the upstream frontmatter, and each
+  phrased one way:
+  - **`model`** — the model calls it: `Call the Skill tool with "<name>"`; two skills are
+    `call the Skill tool twice, for "<a>" and "<b>"` (one skill per call, never "with a and b").
+  - **`user`** — only the human runs it: an instruction to the human, `tell the user to run
+    `/<name>``, never a Skill-tool call.
+  - **`user-followed`** — upstream marks it `disable-model-invocation: true`, so the Skill tool
+    cannot call it, yet the agent runs it: ``Read the installed `<name>` skill and follow it``,
+    optionally followed by `, with <inputs>`. "Installed" means the harness's skill directory
+    (`.agents/skills/<name>/SKILL.md` or `.claude/skills/<name>/SKILL.md`); the route names no
+    path. These are `setup-matt-pocock-skills`, `to-tickets` and `implement-spec`. A Skill-tool
+    call to one is an error, and so is the phrase for a `model` skill.
+
+  Every external skill a skill uses is declared in its `metadata.requires` as
+  `skill:@mattpocock/<name>#^0.1`, and every one declared is used (`scripts/check.py` rule
+  `external-skill-declared`). A hard dependency says in the same step what happens when the
+  skill is absent.
 - **`## Depth Behavior`, `## Standalone Mode`, `## Context Budget`** describe how the
   collection works, not what the skill does. They belong in one place, once —
   `tree/protocol/running.md § How a skill runs` — not in thirty skills each.

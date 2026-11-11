@@ -18,11 +18,15 @@ Resolution of a `_concept/` path: first a literal match against any node's `path
 (`<x>` placeholders match any one segment), then the location rule for directories only (a
 directory resolves to its `README.md`; a file resolves only through a `path:` entry, which every
 file node carries). A path below a directory entry of a list-form `path:` resolves to that README. Nothing else
-resolves. Node names are lowercase; every directory under `tree/` has a `README.md`.
+resolves. Node names are lowercase; every directory under `tree/` has a `README.md`, except a
+directory that only holds a root artifact's node (`tree/docs/`, `tree/docs/agents/`).
 
-**The one root artifact.** `APP-DESIGN.md` sits beside `_concept/`, not in it; its node is
-`tree/APP-DESIGN.md` with `path: APP-DESIGN.md` (no `_concept/` prefix). It is the only node
-whose `path:` leaves `_concept/` (`PROJECT_ROOT_ARTIFACTS` in `scripts/check.py`).
+**The root artifacts.** Three artifacts sit beside `_concept/`, not in it
+(`tree/protocol/beside-the-tree.md`): `APP-DESIGN.md` (node `tree/APP-DESIGN.md`), `docs/adr/`
+(node `tree/docs/adr/README.md`) and `docs/agents/domain.md` (node `tree/docs/agents/domain.md`,
+which owns only its `## skaileup artifacts` section). Their nodes carry the project-relative path
+with no `_concept/` prefix and are the only nodes whose `path:` leaves `_concept/`
+(`PROJECT_ROOT_ARTIFACTS` in `scripts/check.py`).
 
 ## The shape (R2)
 
