@@ -1,0 +1,23 @@
+proposed_by: spec-feature
+proposed_on: "2026-10-25"
+scope: polls-create-poll
+entries:
+  - id: p1
+    target: _concept/07_screens/poll.md
+    anchor: implements
+    payload: 05_features/polls/create-poll.md
+    source: "_concept/05_features/polls/create-poll.md `screens:` lists 07_screens/poll.md"
+    status: promoted
+    settled_by: experience-screen
+    settled_on: "2026-10-25"
+  - id: p2
+    target: _concept/05_features/featuresets.md
+    anchor: idea:deadline-reminders
+    payload:
+      move: idea
+      featureset: notifications
+      row: "| deadline-reminders | notifications (new) | `create-poll.md` DEFER: \"reminders before the deadline, to a later notification feature\" (2026-10-25) | spec-feature |"
+    source: "_concept/05_features/polls/create-poll.md § Scope, DEFER"
+    status: promoted
+    settled_by: concept-brief
+    settled_on: "2026-10-25"

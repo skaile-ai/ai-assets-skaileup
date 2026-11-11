@@ -14,6 +14,7 @@ metadata:
       - { id: datamodel }
     produces:
       - { id: storybook, path: "_concept/09_mockup/storybook/" }
+      - { id: proposals, path: "_concept/proposals/<date>-mockup-storybook-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
@@ -24,7 +25,7 @@ metadata:
 
 # mockup-storybook
 
-Grows the Storybook package at `_concept/09_mockup/storybook/` one layer at a time: the scaffold with its 16 floorplans, a layout story per screen, editor and display components per entity, the whole app, and one story per journey. A run builds every layer whose inputs exist now and names each skipped layer with its missing input; the specs and the data model are never edited here except by `proposed` entries in `model.yaml`.
+Grows the Storybook package at `_concept/09_mockup/storybook/` one layer at a time: the scaffold with its 16 floorplans, a layout story per screen, editor and display components per entity, the whole app, and one story per journey. A run builds every layer whose inputs exist now and names each skipped layer with its missing input; the specs and the data model are never edited here; a field an editor needs goes into the run's proposal file (`tree/proposals/README.md § Writing it`).
 
 ## Route
 

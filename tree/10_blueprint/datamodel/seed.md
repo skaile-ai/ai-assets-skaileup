@@ -63,7 +63,6 @@ Further scenarios (`permissions` and others) are optional, follow feature needs,
 - `edge_cases` includes long names (100+ characters), special characters (umlauts, accents, hyphens, plus signs) in text fields, and null values for optional fields.
 - Data looks real: names from different locales (German, French, Japanese, Spanish), varied string lengths from `"X"` to very long, realistic email formats including subdomains and international TLDs.
 - A stack that needs a fixed dev identity for auth-scoped queries (a user matching the mock JWT subject) gets that record in every scenario except `empty`; the template's `## Seed` section says whether it does.
-- A proposed entity (`tree/10_blueprint/datamodel/model.md § Format`) may carry rows that the mockup needs; they are scratch data until the entity is promoted.
 - A value YAML would read as another type is quoted: a text field holding `true`, `false`, `null` or a number is written `"…"`, and the check reports the type where it is not.
 
 ## Writing it

@@ -34,7 +34,7 @@ and `## Writing it` a node may carry further named `##` sections (see below):
 path: _concept/03_brand/identity.md      # string or list; every entry is under this node's directory
 summary: colours, fonts, tone of voice and copy guidelines     # ≤ 80 chars; rendered into the tree listing
 owner: [design-brand]                    # skills whose `produces` resolve here; [] when nothing generates it
-may_propose: []                          # skills that may append `proposed` entries through this node; [] allowed, disjoint from owner
+may_propose: []                          # skills that may target this artifact in a proposal file; [] allowed, disjoint from owner
 ---
 
 # _concept/03_brand/identity.md
@@ -71,10 +71,13 @@ A derive-or-ask step: read what exists → derive the rest from `_concept/02_gro
   nothing generates the part. A **conditional file** — one a skill writes only sometimes,
   so its `produces` leaves it out (`openapi.yaml`, `asyncapi.yaml`) — carries
   `owner: []`, and its intro paragraph names the skill that writes it and when.
-- `may_propose` lists the skills allowed to append `proposed` entries to this artifact
-  (protocol: `tree/protocol/ownership.md § Ownership`). Every entry is a skill of this collection and
-  none repeats an `owner`; the key is required, `[]` when nobody proposes here. The node's
-  `## Format` gives the per-artifact shape of a proposed entry.
+- `may_propose` lists the skills that may target this artifact in an entry of their proposal
+  file (`tree/proposals/README.md`; protocol: `tree/protocol/ownership.md § Ownership`). Every
+  entry is a skill of this collection and none repeats an `owner`; the key is required, `[]`
+  when nobody proposes here. Every skill listed in some node's `may_propose` is an owner of
+  `tree/proposals/README.md` and produces its proposal file. A node with proposers gives in its
+  `## Format` the `payload` shape (an entry in the artifact's own format) and the `anchor`
+  grammar (where an entry lands); the artifact itself never holds a proposal or a marker.
 - A node carries no flow-order prose ("runs after X and before Y"): order lives in the flow
   graph, and what a skill reads is stated as facts to resolve, not as predecessors.
 - **A schema sits beside its node.** A JSON Schema for a machine artifact is a

@@ -14,6 +14,7 @@ metadata:
       - { id: datamodel }
     produces:
       - { id: feedback-applied, path: "_concept/09_mockup/feedback/" }
+      - { id: proposals, path: "_concept/proposals/<date>-mockup-feedback-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/09_mockup/storybook", gate: soft }
@@ -21,7 +22,7 @@ metadata:
 
 # mockup-feedback
 
-One pass over the open notes of the project's annotation inbox: read, triage, patch, apply, resolve. It ends with edited screen specs, proposals in `model.yaml` and the glossary, an audit trail, exactly one commit and the answered notes closed. The pass stops at the review file: nothing is written into the specs or the model until the user approves it, and a screen takes human-approved patches only (`tree/07_screens/[screen].md § Patching (mockup-feedback)`). It never edits the mockup; `mockup-storybook` builds a proposed field into the editor.
+One pass over the open notes of the project's annotation inbox: read, triage, patch, apply, resolve. It ends with edited screen specs, a proposal file for the model and the glossary (`_concept/proposals/`), an audit trail, exactly one commit and the answered notes closed. The pass stops at the review file: nothing is written into the specs or the proposal file until the user approves it, and a screen takes human-approved patches only (`tree/07_screens/[screen].md § Patching (mockup-feedback)`). It never edits the mockup; `mockup-storybook` builds a field into the editor once `architecture-datamodel` has promoted it.
 
 ## Route
 
@@ -29,7 +30,7 @@ Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per sessio
 
 1. **Read the open notes** — `tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)` step 1; list them with the `annotation-inbox` skill (store and item shape: `tree/09_mockup/storybook/README.md § Annotation`).
 2. **Triage them** — `tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)` step 2; `python skills/mockup-feedback/scripts/triage.py` and its format in `tree/09_mockup/feedback/triage/README.md`.
-3. **Author one patch per note, plus the review file** — `tree/09_mockup/feedback/patches/README.md`, scope rules in `tree/09_mockup/feedback/README.md § Patch scope`; a model proposal follows `tree/10_blueprint/datamodel/model.md § Format`, and its glossary term goes into the file `tree/glossary.md § Where the words live` resolves. `stories.yaml` and feature specs take no patch; those notes become `needs_manual`. Validate with `python skills/mockup-feedback/scripts/validate_patches.py`.
+3. **Author one patch per note, plus the review file** — `tree/09_mockup/feedback/patches/README.md`, scope rules in `tree/09_mockup/feedback/README.md § Patch scope`; a model or glossary note becomes a `proposal` patch, its payload per `tree/10_blueprint/datamodel/model.md § Format` or `tree/glossary.md § Format` (*Proposal entry*), which `apply.py` writes into the round's proposal file (`tree/proposals/README.md § Writing it`). `stories.yaml` and feature specs take no patch; those notes become `needs_manual`. Validate with `python skills/mockup-feedback/scripts/validate_patches.py`.
 4. **Present the review file and stop** — `tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)` step 4.
 5. **Pre-flight, apply, resolve, report** — `tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)` steps 5–6: `python skills/mockup-feedback/scripts/apply.py` runs `bunx @skaile/model@1 check` after a `model.yaml` change and restores the file when the check fails, closes the notes in the inbox, writes `_concept/09_mockup/feedback/applied/<round>.json` (format: `tree/09_mockup/feedback/applied/README.md`) and appends to `_concept/09_mockup/feedback/devlog.md` (format: `tree/09_mockup/feedback/devlog.md`).
 

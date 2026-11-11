@@ -66,14 +66,14 @@ Each kind has one detection pass, a subagent task that returns `file:line` lists
 
 ## Landing proposals
 
-The owner's node holds the entry shape; this is the shape `quality-design` appends there. Each proposal names its source `DC-<n>` and carries `proposed_by: quality-design` and `proposed_on: YYYY-MM-DD`, or in `APP-DESIGN.md` and a screen's `### Open` the marker `(proposed by quality-design, YYYY-MM-DD)` that stands for both, and adds without editing a confirmed entry. An owner file that does not exist is created holding only the proposal (`tree/protocol/ownership.md § Ownership`); the completion summary names the owner who settles it.
+The owner's node holds the entry shape; `quality-design` writes every proposal into its run's proposal file (`tree/proposals/README.md § Writing it`), never into the owner's artifact. Each entry names its source `DC-<n>` in `source` and adds without editing a confirmed entry; the completion summary names the owner who settles it. The decision record is the one exception: `quality-design` owns its records in `decisions.md` and appends them directly.
 
 | owner artifact | proposal |
 |---|---|
-| the glossary (`tree/glossary.md § Where the words live`) | a `status: proposed` term entry filed per that section: both terms of a split, or the winning term of a rename (the losing word goes under `_Avoid_` when the owner promotes it) |
-| `APP-DESIGN.md` | a § Open row `Q<n>` per `tree/APP-DESIGN.md § Format`: question naming `DC-<n>`, the alternatives as options, and the recommendation cell ending `(proposed by quality-design, YYYY-MM-DD)` |
-| `_concept/07_screens/<screen>.md` | a `### Open` bullet `Q-<screen_id>-<n>` per `tree/07_screens/[screen].md § Format`, with the recommendation, a one-line consequence and the same marker; a merge lands on the surviving screen |
-| `_concept/10_blueprint/decisions.md` | a record `By: quality-design` per `tree/10_blueprint/decisions.md § Format`; **Decision** states the chosen concept, **Options rejected** the design-it-twice losers and the status quo, **Refs** `DC-<n>`, the evidence lines and the proposed entry ids |
+| the glossary (`target: _concept/glossary.md`) | a term entry per `tree/glossary.md § Format`, *Proposal entry*: both terms of a split, or the winning term of a rename (the losing word goes under `_Avoid_` when the owner promotes it) |
+| `APP-DESIGN.md` | a `section:Open` row `Q<n>` per `tree/APP-DESIGN.md § Format`, *Proposal entry*: question naming `DC-<n>`, the alternatives as options, and the recommendation |
+| `_concept/07_screens/<screen>.md` | a `section:Open` bullet `Q-<screen_id>-?` per `tree/07_screens/[screen].md § Format`, with the recommendation and a one-line consequence; the owner assigns the number; a merge lands on the surviving screen |
+| `_concept/10_blueprint/decisions.md` | a record `By: quality-design` per `tree/10_blueprint/decisions.md § Format`, written directly; **Decision** states the chosen concept, **Options rejected** the design-it-twice losers and the status quo, **Refs** `DC-<n>`, the evidence lines and the proposal entry ids (`<file-stem>#p<n>`) |
 
 ## Writing it
 
@@ -92,5 +92,5 @@ The owner's node holds the entry shape; this is the shape `quality-design` appen
 - The file has `last_updated`, `source_sha` and `intent`; every candidate has all eight fields and a unique `DC-<n>`.
 - Every `Evidence` line passes the citation check; no candidate lacks friction.
 - At most one candidate is `selected` or decided per run, and a decided one cites its `DR-<n>` and a record exists.
-- Every proposal landed carries `proposed_by: quality-design`, `proposed_on` and `source: DC-<n>` (or the marker and `DC-<n>` where § Landing proposals says so), and no confirmed entry or application file changed.
+- Every proposal landed is an entry of this run's proposal file with `source` naming its `DC-<n>`, and no confirmed entry, owner artifact other than `decisions.md`, or application file changed.
 - The unread regions are named under `## Not examined`.

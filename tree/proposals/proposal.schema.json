@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skaile:schema:proposal",
+  "title": "Proposal file — the entries one run proposes to artifacts other skills own",
+  "description": "One file per proposing run, _concept/proposals/<proposed_on>-<proposed_by>-<scope>.yaml (tree/proposals/README.md § Format). The proposer writes it once; the target's owner later sets only status, settled_by, settled_on and reason of an entry. Dates: validate after turning YAML dates into ISO text, per tree/README.md § Frontmatter every markdown artifact carries.",
+  "x-artifact": "_concept/proposals/<date>-<skill>-<scope>.yaml",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["proposed_by", "proposed_on", "scope", "entries"],
+  "properties": {
+    "proposed_by": { "$ref": "#/$defs/skill", "description": "The proposing skill; listed in each target node's may_propose." },
+    "proposed_on": { "$ref": "#/$defs/date" },
+    "scope": {
+      "type": "string",
+      "description": "Kebab slug of what the run worked on, as in the file name: <featureset>-<feature>, a screen id, a topic.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "skill": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+){0,2}$"
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "target", "anchor", "payload", "source", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique within the file; cited as <file-stem>#<id>.",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "target": {
+          "type": "string",
+          "description": "Project-relative path of the owner's artifact: under _concept/, APP-DESIGN.md, or the project glossary.",
+          "minLength": 1,
+          "not": { "pattern": "^(/|\\.\\./)" }
+        },
+        "anchor": {
+          "type": "string",
+          "description": "Where the payload lands, in the grammar the target node's ## Format defines.",
+          "minLength": 1
+        },
+        "payload": {
+          "description": "The entry in the target node's own format: a YAML value, or a markdown string."
+        },
+        "source": {
+          "type": "string",
+          "description": "An evidence reference or the user's words.",
+          "minLength": 1
+        },
+        "status": { "enum": ["proposed", "promoted", "rejected"] },
+        "settled_by": { "$ref": "#/$defs/skill", "description": "The target's owner that settled the entry." },
+        "settled_on": { "$ref": "#/$defs/date" },
+        "reason": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "enum": ["promoted", "rejected"] } }, "required": ["status"] },
+          "then": { "required": ["settled_by", "settled_on"] }
+        },
+        {
+          "if": { "properties": { "status": { "const": "rejected" } }, "required": ["status"] },
+          "then": { "required": ["reason"], "properties": { "reason": { "minLength": 1 } } }
+        }
+      ]
+    }
+  }
+}

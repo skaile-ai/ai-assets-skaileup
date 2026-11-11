@@ -40,7 +40,8 @@ DECISIONS = "_concept/10_blueprint/decisions.md"
 APP_DESIGN = "APP-DESIGN.md"
 STORYBOOK = "_concept/09_mockup/storybook/src"
 STATUSES = ("open", "approved", "waived")
-OPEN_MARKERS = ("[open Q", "(proposed by")
+PROPOSALS = "_concept/proposals"
+MODEL = "_concept/10_blueprint/datamodel/model.yaml"
 DR_RE = re.compile(r"^DR-[0-9]+$")
 
 OK, MISSING, UNAPPROVED, MARKERS = "ok", "missing", "unapproved", "open markers"
@@ -87,8 +88,25 @@ def section(text: str, heading: str) -> str | None:
     return text[m.end():m.end() + end.start()] if end else text[m.end():]
 
 
-def has_markers(text: str, markers=OPEN_MARKERS) -> bool:
-    return any(mark in text for mark in markers)
+def has_markers(text: str) -> bool:
+    return "[open Q" in text
+
+
+def pending_targets(root: Path) -> set[str]:
+    """Target paths of every `proposed` entry in `_concept/proposals/*.yaml`
+    (`tree/proposals/README.md`): a pending entry is unconfirmed content of its target."""
+    out: set[str] = set()
+    folder = root / PROPOSALS
+    for path in sorted(folder.glob("*.yaml")) if folder.is_dir() else []:
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except yaml.YAMLError:
+            continue
+        entries = data.get("entries") if isinstance(data, dict) else None
+        for entry in entries if isinstance(entries, list) else []:
+            if isinstance(entry, dict) and entry.get("status") == "proposed" and isinstance(entry.get("target"), str):
+                out.add(entry["target"].strip().removeprefix("./"))
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -121,10 +139,9 @@ def navigation_model(root: Path) -> str:
 
 
 def model_settled(root: Path) -> str:
-    text = read_text(root / "_concept/10_blueprint/datamodel/model.yaml")
-    if text is None:
+    if not (root / MODEL).is_file():
         return MISSING
-    return MARKERS if "proposed:" in text else OK
+    return MARKERS if MODEL in pending_targets(root) else OK
 
 
 def object_map(root: Path) -> str:
@@ -133,7 +150,7 @@ def object_map(root: Path) -> str:
     if objects is None:
         return MISSING
     hierarchy = section(text, "Information hierarchy") or ""
-    if has_markers(objects) or has_markers(hierarchy):
+    if has_markers(objects) or has_markers(hierarchy) or APP_DESIGN in pending_targets(root):
         return MARKERS
     return OK if re.search(r"^\|\s*OBJ-", objects, re.M) else MISSING
 
@@ -210,9 +227,10 @@ STAGES: list[Stage] = [
             Check("`_concept/10_blueprint/datamodel/model.yaml` and `seed.yaml` exist",
                   "architecture-datamodel",
                   exists("_concept/10_blueprint/datamodel/model.yaml", "_concept/10_blueprint/datamodel/seed.yaml")),
-            Check("`model.yaml` contains no `proposed:`", "architecture-datamodel", model_settled),
-            Check("`APP-DESIGN.md` `## Objects` has ≥1 `OBJ-` row and neither `## Objects` nor "
-                  "`## Information hierarchy` contains `[open Q` or `(proposed by`",
+            Check("no pending proposal entry targets `model.yaml`", "architecture-datamodel", model_settled),
+            Check("`APP-DESIGN.md` `## Objects` has ≥1 `OBJ-` row, neither `## Objects` nor "
+                  "`## Information hierarchy` contains `[open Q`, and no pending proposal entry targets "
+                  "`APP-DESIGN.md`",
                   "experience-interaction", object_map),
             Check("≥1 directory `_concept/09_mockup/storybook/src/entities/*/`", "mockup-storybook",
                   any_dir(f"{STORYBOOK}/entities/*/")),
@@ -459,7 +477,7 @@ def gate_build(root: Path, state: dict | None) -> str | None:
 
 
 def screen_paths(screens) -> list[str]:
-    """`screens:` entries (`- path: 07_screens/<screen>.md`, a proposed mapping, or a bare id) as paths."""
+    """`screens:` entries (`- path: 07_screens/<screen>.md`, or a bare id) as paths."""
     paths = []
     for entry in screens if isinstance(screens, list) else []:
         ref = (entry.get("path") or entry.get("screen_id") or entry.get("id")) if isinstance(entry, dict) else entry

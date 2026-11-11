@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/10_blueprint/decisions.md
 
-The one append-only record of why a hard-to-reverse design choice was made, written while the work happens and never authored up front. A future reader opens it to learn that a decision was made and why; the value is the reason, not the template. Every authoring skill appends here: a skill that starts appending declares `{ id: decisions, path: "_concept/10_blueprint/decisions.md" }` in its `metadata.artifacts.produces` and joins `owner:` of this node in the same change, because the gate requires the owner list to equal the producers. `_concept/11_build/decisions.md` is the build-time twin with the same format and gate (`tree/11_build/decisions.md`). Rejections of `proposed` entries are recorded here too (`tree/protocol/ownership.md § Ownership`). Each record names the level it binds and whether it is one decision or a pattern later features follow (`## Levels`, `## Patterns`).
+The one append-only record of why a hard-to-reverse design choice was made, written while the work happens and never authored up front. A future reader opens it to learn that a decision was made and why; the value is the reason, not the template. Every authoring skill appends here: a skill that starts appending declares `{ id: decisions, path: "_concept/10_blueprint/decisions.md" }` in its `metadata.artifacts.produces` and joins `owner:` of this node in the same change, because the gate requires the owner list to equal the producers. `_concept/11_build/decisions.md` is the build-time twin with the same format and gate (`tree/11_build/decisions.md`). A rejected proposal entry is not recorded here: its `reason` in the proposal file is its record (`tree/proposals/README.md`). Each record names the level it binds and whether it is one decision or a pattern later features follow (`## Levels`, `## Patterns`).
 
 ## Format
 
@@ -28,7 +28,7 @@ Append-only. One record per decision, with a stable id `DR-<n>` (next integer, n
 - **Status**: <optional; `accepted` when absent>
 ```
 
-The fields are `id · date · by · level · kind · decision · options rejected · consequence · refs`; the id is the heading, and a `pattern` record adds `Applies when`. `Status` is the one optional line: `accepted | rejected | superseded by DR-<m>`. `rejected` means the choice was refused and is recorded so nobody re-litigates it, which is not *Options rejected*: those are the roads not taken inside an accepted decision. Scope decisions marked OUT in a feature spec, and rejections of `proposed` entries, are recorded with `Status: rejected`.
+The fields are `id · date · by · level · kind · decision · options rejected · consequence · refs`; the id is the heading, and a `pattern` record adds `Applies when`. `Status` is the one optional line: `accepted | rejected | superseded by DR-<m>`. `rejected` means the choice was refused and is recorded so nobody re-litigates it, which is not *Options rejected*: those are the roads not taken inside an accepted decision. Scope decisions marked OUT in a feature spec are recorded with `Status: rejected`.
 
 The fields map onto [MADR 4.0.0](https://adr.github.io/madr/) so a reader who knows that format needs no legend: **Decision** is *Decision Outcome*, **Options rejected** is *Considered Options*, **Consequence** is *Consequences*, **Refs** is *More Information*, **Status** is `status`, **By** and **Date** are the `deciders` and `date` fields. **Level**, **Kind** and **Applies when** have no MADR field. The file stays one append-only log rather than MADR's one file per decision.
 

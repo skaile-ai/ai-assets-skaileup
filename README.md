@@ -89,7 +89,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [quality-review](skills/quality-review/) | Reviews a finished feature's code adversarially against its spec |
 | [quality-release](skills/quality-release/) | Grades the running app against its brief on seven axes before release |
 | [quality-interaction](skills/quality-interaction/) | Checks the code against APP-DESIGN.md and writes an interaction conformance verdict |
-| [quality-design](skills/quality-design/) | Scans the code for design candidates, grills the one the user picks and files proposed entries with a decision record |
+| [quality-design](skills/quality-design/) | Scans the code for design candidates, grills the one the user picks and writes its proposals into a proposal file |
 | [ops-review](skills/ops-review/) | Health-checks _concept/: cross-references and build/ship coverage |
 
 ## Agents

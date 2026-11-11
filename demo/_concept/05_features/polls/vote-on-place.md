@@ -17,7 +17,7 @@ last_updated: 2026-10-25
 ## Scope
 - IN: every Member casts exactly one Vote per open Poll and may move it until the Poll closes.
 - IN: the counts are visible to all while the Poll is open, because a hidden count made people vote twice in the pilot.
-- OUT: a Veto that strikes a Place for everyone. Filed as a proposed glossary term `veto`; the team has not decided whether one Member may override the vote.
+- OUT: a Veto that strikes a Place for everyone. Filed as a glossary-term proposal `veto` (`_concept/proposals/2026-10-25-spec-feature-polls-vote-on-place.yaml`); the team has not decided whether one Member may override the vote.
 - OUT: weighted votes. Every Member counts once.
 - DEFER: voting by link without a login, to the next release.
 

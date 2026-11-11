@@ -165,6 +165,30 @@ def test_gate_feature_fails_on_an_unapproved_screen(tmp_path, capsys):
     assert run(tmp_path, "gate", "feature", "polls/create-poll") == 0
 
 
+def proposal_file(status: str) -> str:
+    entry = {"id": "p1", "target": "_concept/10_blueprint/datamodel/model.yaml",
+             "anchor": "entities.Place.fields.price_level", "payload": {"type": "integer", "required": False},
+             "source": "PlaceCard needs a price hint", "status": status}
+    if status != "proposed":
+        entry.update(settled_by="architecture-datamodel", settled_on="2026-11-09")
+    return yaml.safe_dump({"proposed_by": "mockup-storybook", "proposed_on": "2026-11-08",
+                           "scope": "place-card", "entries": [entry]}, sort_keys=False)
+
+
+def test_a_pending_proposal_on_model_yaml_blocks_the_data_stage(tmp_path, capsys):
+    project(tmp_path)
+    run(tmp_path, "init")
+    for stage in ("frame", "look"):
+        assert run(tmp_path, "approve", stage, "--source", "user, 2026-11-08") == 0
+    path = "_concept/proposals/2026-11-08-mockup-storybook-place-card.yaml"
+    write(tmp_path, path, proposal_file("proposed"))
+    capsys.readouterr()
+    assert run(tmp_path, "approve", "data", "--source", "user, 2026-11-08") == 2
+    assert "no pending proposal entry targets model.yaml: open markers" in capsys.readouterr().out
+    write(tmp_path, path, proposal_file("promoted"))
+    assert run(tmp_path, "approve", "data", "--source", "user, 2026-11-08") == 0
+
+
 def test_status_without_a_state_file(tmp_path, capsys):
     assert run(tmp_path, "status") == 0
     out = capsys.readouterr().out

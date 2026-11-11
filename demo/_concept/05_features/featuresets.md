@@ -25,7 +25,7 @@ The team keeps one list of Places that every Poll offers.
 organizer, member
 
 ## Ideas
-| idea | featureset | source | proposed_by |
+| idea | featureset | source | raised_by |
 |---|---|---|---|
 | diet-filter | polls | `brief.md`: "a vegetarian never gets a steakhouse as the only choice" (2026-10-24) | concept-brief |
 | chat-share | polls | `brief.md` Comparables: "borrow the vote inside the channel where the team already talks" (2026-10-24) | concept-brief |

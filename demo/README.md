@@ -6,9 +6,12 @@ filled the way the skills of this collection would fill it, so a UI that renders
 has something real on every page.
 
 - `_concept/`: the numbered tree `01_meta … 11_build`, one file per part the nodes of `tree/`
-  describe, with a `proposed` scope entry, a `proposed` glossary term and data-model field, a
-  rejected decision record, and a review with open findings.
-- `APP-DESIGN.md` (with one proposed entry) and `CONTEXT.md` sit beside `_concept/`.
+  describe, and a review with open findings.
+- `_concept/proposals/`: one file per proposing run. They hold a pending glossary term (`veto`),
+  promoted entries (a data-model field, a screen's `implements:` link, two roster ideas and the
+  `APP-DESIGN.md` rule MSG-2), and two rejected ones: a scope `depth` and weighted votes for a
+  feature spec, each with its reason.
+- `APP-DESIGN.md` and `CONTEXT.md` sit beside `_concept/`.
 - `skaile.yaml` is a valid workspace config: a `url` source for this collection (unpinned, so its
   `main`) and every flow, contract and skill as a dependency.
 

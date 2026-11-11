@@ -4,7 +4,7 @@ title: Poll
 implements:
   - 05_features/polls/vote-on-place.md
   - 05_features/polls/draw-pick.md
-  - { path: 05_features/polls/create-poll.md, status: proposed, proposed_by: spec-feature, proposed_on: 2026-10-25 }
+  - 05_features/polls/create-poll.md
 floorplan: object-page
 posture: sovereign
 density: default

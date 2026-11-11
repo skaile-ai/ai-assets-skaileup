@@ -1,0 +1,13 @@
+proposed_by: concept-research
+proposed_on: "2026-10-23"
+scope: depth
+entries:
+  - id: p1
+    target: _concept/01_meta/scope.yaml
+    anchor: key:depth
+    payload: sketch
+    source: "user: 'a quick pass is enough for the demo'"
+    status: rejected
+    settled_by: skaileup
+    settled_on: "2026-10-24"
+    reason: "The voting rules need standard depth: four things a team manages, two roles sharing state (scope.yaml `reasoning`)."

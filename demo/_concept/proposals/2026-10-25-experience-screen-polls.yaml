@@ -1,0 +1,12 @@
+proposed_by: experience-screen
+proposed_on: "2026-10-25"
+scope: polls
+entries:
+  - id: p1
+    target: APP-DESIGN.md
+    anchor: section:Messages
+    payload: "- **MSG-2 An empty Poll list says \"No polls yet - hungry?\" and offers Open poll.** *Rules:* P15"
+    source: "_concept/07_screens/polls.md § Situations: the empty Polls list needs one message every empty list can follow"
+    status: promoted
+    settled_by: experience-interaction
+    settled_on: "2026-10-25"

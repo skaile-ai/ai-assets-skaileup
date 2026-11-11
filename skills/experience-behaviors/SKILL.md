@@ -15,6 +15,7 @@ metadata:
       - { id: journeys }
     produces:
       - { id: behaviors, path: "_concept/06_behaviors/<featureset>.md" }
+      - { id: proposals, path: "_concept/proposals/<date>-experience-behaviors-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/05_features", gate: soft }
@@ -31,7 +32,7 @@ Writes `06_behaviors/<featureset>.md`: the states an entity can be in, what move
 
 ## Route
 
-Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Write the state tables** — `tree/06_behaviors/[featureset].md`: read the featuresets (or propose the featureset slug), find the entities with a life, write one file per featureset, name the constants, record open questions, report them to the user.
 2. **Name entities and enums as the data model does** — `tree/10_blueprint/datamodel/README.md § Naming`; these tables read the model's names where it exists, else the glossary's (`tree/glossary.md § Where the words live`), and coin none.

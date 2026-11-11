@@ -32,13 +32,13 @@ Role names come from the vocabulary `featuresets.md` settles once; the same pers
 
 ## Links in both directions
 
-Every link between a feature and a screen exists in both files: if screen X implements feature Y, feature Y lists screen X in `screens:` (entries `- path: 07_screens/<screen>.md`) and screen X lists feature Y in `implements:`. The two files have different owners, so a run writes its own side and proposes the other, as a mapping `{ path: <file>, status: proposed, proposed_by: <skill>, proposed_on: YYYY-MM-DD }`: `spec-feature` lists the screen in `screens:` and appends a proposed entry to the screen's `implements:`, and `experience-screen` writes its own `implements:` and appends a proposed entry to the feature's `screens:`. The owner turns a proposed entry into a plain `- path:` one on its next run; until then it counts for the cross-link.
+Every link between a feature and a screen exists in both files: if screen X implements feature Y, feature Y lists screen X in `screens:` (entries `- path: 07_screens/<screen>.md`) and screen X lists feature Y in `implements:`. The two files have different owners, so a run writes its own side and proposes the other in its run's proposal file (`tree/proposals/README.md § Writing it`): `spec-feature` lists the screen in `screens:` and proposes an entry with anchor `implements` targeting the screen (`tree/07_screens/[screen].md § Format`), and `experience-screen` writes its own `implements:` and proposes an entry with anchor `screens` targeting the feature (`tree/05_features/[featureset]/[feature].md § Format`). The owner promotes the entry to a plain one on its next run; until then the pending entry counts for the cross-link.
 
 | when | write | and |
 |---|---|---|
-| `spec-feature` adds a roster row | `story_refs` on the feature = the journey ids that motivated it | features may be added, merged or split beyond what journeys suggest; `story_refs` traces the origin |
-| `spec-feature` lists a screen | the feature's `screens:` names the existing screen file | append a proposed entry to that screen's `implements:`; for a screen that does not exist yet, `spec-feature` calls `experience-screen`, whose write lands in the next row |
-| `experience-screen` writes a screen | the screen's `implements:` lists the feature path(s) | append a proposed entry to each feature's `screens:` |
+| `spec-feature` proposes a roster row | `story_refs` on the feature = the journey ids that motivated it | features may be added, merged or split beyond what journeys suggest; `story_refs` traces the origin |
+| `spec-feature` lists a screen | the feature's `screens:` names the existing screen file | propose an `implements` entry for that screen; for a screen that does not exist yet, `spec-feature` calls `experience-screen`, whose write lands in the next row |
+| `experience-screen` writes a screen | the screen's `implements:` lists the feature path(s) | propose a `screens` entry for each feature |
 | `spec-feature` writes a feature spec | `data_entities:` = model names from `10_blueprint/datamodel/model.yaml` | the feature's `data_entities` is the only feature↔entity join; the model holds no list of features |
 | a screen is deleted or renamed | find every feature whose `screens:` names it; remove or update the entry | |
 | a feature is deleted | find every screen whose `implements:` names it; remove the entry or flag it for human review | the model needs no update |

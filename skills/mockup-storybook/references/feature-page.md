@@ -18,7 +18,7 @@ Each block comes from one file under `_concept/`, and a block whose source is em
 | Screens | the spec's `screens:` plus every `07_screens/*.md` whose `implements:` names the spec; a link when `src/screens/<id>.stories.ts` exists | `poll` (Poll), linked to `Screens/poll` |
 | Journeys | `story_refs:`, with title and stage from `stories.yaml`; a link when the journey is not `backlog` and `src/journeys/<id>.stories.ts` exists | `run_a_lunch_poll` Run a lunch poll from opening to pick, `hero`, no story yet |
 
-The same join runs the other way: `screenDocs('poll')` puts the Poll purpose ("Vote for a place, watch the counts and see the pick. …") and an **Implements** list on `Screens/poll`'s Docs page, naming `polls/create-poll` (proposed), `polls/draw-pick` and `polls/vote-on-place`.
+The same join runs the other way: `screenDocs('poll')` puts the Poll purpose ("Vote for a place, watch the counts and see the pick. …") and an **Implements** list on `Screens/poll`'s Docs page, naming `polls/create-poll` (from a pending `implements` entry), `polls/draw-pick` and `polls/vote-on-place`.
 
 ## The story
 

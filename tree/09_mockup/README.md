@@ -12,4 +12,4 @@ The mockup stakeholders review before the app exists, and the loop that carries 
 ## Contents
 
 - `storybook/` — one Vue Storybook package of floorplans, screens, entities, the whole app, journeys and a generated page per feature (`tree/09_mockup/storybook/README.md`).
-- `feedback/` — the loop from a stakeholder's note to an edited screen spec or a proposed model entry (`tree/09_mockup/feedback/README.md`).
+- `feedback/` — the loop from a stakeholder's note to an edited screen spec or a proposal for the model (`tree/09_mockup/feedback/README.md`).

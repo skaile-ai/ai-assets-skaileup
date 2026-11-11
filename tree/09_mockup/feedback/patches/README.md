@@ -27,16 +27,13 @@ The anchors `apply.py` knows:
 |---|---|---|
 | `## Heading` | a markdown section | removes and adds; no removes appends to the end of the section, and a missing section is appended to the file as `kind: create-section` |
 | `frontmatter:elements` | a screen's `elements:` block | removes and adds inside the YAML frontmatter |
-| `before:## Heading` | the line above a heading | adds only; used for a glossary term placed ahead of `## Relations` |
-| `yaml:entity/<Id>/fields` | the `fields:` block of entity `<Id>` in `model.yaml` | adds only: one field line each (`      <name>: { … }`), inserted after the block's last line |
-| `yaml:model/entities` | the top-level `entities:` block of `model.yaml` | adds only: one complete entity block starting `  <Id>:`, inserted after the block's last line |
 
 What `apply.py` does with these:
 
 - A heading anchor matches a heading line **exactly**: `@@ ## Layout @@` needs a literal `## Layout` line in the file.
 - Removed lines exist in that section as a **consecutive block**, matched exactly; the first mismatch fails that patch and only that patch.
 - There are no context lines; a line starting with neither `-` nor `+` is ignored.
-- A `yaml:` anchor names an entity `model.yaml` declares (a new entity must not exist yet), else the patch fails; after the file is written `bunx @skaile/model@1 check` runs, and a rejection restores the file byte for byte and fails every `yaml:` patch of the round with the check's output.
+- A diff never targets `model.yaml` or the glossary: those files have other owners, and a note that needs them becomes a `proposal` patch, which carries no diff.
 
 ### Kinds
 
@@ -44,21 +41,13 @@ What `apply.py` does with these:
 |---|---|---|
 | `content` | a screen spec | anchored section diff; the author rewrites the section the note's element sits in, scoped to the lines that move |
 | `create-section` | a screen spec | the section did not exist: adds appended to the file |
-| `model-proposal` | `10_blueprint/datamodel/model.yaml` | `yaml:` anchors, adds only |
-| `glossary-proposal` | the project glossary | `before:` or heading anchor, adds only |
+| `proposal` | nothing directly: one entry of the round's proposal file | no diff; `target`, `anchor`, `payload`, `source` |
 
-**`model-proposal`.** A field line or an entity block in the format of `tree/10_blueprint/datamodel/model.md § Format` (two-space indent; a field is one flow-mapping line at six spaces, `      <name>: { type: …, … }`), carrying the marker `proposed: { by: mockup-feedback, on: <YYYY-MM-DD>, source: <inboxId> }`: as a key inside a field's mapping, as the line `    proposed: { … }` of an entity block. `source` names a note the patch resolves. The diff removes nothing.
-
-```
-@@ yaml:entity/Task/fields @@
-+      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }
-```
-
-**`glossary-proposal`.** One term, with its four marker lines (`- status: proposed`, `- proposed_by: mockup-feedback`, `- proposed_on: <date>`, `- source: <the note's words> (<inboxId>)`), in the layout the glossary's mode asks for (`tree/glossary.md § Where the words live`, *Proposed terms*). It accompanies the model proposal that introduces the entity: a term and its entity are filed together, or the model entry has no word to point at (`glossary: '<id>'`). The patch step reads `scope.yaml` `glossary` to choose the file; the triage file never names it.
+**`proposal`.** One entry for an artifact `mockup-feedback` does not own, in the shape of `tree/proposals/README.md § Format`: `target` is `_concept/10_blueprint/datamodel/model.yaml` or `_concept/glossary.md`; `anchor` is `entities.<Entity>` or `entities.<Entity>.fields.<field>` with a YAML mapping as `payload` (`tree/10_blueprint/datamodel/model.md § Format`, *Proposal entry*), or `term:<Bold Term>` with the term's markdown block as `payload` (`tree/glossary.md § Format`, *Proposal entry*); `source` names the note's id. A new entity and its term are proposed together, or the model entry has no word to point at (`glossary: '<id>'`). The patch carries no `file`, `section` or `diff`; on approval `apply.py` appends it to `_concept/proposals/<date>-mockup-feedback-<round>.yaml` (`-2`, `-3` when that exists), entries `p1`, `p2`, ... in patch-id order, and never edits the target. The owner settles it (`tree/proposals/README.md § Writing it`).
 
 ### `patches/<round>.json`
 
-`file` is relative to the concept root, with no `_concept/` prefix. Ids follow `p-<inboxId>-<kind>` (`-content`, `-model`, `-glossary`). Every patch carries `resolves[]`: the notes it answers, each with the status the inbox will record and the resolution sentence.
+`file` is relative to the concept root, with no `_concept/` prefix; a `proposal` patch has `target` (project-relative, with the prefix) instead of `file`, `section` and `diff`. Ids follow `p-<inboxId>-<suffix>` (`-content`, and `-model` or `-glossary` for a proposal). Every patch carries `resolves[]`: the notes it answers, each with the status the inbox will record and the resolution sentence.
 
 ```json
 {
@@ -68,14 +57,15 @@ What `apply.py` does with these:
     {
       "id": "p-k3m9x2-1-model",
       "inboxId": "k3m9x2-1",
-      "file": "10_blueprint/datamodel/model.yaml",
-      "section": "yaml:entity/Task/fields",
-      "kind": "model-proposal",
+      "kind": "proposal",
       "category": null,
       "body": "The editor needs an estimate field.",
-      "diff": "@@ yaml:entity/Task/fields @@\n+      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }\n",
+      "target": "_concept/10_blueprint/datamodel/model.yaml",
+      "anchor": "entities.Task.fields.estimate",
+      "payload": { "type": "decimal", "required": false },
+      "source": "note k3m9x2-1: The editor needs an estimate field.",
       "resolves": [
-        { "id": "k3m9x2-1", "status": "implemented", "resolution": "Task.estimate proposed in model.yaml." }
+        { "id": "k3m9x2-1", "status": "implemented", "resolution": "Task.estimate proposed to architecture-datamodel." }
       ]
     }
   ],
@@ -100,16 +90,23 @@ Every triaged note ends in `patches[]` (as the `inboxId` of a patch or in a `res
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "inboxId", "file", "section", "kind", "body", "diff", "resolves"],
+        "required": ["id", "inboxId", "kind", "body", "resolves"],
+        "if": { "properties": { "kind": { "const": "proposal" } } },
+        "then": { "required": ["target", "anchor", "payload", "source"] },
+        "else": { "required": ["file", "section", "diff"] },
         "properties": {
           "id":      { "type": "string" },
           "inboxId": { "type": "string" },
           "file":    { "type": "string" },
           "section": { "type": "string" },
-          "kind":    { "type": "string", "enum": ["content", "create-section", "model-proposal", "glossary-proposal"] },
+          "kind":    { "type": "string", "enum": ["content", "create-section", "proposal"] },
           "category": { "type": ["string", "null"] },
           "body":    { "type": "string", "description": "The note's comment, copied verbatim; kept in applied/ as the lasting record" },
           "diff":    { "type": "string" },
+          "target":  { "type": "string", "description": "proposal only: project-relative path of the owner's artifact" },
+          "anchor":  { "type": "string", "description": "proposal only: entities.<E>, entities.<E>.fields.<f> or term:<Bold Term>" },
+          "payload": { "description": "proposal only: a mapping for model.yaml, a markdown string for the glossary" },
+          "source":  { "type": "string", "description": "proposal only: names the note's id" },
           "resolves": {
             "type": "array",
             "minItems": 1,
@@ -170,6 +167,13 @@ The approval gate. `apply.py` reads exactly one thing from it, `- [x] **<patch-i
   <diff text>
   ```
 
+## Proposals
+
+- [x] **<patch-id>** · proposal · note: "<comment preview>"
+  ```yaml
+  <payload: yaml for model.yaml, markdown fence for the glossary>
+  ```
+
 ## Test impact
 
 Re-run the quality-test skill after applying — these spec changes affect coverage:
@@ -185,4 +189,4 @@ Author one patch per note per `tree/09_mockup/feedback/README.md § Filing feedb
 
 ## Checks
 
-`python skills/mockup-feedback/scripts/validate_patches.py <triage-json> <patches-json> <review-md>` exits 0: the partition invariant above holds; a `content` patch's `file` matches its note's triaged file and a `model-proposal` patch edits `10_blueprint/datamodel/model.yaml`; each diff starts with a valid `@@` anchor and `yaml:` anchors appear on `model-proposal` patches only; every patch has `resolves[]` listing its own note with a status and a non-empty resolution, identical across the patches of one note; a `model-proposal` adds lines only, each marker well formed with a `source` that names a resolved note; a `glossary-proposal` carries the four marker lines; every patch has a `- [x]` item in the review file; every `needs_manual` entry has a bullet under `## Needs manual review` and no checklist item; `add` / `remove` / `question` diffs match their templates.
+`python skills/mockup-feedback/scripts/validate_patches.py <triage-json> <patches-json> <review-md>` exits 0: the partition invariant above holds; a `content` patch's `file` matches its note's triaged file and its diff starts with a valid `@@` anchor; a `proposal` patch has no `file`, `section` or `diff`, a `target` of `model.yaml` or the glossary, an `anchor` of the grammar above, a `payload`, and a `source` that names a resolved note; every patch has `resolves[]` listing its own note with a status and a non-empty resolution, identical across the patches of one note; every patch has a `- [x]` item in the review file; every `needs_manual` entry has a bullet under `## Needs manual review` and no checklist item; `add` / `remove` / `question` diffs match their templates.

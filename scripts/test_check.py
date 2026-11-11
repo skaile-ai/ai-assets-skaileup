@@ -1447,7 +1447,7 @@ def test_skill_that_writes_nothing_has_no_steps_heading(tmp_path):
     set_produces(root, "    produces: []\n")
     p = skill_file(root)
     p.write_text(p.read_text().replace("## Steps", "## Notes"))
-    only(root, "writes no artifact (`produces: []`) and has no `## Steps` heading")
+    only(root, "writes no artifact (`produces: []`, or only its proposal file) and has no `## Steps` heading")
 
 
 # -- skills <-> nodes: owners say the same thing from both ends (S3, S11) ---------
@@ -2133,53 +2133,97 @@ def test_node_still_carrying_writers(tmp_path):
     only(root, "still carries `writers:` — rename it to `owner:`")
 
 
-def records_decisions(root: Path, skill: str = "spec-feature") -> None:
-    """Give `skill` the decision-log entry in `produces` (and the log its node), the way an owner of a
-    node that takes `proposed` entries has it."""
-    add_node(root, "10_blueprint/README.md", ["_concept/10_blueprint/"], summary="the blueprint")
-    add_node(root, "10_blueprint/decisions.md", "_concept/10_blueprint/decisions.md", summary="decision records")
-    set_produces(
-        root,
-        '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n'
-        '      - { id: decisions, path: "_concept/10_blueprint/decisions.md" }\n',
-        skill,
+PROPOSALS_ENTRY = '      - { id: proposals, path: "_concept/proposals/<date>-<skill>-<scope>.yaml" }\n'
+
+
+def proposals_node(root: Path) -> None:
+    """The directory node every proposal file resolves to (`tree/proposals/README.md`)."""
+    add_node(
+        root, "proposals/README.md", ["_concept/proposals/", "_concept/proposals/<date>-<skill>-<scope>.yaml"],
+        summary="one file per run that proposes entries",
     )
+
+
+def proposes(root: Path, skill: str = "design-brand", brief: bool = False) -> None:
+    """Give `skill` its proposal file in `produces` (and the directory its node), the way a skill in
+    some `may_propose:` has it. Without `brief` the proposal file is its only entry, so it keeps
+    `## Steps`, like a skill that writes no artifact."""
+    proposals_node(root)
+    block = '    produces:\n' + ('      - { id: brief, path: "_concept/brief.md" }\n' if brief else "") + PROPOSALS_ENTRY
+    set_produces(root, block, skill)
+    if not brief:
+        p = skill_file(root, skill)
+        p.write_text(p.read_text().replace("## Route", "## Steps"))
+    refresh_fence(root)
 
 
 def test_node_with_a_proposer_that_is_no_skill(tmp_path):
     root = write_repo(tmp_path)
-    records_decisions(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [ghost]")
     only(root, "`may_propose:` lists 'ghost', which is no skill in this collection")
 
 
 def test_node_with_a_proposer_that_is_also_its_owner(tmp_path):
     root = write_repo(tmp_path)
-    records_decisions(root)
+    proposes(root, "spec-feature", brief=True)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [spec-feature]")
     only(root, "`may_propose:` lists 'spec-feature', which is also in `owner:`")
 
 
 def test_node_with_a_known_proposer_is_clean(tmp_path):
+    """The proposer's only `produces` entry is its proposal file: it keeps `## Steps`."""
     root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
-    records_decisions(root)
-    set_produces(root, "    produces: []\n", "design-brand")
+    proposes(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
     assert errors(root) == []
 
 
-def test_owner_of_a_node_with_proposers_that_records_no_decisions(tmp_path):
+def test_owner_of_a_node_with_proposers_needs_no_decisions(tmp_path):
+    """A rejection stays in the proposal file, so the owner need not produce the decision log."""
     root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    proposes(root)
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    assert "decisions" not in skill_file(root, "spec-feature").read_text()
+    assert errors(root) == []
+
+
+def test_proposer_without_a_proposal_file(tmp_path):
+    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    proposals_node(root)
     set_produces(root, "    produces: []\n", "design-brand")
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
-    only(root, "its owner 'spec-feature' does not list")
+    only(root, "is listed in a node's `may_propose:` but declares no `produces` path under `_concept/proposals/`")
     found = errors(root)[0]
-    assert "tree/brief.md" in found and "proposal-owner-records-decisions" in found
+    assert "skills/design-brand" in found and "proposer-produces-proposals" in found
 
 
-def test_owner_of_a_node_without_proposers_needs_no_decisions(tmp_path):
-    root = write_repo(tmp_path)
-    assert errors(root) == []
+def test_proposal_file_of_a_skill_nobody_lets_propose(tmp_path):
+    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    proposes(root)
+    only(root, "but no node's `may_propose:` lists 'design-brand'")
+    found = errors(root)[0]
+    assert "skills/design-brand" in found and "proposer-produces-proposals" in found
+
+
+def test_proposers_without_the_proposals_node(tmp_path):
+    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    set_produces(root, "    produces: []\n", "design-brand")
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    among(
+        root,
+        "tree/proposals/README.md: does not exist, but design-brand may propose",
+        "is listed in a node's `may_propose:` but declares no `produces` path",
+    )
+
+
+def test_proposal_only_skill_with_a_route_is_a_steps_skill(tmp_path):
+    """A proposal file is no artifact of the skill's own: `## Route` there is `route-shape`."""
+    root = write_repo(tmp_path, skills=("spec-feature", "design-brand"))
+    proposes(root)
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    p = skill_file(root, "design-brand")
+    p.write_text(p.read_text().replace("## Steps", "## Route"))
+    only(root, "writes no artifact (`produces: []`, or only its proposal file) and has no `## Steps` heading")
 
 
 # -- the tree: names (T3) --------------------------------------------------------
@@ -3081,15 +3125,16 @@ def test_check_concept_accepts_a_hyphenated_feature_scope_but_not_a_hyphenated_s
     assert any("'AC-log-in-01' is not AC-<story-id>-<nn>" in p for p in problems), problems
 
 
-def test_check_concept_accepts_a_proposed_implements_entry_for_the_cross_link(tmp_path):
-    """A screen's `implements:` entry is a string or a `{path, status: proposed, …}` mapping."""
+def test_check_concept_takes_a_pending_implements_proposal_for_the_cross_link(tmp_path):
+    """A feature lists the screen; the screen's `implements:` entry waits in a proposal file."""
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
     screen = concept / "07_screens/login.md"
-    screen.write_text(screen.read_text().replace(
-        "  - 05_features/auth/login.md\n",
-        f"  - {{ path: 05_features/auth/login.md, status: proposed, proposed_by: spec-feature, proposed_on: {datetime.date.today().isoformat()} }}\n",
-    ))
+    screen.write_text(screen.read_text().replace("implements:\n  - 05_features/auth/login.md\n", "implements: []\n"))
+    assert len(module.check(concept, script)) == 1
+    write_proposal(concept, "spec-feature", datetime.date.today().isoformat(), "auth-login", [
+        {"id": "p1", "target": "_concept/07_screens/login.md", "anchor": "implements",
+         "payload": "05_features/auth/login.md", "source": "login.md § Screens", "status": "proposed"}])
     assert module.check(concept, script) == []
 
 
@@ -3417,7 +3462,7 @@ def test_a_schema_citing_a_section_that_exists_is_clean(tmp_path):
     assert errors(root) == []
 
 
-# --- check_concept.py: stale proposals, open questions, empty floorplans, unproduced hard gates ---
+# --- check_concept.py: proposal files, open questions, empty floorplans, unproduced hard gates ---
 
 def _today():
     import datetime
@@ -3425,81 +3470,114 @@ def _today():
     return datetime.date(2026, 10, 21)
 
 
-def test_check_concept_reports_a_proposed_glossary_entry_older_than_the_limit(tmp_path):
+def write_proposal(concept: Path, by: str, on: str, scope: str, entries: list[dict]) -> Path:
+    """`_concept/proposals/<on>-<by>-<scope>.yaml` in the shape of `tree/proposals/README.md`."""
+    path = concept / "proposals" / f"{on}-{by}-{scope}.yaml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump({"proposed_by": by, "proposed_on": on, "scope": scope, "entries": entries},
+                                   sort_keys=False), encoding="utf-8")
+    return path
+
+
+def glossary_entry(eid: str, status: str = "proposed") -> dict:
+    entry = {"id": eid, "target": "_concept/glossary.md", "anchor": "term:Backorder",
+             "payload": "**Backorder** (`backorder`):\nAn Order line the stock cannot fill yet.\n- kind: state\n",
+             "source": "05_features/shop/order.md", "status": status}
+    if status != "proposed":
+        entry.update(settled_by="concept-glossary", settled_on="2026-10-01")
+    if status == "rejected":
+        entry["reason"] = "an Order line is never partial"
+    return entry
+
+
+def test_check_concept_reports_a_pending_proposal_older_than_the_limit(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    (concept / "glossary.md").write_text(
-        "---\nlast_updated: 2026-09-05\napproved: 2026-09-05\n---\n\n"
-        "**Backorder** (`backorder`):\nAn Order line the stock cannot fill yet.\n"
-        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-09-01\n\n"
-        "**Refund** (`refund`):\nMoney returned.\n"
-        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-10-15\n",
-        encoding="utf-8",
-    )
+    write_proposal(concept, "spec-feature", "2026-09-01", "shop-order", [glossary_entry("p1")])
+    write_proposal(concept, "spec-feature", "2026-10-15", "shop-refund", [glossary_entry("p1")])
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
-    assert problems[0].startswith("_concept/glossary.md:10:"), problems
+    assert problems[0].startswith("_concept/proposals/2026-09-01-spec-feature-shop-order.yaml:"), problems
     assert "2026-09-01" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0]
+
+
+def test_check_concept_takes_a_settled_entry_as_history(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    write_proposal(concept, "spec-feature", "2026-09-01", "shop-order",
+                   [glossary_entry("p1", "promoted"), glossary_entry("p2", "rejected")])
+    assert module.check(concept, script, today=_today()) == []
 
 
 def test_check_concept_limit_is_a_parameter(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    (concept / "glossary.md").write_text(
-        "---\nlast_updated: 2026-09-05\n---\n- proposed_on: 2026-10-15\n", encoding="utf-8"
-    )
+    write_proposal(concept, "spec-feature", "2026-10-15", "shop-order", [glossary_entry("p1")])
     assert module.check(concept, script, today=_today()) == []
     problems = module.check(concept, script, today=_today(), stale_days=5)
-    assert len(problems) == 1 and "6 days old (limit 5)" in problems[0], problems
+    assert len(problems) == 1 and "6 days (limit 5)" in problems[0], problems
 
 
-def test_check_concept_reports_a_stale_proposal_in_model_yaml_in_flow_and_block_style(tmp_path):
+def test_check_concept_names_the_owner_of_each_stale_target(tmp_path):
     module, script = load_check_concept()
     concept = concept_tree(tmp_path)
-    (concept / "10_blueprint/datamodel/model.yaml").write_text(
-        "version: 1\nentities:\n  User:\n    fields:\n"
-        "      nick: { type: string, proposed: { by: mockup-feedback, on: 2026-09-01, source: x } }\n"
-        "      mail:\n        type: string\n        proposed:\n          by: mockup-feedback\n"
-        "          on: '2026-09-02'\n          source: y\n"
-        "      fresh: { type: string, proposed: { by: mockup-feedback, on: 2026-10-15, source: z } }\n",
-        encoding="utf-8",
-    )
+    write_proposal(concept, "quality-design", "2026-09-01", "login", [
+        {"id": "p1", "target": "_concept/07_screens/login.md", "anchor": "section:Open",
+         "payload": "- Undo? Recommend: 10 s", "source": "DC-1", "status": "proposed"},
+        {"id": "p2", "target": "APP-DESIGN.md", "anchor": "section:Open",
+         "payload": "| Q1 | Undo? | 10 s · none | 10 s |", "source": "DC-1", "status": "proposed"}])
+    write_proposal(concept, "concept-research", "2026-09-01", "depth", [
+        {"id": "p1", "target": "_concept/01_meta/scope.yaml", "anchor": "key:depth", "payload": "sketch",
+         "source": "user: 'a quick pass'", "status": "proposed"}])
+    write_proposal(concept, "mockup-feedback", "2026-09-01", "user-card", [
+        {"id": "p1", "target": "_concept/10_blueprint/datamodel/model.yaml", "anchor": "entities.User.fields.nick",
+         "payload": {"type": "string"}, "source": "UserCard", "status": "proposed"}])
     problems = module.check(concept, script, today=_today())
-    assert len(problems) == 2, problems
-    assert problems[0].startswith("_concept/10_blueprint/datamodel/model.yaml:5:"), problems
-    assert problems[1].startswith("_concept/10_blueprint/datamodel/model.yaml:8:"), problems
-    assert "2026-09-02" in problems[1] and "architecture-datamodel" in problems[1], problems
-
-
-def test_check_concept_reports_stale_proposals_in_frontmatter_scope_and_app_design(tmp_path):
-    module, script = load_check_concept()
-    concept = concept_tree(tmp_path)
-    screen = concept / "07_screens/login.md"
-    screen.write_text(
-        screen.read_text().replace(
-            "  - 05_features/auth/login.md\n",
-            "  - 05_features/auth/login.md\n"
-            "  - { path: 05_features/auth/other.md, status: proposed, proposed_by: spec-feature, proposed_on: 2026-08-01 }\n",
-        )
-    )
-    (concept / "05_features/auth/other.md").write_text(
-        "---\npriority: must-have\npermissions: {}\nscreens:\n  - path: 07_screens/login.md\n"
-        "data_entities: [User]\nlast_updated: 2026-09-05\n---\n"
-    )
-    (concept / "01_meta").mkdir()
-    (concept / "01_meta/scope.yaml").write_text(
-        'proposed:\n  - { key: depth, value: sketch, proposed_by: concept-research, proposed_on: "2026-09-01", source: x }\n'
-    )
-    (tmp_path / "APP-DESIGN.md").write_text(
-        "---\napp: x\nupdated: 2026-09-05\n---\n## Open\n| id | question | options | recommendation |\n|---|---|---|---|\n"
-        "| Q1 | Undo? (proposed by quality-design, 2026-09-01, DC-1) | 10 s · none | 10 s |\n"
-    )
-    problems = module.check(concept, script, today=_today())
-    owners = {p.split(":")[0]: p for p in problems}
+    assert len(problems) == 4, problems
+    owners = {p.split(" for ")[1].split(" ")[0]: p for p in problems}
     assert "experience-screen" in owners["_concept/07_screens/login.md"], problems
-    assert "skaileup" in owners["_concept/01_meta/scope.yaml"], problems
     assert "experience-interaction" in owners["APP-DESIGN.md"], problems
-    assert len(problems) == 3, problems
+    assert "skaileup" in owners["_concept/01_meta/scope.yaml"], problems
+    assert "architecture-datamodel" in owners["_concept/10_blueprint/datamodel/model.yaml"], problems
+
+
+def test_check_concept_reports_a_target_that_resolves_to_no_node(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    write_proposal(concept, "spec-feature", "2026-10-15", "shop-order", [
+        {**glossary_entry("p1"), "target": "_concept/10_blueprint/notes.md"}])
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1, problems
+    assert "`p1` targets _concept/10_blueprint/notes.md, which resolves to no node" in problems[0], problems
+
+
+def test_check_concept_reports_a_proposal_file_that_is_not_yaml(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "proposals").mkdir()
+    (concept / "proposals/2026-10-15-spec-feature-x.yaml").write_text("entries: [\n", encoding="utf-8")
+    assert module.check(concept, script, today=_today()) == [
+        "_concept/proposals/2026-10-15-spec-feature-x.yaml: not valid YAML"]
+
+
+def test_check_concept_reports_inline_proposal_markers_in_owner_artifacts(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "glossary.md").write_text(
+        "---\nlast_updated: 2026-09-05\napproved: 2026-09-05\n---\n\n"
+        "**Backorder** (`backorder`):\nAn Order line the stock cannot fill yet.\n- status: proposed\n",
+        encoding="utf-8")
+    (concept / "10_blueprint/datamodel/model.yaml").write_text(
+        "version: 1\nentities:\n  User:\n    fields:\n      name: string\n"
+        "      nick: { type: string, proposed: { by: mockup-feedback, on: 2026-09-01, source: x } }\n",
+        encoding="utf-8")
+    (tmp_path / "APP-DESIGN.md").write_text(
+        "---\napp: x\nupdated: 2026-09-05\n---\n## Messages\n"
+        "- **MSG-1 Empty lists say so.** *Rules:* P15 (proposed by experience-screen, 2026-09-01)\n")
+    problems = module.check(concept, script, today=_today())
+    assert sorted(p.split(": ")[0] for p in problems) == [
+        "APP-DESIGN.md:6", "_concept/10_blueprint/datamodel/model.yaml:6", "_concept/glossary.md:8"], problems
+    assert all("inline proposal; move it to a proposal file" in p for p in problems), problems
 
 
 def test_check_concept_skips_decision_records_and_the_candidate_report(tmp_path):
@@ -3508,7 +3586,7 @@ def test_check_concept_skips_decision_records_and_the_candidate_report(tmp_path)
     for rel in ("10_blueprint/decisions.md", "11_build/design-candidates.md"):
         path = concept / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("- proposed_on: 2026-01-01\n", encoding="utf-8")
+        path.write_text("- proposed_on: 2026-01-01 (proposed by spec-feature, 2026-01-01)\n", encoding="utf-8")
     assert module.check(concept, script, today=_today()) == []
 
 
@@ -3649,27 +3727,27 @@ def test_check_concept_split_mode_reports_a_confirmed_term_with_no_entry(tmp_pat
     assert "concept-glossary adds its kind" in problems[0], problems
 
 
-def test_check_concept_split_mode_does_not_ask_an_entry_for_a_proposed_term(tmp_path):
+def backorder_term(status: str = "proposed") -> dict:
+    return {"id": "p1", "target": "CONTEXT.md", "anchor": "term:Backorder",
+            "payload": "**Backorder**:\nAn Order line the stock cannot fill yet.\n_Avoid_: waitlist\n",
+            "source": "spec", "status": status}
+
+
+def test_check_concept_split_mode_does_not_ask_an_entry_for_a_pending_term(tmp_path):
     module, script = load_check_concept()
-    concept = split_tree(
-        tmp_path,
-        PROJECT_GLOSSARY + "\n**Backorder**:\nAn Order line the stock cannot fill yet.\n_Avoid_: waitlist\n"
-        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-10-15\n- source: spec\n",
-    )
+    concept = split_tree(tmp_path)
+    write_proposal(concept, "spec-feature", "2026-10-15", "shop-order", [backorder_term()])
     assert module.check(concept, script, today=_today()) == []
 
 
-def test_check_concept_split_mode_reports_a_stale_proposal_in_the_project_glossary(tmp_path):
+def test_check_concept_split_mode_reports_a_stale_proposal_for_the_project_glossary(tmp_path):
     module, script = load_check_concept()
-    concept = split_tree(
-        tmp_path,
-        PROJECT_GLOSSARY + "\n**Backorder**:\nAn Order line the stock cannot fill yet.\n_Avoid_: waitlist\n"
-        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-09-01\n- source: spec\n",
-    )
+    concept = split_tree(tmp_path)
+    write_proposal(concept, "spec-feature", "2026-09-01", "shop-order", [backorder_term()])
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 1, problems
-    assert problems[0].startswith("CONTEXT.md:"), problems
-    assert "2026-09-01" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0], problems
+    assert problems[0].startswith("_concept/proposals/2026-09-01-spec-feature-shop-order.yaml:"), problems
+    assert "for CONTEXT.md" in problems[0] and "50 days" in problems[0] and "concept-glossary" in problems[0], problems
 
 
 def test_check_concept_split_mode_ignores_terms_inside_fenced_code(tmp_path):
@@ -3695,19 +3773,19 @@ def test_check_concept_split_mode_reports_two_terms_that_share_an_id_once(tmp_pa
     assert "term `order` repeats the id of line 7 — concept-glossary qualifies one" in problems[0], problems
 
 
-def test_check_concept_split_mode_takes_proposed_status_per_occurrence(tmp_path):
-    """A `- status: proposed` on the second same-id term does not hide the first's missing entry."""
+def test_check_concept_split_mode_reports_an_inline_proposal_in_the_project_glossary(tmp_path):
+    """A term the project glossary holds is confirmed; a `- status: proposed` under it is a leftover marker."""
     module, script = load_check_concept()
     concept = split_tree(
         tmp_path,
-        PROJECT_GLOSSARY + "\n## Billing\n\n**Order**:\nA payment request.\n"
-        "- status: proposed\n- proposed_by: spec-feature\n- proposed_on: 2026-10-15\n",
-        TRANSFER_ENTRY,
+        PROJECT_GLOSSARY + "\n**Backorder**:\nAn Order line the stock cannot fill yet.\n"
+        "- status: proposed\n",
     )
     problems = module.check(concept, script, today=_today())
     assert len(problems) == 2, problems
-    assert any("term `order` repeats the id of line 7" in p for p in problems), problems
-    assert any("term `order` has no entry in _concept/glossary.md" in p and ":7:" in p for p in problems), problems
+    assert any(p.startswith("CONTEXT.md:") and "inline proposal; move it to a proposal file" in p
+               for p in problems), problems
+    assert any("term `backorder` has no entry in _concept/glossary.md" in p for p in problems), problems
 
 
 def test_check_concept_term_id_lowercases_before_it_transliterates():
@@ -3726,16 +3804,18 @@ def test_check_concept_split_mode_reports_a_named_glossary_path_that_does_not_ex
     assert problems == ["_concept/01_meta/scope.yaml: glossary names docs/glossary.md, which does not exist"], problems
 
 
-def test_check_concept_split_mode_takes_a_proposed_glossary_path_and_reads_that_file(tmp_path):
+def test_check_concept_split_mode_takes_a_pending_glossary_path_and_reads_that_file(tmp_path):
     module, script = load_check_concept()
     concept = split_tree(tmp_path)
     (tmp_path / "docs").mkdir()
     (tmp_path / "CONTEXT.md").rename(tmp_path / "docs/glossary.md")
-    (concept / "01_meta").mkdir()
-    (concept / "01_meta/scope.yaml").write_text(
-        "proposed:\n  - { key: glossary, value: docs/old.md, proposed_by: concept-glossary, proposed_on: '2026-10-15' }\n"
-        "  - { key: glossary, value: docs/glossary.md, proposed_by: concept-glossary, proposed_on: '2026-10-20' }\n",
-        encoding="utf-8")
+
+    def glossary_key(path: str) -> dict:
+        return {"id": "p1", "target": "_concept/01_meta/scope.yaml", "anchor": "key:glossary",
+                "payload": path, "source": "user: 'the words live in docs'", "status": "proposed"}
+
+    write_proposal(concept, "concept-glossary", "2026-10-15", "glossary-old", [glossary_key("docs/old.md")])
+    write_proposal(concept, "concept-glossary", "2026-10-20", "glossary", [glossary_key("docs/glossary.md")])
     assert module.check(concept, script, today=_today()) == []
 
 
@@ -4005,6 +4085,66 @@ def test_demo_file_that_fails_its_schema(tmp_path):
     assert len(errs) == 1, errs
     assert "demo/_concept/01_meta/scope.yaml: does not validate against `tree/01_meta/scope.schema.json`" in errs[0]
     assert "flow: 'waterfall' is not one of" in errs[0] and "demo-schema" in errs[0]
+
+
+PROPOSAL_SCHEMA = Path(__file__).resolve().parent.parent / "tree" / "proposals" / "proposal.schema.json"
+
+DEMO_PROPOSAL = """\
+proposed_by: spec-feature
+proposed_on: 2026-11-11
+scope: booking-reserve
+entries:
+  - id: p1
+    target: _concept/01_meta/scope.yaml
+    anchor: key:flow
+    payload: greenfield
+    source: "user: 'start from nothing'"
+    status: proposed
+"""
+
+
+def proposal_schema(root: Path) -> None:
+    """The collection's own proposal schema, with its placeholder `x-artifact`, beside the proposals
+    node; the fixture skill proposes to `scope.yaml` and so produces its proposal file."""
+    edit_node(root, "01_meta/scope.md", "may_propose: []", "may_propose: [spec-feature]")
+    proposals_node(root)
+    set_produces(root, '    produces:\n      - { id: brief, path: "_concept/brief.md" }\n' + PROPOSALS_ENTRY)
+    schema = json.loads(PROPOSAL_SCHEMA.read_text(encoding="utf-8"))
+    schema["description"] = "One file per proposing run."  # the real one cites sections the fixture tree lacks
+    write_schema(root, schema, "proposals/proposal")
+    cite_schema(root, "proposals/proposal", "proposals/README.md")
+    refresh_fence(root)
+
+
+def test_demo_proposal_file_validates_against_the_placeholder_schema(tmp_path):
+    root = write_demo_repo(tmp_path)
+    proposal_schema(root)
+    demo_put(root, "_concept/proposals/2026-11-11-spec-feature-booking-reserve.yaml", DEMO_PROPOSAL)
+    assert errors(root) == []
+
+
+def test_demo_without_a_file_for_a_placeholder_schema(tmp_path):
+    root = write_demo_repo(tmp_path)
+    proposal_schema(root)
+    among(root, "demo-schema-covered", "demo-produces")
+    assert any("demo/_concept/proposals/<date>-<skill>-<scope>.yaml: does not exist" in e for e in errors(root))
+
+
+def test_demo_rejected_proposal_without_a_reason(tmp_path):
+    root = write_demo_repo(tmp_path)
+    proposal_schema(root)
+    rejected = DEMO_PROPOSAL.replace("status: proposed", "status: rejected\n    settled_by: concept-onboard\n    settled_on: 2026-11-12")
+    demo_put(root, "_concept/proposals/2026-11-11-spec-feature-booking-reserve.yaml", rejected)
+    only(root, "demo/_concept/proposals/2026-11-11-spec-feature-booking-reserve.yaml: does not validate against `tree/proposals/proposal.schema.json`")
+    assert "'reason' is a required property" in errors(root)[0]
+
+
+def test_demo_settled_proposal_without_its_settle_fields(tmp_path):
+    root = write_demo_repo(tmp_path)
+    proposal_schema(root)
+    demo_put(root, "_concept/proposals/2026-11-11-spec-feature-booking-reserve.yaml", DEMO_PROPOSAL.replace("status: proposed", "status: promoted"))
+    only(root, "'settled_by' is a required property")
+    assert "demo-schema" in errors(root)[0]
 
 
 def test_demo_json_file_that_is_not_json(tmp_path):

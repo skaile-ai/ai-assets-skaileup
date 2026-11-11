@@ -49,15 +49,16 @@ and procedure for its part; this file holds only the order.
 procedure that belongs in one.
 
 **`produces: []` skills** (`build-branch`, `build-scaffold`, `build-database`,
-`quality-test`, `ops-review`) write nothing under `_concept/`, so no node holds their
-procedure. They carry `## Steps` in place of `## Route` — the compressed procedure, stated
-positively at the step each constraint binds — with a **ceiling of 100 lines**. They still
-cite a node for every `_concept/` format they read.
+`quality-test`, `ops-review`) write nothing under `_concept/` but, at most, their own proposal
+file (`quality-test` declares that one entry), so no node holds their procedure. They carry
+`## Steps` in place of `## Route` — the compressed procedure, stated positively at the step each
+constraint binds — with a **ceiling of 100 lines**. They still cite a node for every `_concept/`
+format they read.
 
 **The opener cites only the protocol files the route uses** (`tree/README.md § Protocol`):
 `tree/protocol/running.md` always, narrowed to the rules it binds where the skill does not
-interview (`(the todo list, rules 1 and 8)`); `tree/protocol/ownership.md` when it proposes
-into another owner's artifact or promotes proposals into its own; `tree/protocol/delegation.md`
+interview (`(the todo list, rules 1 and 8)`); `tree/protocol/ownership.md` when it writes a
+proposal file (`tree/proposals/README.md`) or settles proposals targeting its own artifacts; `tree/protocol/delegation.md`
 when it hands passes to another agent context. `tree/README.md` itself is read only to find a
 part's node.
 
@@ -83,6 +84,10 @@ part's node.
   `scripts/check.py` enforces it in both directions; the host's node done-state read is
   `host:node-done-from-produces`: a node is done when every non-templated path in the list
   exists.
+- **A proposer produces its proposal file.** Every skill listed in some node's `may_propose`
+  declares `{ id: proposals, path: "_concept/proposals/<date>-<skill>-<scope>.yaml" }`, and only
+  those skills produce under `_concept/proposals/` (`scripts/check.py` rule
+  `proposer-produces-proposals`).
 - **A skill that cites the tree declares the contract** (`contract:@skaile-ai/shared-contracts`
   under `metadata.requires`), and a skill that declares it cites the tree.
 - **Frontmatter differs from `-mp` only where the tree requires it.** A skill whose body

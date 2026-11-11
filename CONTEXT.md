@@ -236,10 +236,10 @@ _Avoid_: default mode, single-file mode, standalone glossary
 An append-only note of a choice that was **hard to reverse**, **surprising without
 context**, and a **real trade-off**. All three, or it is not one. One record per project,
 open to every authoring skill; each entry says what was decided, by whom, which options were
-rejected and what follows. A rejected scope decision, or a rejected **proposed entry**, is a
-decision record marked rejected, not a separate store. Recorded where it was made (the
-collection, the design, or the build) and at the **level** it binds: the product, one
-featureset, or one feature.
+rejected and what follows. A rejected scope decision is a decision record marked rejected, not
+a separate store; a rejected **proposed entry** is not one, its reason stays in its **proposal
+file**. Recorded where it was made (the collection, the design, or the build) and at the
+**level** it binds: the product, one featureset, or one feature.
 _Avoid_: ADR log, rationale, out-of-scope file
 
 **Level**:
@@ -258,18 +258,27 @@ which is evidence, and not a **floorplan**.
 _Avoid_: convention (that is a **standard**), template, base feature, abstraction
 
 **Owner**:
-The skill whose output an artifact is, and the only one that confirms what it holds. Anyone
-may read the artifact; another skill adds to it only as a **proposed entry**, and only when the
-owner's contract lists it as a proposer.
+The skill whose output an artifact is, and the only one that writes and confirms what it
+holds. Anyone may read the artifact; another skill offers an addition only as a **proposed
+entry** in its own **proposal file**, and only when the owner's contract lists it as a
+proposer. The owner settles that entry; nothing else in another skill's file is its to write.
 _Avoid_: writer, author, maintainer
 
+**Proposal file**:
+The one file a run writes when it has anything to propose to artifacts it does not own: who
+proposed, when, what the run worked on, and its **proposed entries**. Every run that proposes
+writes a new one, so two runs never write the same file. It stays once its entries are settled,
+as the history of what was offered and what became of it.
+_Avoid_: proposal queue, inbox, change request, patch
+
 **Proposed entry**:
-An entry a skill that does not own an artifact appends to it, marked as proposed with who
-proposed it, when, and the evidence or the user's words behind it. It adds and never edits a
-confirmed entry. The owner reviews it with the user and either promotes it or rejects it into
-the **decision record**. In the **datamodel** it is an entity or field carrying a `proposed`
-key, promoted by deleting the key.
-_Avoid_: suggestion, draft entry, TODO
+One addition a skill that does not own an artifact offers to it: which artifact, where in it,
+the entry in that artifact's own format, and the evidence or the user's words behind it. It
+lives in the proposer's **proposal file**, never in the artifact, and adds rather than edits a
+confirmed entry. While pending it is unconfirmed. The owner reviews it with the user and settles
+it: promoted (written into the artifact, with no trace of having been proposed) or rejected
+with a reason.
+_Avoid_: suggestion, draft entry, TODO, inline proposal
 
 **Answer**:
 A value a user supplied to a question. Onboarding collects answers; they are inputs,

@@ -50,7 +50,7 @@ value; five reserved keys sit beside them: `approved`, `last_updated`, `confiden
 3. Read `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`) for `project_type` and confirm that value rather than
    collecting it again. Absent, derive it where a repository exists (`_concept/02_grounding/findings/stack.md`, or
    `concept-reverse` scoped to `stack`), mark it inferred, and put it into the step 4 batch; the confirmed value is
-   recorded as a `proposed` entry in `scope.yaml`.
+   written as a `key:project_type` entry into the run's proposal file (`tree/01_meta/scope.md § Asking a missing key`).
 4. Ask the technology preferences — framework or language, data access and database, UI
    component library, authentication, overall architecture pattern — as one decision batch
    (`tree/protocol/running.md § How a skill runs`), each answer with its `confidence`; the stack findings, where they

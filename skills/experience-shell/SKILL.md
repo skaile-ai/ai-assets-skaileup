@@ -17,6 +17,7 @@ metadata:
       - { id: app-design }
     produces:
       - { id: app-shell, path: "_concept/07_screens/shell.md" }
+      - { id: proposals, path: "_concept/proposals/<date>-experience-shell-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "APP-DESIGN.md", gate: soft }
@@ -34,7 +35,7 @@ Writes exactly one file: `07_screens/shell.md`, the frame every screen appears i
 
 ## Route
 
-Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Know the `elements:` block** — `tree/07_screens/README.md`; the shell's nav element is written to its schema and `§ Content fidelity` shapes.
 2. **Resolve the facts and derive the destination list** — `tree/07_screens/shell.md § Writing it`, steps 1–2: `APP-DESIGN.md § Navigation model` and the objects with `navigation: primary` when they exist, else the findings and the screens, else one batch of questions.

@@ -1,6 +1,6 @@
 # 0027 — Agents and levelled decisions
 
-**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias)
+**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias); K7 amended by [0031](0031-proposals-are-files-per-run.md) (`concept-brief` is the roster's sole owner; `spec-feature` proposes its roster moves)
 
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends

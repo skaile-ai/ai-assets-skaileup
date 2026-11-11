@@ -75,14 +75,6 @@ _Avoid_: Owner, admin, host
 - is-a: member
 - purpose: carries a Poll from open to closed.
 
-**Veto** (`veto`):
-A Member strikes one Place from a Poll because they cannot eat there.
-- status: proposed
-- proposed_by: spec-feature
-- proposed_on: 2026-10-25
-- source: "Aiko cannot eat shellfish; can she remove the sushi place for everyone?" (05_features/polls/vote-on-place.md)
-- kind: event
-
 ## Relations
 
 - poll · opened-by · organizer

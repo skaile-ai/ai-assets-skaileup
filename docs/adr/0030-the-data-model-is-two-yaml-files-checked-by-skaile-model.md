@@ -1,6 +1,6 @@
 # 0030 — The data model is two YAML files, checked by `@skaile/model`
 
-**Status:** accepted
+**Status:** accepted; amended by [0031](0031-proposals-are-files-per-run.md) (a proposed entity or field is an entry of a proposal file targeting `model.yaml`, no `proposed:` key in the model)
 
 Amends [ADR 0016](0016-published-formats-where-one-exists.md) decision 2 for the data model only:
 its two schemas are owned by the npm package `@skaile/model`, not by `tree/`. Amends

@@ -15,6 +15,7 @@ metadata:
       - { id: grounding-findings }
     produces:
       - { id: architecture, path: "_concept/10_blueprint/architecture.md" }
+      - { id: proposals, path: "_concept/proposals/<date>-architecture-system-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/brief.md", gate: soft }
@@ -31,7 +32,7 @@ Writes `10_blueprint/architecture.md` as C4 levels — what this project adds be
 
 ## Route
 
-Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Resolve the stack and the features for the delta** — `tree/10_blueprint/architecture.md § Writing it`, steps 1–3. Derive-or-ask per `tree/protocol/running.md § How a skill runs`: a stack or a feature the files lack comes from `concept-reverse` scoped `stack`, `routes` or `datamodel`, and the rest goes into the step 3 batch.
 2. **Screen and shape each addition** — `tree/10_blueprint/architecture.md § Design red flags`, then steps 4–5 of its `## Writing it` (seams for outside dependencies).

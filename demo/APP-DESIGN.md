@@ -44,7 +44,7 @@ organization: object-led · primary_surface: topbar · archetype: none
 - **EDIT-2 A Vote saves the moment it is chosen, with an undo toast for ten seconds.** *Why:* ten seconds of work must not need a Save button. *Rules:* P14 adapt; H7.
 ## Messages
 - **MSG-1 Errors on a page are inline alerts with a retry; a refused vote names the reason ("Voting closed at 12:30").** *Rules:* P15.
-- **MSG-2 An empty Poll list says "No polls yet - hungry?" and offers Open poll.** *Rules:* P15 (proposed by experience-screen, 2026-10-25)
+- **MSG-2 An empty Poll list says "No polls yet - hungry?" and offers Open poll.** *Rules:* P15.
 ## Buttons
 - **BTN-1 Create actions carry a text label: "Open poll", "Add place".** *Rules:* P17.
 - **LANG-1 Verbs: Open · Vote · Close · Draw · Add · Edit · Archive. Nouns from the glossary: Poll, Place, Vote, Pick.** *Rules:* P11, P13.

@@ -40,8 +40,8 @@ route through those nodes. This is the one skaileup collection; the earlier ones
   delegation, what sits beside the tree — shipped with the tree and cited by file and
   section; it is no `_concept/` part, so it has no node, like `tree/CONTRACT.md`.
 - **A skill is a route.** Its body is the ordered list of nodes it visits — at most 60 lines
-  including frontmatter; the five skills with `produces: []` keep a compressed `## Steps`, at
-  most 100. See [`docs/skill-template.md`](./docs/skill-template.md).
+  including frontmatter; a skill that produces nothing, or only its proposal file, keeps a
+  compressed `## Steps`, at most 100. See [`docs/skill-template.md`](./docs/skill-template.md).
 - **A node follows one shape**: frontmatter `path` / `summary` / `owner` / `may_propose`, then intro,
   `## Format`, `## Writing it`, `## Checks`. No `MUST`/`NEVER` block — constraints are stated
   positively at the step they bind, one consequence clause per rule. See

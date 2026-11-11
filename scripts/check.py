@@ -1685,10 +1685,11 @@ def _route_items(lines: list[str]) -> list[str]:
 
 def _check_route_shape(produces_empty: bool, body: str, where: str, rep: Report) -> None:
     """Rule `route-shape`: a skill that writes artifacts is a route — a `## Route` heading whose
-    numbered items each cite a `tree/` node. A skill that writes none keeps a `## Steps` list."""
+    numbered items each cite a `tree/` node. A skill that writes none (its `produces` empty, or
+    holding only its proposal file under `PROPOSALS_DIR`) keeps a `## Steps` list."""
     if produces_empty:
         if _section_lines(body, STEPS_HEADING_RE) is None:
-            rep.fail(where, "route-shape", "writes no artifact (`produces: []`) and has no `## Steps` heading")
+            rep.fail(where, "route-shape", "writes no artifact (`produces: []`, or only its proposal file) and has no `## Steps` heading")
         return
     lines = _section_lines(body, ROUTE_HEADING_RE)
     if lines is None:
@@ -1702,7 +1703,13 @@ def _check_route_shape(produces_empty: bool, body: str, where: str, rep: Report)
             rep.fail(where, "route-shape", f"route item {i} cites no `tree/…` node — a route is a list of nodes to read")
 
 
-DECISIONS_PATH = "_concept/10_blueprint/decisions.md"
+# A proposed entry lives in a proposal file of the proposing run, never in the target artifact
+# (`tree/proposals/README.md`, ADR 0031). Every proposer produces one there; nobody else does.
+PROPOSALS_DIR = "_concept/proposals/"
+
+
+def _is_proposal_path(path: str) -> bool:
+    return path.startswith(PROPOSALS_DIR) and len(path) > len(PROPOSALS_DIR)
 
 
 def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Report) -> None:
@@ -1713,9 +1720,10 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
     must have a produces path that resolves to the node, or a directory above one of the node's
     entries, or a path below one of the node's directory entries — a directory entry of at least
     two segments, because the root entry `_concept/` would otherwise cover every path there is.
-    `may_propose:` is not cross-checked against `produces`: a proposer appends entries, it does not
-    generate the part. Rule `proposal-owner-records-decisions`: the owner of a node with a non-empty
-    `may_propose:` produces `DECISIONS_PATH`, where it records the rejections."""
+    `may_propose:` is not cross-checked against `produces`: a proposer writes its own proposal
+    file, it does not generate the part. Rule `proposer-produces-proposals`: every skill in some
+    node's `may_propose:` produces a path under `PROPOSALS_DIR`, every skill producing there is in
+    some `may_propose:`, and a collection with proposers has the node of `PROPOSALS_DIR`."""
     fms = dict(skill_fms)
     for skill, fm in skill_fms:
         for _ident, path in _produced_entries(fm):
@@ -1756,20 +1764,33 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
                     f"or lies above or below its `path:` entries",
                 )
 
-    # A node that takes `proposed` entries has an owner who rejects some, and a rejection is
-    # recorded in the decision log (`tree/protocol/ownership.md § Ownership`) — so that owner appends there.
-    for node in nodes:
-        if not node.may_propose:
-            continue
-        for owner in node.owner:
-            if owner in fms and DECISIONS_PATH not in {p for _i, p in _produced_entries(fms[owner])}:
-                rep.fail(
-                    node.file,
-                    "proposal-owner-records-decisions",
-                    f"takes `proposed` entries (`may_propose:`), but its owner {owner!r} does not list "
-                    f"`{{ id: decisions, path: \"{DECISIONS_PATH}\" }}` in `produces` — the owner records "
-                    f"each rejection there",
-                )
+    # A proposer writes its entries into a proposal file of its own (`tree/protocol/ownership.md
+    # § Ownership`), so it declares that file — and a skill nobody lets propose has nothing to file there.
+    proposers = sorted({p for node in nodes for p in node.may_propose if p in fms})
+    if proposers and resolve(nodes, PROPOSALS_DIR) is None:
+        rep.fail(
+            f"{TREE_DIR}/proposals/README.md",
+            "proposer-produces-proposals",
+            f"does not exist, but {', '.join(proposers)} may propose — a proposal file under "
+            f"`{PROPOSALS_DIR}` would have no node to say its format",
+        )
+    for skill, fm in skill_fms:
+        files = [p for _i, p in _produced_entries(fm) if _is_proposal_path(p)]
+        if skill in proposers and not files:
+            rep.fail(
+                f"skills/{skill}",
+                "proposer-produces-proposals",
+                f"is listed in a node's `may_propose:` but declares no `produces` path under "
+                f"`{PROPOSALS_DIR}` — its proposals would have no file to land in, and forge "
+                f"would never see them",
+            )
+        elif files and skill not in proposers:
+            rep.fail(
+                f"skills/{skill}",
+                "proposer-produces-proposals",
+                f"produces {files[0]!r} under `{PROPOSALS_DIR}`, but no node's `may_propose:` lists "
+                f"{skill!r} — every entry it filed would target an artifact it may not propose to",
+            )
 
 
 def check_skills(
@@ -1837,9 +1858,13 @@ def check_skills(
             rep.error(where, "frontmatter has no `version:`")
 
         # 3. the body ceiling: a route is short; a skill that writes no artifact carries its steps.
+        #    A proposal file is not an artifact of the skill's own: a skill whose only `produces`
+        #    entries lie under `PROPOSALS_DIR` keeps `## Steps` and the larger ceiling.
         block = _artifacts_block(fm)
         declared = block.get("produces") if block is not None else None
-        produces_empty = isinstance(declared, list) and not declared
+        produces_empty = isinstance(declared, list) and all(
+            _is_proposal_path(p) for _i, p in _produced_entries(fm)
+        ) and len(_produced_entries(fm)) == len(declared)
         ceiling = LINE_BUDGET_NO_ARTIFACTS if produces_empty else LINE_BUDGET
         line_count = len(text.splitlines())
         if line_count > ceiling:
@@ -2842,7 +2867,8 @@ def check_docs(repo: Path, skill_names: set[str], rep: Report) -> None:
 # Rule ids: `demo-node` (every demo file resolves to a node of `tree/`), `demo-storybook` (the
 # demo ships no mockup package), `demo-frontmatter` (every demo markdown file carries valid
 # universal frontmatter), `demo-schema-covered` (every `x-artifact` schema has its file in the
-# demo), `demo-schema` (that file validates against the schema), `demo-datamodel` (the data model
+# demo; a placeholder `x-artifact` at least one matching file), `demo-schema` (each such file
+# validates against the schema), `demo-datamodel` (the data model
 # passes `@skaile/model check`), `demo-produces` (every
 # `produces` path of every skill is covered by a demo file or listed in `DEMO_NOT_SHIPPED`),
 # `demo-produces-stale` (a `DEMO_NOT_SHIPPED` key that no skill produces any more),
@@ -2893,8 +2919,8 @@ DEMO_NOT_SHIPPED: dict[str, str] = {
 # The data model is the one machine part whose schemas are not in `tree/`: the npm package
 # `@skaile/model` owns them together with the loader that checks them (ADR 0030), so the demo's
 # `model.yaml` and `seed.yaml` are held to `@skaile/model@1 check`, run through `bunx` or `npx`.
-# The same runner pattern sits in `skills/ops-review/scripts/check_concept.py` and
-# `skills/mockup-feedback/scripts/apply.py` (skills ship standalone and cannot import it).
+# The same runner pattern sits in `skills/ops-review/scripts/check_concept.py` (skills ship
+# standalone and cannot import it).
 DEMO_DATAMODEL = f"{ARTIFACT_ROOT}/10_blueprint/datamodel"
 MODEL_TOOL = "@skaile/model@1"
 MODEL_TOOL_TIMEOUT = 180
@@ -3164,8 +3190,20 @@ def check_demo(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: R
         if not isinstance(artifact, str):
             continue
         schema_where = f"{TREE_DIR}/{sp.relative_to(tree_root).as_posix()}"
-        target = demo / artifact
-        if not target.is_file():
+        # A placeholder `x-artifact` (`_concept/proposals/<date>-<skill>-<scope>.yaml`) describes
+        # every file it matches: the demo needs at least one, and each one validates.
+        art_segs = _segs(artifact)
+        if any(_is_placeholder(s) for s in art_segs):
+            ext = Path(art_segs[-1]).suffix
+            rels = [
+                rel for rel in files
+                if len(_segs(rel)) == len(art_segs)
+                and all(_seg_eq(a, b) for a, b in zip(art_segs, _segs(rel)))
+                and Path(rel).suffix == ext
+            ]
+        else:
+            rels = [artifact] if (demo / artifact).is_file() else []
+        if not rels:
             rep.fail(
                 f"{DEMO_DIR}/{artifact}",
                 "demo-schema-covered",
@@ -3173,23 +3211,25 @@ def check_demo(repo: Path, nodes: list[Node], skill_fms: dict[str, dict], rep: R
                 f"that shows the schema in use",
             )
             continue
-        suffix = target.suffix
-        if suffix not in (".json", ".yaml", ".yml"):
-            continue  # a markdown artifact's schema validates its frontmatter, covered above
-        try:
-            text = target.read_text(encoding="utf-8")
-            doc = json.loads(text) if suffix == ".json" else yaml.safe_load(text)
-        except (ValueError, yaml.YAMLError) as exc:
-            rep.fail(f"{DEMO_DIR}/{artifact}", "demo-schema", f"is not parseable ({exc}) — it cannot be validated against `{schema_where}`")
-            continue
-        problems = _schema_errors(schema, _iso_text(doc))
-        if problems:
-            rep.fail(
-                f"{DEMO_DIR}/{artifact}",
-                "demo-schema",
-                f"does not validate against `{schema_where}` ({'; '.join(problems)}) — the demo would teach "
-                f"a file the skills' own readers reject",
-            )
+        for rel in rels:
+            target = demo / rel
+            suffix = target.suffix
+            if suffix not in (".json", ".yaml", ".yml"):
+                continue  # a markdown artifact's schema validates its frontmatter, covered above
+            try:
+                text = target.read_text(encoding="utf-8")
+                doc = json.loads(text) if suffix == ".json" else yaml.safe_load(text)
+            except (ValueError, yaml.YAMLError) as exc:
+                rep.fail(f"{DEMO_DIR}/{rel}", "demo-schema", f"is not parseable ({exc}) — it cannot be validated against `{schema_where}`")
+                continue
+            problems = _schema_errors(schema, _iso_text(doc))
+            if problems:
+                rep.fail(
+                    f"{DEMO_DIR}/{rel}",
+                    "demo-schema",
+                    f"does not validate against `{schema_where}` ({'; '.join(problems)}) — the demo would teach "
+                    f"a file the skills' own readers reject",
+                )
 
     # demo-datamodel
     if any(rel.startswith(DEMO_DATAMODEL + "/") for rel in files):

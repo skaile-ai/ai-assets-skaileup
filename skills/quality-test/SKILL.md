@@ -10,7 +10,8 @@ metadata:
       - { id: scope }
       - { id: features }
       - { id: grounding-findings }
-    produces: []
+    produces:
+      - { id: proposals, path: "_concept/proposals/<date>-quality-test-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/01_meta/scope.yaml", gate: soft }
@@ -24,7 +25,7 @@ Covers features that are already built: one test file per feature, every case tr
 the criterion it proves. `tdd` owns the tests written *before* the code; this is the pass
 that covers what shipped without them, and it never rewrites a test to make it green.
 
-Read `tree/protocol/running.md` once per session. **The levels come from the depth** in
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session. **The levels come from the depth** in
 `_concept/01_meta/scope.yaml` (`tree/01_meta/scope.md`): `sketch` runs unit only, `standard` and
 `exhaustive` run unit and integration. A `depth` the file lacks is asked in the batch of step 3
 and recorded as `tree/01_meta/scope.md § Asking a missing key` says; the project's size is

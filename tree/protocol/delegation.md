@@ -45,6 +45,6 @@ STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 
 **Work another agent owns.** A receiver whose route needs a skill another agent composes does not run it: it returns `NEEDS_CONTEXT` with no `Question:` and the run under `Missing:`, `evidence pass — <skill> <scope>` for `concept-reverse` or `concept-research` and `skill run — <skill> <args>` for any other (a `spec-feature` run that needs a new screen: `skill run — experience-screen <screen>`). The lead sends that run to the agent that owns the skill, then sends the original run again with the result's paths. A receiver that cannot start its own helper contexts runs its helper passes itself, one after another.
 
-**Parallel only when the write sets are disjoint.** Two receivers run at once only when no path one may write or propose into is one the other may (`owner:` and `may_propose:` of the nodes their routes visit).
+**Parallel only when the owned write sets are disjoint.** Two receivers run at once only when no path one owns is one the other owns (`owner:` of the nodes their routes visit). `may_propose:` does not count, nor does `_concept/proposals/`: each run that proposes writes a new proposal file of its own (`tree/proposals/README.md`), so two runs never write the same one.
 
 A partial result with no status leaves the sender guessing; a code makes it act.
