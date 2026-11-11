@@ -559,7 +559,7 @@ def _first_fence(text: str) -> list[str] | None:
 def _tree_entry_stem(raw: str) -> str:
     """The comparable name of a tree entry: no extension, no path tail, no placeholder.
 
-    `review.yaml` -> `review`, `reviews/` -> `reviews`, `<slice_id>` -> ``.
+    `review.yaml` -> `review`, `reviews/` -> `reviews`, `<feature>` -> ``.
     """
     head = raw.split("/")[0].split("<")[0].strip()
     return head.rsplit(".", 1)[0] if "." in head else head
@@ -3049,8 +3049,6 @@ DEMO_NOT_SHIPPED: dict[str, str] = {
     "_concept/02_grounding/research/patterns.md": "optional research; the demo carries domain, competitors, audiences",
     "_concept/02_grounding/research/behavioral-patterns.md": "optional research; the demo carries domain, competitors, audiences",
     "_concept/03_brand/brandbook.html": "generated visual reference",
-    "_concept/11_build/slices/<slice_id>/index.md": "slice dossiers; the demo's trace.yaml names slices without dossiers",
-    "_concept/11_build/slices/<slice_id>/plan.md": "slice dossiers; the demo's trace.yaml names slices without dossiers",
     "_concept/11_build/release.yaml": "whole-app verdicts and scans; not in the demo",
     "_concept/11_build/interaction.sarif": "whole-app verdicts and scans; not in the demo",
     "_concept/11_build/design-candidates.md": "whole-app verdicts and scans; not in the demo",

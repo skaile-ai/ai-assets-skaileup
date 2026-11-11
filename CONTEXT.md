@@ -195,7 +195,7 @@ it has been acted on or rejected.
 _Avoid_: feedback session, comment
 
 **Implementation**:
-The build half — plans, slices, and the code itself.
+The build half — tickets, their pull requests, and the code itself.
 
 **Grounding**:
 Research, reference material and captured user input, available to every skill as
@@ -408,19 +408,35 @@ A formalized rule or state machine governing an entity's lifecycle.
 
 **Vertical slice**:
 One user-facing increment built end to end — UI, logic, and data together. **Slice** is
-its short form and always means this. Never a horizontal layer.
+its short form and always means this. Never a horizontal layer. A slice is planned and built
+as a **ticket**.
 _Avoid_: tracer bullet, task, chunk, increment
 
+**Parent issue**:
+The tracker issue of one feature spec, which the spec names. Its sub-issues are the spec's
+tickets, and the pull request that closes it is the spec's build.
+_Avoid_: epic, spec issue
+
+**Ticket**:
+One vertical slice as a sub-issue of its spec's parent issue, with its blocking edges and the
+criterion ids it claims. Its state, and the pull request that closes it, are the build's record;
+the concept repeats neither.
+_Avoid_: slice plan, task, story
+
+**Integration branch**:
+The one branch all of a spec's tickets merge into, whose draft pull request closes the parent
+issue.
+_Avoid_: feature branch, spec branch
+
 **Dossier**:
-The working directory for one feature's work — the notes, framing and decisions made
-along the way, kept as documentation once done. A **feature dossier** carries concept
-work; a **slice dossier** carries the build.
-_Avoid_: workspace, scratch, folder
+The working directory for one feature's concept work — the notes, framing and decisions made
+along the way, kept as documentation once done. The build keeps no dossier: its tickets and
+pull requests are its record.
+_Avoid_: workspace, scratch, folder, slice dossier
 
 **Frozen**:
 A dossier that has been indexed and closed. It stops being working state and becomes
-documentation. Only dossiers freeze. Frozen says nothing about proof: a slice dossier's
-`verification` says whether its manual checks have all been run.
+documentation. Only dossiers freeze.
 
 **Seed scenario**:
 One named shape of sample data — empty, single user, populated, edge cases — each

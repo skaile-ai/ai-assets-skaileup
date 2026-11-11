@@ -15,7 +15,8 @@ route through those nodes. This is the one skaileup collection; the earlier ones
 - **`agents/<name>/`, eight of them.** `agent.yaml` is spec 0.2 of `@skaile/workspaces`
   (`spec_version: "0.2"` quoted, `name` equal to the directory, `version`, `description`,
   `composes:`) beside a non-empty `SOUL.md`. `skaileup-lead` is the session's agent: it composes
-  `skaileup` and the seven others as `binding: delegate`; each of the 31 skills is composed by
+  `skaileup` and `build-implement` (which starts subagents, so a delegate cannot run it) and the
+  seven others as `binding: delegate`; each of the 31 skills is composed by
   exactly one agent. No deprecated 0.1 field, no `extends`, every ref resolves, every `as:` is a
   valid file name and unique in its agent: `check_agents` enforces these. By convention, and not
   checked: no `model` (the host picks it), and a SOUL cites tree sections instead of restating
@@ -101,8 +102,9 @@ process. Use its words; don't redefine them locally. Where a thing *lives* is `t
 job.
 
 Two words that are easy to get wrong: an **asset** is shipped by this repo; an **artifact**
-is written into a project. A **slice** is a vertical slice, implementation-side only — the
-concept-side per-feature thing is a **feature dossier**.
+is written into a project. A **slice** is a vertical slice, implementation-side only, and is
+planned and built as a **ticket** (a sub-issue of the spec's parent issue) — the concept-side
+per-feature thing is a **feature dossier**.
 
 ## Decisions
 

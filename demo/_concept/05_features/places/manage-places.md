@@ -9,6 +9,7 @@ follows: []
 screens:
   - path: 07_screens/places.md
 data_entities: [Place]
+tracker: { issue: 104 }
 last_updated: 2026-10-25
 ---
 

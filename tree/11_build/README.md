@@ -1,22 +1,26 @@
 ---
 path: _concept/11_build/
-summary: slices, trace, criteria ledger, reviews and release verdict
+summary: criteria ledger, reviews, release and interaction verdicts
 owner: []
 may_propose: []
 ---
 
 # _concept/11_build/
 
-The build half of the tree: what was planned, built, proved and judged. Everything before
-`11_build/` is design and nothing under it is. A skill here may read the whole tree and writes
-only the part it owns, so each file below has one writing skill and a verdict has one place it
-is decided.
+The build half of the tree: what was proved and judged. Everything before `11_build/` is
+design and nothing under it is. A skill here may read the whole tree and writes only the part
+it owns, so each file below has one writing skill and a verdict has one place it is decided.
+
+What was planned and built lives in the tracker, not here: `build-plan` records each spec's
+parent issue as `tracker.issue` in the feature spec, its sub-issues are the tickets, and the
+pull requests that close them are the build record. A reader that needs a feature's build
+status asks the tracker: `gh issue view <n> --json state,closedByPullRequestsReferences` for
+the parent issue and the PRs that closed it, `gh api repos/{owner}/{repo}/issues/<n>/sub_issues`
+for its tickets and their states.
 
 | part | holds | written by |
 |---|---|---|
-| `slices/<slice_id>/` | one vertical slice's dossier, frozen on commit | `build-plan` (plan), `build-implement` (index) |
-| `trace.yaml` | feature → slices → commits → code | `build-implement` |
-| `acceptance-criteria/` | the criteria status ledger, one file per feature | `build-plan` creates, `build-implement`, `quality-e2e`, `quality-review` flip rows |
+| `acceptance-criteria/` | the criteria status ledger, one file per feature, each row naming its ticket | `build-plan` creates, `quality-e2e`, `quality-review` flip rows |
 | `reviews/<feature_slug>.yaml` | one feature's code-review verdict | `quality-review` |
 | `release.yaml` | the whole-app release verdict | `quality-release` |
 | `interaction.sarif` | the app-wide interaction conformance verdict, SARIF 2.1.0 | `quality-interaction` (`tree/11_build/interaction.md`) |

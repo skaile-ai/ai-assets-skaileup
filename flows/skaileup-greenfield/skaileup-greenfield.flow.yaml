@@ -243,21 +243,21 @@ nodes:
       skill: quality-standards
       label: Standards
       phase: implementation
-  # build-plan and build-implement repeat per feature and per slice; the graph below
-  # shows one iteration. The loop lives in those two skill bodies.
+  # build-plan and build-implement run once per feature spec: build-plan cuts the spec's
+  # tickets, build-implement builds all of them; the graph below shows one spec's pass.
   - id: plan
     type: skill
     parentNode: g-implementation
     data:
       skill: build-plan
-      label: Plan Slices
+      label: Plan Tickets
       phase: implementation
   - id: implement
     type: skill
     parentNode: g-implementation
     data:
       skill: build-implement
-      label: Implement Slice
+      label: Implement Spec
       phase: implementation
   - id: branch
     type: skill

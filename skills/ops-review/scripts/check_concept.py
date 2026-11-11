@@ -10,9 +10,11 @@ Stdlib + PyYAML only. Checks:
                      (`comparable.md`, `10_blueprint/glossary.md`, `10_blueprint/datamodel/feature-map.json`,
                      `03_brand/tokens.json`, `11_build/interaction.yaml`) are reported as unowned; a
                      leftover `10_blueprint/decisions.md` or `11_build/decisions.md` is one line: the
-                     decision log moved to `docs/adr/` (ADR 0032)
+                     decision log moved to `docs/adr/` (ADR 0032); a leftover `11_build/trace.yaml` or
+                     `11_build/slices/` is one line: issue↔PR links replace them (ADR 0036)
   2. frontmatter     `last_updated` (and `approved`, when present) is an ISO date on every
-                     artifact markdown file, plus the fields its artifact type requires
+                     artifact markdown file, plus the fields its artifact type requires; a feature's
+                     `tracker`, when present, is `{ issue: <n> }` with a positive issue number
   3. cross-links     a feature's `screens:` and a screen's `implements:` resolve, in both directions
                      (a pending proposal entry with anchor `implements` or `screens` whose payload names
                      the other side satisfies the link until its owner settles it)
@@ -24,7 +26,8 @@ Stdlib + PyYAML only. Checks:
                      feature's own slug, or scoped to another feature whose spec carries it
   6. ledger          `11_build/acceptance-criteria/<featureset>/<feature>.ac.md` rows are checkbox
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
-                     `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
+                     `<pointer> · <evaluator> · <commit> · <date> · #<ticket>`, untested rows the id and
+                     `#<ticket>` alone; a ledger whose spec has no `tracker.issue` is one line on the ledger
   7. proposals       every `_concept/proposals/*.yaml` file parses; an entry whose `target` resolves
                      to no node of the tree is reported; a `proposed` entry older than `--stale-days`
                      (default 14, counted from the file's `proposed_on`) is reported with the owner skill
@@ -116,6 +119,11 @@ QUOTING_PARTS = ("02_grounding/", "11_build/design-candidates.md", "09_mockup/st
 # now (ADR 0032). A leftover is one finding, and its lines are not read as owner content.
 LEFTOVER_DECISIONS = ("10_blueprint/decisions.md", "11_build/decisions.md")
 DECISIONS_MOVED = "decision log moved to docs/adr/ (ADR 0032); move ADR-grade records, drop the rest"
+# The build trace and the slice dossiers of the earlier build skills; the tracker's issue↔PR links
+# replace both (ADR 0036). A leftover is one finding, and its lines are not read as owner content.
+LEFTOVER_BUILD = ("11_build/trace.yaml", "11_build/slices")
+BUILD_REPLACED = "issue↔PR links replace the trace and slice dossiers (ADR 0036); delete it"
+TICKET_RE = re.compile(r"^#[1-9][0-9]*$")
 ADR_DIR = "docs/adr"
 ADR_REF_RE = re.compile(r"^adr:([a-z0-9]+(?:-[a-z0-9]+)*)$")
 ADR_FILE_RE = re.compile(r"^[0-9]{4}-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$")
@@ -287,6 +295,9 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
     for path in LEFTOVER_DECISIONS:
         if (concept / path).exists():
             report(path, DECISIONS_MOVED)
+    for path in LEFTOVER_BUILD:
+        if (concept / path).exists():
+            report(path, BUILD_REPLACED)
 
     # models, stories
     model = None
@@ -345,6 +356,8 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
         if kind.get(p) == "screen" and "floorplan" in data and not (
                 isinstance(data["floorplan"], str) and data["floorplan"].strip()):
             report(rel(p), "`floorplan` is empty — name one floorplan id of `rulebook/floorplans/`")
+        if kind.get(p) == "feature" and "tracker" in data and tracker_issue(data) is None:
+            report(rel(p), "`tracker` must be `{ issue: <n> }`, the spec's parent issue number")
 
     # 3. cross-links; a pending proposal entry for the missing side holds the link until it is settled
     entries, proposal_errors = read_proposals(concept)
@@ -392,6 +405,8 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
         spec = concept / ref if ref else None
         if ref and not spec.is_file():
             report(rel(ac), f"feature_ref: {ref} does not exist")
+        elif spec and spec in fm and tracker_issue(fm[spec]) is None:
+            report(rel(ac), f"{ref} has no `tracker.issue` — build-plan writes the parent issue and the ledger together")
         slug = ac.name.removesuffix(".ac.md")
         offset = ac.read_text(encoding="utf-8").count("\n") - body.count("\n")
         for n, line in enumerate(body.splitlines(), offset + 1):
@@ -400,18 +415,20 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
             m = ROW_RE.match(line)
             where = f"{rel(ac)}:{n}"
             if not m:
-                report(where, "not a ledger row — rows are `- [ ] <id>` or `- [PASS|FAIL] <id> — <evidence>`")
+                report(where, "not a ledger row — rows are `- [ ] <id> — #<ticket>` or `- [PASS|FAIL] <id> — <evidence> · #<ticket>`")
                 continue
             marker, cid, evidence = m.groups()
             report_id(cid, slug, defined, stories, owned, where, report)
             if spec and spec in cited and cid not in cited[spec]:
                 report(where, f"{cid} is not cited in {ref}")
-            if marker == " " and evidence:
-                report(where, "an untested row carries the id alone")
-            if marker != " ":
+            if marker == " ":
+                if not TICKET_RE.match((evidence or "").strip()):
+                    report(where, "an untested row carries the id and `#<ticket>` alone")
+            else:
                 parts = [x.strip() for x in (evidence or "").split(" · ")]
-                if len(parts) != 4 or not all(parts) or not COMMIT_RE.match(parts[2]) or not is_date(parts[3]):
-                    report(where, "evidence must be `<pointer> · <evaluator> · <commit> · <date>`")
+                if len(parts) != 5 or not all(parts) or not COMMIT_RE.match(parts[2]) or not is_date(parts[3]) \
+                        or not TICKET_RE.match(parts[4]):
+                    report(where, "evidence must be `<pointer> · <evaluator> · <commit> · <date> · #<ticket>`")
 
     # 7-8. proposals and open questions
     root = concept.parent
@@ -424,6 +441,14 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
     problems += glossary_split_problems(concept, root)
     problems += adr_ref_problems(concept, root, features, fm, entries)
     return problems
+
+
+def tracker_issue(data: dict) -> int | None:
+    """The spec's parent issue number from `tracker: { issue: <n> }`; None when absent or malformed."""
+    tracker = data.get("tracker")
+    issue = tracker.get("issue") if isinstance(tracker, dict) else None
+    ok = isinstance(issue, int) and not isinstance(issue, bool) and issue > 0
+    return issue if ok and set(tracker) == {"issue"} else None
 
 
 def as_date(value) -> datetime.date | None:
@@ -561,7 +586,8 @@ def inline_proposals(concept: Path, root: Path, project_glossary: str | None = N
     files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
              if p.is_file() and p.suffix in (".md", ".yaml", ".yml")]
     files = [(f"_concept/{rel}", p) for rel, p in files
-             if not rel.startswith(QUOTING_PARTS) and rel not in LEFTOVER_DECISIONS]
+             if not rel.startswith(QUOTING_PARTS) and rel not in LEFTOVER_DECISIONS
+             and not any(rel == x or rel.startswith(x + "/") for x in LEFTOVER_BUILD)]
     for extra in ("APP-DESIGN.md", project_glossary):
         if extra and (root / extra).is_file():
             files.append((extra, root / extra))

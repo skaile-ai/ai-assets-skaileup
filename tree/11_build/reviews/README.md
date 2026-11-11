@@ -8,7 +8,7 @@ may_propose: []
 # _concept/11_build/reviews/
 
 `<feature_slug>.yaml` is the verdict on one feature's shipped code: the one place the
-collection judges the built feature against its spec, so `build-implement`, `ops-review` and
+collection judges the built feature against its spec, so `ops-review` and
 `quality-release` do not repeat it. Forge-concept's review page reads three names from it
 (`feature`, `verdict`, `findings[].severity`); spelled any other way the feature renders with
 no verdict at all. Stance, severities and the blocking rule are
@@ -17,7 +17,7 @@ no verdict at all. Stance, severities and the blocking rule are
 ## Format
 
 ```yaml
-feature: <feature_slug>          # the id the host joins trace, ledger and review on
+feature: <feature_slug>          # the id the host joins ledger and review on
 verdict: approved | changes-requested
 commits: [<sha>, ...]
 files_reviewed: [<path>, ...]
@@ -35,20 +35,19 @@ last_updated: YYYY-MM-DD
 
 ## Writing it
 
-Reviews **one feature's shipped code**. How to read a diff is the global `code-review` skill's job; this procedure supplies the two inputs `code-review` otherwise asks a human for (the fixed point, from the feature's row in `_concept/11_build/trace.yaml`, format `tree/11_build/trace.md`, and the spec, the feature file) plus the axes a two-axis diff review does not carry. The verdict file and the ledger rows re-checked in step 5 are the only things it writes: a finding fixed during the review is a finding that never reached the ledger.
+Reviews **one feature's shipped code**. How to read a diff is the global `code-review` skill's job; this procedure supplies the two inputs `code-review` otherwise asks a human for (the fixed point, from the pull request of the spec's parent issue, and the spec, the feature file) plus the axes a two-axis diff review does not carry. The verdict file and the ledger rows re-checked in step 5 are the only things it writes: a finding fixed during the review is a finding that never reached the ledger.
 
-1. **Resolve the feature and its fixed point.** Glob `_concept/05_features/*/<feature_slug>.md`; zero matches or two is a question for the user and not a guess. Read the feature's entry in `_concept/11_build/trace.yaml` when the file exists: its slices' `commits` and `code`. Without an entry, derive the commits from git (a slice commit's body names the slice and the feature spec, `tree/11_build/slices/[slice_id]/index.md § Writing it` step 7) and confirm the list with the user; with nothing found, ask for the base commit in the same message as the feature. The fixed point is the one thing a review cannot run without, because it quietly widens to the whole repository otherwise.
+1. **Resolve the feature and its fixed point.** Glob `_concept/05_features/*/<feature_slug>.md`; zero matches or two is a question for the user and not a guess. Read the spec's `tracker.issue`, the parent issue, and find its pull request: `gh issue view <n> --json state,closedByPullRequestsReferences` once the parent is closed, `gh pr list --search "<n>"` while its draft PR is still open. The PR's commits are the review's commits and its base is the fixed point. Without a `tracker` key or a PR, derive the commits from git (the integration branch `spec/<featureset>-<feature>` against the default branch) and confirm the list with the user; with nothing found, ask for the base commit in the same message as the feature. The fixed point is the one thing a review cannot run without, because it quietly widens to the whole repository otherwise.
 2. **Build and test before reading a line.** Run the project's own build and test commands. A red build makes every finding provisional, so stop there, call the Skill tool with "diagnosing-bugs" and come back once it is green; without it, hand the failure to the user with the failing command and stop.
-3. **Call the Skill tool with "code-review" from a context that did not write the code.** If `code-review` is not installed, the review stops and names it. The fixed point is the parent of the earliest sha in the trace row's `commits` (or the derived or given base); the spec is the feature file. Dispatch it as a subagent, since the session that implemented the slice reads its own diff as correct. Hand it `_concept/02_grounding/standards/` alongside whatever the repo documents, where that exists: a convention this project was measured to follow outranks the generic smell baseline. Keep its two axes, Standards and Spec, apart in your own report, because merging them into one ranked list is the masking the split prevents.
+3. **Call the Skill tool with "code-review" from a context that did not write the code.** If `code-review` is not installed, the review stops and names it. The fixed point is the PR's base (or the derived or given base); the spec is the feature file. Dispatch it as a subagent, since the session that implemented the feature reads its own diff as correct. Hand it `_concept/02_grounding/standards/` alongside whatever the repo documents, where that exists: a convention this project was measured to follow outranks the generic smell baseline. Keep its two axes, Standards and Spec, apart in your own report, because merging them into one ranked list is the masking the split prevents.
 4. **Add the two axes `code-review` has no eye for**, per `## Checks`: security and data integrity across every route the diff touches, and accessibility across every screen it renders. Each hit is a finding with a file and a line.
 5. **Re-check the ledger** per `tree/11_build/acceptance-criteria/README.md § Reading`.
-6. **Read the accepted debt before writing findings.** `_concept/11_build/slices/<slice_id>/index.md` records what the simplification pass deliberately left in place (`tree/11_build/slices/[slice_id]/index.md`); with no dossier there is no recorded debt. Debt recorded there is context and not a finding; re-flagging it spends the reader's attention on a decision already made.
-7. **Write the verdict** to `_concept/11_build/reviews/<feature_slug>.yaml` in the shape above.
-8. **Report by axis**: Standards, Spec, Security, Accessibility, Criteria, each with its findings ordered by severity inside the axis and never across axes. On `changes-requested`, call the Skill tool with "diagnosing-bugs" against the findings and name this file as the one to re-run against; without it, the findings go to the user as they stand.
+6. **Write the verdict** to `_concept/11_build/reviews/<feature_slug>.yaml` in the shape above.
+7. **Report by axis**: Standards, Spec, Security, Accessibility, Criteria, each with its findings ordered by severity inside the axis and never across axes. On `changes-requested`, call the Skill tool with "diagnosing-bugs" against the findings and name this file as the one to re-run against; without it, the findings go to the user as they stand.
 
 ## Checks
 
-The review scope is the `commits` diffs plus the current contents of the `code` files, both from the feature's trace row. A hit is a finding only with a file, a line and the specific change that clears it; "consider reviewing auth here" is a note to nobody.
+The review scope is the diffs of the PR's commits plus the current contents of the files they touch. A hit is a finding only with a file, a line and the specific change that clears it; "consider reviewing auth here" is a note to nobody.
 
 - Every finding carries a file, a line and a resolution; the verdict is `approved` only where no finding is `critical` or `high`.
 

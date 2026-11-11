@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/04_journeys/stories.yaml
 
-The personas and the staged journeys the product exists for, each with testable acceptance criteria. `spec-feature` seeds the roster from it, and feature specs, slice plans, the ledger and e2e verdicts all cite its criterion ids, so a wrong shape here is re-cut in every skill after it.
+The personas and the staged journeys the product exists for, each with testable acceptance criteria. `spec-feature` seeds the roster from it, and feature specs, tickets, the ledger and e2e verdicts all cite its criterion ids, so a wrong shape here is re-cut in every skill after it.
 
 ## Format
 

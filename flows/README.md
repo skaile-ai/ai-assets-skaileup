@@ -24,7 +24,7 @@ a project. `quality-design` is on demand and sits in neither graph.
 Each flow carries three group nodes and repeats their `data.phase` on every skill node.
 The per-feature loops are **not** in the graph: the host orders nodes only along
 `type: flow` edges, so `spec-feature`, `experience-screen`, `build-plan` and `build-implement` state their own
-iteration and the graph shows one pass, marked by a comment at the loop's first node.
+iteration (`build-plan` and `build-implement` once per spec) and the graph shows one pass, marked by a comment at the loop's first node.
 
 ## Node order
 

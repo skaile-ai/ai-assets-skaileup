@@ -39,7 +39,7 @@ refs: [_concept/05_features/booking/reserve.md]
 
 The body is upstream's ADR format; the frontmatter is optional upstream and always written here, and upstream readers ignore the keys they do not know. `status: rejected` means the choice was refused and is recorded so nobody re-litigates it, which is not *Considered Options*: those are the roads not taken inside an accepted decision. A scope decision marked OUT in a feature spec is recorded `status: rejected`. A record without frontmatter reads as `status: accepted`, `level: product`, `kind: decision`.
 
-**Referencing.** A record is cited by its slug as `adr:<slug>` — in a feature's `follows:`, a waived stage's `adr:` in `_concept/01_meta/walkthrough.yaml`, a design candidate's status, a slice plan — never by number, because the number is assigned at promotion and a citation written before it must stay valid. `adr:<slug>` resolves to `docs/adr/*-<slug>.md`, else to a pending proposal entry with `target: docs/adr/` and `anchor: adr:<slug>`.
+**Referencing.** A record is cited by its slug as `adr:<slug>` — in a feature's `follows:`, a waived stage's `adr:` in `_concept/01_meta/walkthrough.yaml`, a design candidate's status, a ticket — never by number, because the number is assigned at promotion and a citation written before it must stay valid. `adr:<slug>` resolves to `docs/adr/*-<slug>.md`, else to a pending proposal entry with `target: docs/adr/` and `anchor: adr:<slug>`.
 
 **Proposal entry.** `target: docs/adr/`, `anchor: adr:<slug>`, `payload:` the full markdown record above as a string, with `status: proposed` and no number in it.
 
@@ -54,7 +54,7 @@ A landed record is never edited. To change your mind, write a new record that na
 
 ## Patterns
 
-A record of `kind: pattern` generalises what two or more features share (the same entities, actions, screens or floorplans used the same way) into one rule later features follow. `spec-feature` proposes it when its similarity check generalises a match (`tree/05_features/[featureset]/[feature].md § Writing it`): at `featureset` level when every feature it covers sits in one featureset, else at `product`. `applies_when` is the sentence a later run matches a new feature against; each feature that follows the record lists `adr:<slug>` in `follows:`. In the build, a pattern is one shared module (`tree/11_build/slices/README.md § Writing it`).
+A record of `kind: pattern` generalises what two or more features share (the same entities, actions, screens or floorplans used the same way) into one rule later features follow. `spec-feature` proposes it when its similarity check generalises a match (`tree/05_features/[featureset]/[feature].md § Writing it`): at `featureset` level when every feature it covers sits in one featureset, else at `product`. `applies_when` is the sentence a later run matches a new feature against; each feature that follows the record lists `adr:<slug>` in `follows:`. In the build, a pattern is one shared module: the first ticket that needs it builds it and names `adr:<slug>`, and every later ticket reuses it (`build-plan` cuts them so).
 
 ## Writing it
 

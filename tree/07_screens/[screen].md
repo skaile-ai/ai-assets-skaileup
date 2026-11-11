@@ -7,7 +7,7 @@ may_propose: [spec-feature, quality-design]
 
 # _concept/07_screens/<screen>.md
 
-One screen, described on its own: the floorplan it is laid out in, what each region shows, how it deviates from the app's information tiers, what a person does there, and the elements the Storybook story and the build anchor to. A screen belongs to no feature: it names the feature files it realises in `implements:`, and a feature names its screens back (`tree/05_features/README.md § Links in both directions`). `mockup-storybook` builds the screen's story from the region bindings and `elements:`, a note left on that story is routed back to this file, and the build slices implement against it. `experience-screen` owns the file; `mockup-feedback` edits it only as human-approved patches (`### Patching (mockup-feedback)`), which is no proposal and no ownership; `spec-feature` and `quality-design` propose entries only.
+One screen, described on its own: the floorplan it is laid out in, what each region shows, how it deviates from the app's information tiers, what a person does there, and the elements the Storybook story and the build anchor to. A screen belongs to no feature: it names the feature files it realises in `implements:`, and a feature names its screens back (`tree/05_features/README.md § Links in both directions`). `mockup-storybook` builds the screen's story from the region bindings and `elements:`, a note left on that story is routed back to this file, and the build's tickets implement against it. `experience-screen` owns the file; `mockup-feedback` edits it only as human-approved patches (`### Patching (mockup-feedback)`), which is no proposal and no ownership; `spec-feature` and `quality-design` propose entries only.
 
 ## Format
 

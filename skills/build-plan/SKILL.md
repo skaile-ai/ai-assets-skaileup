@@ -1,10 +1,11 @@
 ---
 name: build-plan
-description: "Use when a frozen feature spec needs breaking into buildable work — cuts the feature into vertical slices, gives each its blocking edges, and writes one slice dossier per slice. Triggers on 'plan this feature', 'break it into slices', 'what do we build first'."
-version: "0.2.0"
+description: "Use when a frozen feature spec needs breaking into buildable work — opens the spec's parent issue, follows the installed to-tickets skill to cut it into tracer-bullet tickets with blocking edges, and creates the criteria ledger naming each criterion's ticket. Triggers on 'plan this feature', 'break it into tickets', 'what do we build first'."
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
+    - skill:@mattpocock/to-tickets#^0.1
   artifacts:
     requires:
       - { id: features }
@@ -16,12 +17,11 @@ metadata:
       - { id: grounding-findings }
       - { id: walkthrough }
     produces:
-      - { id: slice-plan, path: "_concept/11_build/slices/<slice_id>/plan.md" }
       - { id: acceptance-criteria, path: "_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md" }
       - { id: proposals, path: "_concept/proposals/<date>-build-plan-<scope>.yaml" }
   prerequisites:
     files:
-      # Hard: the spec's criterion ids and `screens:` list are machine-joined into the ledger and the plan;
+      # Hard: the spec's criterion ids are machine-joined into the tickets and the ledger;
       # an id cannot be derived from the code, and `spec-feature` writes it.
       - { path: "_concept/05_features", gate: hard, min_entries: 1 }
       - { path: "_concept/01_meta/walkthrough.yaml", gate: soft }
@@ -35,18 +35,24 @@ metadata:
 
 # build-plan
 
-Turns one frozen feature spec into the vertical slices that build it, each with the slices
-that block it and its own dossier under `11_build/slices/<slice_id>/`. It plans and writes no
-code: a dossier is built by `build-implement`.
+Turns one frozen feature spec into the tickets that build it: sub-issues of the spec's parent
+issue, each with its blocking edges, in the tracker `docs/agents/issue-tracker.md` names. How
+to cut them is the installed `to-tickets` skill; this skill opens the parent, hands it the
+concept's inputs, records the parent in the spec and creates the ledger. It writes no code.
 
 ## Route
 
 Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>` for the feature being planned. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
-2. **Read the feature, cut the slices, give them blocking edges, quiz the user** — `tree/11_build/slices/README.md § Writing it` (steps 1–5; step 2 joins the open `interaction.sarif` changes and maps each pattern the feature follows to its one shared module). Only the feature spec is required to plan; a missing screen, stack or model is derived from the findings or asked in the quiz. Write nothing until the user approves the breakdown. A cut that passes the three-test gate (a wide refactor sequenced expand–contract, a shared module placed against the obvious seam) is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`).
-3. **Write one dossier per approved slice** — `tree/11_build/slices/[slice_id]/plan.md`.
-4. **Create the criteria ledger** — `tree/11_build/acceptance-criteria/README.md § Creating the ledger`. Every row untested, one per criterion id the spec carries.
-5. **Report the frontier** — `tree/11_build/slices/README.md § Writing it` (step 7): the slices whose blockers are all satisfied, in the order they can start.
+2. **Check no proposal is pending against the spec** — `tree/proposals/README.md § Format`: an entry at `status: proposed` targeting this spec, a screen it names or `_concept/10_blueprint/datamodel/model.yaml` stops this skill, naming the owner of that target's node to settle it first.
+3. **Ensure the parent issue and record it in the spec** — `tree/05_features/[featureset]/[feature].md § Format` (`tracker`). An existing `tracker.issue` is reused. Otherwise create it once (title the feature name, label `spec`, body the spec path, a two-line summary and the ledger path `_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md`) and write `tracker: { issue: <n> }` into the spec at once, changing no other key, so a rerun reuses it.
+4. **Read the installed `to-tickets` skill and follow it, with the parent issue as its source.** Its quiz runs and nothing is published before the user approves; tickets become sub-issues with native blocked-by edges and the label `ready-for-agent`. Hand it, as pointers: the spec, the screens its `screens:` list names, `_concept/10_blueprint/`, the standards whose `applies_to` names `build-plan` in `_concept/02_grounding/standards/index.yml`, and `_concept/02_grounding/findings/` for what those leave open. Tell it three rules of this collection:
+   - each ticket's acceptance criteria list criterion ids from the spec, never their text, and every id is claimed by exactly one ticket;
+   - an open change in `_concept/11_build/interaction.sarif` (`tree/11_build/interaction.md`) whose `files` fall in this feature's code joins the ticket owning those files, and one with `kind: systemic` is a prefactoring ticket the dependent tickets are blocked by;
+   - each `pattern` in the spec's `follows:` (`tree/docs/adr/README.md § Patterns`) is one shared module: where `gh issue list --search "adr:<slug>"` finds a ticket that builds it, reuse it; otherwise the first ticket that needs it creates it, names `adr:<slug>`, and blocks the others that need it.
 
-**Done when** every acceptance criterion in the spec is claimed by a slice, every `blocked_by` names a slice that exists, each slice's `plan.md` is on disk, and the ledger holds one untested row per criterion.
+   A cut that passes the three-test gate (a wide refactor sequenced expand–contract, a shared module placed against the obvious seam) is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`).
+5. **Create the criteria ledger** — `tree/11_build/acceptance-criteria/README.md § Creating the ledger`. Every row untested, one per criterion id the spec carries, each naming its ticket.
+
+**Done when** the parent issue exists with one sub-issue per approved ticket, every criterion id in the spec is claimed by exactly one ticket, the spec carries `tracker.issue`, and the ledger holds one untested row per criterion naming its ticket.

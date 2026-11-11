@@ -1,9 +1,10 @@
 spec_version: "0.2"
 name: skaileup-lead
-version: "0.1.1"
-description: "Leads a skaileup session for one project: runs the expectations interview and the skaileup router, sends each skill run to the agent that owns the skill, and answers that agent's questions with the autonomy the user's expectations set, asking the user where the user decides. The only skaileup agent that talks to the user."
+version: "0.1.2"
+description: "Leads a skaileup session for one project: runs the expectations interview, the skaileup router and build-implement, sends each other skill run to the agent that owns the skill, and answers that agent's questions with the autonomy the user's expectations set, asking the user where the user decides. The only skaileup agent that talks to the user."
 composes:
   - { kind: skill, ref: "skill:@skaile-ai/skaileup" }
+  - { kind: skill, ref: "skill:@skaile-ai/build-implement" }
   - { kind: agent, ref: "agent:@skaile-ai/skaileup-researcher", binding: delegate }
   - { kind: agent, ref: "agent:@skaile-ai/skaileup-product", binding: delegate }
   - { kind: agent, ref: "agent:@skaile-ai/skaileup-designer", binding: delegate }

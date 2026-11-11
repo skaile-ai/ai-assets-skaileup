@@ -1255,7 +1255,7 @@ def test_node_parameters_are_not_inert(tmp_path):
     (`host:sub-flow-parameters-read` takes `data.parameters.flow` as a child flow id)."""
     root = write_repo(tmp_path)
     flow = good_flow()
-    node(flow, "b")["data"]["parameters"] = {"flow": "skaileup-slice"}
+    node(flow, "b")["data"]["parameters"] = {"flow": "skaileup-child"}
     write_flow(root, flow)
     only(root, "carries `data.parameters:`")
 
@@ -1275,7 +1275,7 @@ def test_sub_flow_node_is_rejected(tmp_path):
     root = write_repo(tmp_path)
     flow = good_flow()
     flow["nodes"].append(
-        {"id": "s", "type": "sub-flow", "data": {"flow": "skaileup-slice", "phase": "implementation"}}
+        {"id": "s", "type": "sub-flow", "data": {"flow": "skaileup-child", "phase": "implementation"}}
     )
     flow["edges"].append({"id": "e2", "source": "b", "target": "s", "type": "flow"})
     write_flow(root, flow)
@@ -1297,7 +1297,7 @@ def test_router_node_is_rejected(tmp_path):
 def test_requires_may_not_name_a_flow(tmp_path):
     root = write_repo(tmp_path)
     flow = good_flow()
-    flow["requires"].append("flow:@skaile-ai/skaileup-slice")
+    flow["requires"].append("flow:@skaile-ai/skaileup-child")
     write_flow(root, flow)
     only(root, "ships no `sub-flow` nodes")
 
@@ -2480,13 +2480,13 @@ def test_resolve_does_not_match_a_file_by_location():
     so a file path resolves only through a `path:` entry that names it."""
     nodes = nodes_of(
         ("01_meta/scope.md", "_concept/01_meta/scope.yaml"),
-        ("11_build/trace.md", "_concept/11_build/trace.yaml"),
+        ("11_build/release.md", "_concept/11_build/release.yaml"),
         ("brief.md", "_concept/brief.md"),
     )
     assert check.resolve(nodes, "_concept/01_meta/scope.yaml") is nodes[0]
-    assert check.resolve(nodes, "_concept/11_build/trace.yaml") is nodes[1]
+    assert check.resolve(nodes, "_concept/11_build/release.yaml") is nodes[1]
     assert check.resolve(nodes, "_concept/brief.md") is nodes[2]
-    for wrong in ("_concept/01_meta/scope.json", "_concept/11_build/trace.json", "_concept/brief"):
+    for wrong in ("_concept/01_meta/scope.json", "_concept/11_build/release.json", "_concept/brief"):
         assert check.resolve(nodes, wrong) is None, wrong
 
 
@@ -3121,7 +3121,7 @@ def concept_tree(root: Path) -> Path:
         "10_blueprint/datamodel/model.yaml": "version: 1\nentities:\n  User:\n    fields:\n      name: string\n",
         "05_features/auth/login.md": (
             "---\npriority: must-have\npermissions: {member: [view]}\nscreens:\n  - path: 07_screens/login.md\n"
-            "data_entities: [User]\nlast_updated: 2026-09-05\n---\n\n## Criteria\n\n- AC-login-01\n"
+            "data_entities: [User]\ntracker: { issue: 7 }\nlast_updated: 2026-09-05\n---\n\n## Criteria\n\n- AC-login-01\n"
         ),
         "07_screens/login.md": (
             "---\nscreen_id: login\ntitle: Login\nimplements:\n  - 05_features/auth/login.md\nfloorplan: focused-task\n"
@@ -3131,7 +3131,7 @@ def concept_tree(root: Path) -> Path:
         "11_build/acceptance-criteria/auth/login.ac.md": (
             "---\nfeature: login\nfeature_ref: _concept/05_features/auth/login.md\nlast_updated: 2026-09-05\n---\n\n"
             "# Criteria — Login\n\n"
-            "- [PASS] AC-login-01 — tests/login.test.ts · build-implement · 4f2a9c1 · 2026-09-05\n"
+            "- [PASS] AC-login-01 — tests/login.test.ts · quality-review · 4f2a9c1 · 2026-09-05 · #8\n"
         ),
     }
     concept = root / "_concept"
@@ -3186,7 +3186,7 @@ def test_check_concept_accepts_a_hyphenated_feature_scope_but_not_a_hyphenated_s
         ledger.read_text()
         .replace("feature: login", "feature: password-reset")
         .replace("auth/login.md", "auth/password-reset.md")
-        + "- [ ] AC-password-reset-01\n"
+        + "- [ ] AC-password-reset-01 — #9\n"
     )
     ledger.unlink()
     assert module.check(concept, script) == []
@@ -3719,6 +3719,42 @@ def test_check_concept_reports_a_leftover_decision_log_once(tmp_path):
     assert problems == [f"_concept/{rel}: {module.DECISIONS_MOVED}"
                         for rel in ("10_blueprint/decisions.md", "11_build/decisions.md")], problems
     assert "decision log moved to docs/adr/ (ADR 0032)" in problems[0]
+
+
+def test_check_concept_reports_a_leftover_trace_and_slice_folder_once(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    (concept / "11_build/trace.yaml").write_text("features: {}\nproposed: x\n", encoding="utf-8")
+    (concept / "11_build/slices/s01").mkdir(parents=True)
+    (concept / "11_build/slices/s01/plan.md").write_text("---\nstatus: proposed\n---\n", encoding="utf-8")
+    problems = module.check(concept, script, today=_today())
+    assert problems == [f"_concept/{rel}: {module.BUILD_REPLACED}"
+                        for rel in ("11_build/trace.yaml", "11_build/slices")], problems
+    assert "issue↔PR links replace the trace and slice dossiers (ADR 0036); delete it" in problems[0]
+
+
+def test_check_concept_reads_the_spec_tracker_and_the_ledger_tickets(tmp_path):
+    module, script = load_check_concept()
+    concept = concept_tree(tmp_path)
+    feature = concept / "05_features/auth/login.md"
+    ledger = concept / "11_build/acceptance-criteria/auth/login.ac.md"
+
+    feature.write_text(feature.read_text().replace("tracker: { issue: 7 }", "tracker: { issue: '7' }"))
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 2, problems
+    assert "`tracker` must be `{ issue: <n> }`" in problems[0]
+    assert "login.ac.md" in problems[1] and "has no `tracker.issue`" in problems[1]
+
+    feature.write_text(feature.read_text().replace("tracker: { issue: '7' }\n", ""))
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 1 and "has no `tracker.issue`" in problems[0], problems
+
+    feature.write_text(feature.read_text().replace("data_entities: [User]\n", "data_entities: [User]\ntracker: { issue: 7 }\n"))
+    ledger.write_text(ledger.read_text().replace(" · #8\n", "\n") + "- [ ] AC-login-01\n")
+    problems = module.check(concept, script, today=_today())
+    assert len(problems) == 2, problems
+    assert "evidence must be `<pointer> · <evaluator> · <commit> · <date> · #<ticket>`" in problems[0]
+    assert "an untested row carries the id and `#<ticket>` alone" in problems[1]
 
 
 def test_check_concept_skips_the_candidate_report(tmp_path):

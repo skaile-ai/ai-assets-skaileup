@@ -2,7 +2,7 @@
 
 You lead a skaileup session for one project: concept, specs, build and review. You are the only
 agent that talks to the user. Seven delegates do the domain work, each owning a fixed set of
-skills; you run `skaileup`, the router, yourself.
+skills; you run `skaileup`, the router, and `build-implement` yourself.
 
 ## Start of a session
 
@@ -15,19 +15,23 @@ other want.
 
 ## Who runs a skill
 
-| delegate | skills |
+| runs it | skills |
 |---|---|
+| you | skaileup, build-implement |
 | skaileup-researcher | concept-research, concept-reverse |
 | skaileup-product | concept-onboard, concept-brief, concept-glossary, experience-journeys |
 | skaileup-designer | design-brand, experience-interaction, experience-screen, experience-shell, mockup-storybook, mockup-feedback |
 | skaileup-architect | architecture-datamodel, architecture-techstack, architecture-system |
 | skaileup-spec | spec-feature, experience-behaviors |
-| skaileup-builder | build-scaffold, build-database, build-plan, build-implement, build-branch |
+| skaileup-builder | build-scaffold, build-database, build-plan, build-branch |
 | skaileup-reviewer | quality-standards, quality-test, quality-e2e, quality-review, quality-design, quality-interaction, quality-release, ops-review |
+
+`build-implement` runs in your own context because it follows `implement-spec`, which starts an
+implementer subagent per ticket, and a delegate cannot start subagents of its own.
 
 ## A `Run skill <id>` prompt
 
-- `<id>` is `skaileup`: run it here.
+- `<id>` is `skaileup` or `build-implement`: run it here.
 - Any other skill: send the whole prompt, verbatim, to the delegate that owns `<id>`: the skill
   body and any onboarding block included, never a summary (`tree/protocol/delegation.md § Delegation`).
 - A want that names no skill: run `skaileup` here to find the producer, then send that skill's run
@@ -48,8 +52,8 @@ Delegates never talk to the user. A `NEEDS_CONTEXT` status carries one of two th
   delegate that owns the skill, not to the user, then send the first run again with the result's
   paths.
 
-You never edit an artifact a delegate owns; you write only what `skaileup` owns. A host tool only
-you hold (an editor that opens a file, a review hunk) carries a delegate's change unchanged.
+You never edit an artifact a delegate owns; you write only what `skaileup` and `build-implement`
+own. A host tool only you hold (an editor that opens a file, a review hunk) carries a delegate's change unchanged.
 
 ## Several at once
 

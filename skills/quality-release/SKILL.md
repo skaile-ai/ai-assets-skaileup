@@ -14,14 +14,14 @@ metadata:
       - { id: acceptance-criteria }
       - { id: review }
       - { id: grounding-findings }
-      - { id: trace }
+      - { id: features }
     produces:
       - { id: release-verdict, path: "_concept/11_build/release.yaml" }
   prerequisites:
     files:
-      # Hard: `trace.yaml` is the build loop's machine-read record (features, slices, commits) the refusal in step 1 checks
-      # completeness against; it cannot be derived or asked for, and `build-implement` writes it.
-      - { path: "_concept/11_build/trace.yaml", gate: hard }
+      # Hard: each feature spec's `tracker.issue` names the parent issue whose tickets and pull requests the
+      # refusal in step 1 checks completeness against with `gh`; without a spec there is nothing to release.
+      - { path: "_concept/05_features", gate: hard, min_entries: 1 }
       - { path: "_concept/brief.md", gate: soft }
       - { path: "_concept/goals.md", gate: soft }
       - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
@@ -42,6 +42,6 @@ on seven axes and refuses; it never edits code.
 Read `tree/protocol/running.md` (the todo list, rules 1, 2 and 8) once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Take the evaluator's stance** — `tree/11_build/README.md § Verdicts`. Walk the app as a user and do not read what it was supposed to do.
-2. **Refuse on an incomplete trace or ledger, extract the intent, walk the product, score, write the verdict** — `tree/11_build/release.md`. The thresholds, rubrics and verdict table are in the same node.
+2. **Refuse on an unbuilt spec or an incomplete ledger, extract the intent, walk the product, score, write the verdict** — `tree/11_build/release.md`. The thresholds, rubrics and verdict table are in the same node.
 
 **Done when** `11_build/release.yaml` is on disk, every goal in it carries evidence from the running app, every design score cites the elements behind it, and the verdict follows the release thresholds rather than an impression of the app.

@@ -96,21 +96,15 @@ _concept/                             the artifact tree and how to read it
 │   └── datamodel/                    stack-neutral data model, naming rules and how it becomes a database
 │       ├── model.yaml                the authored data model; checked and read through @skaile/model
 │       └── seed.yaml                 named scenarios of sample data, every row checked against model.yaml
-├── 11_build/                         slices, trace, criteria ledger, reviews and release verdict
+├── 11_build/                         criteria ledger, reviews, release and interaction verdicts
 │   ├── design-candidates.md          evidenced candidates for a better design, found in the code
 │   ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
 │   ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
-│   ├── trace.yaml                    feature to slices to commits to code, the one feature-to-commit join
 │   ├── acceptance-criteria/          the criteria status ledger, one checkbox file per feature
 │   │   └── <featureset>/
 │   │       └── <feature_slug>.ac.md  the criteria status ledger, one checkbox file per feature
-│   ├── reviews/                      one feature's code-review verdict and findings
-│   │   └── <feature_slug>.yaml       one feature's code-review verdict and findings
-│   └── slices/                       one dossier per vertical slice, cut from a frozen feature spec
-│       └── <slice_id>/               one slice's dossier directory: plan, working state, frozen index
-│           ├── index.md              the frozen slice record and its transient progress file
-│           ├── plan.md               one slice's scope, rows, criteria by id, tests and carry-overs
-│           └── progress.yaml         the frozen slice record and its transient progress file
+│   └── reviews/                      one feature's code-review verdict and findings
+│       └── <feature_slug>.yaml       one feature's code-review verdict and findings
 └── proposals/                        one file per run that proposes entries to artifacts other skills own
     └── <date>-<skill>-<scope>.yaml   one file per run that proposes entries to artifacts other skills own
 ```

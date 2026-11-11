@@ -1,33 +1,26 @@
 ---
 name: build-implement
-description: "Use when a planned vertical slice is ready to build — implements it test-first, reviews it against its spec, then commits it and freezes its dossier — or when a frozen slice's outstanding manual check has been run. Triggers on 'build this slice', 'implement the next slice', 'land it', 'I tested it on the phone'."
-version: "0.2.0"
+description: "Use when a feature spec has its tickets and is ready to build — builds the whole spec on one integration branch by following the installed implement-spec skill on the spec's parent issue, one test-first implementer per ticket, and opens a draft PR that closes the parent. Triggers on 'build this feature', 'implement the spec', 'start building', 'land the tickets'."
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
+    - skill:@mattpocock/implement-spec#^0.1
     - skill:@mattpocock/tdd#^0.1
-    - skill:@mattpocock/code-review#^0.1
   artifacts:
     requires:
-      - { id: slice-plan }
-      - { id: acceptance-criteria }
       - { id: features }
       - { id: screens }
       - { id: standards }
       - { id: walkthrough }
     produces:
-      - { id: slice-index, path: "_concept/11_build/slices/<slice_id>/index.md" }
-      - { id: acceptance-criteria, path: "_concept/11_build/acceptance-criteria/<featureset>/<feature_slug>.ac.md" }
-      - { id: trace, path: "_concept/11_build/trace.yaml" }
       - { id: proposals, path: "_concept/proposals/<date>-build-implement-<scope>.yaml" }
   prerequisites:
     files:
-      # Hard: `plan.md` is the machine-read plan (feature, blocked_by, rows, criterion ids) the slice is
-      # built from; it cannot be derived from the code or asked for field by field, and `build-plan` writes it.
-      - { path: "_concept/11_build/slices", gate: hard, min_entries: 1 }
+      # Hard: the feature spec's `tracker.issue` names the parent issue whose sub-issues are the
+      # tickets this skill builds; `build-plan` writes it, and no ticket exists without it.
+      - { path: "_concept/05_features", gate: hard, min_entries: 1 }
       - { path: "_concept/01_meta/walkthrough.yaml", gate: soft }
-      - { path: "_concept/05_features", gate: soft, min_entries: 1 }
-      - { path: "_concept/11_build/acceptance-criteria", gate: soft }
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
       - { path: "_concept/02_grounding/standards/index.yml", gate: soft }
       - { path: "_concept/10_blueprint/openapi.yaml", gate: soft }
@@ -36,22 +29,54 @@ metadata:
 
 # build-implement
 
-Builds one vertical slice and lands it. What it knows about the work is `plan.md` and the
-artifacts that plan names; a spec or screen the plan names but the project lacks is asked for, not a stop. What it knows about how to build is `tdd` and `code-review`, which
-it calls and does not restate. Both have to be installed: this skill stops and names the
-missing one rather than improvising a test loop or a review.
+Builds one feature spec and lands it on its own integration branch. The work is the spec's
+tickets: the sub-issues of its parent issue, cut by `build-plan`. How to build them is the
+installed `implement-spec` skill, whose implementers call the Skill tool with "tdd"; this
+skill gates the run, hands `implement-spec` its inputs and does not restate it. Both have to
+be installed: this skill stops and names the missing one rather than improvising a build loop.
+It writes nothing under `_concept/` but its proposal file: the issue, its tickets and the
+pull requests that close them are the build's record.
 
-## Route
+Read `tree/protocol/running.md` once per session. This skill runs in the session agent's own
+context, never in a delegate: `implement-spec` starts subagents, and a delegate cannot.
 
-Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+## Steps
 
-1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>` for the feature the slice's `plan.md` names. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
-2. **Load the slice, build and review it, run the gate, recap, propose the simplification** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (steps 1–6; step 2 holds the OpenAPI/AsyncAPI match). Call the Skill tool with "tdd" for each row. Call the Skill tool with "code-review" once the rows are done. Confirm the seams with the user before the first test. A hard-to-reverse choice made while building is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`); other concerns go to the spec's parent issue (`tree/protocol/delegation.md § Delegation`).
-3. **Commit atomically** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 7): a user-approved decomposition and an explicit file list per commit.
-4. **Record the slice in the trace** — `tree/11_build/trace.md`, validated against `tree/11_build/trace.schema.json` before writing. Written once the last commit has landed.
-5. **Flip the ledger rows the gate exercised** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, stamped with the last commit's short sha.
-6. **Freeze the dossier** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (step 8), at `verification: outstanding` while a manual check is unrun.
+1. **Check the walk.** `tree/01_meta/walkthrough.md § Writing it` (step 6): from the project
+   root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>`.
+   A non-zero exit stops this skill with the script's message and names `skaileup` to continue
+   the walk; a missing `walkthrough.yaml` is the same stop.
+2. **Check no proposal is pending against the spec.** An entry in `_concept/proposals/`
+   (`tree/proposals/README.md § Format`) at `status: proposed` whose `target` is this spec, a
+   screen it names or `_concept/10_blueprint/datamodel/model.yaml` stops this skill, naming the
+   target's owner (the `owner:` of its node) to settle it first: a build against an artifact
+   about to change is built against the wrong thing.
+3. **Resolve the parent issue.** The spec's frontmatter `tracker.issue`
+   (`tree/05_features/[featureset]/[feature].md § Format`) is its number, in the tracker
+   `docs/agents/issue-tracker.md` names. No `tracker` key, or
+   `gh api repos/{owner}/{repo}/issues/<n>/sub_issues` returns no ticket, stops this skill and
+   names `build-plan`: a spec with no tickets has no task graph to build.
+4. **Gather the context pointers.** The spec, the screens its `screens:` list names
+   (`_concept/07_screens/<screen>.md`), the standards whose `applies_to` names `build-implement`
+   in `_concept/02_grounding/standards/index.yml`, and, where they exist,
+   `_concept/10_blueprint/openapi.yaml` and `asyncapi.yaml`, whose operations a handler matches
+   at the path, method and payload they document. These are pointers for the implementers,
+   never pasted content. Confirm with the user, in one batch, the seams `tdd` asks about for
+   every ticket on the frontier: an implementer subagent cannot reach the user.
+5. **Read the installed `implement-spec` skill and follow it, with the spec's parent issue.**
+   Tell it the integration branch is `spec/<featureset>-<feature>`, cut from the branch checked
+   out (`build/<app-slug>` where `build-branch` opened one), and that the draft PR from it
+   targets that base with `Closes #<parent>` and a `Closes #<ticket>` line per ticket in its
+   body; GitHub honours those lines only on the default branch, so against another base the
+   parent and tickets are closed with `gh issue close` when the PR merges. Each implementer
+   subagent calls the Skill tool with "tdd" for its ticket, with the pointers of step 4. Leave
+   out `implement-spec`'s own code review: `quality-review` reviews the integration branch from
+   a context that did not write it.
+6. **Record what the build decided.** A hard-to-reverse choice made while building is a
+   decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target
+   `docs/adr/`, anchor `adr:<slug>`); other concerns are one comment on the parent issue
+   (`tree/protocol/delegation.md § Delegation`). A spec, screen or ledger edited to match the
+   code stops being what the code is checked against: the build reads them and writes none.
 
-A frozen slice at `outstanding` whose check the user has now run takes only step 9 of the same node.
-
-**Done when** the slice's commits are on the branch, `index.md` exists beside `plan.md` with every manual check recorded and `verification` set, and `trace.yaml` carries the slice's entry.
+**Done when** every ticket's work is merged into `spec/<featureset>-<feature>`, the draft PR
+from it closes the parent issue and its tickets, and the implementer worktrees are gone.

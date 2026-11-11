@@ -45,7 +45,10 @@ not a question to ask twice.
 3. **Map each feature to its testable units.** For every feature under `_concept/05_features/`
    (`tree/05_features/[featureset]/[feature].md`), read its acceptance criteria and find the
    exported functions, handlers, stores and validators that carry them, then name which
-   criterion each unit answers. A criterion that needs a browser or a database is not a gap
+   criterion each unit answers. Where the spec's frontmatter carries `tracker.issue`, the
+   pull request that built it (`gh pr list --search "<n>" --json number,state,headRefName`,
+   then `gh pr view <pr> --json files`) names the files to look in first. A criterion that
+   needs a browser or a database is not a gap
    here: record it as belonging to integration or to `quality-e2e` and move on. With no
    feature specs, derive the units from `_concept/02_grounding/findings/routes.md` and the
    code, and ask the user which behaviours must hold, in one batch with the open `depth`

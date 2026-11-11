@@ -78,11 +78,11 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [architecture-techstack](skills/architecture-techstack/) | Chooses the technology stack and records its id |
 | [architecture-system](skills/architecture-system/) | Records custom modules, protocols and integrations beyond the stack |
 | [architecture-datamodel](skills/architecture-datamodel/) | Derives the stack-neutral data model, authored as TypeScript, and seed scenarios from feature specs |
-| [build-branch](skills/build-branch/) | Opens the build branch before slices and merges or discards it after |
+| [build-branch](skills/build-branch/) | Opens the build branch before the first spec is built and merges or discards it after the last |
 | [build-scaffold](skills/build-scaffold/) | Scaffolds, themes, wires auth and builds the shell of a running app |
 | [build-database](skills/build-database/) | Translates the data model into a migrated schema with seed scripts |
-| [build-plan](skills/build-plan/) | Cuts a frozen feature spec into vertical slices with slice dossiers |
-| [build-implement](skills/build-implement/) | Implements a slice test-first, reviews it, commits and freezes it |
+| [build-plan](skills/build-plan/) | Opens a frozen feature spec's parent issue and cuts it into tickets with the installed `to-tickets` |
+| [build-implement](skills/build-implement/) | Builds a spec's tickets test-first on one integration branch with the installed `implement-spec`, ending in a draft PR that closes the parent |
 | [quality-standards](skills/quality-standards/) | Records an existing codebase's conventions as standards |
 | [quality-test](skills/quality-test/) | Writes unit tests that trace back to feature specs |
 | [quality-e2e](skills/quality-e2e/) | Proves journeys end to end in a real browser |
@@ -94,14 +94,14 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 
 ## Agents
 
-A host runs `skaileup-lead` as the session's agent; it runs `skaileup` itself and sends every other skill run to the delegate that composes the skill, per `tree/protocol/delegation.md § Delegation`.
+A host runs `skaileup-lead` as the session's agent; it runs `skaileup` and `build-implement` itself (`build-implement` starts subagents, which a delegate cannot) and sends every other skill run to the delegate that composes the skill, per `tree/protocol/delegation.md § Delegation`.
 
 | agent | does |
 |---|---|
 | [skaileup-architect](agents/skaileup-architect/) | Stack, system and data model |
-| [skaileup-builder](agents/skaileup-builder/) | Branch, scaffold, database, slice plans and test-first slices |
+| [skaileup-builder](agents/skaileup-builder/) | Branch, scaffold, database and the tickets each spec is cut into |
 | [skaileup-designer](agents/skaileup-designer/) | Brand, app design, shell, screens and the mockup |
-| [skaileup-lead](agents/skaileup-lead/) | Leads the session: runs the expectations interview and `skaileup`, sends each skill run to the agent that owns it and answers its questions as the expectations say, asking the user where the user decides |
+| [skaileup-lead](agents/skaileup-lead/) | Leads the session: runs the expectations interview, `skaileup` and `build-implement`, sends each other skill run to the agent that owns it and answers its questions as the expectations say, asking the user where the user decides |
 | [skaileup-product](agents/skaileup-product/) | Onboarding, brief, goals, ideas, glossary and journeys |
 | [skaileup-researcher](agents/skaileup-researcher/) | Research and reverse engineering, a source against every claim |
 | [skaileup-reviewer](agents/skaileup-reviewer/) | Standards, tests and reviews of work it did not write; never fixes |

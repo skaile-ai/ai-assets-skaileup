@@ -9,6 +9,7 @@ follows: [adr:poll-state-reaches-every-member-live]
 screens:
   - path: 07_screens/poll.md
 data_entities: [Vote, Poll, Member]
+tracker: { issue: 102 }
 last_updated: 2026-10-25
 ---
 

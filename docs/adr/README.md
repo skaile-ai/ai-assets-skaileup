@@ -12,7 +12,8 @@ files checked by the package `@skaile/model`; 0031 moves proposed entries out of
 artifacts into one proposal file per run; 0032 moves the decision logs to one ADR file per
 decision under `docs/adr/`; 0033 makes `GLOSSARY.md` the default project glossary; 0034 moves the
 tree's protocol into `tree/protocol/`; 0035 has skaileup write a guidance section the upstream
-skills read.
+skills read; 0036 rebuilds `build-plan` and `build-implement` as adapters on upstream
+`to-tickets` and `implement-spec`, with issue ↔ PR links as the trace.
 
 A decision earns a record here when it passes three tests: it constrains future work, it
 was expensive to reach, and reversing it would cost more than reading it.
@@ -24,13 +25,13 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0003](./0003-skill-body-shape.md) | 140-line ceiling, no `MUST`/`NEVER` block — superseded by 0017 |
 | [0004](./0004-contracts-earn-their-place.md) | A contract survives only if it is read in-body — superseded by 0017 |
 | [0005](./0005-warm-and-cold-session-boundaries.md) | Two session boundaries, warm and cold; no slash commands |
-| [0006](./0006-the-slice-loop-composes.md) | The slice loop is four skills that compose global ones |
+| [0006](./0006-the-slice-loop-composes.md) | The slice loop is four skills that compose global ones; amended by 0036 (one pass per spec, on `to-tickets` and `implement-spec`) |
 | [0007](./0007-one-numbered-artifact-tree.md) | One numbered artifact tree under `_concept/` |
 | [0008](./0008-gates-live-at-the-step-they-bind.md) | A gate lives at the step it binds; no file collects gates |
 | [0009](./0009-stack-knowledge-lives-in-templates.md) | Stack-specific knowledge lives in a template, not a skill |
-| [0010](./0010-no-plan-file-and-no-status-file.md) | The build side keeps no plan file and no status file |
+| [0010](./0010-no-plan-file-and-no-status-file.md) | The build side keeps no plan file and no status file; superseded by 0036 where it concerns slice dossiers and the trace |
 | [0011](./0011-the-machine-layer-sits-under-metadata.md) | The machine layer sits under `metadata:`; paths carry `_concept/` |
-| [0012](./0012-foreign-skills-and-the-two-libraries.md) | Five foreign skills stay global, called one gate-checked way; what came from pstack and Pocock; amended by 0035 |
+| [0012](./0012-foreign-skills-and-the-two-libraries.md) | Five foreign skills stay global, called one gate-checked way; what came from pstack and Pocock; amended by 0035 and 0036 |
 | [0013](./0013-a-skill-declares-what-it-produces.md) | A skill declares what it produces; no registry is generated |
 | [0014](./0014-the-glossary-is-a-root-file.md) | The glossary is a root file; `comparable.md` folds into the brief |
 | [0016](./0016-published-formats-where-one-exists.md) | Published formats where one exists: DTCG tokens, JSON Schema for machine files, SARIF, OpenAPI/AsyncAPI, MADR, C4; amended by 0030 |
@@ -44,7 +45,7 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0024](./0024-the-glossary-splits-by-kind.md) | The glossary splits by kind when the project keeps its own: words in the project glossary, ontology in `_concept/glossary.md`; amends 0014 and 0022; G4 and G5 amended by 0031; amended by 0033 |
 | [0025](./0025-archetypes-are-an-optional-declared-default.md) | Archetypes are an optional declared default: one table in `rulebook/archetypes.md`, `archetype:` in `APP-DESIGN.md`, cards stay research; extends 0015 and 0018 |
 | [0026](./0026-the-mockup-stage-is-one-vue-storybook-package.md) | The mockup stage is one Vue Storybook package; the data model is authored in TypeScript and generated to JSON; notes go through the annotation inbox; amends 0020 and 0022; D2 superseded by 0030 |
-| [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; expectations first; decision records carry a level and a kind, patterns included; a similarity check before the grill; ideas in the roster; amends 0022; K7 amended by 0031; K4 and K5 amended by 0032 |
+| [0027](./0027-agents-and-levelled-decisions.md) | Eight agents, a lead and seven delegates, with the interview relay; expectations first; decision records carry a level and a kind, patterns included; a similarity check before the grill; ideas in the roster; amends 0022; K7 amended by 0031; K4 and K5 amended by 0032; K1 amended by 0036 |
 | [0028](./0028-feature-pages-are-generated-from-the-specs.md) | Feature pages are generated from the specs: one `Features/<featureset>/<feature>` story per spec, screen stories bind via `screenDocs`, triage routes feature notes to the spec; amends 0026 |
 | [0029](./0029-the-concept-is-walked-top-down.md) | The concept is walked top-down: four stages (frame, look, data, features) each ending on the user's yes, one state file `_concept/01_meta/walkthrough.yaml`, the four build skills gate on it, no silent completion, `depth` thins and never removes; amends 0019 and 0023 for those four skills; W4 amended by 0031; W5 amended by 0032 |
 | [0030](./0030-the-data-model-is-two-yaml-files-checked-by-skaile-model.md) | The data model is two authored YAML files, `model.yaml` and `seed.yaml`, nothing generated in `_concept/`; `@skaile/model` owns their schemas (an exception to 0016), loader, checks and CLI; layout is editor state; amends 0016, 0019 and 0026 (supersedes its D2); its inline `proposed:` key amended by 0031 |
@@ -53,3 +54,4 @@ was expensive to reach, and reversing it would cost more than reading it.
 | [0033](./0033-glossary-md-is-the-default-project-glossary.md) | `GLOSSARY.md` is the default project glossary; amends 0024 |
 | [0034](./0034-the-tree-protocol-lives-beside-it.md) | The tree's cross-cutting protocol lives beside it in `tree/protocol/` (ownership, running, delegation, beside the tree); routes cite only the files they use; amends 0017; amended by 0035 |
 | [0035](./0035-skaileup-writes-a-guidance-section-for-upstream-skills.md) | skaileup writes the `## skaileup artifacts` section of `docs/agents/domain.md`, a third root artifact, on the first build-side demand after running upstream `setup-matt-pocock-skills`; `build-scaffold` writes no `AGENTS.md` pointer; external skills gain the `user-followed` axis; amends 0012 and 0034 |
+| [0036](./0036-build-adapters-on-to-tickets-and-implement-spec.md) | `build-plan` follows the installed `to-tickets` on the spec's parent issue (`tracker.issue`) and `build-implement` the installed `implement-spec`, on integration branch `spec/<featureset>-<feature>` with a draft PR closing the parent; slice dossiers and `trace.yaml` removed, issue ↔ PR links are the trace; the lead composes `build-implement`; amends 0006, 0012 and 0027 K1; supersedes 0010 where it concerns slice dossiers and the trace |

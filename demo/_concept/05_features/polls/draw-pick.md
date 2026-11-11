@@ -9,6 +9,7 @@ follows: [adr:a-tie-is-settled-by-a-visible-draw, adr:poll-state-reaches-every-m
 screens:
   - path: 07_screens/poll.md
 data_entities: [Poll, Vote, Place]
+tracker: { issue: 103 }
 last_updated: 2026-10-25
 ---
 
