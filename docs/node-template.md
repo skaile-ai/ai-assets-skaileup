@@ -18,11 +18,15 @@ Resolution of a `_concept/` path: first a literal match against any node's `path
 (`<x>` placeholders match any one segment), then the location rule for directories only (a
 directory resolves to its `README.md`; a file resolves only through a `path:` entry, which every
 file node carries). A path below a directory entry of a list-form `path:` resolves to that README. Nothing else
-resolves. Node names are lowercase; every directory under `tree/` has a `README.md`.
+resolves. Node names are lowercase; every directory under `tree/` has a `README.md`, except a
+directory that only holds a root artifact's node (`tree/docs/`, `tree/docs/agents/`).
 
-**The one root artifact.** `APP-DESIGN.md` sits beside `_concept/`, not in it; its node is
-`tree/APP-DESIGN.md` with `path: APP-DESIGN.md` (no `_concept/` prefix). It is the only node
-whose `path:` leaves `_concept/` (`PROJECT_ROOT_ARTIFACTS` in `scripts/check.py`).
+**The root artifacts.** Three artifacts sit beside `_concept/`, not in it
+(`tree/protocol/beside-the-tree.md`): `APP-DESIGN.md` (node `tree/APP-DESIGN.md`), `docs/adr/`
+(node `tree/docs/adr/README.md`) and `docs/agents/domain.md` (node `tree/docs/agents/domain.md`,
+which owns only its `## skaileup artifacts` section). Their nodes carry the project-relative path
+with no `_concept/` prefix and are the only nodes whose `path:` leaves `_concept/`
+(`PROJECT_ROOT_ARTIFACTS` in `scripts/check.py`).
 
 ## The shape (R2)
 
@@ -34,7 +38,7 @@ and `## Writing it` a node may carry further named `##` sections (see below):
 path: _concept/03_brand/identity.md      # string or list; every entry is under this node's directory
 summary: colours, fonts, tone of voice and copy guidelines     # ≤ 80 chars; rendered into the tree listing
 owner: [design-brand]                    # skills whose `produces` resolve here; [] when nothing generates it
-may_propose: []                          # skills that may append `proposed` entries through this node; [] allowed, disjoint from owner
+may_propose: []                          # skills that may target this artifact in a proposal file; [] allowed, disjoint from owner
 ---
 
 # _concept/03_brand/identity.md
@@ -49,8 +53,8 @@ may_propose: []                          # skills that may append `proposed` ent
 
 ## Writing it
 <Numbered procedure. Multi-owner nodes: one `### <role> (<skill>)` subsection per owner.
-An interview step: "batch-ask what the evidence leaves open, per `tree/README.md § How a skill runs`" — rule 2 governs the batch, never "one question per message".
-A derive-or-ask step: read what exists → derive the rest from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) → batch-ask what neither settles (cite `tree/README.md § How a skill runs`).>
+An interview step: "batch-ask what the evidence leaves open, per `tree/protocol/running.md § How a skill runs`" — rule 2 governs the batch, never "one question per message".
+A derive-or-ask step: read what exists → derive the rest from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) → batch-ask what neither settles (cite `tree/protocol/running.md § How a skill runs`).>
 
 ## Checks
 <What "done" means for this part; validator commands if any.>
@@ -71,10 +75,13 @@ A derive-or-ask step: read what exists → derive the rest from `_concept/02_gro
   nothing generates the part. A **conditional file** — one a skill writes only sometimes,
   so its `produces` leaves it out (`openapi.yaml`, `asyncapi.yaml`) — carries
   `owner: []`, and its intro paragraph names the skill that writes it and when.
-- `may_propose` lists the skills allowed to append `proposed` entries to this artifact
-  (protocol: `tree/README.md § Ownership`). Every entry is a skill of this collection and
-  none repeats an `owner`; the key is required, `[]` when nobody proposes here. The node's
-  `## Format` gives the per-artifact shape of a proposed entry.
+- `may_propose` lists the skills that may target this artifact in an entry of their proposal
+  file (`tree/proposals/README.md`; protocol: `tree/protocol/ownership.md § Ownership`). Every
+  entry is a skill of this collection and none repeats an `owner`; the key is required, `[]`
+  when nobody proposes here. Every skill listed in some node's `may_propose` is an owner of
+  `tree/proposals/README.md` and produces its proposal file. A node with proposers gives in its
+  `## Format` the `payload` shape (an entry in the artifact's own format) and the `anchor`
+  grammar (where an entry lands); the artifact itself never holds a proposal or a marker.
 - A node carries no flow-order prose ("runs after X and before Y"): order lives in the flow
   graph, and what a skill reads is stated as facts to resolve, not as predecessors.
 - **A schema sits beside its node.** A JSON Schema for a machine artifact is a

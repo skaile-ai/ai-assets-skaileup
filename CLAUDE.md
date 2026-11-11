@@ -15,11 +15,12 @@ route through those nodes. This is the one skaileup collection; the earlier ones
 - **`agents/<name>/`, eight of them.** `agent.yaml` is spec 0.2 of `@skaile/workspaces`
   (`spec_version: "0.2"` quoted, `name` equal to the directory, `version`, `description`,
   `composes:`) beside a non-empty `SOUL.md`. `skaileup-lead` is the session's agent: it composes
-  `skaileup` and the seven others as `binding: delegate`; each of the 31 skills is composed by
+  `skaileup` and `build-implement` (which starts subagents, so a delegate cannot run it) and the
+  seven others as `binding: delegate`; each of the 31 skills is composed by
   exactly one agent. No deprecated 0.1 field, no `extends`, every ref resolves, every `as:` is a
   valid file name and unique in its agent: `check_agents` enforces these. By convention, and not
   checked: no `model` (the host picks it), and a SOUL cites tree sections instead of restating
-  them; the dispatch protocol lives once, in `tree/README.md § Delegation`.
+  them; the dispatch protocol lives once, in `tree/protocol/delegation.md § Delegation`.
 - **Nine domains:** `concept · design · experience · spec · mockup · architecture ·
   build · quality · ops`. `quality` inspects `src/`; `ops` inspects `_concept/`.
 - **Names are `domain-skill`** — 2 segments by default, 3 for a real sub-cluster, never 4.
@@ -30,16 +31,19 @@ route through those nodes. This is the one skaileup collection; the earlier ones
   by the filesystem.
 - **The tree mirrors `_concept/` and holds all instruction.** Every `_concept/` part has one
   node under `tree/`: directory `X/` → `X/README.md`, file `X/name.ext` → `X/name.md`,
-  placeholder `<x>` → `[x]`; the one project-root artifact, `APP-DESIGN.md`, has the node
-  `tree/APP-DESIGN.md`. Purpose, format, procedure and checks live in
+  placeholder `<x>` → `[x]`; the three project-root artifacts, `APP-DESIGN.md`, `docs/adr/` and
+  `docs/agents/domain.md` (whose `## skaileup artifacts` section is skaileup's), have the nodes
+  `tree/APP-DESIGN.md`, `tree/docs/adr/README.md` and `tree/docs/agents/domain.md`. Purpose, format, procedure and checks live in
   that node and nowhere else; the one cross-cutting asset is `rulebook/` — the app-design
   rules, defaults and floorplans, a second contract
   ([ADR 0018](./docs/adr/0018-the-rulebook-is-a-second-contract-asset.md)). Resolution rules:
   [ADR 0017](./docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md) and
-  `tree/README.md`.
+  `tree/README.md`. The one exemption is `tree/protocol/` — how a skill runs, ownership,
+  delegation, what sits beside the tree — shipped with the tree and cited by file and
+  section; it is no `_concept/` part, so it has no node, like `tree/CONTRACT.md`.
 - **A skill is a route.** Its body is the ordered list of nodes it visits — at most 60 lines
-  including frontmatter; the five skills with `produces: []` keep a compressed `## Steps`, at
-  most 100. See [`docs/skill-template.md`](./docs/skill-template.md).
+  including frontmatter; a skill that produces nothing, or only its proposal file, keeps a
+  compressed `## Steps`, at most 100. See [`docs/skill-template.md`](./docs/skill-template.md).
 - **A node follows one shape**: frontmatter `path` / `summary` / `owner` / `may_propose`, then intro,
   `## Format`, `## Writing it`, `## Checks`. No `MUST`/`NEVER` block — constraints are stated
   positively at the step they bind, one consequence clause per rule. See
@@ -98,8 +102,9 @@ process. Use its words; don't redefine them locally. Where a thing *lives* is `t
 job.
 
 Two words that are easy to get wrong: an **asset** is shipped by this repo; an **artifact**
-is written into a project. A **slice** is a vertical slice, implementation-side only — the
-concept-side per-feature thing is a **feature dossier**.
+is written into a project. A **slice** is a vertical slice, implementation-side only, and is
+planned and built as a **ticket** (a sub-issue of the spec's parent issue) — the concept-side
+per-feature thing is a **feature dossier**.
 
 ## Decisions
 

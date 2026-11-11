@@ -1,7 +1,7 @@
 ---
 name: quality-test
 description: "Use when built features need a test suite that traces back to their specs — learns the project's test conventions from its existing tests, then writes unit tests and, where there is a data layer, integration tests. Triggers on 'generate tests', 'add test coverage', 'write integration tests'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -10,7 +10,8 @@ metadata:
       - { id: scope }
       - { id: features }
       - { id: grounding-findings }
-    produces: []
+    produces:
+      - { id: proposals, path: "_concept/proposals/<date>-quality-test-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/01_meta/scope.yaml", gate: soft }
@@ -24,7 +25,7 @@ Covers features that are already built: one test file per feature, every case tr
 the criterion it proves. `tdd` owns the tests written *before* the code; this is the pass
 that covers what shipped without them, and it never rewrites a test to make it green.
 
-Read `tree/README.md` once per session. **The levels come from the depth** in
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session. **The levels come from the depth** in
 `_concept/01_meta/scope.yaml` (`tree/01_meta/scope.md`): `sketch` runs unit only, `standard` and
 `exhaustive` run unit and integration. A `depth` the file lacks is asked in the batch of step 3
 and recorded as `tree/01_meta/scope.md § Asking a missing key` says; the project's size is
@@ -44,11 +45,14 @@ not a question to ask twice.
 3. **Map each feature to its testable units.** For every feature under `_concept/05_features/`
    (`tree/05_features/[featureset]/[feature].md`), read its acceptance criteria and find the
    exported functions, handlers, stores and validators that carry them, then name which
-   criterion each unit answers. A criterion that needs a browser or a database is not a gap
+   criterion each unit answers. Where the spec's frontmatter carries `tracker.issue`, the
+   pull request that built it (`gh pr list --search "<n>" --json number,state,headRefName`,
+   then `gh pr view <pr> --json files`) names the files to look in first. A criterion that
+   needs a browser or a database is not a gap
    here: record it as belonging to integration or to `quality-e2e` and move on. With no
    feature specs, derive the units from `_concept/02_grounding/findings/routes.md` and the
    code, and ask the user which behaviours must hold, in one batch with the open `depth`
-   (`tree/README.md § How a skill runs`, rule 1); the tests then name those behaviours in
+   (`tree/protocol/running.md § How a skill runs`, rule 1); the tests then name those behaviours in
    place of criterion ids, and the report says so.
 4. **Write the unit tests**, one file per feature, describe blocks named for the criterion
    they cover and each test naming its criterion id (`AC-<story-id>-<nn>`).

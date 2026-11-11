@@ -1,0 +1,12 @@
+proposed_by: mockup-storybook
+proposed_on: "2026-10-22"
+scope: place-card
+entries:
+  - id: p1
+    target: _concept/10_blueprint/datamodel/model.yaml
+    anchor: entities.Place.fields.price_level
+    payload: { type: integer, required: false }
+    source: "PlaceCard story: the card needs a price hint next to the walking time"
+    status: promoted
+    settled_by: architecture-datamodel
+    settled_on: "2026-10-24"

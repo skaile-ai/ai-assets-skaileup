@@ -18,7 +18,7 @@ last_updated: YYYY-MM-DD
 ---
 ```
 
-The body opens with `## Framing`: why the feature exists, in a few sentences; the mockup's feature page shows it. Then `## Similar features` (each match from the similarity check with the option taken (reuse, pattern `DR-<n>`, or separate) and the reason, or one line saying nothing matched), and one appended entry per round or step. The scope line is not copied in: the body links to the spec's `## Scope`, which stays the one record of what was considered. Once frozen, the body also links forward to the feature spec and each screen its `screens:` lists.
+The body opens with `## Framing`: why the feature exists, in a few sentences; the mockup's feature page shows it. Then `## Similar features` (each match from the similarity check with the option taken (reuse, pattern `adr:<slug>`, or separate) and the reason, or one line saying nothing matched), and one appended entry per round or step. The scope line is not copied in: the body links to the spec's `## Scope`, which stays the one record of what was considered. Once frozen, the body also links forward to the feature spec and each screen its `screens:` lists.
 
 ## Writing it
 

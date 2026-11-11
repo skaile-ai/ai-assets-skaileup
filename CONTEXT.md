@@ -195,7 +195,7 @@ it has been acted on or rejected.
 _Avoid_: feedback session, comment
 
 **Implementation**:
-The build half — plans, slices, and the code itself.
+The build half — tickets, their pull requests, and the code itself.
 
 **Grounding**:
 Research, reference material and captured user input, available to every skill as
@@ -214,33 +214,36 @@ vocabulary does not drift; any authoring skill may propose a term. Distinct from
 
 **Project glossary**:
 The file outside `_concept/` that holds a project's words — term, definition and what to avoid
-saying — when the project keeps its own, usually the root `CONTEXT.md` that the
-`domain-modeling` skill tends. It stays the project's: this collection adds definitions to it and
+saying — in the format of the `domain-modeling` skill, which tends it: the root `GLOSSARY.md`
+unless the project names another, `CONTEXT.md` where a project still keeps upstream's legacy name.
+A project that has none gets one. It stays the project's: this collection adds definitions to it and
 rearranges nothing already there. What the words mean lives here; what kind of thing each one is
 lives in the **glossary**.
-_Avoid_: external glossary, words file, context file, CONTEXT.md (that is one project's name for it)
+_Avoid_: external glossary, words file, context file, GLOSSARY.md or CONTEXT.md (those are file names for it)
 
 **Split mode**:
-The way a project keeps its glossary when it has a **project glossary**: the words live there,
+The way a project keeps its glossary by default: the words live in the **project glossary**,
 and the **glossary** holds only the ontology around them. Each term has its home for definition
 and another for kind, so neither file repeats the other.
 _Avoid_: dual glossary, hybrid mode, linked glossary
 
 **Concept mode**:
-The way a project keeps its glossary when it has no **project glossary**, or declares that it
-wants none: the **glossary** holds words and ontology together, as one file. Not the **concept**,
-which is the design half of a project.
+The way a project keeps its glossary when it declares that it wants no **project glossary**: the
+**glossary** holds words and ontology together, as one file. Not the **concept**, which is the
+design half of a project.
 _Avoid_: default mode, single-file mode, standalone glossary
 
 **Decision record**:
-An append-only note of a choice that was **hard to reverse**, **surprising without
-context**, and a **real trade-off**. All three, or it is not one. One record per project,
-open to every authoring skill; each entry says what was decided, by whom, which options were
-rejected and what follows. A rejected scope decision, or a rejected **proposed entry**, is a
-decision record marked rejected, not a separate store. Recorded where it was made (the
-collection, the design, or the build) and at the **level** it binds: the product, one
-featureset, or one feature.
-_Avoid_: ADR log, rationale, out-of-scope file
+A note of a choice that was **hard to reverse**, **surprising without context**, and a **real
+trade-off**. All three, or it is not one. One file per decision, in one folder per project,
+named by a short slug that is its reference; each says what was decided, by which skill, which
+options were rejected and what follows. Never edited once written: a change of mind is a new
+record that supersedes the old. Every authoring skill may propose one; the front door alone
+numbers and writes it. A rejected scope decision is a decision record marked rejected, not a
+separate store; a rejected **proposed entry** is not one, its reason stays in its **proposal
+file**; a build concern that is no hard choice is not one either, it goes to the spec's issue.
+Recorded at the **level** it binds: the product, one featureset, or one feature.
+_Avoid_: decision log entry, DR, rationale, out-of-scope file
 
 **Level**:
 How far a **decision record** reaches: the product, one featureset, or one feature. A higher
@@ -258,18 +261,27 @@ which is evidence, and not a **floorplan**.
 _Avoid_: convention (that is a **standard**), template, base feature, abstraction
 
 **Owner**:
-The skill whose output an artifact is, and the only one that confirms what it holds. Anyone
-may read the artifact; another skill adds to it only as a **proposed entry**, and only when the
-owner's contract lists it as a proposer.
+The skill whose output an artifact is, and the only one that writes and confirms what it
+holds. Anyone may read the artifact; another skill offers an addition only as a **proposed
+entry** in its own **proposal file**, and only when the owner's contract lists it as a
+proposer. The owner settles that entry; nothing else in another skill's file is its to write.
 _Avoid_: writer, author, maintainer
 
+**Proposal file**:
+The one file a run writes when it has anything to propose to artifacts it does not own: who
+proposed, when, what the run worked on, and its **proposed entries**. Every run that proposes
+writes a new one, so two runs never write the same file. It stays once its entries are settled,
+as the history of what was offered and what became of it.
+_Avoid_: proposal queue, inbox, change request, patch
+
 **Proposed entry**:
-An entry a skill that does not own an artifact appends to it, marked as proposed with who
-proposed it, when, and the evidence or the user's words behind it. It adds and never edits a
-confirmed entry. The owner reviews it with the user and either promotes it or rejects it into
-the **decision record**. In the **datamodel** it is an entity or field carrying a `proposed`
-key, promoted by deleting the key.
-_Avoid_: suggestion, draft entry, TODO
+One addition a skill that does not own an artifact offers to it: which artifact, where in it,
+the entry in that artifact's own format, and the evidence or the user's words behind it. It
+lives in the proposer's **proposal file**, never in the artifact, and adds rather than edits a
+confirmed entry. While pending it is unconfirmed. The owner reviews it with the user and settles
+it: promoted (written into the artifact, with no trace of having been proposed) or rejected
+with a reason.
+_Avoid_: suggestion, draft entry, TODO, inline proposal
 
 **Answer**:
 A value a user supplied to a question. Onboarding collects answers; they are inputs,
@@ -396,19 +408,41 @@ A formalized rule or state machine governing an entity's lifecycle.
 
 **Vertical slice**:
 One user-facing increment built end to end — UI, logic, and data together. **Slice** is
-its short form and always means this. Never a horizontal layer.
+its short form and always means this. Never a horizontal layer. A slice is planned and built
+as a **ticket**.
 _Avoid_: tracer bullet, task, chunk, increment
 
+**Parent issue**:
+The tracker issue of one feature spec, which the spec names. Its sub-issues are the spec's
+tickets, and the pull request that closes it is the spec's build.
+_Avoid_: epic, spec issue
+
+**Ticket**:
+One vertical slice as a sub-issue of its spec's parent issue, with its blocking edges and the
+criterion ids it claims. Its state, and the pull request that closes it, are the build's record;
+the concept repeats neither.
+_Avoid_: slice plan, task, story
+
+**Integration branch**:
+The one branch all of a spec's tickets merge into, whose draft pull request closes the parent
+issue.
+_Avoid_: feature branch, spec branch
+
+**Serial point**:
+One of the four places where specs moving in parallel wait for each other: the promotion pass,
+the proposal gate, a shared pattern's module, and the data model's migrations. Everything else
+about several specs runs side by side.
+_Avoid_: lock, sync point, barrier
+
 **Dossier**:
-The working directory for one feature's work — the notes, framing and decisions made
-along the way, kept as documentation once done. A **feature dossier** carries concept
-work; a **slice dossier** carries the build.
-_Avoid_: workspace, scratch, folder
+The working directory for one feature's concept work — the notes, framing and decisions made
+along the way, kept as documentation once done. The build keeps no dossier: its tickets and
+pull requests are its record.
+_Avoid_: workspace, scratch, folder, slice dossier
 
 **Frozen**:
 A dossier that has been indexed and closed. It stops being working state and becomes
-documentation. Only dossiers freeze. Frozen says nothing about proof: a slice dossier's
-`verification` says whether its manual checks have all been run.
+documentation. Only dossiers freeze.
 
 **Seed scenario**:
 One named shape of sample data — empty, single user, populated, edge cases — each

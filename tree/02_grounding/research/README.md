@@ -32,8 +32,8 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
    (the value the host's onboarding depth picker shows and the user may have changed); with no
    flow running, map `depth` in `_concept/01_meta/scope.yaml` (format: `tree/01_meta/scope.md`):
    `sketch` → `light`, `standard` → `moderate`, `exhaustive` → `deep`. With neither, ask it as the
-   first question of the step 2 batch (recommending `moderate`) and record the answer as a `proposed`
-   `depth` entry in `scope.yaml`. The four values are the whole vocabulary, and the depth sets
+   first question of the step 2 batch (recommending `moderate`) and write the answer as a `key:depth`
+   entry into the run's proposal file (`tree/01_meta/scope.md § Asking a missing key`). The four values are the whole vocabulary, and the depth sets
    breadth, not rigour — every claim still names a source:
 
    | depth | files written | agents dispatched |
@@ -49,7 +49,7 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
    and override the answers where they differ. The user's own comparables go on the list before
    anything found. Present the plan as who and what will be investigated and let the user add
    or cut — research nobody asked for spends the same tokens as research that matters.
-3. **Dispatch one background agent per topic** (`tree/README.md § Delegation`) and keep working while
+3. **Dispatch one background agent per topic** (`tree/protocol/delegation.md § Delegation`) and keep working while
    they read. Each is pointed at primary sources — official documentation, the product itself,
    first-party pricing and changelogs, the spec — follows every claim back to whoever owns it,
    and returns findings with a source against every factual claim.

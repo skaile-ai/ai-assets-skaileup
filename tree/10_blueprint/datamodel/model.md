@@ -2,12 +2,12 @@
 path: _concept/10_blueprint/datamodel/model.yaml
 summary: the authored data model; checked and read through @skaile/model
 owner: [architecture-datamodel]
-may_propose: [spec-feature, experience-screen, mockup-storybook, mockup-feedback]
+may_propose: [spec-feature, experience-screen, mockup-storybook, mockup-feedback, build-plan]
 ---
 
 # _concept/10_blueprint/datamodel/model.yaml
 
-The canonical, stack-neutral data model, and the one file that holds it: entities, fields, enums, relations and proposed entries. Nothing is generated from it into `_concept/`; every reader takes it through `@skaile/model` (`tree/10_blueprint/datamodel/README.md § Format`): `build-database` and the tests through `bunx @skaile/model@1 json`, the host's canvas through `loadModel`, the mockup package through the package's Vite plugin, whose row types make a component that uses a field the model no longer has fail `vue-tsc`. The file carries semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) target the entity id, its key under `entities:`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
+The canonical, stack-neutral data model, and the one file that holds it: entities, fields, enums and relations. Nothing is generated from it into `_concept/`; every reader takes it through `@skaile/model` (`tree/10_blueprint/datamodel/README.md § Format`): `build-database` and the tests through `bunx @skaile/model@1 json`, the host's canvas through `loadModel`, the mockup package through the package's Vite plugin, whose row types make a component that uses a field the model no longer has fail `vue-tsc`. The file carries semantic types — intent, not output format — and `build-database` maps them to a concrete stack. Cross-references from other artifacts (`data_entities[]`, `story_refs`) target the entity id, its key under `entities:`; stack-specific files are derived and never referenced. Names follow `tree/10_blueprint/datamodel/README.md § Naming`.
 
 ## Format
 
@@ -35,15 +35,12 @@ entities:
       priority: { type: enum, enum: priority }
       due_date: { type: date, required: false }
       owner_id: { type: m2o, to: User, on_delete: cascade, label: Owner, inverse: Tasks }
-      estimate:
-        type: decimal
-        required: false
-        proposed: { by: mockup-storybook, on: 2026-07-01, source: TaskEditor needs an effort estimate }
+      estimate: { type: decimal, required: false }
 ```
 
 - The first line binds the package's schema for editors (`tree/10_blueprint/datamodel/README.md § Format`); keep it as written.
 - Top level: `version` (always `1`), `enums` (the shared enums: a `lowercase_snake_case` id to `{ Value: description }`) and `entities` (the entity id, PascalCase singular, to its definition). An entity id is the string every other artifact cites.
-- A field is `<name>: <type>` — a bare type name is a required field with no other options, for scalar types only — or `<name>: { type: <type>, <option>: … }`; a long options object may be written as a block, as `status` and `estimate` are above. A field `name` is `lowercase_snake_case`; its id in the normalized model is `<entity_snake>_<name>`.
+- A field is `<name>: <type>` — a bare type name is a required field with no other options, for scalar types only — or `<name>: { type: <type>, <option>: … }`; a long options object may be written as a block, as `status` is above. A field `name` is `lowercase_snake_case`; its id in the normalized model is `<entity_snake>_<name>`.
 - `id`, `created_at` and `updated_at` are standard fields: never declared under `fields:`.
 - Keys are snake_case and the schema rejects an unknown one, naming the allowed keys, so a misspelt option is an error rather than a silent no-op.
 - `bunx @skaile/model@1 json` prints the normalized model: `entities[]` (with `glossary_id`, `display_name`, `standard_fields` and `fields[]` filled in), `relationships[]` derived from every `m2o` and `m2m`, and `enums[]`, the shared enums with `{ value, label }` entries. Readers rely on that shape, never on the file's own layout.
@@ -95,7 +92,6 @@ Declare `m2o` with the `_id` suffix on the owning side; its row value is the tar
 | `key_field` | none | `key_field` | URL-friendly unique identifier — set when the entity has a human-readable unique slug |
 | `standard_fields` | `[id, created_at, updated_at]` | `standard_fields` | Fields the stack injects; not repeated in `fields` |
 | `icon`, `color`, `from_features` | none | same | Canvas and traceability hints, all optional |
-| `proposed` | none | `status`, `proposed_by`, `proposed_on`, `source` | Marks the entity as proposed |
 
 Where the cards of an entity sit on a canvas is the host's state, not a key of the model.
 
@@ -110,11 +106,10 @@ Where the cards of an entity sit on a canvas is the host's state, not a key of t
 | `placeholder` | UI hint text |
 | `faker` | Seed data generator hint (e.g. `faker.internet.email`) |
 | `description` | What the field holds, in the term's words |
-| `proposed` | Marks the field as proposed |
 
 An `m2o` field also takes `to`, `on_delete`, `label` and `inverse`; an `m2m` takes `to`, `through`, `label` and `inverse`. An option that does not apply to the field's type is an error.
 
-**Proposed entity or field.** A skill in `may_propose` (`spec-feature`, `experience-screen`, `mockup-storybook`, `mockup-feedback`) that needs an entity or field the model lacks adds it to `model.yaml` with `proposed: { by: <skill>, on: <YYYY-MM-DD>, source: <evidence or the user's words> }` (`tree/README.md § Ownership`), as a key of the field or the entity, then runs the check; the normalized entry carries `status: "proposed"`, `proposed_by`, `proposed_on` and `source`. `architecture-datamodel` promotes it by deleting the `proposed` key or rejects it by deleting the entry, with a record in `_concept/10_blueprint/decisions.md`. Until then the host's canvas shows it as proposed, and its seed rows are scratch data for the mockup.
+**Proposal entry** (`tree/proposals/README.md`). A skill in `may_propose` (`spec-feature`, `experience-screen`, `mockup-storybook`, `mockup-feedback`, `build-plan`) that needs an entity or field the model lacks writes it into its run's proposal file, never into `model.yaml`. The `anchor` is `entities.<Entity>` for a new entity, with the entity's mapping as `payload` (`{ label_field: title, fields: { title: { type: string } } }`), or `entities.<Entity>.fields.<field>` for a new field, with the field's mapping as `payload` (`{ type: decimal, required: false }`); a payload is written in this format and would pass the check once placed. `source` is the evidence or the user's words. A proposal adds and never edits an existing entity or field. Until `architecture-datamodel` promotes it (`tree/10_blueprint/datamodel/README.md § Writing it`, step 8), the entity or field is not in the model: a reader that needs it names the pending entry, and no seed row or mockup component uses it.
 
 Stack-specific concerns (Prisma decorators, Directus system collections, PostXL `standardFields` casing) belong to the stack translator, not to the model; see `tree/10_blueprint/datamodel/README.md § Materialising the database`.
 
@@ -123,7 +118,7 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
 1. **Migrate a pre-YAML model first.** When `_concept/10_blueprint/datamodel/` holds `model.ts` or `model.json` and no `model.yaml`, run `bunx @skaile/model@1 migrate _concept/10_blueprint/datamodel` (`tree/10_blueprint/datamodel/README.md § Format`) and continue on the files it writes. When it refuses because the TypeScript has no JSON or is newer than it, run the project's own generator in that directory (`npx tsx gen.ts`, still there until the migration deletes it), then `migrate` again. Any other refusal names what it cannot carry over; report it and stop.
 2. **Write `model.yaml`** in the layout of `## Format`, from the approved model (`tree/10_blueprint/datamodel/README.md § Writing it`), applying `tree/10_blueprint/datamodel/README.md § Naming`. Every entity carries its `label_field`, and `glossary` where the term's slug is not the kebab-case of the id; an `m2m` gets a junction entity. A raw SQL type here survives into a migration that will not apply.
 3. **Run `bunx @skaile/model@1 check _concept/10_blueprint/datamodel`** (`npx @skaile/model@1 check …` without Bun). Each issue names the file, the JSON path and the line; fix `model.yaml` and run it again until it prints `ok`.
-4. **A proposal by another skill** adds its field or entity per `## Format`, runs the check and restores the file when the check fails.
+4. **Promote a proposal entry** by writing its `payload` at its anchor in the layout of `## Format`, then running the check; when the check fails, restore the file and ask the user how to amend the entry before promoting it.
 
 ## Checks
 
@@ -136,6 +131,7 @@ Stack-specific concerns (Prisma decorators, Directus system collections, PostXL 
 
 Reviewed, not checked by the tool:
 
-- Every entity's `glossary` is a term in `_concept/glossary.md` (a `proposed` term counts).
+- Every entity's `glossary` is a term in `_concept/glossary.md` (a pending proposal entry for the term counts).
+- No pending proposal entry targets this file at the end of an `architecture-datamodel` run that had the user in the room, except one the user deferred.
 - Every entity sets `label_field`.
 - No raw SQL or Prisma type appears, in a type or a `default`.

@@ -26,10 +26,7 @@ entities:
       cuisine: { type: enum, enum: cuisine }
       walking_minutes: { type: integer, description: Minutes on foot from the office door }
       website: { type: url, required: false }
-      price_level:
-        type: integer
-        required: false
-        proposed: { by: mockup-storybook, on: 2026-10-22, source: PlaceCard needs a price hint next to the walking time }
+      price_level: { type: integer, required: false }
 
   Poll:
     label_field: title

@@ -1,0 +1,35 @@
+proposed_by: mockup-feedback
+proposed_on: 2026-10-23
+scope: test-model-proposal
+entries:
+  - id: p1
+    target: _concept/10_blueprint/datamodel/model.yaml
+    anchor: entities.Task.fields.estimate
+    payload:
+      type: decimal
+      required: false
+    source: "note k3m9x2-1: \"The editor needs an estimate field: how many hours the task will take.\""
+    status: proposed
+  - id: p2
+    target: _concept/glossary.md
+    anchor: "term:Comment"
+    payload: |
+      **Comment** (`comment`):
+      - kind: object
+    source: "note k3m9x2-4: \"Tasks need comments from the team.\""
+    status: proposed
+  - id: p3
+    target: _concept/10_blueprint/datamodel/model.yaml
+    anchor: entities.Comment
+    payload:
+      glossary: comment
+      display: Comment
+      label_field: body
+      fields:
+        body: text
+        task_id:
+          type: m2o
+          to: Task
+          on_delete: cascade
+    source: "note k3m9x2-4: \"Tasks need comments from the team.\""
+    status: proposed

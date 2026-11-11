@@ -8,18 +8,18 @@ Checks:
   1. Partition invariant: every note in the triage groups is answered by at
      least one patch (as its inboxId or in resolves[]) OR sits in needs_manual[]
      once, never both.
-  2. A content / create-section patch edits the file its note was triaged to; a
-     model-proposal patch edits the data model; a glossary-proposal patch any file.
-  3. Every diff starts with a valid @@ anchor header, and the anchor family fits
-     the patch kind (yaml: for model-proposal only).
+  2. A content / create-section patch edits the file its note was triaged to and
+     never the data model; a proposal patch carries target, anchor, payload and
+     source and no diff or file, with an anchor in the grammar of its target
+     (model.yaml: entities.<Entity>[.fields.<field>]; a glossary: term:<Bold Term>).
+  3. Every content / create-section diff starts with a valid @@ anchor header.
   4. Every patch carries resolves[]: its own inboxId, status implemented|rejected,
      a non-empty resolution; one note carries one resolution across patches.
   5. Every patches[] entry has a - [x] checklist item in review.md.
   6. Every needs_manual[] entry has a bullet under ## Needs manual review in
      review.md.
-  7. add/remove/question diffs match their templates; model-proposal lines carry
-     the proposal marker with `source` naming a resolved note; glossary-proposal
-     diffs carry the four marker lines.
+  7. add/remove/question diffs match their templates; a proposal's `source`
+     names a note it resolves, and its review.md line reads `· proposal ·`.
 
 Exit codes: 0 PASS, 2 FAIL, 1 internal error.
 """
@@ -31,10 +31,37 @@ import sys
 from pathlib import Path
 
 MODEL_FILE = "10_blueprint/datamodel/model.yaml"
-KINDS = {"content", "create-section", "model-proposal", "glossary-proposal"}
-ANCHOR = re.compile(
-    r"^@@ (?:#{2,6} \S.*|frontmatter:\S+|before:#{1,6} \S.*|yaml:entity/\w+/fields|yaml:model/entities) @@$"
-)
+MODEL_TARGET = f"_concept/{MODEL_FILE}"
+KINDS = {"content", "create-section", "proposal"}
+ANCHOR = re.compile(r"^@@ (?:#{2,6} \S.*|frontmatter:\S+|before:#{1,6} \S.*) @@$")
+MODEL_ANCHOR = re.compile(r"^entities\.[A-Za-z_]\w*(?:\.fields\.[A-Za-z_]\w*)?$")
+GLOSSARY_ANCHOR = re.compile(r"^term:\S(?:.*\S)?$")
+
+
+def is_glossary_target(target: str) -> bool:
+    return target == "_concept/glossary.md" or Path(target).name in ("CONTEXT.md", "GLOSSARY.md")
+
+
+def proposal_violations(p: dict) -> list[str]:
+    """What keeps a proposal patch from being filed as one entry of the round's proposal file."""
+    out = [f"proposal lacks {k}" for k in ("target", "anchor", "payload", "source") if p.get(k) in (None, "", {}, [])]
+    out += [f"a proposal carries no {k} field" for k in ("diff", "file") if k in p]
+    target, anchor, payload = p.get("target"), p.get("anchor"), p.get("payload")
+    if not isinstance(target, str) or not target:
+        return out
+    if target == MODEL_TARGET:
+        if not isinstance(anchor, str) or not MODEL_ANCHOR.match(anchor):
+            out.append(f"anchor {anchor!r} is not entities.<Entity> or entities.<Entity>.fields.<field>")
+        if payload is not None and not isinstance(payload, dict):
+            out.append("a model proposal's payload must be a YAML mapping")
+    elif is_glossary_target(target):
+        if not isinstance(anchor, str) or not GLOSSARY_ANCHOR.match(anchor):
+            out.append(f"anchor {anchor!r} is not term:<Bold Term>")
+        if payload is not None and not isinstance(payload, str):
+            out.append("a glossary proposal's payload must be a markdown string")
+    else:
+        out.append(f"target {target!r} is neither {MODEL_TARGET} nor a glossary")
+    return out
 
 
 class Report:
@@ -110,19 +137,20 @@ def validate(triage: dict, patches_data: dict, review_md: str, r: Report) -> Non
                     f"patch {p['id']!r}: file={p['file']!r} but triage resolved "
                     f"{p['inboxId']!r} to {expected!r}"
                 )
-        elif kind == "model-proposal" and p.get("file") != MODEL_FILE:
-            r.add(f"patch {p['id']!r}: model-proposal must edit {MODEL_FILE}, not {p.get('file')!r}")
+            if p.get("file") == MODEL_FILE:
+                r.add(f"patch {p['id']!r}: {MODEL_FILE} takes proposals only (kind: proposal)")
+        else:
+            for v in proposal_violations(p):
+                r.add(f"patch {p['id']!r}: {v}")
 
-    # 3. Anchor header present and fitting the kind
+    # 3. Anchor header present on every diff
     for p in patches:
+        if p.get("kind") == "proposal":
+            continue
         diff = p.get("diff", "")
         first_line = (diff.split("\n")[0] if diff else "").strip()
         if not ANCHOR.match(first_line):
             r.add(f"patch {p['id']!r}: diff missing valid @@ anchor header")
-            continue
-        is_yaml = first_line.startswith("@@ yaml:")
-        if (p.get("kind") == "model-proposal") != is_yaml:
-            r.add(f"patch {p['id']!r}: yaml: anchors belong to model-proposal patches only")
 
     # 4. resolves[]
     resolution_of: dict[str, tuple[str, str]] = {}
@@ -159,26 +187,13 @@ def validate(triage: dict, patches_data: dict, review_md: str, r: Report) -> Non
     for p in patches:
         diff = p.get("diff", "")
         kind, cat = p.get("kind"), p.get("category")
-        if kind == "model-proposal":
+        if kind == "proposal":
             sources = {e.get("id") for e in p.get("resolves", []) if isinstance(e, dict)}
-            added = [l[1:] for l in diff.splitlines()[1:] if l.startswith("+")]
-            if not added:
-                r.add(f"patch {p['id']!r}: model-proposal diff has no + lines")
-            if re.search(r"^-", diff, re.MULTILINE):
-                r.add(f"patch {p['id']!r}: model-proposal diff must not remove lines")
-            marked = [l for l in added if "proposed: {" in l]
-            if not marked:
-                r.add(f"patch {p['id']!r}: no added line carries `proposed: {{ by, on, source }}`")
-            for l in marked:
-                m = re.search(r"proposed: \{ by: mockup-feedback, on: \d{4}-\d{2}-\d{2}, source: ([^\s,{}]+) \}", l)
-                if not m:
-                    r.add(f"patch {p['id']!r}: malformed proposal marker in {l.strip()!r}")
-                elif m.group(1) not in sources:
-                    r.add(f"patch {p['id']!r}: proposal source {m.group(1)!r} is not a resolved note")
-        elif kind == "glossary-proposal":
-            for marker in ("- status: proposed", "- proposed_by: mockup-feedback", "- proposed_on: ", "- source: "):
-                if not re.search(rf"^\+{re.escape(marker)}", diff, re.MULTILINE):
-                    r.add(f"patch {p['id']!r}: glossary diff lacks the line `{marker.strip()}`")
+            source = p.get("source")
+            if isinstance(source, str) and source.strip() and not any(n and n in source for n in sources):
+                r.add(f"patch {p['id']!r}: source {source!r} names no note the patch resolves")
+            if not re.search(rf"- \[x\] \*\*{re.escape(p['id'])}\*\* · proposal ·", review_md):
+                r.add(f"patch {p['id']!r}: its review.md line does not read `· proposal ·`")
         elif cat == "add":
             if not re.search(r"^\+", diff, re.MULTILINE):
                 r.add(f"patch {p['id']!r}: category=add diff has no + lines")

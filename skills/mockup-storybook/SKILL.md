@@ -1,7 +1,7 @@
 ---
 name: mockup-storybook
 description: "Use when a screen, an entity editor or a journey should be seen and critiqued as a running mockup, or when the user says 'prototype this screen', 'build the storybook', 'click-dummy', 'try the editor for this entity'. Grows one Vue Storybook package layer by layer: floorplans, screens, entity editors, the whole app, journeys, and a generated page per feature."
-version: "0.3.0"
+version: "0.4.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -14,6 +14,7 @@ metadata:
       - { id: datamodel }
     produces:
       - { id: storybook, path: "_concept/09_mockup/storybook/" }
+      - { id: proposals, path: "_concept/proposals/<date>-mockup-storybook-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
@@ -24,13 +25,13 @@ metadata:
 
 # mockup-storybook
 
-Grows the Storybook package at `_concept/09_mockup/storybook/` one layer at a time: the scaffold with its 16 floorplans, a layout story per screen, editor and display components per entity, the whole app, and one story per journey. A run builds every layer whose inputs exist now and names each skipped layer with its missing input; the specs and the data model are never edited here except by `proposed` entries in `model.yaml`.
+Grows the Storybook package at `_concept/09_mockup/storybook/` one layer at a time: the scaffold with its 16 floorplans, a layout story per screen, editor and display components per entity, the whole app, and one story per journey. A run builds every layer whose inputs exist now and names each skipped layer with its missing input; the specs and the data model are never edited here; a field an editor needs goes into the run's proposal file (`tree/proposals/README.md § Writing it`).
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Resolve which screens, entities and journeys exist** — `tree/09_mockup/storybook/README.md § Writing it` step 1, derive-or-ask per `tree/README.md § How a skill runs`.
+1. **Resolve which screens, entities and journeys exist** — `tree/09_mockup/storybook/README.md § Writing it` step 1, derive-or-ask per `tree/protocol/running.md § How a skill runs`.
 2. **Scaffold, when `package.json` is absent** — `tree/09_mockup/storybook/README.md § Writing it` step 2; the package layout is in `tree/09_mockup/storybook/README.md § Package layout`.
 3. **Bring the brand tokens, the data model and the concept index in** — `tree/09_mockup/storybook/README.md § Writing it` step 3 and `tree/09_mockup/storybook/README.md § Feature pages`; the model is `tree/10_blueprint/datamodel/model.md § Format` and `tree/10_blueprint/datamodel/model.md § Writing it`.
 4. **Write a screen's layout story** — `tree/09_mockup/storybook/README.md § Writing it` step 4, from the screen spec `tree/07_screens/[screen].md § Format`. `experience-screen` calls this step to show a layout before the screen is specified.

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """apply.py — mockup-feedback-apply deterministic patcher.
 
-Parses the review.md checklist, applies the approved patches to _concept/ files
-(best-effort), checks model.yaml with `@skaile/model` when it changed, resolves
-the answered notes in the annotation inbox, appends the devlog, writes
-applied/<round-id>.json and creates one git commit.
+Parses the review.md checklist, applies the approved content patches to _concept/
+files (best-effort), files the approved proposals as entries of one proposal file
+`_concept/proposals/<date>-mockup-feedback-<round>.yaml` (the owner artifacts
+themselves are never touched), resolves the answered notes in the annotation inbox,
+appends the devlog, writes applied/<round-id>.json and creates one git commit.
 
 Usage:
   python apply.py <patches-json> <review-md> <concept-root> <feedback-root> [--force] [--dry-run]
@@ -13,10 +14,9 @@ Anchors a diff header may carry (`@@ <anchor> @@`):
   ## Heading             markdown section; removes match a consecutive block, no removes append
   frontmatter:elements   removes/adds inside the file's YAML frontmatter
   before:## Heading      adds inserted right above that heading line
-  yaml:entity/<Id>/fields  adds only: one-line field entries `      <name>: { … }`, inserted
-                           after the last line of that entity's `    fields:` block in model.yaml
-  yaml:model/entities      adds only: one new entity block starting `  <Id>:`, inserted after
-                           the last line of the top-level `entities:` block in model.yaml
+
+A `proposal` patch carries no diff: its `target` (project-relative owner artifact),
+`anchor`, `payload` and `source` become one entry `p<n>` with `status: proposed`.
 
 Exit codes:
   0  success (at least one patch applied)
@@ -29,15 +29,14 @@ import datetime
 import json
 import re
 import shlex
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-DATAMODEL_DIR = "10_blueprint/datamodel"
-MODEL_FILE = f"{DATAMODEL_DIR}/model.yaml"
+MODEL_FILE = "10_blueprint/datamodel/model.yaml"
 PACKAGE_DIR = "09_mockup/storybook"
-PROPOSAL_BY = "by: mockup-feedback"
+PROPOSALS_DIR = "proposals"
+PROPOSED_BY = "mockup-feedback"
 
 
 # ── Diff application ──────────────────────────────────────────────────────────
@@ -59,10 +58,6 @@ def apply_diff(file_content: str, diff_text: str) -> tuple[str, str | None]:
         return _patch_frontmatter(file_content, removes, adds)
     if anchor.startswith("before:"):
         return _insert_before(file_content, anchor[len("before:"):].strip(), removes, adds)
-    if anchor.startswith("yaml:entity/") and anchor.endswith("/fields"):
-        return _add_entity_fields(file_content, anchor[len("yaml:entity/"):-len("/fields")], removes, adds)
-    if anchor == "yaml:model/entities":
-        return _add_entity(file_content, removes, adds)
     return _patch_section(file_content, anchor, removes, adds)
 
 
@@ -158,157 +153,104 @@ def _insert_before(content: str, heading: str, removes: list[str], adds: list[st
     return content, f"heading not found: {heading!r}"
 
 
-# ── model.yaml anchors (format fixed by tree/10_blueprint/datamodel/model.md) ─
-
-def _indent(line: str) -> int:
-    return len(line) - len(line.lstrip(" "))
-
-
-def _block_end(lines: list[str], start: int, indent: int) -> int:
-    """Index after the last content line of the block opened at `start`: every following line
-    indented deeper than `indent`, blank and comment lines included only when content follows."""
-    end = start + 1
-    for i in range(start + 1, len(lines)):
-        text = lines[i].strip()
-        if not text or text.startswith("#"):
-            continue
-        if _indent(lines[i]) <= indent:
-            break
-        end = i + 1
-    return end
-
-
-def _entities_block(lines: list[str]) -> int | None:
-    return next((i for i, l in enumerate(lines) if l.rstrip() == "entities:"), None)
-
-
-def _entity_at(lines: list[str], ents_at: int, entity: str) -> int | None:
-    end = _block_end(lines, ents_at, 0)
-    return next((i for i in range(ents_at + 1, end) if re.match(rf"^  {re.escape(entity)}:\s*(#.*)?$", lines[i])), None)
-
-
-def _check_proposal(text: str, what: str) -> str | None:
-    if "proposed: {" not in text or PROPOSAL_BY not in text:
-        return f"{what} lacks the proposal marker `proposed: {{ {PROPOSAL_BY}, on: <date>, source: <inboxId> }}`"
-    return None
-
-
-def _with_newline(lines: list[str], at: int) -> list[str]:
-    """`lines[:at]` with a final newline, so text inserted after the file's last line stays apart."""
-    head = lines[:at]
-    if head and not head[-1].endswith("\n"):
-        head[-1] += "\n"
-    return head
-
-
-def _add_entity_fields(content: str, entity: str, removes: list[str], adds: list[str]) -> tuple[str, str | None]:
-    if removes:
-        return content, "model proposal takes adds only"
-    if not adds:
-        return content, "model proposal has no add lines"
-    for line in adds:
-        if not re.match(r"^      \w+: \{.*\}$", line):
-            return content, f"field line does not match `      <name>: {{ type: …, proposed: {{ … }} }}`: {line!r}"
-        err = _check_proposal(line, "field line")
-        if err:
-            return content, err
-
-    lines = content.splitlines(keepends=True)
-    ents_at = _entities_block(lines)
-    if ents_at is None:
-        return content, "top-level `entities:` block not found in model.yaml"
-    start = _entity_at(lines, ents_at, entity)
-    if start is None:
-        return content, f"entity not found in model.yaml: {entity}"
-    end = _block_end(lines, start, 2)
-    fields_at = next((i for i in range(start + 1, end) if lines[i].rstrip() == "    fields:"), None)
-    if fields_at is None:
-        return content, f"block `    fields:` not found in entity {entity}"
-    close = _block_end(lines, fields_at, 4)
-
-    existing = {m.group(1) for l in lines[fields_at + 1:close] if (m := re.match(r"^      (\w+):", l))}
-    for line in adds:
-        name = re.match(r"^      (\w+):", line).group(1)  # type: ignore[union-attr]
-        if name in existing:
-            return content, f"field already exists in {entity}: {name}"
-        existing.add(name)
-
-    new_lines = _with_newline(lines, close) + [a + "\n" for a in adds] + lines[close:]
-    return "".join(new_lines), None
-
-
-def _add_entity(content: str, removes: list[str], adds: list[str]) -> tuple[str, str | None]:
-    if removes:
-        return content, "model proposal takes adds only"
-    block = list(adds)
-    while block and not block[-1].strip():
-        block.pop()
-    if not block:
-        return content, "model proposal has no add lines"
-    m = re.match(r"^  (\w+):$", block[0])
-    if not m or any(l.strip() and _indent(l) <= 2 for l in block[1:]):
-        return content, "entity block must start `  <Id>:` and indent every further line deeper"
-    entity = m.group(1)
-    if not any(re.match(r"^    proposed: \{", l) for l in block[1:]):
-        return content, "entity block lacks its entity-level `    proposed: { … }` line"
-    err = _check_proposal("\n".join(block), "entity block")
-    if err:
-        return content, err
-
-    lines = content.splitlines(keepends=True)
-    ents_at = _entities_block(lines)
-    if ents_at is None:
-        return content, "top-level `entities:` block not found in model.yaml"
-    if _entity_at(lines, ents_at, entity) is not None:
-        return content, f"entity already exists in model.yaml: {entity}"
-    close = _block_end(lines, ents_at, 0)
-
-    new_lines = _with_newline(lines, close) + [b + "\n" for b in block] + lines[close:]
-    return "".join(new_lines), None
-
-
 # ── Review.md parsing ─────────────────────────────────────────────────────────
 
 def parse_checked_ids(review_md: str) -> set[str]:
     return set(re.findall(r"- \[x\] \*\*([^*]+)\*\*", review_md))
 
 
-# ── Data-model check ─────────────────────────────────────────────────────────
+# ── Proposals (format: tree/proposals/README.md) ──────────────────────────────
 
-MODEL_TOOL = "@skaile/model@1"
-MODEL_TOOL_TIMEOUT = 180
-
-
-class ModelToolError(Exception):
-    """`@skaile/model` could not be run at all; the message says why."""
+MODEL_TARGET = f"_concept/{MODEL_FILE}"
+MODEL_ANCHOR = re.compile(r"^entities\.[A-Za-z_]\w*(?:\.fields\.[A-Za-z_]\w*)?$")
+GLOSSARY_ANCHOR = re.compile(r"^term:\S(?:.*\S)?$")
 
 
-def run_model_tool(command: str, datamodel: Path) -> subprocess.CompletedProcess:
-    """`bunx @skaile/model@1 <command> <dir>` (`npx --yes` without Bun), run to the end; raises
-    `ModelToolError` when neither runner is on PATH or the run outlasts `MODEL_TOOL_TIMEOUT` seconds."""
-    if shutil.which("bunx"):
-        runner = ["bunx"]
-    elif shutil.which("npx"):
-        runner = ["npx", "--yes"]
+def is_glossary_target(target: str) -> bool:
+    return target == "_concept/glossary.md" or Path(target).name in ("CONTEXT.md", "GLOSSARY.md")
+
+
+def check_proposal(patch: dict) -> str | None:
+    """Why an approved proposal patch cannot be filed, or None."""
+    missing = [k for k in ("target", "anchor", "payload", "source") if patch.get(k) in (None, "", {}, [])]
+    if missing:
+        return "proposal lacks " + ", ".join(missing)
+    if "diff" in patch or "file" in patch:
+        return "a proposal carries target/anchor/payload, never diff/file"
+    target, anchor, payload = patch["target"], patch["anchor"], patch["payload"]
+    if target == MODEL_TARGET:
+        if not isinstance(anchor, str) or not MODEL_ANCHOR.match(anchor):
+            return f"model anchor must be entities.<Entity> or entities.<Entity>.fields.<field>: {anchor!r}"
+        if not isinstance(payload, dict):
+            return "a model proposal's payload must be a YAML mapping"
+    elif is_glossary_target(target):
+        if not isinstance(anchor, str) or not GLOSSARY_ANCHOR.match(anchor):
+            return f"glossary anchor must be term:<Bold Term>: {anchor!r}"
+        if not isinstance(payload, str) or not payload.strip():
+            return "a glossary proposal's payload must be a markdown string"
     else:
-        raise ModelToolError(f"neither `bunx` (Bun) nor `npx` (Node) is on PATH to run `{MODEL_TOOL} {command}`")
-    try:
-        return subprocess.run([*runner, MODEL_TOOL, command, str(datamodel)],
-                              capture_output=True, text=True, timeout=MODEL_TOOL_TIMEOUT)
-    except subprocess.TimeoutExpired:
-        raise ModelToolError(f"`{MODEL_TOOL} {command}` did not finish within {MODEL_TOOL_TIMEOUT} s") from None
+        return f"target {target!r} is neither {MODEL_TARGET} nor a glossary"
+    if not isinstance(patch["source"], str) or not patch["source"].strip():
+        return "a proposal's source must be a string naming the note"
+    return None
 
 
-def run_check(datamodel_dir: Path) -> str | None:
-    """Run `@skaile/model@1 check` on the datamodel directory. Returns its output on failure, else None."""
-    try:
-        result = run_model_tool("check", datamodel_dir)
-    except ModelToolError as exc:
-        return f"{MODEL_TOOL} check could not run: {exc}"
-    if result.returncode == 0:
-        return None
-    out = "\n".join(l.rstrip() for l in (result.stdout + result.stderr).splitlines() if l.strip())
-    return out or f"{MODEL_TOOL} check exited {result.returncode}"
+_PLAIN = re.compile(r"^[A-Za-z_./][\w ./-]*$")
+_RESERVED = {"true", "false", "yes", "no", "on", "off", "null", "y", "n"}
+
+
+def _scalar(value) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (int, float)):
+        return json.dumps(value)
+    if isinstance(value, (dict, list)):
+        return "{}" if isinstance(value, dict) else "[]"
+    text = str(value)
+    if _PLAIN.match(text) and text == text.rstrip() and text.lower() not in _RESERVED:
+        return text
+    return json.dumps(text, ensure_ascii=False)
+
+
+def _emit(head: str, value, pad: str) -> list[str]:
+    """YAML block lines of one node: `head` is `<key>:` or `-`, `pad` its indentation."""
+    if isinstance(value, dict) and value:
+        body = [l for k, v in value.items() for l in _emit(f"{_scalar(k)}:", v, pad + "  ")]
+    elif isinstance(value, list) and value:
+        body = [l for v in value for l in _emit("-", v, pad + "  ")]
+    elif isinstance(value, str) and "\n" in value.rstrip("\n") and value[:1] not in (" ", "\t") \
+            and not value.endswith("\n\n"):
+        chomp = "|" if value.endswith("\n") else "|-"
+        lines = value.rstrip("\n").split("\n")
+        return [f"{pad}{head} {chomp}"] + [f"{pad}  {l}" if l else "" for l in lines]
+    else:
+        return [f"{pad}{head} {_scalar(value)}"]
+    if head == "-" and isinstance(value, dict):
+        return [f"{pad}- {body[0][len(pad) + 2:]}"] + body[1:]
+    return [f"{pad}{head}"] + body
+
+
+def proposal_scope(round_id: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", round_id.lower()).strip("-") or "round"
+
+
+def proposal_path(concept_root: Path, on: str, scope: str) -> Path:
+    """`proposals/<on>-mockup-feedback-<scope>.yaml`; a second run of the same day and round takes `-2`, `-3`."""
+    base = f"{on}-{PROPOSED_BY}-{scope}"
+    path, n = concept_root / PROPOSALS_DIR / f"{base}.yaml", 1
+    while path.exists():
+        n += 1
+        path = concept_root / PROPOSALS_DIR / f"{base}-{n}.yaml"
+    return path
+
+
+def proposal_file_text(on: str, scope: str, entries: list[dict]) -> str:
+    lines = [f"proposed_by: {PROPOSED_BY}", f"proposed_on: {on}", f"scope: {_scalar(scope)}", "entries:"]
+    for entry in entries:
+        lines += _emit("-", entry, "  ")
+    return "\n".join(lines) + "\n"
 
 
 # ── Note resolution ───────────────────────────────────────────────────────────
@@ -498,14 +440,22 @@ def main() -> int:
             print(f"ERROR: {err}", file=sys.stderr)
             return 1
 
-    # Load all files that will be edited (in-memory)
+    # Load all files the content patches edit (in-memory); a proposal edits no file
     file_contents: dict[str, str | None] = {}
     for pid in checked_ids:
+        if patches_by_id[pid].get("kind") == "proposal":
+            continue
         rel = patches_by_id[pid]["file"]
         if rel not in file_contents:
             fp = concept_root / rel
             file_contents[rel] = fp.read_text(encoding="utf-8") if fp.is_file() else None
-    originals = dict(file_contents)
+
+    # The round's proposal file; written only when a proposal is approved and valid
+    proposed_on = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+    scope = proposal_scope(rid)
+    proposals_file = proposal_path(concept_root, proposed_on, scope)
+    proposals_rel = proposals_file.relative_to(concept_root).as_posix()
+    entries: list[dict] = []
 
     # Apply patches best-effort (deterministic order by patch ID)
     applied_items: list[dict] = []
@@ -513,21 +463,43 @@ def main() -> int:
     n_failed  = 0
 
     for pid in sorted(checked_ids):
-        patch   = patches_by_id[pid]
+        patch = patches_by_id[pid]
+        base  = {"inboxId": patch["inboxId"], "patchId": pid, "kind": patch["kind"]}
+        body  = {"body": patch.get("body", "")}
+
+        if patch["kind"] == "proposal":
+            entry_id = f"p{len(entries) + 1}"
+            proposes = {"target": patch.get("target"), "anchor": patch.get("anchor")}
+            err = check_proposal(patch)
+            if err:
+                applied_items.append({**base, "target": {"file": proposals_rel, "section": None, "category": None},
+                                      "proposes": proposes, **body, "status": "failed", "error": err})
+                n_failed += 1
+                continue
+            entries.append({"id": entry_id, "target": patch["target"], "anchor": patch["anchor"],
+                            "payload": patch["payload"], "source": patch["source"], "status": "proposed"})
+            applied_items.append({**base, "target": {"file": proposals_rel, "section": entry_id, "category": None},
+                                  "proposes": proposes, **body, "status": "applied"})
+            n_applied += 1
+            continue
+
         rel     = patch["file"]
         content = file_contents.get(rel)
-
         item_base = {
-            "inboxId": patch["inboxId"],
-            "patchId": pid,
-            "kind":    patch["kind"],
+            **base,
             "target": {
                 "file":     rel,
                 "section":  patch["section"],
                 "category": patch.get("category"),
             },
-            "body": patch.get("body", ""),
+            **body,
         }
+
+        if rel == MODEL_FILE:
+            applied_items.append({**item_base, "status": "failed",
+                                  "error": f"{MODEL_FILE} takes proposals only (kind: proposal)"})
+            n_failed += 1
+            continue
 
         if content is None:
             applied_items.append({**item_base, "status": "failed", "error": f"file not found: {rel}"})
@@ -543,10 +515,10 @@ def main() -> int:
             applied_items.append({**item_base, "status": "applied"})
             n_applied += 1
 
-    def short_circuit() -> int:
+    if n_applied == 0:
         print(
             f"ERROR: all {n_failed} patch(es) failed — no artifacts written. "
-            "The round can be retried without --force after fixing the diffs.",
+            "The round can be retried without --force after fixing the patches.",
             file=sys.stderr,
         )
         for item in applied_items:
@@ -554,13 +526,10 @@ def main() -> int:
                 print(f"  FAILED {item['patchId']}: {item.get('error')}", file=sys.stderr)
         return 2
 
-    if n_applied == 0:
-        return short_circuit()
-
     if dry_run:
         print(
             f"DRY-RUN: {n_applied} would be applied, {n_failed} would fail "
-            "(model check and note resolution not run)"
+            "(note resolution not run)"
         )
         return 0
 
@@ -583,37 +552,15 @@ def main() -> int:
             else:
                 path.write_bytes(data)
 
-    # model.yaml first: `@skaile/model check` must accept it, otherwise the proposals fail and the
-    # file is restored byte for byte.
-    datamodel_dir = concept_root / DATAMODEL_DIR
-    model_ids = {i["patchId"] for i in applied_items if i["status"] == "applied" and i["target"]["file"] == MODEL_FILE}
-    checked_model = False
-    if model_ids:
-        write_text(concept_root / MODEL_FILE, file_contents[MODEL_FILE])  # type: ignore[arg-type]
-        check_err = run_check(datamodel_dir)
-        if check_err:
-            restore_all()
-            before.clear()
-            file_contents[MODEL_FILE] = originals[MODEL_FILE]
-            print(f"@skaile/model check rejected model.yaml; restored it:\n{check_err}", file=sys.stderr)
-            for item in applied_items:
-                if item["patchId"] in model_ids:
-                    item["status"] = "failed"
-                    item["error"] = f"@skaile/model check rejected model.yaml: {check_err}"
-                    n_applied -= 1
-                    n_failed += 1
-            if n_applied == 0:
-                return short_circuit()
-        else:
-            checked_model = True
-
-    # Remaining edited files
+    # Edited files, then the round's proposal file; no owner artifact is touched by a proposal
     files_with_applied = {
         item["target"]["file"] for item in applied_items if item["status"] == "applied"
     }
     for rel, content in file_contents.items():
-        if rel in files_with_applied and rel != MODEL_FILE and content is not None:
+        if rel in files_with_applied and content is not None:
             write_text(concept_root / rel, content)
+    if entries:
+        write_text(proposals_file, proposal_file_text(proposed_on, scope, entries))
 
     # The notes this round answers; they are closed only once the round is committed, so a failed
     # commit never leaves a note resolved for a change that is not in the history.
@@ -658,8 +605,9 @@ def main() -> int:
         subprocess.run(["git", "commit", "-q", "--amend", "--no-edit"], check=False, capture_output=True)
 
     print(f"Applied {n_applied} patch(es), {n_failed} failed; round {rid!r} committed")
-    if checked_model:
-        print("@skaile/model check accepted model.yaml")
+    if entries:
+        print(f"PROPOSED {len(entries)} entr{'y' if len(entries) == 1 else 'ies'} in {proposals_rel}; "
+              "the target owners settle them")
     for r in sorted(resolutions, key=lambda r: r["id"]):
         if r["state"] == "resolved":
             print(f"RESOLVED note {r['id']}: {r['status']}")

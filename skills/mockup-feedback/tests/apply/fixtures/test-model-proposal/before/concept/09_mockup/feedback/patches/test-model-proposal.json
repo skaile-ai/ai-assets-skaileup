@@ -5,40 +5,70 @@
     {
       "id": "p-k3m9x2-1-model",
       "inboxId": "k3m9x2-1",
-      "file": "10_blueprint/datamodel/model.yaml",
-      "section": "yaml:entity/Task/fields",
-      "kind": "model-proposal",
+      "kind": "proposal",
       "category": null,
       "body": "The editor needs an estimate field: how many hours the task will take.",
-      "diff": "@@ yaml:entity/Task/fields @@\n+      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }\n",
+      "target": "_concept/10_blueprint/datamodel/model.yaml",
+      "anchor": "entities.Task.fields.estimate",
+      "payload": {
+        "type": "decimal",
+        "required": false
+      },
+      "source": "note k3m9x2-1: \"The editor needs an estimate field: how many hours the task will take.\"",
       "resolves": [
-        { "id": "k3m9x2-1", "status": "implemented", "resolution": "Task.estimate proposed in model.yaml and shown in TaskEditor." }
+        {
+          "id": "k3m9x2-1",
+          "status": "implemented",
+          "resolution": "Task.estimate proposed for model.yaml and shown in TaskEditor."
+        }
       ]
     },
     {
       "id": "p-k3m9x2-4-model",
       "inboxId": "k3m9x2-4",
-      "file": "10_blueprint/datamodel/model.yaml",
-      "section": "yaml:model/entities",
-      "kind": "model-proposal",
+      "kind": "proposal",
       "category": null,
       "body": "Tasks need comments from the team.",
-      "diff": "@@ yaml:model/entities @@\n+  Comment:\n+    glossary: comment\n+    display: Comment\n+    label_field: body\n+    proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-4 }\n+    fields:\n+      body: text\n+      task_id: { type: m2o, to: Task, on_delete: cascade }\n",
+      "target": "_concept/10_blueprint/datamodel/model.yaml",
+      "anchor": "entities.Comment",
+      "payload": {
+        "glossary": "comment",
+        "display": "Comment",
+        "label_field": "body",
+        "fields": {
+          "body": "text",
+          "task_id": {
+            "type": "m2o",
+            "to": "Task",
+            "on_delete": "cascade"
+          }
+        }
+      },
+      "source": "note k3m9x2-4: \"Tasks need comments from the team.\"",
       "resolves": [
-        { "id": "k3m9x2-4", "status": "implemented", "resolution": "Comment entity proposed in model.yaml." }
+        {
+          "id": "k3m9x2-4",
+          "status": "implemented",
+          "resolution": "Comment entity and term proposed for the data model and glossary."
+        }
       ]
     },
     {
       "id": "p-k3m9x2-4-glossary",
       "inboxId": "k3m9x2-4",
-      "file": "glossary.md",
-      "section": "before:## Relations",
-      "kind": "glossary-proposal",
+      "kind": "proposal",
       "category": null,
       "body": "Tasks need comments from the team.",
-      "diff": "@@ before:## Relations @@\n+**Comment** (`comment`):\n+- status: proposed\n+- proposed_by: mockup-feedback\n+- proposed_on: 2026-10-23\n+- source: \"Tasks need comments from the team.\" (k3m9x2-4)\n+- kind: object\n+\n",
+      "target": "_concept/glossary.md",
+      "anchor": "term:Comment",
+      "payload": "**Comment** (`comment`):\n- kind: object\n",
+      "source": "note k3m9x2-4: \"Tasks need comments from the team.\"",
       "resolves": [
-        { "id": "k3m9x2-4", "status": "implemented", "resolution": "Comment entity proposed in model.yaml." }
+        {
+          "id": "k3m9x2-4",
+          "status": "implemented",
+          "resolution": "Comment entity and term proposed for the data model and glossary."
+        }
       ]
     }
   ],

@@ -1,6 +1,6 @@
 # 0022 — Shared artifact contracts and proposed entries
 
-**Status:** accepted; amended by [0024](0024-the-glossary-splits-by-kind.md) (in split mode a proposed glossary term lands in the project glossary)
+**Status:** accepted; amended by [0024](0024-the-glossary-splits-by-kind.md) (in split mode a proposed glossary term lands in the project glossary), [0031](0031-proposals-are-files-per-run.md) (proposed entries live in one proposal file per run, not in the owner's artifact; a rejection stays there and takes no decision record) and [0032](0032-one-decision-log-under-docs-adr.md) (the one decision record is the folder `docs/adr/`, one file per decision, owned by `skaileup`; other skills propose)
 
 Supersedes the `writers` key and the "conditional file carries `writers: []`" choice of
 [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md), and the single-writer

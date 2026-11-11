@@ -34,7 +34,7 @@ the job and the boundary instead of restating them.>
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format
+Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format
 and procedure for its part; this file holds only the order.
 
 1. **<Verb phrase>** — `tree/03_brand/identity.md`. <≤ 1 line of skill-specific constraint,
@@ -49,10 +49,18 @@ and procedure for its part; this file holds only the order.
 procedure that belongs in one.
 
 **`produces: []` skills** (`build-branch`, `build-scaffold`, `build-database`,
-`quality-test`, `ops-review`) write nothing under `_concept/`, so no node holds their
-procedure. They carry `## Steps` in place of `## Route` — the compressed procedure, stated
-positively at the step each constraint binds — with a **ceiling of 100 lines**. They still
-cite a node for every `_concept/` format they read.
+`quality-test`, `ops-review`) write nothing under `_concept/` but, at most, their own proposal
+file (`quality-test` declares that one entry), so no node holds their procedure. They carry
+`## Steps` in place of `## Route` — the compressed procedure, stated positively at the step each
+constraint binds — with a **ceiling of 100 lines**. They still cite a node for every `_concept/`
+format they read.
+
+**The opener cites only the protocol files the route uses** (`tree/README.md § Protocol`):
+`tree/protocol/running.md` always, narrowed to the rules it binds where the skill does not
+interview (`(the todo list, rules 1 and 8)`); `tree/protocol/ownership.md` when it writes a
+proposal file (`tree/proposals/README.md`) or settles proposals targeting its own artifacts; `tree/protocol/delegation.md`
+when it hands passes to another agent context. `tree/README.md` itself is read only to find a
+part's node.
 
 ## The rules behind it
 
@@ -63,19 +71,26 @@ cite a node for every `_concept/` format they read.
   `name`, `description` and `version` stay at the root: those readers normalise both.
 - **A declared path is joined to the *project* root** (`resolver/src/validator.ts:81`), not to
   `_concept/`, so every concept path carries the prefix. `scripts/check.py` enforces both
-  halves: a path either starts with `_concept/` and resolves to a node, or is the named
+  halves: a path either starts with `_concept/` and resolves to a node, or is a named
   project-root artifact in `PROJECT_ROOT_ARTIFACTS`.
 - **A skill declares what it writes** (ADR 0013). `metadata.artifacts.produces` is a list of
   `{ id, path }`, mandatory on every skill: `id` is the kebab-case artifact id other skills
   name in `artifacts.requires` (every required id must be produced by some skill), and
   `path` starts with `_concept/` and resolves to a node that lists the skill under `owner`.
-  A skill that writes nothing under `_concept/` says `produces: []`. The only path allowed
-  outside `_concept/` is the named project-root artifact `APP-DESIGN.md`
-  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md), the
-  `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`), whose node is `tree/APP-DESIGN.md`.
+  A skill that writes nothing under `_concept/` says `produces: []`. The only paths allowed
+  outside `_concept/` are the named project-root artifacts `APP-DESIGN.md`
+  ([ADR 0015](./adr/0015-interaction-decisions-live-in-app-design.md)),
+  `docs/adr/<NNNN>-<slug>.md` ([ADR 0032](./adr/0032-one-decision-log-under-docs-adr.md)) and
+  `docs/agents/domain.md` ([ADR 0035](./adr/0035-skaileup-writes-a-guidance-section-for-upstream-skills.md)),
+  the `PROJECT_ROOT_ARTIFACTS` set in `scripts/check.py`, whose nodes are `tree/APP-DESIGN.md`,
+  `tree/docs/adr/README.md` and `tree/docs/agents/domain.md`.
   `scripts/check.py` enforces it in both directions; the host's node done-state read is
   `host:node-done-from-produces`: a node is done when every non-templated path in the list
   exists.
+- **A proposer produces its proposal file.** Every skill listed in some node's `may_propose`
+  declares `{ id: proposals, path: "_concept/proposals/<date>-<skill>-<scope>.yaml" }`, and only
+  those skills produce under `_concept/proposals/` (`scripts/check.py` rule
+  `proposer-produces-proposals`).
 - **A skill that cites the tree declares the contract** (`contract:@skaile-ai/shared-contracts`
   under `metadata.requires`), and a skill that declares it cites the tree.
 - **Frontmatter differs from `-mp` only where the tree requires it.** A skill whose body
@@ -101,22 +116,34 @@ cite a node for every `_concept/` format they read.
   human nothing.
 - **No flow-order prose.** A skill does not say "runs after X" or "hands over to Y": order
   lives in the flow graph, and next steps are named by demand — the skills that own what is
-  still missing (`tree/README.md § How a skill runs`, rule 8).
+  still missing (`tree/protocol/running.md § How a skill runs`, rule 8).
 - **An interviewing route item is a derive-or-ask step**: read what exists → derive the rest
   from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) →
-  batch-ask what neither settles; it cites `tree/README.md § How a skill runs` and does not
+  batch-ask what neither settles; it cites `tree/protocol/running.md § How a skill runs` and does not
   restate the rules.
 - **The environment and the tree are sources of truth; the body is not a cache of them.** No
   READS/WRITES path list (the frontmatter and the nodes have it), no CHECKLIST (the node's
   `## Checks` has it), no Context Budget table.
 - **Constraints are stated positively, at the step they bind.** No `MUST`/`NEVER` block.
-- **Calling a skill the collection does not ship.** An operative call reads
-  `Call the Skill tool with "<name>"`; two skills are
-  `call the Skill tool twice, for "<a>" and "<b>"` (one skill per call, never "with a and
-  b"); a user-invoked skill is an instruction to the human (`tell the user to run
-  `/<name>``) and never a Skill-tool call; the allowed names are `EXTERNAL_SKILLS` in
-  `scripts/check.py`; a hard dependency says in the same step what happens when the skill
-  is absent.
+- **Calling a skill the collection does not ship.** The allowed names are `EXTERNAL_SKILLS` in
+  `scripts/check.py`, each on one of three axes taken from the upstream frontmatter, and each
+  phrased one way:
+  - **`model`** — the model calls it: `Call the Skill tool with "<name>"`; two skills are
+    `call the Skill tool twice, for "<a>" and "<b>"` (one skill per call, never "with a and b").
+  - **`user`** — only the human runs it: an instruction to the human, `tell the user to run
+    `/<name>``, never a Skill-tool call.
+  - **`user-followed`** — upstream marks it `disable-model-invocation: true`, so the Skill tool
+    cannot call it, yet the agent runs it: ``Read the installed `<name>` skill and follow it``,
+    optionally followed by `, with <inputs>`. "Installed" means the harness's skill directory
+    (`.agents/skills/<name>/SKILL.md` or `.claude/skills/<name>/SKILL.md`); the route names no
+    path. These are `setup-matt-pocock-skills`, `to-tickets` and `implement-spec`. A Skill-tool
+    call to one is an error, and so is the phrase for a `model` skill.
+
+  Every external skill a skill uses is declared in its `metadata.requires` as
+  `skill:@mattpocock/<name>#0.1.0`, an exact store version because skaile resolves no caret
+  range in `requires`, and every one declared is used (`scripts/check.py` rule
+  `external-skill-declared`). A hard dependency says in the same step what happens when the
+  skill is absent.
 - **`## Depth Behavior`, `## Standalone Mode`, `## Context Budget`** describe how the
   collection works, not what the skill does. They belong in one place, once —
-  `tree/README.md § How a skill runs` — not in thirty skills each.
+  `tree/protocol/running.md § How a skill runs` — not in thirty skills each.

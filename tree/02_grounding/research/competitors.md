@@ -30,9 +30,9 @@ available" rather than filled in; `products_analyzed` equals the number of produ
    first, then the products research found.
 2. Dispatch and write per `tree/02_grounding/research/README.md`, with a source against every
    claim.
-3. **Propose the gaps as ideas.** A gap users complain about that no roster row, idea or `## Cut`
-   line covers is proposed into `_concept/05_features/featuresets.md`
-   (`tree/05_features/featuresets.md § Ideas`).
+3. **Propose the gaps as ideas.** A gap users complain about that no roster row, idea, `## Cut`
+   line or pending entry covers becomes a `move: idea` entry in the run's proposal file
+   (`tree/05_features/featuresets.md § Format`, *Proposal entry*; `tree/proposals/README.md § Writing it`).
 
 ## Checks
 

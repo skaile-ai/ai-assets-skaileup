@@ -1,7 +1,7 @@
 ---
 name: quality-e2e
 description: "Use when the app runs and its journeys need proving end to end in a real browser — drives every story from stories.yaml with agent-browser, screenshots each step, checks the database behind it, and writes each journey's verdict into the acceptance-criteria ledger. Triggers on 'test the app', 'e2e tests', 'browser testing', 'walk the journeys'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -34,7 +34,7 @@ criterion ids, observed in the browser with `agent-browser`.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` (the todo list, rules 1, 2 and 8) once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Walk every journey and write its verdict into the ledger** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, the `quality-e2e` procedure (steps 1–8; step 2 derives the journey list from stories, specs or findings, and covers an `api-service` with no UI journeys). A feature with no ledger gets its verdict in the report and the name of the skill that creates rows.
 

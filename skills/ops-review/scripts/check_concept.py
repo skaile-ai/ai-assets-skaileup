@@ -8,12 +8,16 @@ Stdlib + PyYAML only. Checks:
 
   1. root layout     every first-level entry is in the tree; the retired paths
                      (`comparable.md`, `10_blueprint/glossary.md`, `10_blueprint/datamodel/feature-map.json`,
-                     `03_brand/tokens.json`, `11_build/interaction.yaml`) are reported as unowned
+                     `03_brand/tokens.json`, `11_build/interaction.yaml`) are reported as unowned; a
+                     leftover `10_blueprint/decisions.md` or `11_build/decisions.md` is one line: the
+                     decision log moved to `docs/adr/` (ADR 0032); a leftover `11_build/trace.yaml` or
+                     `11_build/slices/` is one line: issue↔PR links replace them (ADR 0036)
   2. frontmatter     `last_updated` (and `approved`, when present) is an ISO date on every
-                     artifact markdown file, plus the fields its artifact type requires
+                     artifact markdown file, plus the fields its artifact type requires; a feature's
+                     `tracker`, when present, is `{ issue: <n> }` with a positive issue number
   3. cross-links     a feature's `screens:` and a screen's `implements:` resolve, in both directions
-                     (a screen's `implements:` entry is a path or a `{path, status: proposed, …}`
-                     mapping; either one satisfies the link)
+                     (a pending proposal entry with anchor `implements` or `screens` whose payload names
+                     the other side satisfies the link until its owner settles it)
   4. data_entities   every name is an entity `id` of `10_blueprint/datamodel/model.yaml` (skipped without one),
                      read through `bunx @skaile/model@1 json` (or `npx`); a model the tool rejects, or a
                      machine with neither runner, is one line on `model.yaml`
@@ -22,20 +26,29 @@ Stdlib + PyYAML only. Checks:
                      feature's own slug, or scoped to another feature whose spec carries it
   6. ledger          `11_build/acceptance-criteria/<featureset>/<feature>.ac.md` rows are checkbox
                      lines with a PASS/FAIL/empty marker; evaluated rows carry
-                     `<pointer> · <evaluator> · <commit> · <date>`, untested rows the id alone
-  7. stale proposals every `proposed_on:` date (or `proposed by <skill>, <date>` marker, or the
-                     `proposed: { on: <date> }` key of `model.yaml`, flow or block style) in an artifact
-                     that is older than `--stale-days` (default 14) is reported with the owner skill that
-                     promotes or rejects it
+                     `<pointer> · <evaluator> · <commit> · <date> · #<ticket>`, untested rows the id and
+                     `#<ticket>` alone; a ledger whose spec has no `tracker.issue` is one line on the ledger
+  7. proposals       every `_concept/proposals/*.yaml` file parses; an entry whose `target` resolves
+                     to no node of the tree is reported; a `proposed` entry older than `--stale-days`
+                     (default 14, counted from the file's `proposed_on`) is reported with the owner skill
+                     that promotes or rejects it; an inline proposal marker left in an owner artifact
+                     (`status: proposed`, `proposed_by`/`proposed_on`, `(proposed by …)`, or a `proposed:`
+                     key of a YAML file) is reported as one to move into a proposal file
   8. open questions  every `## Open` row of `APP-DESIGN.md` and every `### Open` bullet of a screen spec
                      carries a recommendation; an `[open Qn]` entry has its row
-  9. glossary split  when the project keeps its own glossary (`01_meta/scope.yaml` key `glossary` names a
-                     path, or the key is absent and the root holds a `CONTEXT.md`; `tree/glossary.md
+  9. glossary split  in split mode (`01_meta/scope.yaml` key `glossary` names a path, else the latest
+                     pending proposal entry targeting `scope.yaml` at anchor `key:glossary` names one,
+                     else the root holds a `GLOSSARY.md`, else a legacy `CONTEXT.md`; `tree/glossary.md
                      § Where the words live`): every `_concept/glossary.md` entry id is the slug of a
-                     term there, the entries carry no definition or `_Avoid_` line, every confirmed
-                     term there has an entry, and no two terms there share an id (two meanings of
+                     term there, the entries carry no definition or `_Avoid_` line, every term there
+                     has an entry, and no two terms there share an id (two meanings of
                      one word get distinct bold terms); a named path that does not exist is one
-                     line. Mode `concept` (and an undecided `CONTEXT-MAP.md` root) checks none of this
+                     line. Mode `concept`, an undecided root (`GLOSSARY-MAP.md` or `CONTEXT-MAP.md`
+                     with no root glossary) and a default `GLOSSARY.md` not yet created check none of this
+ 10. decision refs   every `adr:<slug>` in a feature's `follows:` and a waived stage of
+                     `01_meta/walkthrough.yaml` names a record `docs/adr/<NNNN>-<slug>.md` that is
+                     neither rejected nor superseded, or a pending proposal entry with
+                     `target: docs/adr/` and `anchor: adr:<slug>`
 
 A screen whose `floorplan:` is missing or empty is reported under 2; the floorplan is the one fact the
 screen story and `quality-design` read it by.
@@ -45,7 +58,10 @@ The tree's legal first-level entries are parsed from the fenced tree in `tree/RE
 collection (`../../../tree/`), or from the installed copy
 (`../../../contracts/shared-contracts/README.md`); with neither, the built-in list below,
 mirrored from that fence, is used. An entry is the first token after the box-drawing prefix —
-the summary column is ignored — and a directory's trailing `/` is dropped.
+the summary column is ignored — and a directory's trailing `/` is dropped. A proposal's `target` is
+resolved against the `path:` of the nodes in that same tree (a `<placeholder>` matches one path
+segment; `GLOSSARY.md`, `CONTEXT.md` and the project glossary resolve to `_concept/glossary.md`); with neither tree,
+against the prefixes of `PROPOSAL_OWNERS`.
 """
 from __future__ import annotations
 
@@ -62,7 +78,7 @@ import yaml
 
 BUILTIN_ROOT = ["README.md", "brief.md", "goals.md", "glossary.md", "01_meta", "02_grounding",
                 "03_brand", "04_journeys", "05_features", "06_behaviors", "07_screens",
-                "08_dossiers", "09_mockup", "10_blueprint", "11_build"]
+                "08_dossiers", "09_mockup", "10_blueprint", "11_build", "proposals"]
 RETIRED = {
     "comparable.md": "folded into brief.md `## Comparables`",
     "10_blueprint/glossary.md": "the glossary is `glossary.md` at the root",
@@ -88,29 +104,48 @@ ID_RE = re.compile(r"^AC-([a-z0-9][a-z0-9_-]*)-(\d{2})$")
 CITE_RE = re.compile(r"AC-[A-Za-z0-9_-]+")
 ROW_RE = re.compile(r"^- \[(PASS|FAIL| )\] (\S+)(?: — (.*))?$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
-PROPOSED_ON_RE = re.compile(r"proposed_on\"?:[ \t]*[\"']?(\d{4}-\d{2}-\d{2})")
-# The data model marks a proposal as `proposed: { by: <skill>, on: <date>, source: … }`
-# (`tree/10_blueprint/datamodel/model.md § Format`), in flow or block style; the key may span lines,
-# so it is matched on the whole text.
-PROPOSED_YAML_RE = re.compile(
-    r"\bproposed:(?:\s*\{[^{}]*?\bon:|[ \t]*\n(?:[ \t]+[^\n]*\n)*?[ \t]+on:)[ \t]*[\"']?(\d{4}-\d{2}-\d{2})"
-)
 DATAMODEL_DIR = "10_blueprint/datamodel/"
-PROPOSED_BY_RE = re.compile(r"proposed by [a-z][a-z0-9-]*, (\d{4}-\d{2}-\d{2})")
+PROPOSALS_DIR = "proposals"
 STALE_DAYS = 14
-# Parts that quote proposals without holding one: findings carry code evidence, the decision
-# records and the candidate report cite entries they already settled or reported.
-PROPOSAL_SKIP = ("02_grounding/", "10_blueprint/decisions.md", "11_build/decisions.md",
-                 "11_build/design-candidates.md")
-PROPOSAL_OWNERS = (  # display-path prefix -> the skill that promotes or rejects a proposal there
+# A proposal lives in its own file under `_concept/proposals/` (`tree/proposals/README.md`); an owner
+# artifact never holds one. These are the inline markers the earlier mechanism left in owner artifacts.
+INLINE_MARKER_RE = re.compile(r"\bstatus:[ \t]*[\"']?proposed\b|\bproposed_(?:by|on)\b|\(proposed by\b")
+INLINE_YAML_KEY_RE = re.compile(r"(?:^|[\s{,])proposed:")  # a `proposed:` key, block or flow style
+# Parts that quote proposals without holding one: findings carry code evidence, the candidate report
+# cites entries it already reported; the Storybook package is code, the proposal files are the
+# proposals themselves.
+QUOTING_PARTS = ("02_grounding/", "11_build/design-candidates.md", "09_mockup/storybook/", f"{PROPOSALS_DIR}/")
+# The decision logs the tree once kept under `_concept/`; the log is `docs/adr/` at the project root
+# now (ADR 0032). A leftover is one finding, and its lines are not read as owner content.
+LEFTOVER_DECISIONS = ("10_blueprint/decisions.md", "11_build/decisions.md")
+DECISIONS_MOVED = "decision log moved to docs/adr/ (ADR 0032); move ADR-grade records, drop the rest"
+# The build trace and the slice dossiers of the earlier build skills; the tracker's issue↔PR links
+# replace both (ADR 0036). A leftover is one finding, and its lines are not read as owner content.
+LEFTOVER_BUILD = ("11_build/trace.yaml", "11_build/slices")
+BUILD_REPLACED = "issue↔PR links replace the trace and slice dossiers (ADR 0036); delete it"
+TICKET_RE = re.compile(r"^#[1-9][0-9]*$")
+ADR_DIR = "docs/adr"
+ADR_REF_RE = re.compile(r"^adr:([a-z0-9]+(?:-[a-z0-9]+)*)$")
+ADR_FILE_RE = re.compile(r"^[0-9]{4}-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$")
+# The project glossary's names at the root (`tree/glossary.md § Where the words live`): `GLOSSARY.md`,
+# else upstream's legacy `CONTEXT.md`; a map of several contexts under either name leaves the mode undecided.
+ROOT_GLOSSARIES = ("GLOSSARY.md", "CONTEXT.md")
+ROOT_GLOSSARY_MAPS = ("GLOSSARY-MAP.md", "CONTEXT-MAP.md")
+PROPOSAL_OWNERS = (  # target path (or path prefix) -> the skill that promotes or rejects a proposal there
     ("APP-DESIGN.md", "experience-interaction"),
+    ("GLOSSARY.md", "concept-glossary"),
+    ("CONTEXT.md", "concept-glossary"),
+    ("docs/adr/", "skaileup"),
     ("_concept/glossary.md", "concept-glossary"),
     ("_concept/07_screens/shell.md", "experience-shell"),
     ("_concept/07_screens/", "experience-screen"),
+    ("_concept/05_features/featuresets.md", "concept-brief"),
     ("_concept/05_features/", "spec-feature"),
     ("_concept/01_meta/scope.yaml", "skaileup"),
     ("_concept/10_blueprint/datamodel/", "architecture-datamodel"),
 )
+GLOSSARY_NODE = "_concept/glossary.md"
+SCOPE = "_concept/01_meta/scope.yaml"
 NO_RECOMMENDATION = {"", "-", "—", "?", "tbd", "TBD", "n/a"}
 
 
@@ -257,6 +292,12 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
     for path, why in RETIRED.items():
         if (concept / path).exists():
             report(path, f"unowned — retired path ({why})")
+    for path in LEFTOVER_DECISIONS:
+        if (concept / path).exists():
+            report(path, DECISIONS_MOVED)
+    for path in LEFTOVER_BUILD:
+        if (concept / path).exists():
+            report(path, BUILD_REPLACED)
 
     # models, stories
     model = None
@@ -315,21 +356,25 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
         if kind.get(p) == "screen" and "floorplan" in data and not (
                 isinstance(data["floorplan"], str) and data["floorplan"].strip()):
             report(rel(p), "`floorplan` is empty — name one floorplan id of `rulebook/floorplans/`")
+        if kind.get(p) == "feature" and "tracker" in data and tracker_issue(data) is None:
+            report(rel(p), "`tracker` must be `{ issue: <n> }`, the spec's parent issue number")
 
-    # 3. cross-links
+    # 3. cross-links; a pending proposal entry for the missing side holds the link until it is settled
+    entries, proposal_errors = read_proposals(concept)
+    links = pending_links(entries)
     for f in features:
         for target in listed_paths(fm.get(f, {}).get("screens")):
             s = concept / target
             if not s.is_file():
                 report(rel(f), f"screens: {target} does not exist")
-            elif rel(f) not in listed_paths(fm.get(s, {}).get("implements")):
+            elif rel(f) not in listed_paths(fm.get(s, {}).get("implements")) and (rel(s), rel(f)) not in links:
                 report(rel(s), f"implements: does not name {rel(f)}, which lists it in screens:")
     for s in screens:
         for target in listed_paths(fm.get(s, {}).get("implements")):
             f = concept / target
             if not f.is_file():
                 report(rel(s), f"implements: {target} does not exist")
-            elif rel(s) not in listed_paths(fm.get(f, {}).get("screens")):
+            elif rel(s) not in listed_paths(fm.get(f, {}).get("screens")) and (rel(f), rel(s)) not in links:
                 report(rel(f), f"screens: does not list {rel(s)}, which implements it")
 
     # 4. data_entities
@@ -360,6 +405,8 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
         spec = concept / ref if ref else None
         if ref and not spec.is_file():
             report(rel(ac), f"feature_ref: {ref} does not exist")
+        elif spec and spec in fm and tracker_issue(fm[spec]) is None:
+            report(rel(ac), f"{ref} has no `tracker.issue` — build-plan writes the parent issue and the ledger together")
         slug = ac.name.removesuffix(".ac.md")
         offset = ac.read_text(encoding="utf-8").count("\n") - body.count("\n")
         for n, line in enumerate(body.splitlines(), offset + 1):
@@ -368,56 +415,191 @@ def check(concept: Path, here: Path, today: datetime.date | None = None,
             m = ROW_RE.match(line)
             where = f"{rel(ac)}:{n}"
             if not m:
-                report(where, "not a ledger row — rows are `- [ ] <id>` or `- [PASS|FAIL] <id> — <evidence>`")
+                report(where, "not a ledger row — rows are `- [ ] <id> — #<ticket>` or `- [PASS|FAIL] <id> — <evidence> · #<ticket>`")
                 continue
             marker, cid, evidence = m.groups()
             report_id(cid, slug, defined, stories, owned, where, report)
             if spec and spec in cited and cid not in cited[spec]:
                 report(where, f"{cid} is not cited in {ref}")
-            if marker == " " and evidence:
-                report(where, "an untested row carries the id alone")
-            if marker != " ":
+            if marker == " ":
+                if not TICKET_RE.match((evidence or "").strip()):
+                    report(where, "an untested row carries the id and `#<ticket>` alone")
+            else:
                 parts = [x.strip() for x in (evidence or "").split(" · ")]
-                if len(parts) != 4 or not all(parts) or not COMMIT_RE.match(parts[2]) or not is_date(parts[3]):
-                    report(where, "evidence must be `<pointer> · <evaluator> · <commit> · <date>`")
+                if len(parts) != 5 or not all(parts) or not COMMIT_RE.match(parts[2]) or not is_date(parts[3]) \
+                        or not TICKET_RE.match(parts[4]):
+                    report(where, "evidence must be `<pointer> · <evaluator> · <commit> · <date> · #<ticket>`")
 
     # 7-8. proposals and open questions
     root = concept.parent
     pg, _ = glossary_target(concept)
-    problems += stale_proposals(concept, root, today or datetime.date.today(), stale_days,
-                                pg if pg and is_project_path(pg) else None)
+    pg = pg if pg and is_project_path(pg) else None
+    problems += proposal_errors
+    problems += proposal_problems(entries, here, today or datetime.date.today(), stale_days, pg)
+    problems += inline_proposals(concept, root, pg)
     problems += open_question_problems(concept, root, screens + [concept / "07_screens/shell.md"])
     problems += glossary_split_problems(concept, root)
+    problems += adr_ref_problems(concept, root, features, fm, entries)
     return problems
 
 
-def stale_proposals(concept: Path, root: Path, today: datetime.date, days: int,
-                    project_glossary: str | None = None) -> list[str]:
-    """One line per `proposed` entry whose proposal date is more than `days` days old. In split mode
-    `project_glossary` (a root-relative path) is scanned too, its owner `concept-glossary`."""
-    out: list[str] = []
-    files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
-             if p.is_file() and p.suffix in (".md", ".yaml", ".yml", ".json")]
-    files = [(f"_concept/{rel}", p) for rel, p in files if not rel.startswith(PROPOSAL_SKIP)]
-    if (root / "APP-DESIGN.md").is_file():
-        files.append(("APP-DESIGN.md", root / "APP-DESIGN.md"))
-    if project_glossary and (root / project_glossary).is_file():
-        files.append((project_glossary, root / project_glossary))
-    for shown, p in files:
-        owner = "concept-glossary" if shown == project_glossary else \
-            next((o for prefix, o in PROPOSAL_OWNERS if shown.startswith(prefix)), "its owner skill")
-        text = p.read_text(encoding="utf-8", errors="replace")
-        hits = [(text.count("\n", 0, m.start()) + 1, m.group(1))
-                for pattern in (PROPOSED_ON_RE, PROPOSED_BY_RE, PROPOSED_YAML_RE)
-                for m in pattern.finditer(text)]
-        for n, date in sorted(hits):
-            try:
-                age = (today - datetime.date.fromisoformat(date)).days
-            except ValueError:
+def tracker_issue(data: dict) -> int | None:
+    """The spec's parent issue number from `tracker: { issue: <n> }`; None when absent or malformed."""
+    tracker = data.get("tracker")
+    issue = tracker.get("issue") if isinstance(tracker, dict) else None
+    ok = isinstance(issue, int) and not isinstance(issue, bool) and issue > 0
+    return issue if ok and set(tracker) == {"issue"} else None
+
+
+def as_date(value) -> datetime.date | None:
+    if isinstance(value, datetime.date):
+        return value
+    try:
+        return datetime.date.fromisoformat(str(value))
+    except ValueError:
+        return None
+
+
+def read_proposals(concept: Path) -> tuple[list[dict], list[str]]:
+    """Every entry of `_concept/proposals/*.yaml` (`tree/proposals/README.md`) as
+    `{file, line, proposed_by, proposed_on, entry}`, plus one line per file that cannot be read."""
+    folder = concept / PROPOSALS_DIR
+    records: list[dict] = []
+    problems: list[str] = []
+    for path in sorted(folder.glob("*.yaml")) if folder.is_dir() else []:
+        shown = f"_concept/{PROPOSALS_DIR}/{path.name}"
+        text = path.read_text(encoding="utf-8", errors="replace")
+        try:
+            data = yaml.safe_load(text)
+        except yaml.YAMLError:
+            problems.append(f"{shown}: not valid YAML")
+            continue
+        items = data.get("entries") if isinstance(data, dict) else None
+        if not isinstance(items, list):
+            problems.append(f"{shown}: no `entries` list (format: tree/proposals/README.md)")
+            continue
+        for entry in items:
+            if not isinstance(entry, dict):
+                problems.append(f"{shown}: an entry is not a mapping")
                 continue
-            if age > days:
-                out.append(f"{shown}:{n}: proposed entry from {date} is {age} days old "
-                           f"(limit {days}) — promote or reject it with {owner}")
+            m = re.search(rf"^[ \t]*(?:-[ \t]+)?id:[ \t]*[\"']?{re.escape(str(entry.get('id', '')))}[\"']?[ \t]*(?:#.*)?$",
+                          text, re.M)
+            records.append({"file": shown, "line": text.count("\n", 0, m.start()) + 1 if m else 1,
+                            "proposed_by": data.get("proposed_by"), "proposed_on": data.get("proposed_on"),
+                            "entry": entry})
+    return records, problems
+
+
+def is_pending(record: dict) -> bool:
+    return record["entry"].get("status") == "proposed"
+
+
+def pending_links(records: list[dict]) -> set[tuple[str, str]]:
+    """(artifact, linked path), both relative to `_concept/`, of every pending entry with anchor
+    `implements` (a screen naming a feature) or `screens` (a feature naming a screen)."""
+    out = set()
+    for r in records:
+        e = r["entry"]
+        if not is_pending(r) or e.get("anchor") not in ("implements", "screens") or not isinstance(e.get("target"), str):
+            continue
+        for path in listed_paths([e.get("payload")]):
+            out.add((e["target"].strip().removeprefix("_concept/"), path))
+    return out
+
+
+def tree_nodes(here: Path) -> list[tuple[str, list[str]]] | None:
+    """(`path:` entry, owners) of every node of the tree beside the script, or of its installed copy;
+    None when neither is there."""
+    root = here.parents[3] if len(here.parents) > 3 else None
+    for tree in (root / "tree", root / "contracts" / "shared-contracts") if root else ():
+        if not (tree / "README.md").is_file():
+            continue
+        nodes = []
+        for p in sorted(tree.rglob("*.md")):
+            data, _ = frontmatter(p)
+            if not data:
+                continue
+            paths = data.get("path")
+            owners = [o for o in data.get("owner") or [] if isinstance(o, str)] \
+                if isinstance(data.get("owner"), list) else []
+            for path in paths if isinstance(paths, list) else [paths]:
+                if isinstance(path, str):
+                    nodes.append((path, owners))
+        return nodes
+    return None
+
+
+def path_pattern(path: str) -> str:
+    """A node `path:` as a regex; a `<placeholder>` matches one path segment."""
+    return "".join("[^/]+" if part.startswith("<") else re.escape(part)
+                   for part in re.split(r"(<[^>/]+>)", path) if part)
+
+
+def target_owners(target: str, nodes, project_glossary: str | None) -> list[str] | None:
+    """The owners of the node `target` resolves to, None when it resolves to none. A root glossary
+    (`GLOSSARY.md`, legacy `CONTEXT.md`) and the project glossary resolve to the glossary node."""
+    if target in (*ROOT_GLOSSARIES, project_glossary):
+        target = GLOSSARY_NODE
+    if nodes is None:
+        owner = next((o for prefix, o in PROPOSAL_OWNERS if target.startswith(prefix)), None)
+        return [owner] if owner else None
+    return next((owners for path, owners in nodes if re.fullmatch(path_pattern(path), target)), None)
+
+
+def owner_of(target: str, owners: list[str], project_glossary: str | None) -> str:
+    if target in (*ROOT_GLOSSARIES, project_glossary):
+        return "concept-glossary"
+    return next((o for prefix, o in PROPOSAL_OWNERS if target.startswith(prefix)), None) \
+        or " or ".join(owners) or "its owner skill"
+
+
+def proposal_problems(records: list[dict], here: Path, today: datetime.date, days: int,
+                      project_glossary: str | None = None) -> list[str]:
+    """An entry with no target, an entry whose target resolves to no node, and a `proposed` entry more
+    than `days` days old, the last named with the owner skill that promotes or rejects it."""
+    out: list[str] = []
+    nodes = tree_nodes(here)
+    for r in records:
+        e = r["entry"]
+        where, eid, target = f"{r['file']}:{r['line']}", e.get("id", "?"), e.get("target")
+        if not isinstance(target, str) or not target.strip():
+            out.append(f"{where}: entry `{eid}` has no `target`")
+            continue
+        target = target.strip()
+        owners = target_owners(target, nodes, project_glossary)
+        if owners is None:
+            out.append(f"{where}: entry `{eid}` targets {target}, which resolves to no node of the tree")
+            continue
+        date = as_date(r["proposed_on"])
+        if not is_pending(r) or date is None:
+            continue
+        age = (today - date).days
+        if age > days:
+            out.append(f"{where}: entry `{eid}` for {target} is proposed since {date.isoformat()}, {age} days "
+                       f"(limit {days}) — promote or reject it with {owner_of(target, owners, project_glossary)}")
+    return out
+
+
+def inline_proposals(concept: Path, root: Path, project_glossary: str | None = None) -> list[str]:
+    """One line per line of an owner artifact that still carries an inline proposal marker; a proposal
+    belongs in its own file under `_concept/proposals/`. In split mode the project glossary is read too."""
+    files = [(p.relative_to(concept).as_posix(), p) for p in sorted(concept.rglob("*"))
+             if p.is_file() and p.suffix in (".md", ".yaml", ".yml")]
+    files = [(f"_concept/{rel}", p) for rel, p in files
+             if not rel.startswith(QUOTING_PARTS) and rel not in LEFTOVER_DECISIONS
+             and not any(rel == x or rel.startswith(x + "/") for x in LEFTOVER_BUILD)]
+    for extra in ("APP-DESIGN.md", project_glossary):
+        if extra and (root / extra).is_file():
+            files.append((extra, root / extra))
+    out: list[str] = []
+    for shown, p in files:
+        is_yaml = p.suffix in (".yaml", ".yml")
+        lines = enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1) if is_yaml \
+            else glossary_lines(p)
+        for n, line in lines:
+            if INLINE_MARKER_RE.search(line) or (is_yaml and not line.lstrip().startswith("#")
+                                                 and INLINE_YAML_KEY_RE.search(line)):
+                out.append(f"{shown}:{n}: inline proposal; move it to a proposal file under _concept/proposals/")
     return out
 
 
@@ -434,7 +616,10 @@ def is_project_path(value: str) -> bool:
 def glossary_target(concept: Path) -> tuple[str | None, bool]:
     """(project glossary path, explicit) per `tree/glossary.md § Where the words live`; the path is
     None in concept mode and in the undecided mode. A confirmed `glossary` key in `scope.yaml` wins,
-    else the latest `proposed` entry for it, else `CONTEXT.md` when the project root has one."""
+    else the latest pending proposal entry for it (target `scope.yaml`, anchor `key:glossary`), else a
+    root `GLOSSARY.md`, else a root `CONTEXT.md` (upstream's legacy name); a root map
+    (`GLOSSARY-MAP.md`, legacy `CONTEXT-MAP.md`) with neither is undecided, and a root with none of
+    them defaults to split mode with a `GLOSSARY.md` still to be created."""
     root = concept.parent
     scope = concept / "01_meta/scope.yaml"
     data = None
@@ -444,19 +629,25 @@ def glossary_target(concept: Path) -> tuple[str | None, bool]:
         except yaml.YAMLError:
             data = None
     value = None
-    if isinstance(data, dict):
-        if isinstance(data.get("glossary"), str) and data["glossary"].strip():
-            value = data["glossary"].strip()
-        else:
-            proposed = [e for e in data.get("proposed") or []
-                        if isinstance(e, dict) and e.get("key") == "glossary"
-                        and isinstance(e.get("value"), str) and e["value"].strip()]
-            if proposed:
-                latest = max(enumerate(proposed), key=lambda ie: (str(ie[1].get("proposed_on", "")), ie[0]))[1]
-                value = latest["value"].strip()
+    if isinstance(data, dict) and isinstance(data.get("glossary"), str) and data["glossary"].strip():
+        value = data["glossary"].strip()
+    else:
+        records, _ = read_proposals(concept)
+        pending = [((as_date(r["proposed_on"]) or datetime.date.min), i, r["entry"]["payload"].strip())
+                   for i, r in enumerate(records)
+                   if is_pending(r) and r["entry"].get("target") == SCOPE
+                   and r["entry"].get("anchor") == "key:glossary"
+                   and isinstance(r["entry"].get("payload"), str) and r["entry"]["payload"].strip()]
+        if pending:
+            value = max(pending)[2]
     if value is not None:
         return (None, False) if value == "concept" else (value, True)
-    return ("CONTEXT.md", False) if (root / "CONTEXT.md").is_file() else (None, False)
+    for name in ROOT_GLOSSARIES:
+        if (root / name).is_file():
+            return name, False
+    if any((root / name).is_file() for name in ROOT_GLOSSARY_MAPS):
+        return None, False
+    return ROOT_GLOSSARIES[0], False
 
 
 def glossary_lines(path: Path):
@@ -493,23 +684,16 @@ def glossary_split_problems(concept: Path, root: Path) -> list[str]:
         return []
     out: list[str] = []
 
-    terms: dict[str, tuple[int, bool]] = {}  # id -> (first line, first occurrence confirmed)
-    current = None  # (id, is the first occurrence)
+    terms: dict[str, int] = {}  # id -> first line
     for n, line in glossary_lines(pg_path):
         m = TERM_RE.match(line)
         if m:
             tid = term_id(m.group(1))
             if tid in terms:
-                out.append(f"{pg}:{n}: term `{tid}` repeats the id of line {terms[tid][0]} — "
+                out.append(f"{pg}:{n}: term `{tid}` repeats the id of line {terms[tid]} — "
                            f"concept-glossary qualifies one")
-                current = (tid, False)
             else:
-                terms[tid] = (n, True)
-                current = (tid, True)
-        elif line.startswith("#"):
-            current = None
-        elif current and current[1] and line.strip() == "- status: proposed":
-            terms[current[0]] = (terms[current[0]][0], False)
+                terms[tid] = n
 
     entries: dict[str, int] = {}  # id -> line
     block = None  # (id, reported)
@@ -527,9 +711,63 @@ def glossary_split_problems(concept: Path, root: Path) -> list[str]:
             block[1] = True
             out.append(f"_concept/glossary.md:{n}: entry `{block[0]}` carries a definition or _Avoid_ line — "
                        f"in split mode the words live in {pg}")
-    for tid, (n, confirmed) in terms.items():
-        if confirmed and tid not in entries:
+    for tid, n in terms.items():
+        if tid not in entries:
             out.append(f"{pg}:{n}: term `{tid}` has no entry in _concept/glossary.md — concept-glossary adds its kind")
+    return out
+
+
+def adr_records(root: Path) -> dict[str, str]:
+    """slug -> status of every record `docs/adr/<NNNN>-<slug>.md`; a record without frontmatter reads
+    as accepted (`tree/docs/adr/README.md § Format`)."""
+    folder = root / ADR_DIR
+    out: dict[str, str] = {}
+    for p in sorted(folder.glob("*.md")) if folder.is_dir() else []:
+        m = ADR_FILE_RE.match(p.name)
+        if m:
+            data, _ = frontmatter(p)
+            out[m.group(1)] = str((data or {}).get("status") or "accepted").strip()
+    return out
+
+
+def adr_ref_problems(concept: Path, root: Path, features: list[Path], fm: dict, records: list[dict]) -> list[str]:
+    """Every `adr:<slug>` a feature's `follows:` or a waived stage of `01_meta/walkthrough.yaml` cites
+    resolves to a record in `docs/adr/` that is neither rejected nor superseded, or to a pending
+    proposal entry with `target: docs/adr/` and `anchor: adr:<slug>` (docstring rule 10)."""
+    landed = adr_records(root)
+    pending = {r["entry"].get("anchor") for r in records if is_pending(r)
+               and str(r["entry"].get("target", "")).strip().rstrip("/") == ADR_DIR}
+
+    def problem(ref) -> str | None:
+        m = ADR_REF_RE.match(ref) if isinstance(ref, str) else None
+        if not m:
+            return f"{ref!r} is not a decision reference `adr:<slug>`"
+        status = landed.get(m.group(1))
+        if status is None:
+            return None if ref in pending else f"{ref} names no record in {ADR_DIR}/ and no pending proposal entry"
+        if status == "rejected" or status.startswith("superseded"):
+            return f"{ref} names a record that is {status}"
+        return None
+
+    cites: list[tuple[str, object]] = []
+    for f in features:
+        follows = fm.get(f, {}).get("follows") or []
+        for ref in follows if isinstance(follows, list) else [follows]:
+            cites.append((f.relative_to(concept).as_posix(), ref))
+    walk = concept / "01_meta/walkthrough.yaml"
+    if walk.is_file():
+        try:
+            stages = (yaml.safe_load(walk.read_text(encoding="utf-8")) or {}).get("stages")
+        except (yaml.YAMLError, AttributeError):
+            stages = None
+        for stage in (stages or {}).values() if isinstance(stages, dict) else []:
+            if isinstance(stage, dict) and "adr" in stage:
+                cites.append(("01_meta/walkthrough.yaml", stage["adr"]))
+    out = []
+    for where, ref in cites:
+        msg = problem(ref)
+        if msg:
+            out.append(f"_concept/{where}: {msg}")
     return out
 
 

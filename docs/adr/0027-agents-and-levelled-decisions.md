@@ -1,6 +1,6 @@
 # 0027 — Agents and levelled decisions
 
-**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias)
+**Status:** accepted; K1 amended 2026-11-05 (the delegates keep their own names, no `as:` alias); K7 amended by [0031](0031-proposals-are-files-per-run.md) (`concept-brief` is the roster's sole owner; `spec-feature` proposes its roster moves); K4 and K5 amended by [0032](0032-one-decision-log-under-docs-adr.md) (a record is a file under `docs/adr/`, cited by slug `adr:<slug>`; levels, kinds and patterns unchanged); K1 amended by [0036](0036-build-adapters-on-to-tickets-and-implement-spec.md) (the lead composes `build-implement`, which `skaileup-builder` no longer does); K1 and K5 amended by [0037](0037-parallel-specs-serialise-at-four-points.md) (several specs run at once and serialise at four points)
 
 Extends [ADR 0017](0017-the-instruction-tree-mirrors-the-artifact-tree.md): an agent holds no
 procedure; the instruction stays in the tree. Extends
@@ -45,7 +45,7 @@ The table above keeps the short names as roles; the lead's `SOUL.md` names the a
 
 A `SOUL.md` says how its agent works with the others and cites the tree instead of restating it;
 the hand-over protocol (verbatim task, status block, evidence passes, parallel runs only on
-disjoint write sets) lives once, in `tree/README.md § Delegation`. The researcher is shared: an
+disjoint write sets) lives once, in `tree/protocol/delegation.md § Delegation`. The researcher is shared: an
 evidence pass another agent's run needs goes back to the lead, which sends it to the researcher.
 The reviewer reviews only work it did not write and never fixes; a finding names the skill that
 owns the fix, and the lead sends the fix there.
@@ -70,7 +70,7 @@ it stays the user's yes.
 
 **K4 — A decision record has a level.** Each record says how far it reaches: `product`,
 `featureset <slug>` or `feature <featureset>/<feature>`
-(`tree/10_blueprint/decisions.md § Levels`). A skill reads the records from the top down before
+(`tree/docs/adr/README.md § Levels`). A skill reads the records from the top down before
 asking, and a question a binding record answers is not asked. A lower choice never overrides a
 higher record: it goes to the user, and when accepted it becomes a new record at the higher level
 that supersedes the old one. The levels live in the one log, not in a second file.

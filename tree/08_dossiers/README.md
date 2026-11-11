@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/08_dossiers/
 
-One directory per feature, `<feature_slug>/`, holding `index.md` — the concept-side working record for that feature: the framing, the questions, the answers. `11_build/slices/<slice_id>/` is its build-side counterpart. A dossier is one file with one owner (`spec-feature`); it carries the reasons behind the spec so a later reader, who may be a different session, host or person, has the decisions with their reasons.
+One directory per feature, `<feature_slug>/`, holding `index.md` — the concept-side working record for that feature: the framing, the questions, the answers. Its build-side counterpart is the spec's parent issue in the tracker (`tracker.issue` in the feature spec), whose sub-issues are the tickets that build it. A dossier is one file with one owner (`spec-feature`); it carries the reasons behind the spec so a later reader, who may be a different session, host or person, has the decisions with their reasons.
 
 ## Freeze lifecycle
 

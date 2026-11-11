@@ -1,7 +1,7 @@
 ---
 name: build-scaffold
 description: "Use when the stack is chosen and no project exists yet — runs the template's scaffold recipe, then themes it, wires auth and builds the app shell, leaving a running app to build features into. Triggers on 'scaffold', 'bootstrap the project', 'set up the repo', 'create the app'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -13,7 +13,8 @@ metadata:
       - { id: brand-tokens }
       - { id: screens }
       - { id: grounding-findings }
-    produces: []
+    produces:
+      - { id: proposals, path: "_concept/proposals/<date>-build-scaffold-<scope>.yaml" }
   prerequisites:
     files:
       - { path: "_concept/01_meta/walkthrough.yaml", gate: soft }
@@ -24,23 +25,21 @@ metadata:
       - { path: "_concept/07_screens", gate: soft, min_entries: 1 }
       - { path: "_concept/10_blueprint/openapi.yaml", gate: soft }
       - { path: "_concept/10_blueprint/asyncapi.yaml", gate: soft }
-      - { path: "APP-DESIGN.md", gate: soft }
 ---
 
 # build-scaffold
 
-Takes an empty directory to a running, themed, authenticated, navigable app by walking the chosen template's recipe sections in order: `## Scaffold Recipe`, `## CSS Variables / Theming`, `## Auth Setup`, `## App Shell`. The recipe belongs to the template; the order, the checkpoints and the verification are this skill's. Read `tree/README.md` once per session.
+Takes an empty directory to a running, themed, authenticated, navigable app by walking the chosen template's recipe sections in order: `## Scaffold Recipe`, `## CSS Variables / Theming`, `## Auth Setup`, `## App Shell`. The recipe belongs to the template; the order, the checkpoints and the verification are this skill's. Read `tree/protocol/running.md` once per session.
 
 It stops at the shell: no schema or seed data (`build-database`), no feature code (`build-plan` cuts it, `build-implement` builds it), no plan or status file (completion is git, so the scaffold's record is its commit), and no Storybook — the one in `_concept/09_mockup/storybook/` belongs to the mockup domain (`tree/09_mockup/storybook/README.md`), and an app that wants its own gets it as ordinary build work behind the template's `## Storybook Config`.
 
 ## Steps
 
 1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate build`. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
-2. **Resolve the stack and read its atoms by name; ask for it when it is unrecorded.** `_concept/10_blueprint/techstack.md` (`tree/10_blueprint/techstack.md`) names `tech_stack_skill`. Without that file take the stack from `_concept/02_grounding/findings/stack.md` or the project's own manifest and ask for the template in one batch with the open questions of step 3 (`tree/README.md § How a skill runs`, rule 1); `architecture-techstack` records a choice. `templates/<that id>/TEMPLATE.md` carries `scaffold_command`, `package_manager`, `project_structure`, `build_command`, `lint_command`, `type_check_command` and `env_setup_command` under `metadata.atoms`. Every template declares every atom with a value or an explicit `null`, and a `null` is the answer: `env_setup_command: null` means the scaffolder ships no `.env.example` and the env file's contents are recipe material under `## Scaffold Recipe`; `lint_command: null` means step 9 has one less check. `tech_stack_skill: custom` means no template — take each command from `techstack.md` and confirm it with the user before running it.
-3. **Confirm before creating anything.** App name and slug from `_concept/brief.md`, or from the project's own name when there is no brief and from the user when that gives none; the resolved scaffold command verbatim, the directory it runs in, and what this run will not do (no database, no seed data, no features). After the scaffolder runs, changing the stack means deleting the tree.
+2. **Resolve the stack and read its atoms by name; ask for it when it is unrecorded.** `_concept/10_blueprint/techstack.md` (`tree/10_blueprint/techstack.md`) names `tech_stack_skill`. Without that file take the stack from `_concept/02_grounding/findings/stack.md` or the project's own manifest and ask for the template in one batch with the open questions of step 3 (`tree/protocol/running.md § How a skill runs`, rule 1); `architecture-techstack` records a choice. `templates/<that id>/TEMPLATE.md` carries `scaffold_command`, `package_manager`, `project_structure`, `build_command`, `lint_command`, `type_check_command` and `env_setup_command` under `metadata.atoms`. Every template declares every atom with a value or an explicit `null`, and a `null` is the answer: `env_setup_command: null` means the scaffolder ships no `.env.example` and the env file's contents are recipe material under `## Scaffold Recipe`; `lint_command: null` means step 9 has one less check. `tech_stack_skill: custom` means no template — take each command from `techstack.md` and confirm it with the user before running it.
+3. **Confirm before creating anything.** App name and slug from `_concept/brief.md`, or from the project's own name when there is no brief and from the user when that gives none; the resolved scaffold command verbatim, the directory it runs in, and what this run will not do (no database, no seed data, no features). After the scaffolder runs, changing the stack means deleting the tree. A departure from the template's recipe the user settles here that passes the three-test gate is a decision record in the run's proposal file (`tree/docs/adr/README.md § Writing it`: target `docs/adr/`, anchor `adr:<slug>`).
 4. **Run `## Scaffold Recipe` end to end.** The `scaffold_command` in the empty directory, dependencies with `package_manager`, then the recipe's remaining steps in order — config files, environment files, the directories it names. Check the result against `project_structure`; a layout that came out different means a flag was dropped, and the next three sections are written against the intended layout.
-   - Where `_concept/10_blueprint/openapi.yaml` exists (`tree/10_blueprint/openapi.md`), write one route or handler stub per operation, at the path and method it documents, answering `501` until a slice builds it, and derive request validation from the operation's parameter and body schemas. Where `_concept/10_blueprint/asyncapi.yaml` exists (`tree/10_blueprint/asyncapi.md`), do the same for each channel's handler. Without them the stack's own example routes stay. The contract is `architecture-system`'s: a path or schema that needs to change is named for it and is not edited here.
-   - When this run created the project, write one line in the root `AGENTS.md` (create it if absent) telling coding agents to read `APP-DESIGN.md` for the interaction rules, if that file exists (`tree/APP-DESIGN.md`). A directory that already held a project keeps its `AGENTS.md` and `CLAUDE.md` untouched; say that the link is missing instead.
+   - Where `_concept/10_blueprint/openapi.yaml` exists (`tree/10_blueprint/openapi.md`), write one route or handler stub per operation, at the path and method it documents, answering `501` until a ticket builds it, and derive request validation from the operation's parameter and body schemas. Where `_concept/10_blueprint/asyncapi.yaml` exists (`tree/10_blueprint/asyncapi.md`), do the same for each channel's handler. Without them the stack's own example routes stay. The contract is `architecture-system`'s: a path or schema that needs to change is named for it and is not edited here.
 5. **Commit the scaffold on the build branch.** When `build/<app-slug>` is already open (`build-branch` opens it), find that branch and commit onto it. When there is none, initialize the repo if needed and cut `build/<app-slug>` here, so a generated project never lands unreviewed on the default branch.
 6. **Theme it — `## CSS Variables / Theming`.**
    - With `_concept/03_brand/brand.tokens.json` present, flatten it to CSS custom properties per `tree/03_brand/brand.tokens.md § Flattening to CSS` and wire the section's theme variables to those, so every colour, font, radius, spacing value and shadow traces to a token. Where `_concept/03_brand/brand.dark.tokens.json` exists its tokens become the dark block (`tree/03_brand/brand.tokens.md § Light and dark`); without it the app has one mode. Import fonts from the provider the font tokens name, and read `_concept/03_brand/identity.md` (`tree/03_brand/identity.md`) for atmosphere.

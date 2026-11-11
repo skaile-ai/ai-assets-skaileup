@@ -1,7 +1,7 @@
 ---
 name: concept-reverse
 description: "Use when the code already holds a fact the concept needs, or a repository exists and the concept has to be extracted from it rather than designed. Reads the routes, screens, schema, stack, brand, interaction surfaces and docs of the requested scope, and writes what the code actually says as graded, freshness-stamped findings the owning skills seed from. Triggers on 'reverse engineer this project', 'extract the concept from this codebase', 'document this existing app', 're-read the screens from the code'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -10,6 +10,7 @@ metadata:
     requires: []
     produces:
       - { id: grounding-findings, path: "_concept/02_grounding/findings/" }
+      - { id: proposals, path: "_concept/proposals/<date>-concept-reverse-<scope>.yaml" }
   prerequisites:
     files: []
     inputs_optional:
@@ -28,7 +29,7 @@ artifacts that seed from the findings are written by their owners, never here.
 
 ## Route
 
-Read `tree/README.md` once per session, then the nodes of the requested scopes — each holds the format and procedure for its part; this file holds only the order. A scope absent from the request is skipped and listed as `skip: not requested`.
+Read `tree/protocol/running.md` (the todo list, rules 1 and 8) and `tree/protocol/ownership.md` once per session, then the nodes of the requested scopes — each holds the format and procedure for its part; this file holds only the order. A scope absent from the request is skipped and listed as `skip: not requested`.
 
 1. **Resolve the request and extract** — `tree/02_grounding/findings/README.md § Extracting (concept-reverse)`: scope and paths, the app, the freshness of each existing file, then one file per requested scope, the citation check and the report.
 2. **`brief`** — `tree/02_grounding/findings/brief-seeds.md`.

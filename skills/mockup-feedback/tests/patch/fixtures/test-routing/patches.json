@@ -5,12 +5,16 @@
     {
       "id": "p-k3m9x2-1-model",
       "inboxId": "k3m9x2-1",
-      "file": "10_blueprint/datamodel/model.yaml",
-      "section": "yaml:entity/Task/fields",
-      "kind": "model-proposal",
+      "kind": "proposal",
       "category": null,
       "body": "The editor needs an estimate field.",
-      "diff": "@@ yaml:entity/Task/fields @@\n+      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }\n",
+      "target": "_concept/10_blueprint/datamodel/model.yaml",
+      "anchor": "entities.Task.fields.estimate",
+      "payload": {
+        "type": "decimal",
+        "required": false
+      },
+      "source": "note k3m9x2-1: \"The editor needs an estimate field.\"",
       "resolves": [
         {
           "id": "k3m9x2-1",

@@ -1,6 +1,6 @@
 # 0024 — The glossary splits by kind when the project keeps its own
 
-**Status:** accepted
+**Status:** accepted; G4 and G5 amended by [0031](0031-proposals-are-files-per-run.md) (a proposed term is an entry of a proposal file targeting `_concept/glossary.md`; no marker lines are written into the project glossary, and a rejection takes no decision record); G1 and G6 amended by [0033](0033-glossary-md-is-the-default-project-glossary.md) (the project glossary is a root `GLOSSARY.md` by default, `CONTEXT.md` is its legacy name, and a project with neither gets a new `GLOSSARY.md` in split mode)
 
 Amends [ADR 0014](0014-the-glossary-is-a-root-file.md): the glossary is no longer only a root
 file of `_concept/`; in split mode its words live in a file outside `_concept/`. Amends
@@ -68,7 +68,7 @@ definitions and `_Avoid_` lines of terms it adds or moves, the promotion of a pr
 (dropping its marker lines) and its rejection (removing the entry). Entries written by
 `domain-modeling` or by hand are kept, never reordered or reformatted, and no frontmatter is added.
 `approved:` lives in `_concept/glossary.md` and covers both parts. This is the one exception to the
-rule that project files outside `_concept/` are sources only; `tree/README.md § Ownership` names
+rule that project files outside `_concept/` are sources only; `tree/protocol/ownership.md § Ownership` names
 it. Two writers on one file are safe only when the second preserves what the first wrote.
 
 **G6 — A `CONTEXT-MAP.md` with no `glossary` key and no root `CONTEXT.md` is undecided.** A

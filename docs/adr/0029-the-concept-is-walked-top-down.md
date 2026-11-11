@@ -1,6 +1,6 @@
 # 0029 — The concept is walked top-down
 
-**Status:** accepted
+**Status:** accepted; W4 amended by [0031](0031-proposals-are-files-per-run.md) (a stage's artifacts are unconfirmed while a proposal entry targeting them is pending, not while they hold `(proposed by` markers); W5 amended by [0032](0032-one-decision-log-under-docs-adr.md) (the waive is backed by an ADR under `docs/adr/`, cited `adr:<slug>`)
 
 Amends [ADR 0019](0019-scoped-fact-resolution.md) ("hard gates only for machine-read formats")
 and [ADR 0023](0023-two-advisory-flows.md) ("order is advisory") for four skills only:
@@ -73,7 +73,7 @@ its checkpoint is skipped only by a waive backed by a decision record the user a
 stage before any code changes; the concept is updated and re-approved, then the code follows.
 
 **W7 — Hosts without the skaileup agents.** Where `skaileup-lead` and its delegates are not
-installed, the session agent is the lead: the relay rules of `tree/README.md § Delegation` apply
+installed, the session agent is the lead: the relay rules of `tree/protocol/delegation.md § Delegation` apply
 to the generic subagents it sends, and a plan the session agent writes answers no skill's
 decision batch in advance. `skaileup` writes a marked guard section into the project's agent
 file so the host's own planning sees the gate.

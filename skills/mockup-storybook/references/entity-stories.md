@@ -222,13 +222,19 @@ export const LongTitle: Story = {
 
 ## The proposal move
 
-The editor above needs an effort estimate and the model has none. Add one field to `Task` in `model.yaml`, after the last field under `fields:`, then run `npx @skaile/model@1 check` in `_concept/10_blueprint/datamodel/`:
+The editor above needs an effort estimate and the model has none. `model.yaml` is `architecture-datamodel`'s, so the field goes into this run's proposal file, `_concept/proposals/2026-10-23-mockup-storybook-task.yaml` (`tree/proposals/README.md § Writing it`), and nothing in `model.yaml` changes:
 
 ```yaml
-      estimate:
-        type: decimal
-        required: false
-        proposed: { by: mockup-storybook, on: 2026-10-23, source: TaskEditor needs an effort estimate }
+proposed_by: mockup-storybook
+proposed_on: 2026-10-23
+scope: task
+entries:
+  - id: p1
+    target: _concept/10_blueprint/datamodel/model.yaml
+    anchor: entities.Task.fields.estimate
+    payload: { type: decimal, required: false }
+    source: TaskEditor needs an effort estimate
+    status: proposed
 ```
 
-The `proposed:` key is how `architecture-datamodel` and the owner see it (`npx @skaile/model@1 json` lists it as `task_estimate` with `"status": "proposed"`, `proposed_by`, `proposed_on` and `source`). The plugin rewrites `TaskRow` with `estimate`; then add `<Field v-model:row="draft" name="estimate" type="decimal" label="Estimate" />` to the editor. A field that is not in `model.yaml` fails `vue-tsc` at the `Field`; a seed row that misspells a field fails `npx @skaile/model@1 check`. A whole new entity is added the same way: one more key under `entities:` with its `fields:` and an entity-level `proposed: { by, on, source }`.
+The editor ships without the field and the completion summary names the entry. Once `architecture-datamodel` promotes it, the field is in `model.yaml`, the plugin rewrites `TaskRow` with `estimate`, and the next run adds `<Field v-model:row="draft" name="estimate" type="decimal" label="Estimate" />` to the editor. A field that is not in `model.yaml` fails `vue-tsc` at the `Field`, which is why the editor waits for the promotion; a seed row that misspells a field fails `npx @skaile/model@1 check`. A whole new entity is proposed the same way, with anchor `entities.<Entity>` and the entity mapping as `payload`.

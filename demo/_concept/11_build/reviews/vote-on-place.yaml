@@ -1,5 +1,8 @@
 feature: vote-on-place
 verdict: changes-requested
+parent_issue: 102
+branch: spec/polls-vote-on-place
+fixed_point: 9e41a07
 commits: [b72d1f3, c0e88a5]
 files_reviewed: [server/api/polls/[id]/vote.put.ts, app/components/VoteList.vue]
 findings:

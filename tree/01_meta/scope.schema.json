@@ -35,7 +35,7 @@
     },
     "glossary": {
       "type": "string",
-      "description": "Where the words live (tree/glossary.md § Where the words live): `concept` keeps every definition in _concept/glossary.md; any other value is the project-relative path of the project glossary, with no leading / and no .. segment. Absent reads as CONTEXT.md when the project root has one, else concept.",
+      "description": "Where the words live (tree/glossary.md § Where the words live): `concept` keeps every definition in _concept/glossary.md; any other value is the project-relative path of the project glossary, with no leading / and no .. segment. Absent resolves per tree/glossary.md § Where the words live: root GLOSSARY.md (legacy CONTEXT.md), else a new root GLOSSARY.md.",
       "pattern": "^(?!/)(?!(.*/)?\\.\\.(/|$)).+$"
     },
     "reasoning": {
@@ -44,13 +44,6 @@
     },
     "signals": {
       "$ref": "#/$defs/signals"
-    },
-    "proposed": {
-      "type": "array",
-      "description": "Entries a non-owner skill appended for an absent key; skaileup confirms or rejects them (tree/01_meta/scope.md § Asking a missing key).",
-      "items": {
-        "$ref": "#/$defs/proposed"
-      }
     },
     "chosen_at": {
       "type": "string",
@@ -92,41 +85,6 @@
         "existing_repo": {
           "type": "boolean",
           "description": "Whether a repository already exists."
-        }
-      }
-    },
-    "proposed": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "key",
-        "value",
-        "proposed_by",
-        "proposed_on",
-        "source"
-      ],
-      "properties": {
-        "key": {
-          "enum": [
-            "project_type",
-            "depth",
-            "glossary"
-          ]
-        },
-        "value": {
-          "type": "string"
-        },
-        "proposed_by": {
-          "type": "string",
-          "description": "The skill that asked."
-        },
-        "proposed_on": {
-          "type": "string",
-          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
-        },
-        "source": {
-          "type": "string",
-          "description": "The user's words or an evidence reference."
         }
       }
     }

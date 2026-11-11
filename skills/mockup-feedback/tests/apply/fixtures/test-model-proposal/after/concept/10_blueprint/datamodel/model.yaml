@@ -17,12 +17,3 @@ entities:
       status: { type: enum, values: { Draft: Initial state, Published: Live and visible } }
       due_date: { type: date, required: false }
       owner_id: { type: m2o, to: User, on_delete: cascade }
-      estimate: { type: decimal, required: false, proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-1 } }
-  Comment:
-    glossary: comment
-    display: Comment
-    label_field: body
-    proposed: { by: mockup-feedback, on: 2026-10-23, source: k3m9x2-4 }
-    fields:
-      body: text
-      task_id: { type: m2o, to: Task, on_delete: cascade }

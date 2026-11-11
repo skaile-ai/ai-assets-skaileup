@@ -19,9 +19,9 @@ Committed, append-only. `apply.py` adds one block per applied round. Whoever reg
 
 - p-k3m9x2-2-content applied (change): 'Put the filter bar above the list, not beside it.'
 
-### 10_blueprint/datamodel/model.yaml
+### proposals/2026-10-23-mockup-feedback-r-20261023t101500z.yaml
 
-- p-k3m9x2-1-model applied (model-proposal): 'The editor needs an estimate field.'
+- p-k3m9x2-1-model applied (proposal): 'The editor needs an estimate field.'
 ```
 
 A block is `## <UTC date> · round <round>`, then one `### <file>` per file with at least one applied patch (path relative to `_concept/`), then one bullet per applied patch: `<patchId> applied (<category|kind>): <note comment, first 80 chars, repr-quoted>`; the label is the patch's category, or its kind when it has none. Failed patches are not logged here; they are in `applied/<round>.json`.

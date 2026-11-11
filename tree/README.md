@@ -1,6 +1,6 @@
 ---
 path: [_concept/, _concept/README.md]
-summary: the artifact tree, its ownership rule and how a skill runs
+summary: the artifact tree and how to read it
 owner: [skaileup]
 may_propose: []
 ---
@@ -11,7 +11,7 @@ may_propose: []
 
 ## The rule
 
-Before reading or writing anything under `_concept/<p>`, read the node at the same path `<p>` in this directory (installed at `<contracts>/shared-contracts/<p>`, where `<contracts>` is the harness's contract directory: `.omp/contracts` for omp, `.claude/contracts` for Claude Code, `.codex/contracts` for Codex): the folder's `README.md`, then the file's node. If the exact node is missing, the nearest `README.md` up the path applies.
+Before reading or writing anything under `_concept/<p>`, read the node at the same path `<p>` in this directory (installed at `<contracts>/shared-contracts/<p>`, where `<contracts>` is the harness's contract directory: `.agents/contracts` for omp, Codex, pi and dsh, `.claude/contracts` for Claude Code): the folder's `README.md`, then the file's node. If the exact node is missing, the nearest `README.md` up the path applies.
 
 | `_concept/` thing | node |
 |---|---|
@@ -25,8 +25,8 @@ A node's `path:` entries are matched first, `<x>` matching any one segment; the 
 ## The tree
 
 ```text
-_concept/                             the artifact tree, its ownership rule and how a skill runs
-├── README.md                         the artifact tree, its ownership rule and how a skill runs
+_concept/                             the artifact tree and how to read it
+├── README.md                         the artifact tree and how to read it
 ├── brief.md                          the pitch, with its comparables — what the user said, no more
 ├── glossary.md                       the ubiquitous language and its light ontology — terms, kinds, relations
 ├── goals.md                          success criteria, KPIs, constraints and explicit non-goals
@@ -88,31 +88,25 @@ _concept/                             the artifact tree, its ownership rule and 
 │   │   ├── patches/                  proposed anchored patches and the review file a human approves
 │   │   └── triage/                   deterministic routing of each open inbox note to the file it belongs in
 │   └── storybook/                    one Vue Storybook — features, floorplans, screens, entities, the app, journeys
-├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, decisions, data model
+├── 10_blueprint/                     how the app is built — stack, architecture, API contracts, data model
 │   ├── architecture.md               C4 levels — system context, containers, components, deployment, risks
 │   ├── asyncapi.yaml                 AsyncAPI 3.1 contract of the channels the project publishes or consumes
-│   ├── decisions.md                  design-time decision records, append-only
 │   ├── openapi.yaml                  OpenAPI 3.2 contract of the HTTP API served to clients other than the own UI
 │   ├── techstack.md                  chosen technologies, resolved to one template id; no third-party services
 │   └── datamodel/                    stack-neutral data model, naming rules and how it becomes a database
 │       ├── model.yaml                the authored data model; checked and read through @skaile/model
 │       └── seed.yaml                 named scenarios of sample data, every row checked against model.yaml
-└── 11_build/                         slices, trace, criteria ledger, reviews, release verdict and decisions
-    ├── decisions.md                  build-time decision records, append-only
-    ├── design-candidates.md          evidenced candidates for a better design, found in the code
-    ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
-    ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
-    ├── trace.yaml                    feature to slices to commits to code, the one feature-to-commit join
-    ├── acceptance-criteria/          the criteria status ledger, one checkbox file per feature
-    │   └── <featureset>/
-    │       └── <feature_slug>.ac.md  the criteria status ledger, one checkbox file per feature
-    ├── reviews/                      one feature's code-review verdict and findings
-    │   └── <feature_slug>.yaml       one feature's code-review verdict and findings
-    └── slices/                       one dossier per vertical slice, cut from a frozen feature spec
-        └── <slice_id>/               one slice's dossier directory: plan, working state, frozen index
-            ├── index.md              the frozen slice record and its transient progress file
-            ├── plan.md               one slice's scope, rows, criteria by id, tests and carry-overs
-            └── progress.yaml         the frozen slice record and its transient progress file
+├── 11_build/                         criteria ledger, reviews, release and interaction verdicts
+│   ├── design-candidates.md          evidenced candidates for a better design, found in the code
+│   ├── interaction.sarif             SARIF 2.1.0 verdict of the code against APP-DESIGN.md
+│   ├── release.yaml                  the whole-app release verdict: goals, seven scores, findings, improvements
+│   ├── acceptance-criteria/          the criteria status ledger, one checkbox file per feature
+│   │   └── <featureset>/
+│   │       └── <feature_slug>.ac.md  the criteria status ledger, one checkbox file per feature
+│   └── reviews/                      one feature's code-review verdict and findings
+│       └── <feature_slug>.yaml       one feature's code-review verdict and findings
+└── proposals/                        one file per run that proposes entries to artifacts other skills own
+    └── <date>-<skill>-<scope>.yaml   one file per run that proposes entries to artifacts other skills own
 ```
 
 ## Numbering
@@ -127,21 +121,6 @@ The first level is numbered and contiguous, and nothing below it is: the prefix 
 - `02_grounding/research/step/` subfolders are named for the dispatching skill's `name:`, character for character.
 - Term ids come from the glossary, not from features: the data model cites glossary ids rather than coin names, so a feature that invents a name splits one concept into two. The id is the slug of the term, whether the words live in `_concept/glossary.md` or in the project's own glossary (`tree/glossary.md § Where the words live`).
 
-## Ownership
-
-Read anything, in any order; write only the artifacts you own, through the owner node's contract. `02_grounding/` is readable by every skill. An artifact another skill owns takes only `proposed` entries, and only from a skill listed under that node's `may_propose`. A project file outside `_concept/` other than `APP-DESIGN.md` (a `CONTEXT.md`, docs, ADRs) is a source to read and cite, and stays the project's own: a term or decision it lacks is proposed into the `_concept/` artifact that owns that kind of entry. The one exception is the project glossary, the file that holds the words when the project keeps its own: `concept-glossary` writes there only the definitions of terms it adds or moves, the promotion of a proposed entry (dropping its marker lines) and the rejection of one (removing it), keeps every entry written by `domain-modeling` or by hand as it stands, and a proposed term is filed there too (`tree/glossary.md § Where the words live`). `06_behaviors/` and `10_blueprint/architecture.md` are optional; a reader checks for existence before reading.
-
-A node's frontmatter carries two keys, both required:
-
-```yaml
-owner: [concept-glossary]   # skills whose `produces` resolve here; [] when nothing generates it
-may_propose: []             # skills that may append `proposed` entries through this node; disjoint from owner
-```
-
-A directory node lists the owners of the parts it covers. `may_propose` names skills of this collection and repeats no owner.
-
-**Proposed entry.** An entry a non-owner skill appends to the owner's artifact, marked `status: proposed`, with `proposed_by: <skill>`, `proposed_on: YYYY-MM-DD` and its source (an evidence reference or the user's words). It adds and never edits a confirmed entry. When the owner's artifact does not exist yet, the proposer creates it holding only its proposed entries and no `approved:` key, so the owner's first write fills it instead of finding a gap. The owner reviews each entry with the user and promotes it by dropping the marker, or rejects it and records the rejection in `_concept/10_blueprint/decisions.md`. Each node's `## Format` holds the per-artifact shape, one shape per node.
-
 ## Frontmatter every markdown artifact carries
 
 ```yaml
@@ -152,76 +131,6 @@ approved: YYYY-MM-DD        # ISO date of the user's yes; absent = not yet appro
 ```
 
 The skill holding an artifact's approval step writes `approved:` in the same write that records the user's yes, and only then; a file still pending carries no `approved:` key rather than an empty one, and a later edit that changes the substance clears it until the user says yes again. `tree/frontmatter.schema.json` is the machine-readable form of these two fields. To validate, load the YAML, turn date values into ISO text — PyYAML reads an unquoted `2026-10-17` as a date, and `json.loads(json.dumps(doc, default=str))` does it — then validate. Data files without frontmatter carry the same key where their node says so: `answers.json` at its top level, `brand.tokens.json` under `$extensions["ai.skaile"]` (`tree/03_brand/brand.tokens.md`). Each node adds that artifact's own fields to these two.
-
-## How a skill runs
-
-Every skill binds these rules at its interviewing step by citing `tree/README.md § How a skill runs`; a node does not restate them.
-
-**The route is the todo list.** On entry the route's numbered items become the first todo items, verbatim and in order; an item that does not apply stays listed as `skip: <reason>`, and **Done when** is the last item. Where the harness has no todo tool, the first message lists them and each later message names the item it is on.
-
-1. **Resolve facts, then ask.** Read existing artifacts in any order, and an optional one only after checking it exists; `_concept/` outranks the conversation, so a disagreement between them is a question for the user. Read the decision records that bind the work before asking (`tree/10_blueprint/decisions.md § Levels`): a question a binding record answers is not asked. Run `concept-reverse` scoped for evidence the code holds; mark inferred facts; batch only what tools cannot settle. A `hard`-gated input that is missing stops the skill in one sentence naming the missing path and the skill that produces it.
-2. **One decision batch per message.** At most 7 independently answerable questions on one topic; each with the recommendation first and a one-line consequence; an "accept all defaults" option; questions whose options depend on an unanswered one are deferred to the next batch; a status line precedes the batch. A technical term is explained in parentheses.
-3. **Match the user's specificity.** Infer depth from the material supplied; where it matters, ask per artifact how deep to go (`sketch · standard · exhaustive`) and say what each depth produces; a user precise about roles and vague about layout gets precise role questions and a layout proposal.
-4. **Sort before asking.** Restate the user's input as a coherent draft (terms, objects, screens, rules) with gaps marked, then ask about the gaps — never a questionnaire first.
-5. **Show consequences before commitments** on data, feature and navigation choices: what the user sees, data and permission effects, affected artifacts, reversibility; for expensive choices compare genuinely different alternatives (design-it-twice).
-6. **Show the layout when the choice is spatial.** A layout story with neutral placeholders (two floorplans on request, at the `narrow` and `wide` viewports) before the screen is specified.
-7. **Record at the semantic home**, as `proposed` when another skill owns it; open questions get stable ids.
-8. **Completion summary.** Report the files written or modified with one line each, the key decisions, the cross-references established, then the next steps, named by demand: the skills that own what is still missing. Each claim says how it is known — **measured** (seen in a file, a command's output, the running app) or **inferred** (follows from something measured, and names it); a prediction or unseen cause is a guess and goes under its own `Unverified:` line. A check the agent could run is run, not handed to the user.
-
-## Delegation
-
-One protocol for every hand-over of work to another agent context: the lead sending a skill run to the agent that owns the skill, and a skill sending a helper pass (a research topic, a detection pass) to a fresh context. Agents cite this section; nothing restates it.
-
-**The task goes verbatim.** The receiver holds only what the prompt carries and the files it reads, none of the conversation. Paste the full task: for a skill run, the whole `Run skill <id>` prompt as the host sent it, the skill body and any onboarding block included, never a summary and never a pointer to a plan file. A repeat run carries the answers verbatim and the receiver's `Draft:` line unchanged.
-
-**The receiver ends with one status block**, and the sender acts on the status and collects the artifacts:
-
-```
-STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
-
-[If DONE_WITH_CONCERNS]  Concerns: <trade-offs, deviations, debt incurred>
-[If NEEDS_CONTEXT]       Missing:  <what is absent>
-                         Question: <one decision batch, or none when Missing names a run another agent owns>
-                         Draft:    <the path of the draft, or the draft itself>
-[If BLOCKED]             Reason:   <what cannot be resolved>
-                         Route:    context | escalate-model | decompose
-```
-
-| Status | Meaning | Sender's action |
-|---|---|---|
-| `DONE` | All requirements met, tests pass | Accept output, advance flow |
-| `DONE_WITH_CONCERNS` | Implemented but with trade-offs or notes | Accept, name the concerns in the completion summary, advance |
-| `NEEDS_CONTEXT` | Missing information or ambiguous requirement | A decision batch: answer it per the interview relay, step 2. A run another agent owns: send it to that agent, never to the user (`Work another agent owns`). Then send the run again with the answers or the result's paths and the `Draft:` line |
-| `BLOCKED` | Cannot proceed — see route | Follow the route below |
-
-| Route | When to use | Sender's response |
-|---|---|---|
-| `context` | A specific question can unblock the task | Answer it as a decision batch (interview relay, step 2); re-dispatch with the answer |
-| `escalate-model` | Task exceeded model capability | Name it in the completion summary; re-dispatch on a stronger model |
-| `decompose` | Task is too large to execute atomically | Break into smaller tasks; re-dispatch each |
-
-**Concerns are written by the receiver.** A `build-*` run appends its concerns to `_concept/11_build/decisions.md` before it returns (`tree/11_build/decisions.md`); any other run records them where its route keeps reasons (a feature's dossier), or else only under `Concerns:`.
-
-**The interview relay.** A delegate cannot reach the user in Claude Code or omp, so every user conversation stays with the lead.
-
-1. The receiver resolves facts (`tree/README.md § How a skill runs`, rule 1) and drafts. The draft stays where the route already keeps work in progress, a file that carries no `approved:` until the yes (the `open` feature dossier, a pending brief), and `Draft:` names its path. An artifact its node writes only after the yes is not written early: `Draft:` then holds the draft itself. When it needs a decision it returns `NEEDS_CONTEXT` whose `Question:` is one decision batch formatted per rule 2 of that section.
-2. The lead answers the batch per the run's domain row of `## Working together` in `_concept/01_meta/expectations.md` (`tree/01_meta/expectations.md § Reading it`): under `user decides` it puts the batch to the user unchanged (no rewording, no options added or dropped). It sends the run again with the answers verbatim and the `Draft:` line unchanged.
-3. An approval is a decision batch like any other: the receiver writes `approved:` only in the run that carries the user's own yes; an artifact the lead approved under `agent decides and reports` is written without it.
-4. The lead never edits an artifact a delegate owns. A host tool only the lead holds (a review hunk, an editor that opens a file) carries the delegate's change unchanged: the delegate returns the change, the lead submits it and passes the user's decision back.
-
-**Hosts without the skaileup agents.** Where the `skaileup-lead` and its delegates are not installed, the session agent is the lead and the relay above applies unchanged. It sends a skill run to a generic subagent with the verbatim `Run skill <id>` prompt, the status-block contract of this section and the sentence "You cannot reach the user: return NEEDS_CONTEXT with a decision batch for every choice the user owns; never close one with your recommendation." A plan written by the session agent answers no skill's decision batch in advance.
-
-**Work another agent owns.** A receiver whose route needs a skill another agent composes does not run it: it returns `NEEDS_CONTEXT` with no `Question:` and the run under `Missing:`, `evidence pass — <skill> <scope>` for `concept-reverse` or `concept-research` and `skill run — <skill> <args>` for any other (a `spec-feature` run that needs a new screen: `skill run — experience-screen <screen>`). The lead sends that run to the agent that owns the skill, then sends the original run again with the result's paths. A receiver that cannot start its own helper contexts runs its helper passes itself, one after another.
-
-**Parallel only when the write sets are disjoint.** Two receivers run at once only when no path one may write or propose into is one the other may (`owner:` and `may_propose:` of the nodes their routes visit).
-
-A partial result with no status leaves the sender guessing; a code makes it act.
-
-## Beside the tree
-
-One artifact sits outside `_concept/`: **`APP-DESIGN.md`**, at the project root (the directory that holds `_concept/`). It holds the project's interaction decisions and is owned by `experience-interaction`; `quality-interaction` checks code against it and writes its verdict to `_concept/11_build/interaction.sarif`, never to this file. Its node is `tree/APP-DESIGN.md` (installed at `<contracts>/shared-contracts/APP-DESIGN.md`), and a monorepo app has its own, one per project. It is the only such artifact; `AGENTS.md` is project code, not a concept artifact: `build-scaffold` writes a pointer to `APP-DESIGN.md` into it when it creates the project, and no skill lists it under `produces`. The one exception: `skaileup` writes the marked walkthrough section (`<!-- skaileup:walkthrough -->` … `<!-- /skaileup:walkthrough -->`) into the project's agent file — `AGENTS.md`, else `CLAUDE.md` — through `walkthrough.py guard --write` (`tree/01_meta/walkthrough.md`), and nothing else in it.
-
-A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, defaults, floorplans), holds the application-design rules skills cite. It is not a `_concept/` part and has no node here.
 
 ## arc42 map
 
@@ -237,10 +146,19 @@ A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, def
 | 6 Runtime View | `_concept/06_behaviors/`, `_concept/04_journeys/` |
 | 7 Deployment View | `_concept/10_blueprint/architecture.md`, section Deployment |
 | 8 Crosscutting Concepts | `APP-DESIGN.md`, `_concept/07_screens/shell.md` |
-| 9 Architecture Decisions | `_concept/10_blueprint/decisions.md`, `_concept/11_build/decisions.md` |
+| 9 Architecture Decisions | `docs/adr/` at the project root (`tree/docs/adr/README.md`) |
 | 10 Quality Requirements | `_concept/goals.md`, `_concept/11_build/release.yaml` |
 | 11 Risks & Technical Debt | `_concept/10_blueprint/architecture.md`, section Risks and technical debt |
 | 12 Glossary | `_concept/glossary.md` |
+
+## Protocol
+
+How skills work on the tree lives beside it in `protocol/`, cited by file and section, never restated:
+
+- `tree/protocol/ownership.md` — who writes what, and the proposed entry.
+- `tree/protocol/running.md` — how a skill runs: the route as todo list and rules 1–8.
+- `tree/protocol/delegation.md` — handing work to another agent context: the status block and the interview relay.
+- `tree/protocol/beside-the-tree.md` — `APP-DESIGN.md`, `docs/adr/`, `docs/agents/domain.md` and the rulebook, the assets outside `_concept/`.
 
 ## _concept/README.md
 
@@ -249,12 +167,13 @@ A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, def
 ```
 This tree is maintained by the skaileup collection. Every path here has an instruction node at
 `<contracts>/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`),
-where `<contracts>` is the agent harness's contract directory: `.omp/contracts`, `.claude/contracts`
-or `.codex/contracts`, whichever exists.
+where `<contracts>` is the agent harness's contract directory: `.agents/contracts` (omp, Codex,
+pi, dsh) or `.claude/contracts` (Claude Code), whichever exists.
 Read the folder README and the node before editing a file here; the node says who owns it and who may propose into it,
 its format, and what reads it.
-The one artifact outside this tree, APP-DESIGN.md at the project root, has its node at
-`<contracts>/shared-contracts/APP-DESIGN.md`.
+The three artifacts outside this tree, APP-DESIGN.md, docs/adr/ and docs/agents/domain.md at the project
+root, have their nodes at `<contracts>/shared-contracts/APP-DESIGN.md`,
+`<contracts>/shared-contracts/docs/adr/README.md` and `<contracts>/shared-contracts/docs/agents/domain.md`.
 ```
 
 ## Checks

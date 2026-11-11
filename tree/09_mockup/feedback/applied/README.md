@@ -19,7 +19,8 @@ may_propose: []
     {
       "inboxId": "k3m9x2-1",
       "patchId": "p-k3m9x2-1-model",
-      "target": { "file": "10_blueprint/datamodel/model.yaml", "section": "yaml:entity/Task/fields", "category": null },
+      "target": { "file": "proposals/2026-10-23-mockup-feedback-r-20261023t101500z.yaml", "section": "p1", "category": null },
+      "proposes": { "target": "_concept/10_blueprint/datamodel/model.yaml", "anchor": "entities.Task.fields.estimate" },
       "body": "The editor needs an estimate field.",
       "status": "applied"
     },
@@ -36,16 +37,16 @@ may_propose: []
     {
       "id": "k3m9x2-1",
       "status": "implemented",
-      "resolution": "Task.estimate proposed in model.yaml.",
+      "resolution": "Task.estimate proposed to architecture-datamodel.",
       "state": "pending",
-      "command": "cd <package dir> && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed in model.yaml.'"
+      "command": "cd <package dir> && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed to architecture-datamodel.'"
     },
     { "id": "k3m9x2-2", "state": "open", "reason": "patch not applied: p-k3m9x2-2-content" }
   ]
 }
 ```
 
-One item per checked patch, applied and failed alike: note id, patch id, target `file` / `section` / `category`, the verbatim note `body`, `status` (`applied` | `failed`) and an `error` on failure. A patch without a category has `category: null`.
+One item per checked patch, applied and failed alike: note id, patch id, target `file` / `section` / `category`, the verbatim note `body`, for a `proposal` patch the proposal file as `file`, the entry id as `section` and `proposes: { target, anchor }`, `status` (`applied` | `failed`) and an `error` on failure. A patch without a category has `category: null`.
 
 One resolution per note a checked patch answers, with a `state`:
 
@@ -57,7 +58,7 @@ One resolution per note a checked patch answers, with a `state`:
 
 ## Writing it
 
-Only `apply.py` writes this file (`tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)`, step 5). It applies each checked patch best-effort, runs `@skaile/model check` when `model.yaml` changed (restoring `model.yaml` and failing its patches when the check rejects it), writes this file with every answerable note `pending`, appends the devlog block and makes one commit `feedback: apply round <round> (<n> applied, <m> failed)`. Only after that commit does it close the notes through `_concept/09_mockup/storybook/scripts/resolve.ts`, run with the package's own `tsx`, and amend the commit with the `resolved` states, so a note is never closed for a change that is not in the history. If the commit fails it restores the working tree, deletes this file and closes no note. All-failed (exit 2) writes nothing. A `pending` resolution is closed later by running its `command` once; that edits the inbox, which is local state, not a file of this commit.
+Only `apply.py` writes this file (`tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)`, step 5). It applies each checked content patch best-effort, appends each checked `proposal` patch to the round's proposal file (`tree/09_mockup/feedback/patches/README.md § Kinds`), writes this file with every answerable note `pending`, appends the devlog block and makes one commit `feedback: apply round <round> (<n> applied, <m> failed)`. Only after that commit does it close the notes through `_concept/09_mockup/storybook/scripts/resolve.ts`, run with the package's own `tsx`, and amend the commit with the `resolved` states, so a note is never closed for a change that is not in the history. If the commit fails it restores the working tree, deletes this file and closes no note. All-failed (exit 2) writes nothing. A `pending` resolution is closed later by running its `command` once; that edits the inbox, which is local state, not a file of this commit.
 
 ## Checks
 

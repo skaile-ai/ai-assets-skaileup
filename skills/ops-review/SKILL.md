@@ -1,7 +1,7 @@
 ---
 name: ops-review
-description: "Use when _concept/ needs a health check, its cross-references have drifted, or you want to know whether every feature is actually built and shipped. Produces the review verdict and a build-coverage matrix read from the trace, each finding naming the skill that fixes it. Triggers on 'audit the concept', 'check for issues', 'fix the links', 'is every feature done', 'what code belongs to no feature'."
-version: "0.1.0"
+description: "Use when _concept/ needs a health check, its cross-references have drifted, or you want to know whether every feature is actually built and shipped. Produces the review verdict and a build-coverage matrix read from each spec's parent issue, each finding naming the skill that fixes it. Triggers on 'audit the concept', 'check for issues', 'fix the links', 'is every feature done', 'what code belongs to no feature'."
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts
@@ -15,8 +15,6 @@ metadata:
       - { id: datamodel }
       - { id: techstack }
       - { id: brand-tokens }
-      - { id: slice-plan }
-      - { id: trace }
       - { id: app-design }
     produces: []
   prerequisites:
@@ -28,8 +26,6 @@ metadata:
       - { path: "_concept/10_blueprint/datamodel", gate: soft }
       - { path: "_concept/10_blueprint/techstack.md", gate: soft }
       - { path: "_concept/03_brand/brand.tokens.json", gate: soft }
-      - { path: "_concept/11_build/slices", gate: soft }
-      - { path: "_concept/11_build/trace.yaml", gate: soft }
       - { path: "APP-DESIGN.md", gate: soft }
     inputs_optional:
       - { id: stale_days, label: "Days before a proposed entry counts as stale", type: text, hint: "Defaults to 14" }
@@ -37,15 +33,15 @@ metadata:
 
 # ops-review
 
-Inspects `_concept/` and reports what is wrong with it, in two halves. **Review** is the tree's integrity: structure, frontmatter, cross-references, naming, coverage, pending proposals and decay. **Coverage** is build coverage: per feature, the slices, commits and code behind it from `11_build/trace.yaml`, plus the tracked files that belong to no feature. Both are recomputed every run, delivered as the report and never written to disk; the only writes are the cross-reference repairs the user approved.
+Inspects `_concept/` and reports what is wrong with it, in two halves. **Review** is the tree's integrity: structure, frontmatter, cross-references, naming, coverage, pending proposals and decay. **Coverage** is build coverage: per feature, the tickets, pull requests and code behind it, read with `gh` from the spec's parent issue, plus the tracked files that belong to no feature. Both are recomputed every run, delivered as the report and never written to disk; the only writes are the cross-reference repairs the user approved.
 
-Read `tree/README.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the legal paths and what each skill may write or propose are `tree/README.md § Ownership`; every `_concept/` file's frontmatter and naming is the node at its own path. This file sequences the checks and does not restate them.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the legal paths and what each skill may write or propose are `tree/protocol/ownership.md § Ownership`; every `_concept/` file's frontmatter and naming is the node at its own path. This file sequences the checks and does not restate them.
 
 ## Steps
 
 1. **Run the mechanical check.** `python3 <skill-dir>/scripts/check_concept.py <project> --stale-days <stale_days, else 14>` prints one `path: message` line per problem. Report each line unedited, the message as the finding's `note`; rereading the files to second-guess it spends the run on what the script already settled. A `@skaile/model json` failure on `model.yaml` (or no `bunx`/`npx` to run it) and `not valid YAML` on `stories.yaml` are `critical`: the script then skips the data-entity and criterion checks, and the model or journeys cannot be read. A `proposed entry … days old` line, an `open question …` line and a `term … has no entry in _concept/glossary.md` line are `medium`: the entry waits on its owner, and the line names the skill that promotes, rejects or completes it. Every other line is `high`: `unowned` entries (retired paths included), missing or non-ISO frontmatter fields, a screen with a missing or empty `floorplan`, broken `screens:` and `implements:` links, `data_entities[]` absent from the model, bad criterion ids and malformed ledger rows, a glossary entry with no term in the project glossary or carrying a definition (split mode, `tree/glossary.md § Where the words live`), a `term … repeats the id of line …` line (`concept-glossary` qualifies one), and a `glossary names … which does not exist` line. A project with no `_concept/` is the missing step, not a finding.
 2. **Inventory what the script does not read**, once and before scoring anything: every featureset, feature and
-   screen, the data model, the `11_build/slices/` dossiers and `git ls-files`. Then **check the naming rules** per
+   screen, the data model and `git ls-files`. Then **check the naming rules** per
    `tree/10_blueprint/datamodel/README.md § Naming` (entity, field, enum, relation) and the body a feature spec must
    have per `tree/05_features/[featureset]/[feature].md § Format`; a generated concept fails these first.
 3. **Check coverage.** Per feature: a spec, at least one screen that implements it, and an entity it reads or writes or an explicit statement that it needs none. Globally: `03_brand/brand.tokens.json` exists, since the Storybook package reads it, and `10_blueprint/techstack.md` exists, since the planner reads it. A gap here is work not yet done, reported as the missing step.
@@ -53,20 +49,21 @@ Read `tree/README.md` once per session. Stance, flag shape and severities are `t
 5. **Check for decay.** A screen may implement no feature (`implements: []`, ADR 0020), so it is not reported; a model no feature's `data_entities[]` lists is an orphan; a
    file whose `last_updated` sits far behind its siblings is stale. Report both; deleting is the user's call, since an
    orphan is as often planned work as a leftover.
-6. **Build the coverage matrix, one row per feature**, from the trace and the dossiers, never stored. A feature's
-   slices are its `11_build/trace.yaml` entries (`tree/11_build/trace.md`), cross-checked against the
-   `11_build/slices/` dossiers whose `plan.md` frontmatter names the feature (`tree/11_build/slices/[slice_id]/plan.md`):
-   a dossier the trace lacks is a slice that committed without recording itself, reported against `build-implement`. No
-   trace at all is the finding when any slice dossier exists, and the missing step on a project that has built nothing.
-   Per row: whether every slice is frozen (its `index.md` exists) and verified (`verification: complete`), the commits and code the trace recorded, the ledger
-   rows of the feature's criteria and their status (`tree/11_build/acceptance-criteria/README.md § Reading`), and
-   whether any doc page cites its source files. **Red** when a slice is unfrozen or `outstanding`, commits or code are empty, or a
-   ledger row is `FAIL` or untested. **Amber** when the hard checks pass but the documentation does not. **Green**
-   otherwise. `overall` is green exactly when no row is red; amber is surfaced, not blocking.
+6. **Build the coverage matrix, one row per feature**, from the tracker, never stored. A feature's parent issue is
+   its spec's `tracker.issue` (`tree/05_features/[featureset]/[feature].md § Format`); no `tracker` key is the
+   missing step on a feature not yet planned. Read the parent with `gh issue view <n> --json state,closedByPullRequestsReferences`,
+   its tickets with `gh api repos/{owner}/{repo}/issues/<n>/sub_issues`, and its pull requests with
+   `gh pr list --search "<n>" --json number,state,headRefName` (the integration branch is `spec/<featureset>-<feature>`).
+   Without `gh` or a tracker, say the coverage half did not run. Per row: the tickets and how many are closed, the
+   pull request and its state, the code it touched (`gh pr view <pr> --json files`), the ledger rows of the
+   feature's criteria and their status (`tree/11_build/acceptance-criteria/README.md § Reading`), and whether any
+   doc page cites its source files. **Red** when the parent has no ticket, a ticket is open, no pull request is
+   merged, or a ledger row is `FAIL` or untested. **Amber** when the hard checks pass but the documentation does not.
+   **Green** otherwise. `overall` is green exactly when no row is red; amber is surfaced, not blocking.
 7. **Scan the other direction for orphan code.** Every file `git ls-files` reports under the source directories, minus
-   the union of every feature's `code` in the trace, minus tests, build output, configuration, dotfiles and
+   the union of the files every feature's pull requests touched, minus tests, build output, configuration, dotfiles and
    `_concept/`. What remains is code no feature claims: advisory, never deleted, a question for the user.
-8. **Name the fixing skill on every finding**, the script's included. A missing screen or a screen without `floorplan` is `experience-screen`; a missing shell is `experience-shell`; missing tokens are `design-brand`; a missing stack or model is `architecture-techstack` or `architecture-datamodel`; a retired path is the skill that now writes its replacement (`03_brand/tokens.json` → `design-brand`, `11_build/interaction.yaml` → `quality-interaction`, `comparable.md` → `concept-brief`); a missing glossary is `concept-glossary`; an unplanned feature is `build-plan`; an unfrozen slice or missing trace entry is `build-implement` or `build-branch`; a feature with no featureset or roster row is `spec-feature`. A finding without a next command leaves the reader to triage it.
+8. **Name the fixing skill on every finding**, the script's included. A missing screen or a screen without `floorplan` is `experience-screen`; a missing shell is `experience-shell`; missing tokens are `design-brand`; a missing stack or model is `architecture-techstack` or `architecture-datamodel`; a retired path is the skill that now writes its replacement (`03_brand/tokens.json` → `design-brand`, `11_build/interaction.yaml` → `quality-interaction`, `comparable.md` → `concept-brief`); a leftover `11_build/trace.yaml` or `11_build/slices/` is `build-plan`, whose tickets replace it; a missing glossary is `concept-glossary`; an unplanned feature (no `tracker` key, or a parent issue with no ticket) is `build-plan`; an open ticket or no pull request is `build-implement`; an unmerged pull request is `build-branch`; a feature with no featureset or roster row is `spec-feature`. A finding without a next command leaves the reader to triage it.
 9. **Show everything, then offer the repairs.** Rank findings by the severities of `tree/11_build/README.md § Verdicts`,
    `critical` and `high` being the blocking issues in its report format. Beyond the script's lines (step 1): a red
    coverage row is `high`; a naming violation or an amber row is `medium`; an orphan model,

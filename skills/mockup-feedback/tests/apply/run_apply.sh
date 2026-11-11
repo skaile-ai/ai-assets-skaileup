@@ -140,8 +140,8 @@ set -e
 
 echo ""
 
-# ── Test 4: model proposals — @skaile/model check accepts, glossary patched, notes recorded as pending ──
-echo "--- Test 4: test-model-proposal (field + entity + glossary; model check runs; resolution pending) ---"
+# ── Test 4: proposals — filed in one proposal file, owner artifacts untouched, notes recorded as pending ──
+echo "--- Test 4: test-model-proposal (field + entity + glossary term; proposal file written; resolution pending) ---"
 TMP4=$(setup_repo "$FIXTURES/test-model-proposal/before")
 trap 'rm -rf "$TMP1" "$TMP2" "$TMP3" "$TMP4" "$TMP5"' EXIT
 
@@ -150,51 +150,66 @@ trap 'rm -rf "$TMP1" "$TMP2" "$TMP3" "$TMP4" "$TMP5"' EXIT
     "concept/09_mockup/feedback/patches/test-model-proposal.review.md" \
     "concept" "concept/09_mockup/feedback")
 
+# The proposal file is named and dated by the day of the run; the fixture's date is masked.
+mask_date() {
+    python3 -c "
+import re, sys
+t = sys.stdin.read()
+t = re.sub(r'\d{4}-\d{2}-\d{2}-mockup-feedback', '<date>-mockup-feedback', t)
+print(re.sub(r'(?m)^proposed_on: \d{4}-\d{2}-\d{2}$', 'proposed_on: <date>', t))
+"
+}
+
 for f in 10_blueprint/datamodel/model.yaml glossary.md; do
     diff "$FIXTURES/test-model-proposal/after/concept/$f" "$TMP4/concept/$f" \
-        && echo "OK: $f matches expected" \
-        || { echo "FAIL: $f differs"; exit 1; }
+        && echo "OK: $f unchanged" \
+        || { echo "FAIL: $f was edited"; exit 1; }
 done
 
-ACTUAL_NORM=$(normalize_applied < "$TMP4/concept/09_mockup/feedback/applied/test-model-proposal.json")
-EXPECTED_NORM=$(normalize_applied < "$FIXTURES/test-model-proposal/after/concept/09_mockup/feedback/applied/test-model-proposal.json")
+PROPOSALS=("$TMP4"/concept/proposals/*-mockup-feedback-test-model-proposal.yaml)
+[ "${#PROPOSALS[@]}" -eq 1 ] && [ -f "${PROPOSALS[0]}" ] \
+    || { echo "FAIL: expected one proposal file, found: ${PROPOSALS[*]}"; exit 1; }
+[ "$(mask_date < "${PROPOSALS[0]}")" = "$(mask_date < "$FIXTURES"/test-model-proposal/after/concept/proposals/*-mockup-feedback-test-model-proposal.yaml)" ] \
+    && echo "OK: proposal file matches expected" \
+    || { echo "FAIL: proposal file differs"; cat "${PROPOSALS[0]}"; exit 1; }
+
+ACTUAL_NORM=$(normalize_applied < "$TMP4/concept/09_mockup/feedback/applied/test-model-proposal.json" | mask_date)
+EXPECTED_NORM=$(normalize_applied < "$FIXTURES/test-model-proposal/after/concept/09_mockup/feedback/applied/test-model-proposal.json" | mask_date)
 [ "$ACTUAL_NORM" = "$EXPECTED_NORM" ] \
-    && echo "OK: applied JSON matches expected (resolutions pending)" \
+    && echo "OK: applied JSON matches expected (proposals landed, resolutions pending)" \
     || { echo "FAIL: applied JSON differs"; diff <(echo "$EXPECTED_NORM") <(echo "$ACTUAL_NORM"); exit 1; }
 
-# The loaded model carries the proposal markers (field and entity)
-bunx @skaile/model@1 json "$TMP4/concept/10_blueprint/datamodel" | python3 -c '
-import json, sys
-m = json.load(sys.stdin)["model"]
-ents = {e["id"]: e for e in m["entities"]}
-est = next(f for f in ents["Task"]["fields"] if f["name"] == "estimate")
-assert (est["status"], est["proposed_by"], est["proposed_on"], est["source"]) == ("proposed", "mockup-feedback", "2026-10-23", "k3m9x2-1"), est
-c = ents["Comment"]
-assert (c["status"], c["proposed_by"], c["source"]) == ("proposed", "mockup-feedback", "k3m9x2-4"), c
-' \
-    && echo "OK: the loaded model carries the proposal markers" \
-    || { echo "FAIL: the loaded model lacks the proposal markers"; exit 1; }
+git -C "$TMP4" ls-files --error-unmatch "${PROPOSALS[0]#"$TMP4"/}" > /dev/null 2>&1 \
+    && echo "OK: proposal file committed" \
+    || { echo "FAIL: proposal file not committed"; exit 1; }
 
 echo ""
 
-# ── Test 5: @skaile/model check rejects the new field — model.yaml is left as it was, nothing is committed ──
-echo "--- Test 5: test-model-bad (model check rejects; expect exit 2, model.yaml reverted, no commit) ---"
+# ── Test 5: a malformed proposal (bad anchor) fails — nothing is filed, nothing is committed ──
+echo "--- Test 5: test-model-bad (anchor outside the model grammar; expect exit 2, no proposal file, no commit) ---"
 TMP5=$(setup_repo "$FIXTURES/test-model-bad/before")
 BEFORE_SUM=$(shasum "$TMP5/concept/10_blueprint/datamodel/model.yaml")
 
 set +e
-(cd "$TMP5" && python3 "$APPLY" \
+OUT5=$(cd "$TMP5" && python3 "$APPLY" \
     "concept/09_mockup/feedback/patches/test-model-bad.json" \
     "concept/09_mockup/feedback/patches/test-model-bad.review.md" \
-    "concept" "concept/09_mockup/feedback")
+    "concept" "concept/09_mockup/feedback" 2>&1)
 EC5=$?
 set -e
+echo "$OUT5"
 [ "$EC5" -eq 2 ] \
     && echo "OK: exit code 2 (the only patch failed)" \
     || { echo "FAIL: expected exit 2, got $EC5"; exit 1; }
+echo "$OUT5" | grep -q "model anchor must be entities" \
+    && echo "OK: the bad anchor is named" \
+    || { echo "FAIL: the bad anchor is not reported"; exit 1; }
 [ "$BEFORE_SUM" = "$(shasum "$TMP5/concept/10_blueprint/datamodel/model.yaml")" ] \
-    && echo "OK: model.yaml restored byte for byte" \
+    && echo "OK: model.yaml untouched" \
     || { echo "FAIL: model.yaml changed"; exit 1; }
+[ ! -e "$TMP5/concept/proposals" ] \
+    && echo "OK: no proposal file" \
+    || { echo "FAIL: a proposal file was written"; exit 1; }
 [ "$(git -C "$TMP5" log --oneline | wc -l | tr -d ' ')" -eq 1 ] \
     && echo "OK: no feedback commit" \
     || { echo "FAIL: unexpected commit count"; exit 1; }

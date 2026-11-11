@@ -10,6 +10,7 @@ screens:
   - path: 07_screens/polls.md
   - path: 07_screens/poll.md
 data_entities: [Poll, Place]
+tracker: { issue: 101 }
 last_updated: 2026-10-25
 ---
 

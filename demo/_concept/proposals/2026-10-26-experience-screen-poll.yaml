@@ -1,0 +1,13 @@
+proposed_by: experience-screen
+proposed_on: "2026-10-26"
+scope: poll
+entries:
+  - id: p1
+    target: _concept/05_features/polls/vote-on-place.md
+    anchor: section:Scope
+    payload: "- IN: the Organizer's Vote counts double, so the one who opened the Poll settles a split team."
+    source: "_concept/07_screens/poll.md § Situations: a split vote leaves the Organizer waiting for the Draw"
+    status: rejected
+    settled_by: spec-feature
+    settled_on: "2026-10-26"
+    reason: "It recreates the loudest voice the product replaces (goals.md): one Vote per Member, everywhere, and the data model has no weight field."

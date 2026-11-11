@@ -6,9 +6,13 @@
       "inboxId": "k3m9x2-1",
       "patchId": "p-k3m9x2-1-model",
       "target": {
-        "file": "10_blueprint/datamodel/model.yaml",
-        "section": "yaml:entity/Task/fields",
+        "file": "proposals/2026-10-23-mockup-feedback-test-model-proposal.yaml",
+        "section": "p1",
         "category": null
+      },
+      "proposes": {
+        "target": "_concept/10_blueprint/datamodel/model.yaml",
+        "anchor": "entities.Task.fields.estimate"
       },
       "body": "The editor needs an estimate field: how many hours the task will take.",
       "status": "applied"
@@ -17,9 +21,13 @@
       "inboxId": "k3m9x2-4",
       "patchId": "p-k3m9x2-4-glossary",
       "target": {
-        "file": "glossary.md",
-        "section": "before:## Relations",
+        "file": "proposals/2026-10-23-mockup-feedback-test-model-proposal.yaml",
+        "section": "p2",
         "category": null
+      },
+      "proposes": {
+        "target": "_concept/glossary.md",
+        "anchor": "term:Comment"
       },
       "body": "Tasks need comments from the team.",
       "status": "applied"
@@ -28,9 +36,13 @@
       "inboxId": "k3m9x2-4",
       "patchId": "p-k3m9x2-4-model",
       "target": {
-        "file": "10_blueprint/datamodel/model.yaml",
-        "section": "yaml:model/entities",
+        "file": "proposals/2026-10-23-mockup-feedback-test-model-proposal.yaml",
+        "section": "p3",
         "category": null
+      },
+      "proposes": {
+        "target": "_concept/10_blueprint/datamodel/model.yaml",
+        "anchor": "entities.Comment"
       },
       "body": "Tasks need comments from the team.",
       "status": "applied"
@@ -40,16 +52,16 @@
     {
       "id": "k3m9x2-1",
       "status": "implemented",
-      "resolution": "Task.estimate proposed in model.yaml and shown in TaskEditor.",
+      "resolution": "Task.estimate proposed for model.yaml and shown in TaskEditor.",
       "state": "pending",
-      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed in model.yaml and shown in TaskEditor.'"
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-1 --status implemented --resolution 'Task.estimate proposed for model.yaml and shown in TaskEditor.'"
     },
     {
       "id": "k3m9x2-4",
       "status": "implemented",
-      "resolution": "Comment entity proposed in model.yaml.",
+      "resolution": "Comment entity and term proposed for the data model and glossary.",
       "state": "pending",
-      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-4 --status implemented --resolution 'Comment entity proposed in model.yaml.'"
+      "command": "cd concept/09_mockup/storybook && npm install && npx tsx scripts/resolve.ts --ids k3m9x2-4 --status implemented --resolution 'Comment entity and term proposed for the data model and glossary.'"
     }
   ]
 }

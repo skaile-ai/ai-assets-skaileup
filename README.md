@@ -19,7 +19,7 @@ this collection by pointing a `sources:` entry of `skaile.yaml` at this repo.
 ```
 skills/<name>/SKILL.md     one directory per skill; the directory name IS the name: field
 agents/<name>/             the lead and its seven delegates: agent.yaml + SOUL.md; each skill is composed by one agent
-tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes) — the `shared-contracts` asset
+tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes), plus protocol/ — the `shared-contracts` asset
 rulebook/                  app-design rules, defaults and floorplans that APP-DESIGN.md adopts — the `app-design-rulebook` asset
 flows/<id>/<id>.flow.yaml  advisory recipes over skills — recommended order lives here, not in the filesystem
 templates/                 tech-stack references an implementation skill reads
@@ -78,30 +78,30 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 | [architecture-techstack](skills/architecture-techstack/) | Chooses the technology stack and records its id |
 | [architecture-system](skills/architecture-system/) | Records custom modules, protocols and integrations beyond the stack |
 | [architecture-datamodel](skills/architecture-datamodel/) | Derives the stack-neutral data model, authored as TypeScript, and seed scenarios from feature specs |
-| [build-branch](skills/build-branch/) | Opens the build branch before slices and merges or discards it after |
+| [build-branch](skills/build-branch/) | Opens the build branch before the first spec is built and merges or discards it after the last |
 | [build-scaffold](skills/build-scaffold/) | Scaffolds, themes, wires auth and builds the shell of a running app |
 | [build-database](skills/build-database/) | Translates the data model into a migrated schema with seed scripts |
-| [build-plan](skills/build-plan/) | Cuts a frozen feature spec into vertical slices with slice dossiers |
-| [build-implement](skills/build-implement/) | Implements a slice test-first, reviews it, commits and freezes it |
+| [build-plan](skills/build-plan/) | Opens a frozen feature spec's parent issue and cuts it into tickets with the installed `to-tickets` |
+| [build-implement](skills/build-implement/) | Builds a spec's tickets test-first on one integration branch with the installed `implement-spec`, ending in a draft PR that closes the parent |
 | [quality-standards](skills/quality-standards/) | Records an existing codebase's conventions as standards |
 | [quality-test](skills/quality-test/) | Writes unit tests that trace back to feature specs |
 | [quality-e2e](skills/quality-e2e/) | Proves journeys end to end in a real browser |
 | [quality-review](skills/quality-review/) | Reviews a finished feature's code adversarially against its spec |
 | [quality-release](skills/quality-release/) | Grades the running app against its brief on seven axes before release |
 | [quality-interaction](skills/quality-interaction/) | Checks the code against APP-DESIGN.md and writes an interaction conformance verdict |
-| [quality-design](skills/quality-design/) | Scans the code for design candidates, grills the one the user picks and files proposed entries with a decision record |
+| [quality-design](skills/quality-design/) | Scans the code for design candidates, grills the one the user picks and writes its proposals into a proposal file |
 | [ops-review](skills/ops-review/) | Health-checks _concept/: cross-references and build/ship coverage |
 
 ## Agents
 
-A host runs `skaileup-lead` as the session's agent; it runs `skaileup` itself and sends every other skill run to the delegate that composes the skill, per `tree/README.md § Delegation`.
+A host runs `skaileup-lead` as the session's agent; it runs `skaileup` and `build-implement` itself (`build-implement` starts subagents, which a delegate cannot) and sends every other skill run to the delegate that composes the skill, per `tree/protocol/delegation.md § Delegation`.
 
 | agent | does |
 |---|---|
 | [skaileup-architect](agents/skaileup-architect/) | Stack, system and data model |
-| [skaileup-builder](agents/skaileup-builder/) | Branch, scaffold, database, slice plans and test-first slices |
+| [skaileup-builder](agents/skaileup-builder/) | Branch, scaffold, database and the tickets each spec is cut into |
 | [skaileup-designer](agents/skaileup-designer/) | Brand, app design, shell, screens and the mockup |
-| [skaileup-lead](agents/skaileup-lead/) | Leads the session: runs the expectations interview and `skaileup`, sends each skill run to the agent that owns it and answers its questions as the expectations say, asking the user where the user decides |
+| [skaileup-lead](agents/skaileup-lead/) | Leads the session: runs the expectations interview, `skaileup` and `build-implement`, sends each other skill run to the agent that owns it and answers its questions as the expectations say, asking the user where the user decides |
 | [skaileup-product](agents/skaileup-product/) | Onboarding, brief, goals, ideas, glossary and journeys |
 | [skaileup-researcher](agents/skaileup-researcher/) | Research and reverse engineering, a source against every claim |
 | [skaileup-reviewer](agents/skaileup-reviewer/) | Standards, tests and reviews of work it did not write; never fixes |

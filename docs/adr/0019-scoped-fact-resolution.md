@@ -30,7 +30,7 @@ features → app-design → datamodel), so it cannot be read as a dependency gra
 **A skill resolves facts, not files.** At each step it reads what exists, in any order (an
 optional artifact only after checking it exists), pulls scoped code evidence with
 `concept-reverse` where the code holds the answer, marks inferred facts as inferred, and
-batch-asks only what tools cannot settle. `tree/README.md § How a skill runs` states this once
+batch-asks only what tools cannot settle. `tree/protocol/running.md § How a skill runs` states this once
 and the nodes that interview bind it at their step.
 
 **Hard gates only where a machine-read format is consumed.** `model.json` gates

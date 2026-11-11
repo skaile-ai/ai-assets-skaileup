@@ -126,14 +126,32 @@ def test_reopen_look_reopens_every_later_stage(tmp_path):
 
 def test_waive_refuses_an_unknown_decision_record(tmp_path, capsys):
     project(tmp_path, stages=("frame",))
-    write(tmp_path, "_concept/10_blueprint/decisions.md", "# Decisions\n\n## DR-1 — Something\n")
+    write(tmp_path, "docs/adr/0001-something.md", "# Something\n\nDecided.\n")
     run(tmp_path, "init")
-    assert run(tmp_path, "waive", "features", "--dr", "DR-7", "--source", "user, 2026-11-08") == 2
-    assert "DR-7 does not occur" in capsys.readouterr().out
-    assert run(tmp_path, "waive", "features", "--dr", "DR-1", "--source", "user, 2026-11-08") == 0
+    assert run(tmp_path, "waive", "features", "--adr", "adr:other", "--source", "user, 2026-11-08") == 2
+    assert "adr:other names no record" in capsys.readouterr().out
+    assert run(tmp_path, "waive", "features", "--adr", "DR-1", "--source", "user, 2026-11-08") == 2
+    assert "not a decision reference" in capsys.readouterr().out
+    assert run(tmp_path, "waive", "features", "--adr", "adr:something", "--source", "user, 2026-11-08") == 0
     doc = state(tmp_path)
-    assert doc["stages"]["features"] == {"status": "waived", "dr": "DR-1", "source": "user, 2026-11-08"}
+    assert doc["stages"]["features"] == {"status": "waived", "adr": "adr:something", "source": "user, 2026-11-08"}
     assert doc["history"][-1]["event"] == "waived"
+
+
+def test_waive_refuses_a_superseded_record(tmp_path, capsys):
+    run(tmp_path, "init")
+    write(tmp_path, "docs/adr/0002-old-way.md", "---\nstatus: superseded by ADR-0003\n---\n# Old way\n")
+    assert run(tmp_path, "waive", "look", "--adr", "adr:old-way", "--source", "user, 2026-11-08") == 2
+    assert "superseded" in capsys.readouterr().out
+
+
+def test_waive_accepts_a_pending_adr_proposal(tmp_path):
+    run(tmp_path, "init")
+    write(tmp_path, "_concept/proposals/2026-11-08-spec-feature-polls.yaml", yaml.safe_dump({
+        "entries": [{"target": "docs/adr/", "anchor": "adr:skip-the-look", "status": "proposed",
+                     "payload": "---\nstatus: proposed\n---\n# Skip the look\n"}]}))
+    assert run(tmp_path, "waive", "look", "--adr", "adr:skip-the-look", "--source", "user, 2026-11-08") == 0
+    assert state(tmp_path)["stages"]["look"]["adr"] == "adr:skip-the-look"
 
 
 def test_gate_build_opens_after_the_approvals(tmp_path, capsys):
@@ -163,6 +181,30 @@ def test_gate_feature_fails_on_an_unapproved_screen(tmp_path, capsys):
     assert "_concept/07_screens/poll.md" in capsys.readouterr().out
     write(tmp_path, "_concept/07_screens/poll.md", md(screen_id="poll"))
     assert run(tmp_path, "gate", "feature", "polls/create-poll") == 0
+
+
+def proposal_file(status: str) -> str:
+    entry = {"id": "p1", "target": "_concept/10_blueprint/datamodel/model.yaml",
+             "anchor": "entities.Place.fields.price_level", "payload": {"type": "integer", "required": False},
+             "source": "PlaceCard needs a price hint", "status": status}
+    if status != "proposed":
+        entry.update(settled_by="architecture-datamodel", settled_on="2026-11-09")
+    return yaml.safe_dump({"proposed_by": "mockup-storybook", "proposed_on": "2026-11-08",
+                           "scope": "place-card", "entries": [entry]}, sort_keys=False)
+
+
+def test_a_pending_proposal_on_model_yaml_blocks_the_data_stage(tmp_path, capsys):
+    project(tmp_path)
+    run(tmp_path, "init")
+    for stage in ("frame", "look"):
+        assert run(tmp_path, "approve", stage, "--source", "user, 2026-11-08") == 0
+    path = "_concept/proposals/2026-11-08-mockup-storybook-place-card.yaml"
+    write(tmp_path, path, proposal_file("proposed"))
+    capsys.readouterr()
+    assert run(tmp_path, "approve", "data", "--source", "user, 2026-11-08") == 2
+    assert "no pending proposal entry targets model.yaml: open markers" in capsys.readouterr().out
+    write(tmp_path, path, proposal_file("promoted"))
+    assert run(tmp_path, "approve", "data", "--source", "user, 2026-11-08") == 0
 
 
 def test_status_without_a_state_file(tmp_path, capsys):
@@ -218,8 +260,8 @@ def test_guard_write_keeps_the_rest_of_claude_md(tmp_path):
 @pytest.mark.parametrize("stage", ["frame", "features"])
 def test_init_keeps_an_existing_file(tmp_path, capsys, stage):
     run(tmp_path, "init")
-    write(tmp_path, "_concept/10_blueprint/decisions.md", "## DR-3 — x\n")
-    run(tmp_path, "waive", stage, "--dr", "DR-3", "--source", "user, 2026-11-08")
+    write(tmp_path, "docs/adr/0003-x.md", "# X\n")
+    run(tmp_path, "waive", stage, "--adr", "adr:x", "--source", "user, 2026-11-08")
     capsys.readouterr()
     assert run(tmp_path, "init") == 0
     assert capsys.readouterr().out == "walkthrough.yaml exists\n"
