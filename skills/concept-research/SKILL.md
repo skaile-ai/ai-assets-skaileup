@@ -37,7 +37,7 @@ features, no tokens.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/delegation.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Pick the depth, scope, dispatch and write the topic files** — `tree/02_grounding/research/README.md`. It maps `depth` from `scope.yaml` to the research depth (asked when absent, per `tree/01_meta/scope.md`) and names the node for each of the seven files (`domain`, `competitors`, `audiences`, `design-inspiration` by default; `patterns`, `colors-fonts`, `behavioral-patterns` when scoped) and the `step/<skill-name>/` rule.
 2. **Catalogue the raw material** — `tree/02_grounding/findings/README.md § Filing raw material (concept-research, design-brand)`, with `step: concept-research`.

@@ -76,6 +76,15 @@ ARTIFACT_ROOT = "_concept"
 
 # The instruction tree and the one manifest that ships it.
 TREE_DIR = "tree"
+# How skills work on the tree (`tree/README.md § Protocol`): shipped with the tree, cited by
+# file and section, but no `_concept/` part — exempt from the mirror rule like `CONTRACT.md`.
+PROTOCOL_DIR = "protocol"
+
+
+def _is_protocol(rel: str) -> bool:
+    """True for `protocol/` and anything below it (`rel` is relative to `tree/`)."""
+    return rel.split("/", 1)[0] == PROTOCOL_DIR
+
 
 # The path the host writes each step's dialog input to (`host:grounding-user-input`).
 # `concept-onboard` folds it into `answers.json`, so the node that documents that file
@@ -89,8 +98,8 @@ ONBOARD_NODE = "02_grounding/onboarding/answers.md"
 # first level), which would otherwise pass as "some project-root file". A root artifact still
 # resolves through the tree: its node is `tree/<artifact>`, which lists the name literally in
 # `path:`. A hard gate on one is held to the upstream-writer rule in `_check_gate_writers` (exact
-# match). The tree listing (`--print-tree`) shows `_concept/` only; `tree/README.md § Beside the
-# tree` documents these.
+# match). The tree listing (`--print-tree`) shows `_concept/` only; `tree/protocol/beside-the-tree.md §
+# Beside the tree` documents these.
 PROJECT_ROOT_ARTIFACTS = {"APP-DESIGN.md"}
 
 # Skills this collection calls but does not ship (migration map, premise 6). Axis is
@@ -355,14 +364,15 @@ class Node:
 
 
 def load_tree(repo: Path) -> list[Node]:
-    """Every node under `tree/`, sorted by path. `CONTRACT.md` is the manifest, not a node."""
+    """Every node under `tree/`, sorted by path. `CONTRACT.md` is the manifest and `protocol/`
+    the protocol, not nodes."""
     root = repo / TREE_DIR
     if not root.is_dir():
         return []
     nodes = []
     for path in sorted(root.rglob("*.md")):
         rel = path.relative_to(root).as_posix()
-        if rel == "CONTRACT.md" or any(part.startswith(".") for part in rel.split("/")):
+        if rel == "CONTRACT.md" or _is_protocol(rel) or any(part.startswith(".") for part in rel.split("/")):
             continue
         text = path.read_text(encoding="utf-8")
         fm, _body = split_frontmatter(text)
@@ -648,7 +658,7 @@ def check_tree(repo: Path, nodes: list[Node], rep: Report) -> None:
 
     for path in sorted(tree_root.rglob("*")):
         rel = path.relative_to(tree_root).as_posix()
-        if any(part.startswith(".") for part in rel.split("/")):
+        if _is_protocol(rel) or any(part.startswith(".") for part in rel.split("/")):
             continue
         if path.is_dir() and not (path / "README.md").is_file():
             rep.fail(
@@ -1747,7 +1757,7 @@ def _check_owners(nodes: list[Node], skill_fms: list[tuple[str, dict]], rep: Rep
                 )
 
     # A node that takes `proposed` entries has an owner who rejects some, and a rejection is
-    # recorded in the decision log (`tree/README.md § Ownership`) — so that owner appends there.
+    # recorded in the decision log (`tree/protocol/ownership.md § Ownership`) — so that owner appends there.
     for node in nodes:
         if not node.may_propose:
             continue

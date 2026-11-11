@@ -18,7 +18,7 @@ on a repository with no concept at all.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Scope, scan and write one file per convention** — `tree/02_grounding/standards/README.md`. Ask the path and the domains (`api`, `database`, `ui`, `naming`, `testing`, `architecture`) first.
 2. **Write the index** — `tree/02_grounding/standards/index.md`; the build skills match on it.

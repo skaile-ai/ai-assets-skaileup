@@ -7,7 +7,7 @@ may_propose: []
 
 # _concept/01_meta/expectations.md
 
-What the user expects: the result they will judge the product by, and how they want to work with the agents that build it. `skaileup` writes it from one interview when a project has none; the lead applies `## Working together` to every run it sends (`tree/README.md § Delegation`), and `concept-brief` reads `## The result` when it writes the goals. Without it the lead guesses how much to ask: the user answers questions they wanted handled, or finds decisions made that they wanted to make.
+What the user expects: the result they will judge the product by, and how they want to work with the agents that build it. `skaileup` writes it from one interview when a project has none; the lead applies `## Working together` to every run it sends (`tree/protocol/delegation.md § Delegation`), and `concept-brief` reads `## The result` when it writes the goals. Without it the lead guesses how much to ask: the user answers questions they wanted handled, or finds decisions made that they wanted to make.
 
 ## Format
 
@@ -53,13 +53,13 @@ The lead reads it before every run it sends; without agents, the session running
 |---|---|
 | `user decides` | puts the batch to the user unchanged and waits for the answers |
 | `lead proposes, user confirms` | puts the batch with its recommendations as one proposal; the user confirms it with one yes or names what to change |
-| `agent decides and reports` | answers the batch with its recommendations and lists the choices in the completion summary (`tree/README.md § How a skill runs`, rule 8) |
+| `agent decides and reports` | answers the batch with its recommendations and lists the choices in the completion summary (`tree/protocol/running.md § How a skill runs`, rule 8) |
 
 `approved:` records the user's yes and nothing else (`tree/README.md § Frontmatter every markdown artifact carries`): an artifact written under `agent decides and reports` carries none until the user has seen it at the review cadence. The cadence says when the lead shows finished artifacts for approval inside a stage of the walk (`tree/01_meta/walkthrough.md`): after each artifact (`per artifact`), at the end of each stage (`per stage`), or once at the end of the walk (`at the end`); each stage's approval happens regardless of the cadence. A check-in is a point where the lead stops and reports even when the cadence would not. The user may change any line at any time; the lead rewrites it with the new source in the same turn.
 
 ## Writing it
 
-1. **Resolve the facts, then ask** (`tree/README.md § How a skill runs`, rule 1). Read `_concept/brief.md` and `_concept/02_grounding/onboarding/answers.json` where they exist, and what the user has said in this session. When the file exists, show it and ask only what the user wants to change.
+1. **Resolve the facts, then ask** (`tree/protocol/running.md § How a skill runs`, rule 1). Read `_concept/brief.md` and `_concept/02_grounding/onboarding/answers.json` where they exist, and what the user has said in this session. When the file exists, show it and ask only what the user wants to change.
 2. **Ask about the result** in one decision batch (rule 2): what they will judge the product by, the quality bar, references they like and dislike and what about each, and what must not happen. Recommend from the brief and the onboarding answers where they say something; otherwise ask the question open.
 3. **Ask how to work together** in a second batch: the autonomy table as one question, recommended as in the format example; the review cadence, recommended `per stage`; the check-ins, recommended after the brief and goals and before the first build commit; the language, recommended as the one the user writes in. The batch offers "accept all defaults".
 4. **A user who declines the interview** gets the recommended rows with source `default` and no `## The result` lines; the file is still written, so the lead has a cadence to apply and nothing about the result is invented. A line whose text came from a plan or another agent's document carries that path as its source, `(plan <path>)`, never `(user, …)`.

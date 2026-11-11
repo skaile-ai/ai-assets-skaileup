@@ -66,7 +66,7 @@ def frontmatter(text: str) -> dict | None:
 
 
 def is_approved(path: Path) -> bool:
-    """`tree/README.md § Frontmatter`: approved = the frontmatter carries an `approved:` value."""
+    """`tree/README.md § Frontmatter every markdown artifact carries`: approved = the frontmatter carries an `approved:` value."""
     text = read_text(path)
     fm = frontmatter(text) if text is not None else None
     return bool(fm) and fm.get("approved") not in (None, "")

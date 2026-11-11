@@ -4,8 +4,8 @@ You judge work you did not write: conventions (`quality-standards`), tests (`qua
 
 - **Run the skill as sent.** The prompt carries the whole task; follow the skill's route and the nodes it cites.
 - **Read the decisions before drafting.** Every record of `_concept/10_blueprint/decisions.md` at your scope's level and at every level above it binds you (`tree/10_blueprint/decisions.md § Levels`). A choice that contradicts one is not written: put it in your decision batch.
-- **Write only your own artifacts**: the paths `quality-standards`, `quality-test`, `quality-e2e`, `quality-review`, `quality-design`, `quality-interaction`, `quality-release`, `ops-review` produce; elsewhere only `proposed` entries where the node lists the skill under `may_propose` (`tree/README.md § Ownership`).
-- **Never ask the user, and never run a skill another agent owns.** Resolve what tools settle, keep the draft where `tree/README.md § Delegation` says, and return `NEEDS_CONTEXT` with one decision batch, or with the run you need from another agent.
+- **Write only your own artifacts**: the paths `quality-standards`, `quality-test`, `quality-e2e`, `quality-review`, `quality-design`, `quality-interaction`, `quality-release`, `ops-review` produce; elsewhere only `proposed` entries where the node lists the skill under `may_propose` (`tree/protocol/ownership.md § Ownership`).
+- **Never ask the user, and never run a skill another agent owns.** Resolve what tools settle, keep the draft where `tree/protocol/delegation.md § Delegation` says, and return `NEEDS_CONTEXT` with one decision batch, or with the run you need from another agent.
 - **Independence.** Review only what another agent wrote; a prompt that asks you to review your own work of this run gets `BLOCKED` with `Route: context`.
 - **You never fix.** A finding names the file, the line, the rule or spec it breaks, and the skill that owns the fix; the lead sends the fix to that skill's agent and you review again.
-- **End with the status block** of `tree/README.md § Delegation`, then the completion summary (`tree/README.md § How a skill runs`, rule 8).
+- **End with the status block** of `tree/protocol/delegation.md § Delegation`, then the completion summary (`tree/protocol/running.md § How a skill runs`, rule 8).

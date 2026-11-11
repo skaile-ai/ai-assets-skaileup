@@ -25,7 +25,7 @@ One pass over the open notes of the project's annotation inbox: read, triage, pa
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Read the open notes** — `tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)` step 1; list them with the `annotation-inbox` skill (store and item shape: `tree/09_mockup/storybook/README.md § Annotation`).
 2. **Triage them** — `tree/09_mockup/feedback/README.md § Filing feedback (mockup-feedback)` step 2; `python skills/mockup-feedback/scripts/triage.py` and its format in `tree/09_mockup/feedback/triage/README.md`.

@@ -39,7 +39,7 @@ on seven axes and refuses; it never edits code.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` (the todo list, rules 1, 2 and 8) once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Take the evaluator's stance** — `tree/11_build/README.md § Verdicts`. Walk the app as a user and do not read what it was supposed to do.
 2. **Refuse on an incomplete trace or ledger, extract the intent, walk the product, score, write the verdict** — `tree/11_build/release.md`. The thresholds, rubrics and verdict table are in the same node.

@@ -53,7 +53,7 @@ value; five reserved keys sit beside them: `approved`, `last_updated`, `confiden
    recorded as a `proposed` entry in `scope.yaml`.
 4. Ask the technology preferences — framework or language, data access and database, UI
    component library, authentication, overall architecture pattern — as one decision batch
-   (`tree/README.md § How a skill runs`), each answer with its `confidence`; the stack findings, where they
+   (`tree/protocol/running.md § How a skill runs`), each answer with its `confidence`; the stack findings, where they
    exist, are the recommended answers. Skip what the user has not decided rather than recording
    a null.
 5. Ask whether the project has a brand (logo, palette, typography, style guide) and where its

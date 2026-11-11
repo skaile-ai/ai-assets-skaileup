@@ -28,9 +28,9 @@ Grows the Storybook package at `_concept/09_mockup/storybook/` one layer at a ti
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Resolve which screens, entities and journeys exist** — `tree/09_mockup/storybook/README.md § Writing it` step 1, derive-or-ask per `tree/README.md § How a skill runs`.
+1. **Resolve which screens, entities and journeys exist** — `tree/09_mockup/storybook/README.md § Writing it` step 1, derive-or-ask per `tree/protocol/running.md § How a skill runs`.
 2. **Scaffold, when `package.json` is absent** — `tree/09_mockup/storybook/README.md § Writing it` step 2; the package layout is in `tree/09_mockup/storybook/README.md § Package layout`.
 3. **Bring the brand tokens, the data model and the concept index in** — `tree/09_mockup/storybook/README.md § Writing it` step 3 and `tree/09_mockup/storybook/README.md § Feature pages`; the model is `tree/10_blueprint/datamodel/model.md § Format` and `tree/10_blueprint/datamodel/model.md § Writing it`.
 4. **Write a screen's layout story** — `tree/09_mockup/storybook/README.md § Writing it` step 4, from the screen spec `tree/07_screens/[screen].md § Format`. `experience-screen` calls this step to show a layout before the screen is specified.

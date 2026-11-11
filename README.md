@@ -19,7 +19,7 @@ this collection by pointing a `sources:` entry of `skaile.yaml` at this repo.
 ```
 skills/<name>/SKILL.md     one directory per skill; the directory name IS the name: field
 agents/<name>/             the lead and its seven delegates: agent.yaml + SOUL.md; each skill is composed by one agent
-tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes) — the `shared-contracts` asset
+tree/                      mirror of _concept/, one node per part (APP-DESIGN.md's node, schemas beside nodes), plus protocol/ — the `shared-contracts` asset
 rulebook/                  app-design rules, defaults and floorplans that APP-DESIGN.md adopts — the `app-design-rulebook` asset
 flows/<id>/<id>.flow.yaml  advisory recipes over skills — recommended order lives here, not in the filesystem
 templates/                 tech-stack references an implementation skill reads
@@ -94,7 +94,7 @@ nodes; each writes into `_concept/`, the one artifact tree, whose instruction mi
 
 ## Agents
 
-A host runs `skaileup-lead` as the session's agent; it runs `skaileup` itself and sends every other skill run to the delegate that composes the skill, per `tree/README.md § Delegation`.
+A host runs `skaileup-lead` as the session's agent; it runs `skaileup` itself and sends every other skill run to the delegate that composes the skill, per `tree/protocol/delegation.md § Delegation`.
 
 | agent | does |
 |---|---|

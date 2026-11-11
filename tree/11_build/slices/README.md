@@ -45,7 +45,7 @@ the slice is proved: `verification` in `index.md` says that, and a slice frozen 
    (`_concept/07_screens/<screen>.md`, `tree/07_screens/[screen].md`), and `_concept/10_blueprint/` for stack, architecture
    and data model where they exist. Only the feature spec is required, because its criterion ids and
    `screens:` list are what the plan and the ledger join on; a missing screen, stack or model is
-   derived or asked (`tree/README.md § How a skill runs`, rule 1): read `_concept/02_grounding/findings/`
+   derived or asked (`tree/protocol/running.md § How a skill runs`, rule 1): read `_concept/02_grounding/findings/`
    (`stack.md`, `datamodel.md`, `screens.md`; `concept-reverse` scoped to them fills the gaps from the
    code) and put what the findings leave open into step 5's batch. A slice plan with no recorded stack
    names no framework and the first slice has to establish it; with no data model every slice that

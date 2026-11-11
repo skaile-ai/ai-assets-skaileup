@@ -28,7 +28,7 @@ artifacts that seed from the findings are written by their owners, never here.
 
 ## Route
 
-Read `tree/README.md` once per session, then the nodes of the requested scopes — each holds the format and procedure for its part; this file holds only the order. A scope absent from the request is skipped and listed as `skip: not requested`.
+Read `tree/protocol/running.md` (the todo list, rules 1 and 8) once per session, then the nodes of the requested scopes — each holds the format and procedure for its part; this file holds only the order. A scope absent from the request is skipped and listed as `skip: not requested`.
 
 1. **Resolve the request and extract** — `tree/02_grounding/findings/README.md § Extracting (concept-reverse)`: scope and paths, the app, the freshness of each existing file, then one file per requested scope, the citation check and the report.
 2. **`brief`** — `tree/02_grounding/findings/brief-seeds.md`.

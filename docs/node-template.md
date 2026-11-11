@@ -49,8 +49,8 @@ may_propose: []                          # skills that may append `proposed` ent
 
 ## Writing it
 <Numbered procedure. Multi-owner nodes: one `### <role> (<skill>)` subsection per owner.
-An interview step: "batch-ask what the evidence leaves open, per `tree/README.md § How a skill runs`" — rule 2 governs the batch, never "one question per message".
-A derive-or-ask step: read what exists → derive the rest from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) → batch-ask what neither settles (cite `tree/README.md § How a skill runs`).>
+An interview step: "batch-ask what the evidence leaves open, per `tree/protocol/running.md § How a skill runs`" — rule 2 governs the batch, never "one question per message".
+A derive-or-ask step: read what exists → derive the rest from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) → batch-ask what neither settles (cite `tree/protocol/running.md § How a skill runs`).>
 
 ## Checks
 <What "done" means for this part; validator commands if any.>
@@ -72,7 +72,7 @@ A derive-or-ask step: read what exists → derive the rest from `_concept/02_gro
   so its `produces` leaves it out (`openapi.yaml`, `asyncapi.yaml`) — carries
   `owner: []`, and its intro paragraph names the skill that writes it and when.
 - `may_propose` lists the skills allowed to append `proposed` entries to this artifact
-  (protocol: `tree/README.md § Ownership`). Every entry is a skill of this collection and
+  (protocol: `tree/protocol/ownership.md § Ownership`). Every entry is a skill of this collection and
   none repeats an `owner`; the key is required, `[]` when nobody proposes here. The node's
   `## Format` gives the per-artifact shape of a proposed entry.
 - A node carries no flow-order prose ("runs after X and before Y"): order lives in the flow

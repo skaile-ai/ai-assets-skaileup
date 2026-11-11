@@ -31,9 +31,9 @@ Writes `10_blueprint/architecture.md` as C4 levels — what this project adds be
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Resolve the stack and the features for the delta** — `tree/10_blueprint/architecture.md § Writing it`, steps 1–3. Derive-or-ask per `tree/README.md § How a skill runs`: a stack or a feature the files lack comes from `concept-reverse` scoped `stack`, `routes` or `datamodel`, and the rest goes into the step 3 batch.
+1. **Resolve the stack and the features for the delta** — `tree/10_blueprint/architecture.md § Writing it`, steps 1–3. Derive-or-ask per `tree/protocol/running.md § How a skill runs`: a stack or a feature the files lack comes from `concept-reverse` scoped `stack`, `routes` or `datamodel`, and the rest goes into the step 3 batch.
 2. **Screen and shape each addition** — `tree/10_blueprint/architecture.md § Design red flags`, then steps 4–5 of its `## Writing it` (seams for outside dependencies).
 3. **Write `architecture.md` by C4 level** — `tree/10_blueprint/architecture.md § Format` (system context with every external integration, containers, components, deployment, risks and technical debt), then step 6 of its `## Writing it`.
 4. **Write the API and event contracts where the project has them** — `tree/10_blueprint/openapi.md` for an HTTP API served to clients other than the own UI (always for `api-service`), `tree/10_blueprint/asyncapi.md` for published or consumed messages, per step 7 of `tree/10_blueprint/architecture.md § Writing it`. A project with neither writes neither file and says so in `architecture.md`.

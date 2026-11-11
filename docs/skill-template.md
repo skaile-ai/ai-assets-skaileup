@@ -34,7 +34,7 @@ the job and the boundary instead of restating them.>
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format
+Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format
 and procedure for its part; this file holds only the order.
 
 1. **<Verb phrase>** — `tree/03_brand/identity.md`. <≤ 1 line of skill-specific constraint,
@@ -53,6 +53,13 @@ procedure that belongs in one.
 procedure. They carry `## Steps` in place of `## Route` — the compressed procedure, stated
 positively at the step each constraint binds — with a **ceiling of 100 lines**. They still
 cite a node for every `_concept/` format they read.
+
+**The opener cites only the protocol files the route uses** (`tree/README.md § Protocol`):
+`tree/protocol/running.md` always, narrowed to the rules it binds where the skill does not
+interview (`(the todo list, rules 1 and 8)`); `tree/protocol/ownership.md` when it proposes
+into another owner's artifact or promotes proposals into its own; `tree/protocol/delegation.md`
+when it hands passes to another agent context. `tree/README.md` itself is read only to find a
+part's node.
 
 ## The rules behind it
 
@@ -101,10 +108,10 @@ cite a node for every `_concept/` format they read.
   human nothing.
 - **No flow-order prose.** A skill does not say "runs after X" or "hands over to Y": order
   lives in the flow graph, and next steps are named by demand — the skills that own what is
-  still missing (`tree/README.md § How a skill runs`, rule 8).
+  still missing (`tree/protocol/running.md § How a skill runs`, rule 8).
 - **An interviewing route item is a derive-or-ask step**: read what exists → derive the rest
   from `_concept/02_grounding/findings/` (scoped `concept-reverse` when the code holds it) →
-  batch-ask what neither settles; it cites `tree/README.md § How a skill runs` and does not
+  batch-ask what neither settles; it cites `tree/protocol/running.md § How a skill runs` and does not
   restate the rules.
 - **The environment and the tree are sources of truth; the body is not a cache of them.** No
   READS/WRITES path list (the frontmatter and the nodes have it), no CHECKLIST (the node's
@@ -119,4 +126,4 @@ cite a node for every `_concept/` format they read.
   is absent.
 - **`## Depth Behavior`, `## Standalone Mode`, `## Context Budget`** describe how the
   collection works, not what the skill does. They belong in one place, once —
-  `tree/README.md § How a skill runs` — not in thirty skills each.
+  `tree/protocol/running.md § How a skill runs` — not in thirty skills each.

@@ -8,4 +8,4 @@ metadata:
 
 # shared-contracts
 
-**Do not invoke.** The directory beside this file mirrors `_concept/`; `README.md` explains how to read it.
+**Do not invoke.** The directory beside this file mirrors `_concept/`; `README.md` explains how to read it, and `protocol/` holds how a skill works on it.

@@ -34,7 +34,7 @@ criterion ids, observed in the browser with `agent-browser`.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` (the todo list, rules 1, 2 and 8) once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Walk every journey and write its verdict into the ledger** — `tree/11_build/acceptance-criteria/README.md § Flipping rows`, the `quality-e2e` procedure (steps 1–8; step 2 derives the journey list from stories, specs or findings, and covers an `api-service` with no UI journeys). A feature with no ledger gets its verdict in the report and the name of the skill that creates rows.
 

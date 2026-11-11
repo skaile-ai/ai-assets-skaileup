@@ -24,7 +24,7 @@ Covers features that are already built: one test file per feature, every case tr
 the criterion it proves. `tdd` owns the tests written *before* the code; this is the pass
 that covers what shipped without them, and it never rewrites a test to make it green.
 
-Read `tree/README.md` once per session. **The levels come from the depth** in
+Read `tree/protocol/running.md` once per session. **The levels come from the depth** in
 `_concept/01_meta/scope.yaml` (`tree/01_meta/scope.md`): `sketch` runs unit only, `standard` and
 `exhaustive` run unit and integration. A `depth` the file lacks is asked in the batch of step 3
 and recorded as `tree/01_meta/scope.md § Asking a missing key` says; the project's size is
@@ -48,7 +48,7 @@ not a question to ask twice.
    here: record it as belonging to integration or to `quality-e2e` and move on. With no
    feature specs, derive the units from `_concept/02_grounding/findings/routes.md` and the
    code, and ask the user which behaviours must hold, in one batch with the open `depth`
-   (`tree/README.md § How a skill runs`, rule 1); the tests then name those behaviours in
+   (`tree/protocol/running.md § How a skill runs`, rule 1); the tests then name those behaviours in
    place of criterion ids, and the report says so.
 4. **Write the unit tests**, one file per feature, describe blocks named for the criterion
    they cover and each test naming its criterion id (`AC-<story-id>-<nn>`).

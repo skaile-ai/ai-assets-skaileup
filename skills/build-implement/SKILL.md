@@ -40,7 +40,7 @@ missing one rather than improvising a test loop or a review.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Check the walk** — `tree/01_meta/walkthrough.md § Writing it` (step 6). From the project root run `python3 <skaileup-skill-dir>/scripts/walkthrough.py gate feature <featureset>/<feature>` for the feature the slice's `plan.md` names. A non-zero exit stops this skill with the script's message and names `skaileup` to continue the walk; a missing `walkthrough.yaml` is the same stop.
 2. **Load the slice, build and review it, run the gate, recap, propose the simplification** — `tree/11_build/slices/[slice_id]/index.md § Writing it` (steps 1–6; step 2 holds the OpenAPI/AsyncAPI match). Call the Skill tool with "tdd" for each row. Call the Skill tool with "code-review" once the rows are done. Confirm the seams with the user before the first test.

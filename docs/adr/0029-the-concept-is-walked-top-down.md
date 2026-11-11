@@ -73,7 +73,7 @@ its checkpoint is skipped only by a waive backed by a decision record the user a
 stage before any code changes; the concept is updated and re-approved, then the code follows.
 
 **W7 — Hosts without the skaileup agents.** Where `skaileup-lead` and its delegates are not
-installed, the session agent is the lead: the relay rules of `tree/README.md § Delegation` apply
+installed, the session agent is the lead: the relay rules of `tree/protocol/delegation.md § Delegation` apply
 to the generic subagents it sends, and a plan the session agent writes answers no skill's
 decision batch in advance. `skaileup` writes a marked guard section into the project's agent
 file so the host's own planning sees the gate.

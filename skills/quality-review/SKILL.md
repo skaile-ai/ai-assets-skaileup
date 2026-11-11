@@ -31,7 +31,7 @@ it otherwise asks a human for, plus the security, accessibility and criteria axe
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` (the todo list, rules 1, 2 and 8) once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Take the evaluator's stance** — `tree/11_build/README.md § Verdicts`. The verdict file and the re-checked ledger rows are the only things this skill writes.
 2. **Resolve the fixed point (trace row, else git, else ask), build, run `code-review`, add the security and accessibility axes** — `tree/11_build/reviews/README.md § Writing it` (steps 1–4). Call the Skill tool with "code-review" from a context that did not write the code, and call the Skill tool with "diagnosing-bugs" on a red build; where either is not installed the node names the fallback.

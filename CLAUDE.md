@@ -19,7 +19,7 @@ route through those nodes. This is the one skaileup collection; the earlier ones
   exactly one agent. No deprecated 0.1 field, no `extends`, every ref resolves, every `as:` is a
   valid file name and unique in its agent: `check_agents` enforces these. By convention, and not
   checked: no `model` (the host picks it), and a SOUL cites tree sections instead of restating
-  them; the dispatch protocol lives once, in `tree/README.md § Delegation`.
+  them; the dispatch protocol lives once, in `tree/protocol/delegation.md § Delegation`.
 - **Nine domains:** `concept · design · experience · spec · mockup · architecture ·
   build · quality · ops`. `quality` inspects `src/`; `ops` inspects `_concept/`.
 - **Names are `domain-skill`** — 2 segments by default, 3 for a real sub-cluster, never 4.
@@ -36,7 +36,9 @@ route through those nodes. This is the one skaileup collection; the earlier ones
   rules, defaults and floorplans, a second contract
   ([ADR 0018](./docs/adr/0018-the-rulebook-is-a-second-contract-asset.md)). Resolution rules:
   [ADR 0017](./docs/adr/0017-the-instruction-tree-mirrors-the-artifact-tree.md) and
-  `tree/README.md`.
+  `tree/README.md`. The one exemption is `tree/protocol/` — how a skill runs, ownership,
+  delegation, what sits beside the tree — shipped with the tree and cited by file and
+  section; it is no `_concept/` part, so it has no node, like `tree/CONTRACT.md`.
 - **A skill is a route.** Its body is the ordered list of nodes it visits — at most 60 lines
   including frontmatter; the five skills with `produces: []` keep a compressed `## Steps`, at
   most 100. See [`docs/skill-template.md`](./docs/skill-template.md).

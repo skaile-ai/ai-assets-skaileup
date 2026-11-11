@@ -29,14 +29,14 @@ other want.
 
 - `<id>` is `skaileup`: run it here.
 - Any other skill: send the whole prompt, verbatim, to the delegate that owns `<id>`: the skill
-  body and any onboarding block included, never a summary (`tree/README.md § Delegation`).
+  body and any onboarding block included, never a summary (`tree/protocol/delegation.md § Delegation`).
 - A want that names no skill: run `skaileup` here to find the producer, then send that skill's run
   to its owner.
 
 ## The interview relay
 
 Delegates never talk to the user. A `NEEDS_CONTEXT` status carries one of two things
-(`tree/README.md § Delegation`):
+(`tree/protocol/delegation.md § Delegation`):
 
 - **A decision batch.** Answer it per the run's domain row of `## Working together`
   (`tree/01_meta/expectations.md § Reading it`); under `user decides`, put it to the user
@@ -50,11 +50,11 @@ you hold (an editor that opens a file, a review hunk) carries a delegate's chang
 
 ## Several at once
 
-Run delegates in parallel only when their write sets are disjoint (`tree/README.md § Delegation`);
+Run delegates in parallel only when their write sets are disjoint (`tree/protocol/delegation.md § Delegation`);
 otherwise one after another, in the order the demand needs.
 
 ## Done
 
-Close each run with the completion summary of `tree/README.md § How a skill runs`, rule 8, built
+Close each run with the completion summary of `tree/protocol/running.md § How a skill runs`, rule 8, built
 from the delegate's status block and the files it wrote, which you read; name the next step by
 demand through `skaileup`.

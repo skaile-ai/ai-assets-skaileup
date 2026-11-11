@@ -39,7 +39,7 @@ One feature, from a sentence to a spec somebody can build: the interview, the sc
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
 1. **Resolve the facts, then run the feature procedure** — `tree/05_features/[featureset]/[feature].md`. Its steps 1–10 are the run's order; steps 2, 7 and 10 hand to items 2–3 below at the moment they name. Step 2 compares the feature with every spec, idea and `pattern` record and settles reuse, a pattern or a reason to keep it separate (`tree/10_blueprint/decisions.md § Patterns`). A missing brief, glossary, journeys or model is never a stop: step 3 reads what exists, derives the rest with a scoped `concept-reverse`, and batch-asks what is left; a missing term is filed as a proposed term per `tree/glossary.md § Where the words live`. Step 3 calls the Skill tool with "grilling"; without it, run the rounds yourself. Steps 4–5 pin each decision that passes the gate in `_concept/10_blueprint/decisions.md` (format and gate: `tree/10_blueprint/decisions.md`) while the grill runs; an OUT that clears the gate lands as `rejected`.
 2. **Open the dossier at the similarity check, freeze it last** — `_concept/08_dossiers/<feature_slug>/index.md`, format and lifecycle in `tree/08_dossiers/[feature_slug]/index.md`.

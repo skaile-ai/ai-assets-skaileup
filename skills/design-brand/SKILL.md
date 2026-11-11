@@ -32,9 +32,9 @@ Settles what the product looks like and how it sounds: writes `03_brand/` (`iden
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Resolve the ground, discover the direction, extract from references, propose the whole brand** — steps 1–4 of `tree/03_brand/README.md § Writing it`. Without a brief the app, audience and tone come from `findings/brand.md` (a scoped `concept-reverse` for `brand` when the code holds the theme) or from the first batch (`tree/README.md § How a skill runs`). Reference screenshots go into `_concept/02_grounding/findings/` with an index row each, `step: design-brand` (format: `tree/02_grounding/findings/README.md`). Nothing is written to `_concept/03_brand/` before the user approves the proposal in words.
+1. **Resolve the ground, discover the direction, extract from references, propose the whole brand** — steps 1–4 of `tree/03_brand/README.md § Writing it`. Without a brief the app, audience and tone come from `findings/brand.md` (a scoped `concept-reverse` for `brand` when the code holds the theme) or from the first batch (`tree/protocol/running.md § How a skill runs`). Reference screenshots go into `_concept/02_grounding/findings/` with an index row each, `step: design-brand` (format: `tree/02_grounding/findings/README.md`). Nothing is written to `_concept/03_brand/` before the user approves the proposal in words.
 2. **Write the identity** — `_concept/03_brand/identity.md` per `tree/03_brand/identity.md`, with `approved: <date>` set in the same write as the user's yes.
 3. **Write the tokens** — `_concept/03_brand/brand.tokens.json` per `tree/03_brand/brand.tokens.md`, validated against `tree/03_brand/brand-tokens.schema.json` before writing; with a dark mode also `brand.dark.tokens.json` and `brand.resolver.json`. Record the approval in the token file's `$extensions` too (`§ Writing it`).
 4. **Write the brandbook** — `_concept/03_brand/brandbook.html` per `tree/03_brand/brandbook.md`.

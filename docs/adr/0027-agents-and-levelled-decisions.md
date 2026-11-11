@@ -45,7 +45,7 @@ The table above keeps the short names as roles; the lead's `SOUL.md` names the a
 
 A `SOUL.md` says how its agent works with the others and cites the tree instead of restating it;
 the hand-over protocol (verbatim task, status block, evidence passes, parallel runs only on
-disjoint write sets) lives once, in `tree/README.md § Delegation`. The researcher is shared: an
+disjoint write sets) lives once, in `tree/protocol/delegation.md § Delegation`. The researcher is shared: an
 evidence pass another agent's run needs goes back to the lead, which sends it to the researcher.
 The reviewer reviews only work it did not write and never fixes; a finding names the skill that
 owns the fix, and the lead sends the fix there.

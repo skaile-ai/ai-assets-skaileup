@@ -36,9 +36,9 @@ The two root files of a concept — `brief.md` (comparables included as a sectio
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Resolve the facts and draft the brief** — `tree/brief.md § Drafting the brief`, steps 1–4. Read `02_grounding/`; a missing `brief-seeds.md` for a built project is derived by a scoped `concept-reverse` (`brief`); the user's description, `depth` from `scope.yaml` (asked in the same batch when absent, per `tree/01_meta/scope.md`) and the gaps go in one batch (`tree/README.md § How a skill runs`). Nothing is approved yet.
+1. **Resolve the facts and draft the brief** — `tree/brief.md § Drafting the brief`, steps 1–4. Read `02_grounding/`; a missing `brief-seeds.md` for a built project is derived by a scoped `concept-reverse` (`brief`); the user's description, `depth` from `scope.yaml` (asked in the same batch when absent, per `tree/01_meta/scope.md`) and the gaps go in one batch (`tree/protocol/running.md § How a skill runs`). Nothing is approved yet.
 2. **Draft the goals** — `tree/goals.md`. Draft them after the pitch exists and before any approval, so the user sees the goals; read `## The result` of `_concept/01_meta/expectations.md` where it exists (`tree/01_meta/expectations.md § Format`), cited, never copied.
 3. **List the first ideas** — `tree/05_features/featuresets.md § First ideas`. Candidates from the brief, shown with it, written only after the yes.
 4. **Approve them together** — `tree/brief.md § Approving both files`. One yes covers `brief.md`, `goals.md` and the ideas; a declined proposed idea goes under `## Cut` (`tree/05_features/featuresets.md § Ideas`).

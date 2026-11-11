@@ -49,7 +49,7 @@ scope asked for them (`research_scope` options: `domain`, `competitors`, `audien
    and override the answers where they differ. The user's own comparables go on the list before
    anything found. Present the plan as who and what will be investigated and let the user add
    or cut — research nobody asked for spends the same tokens as research that matters.
-3. **Dispatch one background agent per topic** (`tree/README.md § Delegation`) and keep working while
+3. **Dispatch one background agent per topic** (`tree/protocol/delegation.md § Delegation`) and keep working while
    they read. Each is pointed at primary sources — official documentation, the product itself,
    first-party pricing and changelogs, the spec — follows every claim back to whoever owns it,
    and returns findings with a source against every factual claim.

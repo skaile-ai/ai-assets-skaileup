@@ -33,9 +33,9 @@ Finds where the adopted design costs users something and helps the user decide o
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
+Read `tree/protocol/running.md`, `tree/protocol/ownership.md` and `tree/protocol/delegation.md` once per session, then these nodes in order — each holds the format and procedure for its part; this file holds only the order.
 
-1. **Read the intent** — `tree/11_build/design-candidates.md § Writing it` step 1, with `tree/APP-DESIGN.md § Reading it`. A derive-or-ask step per `tree/README.md § How a skill runs`: a missing input is scoped `concept-reverse` or a rulebook-only scan, never a stop.
+1. **Read the intent** — `tree/11_build/design-candidates.md § Writing it` step 1, with `tree/APP-DESIGN.md § Reading it`. A derive-or-ask step per `tree/protocol/running.md § How a skill runs`: a missing input is scoped `concept-reverse` or a rulebook-only scan, never a stop.
 2. **Scan in parallel** — step 2 of `tree/11_build/design-candidates.md § Writing it`, one detection pass per kind of `tree/11_build/design-candidates.md § Detection`, on a small, fast model; judging stays here.
 3. **Judge into a candidate report** — steps 3–4 of `tree/11_build/design-candidates.md § Writing it`, shaped by `tree/11_build/design-candidates.md § Format`. HTML only when the user asks.
 4. **Ask which candidate to pursue** — step 5 of `tree/11_build/design-candidates.md § Writing it`; one batch per rule 2, one candidate per run.

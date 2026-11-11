@@ -39,7 +39,7 @@ metadata:
 
 Inspects `_concept/` and reports what is wrong with it, in two halves. **Review** is the tree's integrity: structure, frontmatter, cross-references, naming, coverage, pending proposals and decay. **Coverage** is build coverage: per feature, the slices, commits and code behind it from `11_build/trace.yaml`, plus the tracked files that belong to no feature. Both are recomputed every run, delivered as the report and never written to disk; the only writes are the cross-reference repairs the user approved.
 
-Read `tree/README.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the legal paths and what each skill may write or propose are `tree/README.md § Ownership`; every `_concept/` file's frontmatter and naming is the node at its own path. This file sequences the checks and does not restate them.
+Read `tree/protocol/running.md` and `tree/protocol/ownership.md` once per session. Stance, flag shape and severities are `tree/11_build/README.md § Verdicts`; the legal paths and what each skill may write or propose are `tree/protocol/ownership.md § Ownership`; every `_concept/` file's frontmatter and naming is the node at its own path. This file sequences the checks and does not restate them.
 
 ## Steps
 

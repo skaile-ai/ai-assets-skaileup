@@ -66,7 +66,7 @@ Body.
 
 ## Route
 
-Read `tree/README.md` once per session, then these nodes in order.
+Read `tree/protocol/running.md` once per session, then these nodes in order.
 
 1. **Write it** — `tree/brief.md`.
 
@@ -79,6 +79,15 @@ PROJECT_TYPES = """\
 | project_type | never grows |
 |---|---|
 | web-app | — |
+"""
+
+# A protocol file: shipped beside the nodes, no frontmatter, no `_concept/` part.
+PROTOCOL_RUNNING = """\
+# How a skill runs
+
+## How a skill runs
+
+The route is the todo list.
 """
 
 
@@ -117,6 +126,8 @@ def good_tree(root: Path) -> None:
     )
     write_node(root, "07_screens/shell.md", "_concept/07_screens/shell.md", summary="the app shell")
     write_node(root, "07_screens/[screen].md", "_concept/07_screens/<screen>.md", summary="one spec per screen")
+    (root / "tree" / "protocol").mkdir(exist_ok=True)
+    (root / "tree" / "protocol" / "running.md").write_text(PROTOCOL_RUNNING)
 
 
 def sync_owners(root: Path) -> None:
@@ -883,6 +894,46 @@ def test_cited_section_with_no_such_heading(tmp_path):
     body(root, "spec-feature", "Per `tree/README.md § Nowhere`.")
     only(root, "cites `tree/README.md § Nowhere`, and README.md has no such heading")
     assert "tree-citation-resolves" in errors(root)[0]
+
+
+def test_protocol_citation_resolves(tmp_path):
+    """`tree/protocol/<file> § <Section>` resolves against that file's headings, like a node's."""
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Per `tree/protocol/running.md § How a skill runs`, rule 1.")
+    assert errors(root) == []
+
+
+def test_protocol_citation_to_a_missing_section(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Per `tree/protocol/running.md § Delegation`.")
+    only(root, "cites `tree/protocol/running.md § Delegation`, and protocol/running.md has no such heading")
+    assert "tree-citation-resolves" in errors(root)[0]
+
+
+def test_protocol_citation_to_a_missing_file(tmp_path):
+    root = write_repo(tmp_path)
+    body(root, "spec-feature", "Per `tree/protocol/delegation.md § Delegation`.")
+    only(root, "cites `tree/protocol/delegation.md`, which does not exist")
+
+
+def test_protocol_dir_is_exempt_from_the_mirror_rule(tmp_path):
+    """`tree/protocol/` holds no node: no README, no frontmatter, no `path:`, absent from the
+    listing — and none of that is an error, as for `CONTRACT.md`."""
+    root = write_repo(tmp_path)
+    (root / "tree" / "protocol" / "beside-the-tree.md").write_text("# Beside the tree\n\n## Beside the tree\n\nText.\n")
+    assert not (root / "tree" / "protocol" / "README.md").exists()
+    assert all(not n.rel.startswith("protocol/") for n in check.load_tree(root))
+    assert not any("protocol" in line for line in check.render_tree(check.load_tree(root)))
+    assert errors(root) == []
+
+
+def test_a_directory_beside_protocol_is_still_a_node_dir(tmp_path):
+    """The exemption is `protocol/` by name, not any directory without a README."""
+    root = write_repo(tmp_path)
+    (root / "tree" / "protocols").mkdir()
+    (root / "tree" / "protocols" / "running.md").write_text(PROTOCOL_RUNNING)
+    errs = errors(root)
+    assert any("has no `README.md`" in e for e in errs), errs
 
 
 def test_cited_section_resolves_across_a_wrap_and_a_parenthetical(tmp_path):
@@ -2210,8 +2261,9 @@ def test_readme_without_a_fence(tmp_path):
 
 
 def test_tree_without_a_readme(tmp_path):
-    """No entry point: the listing is gone, and every skill's first route line cites a file that is not."""
+    """No entry point: the listing is gone, and a file citing it cites a file that is not."""
     root = write_repo(tmp_path)
+    body(root, "spec-feature", "The listing is `tree/README.md`.")
     (root / "tree" / "README.md").unlink()
     among(
         root,
