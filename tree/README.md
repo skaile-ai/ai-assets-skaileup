@@ -11,7 +11,7 @@ may_propose: []
 
 ## The rule
 
-Before reading or writing anything under `_concept/<p>`, read the node at the same path `<p>` in this directory (installed at `<contracts>/shared-contracts/<p>`, where `<contracts>` is the harness's contract directory: `.omp/contracts` for omp, `.claude/contracts` for Claude Code, `.codex/contracts` for Codex): the folder's `README.md`, then the file's node. If the exact node is missing, the nearest `README.md` up the path applies.
+Before reading or writing anything under `_concept/<p>`, read the node at the same path `<p>` in this directory (installed at `<contracts>/shared-contracts/<p>`, where `<contracts>` is the harness's contract directory: `.agents/contracts` for omp, Codex, pi and dsh, `.claude/contracts` for Claude Code): the folder's `README.md`, then the file's node. If the exact node is missing, the nearest `README.md` up the path applies.
 
 | `_concept/` thing | node |
 |---|---|
@@ -249,8 +249,8 @@ A second contract asset, `rulebook/` (contract `app-design-rulebook`: rules, def
 ```
 This tree is maintained by the skaileup collection. Every path here has an instruction node at
 `<contracts>/shared-contracts/<same path>` (directory → `README.md`, file → same name with `.md`),
-where `<contracts>` is the agent harness's contract directory: `.omp/contracts`, `.claude/contracts`
-or `.codex/contracts`, whichever exists.
+where `<contracts>` is the agent harness's contract directory: `.agents/contracts` (omp, Codex,
+pi, dsh) or `.claude/contracts` (Claude Code), whichever exists.
 Read the folder README and the node before editing a file here; the node says who owns it and who may propose into it,
 its format, and what reads it.
 The one artifact outside this tree, APP-DESIGN.md at the project root, has its node at

@@ -1199,6 +1199,9 @@ def _check_tree_citations(text: str, where: str, repo: Path, rep: Report) -> Non
 # drift this collection was rebuilt to end: `contracts/<name>.md` anywhere a human or agent
 # reads is a stale instruction waiting to be followed.
 OLD_CONTRACT_PATH_RE = re.compile(r"(?<![\w./-])(?:\.\./)*contracts/[a-z_]+\.md")
+# skaile installs contract assets to `.agents/contracts` (omp, Codex, pi, dsh) or
+# `.claude/contracts` (Claude Code); `.omp/contracts` and `.codex/contracts` are read by no host.
+STALE_CONTRACT_DIR_RE = re.compile(r"(?<![\w-])\.(?:omp|codex)/contracts\b")
 
 
 def _is_frozen(rel: str) -> bool:
@@ -1516,22 +1519,32 @@ def check_archetypes(repo: Path, rep: Report) -> None:
 
 
 def check_old_contract_paths(repo: Path, rep: Report) -> None:
-    """Rule `no-old-contract-path`: nothing under `skills/`, `tree/`, `templates/`, `docs/`
-    (frozen ADRs excepted), `README.md` or `CLAUDE.md` names `contracts/<name>.md`."""
+    """Rules `no-old-contract-path` and `harness-contract-dir`: nothing under `skills/`, `tree/`,
+    `templates/`, `demo/`, `docs/` (frozen ADRs excepted), `README.md` or `CLAUDE.md` names
+    `contracts/<name>.md`, or a contract directory no host reads (`.omp/contracts`, `.codex/contracts`)."""
     files = [
         *[repo / n for n in ("README.md", "CLAUDE.md") if (repo / n).is_file()],
         *_non_frozen(repo, _files(repo, "docs", (".md",))),
         *_files(repo, TREE_DIR, (".md", ".json")),
         *_files(repo, "templates", (".md",)),
         *_files(repo, "skills", (".md", ".py", ".yaml", ".yml")),
+        *_files(repo, "demo", (".md",)),
     ]
     for path in files:
-        for found in sorted(set(OLD_CONTRACT_PATH_RE.findall(path.read_text(encoding="utf-8")))):
+        text = path.read_text(encoding="utf-8")
+        for found in sorted(set(OLD_CONTRACT_PATH_RE.findall(text))):
             rep.fail(
                 _where_of(repo, path),
                 "no-old-contract-path",
                 f"names `{found}`, a cross-cutting contract file this collection no longer ships — "
                 f"cite the node under `tree/` that documents the part instead",
+            )
+        for found in sorted(set(STALE_CONTRACT_DIR_RE.findall(text))):
+            rep.fail(
+                _where_of(repo, path),
+                "harness-contract-dir",
+                f"names `{found}`, a contract directory no host reads — skaile installs contracts to "
+                f"`.agents/contracts` (omp, Codex, pi, dsh) or `.claude/contracts` (Claude Code)",
             )
 
 

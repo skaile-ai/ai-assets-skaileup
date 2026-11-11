@@ -2467,6 +2467,20 @@ def test_the_installed_path_of_the_tree_is_not_a_retired_contract_path(tmp_path)
     assert errors(root) == []
 
 
+@pytest.mark.parametrize("stale", [".omp/contracts", ".codex/contracts"])
+def test_a_contract_directory_no_host_reads_is_flagged(tmp_path, stale):
+    root = write_repo(tmp_path)
+    append(root, "tree/brief.md", f"Installed at `{stale}/shared-contracts/brief.md`.\n")
+    only(root, f"names `{stale}`")
+    assert "harness-contract-dir" in errors(root)[0]
+
+
+def test_the_agents_contract_directory_is_not_flagged(tmp_path):
+    root = write_repo(tmp_path)
+    append(root, "tree/brief.md", "Installed at `.agents/contracts/shared-contracts/brief.md`.\n")
+    assert errors(root) == []
+
+
 def test_a_retired_contract_path_in_a_skill_script(tmp_path):
     root = write_repo(tmp_path)
     append(root, "skills/spec-feature/scripts/x.py", "# see contracts/elements_block.md\n")
