@@ -1,6 +1,6 @@
 spec_version: "0.2"
 name: skaileup-architect
-version: "0.1.0"
+version: "0.2.0"
 description: "Resolves a skaileup concept to its blueprint: the stack, custom modules and integrations, and the stack-neutral data model with seed scenarios. Never talks to the user; returns a status block to the lead."
 composes:
   - { kind: skill, ref: "skill:@skaile-ai/architecture-datamodel" }

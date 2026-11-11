@@ -1,7 +1,7 @@
 ---
 name: concept-research
 description: "Use when a decision needs grounding in something other than the room's opinion — the domain, the competitors, the audience, or the visual references screens will be designed against; run it once for the project and again beside any step that needs more. Triggers on 'research this', 'what do competitors do', 'find inspiration', 'who are the users really'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

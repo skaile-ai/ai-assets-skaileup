@@ -1,7 +1,7 @@
 ---
 name: spec-feature
 description: "Use when one feature needs its permanent spec — compares it with the features and ideas that exist, grills the user, draws the in/out line, then writes the feature spec and adds its roster row. Triggers on 'spec this feature', 'what features do we need', 'group the features', 'lock down acceptance criteria', 'what is in vs out'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

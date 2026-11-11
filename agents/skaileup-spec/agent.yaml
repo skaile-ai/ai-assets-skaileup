@@ -1,6 +1,6 @@
 spec_version: "0.2"
 name: skaileup-spec
-version: "0.1.0"
+version: "0.2.0"
 description: "Specifies features and entity lifecycles for a skaileup project, checking each new feature against the specs and ideas that exist before writing it. Never talks to the user; returns a status block to the lead."
 composes:
   - { kind: skill, ref: "skill:@skaile-ai/spec-feature" }

@@ -1,7 +1,7 @@
 ---
 name: build-database
 description: "Use when the data model is settled and the app needs a real database — translates the model into the stack's schema, migrates it, and generates one runnable seed script per scenario. Triggers on 'migrate', 'generate the schema', 'seed the database', 'set up the data layer'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

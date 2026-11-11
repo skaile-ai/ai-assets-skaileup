@@ -1,7 +1,7 @@
 ---
 name: quality-test
 description: "Use when built features need a test suite that traces back to their specs — learns the project's test conventions from its existing tests, then writes unit tests and, where there is a data layer, integration tests. Triggers on 'generate tests', 'add test coverage', 'write integration tests'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

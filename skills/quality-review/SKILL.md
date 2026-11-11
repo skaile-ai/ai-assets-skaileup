@@ -1,7 +1,7 @@
 ---
 name: quality-review
 description: "Use when a feature's spec is built and its code needs an adversarial review before it ships — resolves the spec and its parent issue, takes the fixed point from the integration branch `spec/<featureset>-<feature>`, runs `code-review`, adds the security, accessibility and acceptance-criteria axes, and flips the ledger rows whose ticket is closed. Triggers on 'review this feature', 'code review the login feature', 'is this ready to ship'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

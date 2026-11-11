@@ -1,7 +1,7 @@
 ---
 name: design-brand
 description: "Use when the project has no visual identity yet, or the user wants to change it. Discovers a direction in plain language, extracts from reference sites, and writes the palette, tokens and brandbook; a brief sharpens it and is not required. Triggers on 'brand', 'colors', 'fonts', 'design tokens', 'make it look good'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

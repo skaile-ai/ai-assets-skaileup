@@ -1,7 +1,7 @@
 ---
 name: mockup-storybook
 description: "Use when a screen, an entity editor or a journey should be seen and critiqued as a running mockup, or when the user says 'prototype this screen', 'build the storybook', 'click-dummy', 'try the editor for this entity'. Grows one Vue Storybook package layer by layer: floorplans, screens, entity editors, the whole app, journeys, and a generated page per feature."
-version: "0.3.0"
+version: "0.4.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

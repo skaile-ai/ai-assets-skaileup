@@ -1,7 +1,7 @@
 ---
 name: experience-journeys
 description: "Use when nothing has mapped what users actually do yet. Defines the personas and the staged story map that features are derived from; a brief or the code's routes ground it, and the user's description is enough. Triggers on 'map the journeys', 'user stories', 'what do users do', 'story map'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

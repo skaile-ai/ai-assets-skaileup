@@ -1,7 +1,7 @@
 ---
 name: skaileup
 description: "Use when the user names something they want — an artifact, a screen, a question, a request — and the skill that produces it or what it needs is unclear, when a project has no recorded scope or expectations, or to walk the concept top-down (frame → look → data → features) before anything is built. Triggers on 'which skill', 'where do I start', 'how do we work together', 'walk me through the app', 'what is decided', 'continue the concept', 'describe this screen', 'I have a bug report', 'a feature was requested'."
-version: "0.4.0"
+version: "0.5.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

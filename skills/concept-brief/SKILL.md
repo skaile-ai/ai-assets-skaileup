@@ -1,7 +1,7 @@
 ---
 name: concept-brief
 description: "Use when a concept has no _concept/brief.md yet, or the user wants to redefine one. Writes the pitch (with its comparables), the goals — the two root files everything downstream reads — and the first feature ideas in the roster. Triggers on 'I have an app idea', 'new project', 'start from scratch', 'redo the brief'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

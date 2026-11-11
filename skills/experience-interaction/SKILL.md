@@ -1,7 +1,7 @@
 ---
 name: experience-interaction
 description: "Use when the app's interaction rules are not written down yet — navigation model, where information lives, one editor per object, inline vs dialog vs page, information tiers, saving, messages, popups, buttons, search and command palette — or when a code check has proposed changes to them. Adopts the rulebook's defaults with the user, decides what remains in batches and writes APP-DESIGN.md. Triggers on 'write the app design', 'APP-DESIGN.md', 'when do we use a modal', 'UI rules for this app', 'interaction decisions'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

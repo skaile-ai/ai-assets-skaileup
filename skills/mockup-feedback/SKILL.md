@@ -1,7 +1,7 @@
 ---
 name: mockup-feedback
 description: "Use when stakeholder notes left on the Storybook mockup need to land in the concept, or when the user says 'work through the feedback', 'apply the annotations', 'what did the reviewers say'. Routes each open note to the spec, data-model entity or glossary term it belongs in, authors a reviewable diff for it, and — after you approve the review file — applies the approved diffs in one commit and closes the notes."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

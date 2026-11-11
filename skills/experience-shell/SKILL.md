@@ -1,7 +1,7 @@
 ---
 name: experience-shell
 description: "Use when the app needs its frame — the shell frame, the navigation model it realises, the one list of destinations, and the layout patterns every screen reuses. Works with or without features and screens, from the code's own routes when they exist. Triggers on 'app shell', 'navigation structure', 'sidebar or top bar', 'what does the layout look like', 'design the frame'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

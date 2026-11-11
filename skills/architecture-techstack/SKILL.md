@@ -1,7 +1,7 @@
 ---
 name: architecture-techstack
 description: "Use when a project has no technology decided — scans the stack templates on disk, asks what the project actually constrains, and records the winner as the one id every later skill resolves. Triggers on 'tech stack', 'what should we build this with', 'pick a framework', 'which template'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

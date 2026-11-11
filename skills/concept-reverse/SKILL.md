@@ -1,7 +1,7 @@
 ---
 name: concept-reverse
 description: "Use when the code already holds a fact the concept needs, or a repository exists and the concept has to be extracted from it rather than designed. Reads the routes, screens, schema, stack, brand, interaction surfaces and docs of the requested scope, and writes what the code actually says as graded, freshness-stamped findings the owning skills seed from. Triggers on 'reverse engineer this project', 'extract the concept from this codebase', 'document this existing app', 're-read the screens from the code'."
-version: "0.2.0"
+version: "0.3.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

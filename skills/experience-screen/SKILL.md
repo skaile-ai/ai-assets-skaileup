@@ -1,7 +1,7 @@
 ---
 name: experience-screen
 description: "Use when one screen needs specifying on its own — a screen already built in the code, a screen a feature needs, or a layout to try before anything is specified. Derives it from the findings or asks, picks the floorplan, posture and density, binds regions, records tier overrides and can show the layout early as a Storybook story. Triggers on 'describe this screen', 'spec the inbox screen', 'which layout fits this', 'show me this screen', 'try two layouts'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

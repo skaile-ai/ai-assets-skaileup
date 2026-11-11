@@ -1,7 +1,7 @@
 ---
 name: build-branch
 description: "Use when implementation work needs somewhere to live or somewhere to go — opens the build branch and optional worktree before the first spec is built, and merges, PRs, keeps or discards it after the last. Triggers on 'start implementing', 'set up the branch', 'finish the branch', 'merge the work'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

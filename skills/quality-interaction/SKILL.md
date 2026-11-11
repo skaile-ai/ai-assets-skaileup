@@ -1,7 +1,7 @@
 ---
 name: quality-interaction
 description: "Use when an app's code exists — checks it against the interaction decisions in APP-DESIGN.md entry by entry and type by type (against the rulebook's invariants alone when none is written), counts violations and exemplars per rule, and writes the ordered changes that close them. Triggers on 'check the app against APP-DESIGN.md', 'does the UI follow our patterns', 'interaction review', 'where do we still break the rules'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

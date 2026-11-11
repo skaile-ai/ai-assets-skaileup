@@ -1,6 +1,6 @@
 spec_version: "0.2"
 name: skaileup-designer
-version: "0.1.0"
+version: "0.2.0"
 description: "Decides how a skaileup app looks and behaves as one thing: brand, APP-DESIGN.md, the shell, each screen, and the Storybook mockup with its stakeholder notes. Never talks to the user; returns a status block to the lead."
 composes:
   - { kind: skill, ref: "skill:@skaile-ai/design-brand" }

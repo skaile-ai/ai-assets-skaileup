@@ -1,7 +1,7 @@
 ---
 name: quality-design
 description: "Use when an app is built or adopted and you suspect its design, not its conformance, is what hurts users — scans the code against the rulebook, the glossary and APP-DESIGN.md for shallow screens, overloaded concepts, hidden modes, undeclared representations and tier violations, reports evidenced candidates, then grills the one you pick. Triggers on 'what is wrong with this design', 'find design problems', 'which screens should merge', 'improve the UX of this app', 'design review of the code'."
-version: "0.1.0"
+version: "0.2.0"
 metadata:
   requires:
     - contract:@skaile-ai/shared-contracts

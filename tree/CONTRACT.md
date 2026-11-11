@@ -1,7 +1,7 @@
 ---
 name: shared-contracts
 description: "The collection's instruction tree, installed as one asset: one node per _concept/ part holding its purpose, format, procedure and checks. Mirrors _concept/ path for path. Not invocable."
-version: "0.3.0"
+version: "0.4.0"
 metadata:
   do_not_invoke: true
 ---
