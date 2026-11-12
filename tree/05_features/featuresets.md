@@ -2,7 +2,7 @@
 path: _concept/05_features/featuresets.md
 summary: the roster of featuresets, their features and priorities, and the open ideas
 owner: [concept-brief, spec-feature]
-may_propose: [concept-research, experience-journeys]
+may_propose: [concept-research, experience-journeys, app-model]
 ---
 
 # _concept/05_features/featuresets.md
@@ -51,6 +51,7 @@ An idea is a candidate feature nobody has specified: an app idea from the brief 
 - `concept-brief` writes the first rows (`### First ideas (concept-brief)`).
 - `spec-feature` adds a row for a feature its grill names that the run does not specify, a DEFER included. It moves a row when it acts on it: into the featureset's table when it specifies the idea, or under `## Cut` with the reason when the user declines it.
 - `experience-journeys` proposes a feature the user named that no journey's `candidate_features` carries; `concept-research` proposes a gap users complain about in `_concept/02_grounding/research/competitors.md`. Specifying the idea promotes it; declining it moves it under `## Cut`.
+- `app-model` proposes features its feature map found in code, docs or the running app that no row covers.
 
 A declined idea that clears the decisions gate is also appended to `_concept/10_blueprint/decisions.md` with `Status: rejected` (`tree/10_blueprint/decisions.md`), by the owner that declined it.
 
