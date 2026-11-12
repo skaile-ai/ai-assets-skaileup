@@ -2099,7 +2099,7 @@ def test_node_with_a_proposer_that_is_no_skill(tmp_path):
     root = write_repo(tmp_path)
     records_decisions(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [ghost]")
-    only(root, "`may_propose:` lists 'ghost', which is no skill in this collection")
+    only(root, "`may_propose:` lists 'ghost', which is no skill in this collection nor in `EXTERNAL_PROPOSERS`")
 
 
 def test_node_with_a_proposer_that_is_also_its_owner(tmp_path):
@@ -2114,6 +2114,14 @@ def test_node_with_a_known_proposer_is_clean(tmp_path):
     records_decisions(root)
     set_produces(root, "    produces: []\n", "design-brand")
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [design-brand]")
+    assert errors(root) == []
+
+
+def test_node_with_an_external_proposer_is_clean(tmp_path):
+    """`app-model` lives in another collection; `EXTERNAL_PROPOSERS` is what admits it."""
+    root = write_repo(tmp_path)
+    records_decisions(root)
+    edit_node(root, "brief.md", "may_propose: []", "may_propose: [app-model]")
     assert errors(root) == []
 
 

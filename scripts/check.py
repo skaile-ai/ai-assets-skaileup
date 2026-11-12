@@ -70,6 +70,12 @@ import host_facts as hf
 LINE_BUDGET = 60
 LINE_BUDGET_NO_ARTIFACTS = 100
 
+# Skills outside this collection that may append `proposed` entries to a node (`may_propose:`).
+# Each is published elsewhere and writes in the node's proposed-entry shape; listing one here is
+# the decision that skaileup accepts its proposals. `app-model` (@skaile-ai, ai-assets-app-explore)
+# proposes feature ideas and glossary terms from its comparison of code, docs and the running app.
+EXTERNAL_PROPOSERS = frozenset({"app-model"})
+
 # Every declared prerequisite path is joined to the *project* root, never to the concept
 # (`host:prerequisite-project-root`), so the prefix is part of the declaration.
 ARTIFACT_ROOT = "_concept"
@@ -627,8 +633,8 @@ def _check_node(node: Node, skill_dirs: set[str], rep: Report) -> None:
         rep.fail(where, "node-frontmatter", "has no `may_propose:` list — write `may_propose: []` when no other skill proposes here")
     else:
         for proposer in node.raw_may_propose:
-            if not isinstance(proposer, str) or proposer not in skill_dirs:
-                rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is no skill in this collection")
+            if not isinstance(proposer, str) or proposer not in skill_dirs | EXTERNAL_PROPOSERS:
+                rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is no skill in this collection nor in `EXTERNAL_PROPOSERS`")
             elif proposer in node.owner:
                 rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is also in `owner:` — an owner writes directly")
 
