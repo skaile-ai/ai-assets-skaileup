@@ -2099,7 +2099,7 @@ def test_node_with_a_proposer_that_is_no_skill(tmp_path):
     root = write_repo(tmp_path)
     records_decisions(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [ghost]")
-    only(root, "`may_propose:` lists 'ghost', which is no skill in this collection nor in `EXTERNAL_PROPOSERS`")
+    only(root, "`may_propose:` lists 'ghost', which is no skill in this collection nor in `EXTERNAL_WRITERS`")
 
 
 def test_node_with_a_proposer_that_is_also_its_owner(tmp_path):
@@ -2118,11 +2118,24 @@ def test_node_with_a_known_proposer_is_clean(tmp_path):
 
 
 def test_node_with_an_external_proposer_is_clean(tmp_path):
-    """`app-model` lives in another collection; `EXTERNAL_PROPOSERS` is what admits it."""
+    """`app-model` lives in another collection; `EXTERNAL_WRITERS` is what admits it."""
     root = write_repo(tmp_path)
     records_decisions(root)
     edit_node(root, "brief.md", "may_propose: []", "may_propose: [app-model]")
     assert errors(root) == []
+
+
+def test_node_owned_by_an_external_skill_is_clean(tmp_path):
+    """An `EXTERNAL_WRITERS` owner is admitted and its `produces` is not looked for here."""
+    root = write_repo(tmp_path)
+    raw_node(root, "extra.md", "---\npath: _concept/extra.md\nsummary: x\nowner: [app-model]\nmay_propose: []\n---\n")
+    assert errors(root) == []
+
+
+def test_node_owned_by_an_unknown_external_skill(tmp_path):
+    root = write_repo(tmp_path)
+    raw_node(root, "extra.md", "---\npath: _concept/extra.md\nsummary: x\nowner: [ghost]\nmay_propose: []\n---\n")
+    only(root, "`owner:` lists 'ghost', which is no skill in this collection nor in `EXTERNAL_WRITERS`")
 
 
 def test_owner_of_a_node_with_proposers_that_records_no_decisions(tmp_path):

@@ -43,7 +43,8 @@ _concept/                             the artifact tree, its ownership rule and 
 │   │   ├── interaction.md            surfaces, editors, save models, messages, search as the code has them today
 │   │   ├── routes.md                 every route or endpoint, the file defining it, what a user does there
 │   │   ├── screens.md                page components behind the routes, with bindings, interactions and states
-│   │   └── stack.md                  the platform, frameworks, database and tooling the manifests declare
+│   │   ├── stack.md                  the platform, frameworks, database and tooling the manifests declare
+│   │   └── app-model/                one ontology of the app from code, docs and the running app, compared
 │   ├── onboarding/                   the preferences, constraints and material a project arrives with
 │   │   ├── answers.json              the onboarding intake record — values, confidence, seed inventory, approval
 │   │   └── questions.md              open questions routed to someone who is not in the room
