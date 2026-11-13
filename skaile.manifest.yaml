@@ -1,2 +1,175 @@
 publisher: skaile-ai
 version: 0.3.0
+assets:
+  - kind: agent
+    name: skaileup-architect
+    root: agents/skaileup-architect
+    version: 0.2.0
+  - kind: agent
+    name: skaileup-builder
+    root: agents/skaileup-builder
+    version: 0.1.1
+  - kind: agent
+    name: skaileup-designer
+    root: agents/skaileup-designer
+    version: 0.2.0
+  - kind: agent
+    name: skaileup-lead
+    root: agents/skaileup-lead
+    version: 0.1.2
+  - kind: agent
+    name: skaileup-product
+    root: agents/skaileup-product
+    version: 0.2.0
+  - kind: agent
+    name: skaileup-researcher
+    root: agents/skaileup-researcher
+    version: 0.2.0
+  - kind: agent
+    name: skaileup-reviewer
+    root: agents/skaileup-reviewer
+    version: 0.2.0
+  - kind: agent
+    name: skaileup-spec
+    root: agents/skaileup-spec
+    version: 0.2.0
+  - kind: flow
+    name: skaileup-greenfield
+    root: flows/skaileup-greenfield
+    version: 0.2.0
+  - kind: flow
+    name: skaileup-reverse
+    root: flows/skaileup-reverse
+    version: 0.1.0
+  - kind: contract
+    name: app-design-rulebook
+    root: rulebook
+    version: 0.1.0
+  - kind: skill
+    name: architecture-datamodel
+    root: skills/architecture-datamodel
+    version: 0.6.0
+  - kind: skill
+    name: architecture-system
+    root: skills/architecture-system
+    version: 0.2.0
+  - kind: skill
+    name: architecture-techstack
+    root: skills/architecture-techstack
+    version: 0.2.0
+  - kind: skill
+    name: build-branch
+    root: skills/build-branch
+    version: 0.2.0
+  - kind: skill
+    name: build-database
+    root: skills/build-database
+    version: 0.3.0
+  - kind: skill
+    name: build-implement
+    root: skills/build-implement
+    version: 0.3.0
+  - kind: skill
+    name: build-plan
+    root: skills/build-plan
+    version: 0.3.0
+  - kind: skill
+    name: build-scaffold
+    root: skills/build-scaffold
+    version: 0.3.0
+  - kind: skill
+    name: concept-brief
+    root: skills/concept-brief
+    version: 0.3.0
+  - kind: skill
+    name: concept-glossary
+    root: skills/concept-glossary
+    version: 0.2.0
+  - kind: skill
+    name: concept-onboard
+    root: skills/concept-onboard
+    version: 0.2.0
+  - kind: skill
+    name: concept-research
+    root: skills/concept-research
+    version: 0.2.0
+  - kind: skill
+    name: concept-reverse
+    root: skills/concept-reverse
+    version: 0.3.0
+  - kind: skill
+    name: design-brand
+    root: skills/design-brand
+    version: 0.2.0
+  - kind: skill
+    name: experience-behaviors
+    root: skills/experience-behaviors
+    version: 0.2.0
+  - kind: skill
+    name: experience-interaction
+    root: skills/experience-interaction
+    version: 0.3.0
+  - kind: skill
+    name: experience-journeys
+    root: skills/experience-journeys
+    version: 0.2.0
+  - kind: skill
+    name: experience-screen
+    root: skills/experience-screen
+    version: 0.2.0
+  - kind: skill
+    name: experience-shell
+    root: skills/experience-shell
+    version: 0.2.0
+  - kind: skill
+    name: mockup-feedback
+    root: skills/mockup-feedback
+    version: 0.3.0
+  - kind: skill
+    name: mockup-storybook
+    root: skills/mockup-storybook
+    version: 0.4.0
+  - kind: skill
+    name: ops-review
+    root: skills/ops-review
+    version: 0.2.0
+  - kind: skill
+    name: quality-design
+    root: skills/quality-design
+    version: 0.2.0
+  - kind: skill
+    name: quality-e2e
+    root: skills/quality-e2e
+    version: 0.2.0
+  - kind: skill
+    name: quality-interaction
+    root: skills/quality-interaction
+    version: 0.2.0
+  - kind: skill
+    name: quality-release
+    root: skills/quality-release
+    version: 0.2.0
+  - kind: skill
+    name: quality-review
+    root: skills/quality-review
+    version: 0.2.0
+  - kind: skill
+    name: quality-standards
+    root: skills/quality-standards
+    version: 0.2.0
+  - kind: skill
+    name: quality-test
+    root: skills/quality-test
+    version: 0.2.0
+  - kind: skill
+    name: skaileup
+    root: skills/skaileup
+    version: 0.5.0
+  - kind: skill
+    name: spec-feature
+    root: skills/spec-feature
+    version: 0.3.0
+  - kind: contract
+    name: shared-contracts
+    root: tree
+    version: 0.4.0
