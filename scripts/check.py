@@ -70,11 +70,13 @@ import host_facts as hf
 LINE_BUDGET = 60
 LINE_BUDGET_NO_ARTIFACTS = 100
 
-# Skills outside this collection that may append `proposed` entries to a node (`may_propose:`).
-# Each is published elsewhere and writes in the node's proposed-entry shape; listing one here is
-# the decision that skaileup accepts its proposals. `app-model` (@skaile-ai, ai-assets-app-explore)
-# proposes feature ideas and glossary terms from its comparison of code, docs and the running app.
-EXTERNAL_PROPOSERS = frozenset({"app-model"})
+# Skills outside this collection that may own a node (`owner:`) or append `proposed` entries to
+# one (`may_propose:`). Each is published elsewhere and writes in the node's shape; listing one here
+# is the decision that skaileup accepts what it writes. Its `produces` is not in this repo, so
+# `writer-without-produces` does not apply to it. `app-model` (@skaile-ai, ai-assets-app-explore)
+# owns `_concept/02_grounding/findings/app-model/` and proposes feature ideas and glossary terms
+# from its comparison of code, docs and the running app.
+EXTERNAL_WRITERS = frozenset({"app-model"})
 
 # Every declared prerequisite path is joined to the *project* root, never to the concept
 # (`host:prerequisite-project-root`), so the prefix is part of the declaration.
@@ -627,14 +629,14 @@ def _check_node(node: Node, skill_dirs: set[str], rep: Report) -> None:
             rep.fail(where, "node-frontmatter", "has no `owner:` list — write `owner: []` for a part nothing generates")
     else:
         for owner in node.raw_owner:
-            if not isinstance(owner, str) or owner not in skill_dirs:
-                rep.fail(where, "node-frontmatter", f"`owner:` lists {owner!r}, which is no skill in this collection")
+            if not isinstance(owner, str) or (owner not in skill_dirs and owner not in EXTERNAL_WRITERS):
+                rep.fail(where, "node-frontmatter", f"`owner:` lists {owner!r}, which is no skill in this collection nor in `EXTERNAL_WRITERS`")
     if not isinstance(node.raw_may_propose, list):
         rep.fail(where, "node-frontmatter", "has no `may_propose:` list — write `may_propose: []` when no other skill proposes here")
     else:
         for proposer in node.raw_may_propose:
-            if not isinstance(proposer, str) or proposer not in skill_dirs | EXTERNAL_PROPOSERS:
-                rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is no skill in this collection nor in `EXTERNAL_PROPOSERS`")
+            if not isinstance(proposer, str) or (proposer not in skill_dirs and proposer not in EXTERNAL_WRITERS):
+                rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is no skill in this collection nor in `EXTERNAL_WRITERS`")
             elif proposer in node.owner:
                 rep.fail(where, "node-frontmatter", f"`may_propose:` lists {proposer!r}, which is also in `owner:` — an owner writes directly")
 

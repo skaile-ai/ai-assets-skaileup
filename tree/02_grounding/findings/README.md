@@ -22,6 +22,7 @@ evidence; `experience-interaction` seeds `APP-DESIGN.md` from `interaction.md`, 
 - `tree/02_grounding/findings/brief-seeds.md`, `tree/02_grounding/findings/stack.md`, `tree/02_grounding/findings/brand.md` — what the docs, manifests and theme files say.
 - `tree/02_grounding/findings/routes.md`, `tree/02_grounding/findings/screens.md`, `tree/02_grounding/findings/datamodel.md` — what the code says.
 - `tree/02_grounding/findings/interaction.md` — how the code lets a user work: surfaces, editors, save models, messages, search.
+- `tree/02_grounding/findings/app-model/` — one model of the app per source (code, docs, running app), merged, with the mismatch register and the feature map; written by `app-model`, published outside this collection.
 - Screenshots and page saves sit beside these files, each with a row in the catalogue.
 
 ## Format

@@ -1,7 +1,7 @@
 ---
 path: _concept/02_grounding/findings/index.md
 summary: catalogue of findings files and raw material, with the skill that took each
-owner: [concept-reverse, concept-research, design-brand]
+owner: [concept-reverse, concept-research, design-brand, app-model]
 may_propose: []
 ---
 
@@ -28,7 +28,7 @@ A markdown table, one row per file, with the universal frontmatter
 
 Each owner appends a row per file it adds, in the same write: `concept-reverse` for each
 evidence file it writes (a re-derive updates the row's date), `concept-research` for its raw material, `design-brand` for each reference it
-screenshots.
+screenshots, `app-model` for each file it writes under `app-model/` (`file` relative to `findings/`, `app-model/compare.md`).
 
 ## Checks
 
